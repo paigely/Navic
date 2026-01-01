@@ -1,0 +1,43 @@
+package paige.navic.ui.component
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import com.kyant.capsule.ContinuousRoundedRectangle
+
+@Composable
+fun Form(
+	modifier: Modifier = Modifier,
+	content: @Composable ColumnScope.() -> Unit
+) {
+	Column(
+		modifier = modifier
+			.padding(bottom = 8.dp)
+			.clip(ContinuousRoundedRectangle(18.dp)),
+		verticalArrangement = Arrangement.spacedBy(3.dp)
+	) {
+		content()
+	}
+}
+
+@Composable
+fun LazyForm(
+	modifier: Modifier = Modifier,
+	content: LazyListScope.() -> Unit
+) {
+	LazyColumn(
+		modifier = modifier
+			.padding(bottom = 8.dp)
+			.clip(ContinuousRoundedRectangle(18.dp)),
+		verticalArrangement = Arrangement.spacedBy(3.dp)
+	) {
+		content()
+	}
+}

@@ -1,0 +1,126 @@
+package paige.navic.ui.screen
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kyant.capsule.ContinuousCapsule
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.playlist_remove
+import org.jetbrains.compose.resources.vectorResource
+import paige.navic.LocalCtx
+import paige.navic.Tracks
+import paige.navic.ui.component.ArtGrid
+import paige.navic.ui.component.ArtGridItem
+import paige.navic.ui.component.ArtGridPlaceholder
+import paige.navic.ui.component.ErrorBox
+import paige.navic.ui.component.Form
+import paige.navic.ui.component.FormRow
+import paige.navic.ui.component.RefreshBox
+import paige.navic.ui.viewmodel.PlaylistsViewModel
+import paige.navic.util.UiState
+import paige.subsonic.api.model.toAny
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PlaylistsScreen(
+	backStack: SnapshotStateList<Any>,
+	viewModel: PlaylistsViewModel = viewModel()
+) {
+	val ctx = LocalCtx.current
+	val haptics = LocalHapticFeedback.current
+
+	val playlistsState by viewModel.playlistsState.collectAsState()
+	val selectedPlaylist by viewModel.selectedPlaylist.collectAsState()
+	val error by viewModel.error.collectAsState()
+
+	RefreshBox(
+		modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+		isRefreshing = playlistsState is UiState.Loading,
+		onRefresh = { viewModel.refreshPlaylists() }
+	) {
+		when (playlistsState) {
+			is UiState.Loading -> ArtGridPlaceholder()
+			is UiState.Success -> {
+				val playlists = (playlistsState as UiState.Success).data
+				if (!playlists.isEmpty()) {
+					ArtGrid {
+						items(playlists) { playlist ->
+							ArtGridItem(
+								modifier = Modifier.combinedClickable(
+									onClick = {
+										ctx.clickSound()
+										backStack.add(Tracks(tracks = playlist.toAny()))
+									},
+									onLongClick = {
+										haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+										viewModel.selectPlaylist(playlist)
+									}
+								),
+								imageUrl = playlist.coverArt,
+								title = playlist.name,
+								subtitle = "${playlist.songCount} songs\n${playlist.comment.orEmpty()}"
+							)
+						}
+					}
+				} else {
+					ArtGridPlaceholder()
+				}
+			}
+
+			is UiState.Error -> ErrorBox(playlistsState as UiState.Error)
+		}
+	}
+
+	selectedPlaylist?.let {
+		ModalBottomSheet(
+			onDismissRequest = { viewModel.clearSelection() }
+		) {
+			Form(modifier = Modifier.padding(14.dp)) {
+				FormRow(
+					horizontalArrangement = Arrangement.spacedBy(8.dp),
+					onClick = { viewModel.deleteSelectedAlbum() },
+				) {
+					Icon(
+						vectorResource(Res.drawable.playlist_remove),
+						contentDescription = null
+					)
+					Text("Delete")
+				}
+			}
+		}
+	}
+
+	error?.let {
+		AlertDialog(
+			onDismissRequest = { viewModel.clearError() },
+			title = { Text("Error") },
+			text = { Text("$error") },
+			confirmButton = {
+				Button(
+					shape = ContinuousCapsule,
+					onClick = { viewModel.clearError() }
+				) {
+					Text("OK")
+				}
+			}
+		)
+	}
+}
