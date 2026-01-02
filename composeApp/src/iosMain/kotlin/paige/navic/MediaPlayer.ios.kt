@@ -89,35 +89,34 @@ class IOSMediaPlayer(
 	private fun setupRemoteCommands() {
 		val commandCenter = MPRemoteCommandCenter.sharedCommandCenter()
 
-		commandCenter.playCommand.addTarget(
-			this,
-			NSSelectorFromString("resume")
-		)
-		commandCenter.pauseCommand.addTarget(
-			this,
-			NSSelectorFromString("pause")
-		)
-		commandCenter.nextTrackCommand.addTarget(
-			this,
-			NSSelectorFromString("next")
-		)
-		commandCenter.previousTrackCommand.addTarget(
-			this,
-			NSSelectorFromString("previous")
-		)
+		commandCenter.playCommand.addTargetWithHandler {
+			resume()
+			MPRemoteCommandHandlerStatusSuccess
+		}
 
-		commandCenter.changePlaybackPositionCommand.addTarget(
-			this,
-			NSSelectorFromString("changePlaybackPositionCommand")
-		)
-	}
+		commandCenter.pauseCommand.addTargetWithHandler {
+			pause()
+			MPRemoteCommandHandlerStatusSuccess
+		}
 
-	@Suppress("unused")
-	@ObjCAction
-	fun changePlaybackPositionCommand(event: Any) {
-		val positionEvent = event as? MPChangePlaybackPositionCommandEvent
-		if (positionEvent != null) {
-			seekToTime(positionEvent.positionTime)
+		commandCenter.nextTrackCommand.addTargetWithHandler {
+			next()
+			MPRemoteCommandHandlerStatusSuccess
+		}
+
+		commandCenter.previousTrackCommand.addTargetWithHandler {
+			previous()
+			MPRemoteCommandHandlerStatusSuccess
+		}
+
+		commandCenter.changePlaybackPositionCommand.addTargetWithHandler { event ->
+			val positionEvent = event as? MPChangePlaybackPositionCommandEvent
+			if (positionEvent != null) {
+				seekToTime(positionEvent.positionTime)
+				MPRemoteCommandHandlerStatusSuccess
+			} else {
+				MPRemoteCommandHandlerStatusCommandFailed
+			}
 		}
 	}
 
