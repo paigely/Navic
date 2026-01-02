@@ -156,7 +156,9 @@ private class MediaPlayerImpl(
 					.setTitle(track.title)
 					.setArtist(track.artist)
 					.setAlbumTitle(track.album)
-					.setArtworkUri(track.coverArt?.toUri())
+					.setArtworkUri(SessionManager.api.getCoverArtUrl(
+						track.coverArt, auth = true
+					)?.toUri())
 					.build()
 
 				MediaItem.Builder()
