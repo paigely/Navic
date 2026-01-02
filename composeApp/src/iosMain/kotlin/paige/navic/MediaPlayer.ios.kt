@@ -14,6 +14,7 @@ import paige.subsonic.api.model.AnyTracks
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
+import platform.CoreGraphics.CGSizeMake
 import platform.CoreMedia.CMTimeGetSeconds
 import platform.CoreMedia.CMTimeMake
 import platform.CoreMedia.CMTimeMakeWithSeconds
@@ -245,16 +246,16 @@ class IOSMediaPlayer(
 		info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = CMTimeGetSeconds(player.currentTime())
 		info[MPNowPlayingInfoPropertyPlaybackRate] = if (_isPaused.value) 0.0 else 1.0
 
-		track.coverArt
-			?.let { NSURL.URLWithString(it) }
-			?.let { NSData.dataWithContentsOfURL(it) }
-			?.let {
-				info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
-					UIImage(
-						data = it
-					)
-				)
+		info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
+			boundsSize = CGSizeMake(512.0, 512.0),
+			requestHandler = {
+				return@MPMediaItemArtwork track.coverArt
+					?.let { SessionManager.api.getCoverArtUrl(it, auth = true) }
+					?.let { NSURL.URLWithString(it) }
+					?.let { NSData.dataWithContentsOfURL(it) }
+					?.let { UIImage(data = it) } ?: UIImage()
 			}
+		)
 
 		MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = info
 	}
