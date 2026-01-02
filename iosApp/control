@@ -1,0 +1,7 @@
+Package: paige.Navic
+Name: Navic
+Version: 1.0
+Architecture: iphoneos-arm64
+Maintainer: paige
+Author: paige
+Depends: firmware(>=14.1) | org.swift.libswift (>=5.0)

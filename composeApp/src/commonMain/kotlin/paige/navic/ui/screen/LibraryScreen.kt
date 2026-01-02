@@ -27,7 +27,7 @@ import paige.subsonic.api.model.toAny
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun LibraryScreen(viewModel: LibraryViewModel = viewModel()) {
+fun LibraryScreen(viewModel: LibraryViewModel = viewModel { LibraryViewModel() }) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val haptics = LocalHapticFeedback.current

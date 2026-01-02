@@ -25,10 +25,6 @@ kotlin {
 	}
 
 	sourceSets {
-		androidMain.dependencies {
-			implementation(libs.androidx.activity.compose)
-			implementation(libs.coil.network.okhttp)
-		}
 		commonMain.dependencies {
 			implementation(project(":subsonic"))
 			implementation(libs.composeMultiplatform.runtime)
@@ -40,12 +36,20 @@ kotlin {
 			implementation(libs.androidx.lifecycle.viewmodelCompose)
 			implementation(libs.androidx.lifecycle.runtimeCompose)
 			implementation(libs.coil.compose)
+			implementation(libs.coil.network.ktor3)
 			implementation(libs.capsule)
 			implementation(libs.wavySlider)
 			implementation(libs.ktor.serialization.json)
 			implementation(libs.jetbrains.navigation3.ui)
 			implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
 			implementation("dev.burnoo:compose-remember-setting:1.0.3")
+		}
+		androidMain.dependencies {
+			implementation(libs.androidx.activity.compose)
+			implementation(libs.ktor.client.okhttp)
+		}
+		iosMain.dependencies {
+			implementation(libs.ktor.client.darwin)
 		}
 	}
 }

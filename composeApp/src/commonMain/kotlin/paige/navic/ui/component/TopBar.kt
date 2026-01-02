@@ -40,7 +40,7 @@ import paige.navic.util.LoginState
 @Composable
 fun TopBar(
 	backStack: SnapshotStateList<Any>,
-	viewModel: TopBarViewModel = viewModel()
+	viewModel: TopBarViewModel = viewModel { TopBarViewModel() }
 ) {
 	val ctx = LocalCtx.current
 

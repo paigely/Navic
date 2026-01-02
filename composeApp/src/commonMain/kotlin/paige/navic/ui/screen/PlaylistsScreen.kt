@@ -42,7 +42,7 @@ import paige.subsonic.api.model.toAny
 @Composable
 fun PlaylistsScreen(
 	backStack: SnapshotStateList<Any>,
-	viewModel: PlaylistsViewModel = viewModel()
+	viewModel: PlaylistsViewModel = viewModel { PlaylistsViewModel() }
 ) {
 	val ctx = LocalCtx.current
 	val haptics = LocalHapticFeedback.current
