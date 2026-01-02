@@ -245,14 +245,16 @@ class IOSMediaPlayer(
 		info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = CMTimeGetSeconds(player.currentTime())
 		info[MPNowPlayingInfoPropertyPlaybackRate] = if (_isPaused.value) 0.0 else 1.0
 
-		// todo: async
-		track.coverArt?.let { NSData.dataWithContentsOfURL(NSURL(string = it)) }?.let {
-			info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
-				UIImage(
-					data = it
+		track.coverArt
+			?.let { NSURL.URLWithString(it) }
+			?.let { NSData.dataWithContentsOfURL(it) }
+			?.let {
+				info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
+					UIImage(
+						data = it
+					)
 				)
-			)
-		}
+			}
 
 		MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = info
 	}
