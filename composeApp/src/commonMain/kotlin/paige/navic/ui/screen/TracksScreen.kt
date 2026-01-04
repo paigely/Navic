@@ -24,14 +24,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import paige.navic.LocalMediaPlayer
-import paige.navic.data.session.SessionManager
 import paige.navic.ui.component.Form
 import paige.navic.ui.component.FormRow
+import paige.navic.ui.theme.mapleMono
 import paige.subsonic.api.model.AnyTrack
 import paige.subsonic.api.model.AnyTracks
 
@@ -39,6 +40,7 @@ import paige.subsonic.api.model.AnyTracks
 fun TracksScreen(
 	tracks: AnyTracks
 ) {
+	val player = LocalMediaPlayer.current
 	val scrollState = rememberScrollState()
 	var roundCoverArt by rememberBooleanSetting("roundCoverArt", true)
 	Column(
@@ -77,7 +79,9 @@ fun TracksScreen(
 				alignment = Alignment.CenterHorizontally
 			)
 		) {
-			for ((label, onClick) in mapOf("Play" to {}, "Shuffle" to {})) {
+			for ((label, onClick) in mapOf("Play" to {
+				player.play(tracks, 0)
+			}, "Shuffle" to {})) {
 				Button(
 					modifier = Modifier.width(120.dp),
 					onClick = onClick,
@@ -109,20 +113,43 @@ fun TrackRow(
 		onClick = {
 			player.play(tracks, index)
 		},
-		horizontalArrangement = Arrangement.spacedBy(12.dp)
+		horizontalArrangement = Arrangement.spacedBy(12.dp),
+		modifier = Modifier.fillMaxWidth()
 	) {
 		Text(
 			"${index + 1}",
-			fontWeight = FontWeight(600),
+			fontFamily = mapleMono(),
+			fontWeight = FontWeight(400),
+			fontSize = 13.sp,
 			color = MaterialTheme.colorScheme.onSurface.copy(alpha = .5f),
 			modifier = Modifier.width(25.dp),
 			textAlign = TextAlign.Center
 		)
-		Column {
-			Text(track.title, maxLines = 1)
+
+		Row(
+			modifier = Modifier.weight(1f),
+			horizontalArrangement = Arrangement.spacedBy(12.dp)
+		) {
+			Column {
+				Text(track.title, maxLines = 1)
+				Text(
+					track.artist.orEmpty(),
+					style = MaterialTheme.typography.bodySmall,
+					maxLines = 1
+				)
+			}
+		}
+
+		track.duration?.let {
+			val minutes = it / 60
+			val seconds = it % 60
+			val formatted = minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0')
 			Text(
-				track.artist.orEmpty(),
-				style = MaterialTheme.typography.bodySmall,
+				formatted,
+				fontFamily = mapleMono(),
+				fontWeight = FontWeight(400),
+				fontSize = 13.sp,
+				color = MaterialTheme.colorScheme.onSurface.copy(alpha = .5f),
 				maxLines = 1
 			)
 		}

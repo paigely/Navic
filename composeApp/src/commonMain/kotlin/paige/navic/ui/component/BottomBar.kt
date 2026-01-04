@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.library_music
@@ -20,6 +19,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.Library
 import paige.navic.LocalCtx
+import paige.navic.LocalNavStack
 import paige.navic.Playlists
 
 private enum class NavItem(
@@ -33,7 +33,6 @@ private enum class NavItem(
 
 @Composable
 private fun NavItems(
-	backStack: SnapshotStateList<Any>,
 	item: @Composable (
 		Boolean,
 		() -> Unit,
@@ -41,6 +40,7 @@ private fun NavItems(
 		@Composable () -> Unit
 	) -> Unit
 ) {
+	val backStack = LocalNavStack.current
 	val ctx = LocalCtx.current
 	NavItem.entries.forEach { navItem ->
 		item(
@@ -63,13 +63,13 @@ private fun NavItems(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun BottomBar(backStack: SnapshotStateList<Any>) {
+fun BottomBar() {
 	var useShortNavbar by rememberBooleanSetting("useShortNavbar", false)
 
 	AnimatedContent(targetState = useShortNavbar) { short ->
 		if (!short) {
 			NavigationBar {
-				NavItems(backStack) { selected, onClick, icon, label ->
+				NavItems { selected, onClick, icon, label ->
 					NavigationBarItem(
 						selected = selected,
 						onClick = onClick,
@@ -80,7 +80,7 @@ fun BottomBar(backStack: SnapshotStateList<Any>) {
 			}
 		} else {
 			ShortNavigationBar {
-				NavItems(backStack) { selected, onClick, icon, label ->
+				NavItems { selected, onClick, icon, label ->
 					ShortNavigationBarItem(
 						selected = selected,
 						onClick = onClick,

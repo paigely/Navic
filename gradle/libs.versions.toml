@@ -11,6 +11,7 @@ coil = "3.3.0"
 ktor = "3.3.3"
 hash = "0.8.0"
 media3 = "1.9.0"
+kmpalette = "3.1.0"
 
 [libraries]
 composeMultiplatform-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
@@ -36,6 +37,9 @@ jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:naviga
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
 androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
+kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpalette" }
+kmpalette-extensions-network = { module = "com.kmpalette:extensions-network", version.ref = "kmpalette" }
+materialKolor = { module = "com.materialkolor:material-kolor", version = "5.0.0-alpha04" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

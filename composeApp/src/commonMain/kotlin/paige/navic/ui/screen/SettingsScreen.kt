@@ -29,6 +29,7 @@ fun ThemeSettings() {
 	var useSystemFont by rememberBooleanSetting("useSystemFont", false)
 	var useShortNavbar by rememberBooleanSetting("useShortNavbar", false)
 	var roundCoverArt by rememberBooleanSetting("roundCoverArt", true)
+	var liquidGlass by rememberBooleanSetting("liquidGlass", false)
 	Form {
 		FormRow(
 			onClick = { expanded = !expanded }
@@ -61,6 +62,13 @@ fun ThemeSettings() {
 				Switch(
 					checked = roundCoverArt,
 					onCheckedChange = { roundCoverArt = it }
+				)
+			}
+			FormRow {
+				Text("Liquid glass")
+				Switch(
+					checked = liquidGlass,
+					onCheckedChange = { liquidGlass = it }
 				)
 			}
 		}

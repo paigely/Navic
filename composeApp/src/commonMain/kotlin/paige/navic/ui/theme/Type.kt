@@ -5,9 +5,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.google_sans
+import navic.composeapp.generated.resources.maple_mono
 import org.jetbrains.compose.resources.Font
 
 private val defaultTypography = Typography()
+
+@Composable
+fun mapleMono() = FontFamily(
+	Font(Res.font.maple_mono)
+)
 
 @Composable
 fun googleSans() = FontFamily(

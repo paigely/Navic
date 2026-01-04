@@ -1,6 +1,5 @@
 package paige.navic
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -72,11 +71,9 @@ fun App() {
 					SideBar(backStack)
 				}
 				MainScaffold(
-					backStack = backStack,
-					topBar = {
-						TopBar(backStack = it)
-					}
-				) {
+					topBar = { TopBar() },
+					bottomBar = { BottomBar() }
+				) { paddingValues ->
 					Box(modifier = Modifier.fillMaxSize()) {
 						val metadata = transitionSpec {
 							ContentTransform(fadeIn(), fadeOut())
@@ -86,7 +83,7 @@ fun App() {
 							ContentTransform(fadeIn(), fadeOut())
 						}
 						NavDisplay(
-							modifier = Modifier.padding(it),
+							modifier = Modifier.padding(paddingValues),
 							backStack = backStack,
 							onBack = { backStack.removeLastOrNull() },
 							entryProvider = entryProvider {
@@ -116,20 +113,6 @@ fun App() {
 									slideOutHorizontally(targetOffsetX = { it })
 							}
 						)
-
-						// this@Row needed because of a bug in kotlin (lol)
-						// https://stackoverflow.com/a/68742173
-						this@Row.AnimatedVisibility(
-							modifier = Modifier.align(Alignment.BottomCenter),
-							visible = ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact && backStack.count() == 1,
-							enter = slideInHorizontally { -it },
-							exit = slideOutHorizontally { -it }
-						) {
-							Column {
-								MediaBar()
-								BottomBar(backStack)
-							}
-						}
 					}
 				}
 			}

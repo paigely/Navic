@@ -41,6 +41,10 @@ kotlin {
 			implementation(libs.wavySlider)
 			implementation(libs.ktor.serialization.json)
 			implementation(libs.jetbrains.navigation3.ui)
+			implementation(libs.kmpalette.core)
+			implementation(libs.kmpalette.extensions.network)
+			implementation(libs.ktor.client.core)
+			implementation(libs.materialKolor)
 			implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
 			implementation("dev.burnoo:compose-remember-setting:1.0.3")
 		}
