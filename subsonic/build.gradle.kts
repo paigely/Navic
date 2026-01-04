@@ -12,7 +12,6 @@ plugins {
 group = "paige"
 
 kotlin {
-	jvm()
 	androidLibrary {
 		namespace = "paige.subsonic"
 		compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -21,10 +20,8 @@ kotlin {
 			jvmTarget = JvmTarget.JVM_17
 		}
 	}
-	iosX64()
 	iosArm64()
 	iosSimulatorArm64()
-	linuxX64()
 
 	sourceSets {
 		commonMain.dependencies {
@@ -34,9 +31,6 @@ kotlin {
 			implementation(libs.hash.md)
 		}
 		androidMain.dependencies {
-			implementation(libs.ktor.client.okhttp)
-		}
-		jvmMain.dependencies {
 			implementation(libs.ktor.client.okhttp)
 		}
 		iosMain.dependencies {

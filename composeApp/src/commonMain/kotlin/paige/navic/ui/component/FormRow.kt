@@ -1,6 +1,6 @@
 package paige.navic.ui.component
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -22,6 +22,7 @@ fun FormRow(
 	horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
 	color: Color? = null,
 	onClick: (() -> Unit)? = null,
+	onLongClick: (() -> Unit)? = null,
 	content: @Composable RowScope.() -> Unit
 ) {
 	val ctx = LocalCtx.current
@@ -29,10 +30,13 @@ fun FormRow(
 		modifier = modifier
 			.fillMaxWidth()
 			.then(
-				if (onClick != null) Modifier.clickable {
-					ctx.clickSound()
-					onClick()
-				} else Modifier
+				if (onClick != null) Modifier.combinedClickable(
+					onClick = {
+						ctx.clickSound()
+						onClick()
+					},
+					onLongClick = onLongClick
+				) else Modifier
 			),
 		color = color ?: MaterialTheme.colorScheme.surfaceContainer,
 		shape = ContinuousRoundedRectangle(3.dp)

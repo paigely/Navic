@@ -2,6 +2,9 @@ package paige.navic.data.session
 
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.cache.storage.CacheStorage
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +18,9 @@ object SessionManager {
 	private val _isLoggedIn = MutableStateFlow(false)
 	val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
+	// platform specified http cache storage
+	var cacheStorage: CacheStorage? = null
+
 	val api: SubsonicApi
 		get() {
 			return SubsonicApi(
@@ -23,7 +29,14 @@ object SessionManager {
 				password = settings.getString("password", ""),
 				apiVersion = "1.16.1",
 				clientId = "SubsonicKotlinApi",
-				authType = AuthType.Token()
+				authType = AuthType.Token(),
+				baseClient = HttpClient {
+					install(HttpCache) {
+						cacheStorage?.let {
+							publicStorage(it)
+						}
+					}
+				}
 			)
 		}
 

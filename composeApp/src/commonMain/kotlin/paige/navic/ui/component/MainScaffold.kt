@@ -33,6 +33,8 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.Url
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
@@ -45,14 +47,19 @@ fun MainScaffold(
 	bottomBar: @Composable () -> Unit,
 	content: @Composable (PaddingValues) -> Unit,
 ) {
-	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
 	val focusManager = LocalFocusManager.current
 	val scaffoldState = rememberBottomSheetScaffoldState()
 	val localDensity = LocalDensity.current
 	var sheetHeightDp by remember { mutableStateOf(0.dp) }
 	val expanded = sheetHeightDp > 350.dp
-	val networkLoader = rememberNetworkLoader()
+	val networkLoader = rememberNetworkLoader(HttpClient().config {
+		install(HttpTimeout) {
+			requestTimeoutMillis = 60_000
+			connectTimeoutMillis = 60_000
+			socketTimeoutMillis = 60_000
+		}
+	})
 	val dominantColorState = rememberDominantColorState(loader = networkLoader)
 	val coverArt = player.tracks?.coverArt
 	val scheme = if (coverArt != null && expanded) rememberDynamicColorScheme(
@@ -63,7 +70,7 @@ fun MainScaffold(
 
 	LaunchedEffect(coverArt) {
 		coverArt?.let {
-			dominantColorState.updateFrom(Url(it))
+			dominantColorState.updateFrom(Url("$it&size=128"))
 		}
 	}
 
@@ -71,9 +78,7 @@ fun MainScaffold(
 		topBar = topBar,
 		bottomBar = {
 			NavicTheme(scheme) {
-				if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
-					bottomBar()
-				}
+				bottomBar()
 			}
 		}
 	) { innerPadding ->
@@ -102,7 +107,7 @@ fun MainScaffold(
 									with(localDensity) { it.boundsInWindow().height.toDp() }
 							}
 					) {
-						MediaBar(expanded)
+						MediaBar(expanded, sheetHeightDp)
 					}
 				}
 			}

@@ -1,5 +1,7 @@
 package paige.navic.ui.viewmodel
 
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,6 +12,8 @@ import paige.navic.data.repository.PlaylistsRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.util.UiState
 import paige.subsonic.api.model.Playlist
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
 
 class PlaylistsViewModel(
 	private val repository: PlaylistsRepository = PlaylistsRepository()
@@ -55,16 +59,35 @@ class PlaylistsViewModel(
 		}
 	}
 
-	fun deleteSelectedAlbum() {
-		val album = _selectedPlaylist.value ?: return
+	fun deleteSelectedPlaylist() {
+		val playlist = _selectedPlaylist.value ?: return
 		viewModelScope.launch {
 			try {
-				repository.deletePlaylist(album.id)
+				repository.deletePlaylist(playlist.id)
 				refreshPlaylists()
 			} catch (e: Exception) {
 				_error.value = e
 			} finally {
 				clearSelection()
+			}
+		}
+	}
+
+	fun shareSelectedPlaylist(clipboard: ClipboardManager) {
+		viewModelScope.launch {
+			try {
+				SessionManager.api.createShare(
+					_selectedPlaylist.value?.id,
+					"${Clock.System.now()
+						.plus(1.hours)
+						.toEpochMilliseconds()}"
+				).data.shares.values.firstOrNull()?.firstOrNull()?.url?.let {
+					clipboard.setText(
+						AnnotatedString(it)
+					)
+				}
+			} catch (e: Exception) {
+				_error.value = e
 			}
 		}
 	}

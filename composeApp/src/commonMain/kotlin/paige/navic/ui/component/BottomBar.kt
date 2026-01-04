@@ -5,9 +5,11 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationItemIconPosition
 import androidx.compose.material3.ShortNavigationBar
 import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -64,10 +66,11 @@ private fun NavItems(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun BottomBar() {
+	val ctx = LocalCtx.current
 	var useShortNavbar by rememberBooleanSetting("useShortNavbar", false)
 
 	AnimatedContent(targetState = useShortNavbar) { short ->
-		if (!short) {
+		if (!short && ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
 			NavigationBar {
 				NavItems { selected, onClick, icon, label ->
 					NavigationBarItem(
@@ -82,6 +85,9 @@ fun BottomBar() {
 			ShortNavigationBar {
 				NavItems { selected, onClick, icon, label ->
 					ShortNavigationBarItem(
+						iconPosition = if (ctx.sizeClass.widthSizeClass > WindowWidthSizeClass.Compact)
+							NavigationItemIconPosition.Start
+						else NavigationItemIconPosition.Top,
 						selected = selected,
 						onClick = onClick,
 						icon = icon,

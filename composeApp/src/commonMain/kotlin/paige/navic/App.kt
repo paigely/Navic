@@ -7,28 +7,29 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.NavDisplay.popTransitionSpec
 import androidx.navigation3.ui.NavDisplay.predictivePopTransitionSpec
 import androidx.navigation3.ui.NavDisplay.transitionSpec
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import paige.navic.ui.component.BottomBar
 import paige.navic.ui.component.MainScaffold
-import paige.navic.ui.component.MediaBar
-import paige.navic.ui.component.SideBar
 import paige.navic.ui.component.TopBar
 import paige.navic.ui.screen.LibraryScreen
 import paige.navic.ui.screen.PlaylistsScreen
@@ -54,22 +55,29 @@ val LocalNavStack = staticCompositionLocalOf<SnapshotStateList<Any>> {
 	error("no backstack")
 }
 
+val LocalImageBuilder = staticCompositionLocalOf<ImageRequest.Builder> {
+	error("no image builder")
+}
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun App() {
 	val ctx = rememberCtx()
+	val platformContext = LocalPlatformContext.current
 	val mediaPlayer = rememberMediaPlayer()
 	val backStack = remember { mutableStateListOf<Any>(Library) }
+	val sceneStrategy = rememberListDetailSceneStrategy<Any>()
+	val imageBuilder = ImageRequest.Builder(platformContext)
+		.crossfade(true)
 
 	CompositionLocalProvider(
 		LocalCtx provides ctx,
 		LocalMediaPlayer provides mediaPlayer,
-		LocalNavStack provides backStack
+		LocalNavStack provides backStack,
+		LocalImageBuilder provides imageBuilder
 	) {
 		NavicTheme {
 			Row {
-				if (ctx.sizeClass.widthSizeClass > WindowWidthSizeClass.Compact) {
-					SideBar(backStack)
-				}
 				MainScaffold(
 					topBar = { TopBar() },
 					bottomBar = { BottomBar() }
@@ -85,9 +93,10 @@ fun App() {
 						NavDisplay(
 							modifier = Modifier.padding(paddingValues),
 							backStack = backStack,
+							sceneStrategy = sceneStrategy,
 							onBack = { backStack.removeLastOrNull() },
 							entryProvider = entryProvider {
-								entry<Library>(metadata = metadata) {
+								entry<Library>(metadata = metadata + ListDetailSceneStrategy.listPane()) {
 									LibraryScreen()
 								}
 								entry<Playlists>(metadata = metadata) {
@@ -96,8 +105,8 @@ fun App() {
 								entry<Settings> {
 									SettingsScreen()
 								}
-								entry<Tracks> { key ->
-									TracksScreen(key.tracks)
+								entry<Tracks>(metadata = ListDetailSceneStrategy.detailPane()) { key ->
+									TracksScreen(tracks = key.tracks)
 								}
 							},
 							transitionSpec = {

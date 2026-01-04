@@ -46,6 +46,7 @@ import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -75,12 +76,13 @@ class MediaBarScope(
 	val player: MediaPlayer,
 	val ctx: Ctx,
 	val animatedVisibilityScope: AnimatedVisibilityScope,
-	val sharedTransitionScope: SharedTransitionScope
+	val sharedTransitionScope: SharedTransitionScope,
+	val sheetHeightDp: Dp
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MediaBar(expanded: Boolean) {
+fun MediaBar(expanded: Boolean, sheetHeightDp: Dp) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
 	SharedTransitionLayout(Modifier.fillMaxHeight()) {
@@ -91,7 +93,8 @@ fun MediaBar(expanded: Boolean) {
 				player,
 				ctx,
 				this@AnimatedContent,
-				this@SharedTransitionLayout
+				this@SharedTransitionLayout,
+				sheetHeightDp
 			).apply {
 				if (!targetState) {
 					MainContent()
@@ -152,6 +155,7 @@ private fun MediaBarScope.DetailsContent() {
 							.7f to Color.Transparent,
 							startY = 0f,
 							endY = size.height
+							//endY = sheetHeightDp.value
 						),
 						blendMode = BlendMode.DstIn
 					)
@@ -228,12 +232,12 @@ private fun MediaBarScope.Info(
 				verticalArrangement = Arrangement.Center
 			) {
 				Text(
-					player.tracks?.tracks[currentIndex]?.title ?: "Nothing playing",
+					player.tracks?.tracks?.getOrNull(currentIndex)?.title ?: "Nothing playing",
 					fontWeight = FontWeight(600),
 					maxLines = 1
 				)
 				Text(
-					player.tracks?.tracks[currentIndex]?.artist ?: "...",
+					player.tracks?.tracks?.getOrNull(currentIndex)?.artist ?: "...",
 					style = MaterialTheme.typography.titleSmall,
 					maxLines = 1
 				)
@@ -253,7 +257,7 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 		60.dp
 	)
 	val shapes = ToggleButtonShapes(
-		shape = ContinuousRoundedRectangle(18.dp),
+		shape = ContinuousRoundedRectangle(16.dp),
 		pressedShape = ContinuousRoundedRectangle(12.dp),
 		checkedShape = ContinuousRoundedRectangle(12.dp)
 	)

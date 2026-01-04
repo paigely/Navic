@@ -3,16 +3,30 @@ package paige.navic.ui.screen
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kyant.capsule.ContinuousCapsule
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.ios_share
+import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.Tracks
@@ -20,18 +34,24 @@ import paige.navic.ui.component.ArtGrid
 import paige.navic.ui.component.ArtGridItem
 import paige.navic.ui.component.ArtGridPlaceholder
 import paige.navic.ui.component.ErrorBox
+import paige.navic.ui.component.Form
+import paige.navic.ui.component.FormRow
 import paige.navic.ui.component.RefreshBox
 import paige.navic.ui.viewmodel.LibraryViewModel
 import paige.navic.util.UiState
 import paige.subsonic.api.model.toAny
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(viewModel: LibraryViewModel = viewModel { LibraryViewModel() }) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val haptics = LocalHapticFeedback.current
+	val clipboard = LocalClipboardManager.current
+
 	val albumsState by viewModel.albumsState.collectAsState()
+	val selectedAlbum by viewModel.selectedAlbum.collectAsState()
+	val error by viewModel.error.collectAsState()
 
 	RefreshBox(
 		modifier = Modifier.background(MaterialTheme.colorScheme.surface),
@@ -54,6 +74,7 @@ fun LibraryScreen(viewModel: LibraryViewModel = viewModel { LibraryViewModel() }
 										},
 										onLongClick = {
 											haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+											viewModel.selectAlbum(album)
 										}
 									),
 									imageUrl = album.coverArt,
@@ -70,5 +91,40 @@ fun LibraryScreen(viewModel: LibraryViewModel = viewModel { LibraryViewModel() }
 				is UiState.Error -> ErrorBox(it)
 			}
 		}
+	}
+
+	selectedAlbum?.let {
+		ModalBottomSheet(
+			onDismissRequest = { viewModel.clearSelection() }
+		) {
+			Form(modifier = Modifier.padding(14.dp)) {
+				FormRow(
+					horizontalArrangement = Arrangement.spacedBy(8.dp),
+					onClick = { viewModel.shareSelectedAlbum(clipboard) },
+				) {
+					Icon(
+						vectorResource(Res.drawable.ios_share),
+						contentDescription = null
+					)
+					Text("Share")
+				}
+			}
+		}
+	}
+
+	error?.let {
+		AlertDialog(
+			onDismissRequest = { viewModel.clearError() },
+			title = { Text("Error") },
+			text = { Text("$error") },
+			confirmButton = {
+				Button(
+					shape = ContinuousCapsule,
+					onClick = { viewModel.clearError() }
+				) {
+					Text("OK")
+				}
+			}
+		)
 	}
 }

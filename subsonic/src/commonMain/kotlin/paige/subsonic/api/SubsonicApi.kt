@@ -17,6 +17,7 @@ import paige.subsonic.api.model.AlbumListResponse
 import paige.subsonic.api.model.AlbumResponse
 import paige.subsonic.api.model.ArtistResponse
 import paige.subsonic.api.model.ArtistsResponse
+import paige.subsonic.api.model.CreateShareResponse
 import paige.subsonic.api.model.EmptyResponse
 import paige.subsonic.api.model.ErrorResponse
 import paige.subsonic.api.model.ListType
@@ -331,6 +332,18 @@ class SubsonicApi(
 				auth
 			).toString()
 		}
+	}
+
+	suspend fun createShare(
+		id: String? = null,
+		expires: String? = null
+	): SubsonicResponse<CreateShareResponse> {
+		return client
+			.get("rest/createShare") {
+				parameter("id", id)
+				parameter("expires", expires)
+			}
+			.body<SubsonicResponse<CreateShareResponse>>()
 	}
 
 	fun downloadUrl(id: String): String = buildUrl("download", mapOf("id" to id)).toString()

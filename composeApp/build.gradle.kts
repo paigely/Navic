@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -30,6 +32,7 @@ kotlin {
 			implementation(libs.composeMultiplatform.runtime)
 			implementation(libs.composeMultiplatform.foundation)
 			implementation(libs.composeMultiplatform.material3)
+			implementation(libs.composeMultiplatform.material3.adaptive.navigation3)
 			implementation(libs.composeMultiplatform.material3.windowSizeClass)
 			implementation(libs.composeMultiplatform.ui)
 			implementation(libs.composeMultiplatform.components.resources)
@@ -45,8 +48,8 @@ kotlin {
 			implementation(libs.kmpalette.extensions.network)
 			implementation(libs.ktor.client.core)
 			implementation(libs.materialKolor)
-			implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
-			implementation("dev.burnoo:compose-remember-setting:1.0.3")
+			implementation(libs.multiplatformSettings.noArg)
+			implementation(libs.multiplatformSettings.remember)
 		}
 		androidMain.dependencies {
 			implementation(libs.androidx.activity.compose)
@@ -59,12 +62,12 @@ kotlin {
 			implementation(libs.ktor.client.darwin)
 		}
 	}
+
 }
 
 android {
 	namespace = "paige.navic"
 	compileSdk = libs.versions.android.compileSdk.get().toInt()
-
 	defaultConfig {
 		applicationId = "paige.navic"
 		minSdk = libs.versions.android.minSdk.get().toInt()
@@ -80,6 +83,10 @@ android {
 	buildTypes {
 		getByName("release") {
 			isMinifyEnabled = true
+			isDebuggable = false
+			isProfileable = false
+			isJniDebuggable = false
+			isShrinkResources = true
 		}
 	}
 	compileOptions {

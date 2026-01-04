@@ -10,60 +10,36 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.data.repository.LibraryRepository
 import paige.navic.data.session.SessionManager
-import paige.navic.util.UiState
-import paige.subsonic.api.model.Album
+import paige.subsonic.api.model.AnyTrack
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
-class LibraryViewModel(
+class TracksViewModel(
 	private val repository: LibraryRepository = LibraryRepository()
 ) : ViewModel() {
-	private val _albumsState = MutableStateFlow<UiState<List<Album>>>(UiState.Loading)
-	val albumsState = _albumsState.asStateFlow()
-
-	private val _selectedAlbum = MutableStateFlow<Album?>(null)
-	val selectedAlbum: StateFlow<Album?> = _selectedAlbum.asStateFlow()
+	private val _selectedTrack = MutableStateFlow<AnyTrack?>(null)
+	val selectedtrack: StateFlow<AnyTrack?> = _selectedTrack.asStateFlow()
 
 	private val _error = MutableStateFlow<Exception?>(null)
 	val error = _error.asStateFlow()
 
-	init {
-		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect {
-				refreshAlbums()
-			}
-		}
-	}
-
-	fun refreshAlbums() {
-		viewModelScope.launch {
-			_albumsState.value = UiState.Loading
-			try {
-				val albums = repository.getAlbums()
-				_albumsState.value = UiState.Success(albums)
-			} catch (e: Exception) {
-				_albumsState.value = UiState.Error(e)
-			}
-		}
-	}
-
-	fun selectAlbum(album: Album) {
-		_selectedAlbum.value = album
+	fun selectTrack(track: AnyTrack) {
+		_selectedTrack.value = track
 	}
 
 	fun clearSelection() {
-		_selectedAlbum.value = null
+		_selectedTrack.value = null
 	}
 
 	fun clearError() {
 		_error.value = null
 	}
 
-	fun shareSelectedAlbum(clipboard: ClipboardManager) {
+	fun shareSelectedTrack(clipboard: ClipboardManager) {
 		viewModelScope.launch {
 			try {
 				SessionManager.api.createShare(
-					_selectedAlbum.value?.id,
+					_selectedTrack.value?.id,
 					"${Clock.System.now()
 						.plus(1.hours)
 						.toEpochMilliseconds()}"

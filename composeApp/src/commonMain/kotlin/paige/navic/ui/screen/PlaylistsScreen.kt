@@ -18,11 +18,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyant.capsule.ContinuousCapsule
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.ios_share
 import navic.composeapp.generated.resources.playlist_remove
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
@@ -46,6 +48,7 @@ fun PlaylistsScreen(
 ) {
 	val ctx = LocalCtx.current
 	val haptics = LocalHapticFeedback.current
+	val clipboard = LocalClipboardManager.current
 
 	val playlistsState by viewModel.playlistsState.collectAsState()
 	val selectedPlaylist by viewModel.selectedPlaylist.collectAsState()
@@ -96,7 +99,17 @@ fun PlaylistsScreen(
 			Form(modifier = Modifier.padding(14.dp)) {
 				FormRow(
 					horizontalArrangement = Arrangement.spacedBy(8.dp),
-					onClick = { viewModel.deleteSelectedAlbum() },
+					onClick = { viewModel.shareSelectedPlaylist(clipboard) },
+				) {
+					Icon(
+						vectorResource(Res.drawable.ios_share),
+						contentDescription = null
+					)
+					Text("Share")
+				}
+				FormRow(
+					horizontalArrangement = Arrangement.spacedBy(8.dp),
+					onClick = { viewModel.deleteSelectedPlaylist() },
 				) {
 					Icon(
 						vectorResource(Res.drawable.playlist_remove),

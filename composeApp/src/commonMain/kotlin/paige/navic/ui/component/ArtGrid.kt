@@ -16,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -29,18 +28,15 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
-import paige.navic.LocalCtx
+import paige.navic.LocalImageBuilder
 
 @Composable
 fun ArtGrid(
 	modifier: Modifier = Modifier,
 	content: LazyGridScope.() -> Unit
 ) {
-	val ctx = LocalCtx.current
 	LazyVerticalGrid(
-		columns = GridCells.Fixed(
-			if (ctx.sizeClass.widthSizeClass > WindowWidthSizeClass.Compact) 4 else 2
-		),
+		columns = GridCells.Adaptive(150.dp),
 		modifier = modifier.fillMaxSize(),
 		contentPadding = PaddingValues(
 			start = 16.dp,
@@ -62,6 +58,7 @@ fun ArtGridItem(
 	title: String,
 	subtitle: String
 ) {
+	val imageBuilder = LocalImageBuilder.current
 	var roundCoverArt by rememberBooleanSetting("roundCoverArt", true)
 	Column(
 		modifier = Modifier
@@ -74,7 +71,11 @@ fun ArtGridItem(
 			.then(modifier)
 	) {
 		AsyncImage(
-			model = imageUrl,
+			model = imageBuilder
+				.data(imageUrl)
+				.memoryCacheKey(imageUrl)
+				.diskCacheKey(imageUrl)
+				.build(),
 			contentDescription = title,
 			contentScale = ContentScale.Crop,
 			modifier = Modifier
