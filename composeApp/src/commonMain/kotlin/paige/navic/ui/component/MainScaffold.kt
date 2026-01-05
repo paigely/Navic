@@ -5,15 +5,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,22 +30,21 @@ import androidx.compose.ui.unit.dp
 import com.kmpalette.loader.rememberNetworkLoader
 import com.kmpalette.rememberDominantColorState
 import com.kyant.capsule.ContinuousRoundedRectangle
-import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.Url
-import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.ui.theme.NavicTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScaffold(
+	snackbarState: SnackbarHostState,
 	topBar: @Composable () -> Unit,
 	bottomBar: @Composable () -> Unit,
-	content: @Composable (PaddingValues) -> Unit,
+	content: @Composable () -> Unit,
 ) {
 	val player = LocalMediaPlayer.current
 	val focusManager = LocalFocusManager.current
@@ -75,6 +74,14 @@ fun MainScaffold(
 	}
 
 	Scaffold(
+		snackbarHost = {
+			NavicTheme {
+				SnackbarHost(
+					hostState = snackbarState,
+					modifier = Modifier.padding(bottom = 117.9.dp)
+				)
+			}
+		},
 		topBar = topBar,
 		bottomBar = {
 			NavicTheme(scheme) {
@@ -107,12 +114,12 @@ fun MainScaffold(
 									with(localDensity) { it.boundsInWindow().height.toDp() }
 							}
 					) {
-						MediaBar(expanded, sheetHeightDp)
+						MediaBar(expanded)
 					}
 				}
 			}
 		) {
-			content(innerPadding)
+			content()
 		}
 	}
 }

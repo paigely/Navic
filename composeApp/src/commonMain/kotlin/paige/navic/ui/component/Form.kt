@@ -26,18 +26,3 @@ fun Form(
 		content()
 	}
 }
-
-@Composable
-fun LazyForm(
-	modifier: Modifier = Modifier,
-	content: LazyListScope.() -> Unit
-) {
-	LazyColumn(
-		modifier = modifier
-			.padding(bottom = 8.dp)
-			.clip(ContinuousRoundedRectangle(18.dp)),
-		verticalArrangement = Arrangement.spacedBy(3.dp)
-	) {
-		content()
-	}
-}

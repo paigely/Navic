@@ -9,7 +9,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
@@ -36,12 +36,11 @@ import paige.navic.ui.screen.PlaylistsScreen
 import paige.navic.ui.screen.SettingsScreen
 import paige.navic.ui.screen.TracksScreen
 import paige.navic.ui.theme.NavicTheme
-import paige.subsonic.api.model.AnyTracks
 
 data object Library
 data object Playlists
 data object Settings
-data class Tracks(val tracks: AnyTracks)
+data class Tracks(val partialTracks: Any)
 
 val LocalCtx = staticCompositionLocalOf<Ctx> {
 	error("no ctx")
@@ -59,6 +58,10 @@ val LocalImageBuilder = staticCompositionLocalOf<ImageRequest.Builder> {
 	error("no image builder")
 }
 
+val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> {
+	error("no snackbar state")
+}
+
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun App() {
@@ -69,19 +72,22 @@ fun App() {
 	val sceneStrategy = rememberListDetailSceneStrategy<Any>()
 	val imageBuilder = ImageRequest.Builder(platformContext)
 		.crossfade(true)
+	val snackbarState = remember { SnackbarHostState() }
 
 	CompositionLocalProvider(
 		LocalCtx provides ctx,
 		LocalMediaPlayer provides mediaPlayer,
 		LocalNavStack provides backStack,
-		LocalImageBuilder provides imageBuilder
+		LocalImageBuilder provides imageBuilder,
+		LocalSnackbarState provides snackbarState
 	) {
 		NavicTheme {
 			Row {
 				MainScaffold(
+					snackbarState = snackbarState,
 					topBar = { TopBar() },
 					bottomBar = { BottomBar() }
-				) { paddingValues ->
+				) {
 					Box(modifier = Modifier.fillMaxSize()) {
 						val metadata = transitionSpec {
 							ContentTransform(fadeIn(), fadeOut())
@@ -91,7 +97,6 @@ fun App() {
 							ContentTransform(fadeIn(), fadeOut())
 						}
 						NavDisplay(
-							modifier = Modifier.padding(paddingValues),
 							backStack = backStack,
 							sceneStrategy = sceneStrategy,
 							onBack = { backStack.removeLastOrNull() },
@@ -106,7 +111,7 @@ fun App() {
 									SettingsScreen()
 								}
 								entry<Tracks>(metadata = ListDetailSceneStrategy.detailPane()) { key ->
-									TracksScreen(tracks = key.tracks)
+									TracksScreen(key.partialTracks)
 								}
 							},
 							transitionSpec = {

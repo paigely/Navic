@@ -1,6 +1,5 @@
-@file:Suppress("UnstableApiUsage")
-
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
 	alias(libs.plugins.kotlinMultiplatform)
@@ -22,7 +21,18 @@ kotlin {
 	).forEach { iosTarget ->
 		iosTarget.binaries.framework {
 			baseName = "ComposeApp"
-			isStatic = true
+			if (buildType == NativeBuildType.RELEASE) {
+				isStatic = false
+				freeCompilerArgs += listOf(
+					"-Xopt-in=kotlin.RequiresOptIn",
+					"-Xdisable-phases=Devirtualization",
+					"-Xdisable-phases=GlobalValueNumbering",
+					"-g0"
+				)
+				linkerOpts("-Wl,-dead_strip")
+			} else {
+				isStatic = true
+			}
 		}
 	}
 
@@ -87,6 +97,10 @@ android {
 			isProfileable = false
 			isJniDebuggable = false
 			isShrinkResources = true
+			proguardFiles(
+				getDefaultProguardFile("proguard-android-optimize.txt"),
+				"proguard-rules.pro"
+			)
 		}
 	}
 	compileOptions {

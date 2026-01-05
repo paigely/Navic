@@ -5,8 +5,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -15,14 +13,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kyant.capsule.ContinuousCapsule
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.ios_share
 import navic.composeapp.generated.resources.playlist_remove
@@ -36,9 +35,12 @@ import paige.navic.ui.component.ErrorBox
 import paige.navic.ui.component.Form
 import paige.navic.ui.component.FormRow
 import paige.navic.ui.component.RefreshBox
+import paige.navic.ui.component.dialog.DeletionDialog
+import paige.navic.ui.component.dialog.DeletionEndpoint
+import paige.navic.ui.component.dialog.ShareDialog
 import paige.navic.ui.viewmodel.PlaylistsViewModel
 import paige.navic.util.UiState
-import paige.subsonic.api.model.toAny
+import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,11 +50,14 @@ fun PlaylistsScreen(
 ) {
 	val ctx = LocalCtx.current
 	val haptics = LocalHapticFeedback.current
-	val clipboard = LocalClipboardManager.current
 
 	val playlistsState by viewModel.playlistsState.collectAsState()
 	val selectedPlaylist by viewModel.selectedPlaylist.collectAsState()
-	val error by viewModel.error.collectAsState()
+
+	var deletionId by remember { mutableStateOf<String?>(null) }
+
+	var shareId by remember { mutableStateOf<String?>(null) }
+	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 
 	RefreshBox(
 		modifier = Modifier.background(MaterialTheme.colorScheme.surface),
@@ -63,28 +68,24 @@ fun PlaylistsScreen(
 			is UiState.Loading -> ArtGridPlaceholder()
 			is UiState.Success -> {
 				val playlists = (playlistsState as UiState.Success).data
-				if (!playlists.isEmpty()) {
-					ArtGrid {
-						items(playlists) { playlist ->
-							ArtGridItem(
-								modifier = Modifier.combinedClickable(
-									onClick = {
-										ctx.clickSound()
-										backStack.add(Tracks(tracks = playlist.toAny()))
-									},
-									onLongClick = {
-										haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-										viewModel.selectPlaylist(playlist)
-									}
-								),
-								imageUrl = playlist.coverArt,
-								title = playlist.name,
-								subtitle = "${playlist.songCount} songs\n${playlist.comment.orEmpty()}"
-							)
-						}
+				ArtGrid {
+					items(playlists) { playlist ->
+						ArtGridItem(
+							modifier = Modifier.combinedClickable(
+								onClick = {
+									ctx.clickSound()
+									backStack.add(Tracks(playlist))
+								},
+								onLongClick = {
+									haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+									viewModel.selectPlaylist(playlist)
+								}
+							),
+							imageUrl = playlist.coverArt,
+							title = playlist.name,
+							subtitle = "${playlist.songCount} songs\n${playlist.comment.orEmpty()}"
+						)
 					}
-				} else {
-					ArtGridPlaceholder()
 				}
 			}
 
@@ -99,7 +100,10 @@ fun PlaylistsScreen(
 			Form(modifier = Modifier.padding(14.dp)) {
 				FormRow(
 					horizontalArrangement = Arrangement.spacedBy(8.dp),
-					onClick = { viewModel.shareSelectedPlaylist(clipboard) },
+					onClick = {
+						shareId = selectedPlaylist?.id
+						viewModel.clearSelection()
+					},
 				) {
 					Icon(
 						vectorResource(Res.drawable.ios_share),
@@ -109,7 +113,10 @@ fun PlaylistsScreen(
 				}
 				FormRow(
 					horizontalArrangement = Arrangement.spacedBy(8.dp),
-					onClick = { viewModel.deleteSelectedPlaylist() },
+					onClick = {
+						deletionId = selectedPlaylist?.id
+						viewModel.clearSelection()
+					},
 				) {
 					Icon(
 						vectorResource(Res.drawable.playlist_remove),
@@ -121,19 +128,18 @@ fun PlaylistsScreen(
 		}
 	}
 
-	error?.let {
-		AlertDialog(
-			onDismissRequest = { viewModel.clearError() },
-			title = { Text("Error") },
-			text = { Text("$error") },
-			confirmButton = {
-				Button(
-					shape = ContinuousCapsule,
-					onClick = { viewModel.clearError() }
-				) {
-					Text("OK")
-				}
-			}
-		)
-	}
+	@Suppress("AssignedValueIsNeverRead")
+	ShareDialog(
+		id = shareId,
+		onIdClear = { shareId = null },
+		expiry = shareExpiry,
+		onExpiryChange = { shareExpiry = it }
+	)
+
+	@Suppress("AssignedValueIsNeverRead")
+	DeletionDialog(
+		endpoint = DeletionEndpoint.PLAYLIST,
+		id = deletionId,
+		onIdClear = { deletionId = null }
+	)
 }

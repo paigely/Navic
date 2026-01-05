@@ -1,7 +1,10 @@
 [versions]
 agp = "8.13.2"
+#noinspection UnusedVersionCatalogEntry
 android-compileSdk = "36"
+#noinspection UnusedVersionCatalogEntry
 android-minSdk = "24"
+#noinspection UnusedVersionCatalogEntry
 android-targetSdk = "36"
 androidx-activity = "1.12.2"
 androidx-lifecycle = "2.9.6"

@@ -14,9 +14,4 @@ class PlaylistsRepository {
 				)
 			}
 	}
-
-	suspend fun deletePlaylist(id: String) {
-		SessionManager.api
-			.deletePlaylist(id)
-	}
 }

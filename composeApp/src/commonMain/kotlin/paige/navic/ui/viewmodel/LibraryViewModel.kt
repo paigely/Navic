@@ -1,7 +1,5 @@
 package paige.navic.ui.viewmodel
 
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,8 +10,6 @@ import paige.navic.data.repository.LibraryRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.util.UiState
 import paige.subsonic.api.model.Album
-import kotlin.time.Clock
-import kotlin.time.Duration.Companion.hours
 
 class LibraryViewModel(
 	private val repository: LibraryRepository = LibraryRepository()
@@ -21,11 +17,11 @@ class LibraryViewModel(
 	private val _albumsState = MutableStateFlow<UiState<List<Album>>>(UiState.Loading)
 	val albumsState = _albumsState.asStateFlow()
 
+	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
+	val starredState = _starredState.asStateFlow()
+
 	private val _selectedAlbum = MutableStateFlow<Album?>(null)
 	val selectedAlbum: StateFlow<Album?> = _selectedAlbum.asStateFlow()
-
-	private val _error = MutableStateFlow<Exception?>(null)
-	val error = _error.asStateFlow()
 
 	init {
 		viewModelScope.launch {
@@ -48,33 +44,35 @@ class LibraryViewModel(
 	}
 
 	fun selectAlbum(album: Album) {
-		_selectedAlbum.value = album
+		viewModelScope.launch {
+			_selectedAlbum.value = album
+			_starredState.value = UiState.Loading
+			try {
+				val isStarred = repository.isAlbumStarred(album)
+				_starredState.value = UiState.Success(isStarred ?: false)
+			} catch(e: Exception) {
+				_starredState.value = UiState.Error(e)
+			}
+		}
 	}
 
 	fun clearSelection() {
 		_selectedAlbum.value = null
 	}
 
-	fun clearError() {
-		_error.value = null
-	}
-
-	fun shareSelectedAlbum(clipboard: ClipboardManager) {
+	fun starSelectedAlbum() {
 		viewModelScope.launch {
 			try {
-				SessionManager.api.createShare(
-					_selectedAlbum.value?.id,
-					"${Clock.System.now()
-						.plus(1.hours)
-						.toEpochMilliseconds()}"
-				).data.shares.values.firstOrNull()?.firstOrNull()?.url?.let {
-					clipboard.setText(
-						AnnotatedString(it)
-					)
-				}
-			} catch (e: Exception) {
-				_error.value = e
-			}
+				repository.starAlbum(_selectedAlbum.value!!)
+			} catch(_: Exception) { }
+		}
+	}
+
+	fun unstarSelectedAlbum() {
+		viewModelScope.launch {
+			try {
+				repository.unstarAlbum(_selectedAlbum.value!!)
+			} catch(_: Exception) { }
 		}
 	}
 }

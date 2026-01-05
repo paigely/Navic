@@ -46,7 +46,6 @@ import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -72,17 +71,16 @@ import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.MediaPlayer
 
-class MediaBarScope(
+private class MediaBarScope(
 	val player: MediaPlayer,
 	val ctx: Ctx,
 	val animatedVisibilityScope: AnimatedVisibilityScope,
 	val sharedTransitionScope: SharedTransitionScope,
-	val sheetHeightDp: Dp
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MediaBar(expanded: Boolean, sheetHeightDp: Dp) {
+fun MediaBar(expanded: Boolean) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
 	SharedTransitionLayout(Modifier.fillMaxHeight()) {
@@ -93,8 +91,7 @@ fun MediaBar(expanded: Boolean, sheetHeightDp: Dp) {
 				player,
 				ctx,
 				this@AnimatedContent,
-				this@SharedTransitionLayout,
-				sheetHeightDp
+				this@SharedTransitionLayout
 			).apply {
 				if (!targetState) {
 					MainContent()

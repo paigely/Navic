@@ -31,6 +31,8 @@ import paige.subsonic.api.model.Starred2Response
 import paige.subsonic.api.model.StarredResponse
 import paige.subsonic.api.model.SubsonicResponse
 import paige.subsonic.api.model.UserResponse
+import kotlin.time.Clock
+import kotlin.time.Duration
 
 
 class SubsonicApi(
@@ -336,12 +338,24 @@ class SubsonicApi(
 
 	suspend fun createShare(
 		id: String? = null,
-		expires: String? = null
+		expires: Duration? = null
 	): SubsonicResponse<CreateShareResponse> {
 		return client
 			.get("rest/createShare") {
 				parameter("id", id)
-				parameter("expires", expires)
+				parameter("expires", if (expires != null) "${Clock.System.now()
+					.plus(expires)
+					.toEpochMilliseconds()}" else null)
+			}
+			.body<SubsonicResponse<CreateShareResponse>>()
+	}
+
+	suspend fun deleteShare(
+		id: String
+	): SubsonicResponse<CreateShareResponse> {
+		return client
+			.get("rest/deleteShare") {
+				parameter("id", id)
 			}
 			.body<SubsonicResponse<CreateShareResponse>>()
 	}
