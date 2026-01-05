@@ -26,8 +26,7 @@ kotlin {
 				freeCompilerArgs += listOf(
 					"-Xopt-in=kotlin.RequiresOptIn",
 					"-Xdisable-phases=Devirtualization",
-					"-Xdisable-phases=GlobalValueNumbering",
-					"-g0"
+					"-Xdisable-phases=GlobalValueNumbering"
 				)
 				linkerOpts("-Wl,-dead_strip")
 			} else {
@@ -69,7 +68,8 @@ kotlin {
 			implementation(libs.androidx.media3.ui)
 		}
 		iosMain.dependencies {
-			implementation(libs.ktor.client.darwin)
+			implementation(libs.ktor.client.darwin
+			)
 		}
 	}
 
