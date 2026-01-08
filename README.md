@@ -5,7 +5,7 @@ Material 3 expressive Navidrome/subsonic client for iOS and Android
 
 ## Screenshots
 
-| Library                      | Player                       | Settings                     | Android quick settings       |
+| Library                      | Player                       | Settings                     | Quick settings               |
 |------------------------------|------------------------------|------------------------------|------------------------------|
 | ![](.github/screenshot1.png) | ![](.github/screenshot2.png) | ![](.github/screenshot3.png) | ![](.github/screenshot4.png) |
 
