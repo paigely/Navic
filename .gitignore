@@ -19,3 +19,4 @@ captures
 node_modules/
 .theos
 iosApp/packages
+release
