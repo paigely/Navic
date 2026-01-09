@@ -24,9 +24,12 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.account_circle
 import navic.composeapp.generated.resources.action_log_in
 import navic.composeapp.generated.resources.action_log_out
+import navic.composeapp.generated.resources.title_settings
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
+import paige.navic.LocalNavStack
+import paige.navic.Settings
 import paige.navic.data.model.User
 import paige.navic.ui.viewmodel.TopBarViewModel
 import paige.navic.util.LoginState
@@ -35,7 +38,7 @@ import paige.navic.util.LoginState
 fun LoginButton(
 	userState: LoginState<User?>,
 	setShowLoginDialog: (Boolean) -> Unit,
-	viewModel: TopBarViewModel
+	viewModel: TopBarViewModel,
 ) {
 	val ctx = LocalCtx.current
 	val user = (userState as? LoginState.Success)?.data

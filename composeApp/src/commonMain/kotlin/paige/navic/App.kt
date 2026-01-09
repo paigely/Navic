@@ -33,6 +33,7 @@ import paige.navic.ui.component.MainScaffold
 import paige.navic.ui.component.TopBar
 import paige.navic.ui.screen.LibraryScreen
 import paige.navic.ui.screen.PlaylistsScreen
+import paige.navic.ui.screen.SearchScreen
 import paige.navic.ui.screen.SettingsScreen
 import paige.navic.ui.screen.TracksScreen
 import paige.navic.ui.theme.NavicTheme
@@ -40,6 +41,7 @@ import paige.navic.ui.theme.NavicTheme
 data object Library
 data object Playlists
 data object Settings
+data object Search
 data class Tracks(val partialTracks: Any)
 
 val LocalCtx = staticCompositionLocalOf<Ctx> {
@@ -105,13 +107,16 @@ fun App() {
 									LibraryScreen()
 								}
 								entry<Playlists>(metadata = metadata) {
-									PlaylistsScreen(backStack)
+									PlaylistsScreen()
 								}
 								entry<Settings> {
 									SettingsScreen()
 								}
 								entry<Tracks>(metadata = ListDetailSceneStrategy.detailPane()) { key ->
 									TracksScreen(key.partialTracks)
+								}
+								entry<Search> {
+									SearchScreen()
 								}
 							},
 							transitionSpec = {

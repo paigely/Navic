@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -32,6 +31,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
+import paige.navic.LocalNavStack
 import paige.navic.Tracks
 import paige.navic.ui.component.ArtGrid
 import paige.navic.ui.component.ArtGridItem
@@ -50,10 +50,10 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistsScreen(
-	backStack: SnapshotStateList<Any>,
 	viewModel: PlaylistsViewModel = viewModel { PlaylistsViewModel() }
 ) {
 	val ctx = LocalCtx.current
+	val backStack = LocalNavStack.current
 	val haptics = LocalHapticFeedback.current
 
 	val playlistsState by viewModel.playlistsState.collectAsState()

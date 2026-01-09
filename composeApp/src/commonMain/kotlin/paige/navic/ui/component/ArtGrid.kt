@@ -36,8 +36,8 @@ fun ArtGrid(
 	content: LazyGridScope.() -> Unit
 ) {
 	LazyVerticalGrid(
-		columns = GridCells.Adaptive(150.dp),
 		modifier = modifier.fillMaxSize(),
+		columns = GridCells.Adaptive(150.dp),
 		contentPadding = PaddingValues(
 			start = 16.dp,
 			top = 16.dp,
