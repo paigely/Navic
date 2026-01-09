@@ -2,28 +2,36 @@ package paige.navic
 
 import android.content.ComponentName
 import android.content.Context
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaSessionService
-import androidx.compose.runtime.*
+import androidx.annotation.OptIn
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaController
+import androidx.media3.session.MediaSession
+import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.model.AnyTracks
-import androidx.annotation.OptIn
-import androidx.core.net.toUri
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
-import androidx.media3.session.MediaController
-import kotlinx.coroutines.delay
+import kotlin.time.Clock
 
 class PlaybackService : MediaSessionService() {
 	private var mediaSession: MediaSession? = null
@@ -137,7 +145,37 @@ private class MediaPlayerImpl(
 
 	private fun updateCurrentIndex() {
 		controller?.let {
-			_currentIndex.intValue = it.currentMediaItemIndex
+			val previousIdx = _currentIndex.intValue
+			val currentIdx = it.currentMediaItemIndex
+			scope.launch {
+				if (previousIdx != currentIdx) {
+					tracks?.tracks?.getOrNull(previousIdx)?.let { track ->
+						try {
+							SessionManager.api.scrobble(
+								track.id,
+								Clock.System.now()
+									.toEpochMilliseconds(),
+								submission = true
+							)
+						} catch (e: Exception) {
+							println(e)
+						}
+					}
+				}
+				tracks?.tracks?.getOrNull(currentIdx)?.let { track ->
+					try {
+						SessionManager.api.scrobble(
+							track.id,
+							Clock.System.now()
+								.toEpochMilliseconds(),
+							submission = false
+						)
+					} catch(e: Exception) {
+						println(e)
+					}
+				}
+			}
+			_currentIndex.intValue = currentIdx
 		}
 	}
 

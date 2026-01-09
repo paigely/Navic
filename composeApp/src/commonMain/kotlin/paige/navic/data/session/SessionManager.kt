@@ -28,7 +28,7 @@ object SessionManager {
 				username = settings.getString("username", ""),
 				password = settings.getString("password", ""),
 				apiVersion = "1.16.1",
-				clientId = "SubsonicKotlinApi",
+				clientId = "Navic",
 				authType = AuthType.Token(),
 				baseClient = HttpClient {
 					install(HttpCache) {
