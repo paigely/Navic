@@ -17,7 +17,11 @@ import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.library_music
 import navic.composeapp.generated.resources.playlist_play
+import navic.composeapp.generated.resources.title_library
+import navic.composeapp.generated.resources.title_playlists
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.Library
 import paige.navic.LocalCtx
@@ -27,10 +31,10 @@ import paige.navic.Playlists
 private enum class NavItem(
 	val destination: Any,
 	val icon: DrawableResource,
-	val label: String
+	val label: StringResource
 ) {
-	LIBRARY(Library, Res.drawable.library_music, "Library"),
-	PLAYLISTS(Playlists, Res.drawable.playlist_play, "Playlists")
+	LIBRARY(Library, Res.drawable.library_music, Res.string.title_library),
+	PLAYLISTS(Playlists, Res.drawable.playlist_play, Res.string.title_playlists)
 }
 
 @Composable
@@ -58,7 +62,7 @@ private fun NavItems(
 					contentDescription = null
 				)
 			},
-			{ Text(navItem.label) }
+			{ Text(stringResource(navItem.label)) }
 		)
 	}
 }

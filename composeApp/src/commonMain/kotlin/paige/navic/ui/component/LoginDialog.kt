@@ -24,6 +24,13 @@ import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.burnoo.compose.remembersetting.rememberStringSetting
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_cancel
+import navic.composeapp.generated.resources.action_log_in
+import navic.composeapp.generated.resources.option_account_navidrome_instance
+import navic.composeapp.generated.resources.option_account_password
+import navic.composeapp.generated.resources.option_account_username
+import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.model.User
 import paige.navic.ui.viewmodel.TopBarViewModel
@@ -52,7 +59,7 @@ fun LoginDialog(
 					OutlinedTextField(
 						value = instanceUrl,
 						onValueChange = { instanceUrl = it },
-						label = { Text("Instance") },
+						label = { Text(stringResource(Res.string.option_account_navidrome_instance)) },
 						placeholder = { Text("demo.navidrome.org") },
 						maxLines = 1,
 						keyboardOptions = KeyboardOptions(
@@ -63,7 +70,7 @@ fun LoginDialog(
 					OutlinedTextField(
 						value = username,
 						onValueChange = { username = it },
-						label = { Text("Username") },
+						label = { Text(stringResource(Res.string.option_account_username)) },
 						maxLines = 1,
 						modifier = Modifier.semantics {
 							contentType = ContentType.Username
@@ -75,7 +82,7 @@ fun LoginDialog(
 					OutlinedTextField(
 						value = password,
 						onValueChange = { password = it },
-						label = { Text("Password") },
+						label = { Text(stringResource(Res.string.option_account_password)) },
 						visualTransformation = PasswordVisualTransformation(),
 						maxLines = 1,
 						modifier = Modifier.semantics {
@@ -104,7 +111,7 @@ fun LoginDialog(
 					enabled = userState !is LoginState.Loading,
 					content = {
 						if (userState !is LoginState.Loading) {
-							Text("Login")
+							Text(stringResource(Res.string.action_log_in))
 						} else {
 							CircularProgressIndicator(
 								modifier = Modifier.size(20.dp)
@@ -120,7 +127,7 @@ fun LoginDialog(
 						setVisible(false)
 					},
 					enabled = userState !is LoginState.Loading,
-					content = { Text("Cancel") }
+					content = { Text(stringResource(Res.string.action_cancel)) }
 				)
 			},
 			shape = ContinuousRoundedRectangle(42.dp)

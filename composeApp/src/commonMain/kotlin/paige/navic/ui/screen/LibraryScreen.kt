@@ -27,9 +27,15 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_remove_star
+import navic.composeapp.generated.resources.action_share
+import navic.composeapp.generated.resources.action_star
+import navic.composeapp.generated.resources.info_unknown_album
+import navic.composeapp.generated.resources.info_unknown_artist
 import navic.composeapp.generated.resources.ios_share
 import navic.composeapp.generated.resources.star
 import navic.composeapp.generated.resources.unstar
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
@@ -85,8 +91,8 @@ fun LibraryScreen(viewModel: LibraryViewModel = viewModel { LibraryViewModel() }
 									}
 								),
 								imageUrl = album.coverArt,
-								title = album.name ?: "Unknown album",
-								subtitle = (album.artist ?: "Unknown album") + "\n",
+								title = album.name ?: stringResource(Res.string.info_unknown_album),
+								subtitle = (album.artist ?: stringResource(Res.string.info_unknown_artist)) + "\n",
 							)
 						}
 					}
@@ -122,7 +128,7 @@ fun LibraryScreen(viewModel: LibraryViewModel = viewModel { LibraryViewModel() }
 								vectorResource(Res.drawable.ios_share),
 								contentDescription = null
 							)
-							Text("Share")
+							Text(stringResource(Res.string.action_share))
 						}
 						(starredState as? UiState.Success)?.data?.let { starred ->
 							FormRow(
@@ -144,7 +150,11 @@ fun LibraryScreen(viewModel: LibraryViewModel = viewModel { LibraryViewModel() }
 									),
 									contentDescription = null
 								)
-								Text(if (starred) "Unstar" else "Star")
+								Text(stringResource(
+									if (!starred)
+										Res.string.action_star
+									else Res.string.action_remove_star
+								))
 							}
 						}
 					}

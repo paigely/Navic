@@ -42,7 +42,12 @@ import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_play
+import navic.composeapp.generated.resources.action_share
+import navic.composeapp.generated.resources.action_shuffle
+import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.ios_share
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalMediaPlayer
 import paige.navic.MediaPlayer
@@ -132,7 +137,7 @@ fun TracksScreen(
 						vectorResource(Res.drawable.ios_share),
 						contentDescription = null
 					)
-					Text("Share")
+					Text(stringResource(Res.string.action_share))
 				}
 			}
 		}
@@ -170,15 +175,17 @@ private fun TracksScreenScope.Metadata() {
 			.background(MaterialTheme.colorScheme.surfaceContainer)
 	)
 	Text(
-		tracks.title ?: "???",
+		tracks.title ?: stringResource(Res.string.info_unknown_album),
 		style = MaterialTheme.typography.headlineMedium,
 		textAlign = TextAlign.Center
 	)
-	Text(
-		tracks.subtitle ?: "???",
-		style = MaterialTheme.typography.bodySmall,
-		textAlign = TextAlign.Center
-	)
+	tracks.subtitle?.let {
+		Text(
+			it,
+			style = MaterialTheme.typography.bodySmall,
+			textAlign = TextAlign.Center
+		)
+	}
 	Row(
 		horizontalArrangement = Arrangement.spacedBy(
 			10.dp,
@@ -193,7 +200,7 @@ private fun TracksScreenScope.Metadata() {
 				contentColor = MaterialTheme.colorScheme.onSurface
 			),
 			shape = ContinuousCapsule
-		) { Text("Play") }
+		) { Text(stringResource(Res.string.action_play)) }
 		Button(
 			modifier = Modifier.width(120.dp),
 			onClick = {},
@@ -202,7 +209,7 @@ private fun TracksScreenScope.Metadata() {
 				contentColor = MaterialTheme.colorScheme.onSurface
 			),
 			shape = ContinuousCapsule
-		) { Text("Shuffle") }
+		) { Text(stringResource(Res.string.action_shuffle)) }
 	}
 }
 
