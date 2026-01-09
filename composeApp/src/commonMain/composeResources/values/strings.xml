@@ -36,7 +36,7 @@
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
 	<string name="notice_deleted_share">Deleted share.</string>
 	<string name="notice_copied">Copied to clipboard.</string>
-	<string name="notice_expiry">Expires in %1$d.</string>
+	<string name="notice_expiry">Expires in %1$s.</string>
 
 	<string name="info_action_is_permanent">This cannot be undone!</string>
 	<string name="info_error">Something went wrong.</string>

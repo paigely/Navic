@@ -92,11 +92,12 @@ fun PlaylistsScreen(
 								append(
 									pluralStringResource(
 										Res.plurals.count_songs,
+										playlist.songCount,
 										playlist.songCount
-									)
+									) + "\n"
 								)
 								playlist.comment?.let {
-									append("\n${playlist.comment}")
+									append("${playlist.comment}\n")
 								}
 							}
 						)
