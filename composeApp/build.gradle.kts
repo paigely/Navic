@@ -22,17 +22,7 @@ kotlin {
 	).forEach { iosTarget ->
 		iosTarget.binaries.framework {
 			baseName = "ComposeApp"
-			if (buildType == NativeBuildType.RELEASE) {
-				isStatic = false
-				freeCompilerArgs += listOf(
-					"-Xopt-in=kotlin.RequiresOptIn",
-					"-Xdisable-phases=Devirtualization",
-					"-Xdisable-phases=GlobalValueNumbering"
-				)
-				linkerOpts("-Wl,-dead_strip")
-			} else {
-				isStatic = true
-			}
+			isStatic = true
 		}
 	}
 
