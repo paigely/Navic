@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.account_circle
+import navic.composeapp.generated.resources.action_log_in
+import navic.composeapp.generated.resources.action_log_out
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.data.model.User
@@ -58,7 +61,7 @@ fun LoginButton(
 				onDismissRequest = { expanded = false }
 			) {
 				DropdownMenuItem(
-					text = { Text("Log out") },
+					text = { Text(stringResource(Res.string.action_log_out)) },
 					onClick = {
 						ctx.clickSound()
 						setShowLoginDialog(false)
@@ -74,7 +77,7 @@ fun LoginButton(
 		}) {
 			Icon(
 				vectorResource(Res.drawable.account_circle),
-				contentDescription = "Login"
+				contentDescription = stringResource(Res.string.action_log_in)
 			)
 		}
 	}

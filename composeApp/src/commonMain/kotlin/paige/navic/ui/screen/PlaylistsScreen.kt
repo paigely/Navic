@@ -23,8 +23,13 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_delete
+import navic.composeapp.generated.resources.action_share
+import navic.composeapp.generated.resources.count_songs
 import navic.composeapp.generated.resources.ios_share
 import navic.composeapp.generated.resources.playlist_remove
+import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.Tracks
@@ -83,7 +88,17 @@ fun PlaylistsScreen(
 							),
 							imageUrl = playlist.coverArt,
 							title = playlist.name,
-							subtitle = "${playlist.songCount} songs\n${playlist.comment.orEmpty()}"
+							subtitle = buildString {
+								append(
+									pluralStringResource(
+										Res.plurals.count_songs,
+										playlist.songCount
+									)
+								)
+								playlist.comment?.let {
+									append("\n${playlist.comment}")
+								}
+							}
 						)
 					}
 				}
@@ -109,7 +124,7 @@ fun PlaylistsScreen(
 						vectorResource(Res.drawable.ios_share),
 						contentDescription = null
 					)
-					Text("Share")
+					Text(stringResource(Res.string.action_share))
 				}
 				FormRow(
 					horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -122,7 +137,7 @@ fun PlaylistsScreen(
 						vectorResource(Res.drawable.playlist_remove),
 						contentDescription = null
 					)
-					Text("Delete")
+					Text(stringResource(Res.string.action_delete))
 				}
 			}
 		}

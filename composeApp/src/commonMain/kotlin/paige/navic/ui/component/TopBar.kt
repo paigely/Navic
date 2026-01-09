@@ -2,7 +2,6 @@ package paige.navic.ui.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -11,6 +10,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,8 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_navigate_back
 import navic.composeapp.generated.resources.arrow_back
 import navic.composeapp.generated.resources.settings
+import navic.composeapp.generated.resources.title_library
+import navic.composeapp.generated.resources.title_playlists
+import navic.composeapp.generated.resources.title_settings
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.Library
 import paige.navic.LocalCtx
@@ -45,9 +50,9 @@ fun TopBar(
 	val ctx = LocalCtx.current
 
 	val title = when (backStack.last()) {
-		Library -> "Library"
-		Playlists -> "Playlists"
-		Settings -> "Settings"
+		Library -> Res.string.title_library
+		Playlists -> Res.string.title_playlists
+		Settings -> Res.string.title_settings
 		else -> null
 	}
 
@@ -57,7 +62,7 @@ fun TopBar(
 	TopAppBar(
 		title = {
 			title?.let {
-				Text(title, style = MaterialTheme.typography.headlineMedium)
+				Text(stringResource(it), style = MaterialTheme.typography.headlineMedium)
 			}
 		},
 		navigationIcon = {
@@ -73,7 +78,7 @@ fun TopBar(
 				) {
 					Icon(
 						imageVector = vectorResource(Res.drawable.arrow_back),
-						contentDescription = "Back"
+						contentDescription = stringResource(Res.string.action_navigate_back)
 					)
 				}
 			}

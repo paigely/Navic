@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -30,6 +30,15 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_cancel
+import navic.composeapp.generated.resources.action_share
+import navic.composeapp.generated.resources.notice_copied
+import navic.composeapp.generated.resources.notice_expiry
+import navic.composeapp.generated.resources.option_share_expires
+import navic.composeapp.generated.resources.title_create_share
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalSnackbarState
 import paige.navic.data.session.SessionManager
 import paige.navic.ui.component.DurationPicker
@@ -86,9 +95,11 @@ fun ShareDialog(
 				viewModel.viewModelScope.launch {
 					snackbarState.showSnackbar(
 						message = buildString {
-							append("Copied to clipboard")
+							append(getString(Res.string.notice_copied))
 							expiry?.let {
-								append("\nExpires in ${expiry.toHumanReadable()}")
+								append("\n" + getString(
+									Res.string.notice_expiry, expiry.toHumanReadable()
+								))
 							}
 						}
 					)
@@ -99,7 +110,7 @@ fun ShareDialog(
 
 	id?.let {
 		AlertDialog(
-			title = { Text("Share") },
+			title = { Text(stringResource(Res.string.title_create_share)) },
 			text = {
 				Column(
 					Modifier.verticalScroll(scrollState),
@@ -119,7 +130,7 @@ fun ShareDialog(
 							enabled = state !is UiState.Loading,
 							onCheckedChange = { onExpiryChange(if (it) 1.hours else null) }
 						)
-						Text("Expires", Modifier.weight(1f))
+						Text(stringResource(Res.string.option_share_expires), Modifier.weight(1f))
 					}
 					expiry?.let {
 						DurationPicker(
@@ -142,7 +153,7 @@ fun ShareDialog(
 					shape = ContinuousCapsule
 				) {
 					if (state !is UiState.Loading) {
-						Text("Share")
+						Text(stringResource(Res.string.action_share))
 					} else {
 						CircularProgressIndicator(Modifier.size(20.dp))
 					}
@@ -152,7 +163,7 @@ fun ShareDialog(
 				TextButton(
 					enabled = state !is UiState.Loading,
 					onClick = { onIdClear() },
-				) { Text("Cancel") }
+				) { Text(stringResource(Res.string.action_cancel)) }
 			},
 			shape = ContinuousRoundedRectangle(42.dp)
 		)

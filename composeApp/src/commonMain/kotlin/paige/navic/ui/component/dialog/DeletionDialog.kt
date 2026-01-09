@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,15 +26,28 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_cancel
+import navic.composeapp.generated.resources.action_delete
+import navic.composeapp.generated.resources.info_action_is_permanent
+import navic.composeapp.generated.resources.info_error
+import navic.composeapp.generated.resources.notice_deleted_playlist
+import navic.composeapp.generated.resources.notice_deleted_share
+import navic.composeapp.generated.resources.title_delete_playlist
+import navic.composeapp.generated.resources.title_delete_share
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalSnackbarState
 import paige.navic.data.session.SessionManager
 import paige.navic.util.UiState
 
 enum class DeletionEndpoint(
-	val displayName: String
+	val questionText: StringResource,
+	val deletedText: StringResource
 ) {
-	PLAYLIST("playlist"),
-	SHARE("share")
+	PLAYLIST(Res.string.title_delete_playlist, Res.string.notice_deleted_playlist),
+	SHARE(Res.string.title_delete_share, Res.string.notice_deleted_share)
 }
 
 class DeletionViewModel : ViewModel() {
@@ -76,21 +89,23 @@ fun DeletionDialog(
 		if (state is UiState.Success && id != null) {
 			viewModel.viewModelScope.launch {
 				onIdClear()
-				snackbarState.showSnackbar("Deleted ${endpoint.displayName}")
+				snackbarState.showSnackbar(
+					getString(endpoint.deletedText)
+				)
 			}
 		}
 	}
 
 	id?.let {
 		AlertDialog(
-			title = { Text("Delete ${endpoint.displayName}?") },
+			title = { Text(stringResource(endpoint.questionText)) },
 			text = {
 				Column(Modifier.verticalScroll(scrollState)) {
-					Text(
+					Text(stringResource(
 						if (state !is UiState.Error)
-							"This cannot be undone!"
-						else "Something went wrong..."
-					)
+							Res.string.info_action_is_permanent
+						else Res.string.info_error
+					))
 					(state as? UiState.Error)?.error?.let {
 						SelectionContainer {
 							Text("$it")
@@ -113,7 +128,7 @@ fun DeletionDialog(
 					shape = ContinuousCapsule
 				) {
 					if (state !is UiState.Loading) {
-						Text("Delete")
+						Text(stringResource(Res.string.action_delete))
 					} else {
 						CircularProgressIndicator(Modifier.size(20.dp))
 					}
@@ -123,7 +138,7 @@ fun DeletionDialog(
 				TextButton(
 					enabled = state !is UiState.Loading,
 					onClick = { onIdClear() },
-				) { Text("Cancel") }
+				) { Text(stringResource(Res.string.action_cancel)) }
 			},
 			shape = ContinuousRoundedRectangle(42.dp)
 		)

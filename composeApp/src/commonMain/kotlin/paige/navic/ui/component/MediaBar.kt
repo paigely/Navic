@@ -152,7 +152,6 @@ private fun MediaBarScope.DetailsContent() {
 							.7f to Color.Transparent,
 							startY = 0f,
 							endY = size.height
-							//endY = sheetHeightDp.value
 						),
 						blendMode = BlendMode.DstIn
 					)
@@ -229,12 +228,12 @@ private fun MediaBarScope.Info(
 				verticalArrangement = Arrangement.Center
 			) {
 				Text(
-					player.tracks?.tracks?.getOrNull(currentIndex)?.title ?: "Nothing playing",
+					player.tracks?.tracks?.getOrNull(currentIndex)?.title.orEmpty(),
 					fontWeight = FontWeight(600),
 					maxLines = 1
 				)
 				Text(
-					player.tracks?.tracks?.getOrNull(currentIndex)?.artist ?: "...",
+					player.tracks?.tracks?.getOrNull(currentIndex)?.artist.orEmpty(),
 					style = MaterialTheme.typography.titleSmall,
 					maxLines = 1
 				)

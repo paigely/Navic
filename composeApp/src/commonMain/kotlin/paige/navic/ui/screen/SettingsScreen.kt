@@ -19,6 +19,11 @@ import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.keyboard_arrow_down
 import navic.composeapp.generated.resources.keyboard_arrow_up
+import navic.composeapp.generated.resources.option_round_album_covers
+import navic.composeapp.generated.resources.option_short_navigation_bar
+import navic.composeapp.generated.resources.option_system_font
+import navic.composeapp.generated.resources.title_appearance
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.ui.component.Form
 import paige.navic.ui.component.FormRow
@@ -33,7 +38,7 @@ fun ThemeSettings() {
 		FormRow(
 			onClick = { expanded = !expanded }
 		) {
-			Text("Appearance")
+			Text(stringResource(Res.string.title_appearance))
 			Icon(
 				if (expanded)
 					vectorResource(Res.drawable.keyboard_arrow_up)
@@ -43,21 +48,21 @@ fun ThemeSettings() {
 		}
 		if (expanded) {
 			FormRow {
-				Text("Use system font")
+				Text(stringResource(Res.string.option_system_font))
 				Switch(
 					checked = useSystemFont,
 					onCheckedChange = { useSystemFont = it }
 				)
 			}
 			FormRow {
-				Text("Use short navigation bar")
+				Text(stringResource(Res.string.option_short_navigation_bar))
 				Switch(
 					checked = useShortNavbar,
 					onCheckedChange = { useShortNavbar = it }
 				)
 			}
 			FormRow {
-				Text("Rounded cover artwork")
+				Text(stringResource(Res.string.option_round_album_covers))
 				Switch(
 					checked = roundCoverArt,
 					onCheckedChange = { roundCoverArt = it }
