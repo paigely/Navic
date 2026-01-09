@@ -18,9 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,7 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,11 +46,12 @@ import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.info_unknown_album
-import navic.composeapp.generated.resources.ios_share
+import navic.composeapp.generated.resources.share
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalMediaPlayer
 import paige.navic.MediaPlayer
+import paige.navic.ui.component.Dropdown
+import paige.navic.ui.component.DropdownItem
 import paige.navic.ui.component.ErrorBox
 import paige.navic.ui.component.Form
 import paige.navic.ui.component.FormRow
@@ -77,10 +78,11 @@ fun TracksScreen(
 	}
 ) {
 	val player = LocalMediaPlayer.current
+	val haptics = LocalHapticFeedback.current
 	val scrollState = rememberScrollState()
 
 	val tracks by viewModel.tracksState.collectAsState()
-	val selectedTrack by viewModel.selectedTrack.collectAsState()
+	val selection by viewModel.selectedTrack.collectAsState()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -107,37 +109,37 @@ fun TracksScreen(
 						Metadata()
 						Form {
 							tracks.tracks.onEachIndexed { index, track ->
-								TrackRow(
-									track = track,
-									onClick = {
-										player.play(tracks, index)
-									},
-									onLongClick = {
-										viewModel.selectTrack(track)
+								Box {
+									TrackRow(
+										track = track,
+										onClick = {
+											player.play(tracks, index)
+										},
+										onLongClick = {
+											haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+											viewModel.selectTrack(track)
+										}
+									)
+									Dropdown(
+										expanded = selection == track,
+										onDismissRequest = {
+											viewModel.clearSelection()
+										}
+									) {
+										DropdownItem(
+											containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+											text = Res.string.action_share,
+											leadingIcon = Res.drawable.share,
+											onClick = {
+												shareId = track.id
+												viewModel.clearSelection()
+											},
+										)
 									}
-								)
+								}
 							}
 						}
 					}
-				}
-			}
-		}
-	}
-
-	selectedTrack?.let {
-		ModalBottomSheet(
-			onDismissRequest = { viewModel.clearSelection() }
-		) {
-			Form(modifier = Modifier.padding(14.dp)) {
-				FormRow(
-					horizontalArrangement = Arrangement.spacedBy(8.dp),
-					onClick = { shareId = selectedTrack?.id },
-				) {
-					Icon(
-						vectorResource(Res.drawable.ios_share),
-						contentDescription = null
-					)
-					Text(stringResource(Res.string.action_share))
 				}
 			}
 		}

@@ -4,12 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,12 +21,10 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.account_circle
 import navic.composeapp.generated.resources.action_log_in
 import navic.composeapp.generated.resources.action_log_out
-import navic.composeapp.generated.resources.title_settings
+import navic.composeapp.generated.resources.logout
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
-import paige.navic.LocalNavStack
-import paige.navic.Settings
 import paige.navic.data.model.User
 import paige.navic.ui.viewmodel.TopBarViewModel
 import paige.navic.util.LoginState
@@ -59,17 +54,18 @@ fun LoginButton(
 						.background(MaterialTheme.colorScheme.surfaceContainer)
 				)
 			}
-			DropdownMenu(
+			Dropdown(
 				expanded = expanded,
 				onDismissRequest = { expanded = false }
 			) {
-				DropdownMenuItem(
-					text = { Text(stringResource(Res.string.action_log_out)) },
+				DropdownItem(
+					text = Res.string.action_log_out,
 					onClick = {
 						ctx.clickSound()
 						setShowLoginDialog(false)
 						viewModel.logout()
-					}
+					},
+					leadingIcon = Res.drawable.logout
 				)
 			}
 		}

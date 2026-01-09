@@ -3,6 +3,7 @@ package paige.navic.ui.theme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.google_sans
 import navic.composeapp.generated.resources.maple_mono
@@ -16,9 +17,20 @@ fun mapleMono() = FontFamily(
 )
 
 @Composable
-fun googleSans() = FontFamily(
-	Font(Res.font.google_sans)
-)
+fun googleSans(
+	grade: Int = 0,
+	width: Float = 100f,
+	round: Float = 0f
+): FontFamily {
+	return FontFamily(Font(
+		Res.font.google_sans,
+		variationSettings = FontVariation.Settings(
+			FontVariation.grade(grade),
+			FontVariation.width(width),
+			FontVariation.Setting("ROND", round)
+		)
+	))
+}
 
 @Composable
 fun typography(): Typography {
