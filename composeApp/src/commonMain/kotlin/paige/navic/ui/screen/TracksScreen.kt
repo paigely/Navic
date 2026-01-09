@@ -43,10 +43,13 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_play
+import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_shuffle
+import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.share
+import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
 import paige.navic.MediaPlayer
@@ -86,6 +89,8 @@ fun TracksScreen(
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
+
+	val starredState by viewModel.starredState.collectAsState()
 
 	AnimatedContent(tracks) {
 		when (it) {
@@ -134,6 +139,22 @@ fun TracksScreen(
 												shareId = track.id
 												viewModel.clearSelection()
 											},
+										)
+										val starred =
+											(starredState as? UiState.Success)?.data
+										DropdownItem(
+											containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+											text = if (starred == true)
+												Res.string.action_remove_star
+											else Res.string.action_star,
+											leadingIcon = Res.drawable.unstar,
+											onClick = {
+												if (starred == true)
+													viewModel.unstarSelectedTrack()
+												else viewModel.starSelectedTrack()
+												viewModel.clearSelection()
+											},
+											enabled = starred != null
 										)
 									}
 								}

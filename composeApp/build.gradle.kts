@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
 	alias(libs.plugins.kotlinMultiplatform)
+	alias(libs.plugins.kotlin.serialization)
 	alias(libs.plugins.androidApplication)
 	alias(libs.plugins.composeMultiplatform)
 	alias(libs.plugins.composeCompiler)
@@ -59,6 +60,7 @@ kotlin {
 			implementation(libs.materialKolor)
 			implementation(libs.multiplatformSettings.noArg)
 			implementation(libs.multiplatformSettings.remember)
+			implementation(libs.reorderable)
 		}
 		androidMain.dependencies {
 			implementation(libs.androidx.activity.compose)

@@ -47,6 +47,7 @@ kmpalette-extensions-network = { module = "com.kmpalette:extensions-network", ve
 materialKolor = { module = "com.materialkolor:material-kolor", version = "5.0.0-alpha04" }
 multiplatformSettings-noArg = { module = "com.russhwolf:multiplatform-settings-no-arg", version = "1.3.0" }
 multiplatformSettings-remember = { module = "dev.burnoo:compose-remember-setting", version = "1.0.3" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version = "3.0.0" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

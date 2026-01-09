@@ -31,6 +31,7 @@ import coil3.request.crossfade
 import paige.navic.ui.component.BottomBar
 import paige.navic.ui.component.MainScaffold
 import paige.navic.ui.component.TopBar
+import paige.navic.ui.screen.ArtistsScreen
 import paige.navic.ui.screen.LibraryScreen
 import paige.navic.ui.screen.PlaylistsScreen
 import paige.navic.ui.screen.SearchScreen
@@ -40,6 +41,7 @@ import paige.navic.ui.theme.NavicTheme
 
 data object Library
 data object Playlists
+data object Artists
 data object Settings
 data object Search
 data class Tracks(val partialTracks: Any)
@@ -108,6 +110,9 @@ fun App() {
 								}
 								entry<Playlists>(metadata = metadata) {
 									PlaylistsScreen()
+								}
+								entry<Artists>(metadata = metadata) {
+									ArtistsScreen()
 								}
 								entry<Settings> {
 									SettingsScreen()

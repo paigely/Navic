@@ -24,6 +24,9 @@ class TracksViewModel(
 	private val _selectedTrack = MutableStateFlow<AnyTrack?>(null)
 	val selectedTrack: StateFlow<AnyTrack?> = _selectedTrack.asStateFlow()
 
+	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
+	val starredState = _starredState.asStateFlow()
+
 	init {
 		viewModelScope.launch {
 			SessionManager.isLoggedIn.collect {
@@ -49,10 +52,35 @@ class TracksViewModel(
 	}
 
 	fun selectTrack(track: AnyTrack) {
-		_selectedTrack.value = track
+		viewModelScope.launch {
+			_selectedTrack.value = track
+			_starredState.value = UiState.Loading
+			try {
+				val isStarred = repository.isTrackStarred(track)
+				_starredState.value = UiState.Success(isStarred ?: false)
+			} catch(e: Exception) {
+				_starredState.value = UiState.Error(e)
+			}
+		}
 	}
 
 	fun clearSelection() {
 		_selectedTrack.value = null
+	}
+
+	fun starSelectedTrack() {
+		viewModelScope.launch {
+			try {
+				repository.starTrack(_selectedTrack.value!!)
+			} catch(_: Exception) { }
+		}
+	}
+
+	fun unstarSelectedTrack() {
+		viewModelScope.launch {
+			try {
+				repository.unstarTrack(_selectedTrack.value!!)
+			} catch(_: Exception) { }
+		}
 	}
 }

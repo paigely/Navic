@@ -19,6 +19,7 @@ import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.keyboard_arrow_down
 import navic.composeapp.generated.resources.keyboard_arrow_up
+import navic.composeapp.generated.resources.option_navbar_tab_positions
 import navic.composeapp.generated.resources.option_round_album_covers
 import navic.composeapp.generated.resources.option_short_navigation_bar
 import navic.composeapp.generated.resources.option_system_font
@@ -27,10 +28,12 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.ui.component.Form
 import paige.navic.ui.component.FormRow
+import paige.navic.ui.component.dialog.NavbarTabsDialog
 
 @Composable
 fun ThemeSettings() {
 	var expanded by rememberSaveable { mutableStateOf(false) }
+	var showNavbarTabsDialog by rememberSaveable { mutableStateOf(false) }
 	var useSystemFont by rememberBooleanSetting("useSystemFont", false)
 	var useShortNavbar by rememberBooleanSetting("useShortNavbar", false)
 	var roundCoverArt by rememberBooleanSetting("roundCoverArt", true)
@@ -68,8 +71,19 @@ fun ThemeSettings() {
 					onCheckedChange = { roundCoverArt = it }
 				)
 			}
+			FormRow(
+				onClick = {
+					showNavbarTabsDialog = true
+				}
+			) {
+				Text(stringResource(Res.string.option_navbar_tab_positions))
+			}
 		}
 	}
+	NavbarTabsDialog(
+		presented = showNavbarTabsDialog,
+		onDismissRequest = { showNavbarTabsDialog = false }
+	)
 }
 
 @Composable

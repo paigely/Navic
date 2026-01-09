@@ -16,6 +16,7 @@
 	<string name="option_system_font">Use system font</string>
 	<string name="option_short_navigation_bar">Use short navigation bar</string>
 	<string name="option_round_album_covers">Rounded cover artwork</string>
+	<string name="option_navbar_tab_positions">Edit tab positions</string>
 	<string name="option_share_expires">Expires</string>
 	<string name="option_account_navidrome_instance">Instance</string>
 	<string name="option_account_username">Username</string>
@@ -26,6 +27,12 @@
 		<item quantity="other">%1$d songs</item>
 	</plurals>
 
+	<plurals name="count_albums">
+		<item quantity="one">%1$d album</item>
+		<item quantity="other">%1$d albums</item>
+	</plurals>
+
+	<string name="action_ok">OK</string>
 	<string name="action_play">Play</string>
 	<string name="action_shuffle">Shuffle</string>
 	<string name="action_delete">Delete</string>
