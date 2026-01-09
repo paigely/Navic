@@ -1,24 +1,62 @@
 package paige.navic
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import kotlinx.cinterop.*
-import kotlinx.coroutines.*
-import platform.AVFoundation.*
-import platform.MediaPlayer.*
-import platform.Foundation.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ObjCAction
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.model.AnyTrack
 import paige.subsonic.api.model.AnyTracks
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
+import platform.AVFoundation.AVPlayer
+import platform.AVFoundation.AVPlayerItem
+import platform.AVFoundation.AVPlayerItemDidPlayToEndTimeNotification
+import platform.AVFoundation.addPeriodicTimeObserverForInterval
+import platform.AVFoundation.currentItem
+import platform.AVFoundation.currentTime
+import platform.AVFoundation.duration
+import platform.AVFoundation.pause
+import platform.AVFoundation.play
+import platform.AVFoundation.removeTimeObserver
+import platform.AVFoundation.replaceCurrentItemWithPlayerItem
+import platform.AVFoundation.seekToTime
 import platform.CoreGraphics.CGSizeMake
 import platform.CoreMedia.CMTimeGetSeconds
 import platform.CoreMedia.CMTimeMake
 import platform.CoreMedia.CMTimeMakeWithSeconds
+import platform.Foundation.NSData
+import platform.Foundation.NSNotificationCenter
+import platform.Foundation.NSOperationQueue
+import platform.Foundation.NSURL
+import platform.Foundation.dataWithContentsOfURL
+import platform.MediaPlayer.MPChangePlaybackPositionCommandEvent
+import platform.MediaPlayer.MPMediaItemArtwork
+import platform.MediaPlayer.MPMediaItemPropertyAlbumTitle
+import platform.MediaPlayer.MPMediaItemPropertyArtist
+import platform.MediaPlayer.MPMediaItemPropertyArtwork
+import platform.MediaPlayer.MPMediaItemPropertyPlaybackDuration
+import platform.MediaPlayer.MPMediaItemPropertyTitle
+import platform.MediaPlayer.MPNowPlayingInfoCenter
+import platform.MediaPlayer.MPNowPlayingInfoPropertyElapsedPlaybackTime
+import platform.MediaPlayer.MPNowPlayingInfoPropertyPlaybackRate
+import platform.MediaPlayer.MPRemoteCommandCenter
+import platform.MediaPlayer.MPRemoteCommandHandlerStatusCommandFailed
+import platform.MediaPlayer.MPRemoteCommandHandlerStatusSuccess
 import platform.UIKit.UIImage
+import kotlin.time.Clock
 
 @Composable
 actual fun rememberMediaPlayer(): MediaPlayer {
@@ -145,6 +183,35 @@ class IOSMediaPlayer(
 
 	private fun playIndex(index: Int) {
 		if (index !in playlist.indices || index !in preparedUrls.indices) return
+
+		scope.launch {
+			if (currentSongIndex != index) {
+				tracks?.tracks?.getOrNull(currentSongIndex)?.let { track ->
+					try {
+						SessionManager.api.scrobble(
+							track.id,
+							Clock.System.now()
+								.toEpochMilliseconds(),
+							submission = true
+						)
+					} catch (e: Exception) {
+						println(e)
+					}
+				}
+			}
+			tracks?.tracks?.getOrNull(index)?.let { track ->
+				try {
+					SessionManager.api.scrobble(
+						track.id,
+						Clock.System.now()
+							.toEpochMilliseconds(),
+						submission = false
+					)
+				} catch(e: Exception) {
+					println(e)
+				}
+			}
+		}
 
 		currentSongIndex = index
 		_currentIndex.intValue = index
