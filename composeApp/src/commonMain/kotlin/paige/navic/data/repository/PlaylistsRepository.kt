@@ -10,7 +10,7 @@ class PlaylistsRepository {
 			.data.playlists.playlist.orEmpty().map { playlist ->
 				SessionManager.api.getPlaylist(playlist.id).data.playlist.copy(
 					coverArt = SessionManager.api
-						.getCoverArtUrl(playlist.coverArt, auth = true)
+						.getCoverArtUrl(playlist.coverArt, size = 512, auth = true)
 				)
 			}
 	}
