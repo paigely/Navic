@@ -11,7 +11,7 @@ class LibraryRepository {
 			.data.albumList.album.orEmpty().map { album ->
 				album.copy(
 					coverArt = SessionManager.api
-						.getCoverArtUrl(album.coverArt, auth = true)
+						.getCoverArtUrl(album.coverArt, size = 512, auth = true)
 				)
 			}
 	}
