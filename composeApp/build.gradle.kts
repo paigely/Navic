@@ -82,19 +82,69 @@ android {
 			excludes += "/META-INF/{AL2.0,LGPL2.1}"
 		}
 	}
+
 	buildTypes {
+		val isRelease = System.getenv("RELEASE")?.toBoolean() ?: false
+		val hasReleaseSigning = System.getenv("SIGNING_STORE_PASSWORD")?.isNotEmpty() == true
+
+		if (isRelease && !hasReleaseSigning) {
+			throw GradleException("Missing keystore in a release workflow!")
+		}
+
 		getByName("release") {
 			isMinifyEnabled = true
 			isDebuggable = false
 			isProfileable = false
 			isJniDebuggable = false
 			isShrinkResources = true
+			signingConfig = signingConfigs.getByName(if (hasReleaseSigning) "release" else "debug")
 			proguardFiles(
 				getDefaultProguardFile("proguard-android-optimize.txt"),
 				"proguard-rules.pro"
 			)
 		}
 	}
+
+	signingConfigs {
+		create("release") {
+			keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+			keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+			storeFile = System.getenv("SIGNING_STORE_FILE")?.let(::File)
+			storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+		}
+	}
+
+	androidComponents {
+		onVariants(selector().withBuildType("release")) {
+			it.packaging.resources.excludes.apply {
+				// Debug metadata
+				add("/**/*.version")
+				add("/kotlin-tooling-metadata.json")
+				// Kotlin debugging (https://github.com/Kotlin/kotlinx.coroutines/issues/2274)
+				add("/DebugProbesKt.bin")
+				// Reflection symbol list (https://stackoverflow.com/a/41073782/13964629)
+				add("/**/*.kotlin_builtins")
+			}
+		}
+	}
+
+	packaging {
+		resources {
+			// okhttp3 is used by some lib (no cookies so publicsuffixes.gz can be dropped)
+			excludes += "/okhttp3/**"
+
+			// Remnants of smali/baksmali lib
+			excludes += "/*.properties"
+			excludes += "/org/antlr/**"
+			excludes += "/com/android/tools/smali/**"
+			excludes += "/org/eclipse/jgit/**"
+
+			// bouncycastle
+			excludes += "/META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+			excludes += "/org/bouncycastle/**"
+		}
+	}
+
 	compileOptions {
 		sourceCompatibility = JavaVersion.VERSION_11
 		targetCompatibility = JavaVersion.VERSION_11

@@ -1,0 +1,43 @@
+name: Build debug variants
+
+on:
+  push:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build with Gradle
+        env:
+          SIGNING_KEY_ALIAS: ${{ secrets.keyAlias }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.keyPassword }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.keystorePassword }}
+          SIGNING_STORE_FILE: ${{ github.workspace }}/release.keystore
+          RELEASE: true
+        run: |
+          echo "${{ secrets.keystore }}" | base64 -d > release.keystore
+          ./gradlew :app:packageRelease --stacktrace
+          rm release.keystore
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: navic-release
+          path: composeApp/build/outputs/apk/debug/*-release.apk
