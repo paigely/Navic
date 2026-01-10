@@ -5,10 +5,18 @@ on:
     branches:
       - master
     paths:
-      - composeApp
-      - gradle
-      - iosApp
-      - subsonic
+      - composeApp/**
+      - gradle/**
+      - iosApp/**
+      - subsonic/**
+      - build.gradle.kts
+      - settings.gradle.kts
+  pull_request:
+    paths:
+      - composeApp/**
+      - gradle/**
+      - iosApp/**
+      - subsonic/**
       - build.gradle.kts
       - settings.gradle.kts
   workflow_dispatch:
