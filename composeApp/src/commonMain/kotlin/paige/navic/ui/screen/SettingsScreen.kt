@@ -26,8 +26,8 @@ import navic.composeapp.generated.resources.option_system_font
 import navic.composeapp.generated.resources.title_appearance
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import paige.navic.ui.component.Form
-import paige.navic.ui.component.FormRow
+import paige.navic.ui.component.common.Form
+import paige.navic.ui.component.common.FormRow
 import paige.navic.ui.component.dialog.NavtabsDialog
 
 @Composable

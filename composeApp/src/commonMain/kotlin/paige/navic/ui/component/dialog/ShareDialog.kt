@@ -41,7 +41,7 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalSnackbarState
 import paige.navic.data.session.SessionManager
-import paige.navic.ui.component.DurationPicker
+import paige.navic.ui.component.common.DurationPicker
 import paige.navic.util.UiState
 import paige.navic.util.toHumanReadable
 import kotlin.time.Duration

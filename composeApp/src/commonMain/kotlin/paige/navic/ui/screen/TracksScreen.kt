@@ -53,11 +53,11 @@ import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
 import paige.navic.MediaPlayer
-import paige.navic.ui.component.Dropdown
-import paige.navic.ui.component.DropdownItem
-import paige.navic.ui.component.ErrorBox
-import paige.navic.ui.component.Form
-import paige.navic.ui.component.FormRow
+import paige.navic.ui.component.common.Dropdown
+import paige.navic.ui.component.common.DropdownItem
+import paige.navic.ui.component.common.ErrorBox
+import paige.navic.ui.component.common.Form
+import paige.navic.ui.component.common.FormRow
 import paige.navic.ui.component.dialog.ShareDialog
 import paige.navic.ui.theme.mapleMono
 import paige.navic.ui.viewmodel.TracksViewModel

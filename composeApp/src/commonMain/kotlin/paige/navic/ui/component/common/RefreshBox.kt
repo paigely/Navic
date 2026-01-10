@@ -1,4 +1,4 @@
-package paige.navic.ui.component
+package paige.navic.ui.component.common
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.layout.Box

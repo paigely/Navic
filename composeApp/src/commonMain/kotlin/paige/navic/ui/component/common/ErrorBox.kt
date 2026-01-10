@@ -1,4 +1,4 @@
-package paige.navic.ui.component
+package paige.navic.ui.component.common
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,11 +47,13 @@ fun ErrorBox(error: UiState.Error) {
 						expanded = !expanded
 					},
 					content = {
-						Text(stringResource(
-							if (!expanded)
-								Res.string.info_error_show
-							else Res.string.info_error_hide
-						))
+						Text(
+							stringResource(
+								if (!expanded)
+									Res.string.info_error_show
+								else Res.string.info_error_hide
+							)
+						)
 					}
 				)
 			}

@@ -62,8 +62,8 @@ import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.Tracks
-import paige.navic.ui.component.ArtGridPlaceholder
-import paige.navic.ui.component.ErrorBox
+import paige.navic.ui.component.layout.ArtGridPlaceholder
+import paige.navic.ui.component.common.ErrorBox
 import paige.navic.ui.viewmodel.SearchViewModel
 import paige.navic.util.UiState
 import paige.subsonic.api.model.Album

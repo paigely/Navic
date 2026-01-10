@@ -1,4 +1,4 @@
-package paige.navic.ui.component
+package paige.navic.ui.component.common
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.ColumnScope
@@ -40,12 +40,12 @@ fun Dropdown(
 		shadowElevation = 0.dp,
 		modifier = modifier.widthIn(200.dp)
 	) {
-		Form(
-			rounding = 20.dp,
-			spacing = 2.5.dp
-		) {
-			content()
-		}
+        Form(
+            rounding = 20.dp,
+            spacing = 2.5.dp
+        ) {
+            content()
+        }
 	}
 }
 
@@ -72,15 +72,17 @@ fun DropdownItem(
 		contentPadding = PaddingValues(2.dp)
 	) {
 		DropdownMenuItem(
-			text = { Text(
-				stringResource(text),
-				fontFamily = googleSans(
-					grade = 100,
-					width = 104f
-				),
-				modifier = Modifier.padding(start = 2.dp),
-				color = color
-			) },
+			text = {
+				Text(
+					stringResource(text),
+					fontFamily = googleSans(
+						grade = 100,
+						width = 104f
+					),
+					modifier = Modifier.padding(start = 2.dp),
+					color = color
+				)
+			},
 			onClick = {
 				ctx.clickSound()
 				onClick()

@@ -1,4 +1,4 @@
-package paige.navic.ui.component
+package paige.navic.ui.component.layout
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope

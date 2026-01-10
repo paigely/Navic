@@ -1,4 +1,4 @@
-package paige.navic.ui.component
+package paige.navic.ui.component.layout
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -51,6 +51,8 @@ import paige.navic.Playlists
 import paige.navic.Search
 import paige.navic.Settings
 import paige.navic.data.model.User
+import paige.navic.ui.component.common.Dropdown
+import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.dialog.LoginDialog
 import paige.navic.ui.viewmodel.LoginViewModel
 import paige.navic.util.LoginState

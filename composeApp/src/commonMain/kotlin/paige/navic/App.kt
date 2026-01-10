@@ -28,9 +28,9 @@ import androidx.navigation3.ui.NavDisplay.transitionSpec
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import paige.navic.ui.component.BottomBar
-import paige.navic.ui.component.MainScaffold
-import paige.navic.ui.component.TopBar
+import paige.navic.ui.component.layout.BottomBar
+import paige.navic.ui.component.layout.MainScaffold
+import paige.navic.ui.component.layout.TopBar
 import paige.navic.ui.screen.ArtistsScreen
 import paige.navic.ui.screen.LibraryScreen
 import paige.navic.ui.screen.PlaylistsScreen

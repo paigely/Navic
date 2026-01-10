@@ -1,4 +1,4 @@
-package paige.navic.ui.component
+package paige.navic.ui.component.common
 
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
