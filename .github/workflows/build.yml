@@ -1,4 +1,4 @@
-name: Build debug variants
+name: Build Navic
 
 on:
   push:
@@ -33,11 +33,11 @@ jobs:
           RELEASE: true
         run: |
           echo "${{ secrets.keystore }}" | base64 -d > release.keystore
-          ./gradlew :app:packageRelease --stacktrace
+          ./gradlew :composeApp:packageRelease --stacktrace
           rm release.keystore
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v6
         with:
           name: navic-release
-          path: composeApp/build/outputs/apk/debug/*-release.apk
+          path: composeApp/build/outputs/apk/release/*-release.apk
