@@ -2,6 +2,15 @@ name: Build Navic
 
 on:
   push:
+    branches:
+      - master
+    paths:
+      - composeApp
+      - gradle
+      - iosApp
+      - subsonic
+      - build.gradle.kts
+      - settings.gradle.kts
   workflow_dispatch:
 
 concurrency:
