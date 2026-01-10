@@ -3,7 +3,15 @@
 [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/paigely/Navic/total)](https://github.com/paigely/Navic/releases)
 [![GitHub License](https://img.shields.io/github/license/paigely/Navic?color=%23C96FAD)](https://github.com/paigely/Navic/blob/master/LICENSE)
 
-Material 3 expressive Navidrome/subsonic client for iOS and Android
+Navidrome client for Android and iOS with Material 3 Expressive design
+
+### Features
+* Intuitive and familiar UI
+* Customizable, many settings
+* Fast and performant
+* Integrates into your system, shows in Android quick settings and iOS lock screen
+* Feature rich, implements most subsonic APIs
+* Open source
 
 ## Download
 Visit [releases](https://github.com/paigely/Navic/releases) and get the latest `.apk` or `.ipa`.
