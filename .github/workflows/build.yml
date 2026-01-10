@@ -41,4 +41,4 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: navic-release
-          path: composeApp/build/outputs/apk/release/*-release.apk
+          path: composeApp/build/outputs/apk/release/*.apk

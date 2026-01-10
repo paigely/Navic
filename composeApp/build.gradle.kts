@@ -115,6 +115,15 @@ android {
 		}
 	}
 
+	applicationVariants.all {
+		outputs.all {
+			val output = this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
+			val buildType = buildType.name
+			val versionName = versionName ?: "unspecified"
+			output.outputFileName = "navic-${buildType}-${versionName}.apk"
+		}
+	}
+
 	androidComponents {
 		onVariants(selector().withBuildType("release")) {
 			it.packaging.resources.excludes.apply {
