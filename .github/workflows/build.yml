@@ -1,0 +1,44 @@
+name: Build Navic
+
+on:
+  push:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build with Gradle
+        env:
+          SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          SIGNING_STORE_FILE: ${{ github.workspace }}/release.keystore
+          RELEASE: true
+        run: |
+          echo "${{ secrets.KEYSTORE }}" | base64 -d > release.keystore
+          ./gradlew :composeApp:packageRelease --stacktrace
+          rm release.keystore
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: navic-release
+          path: composeApp/build/outputs/apk/release/*.apk

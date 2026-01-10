@@ -8,3 +8,6 @@ indent_style = tab
 insert_final_newline = false
 max_line_length = 100
 tab_width = 4
+
+[*.yml]
+tab_width = 2
