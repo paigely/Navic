@@ -60,7 +60,8 @@ kotlin {
 			implementation(libs.androidx.media3.ui)
 		}
 		iosMain.dependencies {
-			implementation(libs.ktor.client.darwin
+			implementation(
+				libs.ktor.client.darwin
 			)
 		}
 	}
@@ -83,6 +84,15 @@ android {
 		}
 	}
 
+	signingConfigs {
+		create("release") {
+			keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+			keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+			storeFile = System.getenv("SIGNING_STORE_FILE")?.let(::File)
+			storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+		}
+	}
+
 	buildTypes {
 		val isRelease = System.getenv("RELEASE")?.toBoolean() ?: false
 		val hasReleaseSigning = System.getenv("SIGNING_STORE_PASSWORD")?.isNotEmpty() == true
@@ -102,15 +112,6 @@ android {
 				getDefaultProguardFile("proguard-android-optimize.txt"),
 				"proguard-rules.pro"
 			)
-		}
-	}
-
-	signingConfigs {
-		create("release") {
-			keyAlias = System.getenv("SIGNING_KEY_ALIAS")
-			keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
-			storeFile = System.getenv("SIGNING_STORE_FILE")?.let(::File)
-			storePassword = System.getenv("SIGNING_STORE_PASSWORD")
 		}
 	}
 
