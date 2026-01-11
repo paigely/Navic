@@ -1,0 +1,59 @@
+<resources>
+	<string name="app_name" translatable="false">Navic</string>
+
+	<string name="title_library">Bibliothek</string>
+	<string name="title_playlists">Playlists</string>
+	<string name="title_settings">Einstellungen</string>
+	<string name="title_search">Suche</string>
+	<string name="title_appearance">Erscheinungsbild</string>
+	<string name="title_delete_playlist">Playlist löschen?</string>
+	<string name="title_delete_share">Freigabe löschen?</string>
+	<string name="title_create_share">Freigeben</string>
+	<string name="title_albums">Alben</string>
+	<string name="title_songs">Lieder</string>
+	<string name="title_artists">Künstler</string>
+
+	<string name="option_system_font">Systemschriftart verwenden</string>
+	<string name="option_short_navigation_bar">Kurze Navigationsleiste verwenden</string>
+	<string name="option_round_album_covers">Abgerundete Covergrafiken</string>
+	<string name="option_navbar_tab_positions">Registerkartenpositionen bearbeiten</string>
+	<string name="option_share_expires">Läuft ab</string>
+	<string name="option_account_navidrome_instance">Instanz</string>
+	<string name="option_account_username">Benutzername</string>
+	<string name="option_account_password">Passwort</string>
+
+	<plurals name="count_songs">
+		<item quantity="one">%1$d Lied</item>
+		<item quantity="other">%1$d Lieder</item>
+	</plurals>
+
+	<plurals name="count_albums">
+		<item quantity="one">%1$d Album</item>
+		<item quantity="other">%1$d Alben</item>
+	</plurals>
+
+	<string name="action_ok">OK</string>
+	<string name="action_play">Abspielen</string>
+	<string name="action_shuffle">Zufallswiedergabe</string>
+	<string name="action_delete">Löschen</string>
+	<string name="action_cancel">Abbrechen</string>
+	<string name="action_share">Teilen</string>
+	<string name="action_star">Mit Stern markieren</string>
+	<string name="action_remove_star">Stern entfernen</string>
+	<string name="action_navigate_back">Zurück</string>
+	<string name="action_log_out">Abmelden</string>
+	<string name="action_log_in">Anmelden</string>
+	<string name="action_clear_search">Suche löschen</string>
+
+	<string name="notice_deleted_playlist">Playlist gelöscht.</string>
+	<string name="notice_deleted_share">Freigabe gelöscht.</string>
+	<string name="notice_copied">In die Zwischenablage kopiert.</string>
+	<string name="notice_expiry">Läuft in %1$s ab.</string>
+
+	<string name="info_action_is_permanent">Dies kann nicht rückgängig gemacht werden!</string>
+	<string name="info_error">Etwas ist schiefgelaufen.</string>
+	<string name="info_error_show">Details anzeigen</string>
+	<string name="info_error_hide">Details ausblenden</string>
+	<string name="info_unknown_album">Unbekanntes Album</string>
+	<string name="info_unknown_artist">Unbekannter Künstler</string>
+</resources>
