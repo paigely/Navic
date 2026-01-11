@@ -9,9 +9,10 @@ plugins {
 }
 
 kotlin {
+	@Suppress("DEPRECATION")
 	androidTarget {
 		compilerOptions {
-			jvmTarget.set(JvmTarget.JVM_11)
+			jvmTarget.set(JvmTarget.JVM_17)
 		}
 	}
 
@@ -77,11 +78,6 @@ android {
 		versionCode = 1
 		versionName = "1.0.0-alpha03"
 	}
-	packaging {
-		resources {
-			excludes += "/META-INF/{AL2.0,LGPL2.1}"
-		}
-	}
 
 	signingConfigs {
 		create("release") {
@@ -108,8 +104,7 @@ android {
 			isShrinkResources = true
 			signingConfig = signingConfigs.getByName(if (hasReleaseSigning) "release" else "debug")
 			proguardFiles(
-				getDefaultProguardFile("proguard-android-optimize.txt"),
-				"proguard-rules.pro"
+				getDefaultProguardFile("proguard-android-optimize.txt")
 			)
 		}
 	}
@@ -126,12 +121,9 @@ android {
 	androidComponents {
 		onVariants(selector().withBuildType("release")) {
 			it.packaging.resources.excludes.apply {
-				// Debug metadata
 				add("/**/*.version")
 				add("/kotlin-tooling-metadata.json")
-				// Kotlin debugging (https://github.com/Kotlin/kotlinx.coroutines/issues/2274)
 				add("/DebugProbesKt.bin")
-				// Reflection symbol list (https://stackoverflow.com/a/41073782/13964629)
 				add("/**/*.kotlin_builtins")
 			}
 		}
@@ -139,23 +131,19 @@ android {
 
 	packaging {
 		resources {
-			// okhttp3 is used by some lib (no cookies so publicsuffixes.gz can be dropped)
 			excludes += "/okhttp3/**"
-
-			// Remnants of smali/baksmali lib
 			excludes += "/*.properties"
 			excludes += "/org/antlr/**"
 			excludes += "/com/android/tools/smali/**"
 			excludes += "/org/eclipse/jgit/**"
-
-			// bouncycastle
 			excludes += "/META-INF/versions/9/OSGI-INF/MANIFEST.MF"
 			excludes += "/org/bouncycastle/**"
+			excludes += "/META-INF/{AL2.0,LGPL2.1}"
 		}
 	}
 
 	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_11
-		targetCompatibility = JavaVersion.VERSION_11
+		sourceCompatibility = JavaVersion.VERSION_17
+		targetCompatibility = JavaVersion.VERSION_17
 	}
 }
