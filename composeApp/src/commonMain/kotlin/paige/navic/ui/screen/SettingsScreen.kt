@@ -1,7 +1,9 @@
 package paige.navic.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -17,7 +19,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import dev.burnoo.compose.remembersetting.rememberFloatSetting
 import navic.composeapp.generated.resources.Res
@@ -34,6 +38,7 @@ import org.jetbrains.compose.resources.vectorResource
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
 import paige.navic.ui.component.dialog.NavtabsDialog
+import paige.navic.ui.theme.mapleMono
 
 @Composable
 fun ThemeSettings() {
@@ -79,14 +84,26 @@ fun ThemeSettings() {
 			}
 			FormRow {
 				Column(Modifier.fillMaxWidth()) {
-					Text(stringResource(Res.string.option_cover_art_size))
+					Row(
+						modifier = Modifier.fillMaxWidth(),
+						horizontalArrangement = Arrangement.SpaceBetween
+					) {
+						Text(stringResource(Res.string.option_cover_art_size))
+						Text(
+							"$artGridSize",
+							fontFamily = mapleMono(),
+							fontWeight = FontWeight(400),
+							fontSize = 13.sp,
+							color = MaterialTheme.colorScheme.onSurface.copy(alpha = .5f),
+						)
+					}
 					Slider(
 						value = artGridSize,
 						onValueChange = {
 							artGridSize = it
 						},
-						valueRange = 25f..400f,
-						steps = 12,
+						valueRange = 50f..500f,
+						steps = 8,
 					)
 				}
 			}
