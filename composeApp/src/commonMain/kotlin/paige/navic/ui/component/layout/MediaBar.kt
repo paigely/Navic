@@ -33,6 +33,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
@@ -43,7 +44,9 @@ import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
@@ -65,16 +68,29 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 import ir.mahozad.multiplatform.wavyslider.material3.WaveHeight
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_add_to_playlist
+import navic.composeapp.generated.resources.action_more
+import navic.composeapp.generated.resources.action_shuffle
+import navic.composeapp.generated.resources.action_star
+import navic.composeapp.generated.resources.more_vert
 import navic.composeapp.generated.resources.pause
 import navic.composeapp.generated.resources.play_arrow
+import navic.composeapp.generated.resources.playlist_play
+import navic.composeapp.generated.resources.shuffle
 import navic.composeapp.generated.resources.skip_next
 import navic.composeapp.generated.resources.skip_previous
+import navic.composeapp.generated.resources.unstar
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayer
+import paige.navic.ui.component.common.Dropdown
+import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.screen.LyricsScreen
+import paige.subsonic.api.model.Album
+import paige.subsonic.api.model.Playlist
 
 private class MediaBarScope(
 	val player: MediaPlayer,
@@ -203,6 +219,7 @@ private fun MediaBarScope.PlayerView() {
 			visibilityThreshold = Dp.VisibilityThreshold
 		)
 	)
+	var moreShown by remember { mutableStateOf(false) }
 	Column(
 		Modifier.fillMaxSize(),
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -218,6 +235,52 @@ private fun MediaBarScope.PlayerView() {
 				verticalAlignment = Alignment.CenterVertically
 			) {
 				Info(rowScope = this@Row)
+				Box {
+					IconButton(onClick = {
+						moreShown = true
+					}) {
+						Icon(
+							vectorResource(Res.drawable.more_vert),
+							contentDescription = stringResource(Res.string.action_more)
+						)
+					}
+					Dropdown(
+						expanded = moreShown,
+						onDismissRequest = {
+							moreShown = false
+						}
+					) {
+						DropdownItem(
+							leadingIcon = Res.drawable.playlist_play,
+							text = Res.string.action_add_to_playlist
+						)
+						DropdownItem(
+							leadingIcon = Res.drawable.unstar,
+							text = Res.string.action_star
+						)
+						DropdownItem(
+							leadingIcon = Res.drawable.shuffle,
+							text = Res.string.action_shuffle,
+							onClick = {
+								moreShown = false
+								player.tracks?.let {
+									when (it) {
+										is Album -> player.play(
+											it.copy(
+												song = it.song?.shuffled()
+											), 0
+										)
+										is Playlist -> player.play(
+											it.copy(
+												entry = it.entry?.shuffled()
+											), 0
+										)
+									}
+								}
+							}
+						)
+					}
+				}
 			}
 			ProgressBar(expanded = true)
 		}
@@ -430,13 +493,7 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 		thumbColor = thumbColor,
 		activeTrackColor = thumbColor,
 		activeTickColor = activeTickColor,
-		inactiveTrackColor = inactiveTrackColor,
-		inactiveTickColor = Color.Unspecified,
-		disabledThumbColor = Color.Unspecified,
-		disabledActiveTrackColor = Color.Unspecified,
-		disabledActiveTickColor = Color.Unspecified,
-		disabledInactiveTrackColor = Color.Unspecified,
-		disabledInactiveTickColor = Color.Unspecified
+		inactiveTrackColor = inactiveTrackColor
 	)
 	with(sharedTransitionScope) {
 		WavySlider(

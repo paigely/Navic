@@ -45,6 +45,8 @@
 	<string name="action_log_out">Logout</string>
 	<string name="action_log_in">Login</string>
 	<string name="action_clear_search">Clear</string>
+	<string name="action_more">More</string>
+	<string name="action_add_to_playlist">Add to Playlist</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
 	<string name="notice_deleted_share">Deleted share.</string>

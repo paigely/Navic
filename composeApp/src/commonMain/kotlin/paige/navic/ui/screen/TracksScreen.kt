@@ -63,6 +63,8 @@ import paige.navic.ui.theme.mapleMono
 import paige.navic.ui.viewmodel.TracksViewModel
 import paige.navic.util.UiState
 import paige.navic.util.shimmerLoading
+import paige.subsonic.api.model.Album
+import paige.subsonic.api.model.Playlist
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
 import kotlin.time.Duration
@@ -226,7 +228,16 @@ private fun TracksScreenScope.Metadata() {
 		) { Text(stringResource(Res.string.action_play)) }
 		Button(
 			modifier = Modifier.width(120.dp),
-			onClick = {},
+			onClick = {
+				when (tracks) {
+					is Album -> player.play(tracks.copy(
+						song = tracks.song?.shuffled()
+					), 0)
+					is Playlist -> player.play(tracks.copy(
+						entry = tracks.entry?.shuffled()
+					), 0)
+				}
+			},
 			colors = ButtonDefaults.buttonColors(
 				containerColor = MaterialTheme.colorScheme.surfaceContainer,
 				contentColor = MaterialTheme.colorScheme.onSurface

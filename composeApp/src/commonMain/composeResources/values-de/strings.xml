@@ -45,6 +45,8 @@
 	<string name="action_log_out">Abmelden</string>
 	<string name="action_log_in">Anmelden</string>
 	<string name="action_clear_search">Suche löschen</string>
+	<string name="action_more">Mehr</string>
+	<string name="action_add_to_playlist">Zur Playlist hinzufügen</string>
 
 	<string name="notice_deleted_playlist">Playlist gelöscht.</string>
 	<string name="notice_deleted_share">Freigabe gelöscht.</string>
