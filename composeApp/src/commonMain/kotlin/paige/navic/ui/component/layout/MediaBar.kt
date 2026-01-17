@@ -25,10 +25,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
@@ -39,7 +44,9 @@ import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
@@ -58,18 +65,38 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
+import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import ir.mahozad.multiplatform.wavyslider.material3.WaveHeight
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_add_to_playlist
+import navic.composeapp.generated.resources.action_more
+import navic.composeapp.generated.resources.action_shuffle
+import navic.composeapp.generated.resources.action_star
+import navic.composeapp.generated.resources.more_vert
 import navic.composeapp.generated.resources.pause
 import navic.composeapp.generated.resources.play_arrow
+import navic.composeapp.generated.resources.playlist_play
+import navic.composeapp.generated.resources.shuffle
 import navic.composeapp.generated.resources.skip_next
 import navic.composeapp.generated.resources.skip_previous
+import navic.composeapp.generated.resources.unstar
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import paige.navic.shared.Ctx
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
+import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayer
+import paige.navic.ui.component.common.Dropdown
+import paige.navic.ui.component.common.DropdownItem
+import paige.navic.ui.screen.LyricsScreen
+import paige.subsonic.api.model.Album
+import paige.subsonic.api.model.Playlist
+
+object MediaBarDefaults {
+	val height = 117.9.dp
+	val heightNoSeekbar = 75.dp
+}
 
 private class MediaBarScope(
 	val player: MediaPlayer,
@@ -105,7 +132,10 @@ fun MediaBar(expanded: Boolean) {
 
 @Composable
 private fun MediaBarScope.MainContent() {
-	Column(Modifier.height(117.9.dp)) {
+	var alwaysShowSeekbar by rememberBooleanSetting("alwaysShowSeekbar", true)
+	Column(Modifier.height(if (alwaysShowSeekbar)
+		MediaBarDefaults.height
+	else MediaBarDefaults.heightNoSeekbar)) {
 		Row(
 			modifier = Modifier.padding(
 				top = 15.dp
@@ -120,23 +150,17 @@ private fun MediaBarScope.MainContent() {
 			Info(rowScope = this@Row)
 			Controls(expanded = false)
 		}
-		ProgressBar(expanded = false)
+		if (alwaysShowSeekbar) {
+			ProgressBar(expanded = false)
+		}
 	}
 }
 
 @Composable
 private fun MediaBarScope.DetailsContent() {
-	val paused by player.isPaused
-	val artSize by animateDpAsState(
-		if (paused)
-			256.dp
-		else 290.dp,
-		animationSpec = spring(
-			dampingRatio = Spring.DampingRatioLowBouncy,
-			stiffness = Spring.StiffnessLow,
-			visibilityThreshold = Dp.VisibilityThreshold
-		)
-	)
+	val pagerState = rememberPagerState(pageCount = { 2 })
+	val currentIndex by player.currentIndex
+	val currentTrack = player.tracks?.tracks?.getOrNull(currentIndex)
 	Box(Modifier.fillMaxSize()) {
 		AlbumArt(
 			modifier = Modifier
@@ -157,29 +181,126 @@ private fun MediaBarScope.DetailsContent() {
 					)
 				}
 		)
-		Column(
-			Modifier.fillMaxSize(),
-			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
-		) {
-			AlbumArtContainer(
-				modifier = Modifier.widthIn(0.dp, artSize).aspectRatio(1f),
-				expanded = true
-			)
-			Column(Modifier.padding(15.dp)) {
-				Row(
-					Modifier.padding(15.dp, 0.dp),
-					verticalAlignment = Alignment.CenterVertically
-				) {
-					Info(rowScope = this@Row)
-				}
-				ProgressBar(expanded = true)
+		HorizontalPager(
+			state = pagerState,
+			modifier = Modifier.fillMaxSize()
+		) { page ->
+			when (page) {
+				0 -> PlayerView()
+				1 -> LyricsScreen(currentTrack)
 			}
-			Controls(expanded = true)
+		}
+		Row(
+			Modifier
+				.wrapContentHeight()
+				.fillMaxWidth()
+				.align(Alignment.BottomCenter)
+				.padding(bottom = 8.dp),
+			horizontalArrangement = Arrangement.Center
+		) {
+			repeat(pagerState.pageCount) { iteration ->
+				val color by animateColorAsState(
+					if (pagerState.currentPage == iteration)
+						MaterialTheme.colorScheme.onSurface
+					else MaterialTheme.colorScheme.onSurface.copy(alpha = .25f)
+				)
+				Box(
+					modifier = Modifier
+						.padding(4.dp)
+						.clip(CircleShape)
+						.background(color)
+						.size(8.dp)
+				)
+			}
 		}
 	}
 }
 
+//region views
+@Composable
+private fun MediaBarScope.PlayerView() {
+	val paused by player.isPaused
+	val artSize by animateDpAsState(
+		if (paused)
+			256.dp
+		else 290.dp,
+		animationSpec = spring(
+			dampingRatio = Spring.DampingRatioLowBouncy,
+			stiffness = Spring.StiffnessLow,
+			visibilityThreshold = Dp.VisibilityThreshold
+		)
+	)
+	var moreShown by remember { mutableStateOf(false) }
+	Column(
+		Modifier.fillMaxSize(),
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
+	) {
+		AlbumArtContainer(
+			modifier = Modifier.widthIn(0.dp, artSize).aspectRatio(1f),
+			expanded = true
+		)
+		Column(Modifier.padding(15.dp)) {
+			Row(
+				Modifier.padding(15.dp, 0.dp),
+				verticalAlignment = Alignment.CenterVertically
+			) {
+				Info(rowScope = this@Row)
+				Box {
+					IconButton(onClick = {
+						moreShown = true
+					}) {
+						Icon(
+							vectorResource(Res.drawable.more_vert),
+							contentDescription = stringResource(Res.string.action_more)
+						)
+					}
+					Dropdown(
+						expanded = moreShown,
+						onDismissRequest = {
+							moreShown = false
+						}
+					) {
+						DropdownItem(
+							leadingIcon = Res.drawable.playlist_play,
+							text = Res.string.action_add_to_playlist
+						)
+						DropdownItem(
+							leadingIcon = Res.drawable.unstar,
+							text = Res.string.action_star
+						)
+						DropdownItem(
+							leadingIcon = Res.drawable.shuffle,
+							text = Res.string.action_shuffle,
+							onClick = {
+								moreShown = false
+								player.tracks?.let {
+									when (it) {
+										is Album -> player.play(
+											it.copy(
+												song = it.song?.shuffled()
+											), 0
+										)
+										is Playlist -> player.play(
+											it.copy(
+												entry = it.entry?.shuffled()
+											), 0
+										)
+									}
+								}
+							}
+						)
+					}
+				}
+			}
+			ProgressBar(expanded = true)
+		}
+		Controls(expanded = true)
+	}
+}
+//endregion views
+
+//region components
 @Composable
 private fun MediaBarScope.AlbumArtContainer(
 	modifier: Modifier = Modifier,
@@ -383,13 +504,7 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 		thumbColor = thumbColor,
 		activeTrackColor = thumbColor,
 		activeTickColor = activeTickColor,
-		inactiveTrackColor = inactiveTrackColor,
-		inactiveTickColor = Color.Unspecified,
-		disabledThumbColor = Color.Unspecified,
-		disabledActiveTrackColor = Color.Unspecified,
-		disabledActiveTickColor = Color.Unspecified,
-		disabledInactiveTrackColor = Color.Unspecified,
-		disabledInactiveTickColor = Color.Unspecified
+		inactiveTrackColor = inactiveTrackColor
 	)
 	with(sharedTransitionScope) {
 		WavySlider(
@@ -417,3 +532,4 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 		)
 	}
 }
+//endregion components

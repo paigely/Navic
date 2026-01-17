@@ -44,7 +44,8 @@ androidx-media3-session = { module = "androidx.media3:media3-session", version.r
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpalette" }
 kmpalette-extensions-network = { module = "com.kmpalette:extensions-network", version.ref = "kmpalette" }
-materialKolor = { module = "com.materialkolor:material-kolor", version = "5.0.0-alpha04" }
+materialKolor = { module = "com.materialkolor:material-kolor", version = "5.0.0-alpha05" }
+composePipette = { module = "dev.zt64.compose.pipette:compose-pipette", version = "2.0.0-beta03" }
 multiplatformSettings-noArg = { module = "com.russhwolf:multiplatform-settings-no-arg", version = "1.3.0" }
 multiplatformSettings-remember = { module = "dev.burnoo:compose-remember-setting", version = "1.0.3" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version = "3.0.0" }

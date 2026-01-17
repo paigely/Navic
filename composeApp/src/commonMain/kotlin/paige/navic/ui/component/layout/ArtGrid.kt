@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.burnoo.compose.remembersetting.rememberBooleanSetting
+import dev.burnoo.compose.remembersetting.rememberFloatSetting
 import paige.navic.LocalImageBuilder
 import paige.navic.util.shimmerLoading
 
@@ -35,9 +35,10 @@ fun ArtGrid(
 	modifier: Modifier = Modifier,
 	content: LazyGridScope.() -> Unit
 ) {
+	var artGridSize by rememberFloatSetting("artGridSize", 150f)
 	LazyVerticalGrid(
 		modifier = modifier.fillMaxSize(),
-		columns = GridCells.Adaptive(150.dp),
+		columns = GridCells.Adaptive(artGridSize.dp),
 		contentPadding = PaddingValues(
 			start = 16.dp,
 			top = 16.dp,
@@ -53,22 +54,16 @@ fun ArtGrid(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ArtGridItem(
-	modifier: Modifier = Modifier,
+	imageModifier: Modifier = Modifier,
 	imageUrl: String?,
 	title: String,
 	subtitle: String
 ) {
 	val imageBuilder = LocalImageBuilder.current
-	var roundCoverArt by rememberBooleanSetting("roundCoverArt", true)
+	var artGridRounding by rememberFloatSetting("artGridRounding", 16f)
 	Column(
 		modifier = Modifier
-			.clip(
-				ContinuousRoundedRectangle(
-					if (roundCoverArt) 16.dp else 0.dp
-				)
-			)
 			.fillMaxWidth()
-			.then(modifier)
 	) {
 		AsyncImage(
 			model = imageBuilder
@@ -82,11 +77,10 @@ fun ArtGridItem(
 				.fillMaxWidth()
 				.aspectRatio(1f)
 				.clip(
-					ContinuousRoundedRectangle(
-						if (roundCoverArt) 16.dp else 0.dp
-					)
+					ContinuousRoundedRectangle(artGridRounding.dp)
 				)
 				.background(MaterialTheme.colorScheme.surfaceContainer)
+				.then(imageModifier)
 		)
 		Text(
 			text = title,

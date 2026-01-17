@@ -20,7 +20,7 @@ fun Form(
 ) {
 	Column(
 		modifier = modifier
-			.padding(bottom = 8.dp)
+			.padding(bottom = 24.dp)
 			.clip(ContinuousRoundedRectangle(rounding)),
 		verticalArrangement = Arrangement.spacedBy(spacing)
 	) {

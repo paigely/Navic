@@ -26,9 +26,6 @@ import org.jetbrains.compose.resources.pluralStringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.Tracks
-import paige.navic.ui.component.layout.ArtGrid
-import paige.navic.ui.component.layout.ArtGridItem
-import paige.navic.ui.component.layout.ArtGridPlaceholder
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.ErrorBox
@@ -36,6 +33,9 @@ import paige.navic.ui.component.common.RefreshBox
 import paige.navic.ui.component.dialog.DeletionDialog
 import paige.navic.ui.component.dialog.DeletionEndpoint
 import paige.navic.ui.component.dialog.ShareDialog
+import paige.navic.ui.component.layout.ArtGrid
+import paige.navic.ui.component.layout.ArtGridItem
+import paige.navic.ui.component.layout.ArtGridPlaceholder
 import paige.navic.ui.viewmodel.PlaylistsViewModel
 import paige.navic.util.UiState
 import kotlin.time.Duration
@@ -70,7 +70,7 @@ fun PlaylistsScreen(
 					items(playlists) { playlist ->
 						Box {
 							ArtGridItem(
-								modifier = Modifier.combinedClickable(
+								imageModifier = Modifier.combinedClickable(
 									onClick = {
 										ctx.clickSound()
 										backStack.add(Tracks(playlist))

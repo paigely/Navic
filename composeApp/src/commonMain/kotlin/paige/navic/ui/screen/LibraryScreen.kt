@@ -30,14 +30,14 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.Tracks
-import paige.navic.ui.component.layout.ArtGrid
-import paige.navic.ui.component.layout.ArtGridItem
-import paige.navic.ui.component.layout.ArtGridPlaceholder
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.ErrorBox
 import paige.navic.ui.component.common.RefreshBox
 import paige.navic.ui.component.dialog.ShareDialog
+import paige.navic.ui.component.layout.ArtGrid
+import paige.navic.ui.component.layout.ArtGridItem
+import paige.navic.ui.component.layout.ArtGridPlaceholder
 import paige.navic.ui.viewmodel.LibraryViewModel
 import paige.navic.util.UiState
 import kotlin.time.Duration
@@ -69,7 +69,7 @@ fun LibraryScreen(viewModel: LibraryViewModel = viewModel { LibraryViewModel() }
 					items(it.data) { album ->
 						Box {
 							ArtGridItem(
-								modifier = Modifier.combinedClickable(
+								imageModifier = Modifier.combinedClickable(
 									onClick = {
 										ctx.clickSound()
 										backStack.add(Tracks(album))

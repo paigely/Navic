@@ -28,12 +28,12 @@ import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.pluralStringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.ui.component.layout.ArtGridItem
-import paige.navic.ui.component.layout.ArtGridPlaceholder
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.ErrorBox
 import paige.navic.ui.component.common.RefreshBox
+import paige.navic.ui.component.layout.ArtGridItem
+import paige.navic.ui.component.layout.ArtGridPlaceholder
 import paige.navic.ui.viewmodel.ArtistsViewModel
 import paige.navic.util.UiState
 
@@ -90,7 +90,7 @@ fun ArtistsScreen(
 							items(artists) { artist ->
 								Box {
 									ArtGridItem(
-										modifier = Modifier.combinedClickable(
+										imageModifier = Modifier.combinedClickable(
 											onClick = {},
 											onLongClick = { viewModel.selectArtist(artist) }
 										),

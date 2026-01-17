@@ -1,5 +1,6 @@
 package paige.navic.ui.component.layout
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -38,19 +39,23 @@ import navic.composeapp.generated.resources.arrow_back
 import navic.composeapp.generated.resources.logout
 import navic.composeapp.generated.resources.search
 import navic.composeapp.generated.resources.settings
+import navic.composeapp.generated.resources.title_appearance
+import navic.composeapp.generated.resources.title_behaviour
 import navic.composeapp.generated.resources.title_library
 import navic.composeapp.generated.resources.title_playlists
 import navic.composeapp.generated.resources.title_settings
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import paige.navic.shared.Ctx
 import paige.navic.Library
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.Playlists
 import paige.navic.Search
 import paige.navic.Settings
+import paige.navic.SettingsAppearance
+import paige.navic.SettingsBehaviour
 import paige.navic.data.model.User
+import paige.navic.shared.Ctx
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.dialog.LoginDialog
@@ -79,6 +84,8 @@ fun TopBar(viewModel: LoginViewModel = viewModel { LoginViewModel() }) {
 		Library -> Res.string.title_library
 		Playlists -> Res.string.title_playlists
 		Settings -> Res.string.title_settings
+		SettingsAppearance -> Res.string.title_appearance
+		SettingsBehaviour -> Res.string.title_behaviour
 		else -> null
 	}
 
@@ -97,13 +104,22 @@ fun TopBar(viewModel: LoginViewModel = viewModel { LoginViewModel() }) {
 	) {
 		TopAppBar(
 			title = {
-				title?.let {
-					Text(stringResource(title), style = MaterialTheme.typography.headlineMedium)
+				AnimatedContent(
+					targetState = title,
+					label = "TitleAnimation"
+				) { animatedTitle ->
+					animatedTitle?.let {
+						Text(
+							text = stringResource(it),
+							style = MaterialTheme.typography.headlineSmall
+						)
+					}
 				}
 			},
 			navigationIcon = { NavigationIcon() },
 			actions = {
 				Actions(
+					onLogOut = { viewModel.logout() },
 					onSetShowLogin = { showLogin = it }
 				)
 			},
@@ -123,25 +139,34 @@ fun TopBar(viewModel: LoginViewModel = viewModel { LoginViewModel() }) {
 
 @Composable
 private fun TopBarScope.NavigationIcon() {
-	if (backStack.size <= 1 || backStack.last() == Search) return
-	IconButton(
-		colors = IconButtonDefaults.iconButtonVibrantColors(
-			containerColor = MaterialTheme.colorScheme.surfaceContainer
-		),
-		onClick = {
-			ctx.clickSound()
-			backStack.removeLast()
-		}
+	AnimatedContent(
+		backStack.size > 1 && backStack.last() != Search
 	) {
-		Icon(
-			imageVector = vectorResource(Res.drawable.arrow_back),
-			contentDescription = stringResource(Res.string.action_navigate_back)
-		)
+		if (it) {
+			IconButton(
+				modifier = Modifier.padding(
+					horizontal = 12.dp
+				),
+				colors = IconButtonDefaults.iconButtonVibrantColors(
+					containerColor = MaterialTheme.colorScheme.surfaceContainer
+				),
+				onClick = {
+					ctx.clickSound()
+					backStack.removeLast()
+				}
+			) {
+				Icon(
+					imageVector = vectorResource(Res.drawable.arrow_back),
+					contentDescription = stringResource(Res.string.action_navigate_back)
+				)
+			}
+		}
 	}
 }
 
 @Composable
 private fun TopBarScope.Actions(
+	onLogOut: () -> Unit,
 	onSetShowLogin: (shown: Boolean) -> Unit
 ) {
 	val user = (loginState as? LoginState.Success)?.data
@@ -204,6 +229,7 @@ private fun TopBarScope.Actions(
 						text = Res.string.action_log_out,
 						onClick = {
 							ctx.clickSound()
+							onLogOut()
 							onSetShowLogin(false)
 						},
 						leadingIcon = Res.drawable.logout

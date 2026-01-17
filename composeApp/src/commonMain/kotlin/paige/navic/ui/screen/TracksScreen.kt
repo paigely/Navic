@@ -40,7 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.burnoo.compose.remembersetting.rememberBooleanSetting
+import dev.burnoo.compose.remembersetting.rememberFloatSetting
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_remove_star
@@ -63,6 +63,8 @@ import paige.navic.ui.theme.mapleMono
 import paige.navic.ui.viewmodel.TracksViewModel
 import paige.navic.util.UiState
 import paige.navic.util.shimmerLoading
+import paige.subsonic.api.model.Album
+import paige.subsonic.api.model.Playlist
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
 import kotlin.time.Duration
@@ -177,7 +179,7 @@ fun TracksScreen(
 
 @Composable
 private fun TracksScreenScope.Metadata() {
-	var roundCoverArt by rememberBooleanSetting("roundCoverArt", true)
+	var artGridRounding by rememberFloatSetting("artGridRounding", 16f)
 	AsyncImage(
 		model = tracks.coverArt,
 		contentDescription = tracks.title,
@@ -191,9 +193,7 @@ private fun TracksScreenScope.Metadata() {
 			)
 			.aspectRatio(1f)
 			.clip(
-				ContinuousRoundedRectangle(
-					if (roundCoverArt) 16.dp else 0.dp
-				)
+				ContinuousRoundedRectangle(artGridRounding.dp)
 			)
 			.background(MaterialTheme.colorScheme.surfaceContainer)
 	)
@@ -226,7 +226,16 @@ private fun TracksScreenScope.Metadata() {
 		) { Text(stringResource(Res.string.action_play)) }
 		Button(
 			modifier = Modifier.width(120.dp),
-			onClick = {},
+			onClick = {
+				when (tracks) {
+					is Album -> player.play(tracks.copy(
+						song = tracks.song?.shuffled()
+					), 0)
+					is Playlist -> player.play(tracks.copy(
+						entry = tracks.entry?.shuffled()
+					), 0)
+				}
+			},
 			colors = ButtonDefaults.buttonColors(
 				containerColor = MaterialTheme.colorScheme.surfaceContainer,
 				contentColor = MaterialTheme.colorScheme.onSurface

@@ -42,12 +42,14 @@ kotlin {
 			implementation(libs.coil.network.ktor3)
 			implementation(libs.capsule)
 			implementation(libs.wavySlider)
+			implementation(libs.composePipette)
+			implementation(libs.materialKolor)
+			implementation(libs.ktor.client.content.negotiation)
 			implementation(libs.ktor.serialization.json)
 			implementation(libs.jetbrains.navigation3.ui)
 			implementation(libs.kmpalette.core)
 			implementation(libs.kmpalette.extensions.network)
 			implementation(libs.ktor.client.core)
-			implementation(libs.materialKolor)
 			implementation(libs.multiplatformSettings.noArg)
 			implementation(libs.multiplatformSettings.remember)
 			implementation(libs.reorderable)
@@ -76,7 +78,7 @@ android {
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
 		versionCode = 1
-		versionName = "1.0.0-alpha03"
+		versionName = "1.0.0-alpha04"
 	}
 
 	signingConfigs {

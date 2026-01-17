@@ -32,6 +32,7 @@ import com.kmpalette.rememberDominantColorState
 import com.kyant.capsule.ContinuousRoundedRectangle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
+import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.Url
@@ -50,8 +51,7 @@ fun MainScaffold(
 	val focusManager = LocalFocusManager.current
 	val scaffoldState = rememberBottomSheetScaffoldState()
 	val localDensity = LocalDensity.current
-	var sheetHeightDp by remember { mutableStateOf(0.dp) }
-	val expanded = sheetHeightDp > 350.dp
+	var expanded by remember { mutableStateOf(false) }
 	val networkLoader = rememberNetworkLoader(HttpClient().config {
 		install(HttpTimeout) {
 			requestTimeoutMillis = 60_000
@@ -66,6 +66,7 @@ fun MainScaffold(
 		isDark = isSystemInDarkTheme(),
 		specVersion = ColorSpec.SpecVersion.SPEC_2025,
 	) else null
+	var alwaysShowSeekbar by rememberBooleanSetting("alwaysShowSeekbar", true)
 
 	LaunchedEffect(coverArt) {
 		coverArt?.let {
@@ -78,13 +79,15 @@ fun MainScaffold(
 			NavicTheme {
 				SnackbarHost(
 					hostState = snackbarState,
-					modifier = Modifier.padding(bottom = 117.9.dp)
+					modifier = Modifier.padding(bottom = if (alwaysShowSeekbar)
+						MediaBarDefaults.height
+					else MediaBarDefaults.heightNoSeekbar)
 				)
 			}
 		},
 		topBar = topBar,
 		bottomBar = {
-			NavicTheme(scheme) {
+			NavicTheme(scheme, forceColorScheme = expanded) {
 				bottomBar()
 			}
 		}
@@ -100,18 +103,21 @@ fun MainScaffold(
 				},
 			sheetDragHandle = {},
 			scaffoldState = scaffoldState,
-			sheetPeekHeight = 117.9.dp,
+			sheetPeekHeight = if (alwaysShowSeekbar)
+				MediaBarDefaults.height
+			else MediaBarDefaults.heightNoSeekbar,
 			sheetMaxWidth = Dp.Unspecified,
 			sheetShape = ContinuousRoundedRectangle(24.dp, 24.dp, 0.dp, 0.dp),
 			sheetContent = {
-				NavicTheme(scheme) {
+				NavicTheme(scheme, forceColorScheme = expanded) {
 					Box(
 						modifier = Modifier
 							.background(MaterialTheme.colorScheme.surfaceContainer)
 							.fillMaxWidth()
 							.onGloballyPositioned {
-								sheetHeightDp =
-									with(localDensity) { it.boundsInWindow().height.toDp() }
+								expanded = with(localDensity) {
+									it.boundsInWindow().height.toDp() > 350.dp
+								}
 							}
 					) {
                         MediaBar(expanded)

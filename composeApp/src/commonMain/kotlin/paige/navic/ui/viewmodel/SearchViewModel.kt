@@ -3,7 +3,6 @@ package paige.navic.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.data.repository.SearchRepository
@@ -15,8 +14,16 @@ class SearchViewModel(
 	private val _searchState = MutableStateFlow<UiState<List<Any>>>(UiState.Success(emptyList()))
 	val searchState = _searchState.asStateFlow()
 
-	private val _searchQuery = MutableStateFlow<String>("")
-	val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+	private val _searchQuery = MutableStateFlow("")
+	val searchQuery = _searchQuery.asStateFlow()
+
+	init {
+		viewModelScope.launch {
+			_searchQuery.collect {
+				refreshResults()
+			}
+		}
+	}
 
 	fun refreshResults() {
 		viewModelScope.launch {
@@ -32,7 +39,6 @@ class SearchViewModel(
 
 	fun search(query: String) {
 		_searchQuery.value = query
-		refreshResults()
 	}
 
 	fun clearSearch() {

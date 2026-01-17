@@ -39,6 +39,8 @@ import paige.navic.ui.screen.ArtistsScreen
 import paige.navic.ui.screen.LibraryScreen
 import paige.navic.ui.screen.PlaylistsScreen
 import paige.navic.ui.screen.SearchScreen
+import paige.navic.ui.screen.SettingsAppearanceScreen
+import paige.navic.ui.screen.SettingsBehaviourScreen
 import paige.navic.ui.screen.SettingsScreen
 import paige.navic.ui.screen.TracksScreen
 import paige.navic.ui.theme.NavicTheme
@@ -48,6 +50,8 @@ data object Library
 data object Playlists
 data object Artists
 data object Settings
+data object SettingsAppearance
+data object SettingsBehaviour
 data object Search
 data class Tracks(val partialCollection: TrackCollection)
 
@@ -121,6 +125,12 @@ fun App() {
 								}
 								entry<Settings> {
 									SettingsScreen()
+								}
+								entry<SettingsAppearance> {
+									SettingsAppearanceScreen()
+								}
+								entry<SettingsBehaviour> {
+									SettingsBehaviourScreen()
 								}
 								entry<Tracks>(metadata = ListDetailSceneStrategy.detailPane()) { key ->
 									TracksScreen(key.partialCollection)

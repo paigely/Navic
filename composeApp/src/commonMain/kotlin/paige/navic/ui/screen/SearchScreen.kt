@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.carousel.CarouselDefaults
 import androidx.compose.material3.carousel.CarouselItemScope
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
@@ -34,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -62,8 +65,8 @@ import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.Tracks
-import paige.navic.ui.component.layout.ArtGridPlaceholder
 import paige.navic.ui.component.common.ErrorBox
+import paige.navic.ui.component.layout.ArtGridPlaceholder
 import paige.navic.ui.viewmodel.SearchViewModel
 import paige.navic.util.UiState
 import paige.subsonic.api.model.Album
@@ -82,7 +85,7 @@ fun SearchScreen(
 		SearchTopBar(
 			query = query,
 			onQueryChange = {
-				viewModel.search(it.text)
+				viewModel.search(it)
 			}
 		)
 		AnimatedContent(state) {
@@ -131,13 +134,17 @@ private fun <T>SearchSection(
 	content: @Composable CarouselItemScope.(item: T) -> Unit
 ) {
 	if (items.isNotEmpty()) {
+		val state = rememberCarouselState { items.count() }
 		Column {
 			Text(
 				stringResource(title),
 				style = MaterialTheme.typography.headlineSmall
 			)
 			HorizontalMultiBrowseCarousel(
-				state = rememberCarouselState { items.count() },
+				state = state,
+				flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(
+					state = state
+				),
 				modifier = Modifier
 					.fillMaxWidth()
 					.wrapContentHeight()
@@ -159,6 +166,7 @@ private fun CarouselItemScope.SearchSectionItem(
 	onClick: () -> Unit = {}
 ) {
 	val ctx = LocalCtx.current
+	val focusManager = LocalFocusManager.current
 	AsyncImage(
 		model = image,
 		contentDescription = contentDescription,
@@ -167,6 +175,7 @@ private fun CarouselItemScope.SearchSectionItem(
 			.maskClip(ContinuousRoundedRectangle(15.dp))
 			.clickable {
 				ctx.clickSound()
+				focusManager.clearFocus(true)
 				onClick()
 			},
 		contentScale = ContentScale.Crop
@@ -176,19 +185,22 @@ private fun CarouselItemScope.SearchSectionItem(
 @Composable
 private fun SearchTopBar(
 	query: String,
-	onQueryChange: (TextFieldValue) -> Unit
+	onQueryChange: (String) -> Unit
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 
+	val focusManager = LocalFocusManager.current
 	val focusRequester = remember { FocusRequester() }
-	val queryValue = remember(query) {
-		mutableStateOf(
-			TextFieldValue(
-				query,
-				TextRange(query.length)
-			)
-		)
+
+	var textFieldValue by remember {
+		mutableStateOf(TextFieldValue(query, TextRange(query.length)))
+	}
+
+	LaunchedEffect(query) {
+		if (query != textFieldValue.text) {
+			textFieldValue = TextFieldValue(query, TextRange(query.length))
+		}
 	}
 
 	LaunchedEffect(Unit) {
@@ -207,6 +219,7 @@ private fun SearchTopBar(
 				.clickable(
 					onClick = {
 						ctx.clickSound()
+						focusManager.clearFocus(true)
 						backStack.removeLast()
 					}
 				),
@@ -226,15 +239,19 @@ private fun SearchTopBar(
 				.heightIn(min = 50.dp)
 				.background(MaterialTheme.colorScheme.surfaceContainer, ContinuousCapsule)
 				.focusRequester(focusRequester),
-			value = queryValue.value,
-			onValueChange = onQueryChange,
+			value = textFieldValue,
+			onValueChange = {
+				textFieldValue = it
+				onQueryChange(it.text)
+			},
 			placeholder = { Text(stringResource(Res.string.title_search)) },
 			trailingIcon = {
-				if (query.isNotEmpty()) {
+				if (textFieldValue.text.isNotEmpty()) {
 					IconButton(
 						onClick = {
 							ctx.clickSound()
-							onQueryChange(TextFieldValue())
+							textFieldValue = TextFieldValue("", TextRange(0))
+							onQueryChange("")
 						}
 					) {
 						Icon(
