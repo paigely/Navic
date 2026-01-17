@@ -14,16 +14,16 @@
 	<string name="title_songs">Lieder</string>
 	<string name="title_artists">Künstler</string>
 
-	<string name="subtitle_appearance">Customise how things look</string>
-	<string name="subtitle_behaviour">Change how things work</string>
-	<string name="subtitle_system_font">If not, uses Google Sans.</string>
+	<string name="subtitle_appearance">Passe das Aussehen an</string>
+	<string name="subtitle_behaviour">Ändere wie Dinge funktionieren</string>
+	<string name="subtitle_system_font">Falls nicht, wird Google Sans verwendet.</string>
 
 	<string name="option_system_font">Systemschriftart verwenden</string>
-	<string name="option_dynamic_colour">Use dynamic colour</string>
-	<string name="option_accent_colour">Accent colour</string>
+	<string name="option_dynamic_colour">Verwende dynamische Farben</string>
+	<string name="option_accent_colour">Akzentfarbe</string>
 	<string name="option_short_navigation_bar">Kurze Navigationsleiste verwenden</string>
-	<string name="option_always_show_seekbar">Always show seek bar</string>
-	<string name="option_cover_art_rounding">Cover artwork rounding</string>
+	<string name="option_always_show_seekbar">Immer Suchleiste anzeigen</string>
+	<string name="option_cover_art_rounding">Cover-Artwork-Abrundung</string>
 	<string name="option_cover_art_size">Albumcovergröße</string>
 	<string name="option_navbar_tab_positions">Registerkartenpositionen bearbeiten</string>
 	<string name="option_share_expires">Läuft ab</string>
