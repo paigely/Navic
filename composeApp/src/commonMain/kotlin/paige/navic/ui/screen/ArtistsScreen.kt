@@ -41,10 +41,6 @@ import paige.navic.util.UiState
 fun ArtistsScreen(
 	viewModel: ArtistsViewModel = viewModel { ArtistsViewModel() }
 ) {
-	LocalCtx.current
-	LocalNavStack.current
-	LocalHapticFeedback.current
-
 	val artistsState by viewModel.artistsState.collectAsState()
 	val selection by viewModel.selectedArtist.collectAsState()
 

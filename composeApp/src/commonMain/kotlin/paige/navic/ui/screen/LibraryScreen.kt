@@ -15,8 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
@@ -47,7 +45,6 @@ import kotlin.time.Duration
 fun LibraryScreen(viewModel: LibraryViewModel = viewModel { LibraryViewModel() }) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
-	val haptics = LocalHapticFeedback.current
 
 	val albumsState by viewModel.albumsState.collectAsState()
 	val selection by viewModel.selectedAlbum.collectAsState()
@@ -75,7 +72,6 @@ fun LibraryScreen(viewModel: LibraryViewModel = viewModel { LibraryViewModel() }
 										backStack.add(Tracks(album))
 									},
 									onLongClick = {
-										haptics.performHapticFeedback(HapticFeedbackType.LongPress)
 										viewModel.selectAlbum(album)
 									}
 								),

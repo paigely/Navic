@@ -13,8 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_delete
@@ -47,7 +45,6 @@ fun PlaylistsScreen(
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
-	val haptics = LocalHapticFeedback.current
 
 	val playlistsState by viewModel.playlistsState.collectAsState()
 	val selection by viewModel.selectedPlaylist.collectAsState()
@@ -76,7 +73,6 @@ fun PlaylistsScreen(
 										backStack.add(Tracks(playlist))
 									},
 									onLongClick = {
-										haptics.performHapticFeedback(HapticFeedbackType.LongPress)
 										viewModel.selectPlaylist(playlist)
 									}
 								),
