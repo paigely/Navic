@@ -1,0 +1,80 @@
+<resources>
+	<string name="app_name" translatable="false">Navic</string>
+
+	<string name="title_library">Libreria</string>
+	<string name="title_playlists">Playlist</string>
+	<string name="title_settings">Impostazioni</string>
+	<string name="title_search">Cerca</string>
+	<string name="title_appearance">Aspetto</string>
+	<string name="title_behaviour">Comportamento</string>
+	<string name="title_delete_playlist">Eliminare la playlist?</string>
+	<string name="title_delete_share">Eliminare la condivisione?</string>
+	<string name="title_create_share">Crea condivisione</string>
+	<string name="title_albums">Album</string>
+	<string name="title_songs">Brani</string>
+	<string name="title_artists">Artisti</string>
+
+	<string name="subtitle_appearance">Personalizza l'aspetto</string>
+	<string name="subtitle_behaviour">Modifica il comportamento</string>
+	<string name="subtitle_system_font">Altrimenti, usa Google Sans.</string>
+
+	<string name="option_system_font">Usa il font di sistema</string>
+	<string name="option_dynamic_colour">Usa colore dinamico</string>
+	<string name="option_accent_colour">Colore di accento</string>
+	<string name="option_short_navigation_bar">Barra di navigazione più bassa</string>
+	<string name="option_always_show_seekbar">Mostra la barra di avanzamento</string>
+	<string name="option_cover_art_rounding">Arrotondamento copertina</string>
+	<string name="option_cover_art_size">Dimensione copertina</string>
+	<string name="option_navbar_tab_positions">Modifica la posizione delle schede</string>
+	<string name="option_share_expires">Scadenza</string>
+	<string name="option_account_navidrome_instance">Istanza</string>
+	<string name="option_account_username">Nome utente</string>
+	<string name="option_account_password">Password</string>
+
+	<plurals name="count_songs">
+		<item quantity="one">%1$d brano</item>
+		<item quantity="other">%1$d brani</item>
+	</plurals>
+
+	<plurals name="count_albums">
+		<item quantity="one">%1$d album</item>
+		<item quantity="other">%1$d album</item>
+	</plurals>
+
+	<plurals name="count_playlists">
+		<item quantity="one">%1$d playlist</item>
+		<item quantity="other">%1$d playlist</item>
+	</plurals>
+
+	<plurals name="count_artists">
+		<item quantity="one">%1$d artista</item>
+		<item quantity="other">%1$d artisti</item>
+	</plurals>
+
+	<string name="action_ok">OK</string>
+	<string name="action_play">Riproduci</string>
+	<string name="action_shuffle">Casuale</string>
+	<string name="action_delete">Elimina</string>
+	<string name="action_cancel">Annulla</string>
+	<string name="action_share">Condividi</string>
+	<string name="action_star">Preferito</string>
+	<string name="action_remove_star">Rimuovi dai preferiti</string>
+	<string name="action_navigate_back">Indietro</string>
+	<string name="action_log_out">Logout</string>
+	<string name="action_log_in">Accedi</string>
+	<string name="action_clear_search">Cancella</string>
+	<string name="action_more">Altro</string>
+	<string name="action_add_to_playlist">Aggiungi alla playlist</string>
+
+	<string name="notice_deleted_playlist">Playlist eliminata.</string>
+	<string name="notice_deleted_share">Condivisione eliminata.</string>
+	<string name="notice_copied">Copiato negli appunti.</string>
+	<string name="notice_expiry">Scade tra %1$s.</string>
+
+	<string name="info_action_is_permanent">Questa azione non può essere annullata!</string>
+	<string name="info_error">Qualcosa è andato storto.</string>
+	<string name="info_error_show">Mostra dettagli</string>
+	<string name="info_error_hide">Nascondi dettagli</string>
+	<string name="info_unknown_album">Album sconosciuto</string>
+	<string name="info_unknown_artist">Artista sconosciuto</string>
+</resources>
