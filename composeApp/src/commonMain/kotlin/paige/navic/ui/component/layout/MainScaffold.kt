@@ -1,5 +1,12 @@
 package paige.navic.ui.component.layout
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -7,23 +14,23 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.boundsInWindow
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -36,6 +43,7 @@ import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.Url
+import kotlinx.coroutines.launch
 import paige.navic.LocalMediaPlayer
 import paige.navic.ui.theme.NavicTheme
 
@@ -49,9 +57,9 @@ fun MainScaffold(
 ) {
 	val player = LocalMediaPlayer.current
 	val focusManager = LocalFocusManager.current
+	val scope = rememberCoroutineScope()
 	val scaffoldState = rememberBottomSheetScaffoldState()
-	val localDensity = LocalDensity.current
-	var expanded by remember { mutableStateOf(false) }
+	val expanded = scaffoldState.bottomSheetState.targetValue == SheetValue.Expanded
 	val networkLoader = rememberNetworkLoader(HttpClient().config {
 		install(HttpTimeout) {
 			requestTimeoutMillis = 60_000
@@ -114,13 +122,25 @@ fun MainScaffold(
 						modifier = Modifier
 							.background(MaterialTheme.colorScheme.surfaceContainer)
 							.fillMaxWidth()
-							.onGloballyPositioned {
-								expanded = with(localDensity) {
-									it.boundsInWindow().height.toDp() > 350.dp
-								}
-							}
 					) {
-                        MediaBar(expanded)
+						MediaBar(expanded)
+						this@BottomSheetScaffold.AnimatedVisibility(
+							expanded,
+							enter = slideInVertically { -it } + fadeIn() + expandIn(),
+							exit = slideOutVertically { -it } + fadeOut() + shrinkOut(),
+							modifier = Modifier
+								.padding(horizontal = 10.dp)
+								.align(Alignment.TopCenter)
+						) {
+							BottomSheetDefaults.DragHandle(
+								modifier = Modifier.clickable {
+									scope.launch {
+										scaffoldState.bottomSheetState.partialExpand()
+									}
+								},
+								color = MaterialTheme.colorScheme.onSurface
+							)
+						}
 					}
 				}
 			}
