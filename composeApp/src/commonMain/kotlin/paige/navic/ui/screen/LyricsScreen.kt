@@ -1,11 +1,14 @@
 package paige.navic.ui.screen
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,10 +16,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +38,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -82,6 +88,10 @@ fun LyricsScreen(
 	val progressState = playerState.progress
 	val currentDuration = duration * progressState.toDouble()
 
+	val density = LocalDensity.current
+	val rowHeightPx = with(density) { 64.dp.toPx() }.toInt()
+	val listState = rememberLazyListState()
+
 	AnimatedContent(
 		state,
 		modifier = Modifier.fillMaxSize()
@@ -95,7 +105,31 @@ fun LyricsScreen(
 						currentDuration >= time
 					}
 
-					LazyColumn(Modifier.fillMaxSize()) {
+					LaunchedEffect(activeIndex) {
+						val layoutInfo = listState.layoutInfo
+						val activeItem = layoutInfo.visibleItemsInfo
+							.firstOrNull { it.index == activeIndex }
+
+						if (activeItem != null) {
+							val itemCenter = activeItem.offset + activeItem.size / 2
+							val viewportCenter =
+								(layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
+							val distance = itemCenter - viewportCenter
+							val thresholdPx = with(density) { 24.dp.toPx() }
+
+							if (kotlin.math.abs(distance) > thresholdPx) {
+								listState.animateScrollBy(
+									value = distance.toFloat(),
+									animationSpec = tween(
+										durationMillis = 350,
+										easing = LinearOutSlowInEasing
+									)
+								)
+							}
+						}
+					}
+
+					LazyColumn(Modifier.fillMaxSize(), state = listState) {
 						itemsIndexed(lyrics) { index, (startTime, text) ->
 							val isActive = index == activeIndex
 
