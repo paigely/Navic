@@ -89,7 +89,6 @@ fun LyricsScreen(
 	val currentDuration = duration * progressState.toDouble()
 
 	val density = LocalDensity.current
-	val rowHeightPx = with(density) { 64.dp.toPx() }.toInt()
 	val listState = rememberLazyListState()
 
 	AnimatedContent(
