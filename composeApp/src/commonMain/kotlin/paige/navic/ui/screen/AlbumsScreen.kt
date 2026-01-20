@@ -32,8 +32,16 @@ import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.count_albums
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_artist
+import navic.composeapp.generated.resources.option_sort_alphabetical_by_artist
+import navic.composeapp.generated.resources.option_sort_alphabetical_by_name
+import navic.composeapp.generated.resources.option_sort_frequent
+import navic.composeapp.generated.resources.option_sort_newest
+import navic.composeapp.generated.resources.option_sort_random
+import navic.composeapp.generated.resources.option_sort_recent
+import navic.composeapp.generated.resources.option_sort_starred
 import navic.composeapp.generated.resources.share
 import navic.composeapp.generated.resources.sort
+import navic.composeapp.generated.resources.switch_on
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -52,6 +60,7 @@ import paige.navic.ui.component.layout.artGridPlaceholder
 import paige.navic.ui.viewmodel.AlbumsViewModel
 import paige.navic.util.UiState
 import paige.subsonic.api.model.Album
+import paige.subsonic.api.model.ListType
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -72,7 +81,7 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel { AlbumsViewModel() }) {
 					is UiState.Loading -> artGridPlaceholder()
 					is UiState.Error -> artGridError(it)
 					is UiState.Success -> {
-						albumsScreenHeader(it.data)
+						albumsScreenHeader(it.data, viewModel)
 						items(it.data, { it.id }) { album ->
 							AlbumsScreenItem(
 								modifier = Modifier.animateItem(),
@@ -100,9 +109,10 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel { AlbumsViewModel() }) {
 
 fun LazyGridScope.albumsScreenHeader(
 	data: List<Album>,
-	key: Any = "albumsScreenHeader"
+	viewModel: AlbumsViewModel
 ) {
-	stickyHeader(key) { _ ->
+	stickyHeader { _ ->
+		val currentListType by viewModel.listType.collectAsState()
 		Row(
 			Modifier
 				.background(MaterialTheme.colorScheme.surface)
@@ -118,14 +128,49 @@ fun LazyGridScope.albumsScreenHeader(
 				color = MaterialTheme.colorScheme.onSurfaceVariant
 			)
 			Spacer(Modifier.weight(1f))
-			IconButton(onClick = {
-
-			}) {
-				Icon(
-					vectorResource(Res.drawable.sort),
-					contentDescription = null,
-					tint = MaterialTheme.colorScheme.onSurfaceVariant
-				)
+			Box {
+				var expanded by remember { mutableStateOf(false) }
+				IconButton(onClick = {
+					expanded = true
+				}) {
+					Icon(
+						vectorResource(Res.drawable.sort),
+						contentDescription = null,
+						tint = MaterialTheme.colorScheme.onSurfaceVariant
+					)
+				}
+				Dropdown(
+					expanded = expanded,
+					onDismissRequest = { expanded = false }
+				) {
+					mapOf(
+						Res.string.option_sort_random to ListType.RANDOM,
+						Res.string.option_sort_newest to ListType.NEWEST,
+						Res.string.option_sort_frequent to ListType.FREQUENT,
+						Res.string.option_sort_recent to ListType.RECENT,
+						Res.string.option_sort_alphabetical_by_name to ListType.ALPHABETICAL_BY_NAME,
+						Res.string.option_sort_alphabetical_by_artist to ListType.ALPHABETICAL_BY_ARTIST,
+						Res.string.option_sort_starred to ListType.STARRED
+					).forEach { (stringRes, listType) ->
+						DropdownItem(
+							text = stringRes,
+							containerColor = if (currentListType == listType)
+								MaterialTheme.colorScheme.primaryContainer
+							else MaterialTheme.colorScheme.surfaceContainerHigh,
+							leadingIcon = if (currentListType == listType)
+								Res.drawable.switch_on
+							else null,
+							onClick = {
+								expanded = false
+								viewModel.setListType(listType)
+								viewModel.refreshAlbums()
+							},
+							rounding = if (currentListType == listType)
+								100.dp
+							else 4.dp
+						)
+					}
+				}
 			}
 		}
 	}

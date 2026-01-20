@@ -74,4 +74,8 @@ open class AlbumsViewModel(
 			}
 		}
 	}
+
+	fun setListType(listType: ListType) {
+		_listType.value = listType
+	}
 }

@@ -13,11 +13,6 @@
 	<string name="title_albums">Albums</string>
 	<string name="title_songs">Songs</string>
 	<string name="title_artists">Artists</string>
-	<string name="title_recently_added">Recently added</string>
-	<string name="title_random">Random</string>
-	<string name="title_starred">Starred</string>
-	<string name="title_recently_played">Recently played</string>
-	<string name="title_frequently_played">Frequently played</string>
 
 	<string name="subtitle_appearance">Customise how things look</string>
 	<string name="subtitle_behaviour">Change how things work</string>
@@ -38,6 +33,17 @@
 	<string name="option_account_password">Password</string>
 	<string name="option_lyrics_autoscroll">Lyrics auto scrolling</string>
 	<string name="option_lyrics_beat_by_beat">Beat-by-beat lyrics</string>
+	<string name="option_sort_random">Random</string>
+	<string name="option_sort_newest">Recently added</string>
+	<string name="option_sort_highest">Highest</string>
+	<string name="option_sort_frequent">Frequently played</string>
+	<string name="option_sort_recent">Recently played</string>
+	<string name="option_sort_alphabetical_by_name">Alphabetical by Name</string>
+	<string name="option_sort_alphabetical_by_artist">Alphabetical by Artist</string>
+	<string name="option_sort_starred">Starred</string>
+	<string name="option_sort_by_year">By Year</string>
+	<string name="option_sort_by_genre">By Genre</string>
+
 
 	<plurals name="count_songs">
 		<item quantity="one">%1$d song</item>

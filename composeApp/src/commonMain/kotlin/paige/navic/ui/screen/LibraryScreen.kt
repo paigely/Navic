@@ -45,14 +45,14 @@ import navic.composeapp.generated.resources.action_see_all
 import navic.composeapp.generated.resources.history
 import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.library_add
+import navic.composeapp.generated.resources.option_sort_frequent
+import navic.composeapp.generated.resources.option_sort_newest
+import navic.composeapp.generated.resources.option_sort_random
+import navic.composeapp.generated.resources.option_sort_recent
+import navic.composeapp.generated.resources.option_sort_starred
 import navic.composeapp.generated.resources.shuffle
 import navic.composeapp.generated.resources.title_artists
-import navic.composeapp.generated.resources.title_frequently_played
 import navic.composeapp.generated.resources.title_playlists
-import navic.composeapp.generated.resources.title_random
-import navic.composeapp.generated.resources.title_recently_added
-import navic.composeapp.generated.resources.title_recently_played
-import navic.composeapp.generated.resources.title_starred
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
@@ -81,7 +81,7 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
-	albumsViewModel: AlbumsViewModel = viewModel { AlbumsViewModel() },
+	albumsViewModel: AlbumsViewModel = viewModel(key = "libraryAlbums") { AlbumsViewModel() },
 	playlistsViewModel: PlaylistsViewModel = viewModel { PlaylistsViewModel() },
 	artistsViewModel: ArtistsViewModel = viewModel { ArtistsViewModel() },
 ) {
@@ -117,22 +117,22 @@ fun LibraryScreen(
 		) {
 			overviewButton(
 				icon = Res.drawable.library_add,
-				label = Res.string.title_recently_added,
+				label = Res.string.option_sort_newest,
 				destination = SortedAlbums(ListType.NEWEST)
 			)
 			overviewButton(
 				icon = Res.drawable.shuffle,
-				label = Res.string.title_random,
+				label = Res.string.option_sort_random,
 				destination = SortedAlbums(ListType.RANDOM)
 			)
 			overviewButton(
 				icon = Res.drawable.unstar,
-				label = Res.string.title_starred,
+				label = Res.string.option_sort_starred,
 				destination = SortedAlbums(ListType.STARRED)
 			)
 			overviewButton(
 				icon = Res.drawable.history,
-				label = Res.string.title_frequently_played,
+				label = Res.string.option_sort_frequent,
 				destination = SortedAlbums(ListType.FREQUENT)
 			)
 			if (!isLoggedIn) {
@@ -252,7 +252,7 @@ private fun LazyGridScope.horizontalAlbums(
 	onSetShareId: (String) -> Unit
 ) {
 	if (state !is UiState.Success || state.data.isNotEmpty()) {
-		header(Res.string.title_recently_played, destination = SortedAlbums(ListType.RECENT))
+		header(Res.string.option_sort_recent, destination = SortedAlbums(ListType.RECENT))
 	}
 	when (state) {
 		is UiState.Error -> artGridError(state)
