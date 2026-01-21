@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,53 +28,57 @@ import navic.composeapp.generated.resources.subtitle_behaviour
 import navic.composeapp.generated.resources.title_about
 import navic.composeapp.generated.resources.title_appearance
 import navic.composeapp.generated.resources.title_behaviour
+import navic.composeapp.generated.resources.title_settings
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalNavStack
-import paige.navic.Settings
-import paige.navic.SettingsAbout
-import paige.navic.SettingsAppearance
-import paige.navic.SettingsBehaviour
+import paige.navic.data.model.Screen
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
+import paige.navic.ui.component.layout.NestedTopBar
 
 @Composable
 fun SettingsScreen() {
-	Column(
-		modifier = Modifier
-			.verticalScroll(rememberScrollState())
-			.padding(12.dp)
-			.padding(bottom = 117.9.dp)
-	) {
-		Form {
-			PageRow(
-				destination = SettingsAppearance,
-				icon = Res.drawable.palette,
-				title = Res.string.title_appearance,
-				subtitle = Res.string.subtitle_appearance,
-				foregroundColor = Color(0xFF753403),
-				backgroundColor = Color(0xFFFFB683)
-			)
-			PageRow(
-				destination = SettingsBehaviour,
-				icon = Res.drawable.settings,
-				title = Res.string.title_behaviour,
-				subtitle = Res.string.subtitle_behaviour,
-				foregroundColor = Color(0xFF004D68),
-				backgroundColor = Color(0xFF67D4FF)
-			)
-		}
-		Form {
-			PageRow(
-				destination = SettingsAbout,
-				icon = Res.drawable.info,
-				title = Res.string.title_about,
-				subtitle = Res.string.subtitle_about,
-				foregroundColor = Color(0xFF2C2C2C),
-				backgroundColor = Color(0xFFC7C7C7)
-			)
+	Scaffold(
+		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_settings)) }) }
+	) { innerPadding ->
+		Column(
+			modifier = Modifier
+				.padding(innerPadding)
+				.verticalScroll(rememberScrollState())
+				.padding(12.dp)
+				.padding(bottom = 117.9.dp)
+		) {
+			Form {
+				PageRow(
+					destination = Screen.Settings.Appearance,
+					icon = Res.drawable.palette,
+					title = Res.string.title_appearance,
+					subtitle = Res.string.subtitle_appearance,
+					foregroundColor = Color(0xFF753403),
+					backgroundColor = Color(0xFFFFB683)
+				)
+				PageRow(
+					destination = Screen.Settings.Behaviour,
+					icon = Res.drawable.settings,
+					title = Res.string.title_behaviour,
+					subtitle = Res.string.subtitle_behaviour,
+					foregroundColor = Color(0xFF004D68),
+					backgroundColor = Color(0xFF67D4FF)
+				)
+			}
+			Form {
+				PageRow(
+					destination = Screen.Settings.About,
+					icon = Res.drawable.info,
+					title = Res.string.title_about,
+					subtitle = Res.string.subtitle_about,
+					foregroundColor = Color(0xFF2C2C2C),
+					backgroundColor = Color(0xFFC7C7C7)
+				)
+			}
 		}
 	}
 }
@@ -90,10 +95,14 @@ private fun PageRow(
 	val backStack = LocalNavStack.current
 	FormRow(
 		onClick = {
-			if (backStack.last() !is Settings) {
-				backStack.removeLastOrNull()
+			backStack.lastOrNull()?.let {
+				if (it is Screen.Settings) {
+					if (it !is Screen.Settings.Root) {
+						backStack.removeLastOrNull()
+					}
+					backStack.add(destination)
+				}
 			}
-			backStack.add(destination)
 		},
 		horizontalArrangement = Arrangement.spacedBy(16.dp),
 		contentPadding = PaddingValues(horizontal = 18.dp, vertical = 18.dp)

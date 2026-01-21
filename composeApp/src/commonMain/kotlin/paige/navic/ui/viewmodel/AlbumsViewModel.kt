@@ -67,9 +67,9 @@ open class AlbumsViewModel(
 			val selection = _selectedAlbum.value ?: return@launch
 			runCatching {
 				if (starred) {
-					repository.unstarAlbum(selection)
-				} else {
 					repository.starAlbum(selection)
+				} else {
+					repository.unstarAlbum(selection)
 				}
 			}
 		}

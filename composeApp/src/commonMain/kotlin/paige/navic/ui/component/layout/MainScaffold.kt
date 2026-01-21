@@ -12,8 +12,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.minus
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,7 +55,6 @@ import paige.navic.ui.theme.NavicTheme
 @Composable
 fun MainScaffold(
 	snackbarState: SnackbarHostState,
-	topBar: @Composable () -> Unit,
 	bottomBar: @Composable () -> Unit,
 	content: @Composable () -> Unit,
 ) {
@@ -95,7 +97,6 @@ fun MainScaffold(
 				)
 			}
 		},
-		topBar = topBar,
 		bottomBar = {
 			NavicTheme(scheme, forceColorScheme = expanded) {
 				bottomBar()
@@ -104,7 +105,7 @@ fun MainScaffold(
 	) { innerPadding ->
 		BottomSheetScaffold(
 			modifier = Modifier
-				.padding(innerPadding)
+				.padding(innerPadding - PaddingValues(top = innerPadding.calculateTopPadding()))
 				.clickable(
 					indication = null,
 					interactionSource = remember { MutableInteractionSource() }
@@ -131,6 +132,7 @@ fun MainScaffold(
 							enter = slideInVertically { -it } + fadeIn() + expandIn(),
 							exit = slideOutVertically { -it } + fadeOut() + shrinkOut(),
 							modifier = Modifier
+								.statusBarsPadding()
 								.padding(horizontal = 10.dp)
 								.align(Alignment.TopCenter)
 						) {

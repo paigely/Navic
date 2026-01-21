@@ -27,29 +27,22 @@ data class Album(
 	override val coverArt: String?,
 	override val duration: Int?,
 	override val id: String,
+	override val year: Int?,
+	override val genre: String?,
 	val artist: String?,
 	val artistId: String?,
 	val created: String,
-	val genre: String?,
 	val name: String?,
 	val album: String?,
 	val playCount: Int?,
 	val song: List<Song>?,
 	val songCount: Int?,
-	val year: Int?,
 	val userRating: Int?
 ) : TrackCollection {
-	override val title: String?
-		get() = name
-
-	override val subtitle: String?
-		get() = artist
-
-	override val tracks: List<Track>
-		get() = song.orEmpty()
-
-	override val trackCount: Int
-		get() = songCount ?: song?.count() ?: -1
+	override val title: String? = name
+	override val subtitle: String? = artist
+	override val tracks: List<Track> = song.orEmpty()
+	override val trackCount: Int = songCount ?: song?.count() ?: -1
 }
 
 @Serializable

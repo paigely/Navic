@@ -15,10 +15,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,15 +43,21 @@ import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.burnoo.compose.remembersetting.rememberFloatSetting
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_more
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.info_unknown_album
+import navic.composeapp.generated.resources.info_unknown_artist
+import navic.composeapp.generated.resources.more_vert
+import navic.composeapp.generated.resources.play_arrow
 import navic.composeapp.generated.resources.share
+import navic.composeapp.generated.resources.shuffle
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalMediaPlayer
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.component.common.Dropdown
@@ -57,7 +66,8 @@ import paige.navic.ui.component.common.ErrorBox
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
 import paige.navic.ui.component.dialog.ShareDialog
-import paige.navic.ui.theme.mapleMono
+import paige.navic.ui.component.layout.NestedTopBar
+import paige.navic.ui.component.layout.TopBarButton
 import paige.navic.ui.viewmodel.TracksViewModel
 import paige.navic.util.UiState
 import paige.navic.util.shimmerLoading
@@ -93,69 +103,85 @@ fun TracksScreen(
 
 	val starredState by viewModel.starredState.collectAsState()
 
-	AnimatedContent(tracks) {
-		when (it) {
-			is UiState.Loading -> TracksScreenPlaceholder()
-			is UiState.Error -> ErrorBox(it)
-			is UiState.Success -> {
-				val tracks = it.data
-				TracksScreenScope(
-					player,
-					tracks
-				).apply {
-					Column(
-						modifier = Modifier
-							.background(MaterialTheme.colorScheme.surface)
-							.verticalScroll(scrollState)
-							.padding(12.dp)
-							.padding(bottom = 200.dp),
-						horizontalAlignment = Alignment.CenterHorizontally,
-						verticalArrangement = Arrangement.spacedBy(10.dp)
-					) {
-						Metadata()
-						Form {
-							tracks.tracks.onEachIndexed { index, track ->
-								Box {
-									TrackRow(
-										track = track,
-										onClick = {
-											player.play(tracks, index)
-										},
-										onLongClick = {
-											viewModel.selectTrack(track)
-										}
-									)
-									Dropdown(
-										expanded = selection == track,
-										onDismissRequest = {
-											viewModel.clearSelection()
-										}
-									) {
-										DropdownItem(
-											containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-											text = Res.string.action_share,
-											leadingIcon = Res.drawable.share,
+	Scaffold(
+		topBar = {
+			NestedTopBar({}, {
+				TopBarButton({}) {
+					Icon(
+						vectorResource(Res.drawable.more_vert),
+						stringResource(Res.string.action_more)
+					)
+				}
+			})
+		}
+	) { innerPadding ->
+		AnimatedContent(
+			tracks,
+			modifier = Modifier.padding(innerPadding)
+		) {
+			when (it) {
+				is UiState.Loading -> TracksScreenPlaceholder()
+				is UiState.Error -> ErrorBox(it)
+				is UiState.Success -> {
+					val tracks = it.data
+					TracksScreenScope(
+						player,
+						tracks
+					).apply {
+						Column(
+							modifier = Modifier
+								.background(MaterialTheme.colorScheme.surface)
+								.verticalScroll(scrollState)
+								.padding(12.dp)
+								.padding(bottom = 200.dp),
+							horizontalAlignment = Alignment.CenterHorizontally,
+							verticalArrangement = Arrangement.spacedBy(10.dp)
+						) {
+							Metadata()
+							Form {
+								tracks.tracks.onEachIndexed { index, track ->
+									Box {
+										TrackRow(
+											track = track,
 											onClick = {
-												shareId = track.id
-												viewModel.clearSelection()
+												player.play(tracks, index)
 											},
+											onLongClick = {
+												viewModel.selectTrack(track)
+											}
 										)
-										val starred =
-											(starredState as? UiState.Success)?.data
-										DropdownItem(
-											containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-											text = if (starred == true)
-												Res.string.action_remove_star
-											else Res.string.action_star,
-											leadingIcon = Res.drawable.unstar,
-											onClick = {
-												if (starred == true)
-													viewModel.unstarSelectedTrack()
-												else viewModel.starSelectedTrack()
+										Dropdown(
+											expanded = selection == track,
+											onDismissRequest = {
 												viewModel.clearSelection()
-											},
-											enabled = starred != null
-										)
+											}
+										) {
+											DropdownItem(
+												containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+												text = Res.string.action_share,
+												leadingIcon = Res.drawable.share,
+												onClick = {
+													shareId = track.id
+													viewModel.clearSelection()
+												},
+											)
+											val starred =
+												(starredState as? UiState.Success)?.data
+											DropdownItem(
+												containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+												text = if (starred == true)
+													Res.string.action_remove_star
+												else Res.string.action_star,
+												leadingIcon = Res.drawable.unstar,
+												onClick = {
+													if (starred == true)
+														viewModel.unstarSelectedTrack()
+													else viewModel.starSelectedTrack()
+													viewModel.clearSelection()
+												},
+												enabled = starred != null
+											)
+										}
 									}
 								}
 							}
@@ -195,35 +221,43 @@ private fun TracksScreenScope.Metadata() {
 			)
 			.background(MaterialTheme.colorScheme.surfaceContainer)
 	)
-	Text(
-		tracks.title ?: stringResource(Res.string.info_unknown_album),
-		style = MaterialTheme.typography.headlineMedium,
-		textAlign = TextAlign.Center
-	)
-	tracks.subtitle?.let {
+	Column(horizontalAlignment = Alignment.CenterHorizontally) {
 		Text(
-			it,
-			style = MaterialTheme.typography.bodySmall,
+			tracks.title ?: stringResource(Res.string.info_unknown_album),
+			style = MaterialTheme.typography.headlineMedium,
 			textAlign = TextAlign.Center
+		)
+		Text(
+			tracks.subtitle ?: stringResource(Res.string.info_unknown_artist),
+			color = MaterialTheme.colorScheme.primary
+		)
+		Text(
+			"${tracks.genre ?: "Unknown genre"} • ${tracks.year ?: "Unknown year"}",
+			color = MaterialTheme.colorScheme.onSurfaceVariant,
+			style = MaterialTheme.typography.bodySmall,
+			fontWeight = FontWeight(600)
 		)
 	}
 	Row(
+		modifier = Modifier.padding(horizontal = 15.dp),
 		horizontalArrangement = Arrangement.spacedBy(
 			10.dp,
 			alignment = Alignment.CenterHorizontally
 		)
 	) {
-		Button(
-			modifier = Modifier.width(120.dp),
+		val shape = ContinuousRoundedRectangle(12.dp)
+		FilledTonalButton(
+			modifier = Modifier.weight(1f),
 			onClick = { player.play(tracks, 0) },
-			colors = ButtonDefaults.buttonColors(
-				containerColor = MaterialTheme.colorScheme.surfaceContainer,
-				contentColor = MaterialTheme.colorScheme.onSurface
-			),
-			shape = ContinuousCapsule
-		) { Text(stringResource(Res.string.action_play)) }
-		Button(
-			modifier = Modifier.width(120.dp),
+			shape = shape
+		) {
+			Icon(vectorResource(Res.drawable.play_arrow), null)
+			Text(
+				stringResource(Res.string.action_play)
+			)
+		}
+		OutlinedButton(
+			modifier = Modifier.weight(1f),
 			onClick = {
 				when (tracks) {
 					is Album -> player.play(tracks.copy(
@@ -234,12 +268,13 @@ private fun TracksScreenScope.Metadata() {
 					), 0)
 				}
 			},
-			colors = ButtonDefaults.buttonColors(
-				containerColor = MaterialTheme.colorScheme.surfaceContainer,
-				contentColor = MaterialTheme.colorScheme.onSurface
-			),
-			shape = ContinuousCapsule
-		) { Text(stringResource(Res.string.action_shuffle)) }
+			shape = shape
+		) {
+			Icon(vectorResource(Res.drawable.shuffle), null)
+			Text(
+				stringResource(Res.string.action_shuffle)
+			)
+		}
 	}
 }
 
@@ -257,11 +292,12 @@ private fun TracksScreenScope.TrackRow(
 	) {
 		Text(
 			"${tracks.tracks.indexOf(track) + 1}",
-			fontFamily = mapleMono(),
+			modifier = Modifier.width(25.dp),
+			style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),
 			fontWeight = FontWeight(400),
 			fontSize = 13.sp,
-			color = MaterialTheme.colorScheme.onSurface.copy(alpha = .5f),
-			modifier = Modifier.width(25.dp),
+			color = MaterialTheme.colorScheme.onSurfaceVariant,
+			maxLines = 1,
 			textAlign = TextAlign.Center
 		)
 
@@ -282,10 +318,10 @@ private fun TracksScreenScope.TrackRow(
 		track.duration?.seconds?.toHHMMSS()?.let {
 			Text(
 				it,
-				fontFamily = mapleMono(),
+				style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),
 				fontWeight = FontWeight(400),
 				fontSize = 13.sp,
-				color = MaterialTheme.colorScheme.onSurface.copy(alpha = .5f),
+				color = MaterialTheme.colorScheme.onSurfaceVariant,
 				maxLines = 1
 			)
 		}

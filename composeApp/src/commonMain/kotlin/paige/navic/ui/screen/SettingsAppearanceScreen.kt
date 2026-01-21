@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -45,6 +46,7 @@ import navic.composeapp.generated.resources.option_short_navigation_bar
 import navic.composeapp.generated.resources.option_system_font
 import navic.composeapp.generated.resources.subtitle_grid_items_per_row
 import navic.composeapp.generated.resources.subtitle_system_font
+import navic.composeapp.generated.resources.title_appearance
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.ui.component.common.Dropdown
@@ -53,6 +55,7 @@ import paige.navic.ui.component.common.FormRow
 import paige.navic.ui.component.common.SettingSwitch
 import paige.navic.ui.component.common.Stepper
 import paige.navic.ui.component.dialog.NavtabsDialog
+import paige.navic.ui.component.layout.NestedTopBar
 import paige.navic.ui.theme.mapleMono
 
 @Composable
@@ -69,133 +72,100 @@ fun SettingsAppearanceScreen() {
 	var artGridItemsPerRow by rememberIntSetting("artGridItemsPerRow", 2)
 	var artGridItemSize by rememberFloatSetting("artGridItemSize", 150f)
 	var alwaysShowSeekbar by rememberBooleanSetting("alwaysShowSeekbar", true)
-	CompositionLocalProvider(
-		LocalMinimumInteractiveComponentSize provides 0.dp
-	) {
-		Column(
-			Modifier
-				.verticalScroll(rememberScrollState())
-				.padding(12.dp)
-				.padding(bottom = 117.9.dp)
+	val hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+	Scaffold(
+		topBar = { NestedTopBar(
+			{ Text(stringResource(Res.string.title_appearance)) },
+			hideBack = hideBack
+		) }
+	) { innerPadding ->
+		CompositionLocalProvider(
+			LocalMinimumInteractiveComponentSize provides 0.dp
 		) {
-			Form {
-				FormRow {
-					Column {
-						Text(stringResource(Res.string.option_system_font))
-						Text(
-							stringResource(Res.string.subtitle_system_font),
-							style = MaterialTheme.typography.bodyMedium,
-							color = MaterialTheme.colorScheme.onSurfaceVariant
+			Column(
+				Modifier
+					.padding(innerPadding)
+					.verticalScroll(rememberScrollState())
+					.padding(12.dp)
+					.padding(bottom = 117.9.dp)
+			) {
+				Form {
+					FormRow {
+						Column {
+							Text(stringResource(Res.string.option_system_font))
+							Text(
+								stringResource(Res.string.subtitle_system_font),
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						}
+						SettingSwitch(
+							checked = useSystemFont,
+							onCheckedChange = { useSystemFont = it }
 						)
 					}
-					SettingSwitch(
-						checked = useSystemFont,
-						onCheckedChange = { useSystemFont = it }
-					)
-				}
-				FormRow {
-					Text(stringResource(Res.string.option_dynamic_colour))
-					SettingSwitch(
-						checked = dynamicColour,
-						onCheckedChange = { dynamicColour = it }
-					)
-				}
-				if (!dynamicColour) {
-					var expanded by remember { mutableStateOf(false) }
 					FormRow {
-						Text(stringResource(Res.string.option_accent_colour))
-						Box {
-							Box(
-								Modifier
-									.background(
-										HsvColor(
-											accentColourH, accentColourS, accentColourV
-										).toColor(), CircleShape
-									)
-									.size(40.dp)
-									.clickable {
-										expanded = true
-									}
-							)
-							Dropdown(
-								expanded = expanded,
-								onDismissRequest = { expanded = false }
-							) {
-								FormRow(
-									color = MaterialTheme.colorScheme.surfaceContainerHigh,
-									horizontalArrangement = Arrangement.Center
-								) {
-									CircularColorPicker(
-										color = {
+						Text(stringResource(Res.string.option_dynamic_colour))
+						SettingSwitch(
+							checked = dynamicColour,
+							onCheckedChange = { dynamicColour = it }
+						)
+					}
+					if (!dynamicColour) {
+						var expanded by remember { mutableStateOf(false) }
+						FormRow {
+							Text(stringResource(Res.string.option_accent_colour))
+							Box {
+								Box(
+									Modifier
+										.background(
 											HsvColor(
-												accentColourH,
-												accentColourS,
-												accentColourV
-											)
-										},
-										onColorChange = {
-											accentColourH = it.hue
-											accentColourS = it.saturation
-											accentColourV = it.value
+												accentColourH, accentColourS, accentColourV
+											).toColor(), CircleShape
+										)
+										.size(40.dp)
+										.clickable {
+											expanded = true
 										}
-									)
+								)
+								Dropdown(
+									expanded = expanded,
+									onDismissRequest = { expanded = false }
+								) {
+									FormRow(
+										color = MaterialTheme.colorScheme.surfaceContainerHigh,
+										horizontalArrangement = Arrangement.Center
+									) {
+										CircularColorPicker(
+											color = {
+												HsvColor(
+													accentColourH,
+													accentColourS,
+													accentColourV
+												)
+											},
+											onColorChange = {
+												accentColourH = it.hue
+												accentColourS = it.saturation
+												accentColourV = it.value
+											}
+										)
+									}
 								}
 							}
 						}
 					}
 				}
-			}
-			Form {
-				FormRow {
-					Column(Modifier.fillMaxWidth()) {
-						Row(
-							modifier = Modifier.fillMaxWidth(),
-							horizontalArrangement = Arrangement.SpaceBetween
-						) {
-							Text(stringResource(Res.string.option_cover_art_rounding))
-							Text(
-								"$artGridRounding",
-								fontFamily = mapleMono(),
-								fontWeight = FontWeight(400),
-								fontSize = 13.sp,
-								color = MaterialTheme.colorScheme.onSurfaceVariant,
-							)
-						}
-						Slider(
-							value = artGridRounding,
-							onValueChange = {
-								artGridRounding = it
-							},
-							valueRange = 0f..64f,
-							steps = 3,
-						)
-					}
-				}
-				FormRow {
-					if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
-						Column {
-							Text(stringResource(Res.string.option_grid_items_per_row) + ": $artGridItemsPerRow")
-							Text(
-								stringResource(Res.string.subtitle_grid_items_per_row),
-								style = MaterialTheme.typography.bodyMedium,
-								color = MaterialTheme.colorScheme.onSurfaceVariant
-							)
-						}
-						Stepper(
-							value = artGridItemsPerRow,
-							onValueChange = { artGridItemsPerRow = it },
-							minValue = 1,
-							maxValue = 32
-						)
-					} else {
+				Form {
+					FormRow {
 						Column(Modifier.fillMaxWidth()) {
 							Row(
 								modifier = Modifier.fillMaxWidth(),
 								horizontalArrangement = Arrangement.SpaceBetween
 							) {
-								Text(stringResource(Res.string.option_cover_art_size))
+								Text(stringResource(Res.string.option_cover_art_rounding))
 								Text(
-									"$artGridItemSize",
+									"$artGridRounding",
 									fontFamily = mapleMono(),
 									fontWeight = FontWeight(400),
 									fontSize = 13.sp,
@@ -203,38 +173,80 @@ fun SettingsAppearanceScreen() {
 								)
 							}
 							Slider(
-								value = artGridItemSize,
+								value = artGridRounding,
 								onValueChange = {
-									artGridItemSize = it
+									artGridRounding = it
 								},
-								valueRange = 50f..500f,
-								steps = 8,
+								valueRange = 0f..64f,
+								steps = 3,
 							)
 						}
 					}
-				}
-			}
-			Form {
-				FormRow {
-					Text(stringResource(Res.string.option_short_navigation_bar))
-					SettingSwitch(
-						checked = useShortNavbar,
-						onCheckedChange = { useShortNavbar = it }
-					)
-				}
-				FormRow {
-					Text(stringResource(Res.string.option_always_show_seekbar))
-					SettingSwitch(
-						checked = alwaysShowSeekbar,
-						onCheckedChange = { alwaysShowSeekbar = it }
-					)
-				}
-				FormRow(
-					onClick = {
-						showNavtabsDialog = true
+					FormRow {
+						if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
+							Column {
+								Text(stringResource(Res.string.option_grid_items_per_row) + ": $artGridItemsPerRow")
+								Text(
+									stringResource(Res.string.subtitle_grid_items_per_row),
+									style = MaterialTheme.typography.bodyMedium,
+									color = MaterialTheme.colorScheme.onSurfaceVariant
+								)
+							}
+							Stepper(
+								value = artGridItemsPerRow,
+								onValueChange = { artGridItemsPerRow = it },
+								minValue = 1,
+								maxValue = 32
+							)
+						} else {
+							Column(Modifier.fillMaxWidth()) {
+								Row(
+									modifier = Modifier.fillMaxWidth(),
+									horizontalArrangement = Arrangement.SpaceBetween
+								) {
+									Text(stringResource(Res.string.option_cover_art_size))
+									Text(
+										"$artGridItemSize",
+										fontFamily = mapleMono(),
+										fontWeight = FontWeight(400),
+										fontSize = 13.sp,
+										color = MaterialTheme.colorScheme.onSurfaceVariant,
+									)
+								}
+								Slider(
+									value = artGridItemSize,
+									onValueChange = {
+										artGridItemSize = it
+									},
+									valueRange = 50f..500f,
+									steps = 8,
+								)
+							}
+						}
 					}
-				) {
-					Text(stringResource(Res.string.option_navbar_tab_positions))
+				}
+				Form {
+					FormRow {
+						Text(stringResource(Res.string.option_short_navigation_bar))
+						SettingSwitch(
+							checked = useShortNavbar,
+							onCheckedChange = { useShortNavbar = it }
+						)
+					}
+					FormRow {
+						Text(stringResource(Res.string.option_always_show_seekbar))
+						SettingSwitch(
+							checked = alwaysShowSeekbar,
+							onCheckedChange = { alwaysShowSeekbar = it }
+						)
+					}
+					FormRow(
+						onClick = {
+							showNavtabsDialog = true
+						}
+					) {
+						Text(stringResource(Res.string.option_navbar_tab_positions))
+					}
 				}
 			}
 		}
