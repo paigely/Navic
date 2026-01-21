@@ -92,7 +92,8 @@ jobs:
             -archivePath "iosApp.xcarchive" \
             CODE_SIGN_ENTITLEMENTS="iosApp/entitlements.xml" \
             CODE_SIGN_IDENTITY="-" \
-            CODE_SIGN_STYLE=Manual
+            CODE_SIGN_STYLE=Manual \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES
 
           mkdir -p Payload
 
