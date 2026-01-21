@@ -7,6 +7,8 @@
 	<string name="title_search">Cerca</string>
 	<string name="title_appearance">Aspetto</string>
 	<string name="title_behaviour">Comportamento</string>
+	<string name="title_about">About</string>
+	<string name="title_acknowledgements">Riconoscimenti</string>
 	<string name="title_delete_playlist">Eliminare la playlist?</string>
 	<string name="title_delete_share">Eliminare la condivisione?</string>
 	<string name="title_create_share">Crea condivisione</string>
@@ -16,7 +18,10 @@
 
 	<string name="subtitle_appearance">Personalizza l'aspetto</string>
 	<string name="subtitle_behaviour">Modifica il comportamento</string>
+	<string name="subtitle_about">Versioni, licenze</string>
 	<string name="subtitle_system_font">Altrimenti, usa Google Sans.</string>
+    <string name="subtitle_lyrics_beat_by_beat">Usa un effetto graduale finto parola per parola.</string>
+    <string name="subtitle_grid_items_per_row">Quanti elementi visualizzare in ogni riga delle griglie</string>
 
 	<string name="option_system_font">Usa il font di sistema</string>
 	<string name="option_dynamic_colour">Usa colore dinamico</string>
@@ -25,11 +30,25 @@
 	<string name="option_always_show_seekbar">Mostra la barra di avanzamento</string>
 	<string name="option_cover_art_rounding">Arrotondamento copertina</string>
 	<string name="option_cover_art_size">Dimensione copertina</string>
+    <string name="option_grid_items_per_row">Elementi per riga</string>
 	<string name="option_navbar_tab_positions">Modifica la posizione delle schede</string>
 	<string name="option_share_expires">Scadenza</string>
 	<string name="option_account_navidrome_instance">Istanza</string>
 	<string name="option_account_username">Nome utente</string>
 	<string name="option_account_password">Password</string>
+	<string name="option_lyrics_autoscroll">Scorrimento automatico testo</string>
+	<string name="option_lyrics_beat_by_beat">Testo parola per parola</string>
+	<string name="option_sort_random">Casuale</string>
+	<string name="option_sort_newest">Più recenti</string>
+	<string name="option_sort_highest">Più votati</string>
+	<string name="option_sort_frequent">Più riprodotti</string>
+	<string name="option_sort_recent">Ultime riproduzioni</string>
+	<string name="option_sort_alphabetical_by_name">Ordine alfabetico per nome</string>
+	<string name="option_sort_alphabetical_by_artist">Ordine alfabetico per artista</string>
+	<string name="option_sort_starred">Preferiti</string>
+	<string name="option_sort_by_year">Per anno</string>
+	<string name="option_sort_by_genre">Per genere</string>
+
 
 	<plurals name="count_songs">
 		<item quantity="one">%1$d brano</item>
@@ -57,7 +76,7 @@
 	<string name="action_delete">Elimina</string>
 	<string name="action_cancel">Annulla</string>
 	<string name="action_share">Condividi</string>
-	<string name="action_star">Preferito</string>
+	<string name="action_star">Aggiungi ai preferiti</string>
 	<string name="action_remove_star">Rimuovi dai preferiti</string>
 	<string name="action_navigate_back">Indietro</string>
 	<string name="action_log_out">Logout</string>
@@ -65,16 +84,20 @@
 	<string name="action_clear_search">Cancella</string>
 	<string name="action_more">Altro</string>
 	<string name="action_add_to_playlist">Aggiungi alla playlist</string>
+	<string name="action_see_all">Vedi tutti</string>
 
 	<string name="notice_deleted_playlist">Playlist eliminata.</string>
 	<string name="notice_deleted_share">Condivisione eliminata.</string>
 	<string name="notice_copied">Copiato negli appunti.</string>
 	<string name="notice_expiry">Scade tra %1$s.</string>
+	<string name="notice_loading_lyrics">Caricamento testi...\nPotrebbe richiedere qualche istante.</string>
 
+	<string name="info_app_version">Navic %1$s</string>
 	<string name="info_action_is_permanent">Questa azione non può essere annullata!</string>
 	<string name="info_error">Qualcosa è andato storto.</string>
 	<string name="info_error_show">Mostra dettagli</string>
 	<string name="info_error_hide">Nascondi dettagli</string>
 	<string name="info_unknown_album">Album sconosciuto</string>
 	<string name="info_unknown_artist">Artista sconosciuto</string>
+	<string name="info_needs_log_in">Devi prima effettuare il login. Tocca il pulsante account in alto a destra.</string>
 </resources>
