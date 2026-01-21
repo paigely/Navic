@@ -64,29 +64,48 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Check Theos cache
-        run: |
-          echo upstream_heads=`git ls-remote https://github.com/theos/theos | head -n 1 | cut -f 1`-`git ls-remote https://github.com/theos/sdks | head -n 1 | cut -f 1` >> $GITHUB_ENV
-
-      - name: Cache Theos
-        id: cache
-        uses: actions/cache@v5
+      - name: Setup JDK
+        uses: actions/setup-java@v5
         with:
-          path: ${{ github.workspace }}/theos
-          key: ${{ runner.os }}-${{ env.upstream_heads }}
+          distribution: temurin
+          java-version: 17
 
-      - name: Install Theos
-        uses: Randomblock1/theos-action@f129528eb3034b088b3eb43f7f935c46ddbdc40c
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
 
-      - name: Build IPA with Theos
-        working-directory: ./iosApp
+      - name: Cache konan
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
+
+      - name: Build Unsigned IPA
+        id: build_ipa
         run: |
-          echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
-          rm -rf packages
-          make package
+          xcodebuild archive \
+            -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath "iosApp.xcarchive" \
+            CODE_SIGN_ENTITLEMENTS="iosApp/entitlements.xml" \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
 
-      - name: Upload IPA artifact
-        uses: actions/upload-artifact@v6
+          mkdir -p Payload
+
+          APP_PATH=$(find "iosApp.xcarchive/Products/Applications" -name "*.app" | head -n 1)
+          cp -r "$APP_PATH" Payload/
+
+          zip -r "Navic.ipa" Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
         with:
           name: navic-release-ios
-          path: iosApp/packages/*.ipa
+          path: Navic.ipa
+          compression-level: 0
