@@ -81,7 +81,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-konan-
 
-      - name: Build Unsigned IPA
+      - name: Build IPA
         id: build_ipa
         run: |
           xcodebuild archive \
