@@ -1,7 +1,7 @@
 package paige.navic.ui.screen
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -54,6 +54,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.notice_loading_lyrics
 import org.jetbrains.compose.resources.stringResource
@@ -151,9 +153,20 @@ fun LyricsScreen(
 								listState.animateScrollBy(
 									value = distance.toFloat(),
 									animationSpec = tween(
-										durationMillis = 350,
-										easing = LinearOutSlowInEasing
+										durationMillis = 450,
+										easing = FastOutSlowInEasing
 									)
+								)
+							}
+						} else if (activeIndex >= 0) {
+							launch {
+								delay(500)
+								val viewportCenter = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
+								val scrollOffset = -(viewportCenter / 2)
+
+								listState.animateScrollToItem(
+									index = activeIndex,
+									scrollOffset = scrollOffset
 								)
 							}
 						}
