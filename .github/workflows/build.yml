@@ -82,7 +82,6 @@ jobs:
             ${{ runner.os }}-konan-
 
       - name: Build IPA
-        id: build_ipa
         run: |
           xcodebuild archive \
             -project iosApp/iosApp.xcodeproj \
