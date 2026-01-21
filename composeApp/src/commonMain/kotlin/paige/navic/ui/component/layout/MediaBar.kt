@@ -66,6 +66,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import coil3.toUri
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
@@ -89,6 +90,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
+import paige.navic.data.session.SessionManager
 import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.PlayerUiState
@@ -336,10 +338,17 @@ private fun MediaBarScope.AlbumArtContainer(
 private fun MediaBarScope.AlbumArt(
 	modifier: Modifier = Modifier
 ) {
+	val coverUri = remember(playerState.currentTrack?.coverArt) {
+		SessionManager.api.getCoverArtUrl(
+			playerState.currentTrack?.coverArt,
+			auth = true
+		)?.toUri()
+	}
+
 	AsyncImage(
 		modifier = modifier,
-		model = playerState.tracks?.coverArt,
-		contentDescription = playerState.tracks?.title,
+		model = coverUri,
+		contentDescription = playerState.currentTrack?.title,
 		contentScale = ContentScale.Crop,
 	)
 }

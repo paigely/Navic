@@ -26,6 +26,7 @@ abstract class MediaPlayerViewModel : ViewModel() {
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
 	abstract fun play(tracks: TrackCollection, startIndex: Int)
+	abstract fun playSingle(track: Track)
 	abstract fun pause()
 	abstract fun resume()
 	abstract fun seek(normalized: Float)
