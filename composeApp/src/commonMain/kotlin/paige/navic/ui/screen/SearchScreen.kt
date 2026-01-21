@@ -64,7 +64,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.Tracks
+import paige.navic.data.model.Screen
 import paige.navic.ui.component.common.ErrorBox
 import paige.navic.ui.component.layout.ArtGrid
 import paige.navic.ui.component.layout.artGridPlaceholder
@@ -116,7 +116,7 @@ fun SearchScreen(
 					) {
 						SearchSection(Res.string.title_albums, albums) { album ->
 							SearchSectionItem(album.coverArt, album.name) {
-								backStack.add(Tracks(album))
+								backStack.add(Screen.Tracks(album))
 							}
 						}
 						SearchSection(Res.string.title_artists, artists) { artist ->

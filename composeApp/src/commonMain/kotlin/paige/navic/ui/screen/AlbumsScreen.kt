@@ -14,7 +14,9 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -23,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
@@ -42,19 +45,22 @@ import navic.composeapp.generated.resources.option_sort_starred
 import navic.composeapp.generated.resources.share
 import navic.composeapp.generated.resources.sort
 import navic.composeapp.generated.resources.switch_on
+import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.Tracks
+import paige.navic.data.model.Screen
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.RefreshBox
 import paige.navic.ui.component.dialog.ShareDialog
 import paige.navic.ui.component.layout.ArtGrid
 import paige.navic.ui.component.layout.ArtGridItem
+import paige.navic.ui.component.layout.NestedTopBar
+import paige.navic.ui.component.layout.RootTopBar
 import paige.navic.ui.component.layout.artGridError
 import paige.navic.ui.component.layout.artGridPlaceholder
 import paige.navic.ui.viewmodel.AlbumsViewModel
@@ -65,32 +71,51 @@ import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel { AlbumsViewModel() }) {
+fun AlbumsScreen(
+	nested: Boolean = false,
+	listType: ListType,
+	viewModel: AlbumsViewModel = viewModel(key = listType.value) {
+		AlbumsViewModel(listType)
+	}
+) {
 	val albumsState by viewModel.albumsState.collectAsState()
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
+	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-	RefreshBox(
-		modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-		isRefreshing = albumsState is UiState.Loading,
-		onRefresh = { viewModel.refreshAlbums() }
-	) { topPadding ->
-		AnimatedContent(albumsState, Modifier.padding(top = topPadding)) {
-			ArtGrid {
-				when (it) {
-					is UiState.Loading -> artGridPlaceholder()
-					is UiState.Error -> artGridError(it)
-					is UiState.Success -> {
-						albumsScreenHeader(it.data, viewModel)
-						items(it.data, { it.id }) { album ->
-							AlbumsScreenItem(
-								modifier = Modifier.animateItem(),
-								album = album,
-								viewModel = viewModel,
-								onSetShareId = { newShareId ->
-									shareId = newShareId
-								}
-							)
+	Scaffold(
+		topBar = {
+			if (!nested) {
+				RootTopBar({ Text(stringResource(Res.string.title_albums)) }, scrollBehavior)
+			} else {
+				NestedTopBar({ Text(stringResource(Res.string.title_albums)) })
+			}
+		}
+	) { innerPadding ->
+		RefreshBox(
+			modifier = Modifier
+				.padding(innerPadding)
+				.background(MaterialTheme.colorScheme.surface),
+			isRefreshing = albumsState is UiState.Loading,
+			onRefresh = { viewModel.refreshAlbums() }
+		) { topPadding ->
+			AnimatedContent(albumsState, Modifier.padding(top = topPadding)) {
+				ArtGrid(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
+					when (it) {
+						is UiState.Loading -> artGridPlaceholder()
+						is UiState.Error -> artGridError(it)
+						is UiState.Success -> {
+							albumsScreenHeader(it.data, viewModel)
+							items(it.data, { it.id }) { album ->
+								AlbumsScreenItem(
+									modifier = Modifier.animateItem(),
+									album = album,
+									viewModel = viewModel,
+									onSetShareId = { newShareId ->
+										shareId = newShareId
+									}
+								)
+							}
 						}
 					}
 				}
@@ -192,7 +217,7 @@ fun AlbumsScreenItem(
 			imageModifier = Modifier.combinedClickable(
 				onClick = {
 					ctx.clickSound()
-					backStack.add(Tracks(album))
+					backStack.add(Screen.Tracks(album))
 				},
 				onLongClick = {
 					viewModel.selectAlbum(album)

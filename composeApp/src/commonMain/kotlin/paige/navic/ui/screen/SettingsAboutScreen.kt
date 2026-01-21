@@ -6,7 +6,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -15,14 +17,16 @@ import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.forward
 import navic.composeapp.generated.resources.info_app_version
+import navic.composeapp.generated.resources.title_about
 import navic.composeapp.generated.resources.title_acknowledgements
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.SettingsAcknowledgements
+import paige.navic.data.model.Screen
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
+import paige.navic.ui.component.layout.NestedTopBar
 
 @Composable
 fun SettingsAboutScreen() {
@@ -30,31 +34,40 @@ fun SettingsAboutScreen() {
 	val clipboard = LocalClipboardManager.current
 	val backStack = LocalNavStack.current
 	val ctx = LocalCtx.current
-	Column(
-		Modifier
-			.verticalScroll(rememberScrollState())
-			.padding(12.dp)
-			.padding(bottom = 117.9.dp)
-	) {
-		Form {
-			SelectionContainer {
-				val text = buildString {
-					append(ctx.name + "\n")
-					append(stringResource(Res.string.info_app_version, ctx.appVersion))
-				}
-				FormRow(onClick = {
-					clipboard.setText(AnnotatedString(text))
-				}) {
-					Text(text)
+	val hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+	Scaffold(
+		topBar = { NestedTopBar(
+			{ Text(stringResource(Res.string.title_about)) },
+			hideBack = hideBack
+		) }
+	) { innerPadding ->
+		Column(
+			Modifier
+				.padding(innerPadding)
+				.verticalScroll(rememberScrollState())
+				.padding(12.dp)
+				.padding(bottom = 117.9.dp)
+		) {
+			Form {
+				SelectionContainer {
+					val text = buildString {
+						append(ctx.name + "\n")
+						append(stringResource(Res.string.info_app_version, ctx.appVersion))
+					}
+					FormRow(onClick = {
+						clipboard.setText(AnnotatedString(text))
+					}) {
+						Text(text)
+					}
 				}
 			}
-		}
-		Form {
-			FormRow(onClick = {
-				backStack.add(SettingsAcknowledgements)
-			}) {
-				Text(stringResource(Res.string.title_acknowledgements))
-				Icon(vectorResource(Res.drawable.forward), null)
+			Form {
+				FormRow(onClick = {
+					backStack.add(Screen.Settings.Acknowledgements)
+				}) {
+					Text(stringResource(Res.string.title_acknowledgements))
+					Icon(vectorResource(Res.drawable.forward), null)
+				}
 			}
 		}
 	}

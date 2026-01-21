@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_delete
@@ -22,10 +26,12 @@ import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.count_songs
 import navic.composeapp.generated.resources.playlist_remove
 import navic.composeapp.generated.resources.share
+import navic.composeapp.generated.resources.title_playlists
 import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.Tracks
+import paige.navic.data.model.Screen
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.RefreshBox
@@ -34,6 +40,8 @@ import paige.navic.ui.component.dialog.DeletionEndpoint
 import paige.navic.ui.component.dialog.ShareDialog
 import paige.navic.ui.component.layout.ArtGrid
 import paige.navic.ui.component.layout.ArtGridItem
+import paige.navic.ui.component.layout.NestedTopBar
+import paige.navic.ui.component.layout.RootTopBar
 import paige.navic.ui.component.layout.artGridError
 import paige.navic.ui.component.layout.artGridPlaceholder
 import paige.navic.ui.viewmodel.PlaylistsViewModel
@@ -44,36 +52,48 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistsScreen(
+	nested: Boolean = false,
 	viewModel: PlaylistsViewModel = viewModel { PlaylistsViewModel() }
 ) {
 	val playlistsState by viewModel.playlistsState.collectAsState()
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	var deletionId by remember { mutableStateOf<String?>(null) }
+	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-	RefreshBox(
-		modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-		isRefreshing = playlistsState is UiState.Loading,
-		onRefresh = { viewModel.refreshPlaylists() }
-	) { topPadding ->
-		AnimatedContent(playlistsState, Modifier.padding(top = topPadding)) {
-			ArtGrid {
-				when (it) {
-					is UiState.Loading -> artGridPlaceholder()
-					is UiState.Error -> artGridError(it)
-					is UiState.Success -> {
-						items(it.data, { it.id }) { playlist ->
-							PlaylistsScreenItem(
-								modifier = Modifier.animateItem(),
-								playlist = playlist,
-								viewModel = viewModel,
-								onSetShareId = { newShareId ->
-									shareId = newShareId
-								},
-								onSetDeletionId = { newDeletionId ->
-									deletionId = newDeletionId
-								}
-							)
+	Scaffold(
+		topBar = {
+			if (!nested) {
+				RootTopBar({ Text(stringResource(Res.string.title_playlists)) }, scrollBehavior)
+			} else {
+				NestedTopBar({ Text(stringResource(Res.string.title_playlists)) })
+			}
+		}
+	) { innerPadding ->
+		RefreshBox(
+			modifier = Modifier.padding(innerPadding).background(MaterialTheme.colorScheme.surface),
+			isRefreshing = playlistsState is UiState.Loading,
+			onRefresh = { viewModel.refreshPlaylists() }
+		) { topPadding ->
+			AnimatedContent(playlistsState, Modifier.padding(top = topPadding)) {
+				ArtGrid(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
+					when (it) {
+						is UiState.Loading -> artGridPlaceholder()
+						is UiState.Error -> artGridError(it)
+						is UiState.Success -> {
+							items(it.data, { it.id }) { playlist ->
+								PlaylistsScreenItem(
+									modifier = Modifier.animateItem(),
+									playlist = playlist,
+									viewModel = viewModel,
+									onSetShareId = { newShareId ->
+										shareId = newShareId
+									},
+									onSetDeletionId = { newDeletionId ->
+										deletionId = newDeletionId
+									}
+								)
+							}
 						}
 					}
 				}
@@ -113,7 +133,7 @@ fun PlaylistsScreenItem(
 			imageModifier = Modifier.combinedClickable(
 				onClick = {
 					ctx.clickSound()
-					backStack.add(Tracks(playlist))
+					backStack.add(Screen.Tracks(playlist))
 				},
 				onLongClick = {
 					viewModel.selectPlaylist(playlist)

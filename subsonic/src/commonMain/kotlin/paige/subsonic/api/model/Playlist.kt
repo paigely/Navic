@@ -31,17 +31,12 @@ data class Playlist(
 	val `public`: Boolean?,
 	val songCount: Int,
 ) : TrackCollection {
-	override val title: String
-		get() = name
-
-	override val subtitle: String?
-		get() = comment
-
-	override val tracks: List<Track>
-		get() = entry.orEmpty()
-
-	override val trackCount: Int
-		get() = songCount
+	override val title: String = name
+	override val subtitle: String? = comment
+	override val tracks: List<Track> = entry.orEmpty()
+	override val trackCount: Int = songCount
+	override val genre: String? = null
+	override val year: Int? = null
 }
 
 @Serializable

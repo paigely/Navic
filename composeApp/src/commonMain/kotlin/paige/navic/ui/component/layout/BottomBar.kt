@@ -35,14 +35,11 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import paige.navic.Albums
-import paige.navic.Artists
-import paige.navic.Library
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.Playlists
 import paige.navic.data.model.NavbarConfig
 import paige.navic.data.model.NavbarTab
+import paige.navic.data.model.Screen
 import paige.navic.ui.component.dialog.NavtabsViewModel
 import paige.navic.util.UiState
 
@@ -53,24 +50,24 @@ private enum class NavItem(
 	val label: StringResource
 ) {
 	LIBRARY(
-		destination = Library,
+		destination = Screen.Library(),
 		icon = Res.drawable.library_music,
 		iconUnselected = Res.drawable.library_music_unselected,
 		label = Res.string.title_library
 	),
 	ALBUMS(
-		destination = Albums,
+		destination = Screen.Albums(),
 		icon = Res.drawable.album,
 		iconUnselected = Res.drawable.album_unselected,
 		label = Res.string.title_albums
 	),
 	PLAYLISTS(
-		destination = Playlists,
+		destination = Screen.Playlists(),
 		icon = Res.drawable.playlist_play,
 		label = Res.string.title_playlists
 	),
 	ARTISTS(
-		destination = Artists,
+		destination = Screen.Artists(),
 		icon = Res.drawable.artist,
 		iconUnselected = Res.drawable.artist_unselected,
 		label = Res.string.title_artists

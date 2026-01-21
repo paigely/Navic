@@ -12,6 +12,8 @@ sealed interface TrackCollection {
 	val subtitle: String?
 	val coverArt: String?
 	val duration: Int?
+	val year: Int?
+	val genre: String?
 	val trackCount: Int
 	val tracks: List<Track>
 }
