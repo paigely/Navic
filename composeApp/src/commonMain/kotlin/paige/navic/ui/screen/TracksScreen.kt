@@ -61,11 +61,13 @@ import paige.navic.ui.theme.mapleMono
 import paige.navic.ui.viewmodel.TracksViewModel
 import paige.navic.util.UiState
 import paige.navic.util.shimmerLoading
+import paige.navic.util.toHHMMSS
 import paige.subsonic.api.model.Album
 import paige.subsonic.api.model.Playlist
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 private class TracksScreenScope(
 	val player: MediaPlayerViewModel,
@@ -277,12 +279,9 @@ private fun TracksScreenScope.TrackRow(
 			}
 		}
 
-		track.duration?.let {
-			val minutes = it / 60
-			val seconds = it % 60
-			val formatted = minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0')
+		track.duration?.seconds?.toHHMMSS()?.let {
 			Text(
-				formatted,
+				it,
 				fontFamily = mapleMono(),
 				fontWeight = FontWeight(400),
 				fontSize = 13.sp,

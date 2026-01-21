@@ -11,3 +11,19 @@ fun Duration.toHumanReadable(): String =
 			if (seconds > 0 || isEmpty()) append("${seconds}s")
 		}.trim()
 	}
+
+fun Duration.toHHMMSS(): String {
+	val totalSeconds = inWholeSeconds
+
+	val hours = totalSeconds / 3600
+	val minutes = (totalSeconds % 3600) / 60
+	val seconds = totalSeconds % 60
+
+	fun Long.twoDigits() = toString().padStart(2, '0')
+
+	return if (hours > 0) {
+		"${hours.twoDigits()}:${minutes.twoDigits()}:${seconds.twoDigits()}"
+	} else {
+		"${minutes.twoDigits()}:${seconds.twoDigits()}"
+	}
+}

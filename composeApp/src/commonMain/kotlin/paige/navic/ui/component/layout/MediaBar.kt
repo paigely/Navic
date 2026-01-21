@@ -32,6 +32,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
@@ -41,6 +43,7 @@ import androidx.compose.material3.ToggleButtonColors
 import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -91,8 +94,10 @@ import paige.navic.shared.PlayerUiState
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.screen.LyricsScreen
+import paige.navic.util.toHHMMSS
 import paige.subsonic.api.model.Album
 import paige.subsonic.api.model.Playlist
+import kotlin.time.Duration.Companion.seconds
 
 object MediaBarDefaults {
 	val height = 117.9.dp
@@ -525,33 +530,60 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 	)
 	val animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Rect>()
 	with(sharedTransitionScope) {
-		WavySlider(
+		Column(
 			modifier = Modifier
-				.sharedElement(
-					sharedContentState = rememberSharedContentState(key = "progress"),
-					animatedVisibilityScope = animatedVisibilityScope,
-					boundsTransform = { _, _ -> animationSpec }
-				)
 				.fillMaxWidth()
 				.padding(horizontal = 15.dp),
-			colors = colors,
-			enabled = playerState.tracks != null,
-			waveHeight = waveHeight,
-			animationSpecs = SliderDefaults.WaveAnimationSpecs.copy(
-				waveAppearanceAnimationSpec = snap()
-			),
-			value = progress,
-			onValueChange = { player.seek(it) },
-			thumb = {
-				SliderDefaults.Thumb(
-					interactionSource = interactionSource,
-					colors = colors,
-					enabled = playerState.tracks != null,
-					thumbSize = DpSize(6.dp, 24.dp),
-					modifier = Modifier.clip(ContinuousCapsule)
-				)
+			verticalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			WavySlider(
+				modifier = Modifier
+					.fillMaxWidth()
+					.sharedElement(
+						sharedContentState = rememberSharedContentState(key = "progress"),
+						animatedVisibilityScope = animatedVisibilityScope,
+						boundsTransform = { _, _ -> animationSpec }
+					),
+				colors = colors,
+				enabled = playerState.tracks != null,
+				waveHeight = waveHeight,
+				animationSpecs = SliderDefaults.WaveAnimationSpecs.copy(
+					waveAppearanceAnimationSpec = snap()
+				),
+				value = progress,
+				onValueChange = { player.seek(it) },
+				thumb = {
+					SliderDefaults.Thumb(
+						interactionSource = interactionSource,
+						colors = colors,
+						enabled = playerState.tracks != null,
+						thumbSize = DpSize(6.dp, 24.dp),
+						modifier = Modifier.clip(ContinuousCapsule)
+					)
+				}
+			)
+			Row(
+				Modifier.fillMaxWidth(),
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.SpaceBetween
+			) {
+				CompositionLocalProvider(
+					LocalTextStyle provides MaterialTheme.typography.bodyMedium,
+					LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
+				) {
+					val duration = playerState.currentTrack?.duration
+					if (duration != null) {
+						if (expanded) {
+							Text(((duration * progress).toDouble().seconds).toHHMMSS())
+							Text(duration.seconds.toHHMMSS())
+						}
+					} else {
+						Text("--:--")
+						Text("--:--")
+					}
+				}
 			}
-		)
+		}
 	}
 }
 //endregion components

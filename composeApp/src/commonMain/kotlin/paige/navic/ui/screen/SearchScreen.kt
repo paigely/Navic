@@ -269,7 +269,8 @@ private fun SearchTopBar(
 				unfocusedContainerColor = Color.Transparent,
 				focusedIndicatorColor = Color.Transparent,
 				unfocusedIndicatorColor = Color.Transparent
-			)
+			),
+			maxLines = 1
 		)
 	}
 }
