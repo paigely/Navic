@@ -190,9 +190,7 @@ class AndroidMediaPlayerViewModel(
 				if (index != -1) {
 					play(album, index)
 				}
-			} catch (_: Exception) {
-				""
-			}
+			} catch (_: Exception) {}
 		}
 	}
 
