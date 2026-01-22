@@ -183,14 +183,14 @@ class AndroidMediaPlayerViewModel(
 				)
 			}
 
-			try {
+			runCatching {
 				val albumResponse = SessionManager.api.getAlbum(track.albumId.toString())
 				val album = albumResponse.data.album
 				val index = album.tracks.indexOfFirst { it.id == track.id }
 				if (index != -1) {
 					play(album, index)
 				}
-			} catch (_: Exception) {}
+			}
 		}
 	}
 
