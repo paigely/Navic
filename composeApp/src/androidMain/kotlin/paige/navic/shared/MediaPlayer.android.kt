@@ -1,6 +1,7 @@
 package paige.navic.shared
 
 import android.app.Application
+import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -24,6 +25,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import paige.navic.MainActivity
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
@@ -34,7 +36,21 @@ class PlaybackService : MediaSessionService() {
 	override fun onCreate() {
 		super.onCreate()
 		val player = ExoPlayer.Builder(this).build()
-		mediaSession = MediaSession.Builder(this, player).build()
+		val sessionIntent = Intent(this, MainActivity::class.java).apply {
+			flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or
+				Intent.FLAG_ACTIVITY_CLEAR_TOP
+		}
+
+		val sessionPendingIntent = PendingIntent.getActivity(
+			this,
+			0,
+			sessionIntent,
+			PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+		)
+
+		mediaSession = MediaSession.Builder(this, player)
+			.setSessionActivity(sessionPendingIntent)
+			.build()
 	}
 
 	override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {

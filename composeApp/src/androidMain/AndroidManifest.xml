@@ -33,6 +33,7 @@
 		</activity>
 		<service
 			android:name=".shared.PlaybackService"
+			android:enabled="true"
 			android:foregroundServiceType="mediaPlayback"
 			android:permission="paige.navic.permission.PLAYBACK_SERVICE"
 			android:exported="true">
