@@ -129,6 +129,26 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 		}
 	}
 
+	override fun playSingle(track: Track) {
+		viewModelScope.launch {
+			_uiState.update {
+				it.copy(
+					currentTrack = track,
+					isLoading = true
+				)
+			}
+
+			runCatching {
+				val albumResponse = SessionManager.api.getAlbum(track.albumId.toString())
+				val album = albumResponse.data.album
+				val index = album.tracks.indexOfFirst { it.id == track.id }
+				if (index != -1) {
+					play(album, index)
+				}
+			}
+		}
+	}
+
 	private fun playIndex(index: Int) {
 		val tracks = _uiState.value.tracks?.tracks ?: return
 		if (index !in tracks.indices || index !in preparedUrls.indices) return

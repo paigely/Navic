@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import paige.navic.data.session.SessionManager
+import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
 
 class PlaybackService : MediaSessionService() {
@@ -145,7 +146,7 @@ class AndroidMediaPlayerViewModel(
 			val mediaItems = tracks.tracks.map { track ->
 				val url = try {
 					SessionManager.api.streamUrl(track.id)
-				} catch (e: Exception) {
+				} catch (_: Exception) {
 					""
 				}
 
@@ -169,6 +170,26 @@ class AndroidMediaPlayerViewModel(
 				controller?.setMediaItems(mediaItems, startIndex, 0L)
 				controller?.prepare()
 				controller?.play()
+			}
+		}
+	}
+
+	override fun playSingle(track: Track) {
+		viewModelScope.launch {
+			_uiState.update {
+				it.copy(
+					currentTrack = track,
+					isLoading = true
+				)
+			}
+
+			runCatching {
+				val albumResponse = SessionManager.api.getAlbum(track.albumId.toString())
+				val album = albumResponse.data.album
+				val index = album.tracks.indexOfFirst { it.id == track.id }
+				if (index != -1) {
+					play(album, index)
+				}
 			}
 		}
 	}

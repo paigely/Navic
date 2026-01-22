@@ -59,10 +59,12 @@ import navic.composeapp.generated.resources.close
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_search
+import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
+import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
 import paige.navic.ui.component.common.ErrorBox
@@ -72,6 +74,7 @@ import paige.navic.ui.viewmodel.SearchViewModel
 import paige.navic.util.UiState
 import paige.subsonic.api.model.Album
 import paige.subsonic.api.model.Artist
+import paige.subsonic.api.model.Track
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -100,6 +103,8 @@ fun SearchScreen(
 
 					val albums = results.filterIsInstance<Album>()
 					val artists = results.filterIsInstance<Artist>()
+					val tracks = results.filterIsInstance<Track>()
+					val player = LocalMediaPlayer.current
 
 					val scrollState = rememberScrollState()
 
@@ -121,6 +126,11 @@ fun SearchScreen(
 						}
 						SearchSection(Res.string.title_artists, artists) { artist ->
 							SearchSectionItem(artist.coverArt, artist.name)
+						}
+						SearchSection(Res.string.title_songs, tracks) { track ->
+							SearchSectionItem(track.coverArt, track.title){
+								player.playSingle(track)
+							}
 						}
 					}
 				}
