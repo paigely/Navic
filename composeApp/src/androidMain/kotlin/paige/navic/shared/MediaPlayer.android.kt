@@ -35,7 +35,15 @@ class PlaybackService : MediaSessionService() {
 
 	override fun onCreate() {
 		super.onCreate()
-		val player = ExoPlayer.Builder(this).build()
+		val player = ExoPlayer.Builder(this).build().apply {
+			setAudioAttributes(
+				androidx.media3.common.AudioAttributes.Builder()
+					.setUsage(androidx.media3.common.C.USAGE_MEDIA)
+					.setContentType(androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC)
+					.build(),
+				true
+			)
+		}
 		val sessionIntent = Intent(this, MainActivity::class.java).apply {
 			flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or
 				Intent.FLAG_ACTIVITY_CLEAR_TOP
