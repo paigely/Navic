@@ -46,6 +46,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -508,6 +509,9 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 	val interactionSource = remember { MutableInteractionSource() }
 	val progress = playerState.progress
 	val paused = playerState.isPaused
+	var dragProgress by remember { mutableFloatStateOf(progress) }
+	var isDragging by remember { mutableStateOf(false) }
+	val shownProgress = if (isDragging) dragProgress else progress
 	val waveHeight by animateDpAsState(
 		if (paused)
 			0.dp
@@ -554,19 +558,26 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 						animatedVisibilityScope = animatedVisibilityScope,
 						boundsTransform = { _, _ -> animationSpec }
 					),
+				enabled = playerState.currentTrack != null,
 				colors = colors,
-				enabled = playerState.tracks != null,
 				waveHeight = waveHeight,
 				animationSpecs = SliderDefaults.WaveAnimationSpecs.copy(
 					waveAppearanceAnimationSpec = snap()
 				),
-				value = progress,
-				onValueChange = { player.seek(it) },
+				value = shownProgress,
+				onValueChange = {
+					isDragging = true
+					dragProgress = it
+				},
+				onValueChangeFinished = {
+					isDragging = false
+					player.seek(dragProgress)
+				},
 				thumb = {
 					SliderDefaults.Thumb(
 						interactionSource = interactionSource,
 						colors = colors,
-						enabled = playerState.tracks != null,
+						enabled = playerState.currentTrack != null,
 						thumbSize = DpSize(6.dp, 24.dp),
 						modifier = Modifier.clip(ContinuousCapsule)
 					)
@@ -584,7 +595,7 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 					val duration = playerState.currentTrack?.duration
 					if (duration != null) {
 						if (expanded) {
-							Text(((duration * progress).toDouble().seconds).toHHMMSS())
+							Text(((duration * shownProgress).toDouble().seconds).toHHMMSS())
 							Text(duration.seconds.toHHMMSS())
 						}
 					} else {
