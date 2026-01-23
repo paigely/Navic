@@ -64,6 +64,7 @@ fun RootTopBar(
 	val scope = rememberCoroutineScope()
 	val loginState by viewModel.loginState.collectAsState()
 	var showLogin by remember { mutableStateOf(false) }
+	var canExpandSearch by remember { mutableStateOf(false) }
 
 	MediumFlexibleTopAppBar(
 		title = {
@@ -74,7 +75,10 @@ fun RootTopBar(
 		actions = {
 			Actions(
 				loginState = loginState,
-				onSearch = { scope.launch { searchBarState.animateToExpanded() } },
+				onSearch = {
+					canExpandSearch = true
+					scope.launch { searchBarState.animateToExpanded()}
+						   },
 				onLogOut = { viewModel.logout() },
 				onSetShowLogin = { showLogin = it }
 			)
@@ -84,9 +88,12 @@ fun RootTopBar(
 			scrolledContainerColor = MaterialTheme.colorScheme.surface
 		),
 	)
-	SearchBar(
-		searchBarState = searchBarState
-	)
+	if (canExpandSearch) {
+		SearchBar(
+			searchBarState = searchBarState,
+			enabled = canExpandSearch
+		)
+	}
 	if (showLogin && loginState !is LoginState.Success) {
 		LoginDialog(
 			viewModel = viewModel,

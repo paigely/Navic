@@ -65,8 +65,10 @@ import paige.subsonic.api.model.Track
 @Composable
 fun SearchBar(
 	searchBarState: SearchBarState,
-	viewModel: SearchViewModel = viewModel { SearchViewModel() }
+	viewModel: SearchViewModel = viewModel { SearchViewModel() },
+	enabled: Boolean
 ) {
+	if (!enabled) return
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val state by viewModel.searchState.collectAsState()
