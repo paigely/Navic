@@ -2,6 +2,7 @@ package paige.navic.data.repository
 
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.model.Album
+import paige.subsonic.api.model.AlbumInfo
 import paige.subsonic.api.model.Playlist
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
@@ -16,6 +17,10 @@ class TracksRepository {
 				coverArt = SessionManager.api.getCoverArtUrl(collection.id, auth = true)
 			)
 		}
+	}
+
+	suspend fun getAlbumInfo(album: Album): AlbumInfo {
+		return SessionManager.api.getAlbumInfo(album.id).data.albumInfo
 	}
 
 	suspend fun isTrackStarred(track: Track): Boolean? {

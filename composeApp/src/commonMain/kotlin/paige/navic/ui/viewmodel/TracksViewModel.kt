@@ -9,6 +9,8 @@ import kotlinx.coroutines.launch
 import paige.navic.data.repository.TracksRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.util.UiState
+import paige.subsonic.api.model.Album
+import paige.subsonic.api.model.AlbumInfo
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
 
@@ -21,6 +23,9 @@ class TracksViewModel(
 
 	private val _selectedTrack = MutableStateFlow<Track?>(null)
 	val selectedTrack: StateFlow<Track?> = _selectedTrack.asStateFlow()
+
+	private val _albumInfoState = MutableStateFlow<UiState<AlbumInfo>>(UiState.Loading)
+	val albumInfoState = _albumInfoState.asStateFlow()
 
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
 	val starredState = _starredState.asStateFlow()
@@ -43,6 +48,15 @@ class TracksViewModel(
 			} catch (e: Exception) {
 				_tracksState.value = UiState.Error(e)
 			}
+			try {
+				val albumInfo = repository.getAlbumInfo(
+					(_tracksState.value as UiState.Success).data as Album
+				)
+				_albumInfoState.value = UiState.Success(albumInfo)
+			} catch (e: Exception) {
+				e.printStackTrace()
+				_albumInfoState.value = UiState.Error(e)
+			}
 		}
 	}
 
@@ -50,6 +64,7 @@ class TracksViewModel(
 		viewModelScope.launch {
 			_selectedTrack.value = track
 			_starredState.value = UiState.Loading
+			_albumInfoState.value = UiState.Loading
 			try {
 				val isStarred = repository.isTrackStarred(track)
 				_starredState.value = UiState.Success(isStarred ?: false)

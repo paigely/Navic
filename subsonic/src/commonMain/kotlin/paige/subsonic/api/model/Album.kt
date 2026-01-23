@@ -23,6 +23,21 @@ data class AlbumList(
 )
 
 @Serializable
+data class AlbumInfoResponse(
+	val albumInfo: AlbumInfo
+)
+
+@Serializable
+data class AlbumInfo(
+	val notes: String?,
+	val musicBrainzId: String?,
+	val lastFmUrl: String?,
+	val smallImageUrl: String?,
+	val mediumImageUrl: String?,
+	val largeImageUrl: String?,
+)
+
+@Serializable
 data class Album(
 	override val coverArt: String?,
 	override val duration: Int?,

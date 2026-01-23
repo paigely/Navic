@@ -34,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,9 +52,13 @@ import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.action_star
+import navic.composeapp.generated.resources.action_view_on_lastfm
+import navic.composeapp.generated.resources.action_view_on_musicbrainz
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_artist
+import navic.composeapp.generated.resources.lastfm
 import navic.composeapp.generated.resources.more_vert
+import navic.composeapp.generated.resources.musicbrainz
 import navic.composeapp.generated.resources.play_arrow
 import navic.composeapp.generated.resources.share
 import navic.composeapp.generated.resources.shuffle
@@ -95,6 +101,9 @@ fun TracksScreen(
 		TracksViewModel(partialTracks)
 	}
 ) {
+	@Suppress("DEPRECATION")
+	val clipboard = LocalClipboardManager.current
+	val uriHandler = LocalUriHandler.current
 	val player = LocalMediaPlayer.current
 	val scrollState = rememberScrollState()
 
@@ -104,16 +113,64 @@ fun TracksScreen(
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 
+	val albumInfoState by viewModel.albumInfoState.collectAsState()
 	val starredState by viewModel.starredState.collectAsState()
 
 	Scaffold(
 		topBar = {
 			NestedTopBar({}, {
-				TopBarButton({}) {
-					Icon(
-						vectorResource(Res.drawable.more_vert),
-						stringResource(Res.string.action_more)
-					)
+				Box {
+					var expanded by remember { mutableStateOf(false) }
+					TopBarButton({
+						expanded = true
+					}) {
+						Icon(
+							vectorResource(Res.drawable.more_vert),
+							stringResource(Res.string.action_more)
+						)
+					}
+					Dropdown(
+						expanded = expanded,
+						onDismissRequest = { expanded = false }
+					) {
+						val info = (albumInfoState as? UiState.Success)?.data
+						DropdownItem(
+							text = Res.string.action_view_on_lastfm,
+							leadingIcon = Res.drawable.lastfm,
+							enabled = albumInfoState is UiState.Success
+								&& info?.lastFmUrl != null,
+							onClick = {
+								expanded = false
+								info?.lastFmUrl?.let { url ->
+									uriHandler.openUri(url)
+								}
+							}
+						)
+						DropdownItem(
+							text = Res.string.action_view_on_musicbrainz,
+							leadingIcon = Res.drawable.musicbrainz,
+							enabled = albumInfoState is UiState.Success
+								&& info?.musicBrainzId != null,
+							onClick = {
+								expanded = false
+								info?.musicBrainzId?.let { id ->
+									uriHandler.openUri(
+										"https://musicbrainz.org/release/$id"
+									)
+								}
+							}
+						)
+						DropdownItem(
+							containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+							text = Res.string.action_share,
+							leadingIcon = Res.drawable.share,
+							enabled = tracks is UiState.Success,
+							onClick = {
+								expanded = false
+								shareId = (tracks as? UiState.Success)?.data?.id
+							},
+						)
+					}
 				}
 			})
 		}

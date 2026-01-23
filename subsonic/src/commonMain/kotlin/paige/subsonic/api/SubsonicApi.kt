@@ -12,6 +12,7 @@ import io.ktor.http.Url
 import io.ktor.http.appendPathSegments
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import paige.subsonic.api.model.AlbumInfoResponse
 import paige.subsonic.api.model.AlbumList2Response
 import paige.subsonic.api.model.AlbumListResponse
 import paige.subsonic.api.model.AlbumResponse
@@ -185,6 +186,14 @@ class SubsonicApi(
 				parameter("id", id)
 			}
 			.body<SubsonicResponse<AlbumResponse>>()
+	}
+
+	suspend fun getAlbumInfo(id: String): SubsonicResponse<AlbumInfoResponse> {
+		return client
+			.get("rest/getAlbumInfo") {
+				parameter("id", id)
+			}
+			.body<SubsonicResponse<AlbumInfoResponse>>()
 	}
 
 	suspend fun getPlaylist(id: String): SubsonicResponse<PlaylistResponse> {
