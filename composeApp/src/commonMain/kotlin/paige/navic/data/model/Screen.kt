@@ -27,7 +27,6 @@ sealed interface Screen : NavKey {
 	) : NavKey
 
 	// misc
-	@Serializable data object Search : NavKey
 	@Serializable data class Tracks(val partialCollection: TrackCollection) : NavKey
 
 	// settings

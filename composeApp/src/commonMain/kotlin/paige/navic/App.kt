@@ -42,7 +42,6 @@ import paige.navic.ui.screen.AlbumsScreen
 import paige.navic.ui.screen.ArtistsScreen
 import paige.navic.ui.screen.LibraryScreen
 import paige.navic.ui.screen.PlaylistsScreen
-import paige.navic.ui.screen.SearchScreen
 import paige.navic.ui.screen.SettingsAboutScreen
 import paige.navic.ui.screen.SettingsAcknowledgementsScreen
 import paige.navic.ui.screen.SettingsAppearanceScreen
@@ -64,7 +63,6 @@ private val config = SavedStateConfiguration {
 			subclass(Screen.Artists::class, Screen.Artists.serializer())
 
 			// misc
-			subclass(Screen.Search::class, Screen.Search.serializer())
 			subclass(Screen.Tracks::class, Screen.Tracks.serializer())
 
 			// settings
@@ -160,9 +158,6 @@ private fun entryProvider(
 		// misc
 		entry<Screen.Tracks>(metadata = detailPane("root")) { key ->
 			TracksScreen(key.partialCollection)
-		}
-		entry<Screen.Search> {
-			SearchScreen()
 		}
 
 		// settings

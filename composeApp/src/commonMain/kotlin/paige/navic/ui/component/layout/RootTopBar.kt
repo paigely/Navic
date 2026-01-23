@@ -15,12 +15,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +30,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.account_circle
 import navic.composeapp.generated.resources.action_log_in
@@ -57,6 +60,8 @@ fun RootTopBar(
 	scrollBehavior: TopAppBarScrollBehavior,
 	viewModel: LoginViewModel = viewModel { LoginViewModel() },
 ) {
+	val searchBarState = rememberSearchBarState()
+	val scope = rememberCoroutineScope()
 	val loginState by viewModel.loginState.collectAsState()
 	var showLogin by remember { mutableStateOf(false) }
 
@@ -69,6 +74,7 @@ fun RootTopBar(
 		actions = {
 			Actions(
 				loginState = loginState,
+				onSearch = { scope.launch { searchBarState.animateToExpanded() } },
 				onLogOut = { viewModel.logout() },
 				onSetShowLogin = { showLogin = it }
 			)
@@ -77,6 +83,9 @@ fun RootTopBar(
 		colors = TopAppBarDefaults.topAppBarColors(
 			scrolledContainerColor = MaterialTheme.colorScheme.surface
 		),
+	)
+	SearchBar(
+		searchBarState = searchBarState
 	)
 	if (showLogin && loginState !is LoginState.Success) {
 		LoginDialog(
@@ -89,6 +98,7 @@ fun RootTopBar(
 @Composable
 private fun Actions(
 	loginState: LoginState<User?>,
+	onSearch: () -> Unit,
 	onLogOut: () -> Unit,
 	onSetShowLogin: (shown: Boolean) -> Unit
 ) {
@@ -99,7 +109,7 @@ private fun Actions(
 	IconButton(
 		onClick = {
 			ctx.clickSound()
-			backStack.add(Screen.Search)
+			onSearch()
 		},
 		enabled = user != null
 	) {

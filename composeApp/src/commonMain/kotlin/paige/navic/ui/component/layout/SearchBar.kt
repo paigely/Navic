@@ -1,64 +1,51 @@
-package paige.navic.ui.screen
+package paige.navic.ui.component.layout
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.carousel.CarouselDefaults
 import androidx.compose.material3.carousel.CarouselItemScope
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_clear_search
 import navic.composeapp.generated.resources.action_navigate_back
 import navic.composeapp.generated.resources.arrow_back
-import navic.composeapp.generated.resources.close
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_artists
-import navic.composeapp.generated.resources.title_search
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -68,8 +55,6 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
 import paige.navic.ui.component.common.ErrorBox
-import paige.navic.ui.component.layout.ArtGrid
-import paige.navic.ui.component.layout.artGridPlaceholder
 import paige.navic.ui.viewmodel.SearchViewModel
 import paige.navic.util.UiState
 import paige.subsonic.api.model.Album
@@ -78,21 +63,46 @@ import paige.subsonic.api.model.Track
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(
+fun SearchBar(
+	searchBarState: SearchBarState,
 	viewModel: SearchViewModel = viewModel { SearchViewModel() }
 ) {
-	val query by viewModel.searchQuery.collectAsState()
-	val state by viewModel.searchState.collectAsState()
+	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
+	val state by viewModel.searchState.collectAsState()
+	val scope = rememberCoroutineScope()
 
-	Column {
-		SearchTopBar(
-			query = query,
-			onQueryChange = {
-				viewModel.search(it)
-			}
+	ExpandedFullScreenSearchBar(
+		state = searchBarState,
+		collapsedShape = RectangleShape,
+		inputField = {
+			SearchBarDefaults.InputField(
+				textFieldState = viewModel.searchQuery,
+				searchBarState = searchBarState,
+				colors = SearchBarDefaults.appBarWithSearchColors().searchBarColors.inputFieldColors,
+				onSearch = {},
+				leadingIcon = {
+					IconButton({
+						scope.launch { searchBarState.animateToCollapsed() }
+					}) {
+						Icon(
+							vectorResource(Res.drawable.arrow_back),
+							stringResource(Res.string.action_navigate_back),
+							tint = MaterialTheme.colorScheme.onSurfaceVariant
+						)
+					}
+				}
+			)
+		},
+		colors = SearchBarDefaults.colors(
+			dividerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+			containerColor = MaterialTheme.colorScheme.surface
 		)
-		AnimatedContent(state) {
+	) {
+		AnimatedContent(
+			state,
+			modifier = Modifier.fillMaxSize()
+		) {
 			when (it) {
 				is UiState.Loading -> ArtGrid {
 					artGridPlaceholder()
@@ -111,14 +121,10 @@ fun SearchScreen(
 					Column(
 						modifier = Modifier
 							.fillMaxSize()
-							.padding(
-								bottom = 117.9.dp,
-								start = 20.dp,
-								end = 20.dp
-							)
 							.verticalScroll(scrollState),
 						verticalArrangement = Arrangement.spacedBy(20.dp)
 					) {
+						Spacer(Modifier.height(0.dp))
 						SearchSection(Res.string.title_albums, albums) { album ->
 							SearchSectionItem(album.coverArt, album.name) {
 								backStack.add(Screen.Tracks(album))
@@ -127,9 +133,45 @@ fun SearchScreen(
 						SearchSection(Res.string.title_artists, artists) { artist ->
 							SearchSectionItem(artist.coverArt, artist.name)
 						}
-						SearchSection(Res.string.title_songs, tracks) { track ->
-							SearchSectionItem(track.coverArt, track.title){
-								player.playSingle(track)
+						Column {
+							Text(
+								stringResource(Res.string.title_songs),
+								style = MaterialTheme.typography.headlineSmall,
+								modifier = Modifier.padding(horizontal = 20.dp)
+							)
+							tracks.forEach { track ->
+								ListItem(
+									modifier = Modifier.clickable {
+										ctx.clickSound()
+										player.playSingle(track)
+									},
+									headlineContent = {
+										Text(track.title)
+									},
+									supportingContent = {
+										Text(
+											buildString {
+												append(track.album ?: "Unknown album")
+												append(" • ")
+												append(track.artist ?: "Unknown artist(s)")
+												append(" • ")
+												append(track.year ?: "Unknown year")
+											},
+											maxLines = 1
+										)
+									},
+									leadingContent = {
+										AsyncImage(
+											model = track.coverArt,
+											contentDescription = null,
+											modifier = Modifier
+												.padding(start = 6.5.dp)
+												.size(50.dp)
+												.clip(ContinuousRoundedRectangle(8.dp)),
+											contentScale = ContentScale.Crop
+										)
+									}
+								)
 							}
 						}
 					}
@@ -141,14 +183,14 @@ fun SearchScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun <T>SearchSection(
+private fun <T> SearchSection(
 	title: StringResource,
 	items: List<T>,
 	content: @Composable CarouselItemScope.(item: T) -> Unit
 ) {
 	if (items.isNotEmpty()) {
 		val state = rememberCarouselState { items.count() }
-		Column {
+		Column(Modifier.padding(horizontal = 20.dp)) {
 			Text(
 				stringResource(title),
 				style = MaterialTheme.typography.headlineSmall
@@ -193,94 +235,4 @@ private fun CarouselItemScope.SearchSectionItem(
 			},
 		contentScale = ContentScale.Crop
 	)
-}
-
-@Composable
-private fun SearchTopBar(
-	query: String,
-	onQueryChange: (String) -> Unit
-) {
-	val ctx = LocalCtx.current
-	val backStack = LocalNavStack.current
-
-	val focusManager = LocalFocusManager.current
-	val focusRequester = remember { FocusRequester() }
-
-	var textFieldValue by remember {
-		mutableStateOf(TextFieldValue(query, TextRange(query.length)))
-	}
-
-	LaunchedEffect(query) {
-		if (query != textFieldValue.text) {
-			textFieldValue = TextFieldValue(query, TextRange(query.length))
-		}
-	}
-
-	LaunchedEffect(Unit) {
-		focusRequester.requestFocus()
-	}
-
-	Row(
-		Modifier.padding(20.dp),
-		verticalAlignment = Alignment.CenterVertically
-	) {
-		Column(
-			modifier = Modifier
-				.size(50.dp)
-				.clip(CircleShape)
-				.background(MaterialTheme.colorScheme.surfaceContainer, CircleShape)
-				.clickable(
-					onClick = {
-						ctx.clickSound()
-						focusManager.clearFocus(true)
-						if (backStack.size > 1) backStack.removeLastOrNull()
-					}
-				),
-			verticalArrangement = Arrangement.Center,
-			horizontalAlignment = Alignment.CenterHorizontally,
-		) {
-			Icon(
-				vectorResource(Res.drawable.arrow_back),
-				contentDescription = stringResource(Res.string.action_navigate_back),
-				tint = MaterialTheme.colorScheme.onSurfaceVariant
-			)
-		}
-		Spacer(Modifier.width(8.dp))
-		TextField(
-			modifier = Modifier
-				.fillMaxWidth()
-				.heightIn(min = 50.dp)
-				.background(MaterialTheme.colorScheme.surfaceContainer, ContinuousCapsule)
-				.focusRequester(focusRequester),
-			value = textFieldValue,
-			onValueChange = {
-				textFieldValue = it
-				onQueryChange(it.text)
-			},
-			placeholder = { Text(stringResource(Res.string.title_search)) },
-			trailingIcon = {
-				if (textFieldValue.text.isNotEmpty()) {
-					IconButton(
-						onClick = {
-							ctx.clickSound()
-							textFieldValue = TextFieldValue("", TextRange(0))
-							onQueryChange("")
-						}
-					) {
-						Icon(
-							vectorResource(Res.drawable.close),
-							contentDescription = stringResource(Res.string.action_clear_search)
-						)
-					}
-				}
-			},
-			colors = TextFieldDefaults.colors(
-				focusedContainerColor = Color.Transparent,
-				unfocusedContainerColor = Color.Transparent,
-				focusedIndicatorColor = Color.Transparent,
-				unfocusedIndicatorColor = Color.Transparent
-			),
-			maxLines = 1
-		)
-	}
 }
