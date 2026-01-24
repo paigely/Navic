@@ -171,7 +171,11 @@ fun SettingsAppearanceScreen() {
 					}
 					FormRow {
 						if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
-							Column {
+							Column(
+								modifier = Modifier
+									.weight(1f, fill = true)
+									.padding(end = 8.dp)
+							) {
 								Text(stringResource(Res.string.option_grid_items_per_row) + ": ${Settings.shared.artGridItemsPerRow}")
 								Text(
 									stringResource(Res.string.subtitle_grid_items_per_row),
