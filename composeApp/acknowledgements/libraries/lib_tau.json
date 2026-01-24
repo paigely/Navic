@@ -9,8 +9,7 @@
 		}
 	],
 	"licenses": [
-		"GPL-3.0",
-		"BSD-3-Clause"
+		"GPL-3.0-or-later"
 	],
 	"funding": [
 		{
