@@ -85,7 +85,7 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
-	albumsViewModel: AlbumsViewModel = viewModel(key = "libraryAlbums") { AlbumsViewModel() },
+	albumsViewModel: AlbumsViewModel = viewModel(key = "libraryAlbums") { AlbumsViewModel(ListType.RECENT) },
 	playlistsViewModel: PlaylistsViewModel = viewModel { PlaylistsViewModel() },
 	artistsViewModel: ArtistsViewModel = viewModel { ArtistsViewModel() },
 ) {
