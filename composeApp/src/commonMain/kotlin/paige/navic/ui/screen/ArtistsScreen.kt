@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -58,6 +59,7 @@ fun ArtistsScreen(
 ) {
 	val artistsState by viewModel.artistsState.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+	val gridState = rememberLazyGridState()
 
 	Scaffold(
 		topBar = {
@@ -86,17 +88,11 @@ fun ArtistsScreen(
 								.sortedBy { it.first }
 						}
 
-						LazyVerticalGrid(
-							modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-							columns = GridCells.Adaptive(150.dp),
-							contentPadding = PaddingValues(
-								start = 16.dp,
-								top = 16.dp,
-								end = 16.dp,
-								bottom = 200.dp,
-							),
-							verticalArrangement = Arrangement.spacedBy(12.dp),
-							horizontalArrangement = Arrangement.spacedBy(12.dp),
+						ArtGrid(
+							modifier = if (!nested)
+								Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+							else Modifier,
+							state = gridState
 						) {
 							stickyHeader { _ ->
 								Row(
