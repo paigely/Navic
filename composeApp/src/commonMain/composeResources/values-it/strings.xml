@@ -48,6 +48,8 @@
 	<string name="option_sort_starred">Preferiti</string>
 	<string name="option_sort_by_year">Per anno</string>
 	<string name="option_sort_by_genre">Per genere</string>
+	<string name="option_scrobble_percentage">Percentuale di scrobble</string>
+	<string name="option_min_duration_to_scrobble">Durata min. per lo scrobble</string>
 
 
 	<plurals name="count_songs">
@@ -85,6 +87,8 @@
 	<string name="action_more">Altro</string>
 	<string name="action_add_to_playlist">Aggiungi alla playlist</string>
 	<string name="action_see_all">Vedi tutti</string>
+	<string name="action_view_on_lastfm">Vedi su last.fm</string>
+	<string name="action_view_on_musicbrainz">Vedi su MusicBrainz</string>
 
 	<string name="notice_deleted_playlist">Playlist eliminata.</string>
 	<string name="notice_deleted_share">Condivisione eliminata.</string>
