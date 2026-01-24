@@ -446,4 +446,13 @@ class SubsonicApi(
 			}
 		}
 	}
+
+	suspend fun getLyricsBySongId(songId: String): String {
+		val url = buildUrl(
+			"getLyricsBySongId",
+			mapOf("id" to songId)
+		).toString()
+
+		return client.get(url).body()
+	}
 }

@@ -13,6 +13,12 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import paige.navic.data.session.SessionManager
 import paige.subsonic.api.model.Track
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -85,7 +91,32 @@ class LyricsRepository(
 		val album = track.album ?: return null
 		val duration = track.duration ?: return null
 
+		// Try if there are lyrics that can be used
+		try {
+			val jsonString = SessionManager.api.getLyricsBySongId(track.id)
+			val json = Json.parseToJsonElement(jsonString)
+
+			val structuredLyrics = json.jsonObject["subsonic-response"]
+				?.jsonObject?.get("lyricsList")
+				?.jsonObject?.get("structuredLyrics")
+				?.jsonArray
+
+			val syncedLyrics = structuredLyrics
+				?.firstOrNull { it.jsonObject["synced"]?.jsonPrimitive?.booleanOrNull == true }
+				?: structuredLyrics?.firstOrNull()
+
+			val lines = syncedLyrics?.jsonObject?.get("line")?.jsonArray
+			if (!lines.isNullOrEmpty()) {
+				return lines.mapNotNull { line ->
+					val startMs = line.jsonObject["start"]?.jsonPrimitive?.contentOrNull?.toLongOrNull()
+					val value = line.jsonObject["value"]?.jsonPrimitive?.contentOrNull
+					if (startMs != null && value != null) startMs.milliseconds to value else null
+				}.sortedBy { it.first }
+			}
+		} catch (_: Exception) {
+		}
 		return try {
+			println("Searching")
 			parseLyrics(
 				client.get("api/get") {
 					parameter("track_name", track.title)
