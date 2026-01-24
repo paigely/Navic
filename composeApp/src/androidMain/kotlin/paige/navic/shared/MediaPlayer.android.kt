@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import paige.navic.MainActivity
+import paige.navic.data.model.Settings
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
@@ -132,7 +133,14 @@ class AndroidMediaPlayerViewModel(
 			val index = player.currentMediaItemIndex
 			val oldIndex = _uiState.value.currentIndex
 
-			if (index != oldIndex) handleScrobble(oldIndex, index)
+			if (index != oldIndex) {
+				scrobbleNowPlaying(index)
+				if (_uiState.value.progress >= Settings.shared.scrobblePercentage
+					&& (_uiState.value.currentTrack?.duration?.toFloat()
+						?: Settings.shared.minDurationToScrobble) >= Settings.shared.minDurationToScrobble) {
+					scrobbleSubmission(oldIndex)
+				}
+			}
 
 			_uiState.update { state ->
 				state.copy(

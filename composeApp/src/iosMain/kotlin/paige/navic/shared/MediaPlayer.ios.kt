@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import paige.navic.data.model.Settings
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
@@ -153,7 +154,14 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 		val tracks = _uiState.value.tracks?.tracks ?: return
 		if (index !in tracks.indices || index !in preparedUrls.indices) return
 
-		handleScrobble(_uiState.value.currentIndex, index)
+		if (index != _uiState.value.currentIndex) {
+			scrobbleNowPlaying(_uiState.value.currentIndex)
+			if (_uiState.value.progress >= Settings.shared.scrobblePercentage
+				&& (_uiState.value.currentTrack?.duration?.toFloat()
+					?: Settings.shared.minDurationToScrobble) >= Settings.shared.minDurationToScrobble) {
+				scrobbleSubmission(index)
+			}
+		}
 
 		val urlStr = preparedUrls[index]
 		if (urlStr.isEmpty()) {

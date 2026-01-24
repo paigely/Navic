@@ -13,11 +13,8 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
-import com.russhwolf.settings.Settings
-import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import kotlinx.serialization.json.Json
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.album
@@ -40,6 +37,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.model.NavbarConfig
 import paige.navic.data.model.NavbarTab
 import paige.navic.data.model.Screen
+import paige.navic.data.model.Settings
 import paige.navic.ui.component.dialog.NavtabsViewModel
 import paige.navic.util.UiState
 
@@ -77,11 +75,11 @@ private enum class NavItem(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun BottomBar(
-	viewModel: NavtabsViewModel = viewModel { NavtabsViewModel(Settings(), Json) }
+	viewModel: NavtabsViewModel = viewModel { NavtabsViewModel(com.russhwolf.settings.Settings(), Json) }
 ) {
 	val backStack = LocalNavStack.current
 	val ctx = LocalCtx.current
-	var useShortNavbar by rememberBooleanSetting("useShortNavbar", false)
+	var useShortNavbar = Settings.shared.useShortNavbar
 	val state by viewModel.state.collectAsState()
 
 	AnimatedContent(

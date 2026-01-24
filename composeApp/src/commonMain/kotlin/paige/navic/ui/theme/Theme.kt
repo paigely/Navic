@@ -7,14 +7,11 @@ import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
-import dev.burnoo.compose.remembersetting.rememberBooleanSetting
-import dev.burnoo.compose.remembersetting.rememberFloatSetting
 import dev.zt64.compose.pipette.HsvColor
 import paige.navic.LocalCtx
+import paige.navic.data.model.Settings
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -24,16 +21,14 @@ fun NavicTheme(
 	content: @Composable () -> Unit
 ) {
 	val ctx = LocalCtx.current
-	var useSystemFont by rememberBooleanSetting("useSystemFont", false)
-	var dynamicColour by rememberBooleanSetting("dynamicColour", true)
-	var accentColourH by rememberFloatSetting("accentColourH", 0f)
-	var accentColourS by rememberFloatSetting("accentColourS", 0f)
-	var accentColourV by rememberFloatSetting("accentColourV", 1f)
-
 	val colorScheme = @Composable {
-		if (!dynamicColour && !forceColorScheme) {
+		if (!Settings.shared.dynamicColour && !forceColorScheme) {
 			rememberDynamicColorScheme(
-				seedColor = HsvColor(accentColourH, accentColourS, accentColourV).toColor(),
+				seedColor = HsvColor(
+					Settings.shared.accentColourH,
+					Settings.shared.accentColourS,
+					Settings.shared.accentColourV
+				).toColor(),
 				isDark = isSystemInDarkTheme(),
 				specVersion = ColorSpec.SpecVersion.SPEC_2025,
 			)
@@ -45,7 +40,7 @@ fun NavicTheme(
 	MaterialExpressiveTheme(
 		motionScheme = MotionScheme.expressive(),
 		colorScheme = colorScheme(),
-		typography = if (useSystemFont)
+		typography = if (Settings.shared.useSystemFont)
 			MaterialTheme.typography
 		else typography(),
 		content = content

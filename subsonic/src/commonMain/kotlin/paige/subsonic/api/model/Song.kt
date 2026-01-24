@@ -24,7 +24,7 @@ data class TopSongsResponse(
 
 @Serializable
 data class TopSongs(
-	val song: List<Song>
+	val song: List<Song>?
 )
 
 @Serializable

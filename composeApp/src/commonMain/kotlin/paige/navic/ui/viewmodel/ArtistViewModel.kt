@@ -35,7 +35,7 @@ class ArtistViewModel(
 				}
 				val topSongs = SessionManager.api.getTopSongs(artist.name).data.topSongs.let {
 					it.copy(
-						song = it.song.map { song ->
+						song = it.song?.map { song ->
 							song.copy(
 								coverArt = SessionManager.api
 									.getCoverArtUrl(song.coverArt, size = 128, auth = true)
@@ -43,7 +43,7 @@ class ArtistViewModel(
 						}
 					)
 				}
-				_topSongs.value = topSongs.song
+				_topSongs.value = topSongs.song.orEmpty()
 				_artistState.value = UiState.Success(artist)
 			} catch (e: Exception) {
 				_artistState.value = UiState.Error(e)

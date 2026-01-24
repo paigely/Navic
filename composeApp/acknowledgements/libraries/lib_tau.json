@@ -1,0 +1,21 @@
+{
+	"uniqueId": "dev.zt64.tau",
+	"name": "tau",
+	"description": "A simple file manager written in Kotlin using Compose Multiplatform",
+	"website": "https://github.com/zt64/tau",
+	"developers": [
+		{
+			"name": "zt64"
+		}
+	],
+	"licenses": [
+		"GPL-3.0",
+		"BSD-3-Clause"
+	],
+	"funding": [
+		{
+			"platform": "GITHUB",
+			"url": "https://github.com/zt64"
+		}
+	]
+}

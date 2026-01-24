@@ -61,7 +61,6 @@ kotlin {
 			implementation(libs.kmpalette.extensions.network)
 			implementation(libs.ktor.client.core)
 			implementation(libs.multiplatformSettings.noArg)
-			implementation(libs.multiplatformSettings.remember)
 			implementation(libs.reorderable)
 			implementation(libs.aboutLibraries.core)
 			implementation(libs.aboutLibraries.compose.m3)

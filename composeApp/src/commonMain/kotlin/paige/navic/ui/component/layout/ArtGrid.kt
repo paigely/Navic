@@ -21,8 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -30,10 +28,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.burnoo.compose.remembersetting.rememberFloatSetting
-import dev.burnoo.compose.remembersetting.rememberIntSetting
 import paige.navic.LocalCtx
 import paige.navic.LocalImageBuilder
+import paige.navic.data.model.Settings
 import paige.navic.ui.component.common.ErrorBox
 import paige.navic.util.UiState
 import paige.navic.util.shimmerLoading
@@ -45,8 +42,8 @@ fun ArtGrid(
 	content: LazyGridScope.() -> Unit
 ) {
 	val ctx = LocalCtx.current
-	var artGridItemsPerRow by rememberIntSetting("artGridItemsPerRow", 2)
-	var artGridItemSize by rememberFloatSetting("artGridItemSize", 150f)
+	val artGridItemsPerRow = Settings.shared.artGridItemsPerRow
+	val artGridItemSize = Settings.shared.artGridItemSize
 	LazyVerticalGrid(
 		modifier = modifier.fillMaxSize(),
 		state = state,
@@ -74,7 +71,7 @@ fun ArtGridItem(
 	subtitle: String
 ) {
 	val imageBuilder = LocalImageBuilder.current
-	var artGridRounding by rememberFloatSetting("artGridRounding", 16f)
+	val artGridRounding = Settings.shared.artGridRounding
 	Column(
 		modifier = Modifier
 			.fillMaxWidth()

@@ -43,7 +43,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.burnoo.compose.remembersetting.rememberFloatSetting
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
 import navic.composeapp.generated.resources.action_play
@@ -67,6 +66,7 @@ import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
+import paige.navic.data.model.Settings
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
@@ -262,7 +262,7 @@ fun TracksScreen(
 private fun TracksScreenScope.Metadata() {
 	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
-	var artGridRounding by rememberFloatSetting("artGridRounding", 16f)
+	val artGridRounding = Settings.shared.artGridRounding
 	AsyncImage(
 		model = tracks.coverArt,
 		contentDescription = tracks.title,

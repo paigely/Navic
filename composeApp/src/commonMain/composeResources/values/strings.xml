@@ -48,6 +48,8 @@
 	<string name="option_sort_starred">Starred</string>
 	<string name="option_sort_by_year">By Year</string>
 	<string name="option_sort_by_genre">By Genre</string>
+	<string name="option_scrobble_percentage">Scrobble percentage</string>
+	<string name="option_min_duration_to_scrobble">Min. duration to scrobble</string>
 
 
 	<plurals name="count_songs">

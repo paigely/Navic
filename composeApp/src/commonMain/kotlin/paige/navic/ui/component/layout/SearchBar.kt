@@ -102,7 +102,6 @@ fun SearchBar(
 					val albums = results.filterIsInstance<Album>()
 					val artists = results.filterIsInstance<Artist>()
 					val tracks = results.filterIsInstance<Track>()
-					val player = LocalMediaPlayer.current
 
 					val scrollState = rememberScrollState()
 

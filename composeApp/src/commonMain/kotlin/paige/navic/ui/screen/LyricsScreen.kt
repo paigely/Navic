@@ -53,13 +53,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.notice_loading_lyrics
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
+import paige.navic.data.model.Settings
 import paige.navic.ui.component.common.ErrorBox
 import paige.navic.ui.viewmodel.LyricsViewModel
 import paige.navic.util.UiState
@@ -104,7 +104,7 @@ fun LyricsScreen(
 	val density = LocalDensity.current
 	val listState = rememberLazyListState()
 
-	var lyricsAutoscroll by rememberBooleanSetting("lyricsAutoscroll", true)
+	val lyricsAutoscroll = Settings.shared.lyricsAutoscroll
 
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
@@ -259,7 +259,7 @@ private fun KaraokeText(
 		animationSpec = spring(stiffness = Spring.StiffnessLow, visibilityThreshold = 0.001f)
 	)
 
-	var lyricsBeatByBeat by rememberBooleanSetting("lyricsBeatByBeat", true)
+	val lyricsBeatByBeat = Settings.shared.lyricsBeatByBeat
 
 	val inactiveAlpha by animateFloatAsState(
 		if (isActive) 1f else 0.35f, label = "alpha",

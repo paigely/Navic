@@ -72,7 +72,6 @@ import coil3.compose.AsyncImage
 import coil3.toUri
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WaveHeight
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
@@ -93,6 +92,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
+import paige.navic.data.model.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayerViewModel
@@ -147,7 +147,7 @@ fun MediaBar(expanded: Boolean) {
 
 @Composable
 private fun MediaBarScope.MainContent() {
-	var alwaysShowSeekbar by rememberBooleanSetting("alwaysShowSeekbar", true)
+	var alwaysShowSeekbar = Settings.shared.alwaysShowSeekbar
 	Column(Modifier.height(if (alwaysShowSeekbar)
 		MediaBarDefaults.height
 	else MediaBarDefaults.heightNoSeekbar)) {

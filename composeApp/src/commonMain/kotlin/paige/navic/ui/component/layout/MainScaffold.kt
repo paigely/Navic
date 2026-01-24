@@ -31,7 +31,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -43,12 +42,12 @@ import com.kmpalette.rememberDominantColorState
 import com.kyant.capsule.ContinuousRoundedRectangle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
-import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.Url
 import kotlinx.coroutines.launch
 import paige.navic.LocalMediaPlayer
+import paige.navic.data.model.Settings
 import paige.navic.ui.theme.NavicTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +77,7 @@ fun MainScaffold(
 		isDark = isSystemInDarkTheme(),
 		specVersion = ColorSpec.SpecVersion.SPEC_2025,
 	) else null
-	var alwaysShowSeekbar by rememberBooleanSetting("alwaysShowSeekbar", true)
+	val alwaysShowSeekbar = Settings.shared.alwaysShowSeekbar
 
 	LaunchedEffect(coverArt) {
 		coverArt?.let {

@@ -29,9 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.burnoo.compose.remembersetting.rememberBooleanSetting
-import dev.burnoo.compose.remembersetting.rememberFloatSetting
-import dev.burnoo.compose.remembersetting.rememberIntSetting
 import dev.zt64.compose.pipette.CircularColorPicker
 import dev.zt64.compose.pipette.HsvColor
 import navic.composeapp.generated.resources.Res
@@ -49,6 +46,7 @@ import navic.composeapp.generated.resources.subtitle_system_font
 import navic.composeapp.generated.resources.title_appearance
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
+import paige.navic.data.model.Settings
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
@@ -62,21 +60,10 @@ import paige.navic.ui.theme.mapleMono
 fun SettingsAppearanceScreen() {
 	val ctx = LocalCtx.current
 	var showNavtabsDialog by rememberSaveable { mutableStateOf(false) }
-	var useSystemFont by rememberBooleanSetting("useSystemFont", false)
-	var dynamicColour by rememberBooleanSetting("dynamicColour", true)
-	var accentColourH by rememberFloatSetting("accentColourH", 0f)
-	var accentColourS by rememberFloatSetting("accentColourS", 0f)
-	var accentColourV by rememberFloatSetting("accentColourV", 1f)
-	var useShortNavbar by rememberBooleanSetting("useShortNavbar", false)
-	var artGridRounding by rememberFloatSetting("artGridRounding", 16f)
-	var artGridItemsPerRow by rememberIntSetting("artGridItemsPerRow", 2)
-	var artGridItemSize by rememberFloatSetting("artGridItemSize", 150f)
-	var alwaysShowSeekbar by rememberBooleanSetting("alwaysShowSeekbar", true)
-	val hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 	Scaffold(
 		topBar = { NestedTopBar(
 			{ Text(stringResource(Res.string.title_appearance)) },
-			hideBack = hideBack
+			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 		) }
 	) { innerPadding ->
 		CompositionLocalProvider(
@@ -100,18 +87,18 @@ fun SettingsAppearanceScreen() {
 							)
 						}
 						SettingSwitch(
-							checked = useSystemFont,
-							onCheckedChange = { useSystemFont = it }
+							checked = Settings.shared.useSystemFont,
+							onCheckedChange = { Settings.shared.useSystemFont = it }
 						)
 					}
 					FormRow {
 						Text(stringResource(Res.string.option_dynamic_colour))
 						SettingSwitch(
-							checked = dynamicColour,
-							onCheckedChange = { dynamicColour = it }
+							checked = Settings.shared.dynamicColour,
+							onCheckedChange = { Settings.shared.dynamicColour = it }
 						)
 					}
-					if (!dynamicColour) {
+					if (!Settings.shared.dynamicColour) {
 						var expanded by remember { mutableStateOf(false) }
 						FormRow {
 							Text(stringResource(Res.string.option_accent_colour))
@@ -120,7 +107,7 @@ fun SettingsAppearanceScreen() {
 									Modifier
 										.background(
 											HsvColor(
-												accentColourH, accentColourS, accentColourV
+												Settings.shared.accentColourH, Settings.shared.accentColourS, Settings.shared.accentColourV
 											).toColor(), CircleShape
 										)
 										.size(40.dp)
@@ -139,15 +126,15 @@ fun SettingsAppearanceScreen() {
 										CircularColorPicker(
 											color = {
 												HsvColor(
-													accentColourH,
-													accentColourS,
-													accentColourV
+													Settings.shared.accentColourH,
+													Settings.shared.accentColourS,
+													Settings.shared.accentColourV
 												)
 											},
 											onColorChange = {
-												accentColourH = it.hue
-												accentColourS = it.saturation
-												accentColourV = it.value
+												Settings.shared.accentColourH = it.hue
+												Settings.shared.accentColourS = it.saturation
+												Settings.shared.accentColourV = it.value
 											}
 										)
 									}
@@ -165,7 +152,7 @@ fun SettingsAppearanceScreen() {
 							) {
 								Text(stringResource(Res.string.option_cover_art_rounding))
 								Text(
-									"$artGridRounding",
+									"${Settings.shared.artGridRounding}",
 									fontFamily = mapleMono(),
 									fontWeight = FontWeight(400),
 									fontSize = 13.sp,
@@ -173,9 +160,9 @@ fun SettingsAppearanceScreen() {
 								)
 							}
 							Slider(
-								value = artGridRounding,
+								value = Settings.shared.artGridRounding,
 								onValueChange = {
-									artGridRounding = it
+									Settings.shared.artGridRounding = it
 								},
 								valueRange = 0f..64f,
 								steps = 3,
@@ -185,7 +172,7 @@ fun SettingsAppearanceScreen() {
 					FormRow {
 						if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
 							Column {
-								Text(stringResource(Res.string.option_grid_items_per_row) + ": $artGridItemsPerRow")
+								Text(stringResource(Res.string.option_grid_items_per_row) + ": ${Settings.shared.artGridItemsPerRow}")
 								Text(
 									stringResource(Res.string.subtitle_grid_items_per_row),
 									style = MaterialTheme.typography.bodyMedium,
@@ -193,8 +180,8 @@ fun SettingsAppearanceScreen() {
 								)
 							}
 							Stepper(
-								value = artGridItemsPerRow,
-								onValueChange = { artGridItemsPerRow = it },
+								value = Settings.shared.artGridItemsPerRow,
+								onValueChange = { Settings.shared.artGridItemsPerRow = it },
 								minValue = 1,
 								maxValue = 32
 							)
@@ -206,7 +193,7 @@ fun SettingsAppearanceScreen() {
 								) {
 									Text(stringResource(Res.string.option_cover_art_size))
 									Text(
-										"$artGridItemSize",
+										"${Settings.shared.artGridItemSize}",
 										fontFamily = mapleMono(),
 										fontWeight = FontWeight(400),
 										fontSize = 13.sp,
@@ -214,9 +201,9 @@ fun SettingsAppearanceScreen() {
 									)
 								}
 								Slider(
-									value = artGridItemSize,
+									value = Settings.shared.artGridItemSize,
 									onValueChange = {
-										artGridItemSize = it
+										Settings.shared.artGridItemSize = it
 									},
 									valueRange = 50f..500f,
 									steps = 8,
@@ -229,15 +216,15 @@ fun SettingsAppearanceScreen() {
 					FormRow {
 						Text(stringResource(Res.string.option_short_navigation_bar))
 						SettingSwitch(
-							checked = useShortNavbar,
-							onCheckedChange = { useShortNavbar = it }
+							checked = Settings.shared.useShortNavbar,
+							onCheckedChange = { Settings.shared.useShortNavbar = it }
 						)
 					}
 					FormRow {
 						Text(stringResource(Res.string.option_always_show_seekbar))
 						SettingSwitch(
-							checked = alwaysShowSeekbar,
-							onCheckedChange = { alwaysShowSeekbar = it }
+							checked = Settings.shared.alwaysShowSeekbar,
+							onCheckedChange = { Settings.shared.alwaysShowSeekbar = it }
 						)
 					}
 					FormRow(
