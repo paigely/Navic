@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,13 +31,13 @@ import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_navigate_back
 import navic.composeapp.generated.resources.arrow_back
+import navic.composeapp.generated.resources.close
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
 import paige.navic.ui.component.common.ErrorBox
@@ -78,6 +79,20 @@ fun SearchBar(
 							stringResource(Res.string.action_navigate_back),
 							tint = MaterialTheme.colorScheme.onSurfaceVariant
 						)
+					}
+				},
+				trailingIcon = {
+					if (viewModel.searchQuery.text.isNotEmpty()) {
+						IconButton(
+							onClick = {
+								viewModel.searchQuery.clearText()
+							}
+						) {
+							Icon(
+								imageVector = vectorResource(Res.drawable.close),
+								contentDescription = "Clear search"
+							)
+						}
 					}
 				}
 			)
