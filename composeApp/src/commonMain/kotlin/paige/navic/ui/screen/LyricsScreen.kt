@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -126,7 +127,10 @@ fun LyricsScreen(
 		}
 	) { uiState ->
 		when (uiState) {
-			is UiState.Error -> ErrorBox(uiState)
+			is UiState.Error -> ErrorBox(
+				error = uiState,
+				modifier = Modifier.wrapContentSize()
+			)
 			is UiState.Loading -> LoadingScreen()
 			is UiState.Success -> {
 				val lyrics = uiState.data

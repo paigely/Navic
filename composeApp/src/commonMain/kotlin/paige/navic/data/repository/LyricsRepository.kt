@@ -2,14 +2,12 @@ package paige.navic.data.repository
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -39,9 +37,9 @@ private data class Lyrics(
 
 @Serializable
 private data class ApiError(
-	val message: String,
-	val name: String,
-	val statusCode: Int
+	val message: String?,
+	val name: String?,
+	val code: Int?
 )
 
 class LyricsRepository(
@@ -91,8 +89,7 @@ class LyricsRepository(
 		val album = track.album ?: return null
 		val duration = track.duration ?: return null
 
-		// Try if there are lyrics that can be used
-		try {
+		runCatching {
 			val jsonString = SessionManager.api.getLyricsBySongId(track.id)
 			val json = Json.parseToJsonElement(jsonString)
 
@@ -113,26 +110,27 @@ class LyricsRepository(
 					if (startMs != null && value != null) startMs.milliseconds to value else null
 				}.sortedBy { it.first }
 			}
-		} catch (_: Exception) {
 		}
-		return try {
-			println("Searching")
-			parseLyrics(
-				client.get("api/get") {
-					parameter("track_name", track.title)
-					parameter("artist_name", artist)
-					parameter("album_name", album)
-					parameter("duration", duration)
-					accept(ContentType.Application.Json)
-				}.body<Lyrics>().syncedLyrics
-			)
-		} catch (e: ClientRequestException) {
-			if (e.response.status == HttpStatusCode.NotFound) {
-				val error = e.response.body<ApiError>()
-				if (error.name == "TrackNotFound")
-					null
-				else throw e
-			} else { throw e }
+
+		val response = client.get("api/get") {
+			parameter("track_name", track.title)
+			parameter("artist_name", artist)
+			parameter("album_name", album)
+			parameter("duration", duration)
+			accept(ContentType.Application.Json)
+		}
+
+		return runCatching {
+			parseLyrics(response.body<Lyrics>().syncedLyrics)
+		}.getOrElse { exception ->
+			val error = runCatching {
+				response.body<ApiError>()
+			}.getOrElse { throw exception }
+			if (error.name == "TrackNotFound") {
+				return null
+			} else {
+				throw Exception(error.message)
+			}
 		}
 	}
 }

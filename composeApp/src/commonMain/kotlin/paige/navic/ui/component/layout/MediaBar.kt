@@ -69,7 +69,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import coil3.toUri
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
@@ -111,6 +110,7 @@ object MediaBarDefaults {
 }
 
 private class MediaBarScope(
+	val coverUri: String?,
 	val player: MediaPlayerViewModel,
 	val playerState: PlayerUiState,
 	val ctx: Ctx,
@@ -124,11 +124,18 @@ fun MediaBar(expanded: Boolean) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsStateWithLifecycle()
+	val coverUri = remember(playerState.currentTrack?.coverArt) {
+		SessionManager.api.getCoverArtUrl(
+			playerState.currentTrack?.coverArt,
+			auth = true
+		)
+	}
 	SharedTransitionLayout(Modifier.fillMaxHeight()) {
 		AnimatedContent(
 			expanded
 		) { targetState ->
 			MediaBarScope(
+				coverUri,
 				player,
 				playerState,
 				ctx,
@@ -342,18 +349,12 @@ private fun MediaBarScope.AlbumArt(
 	modifier: Modifier = Modifier
 ) {
 	val uriHandler = LocalUriHandler.current
-	val coverUri = remember(playerState.currentTrack?.coverArt) {
-		SessionManager.api.getCoverArtUrl(
-			playerState.currentTrack?.coverArt,
-			auth = true
-		)?.toUri()
-	}
 
 	AsyncImage(
 		modifier = modifier
 			.clickable {
 				coverUri?.let { uri ->
-					uriHandler.openUri(uri.toString())
+					uriHandler.openUri(uri)
 				}
 			},
 		model = coverUri,
