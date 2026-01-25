@@ -2,10 +2,10 @@ package paige.navic.ui.component.layout
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -74,7 +74,8 @@ fun CarouselItemScope.ArtCarouselItem(
 		model = image,
 		contentDescription = contentDescription,
 		modifier = Modifier
-			.size(150.dp)
+			.fillMaxWidth()
+			.aspectRatio(1f)
 			.maskClip(ContinuousRoundedRectangle(15.dp))
 			.clickable {
 				ctx.clickSound()
