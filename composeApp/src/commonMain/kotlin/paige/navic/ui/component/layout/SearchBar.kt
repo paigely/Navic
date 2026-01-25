@@ -144,7 +144,12 @@ fun SearchBar(
 								modifier = Modifier.padding(horizontal = 20.dp)
 							)
 							tracks.forEach { track ->
-								TrackRow(track = track)
+								TrackRow(track = track) {
+									scope.launch {
+										searchBarState.animateToCollapsed()
+										viewModel.searchQuery.clearText()
+									}
+								}
 							}
 						}
 					}

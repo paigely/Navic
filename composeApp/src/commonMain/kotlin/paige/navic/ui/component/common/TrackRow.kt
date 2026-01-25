@@ -19,7 +19,8 @@ import paige.subsonic.api.model.Track
 @Composable
 fun TrackRow(
 	modifier: Modifier = Modifier,
-	track: Track
+	track: Track,
+	onClick: () -> Unit = {}
 ) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
@@ -27,6 +28,7 @@ fun TrackRow(
 		modifier = modifier.clickable {
 			ctx.clickSound()
 			player.playSingle(track)
+			onClick()
 		},
 		headlineContent = {
 			Text(track.title)
