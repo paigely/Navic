@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_clear_search
 import navic.composeapp.generated.resources.action_navigate_back
 import navic.composeapp.generated.resources.arrow_back
 import navic.composeapp.generated.resources.close
@@ -89,8 +90,8 @@ fun SearchBar(
 							}
 						) {
 							Icon(
-								imageVector = vectorResource(Res.drawable.close),
-								contentDescription = "Clear search"
+								vectorResource(Res.drawable.close),
+								stringResource(Res.string.action_clear_search)
 							)
 						}
 					}
