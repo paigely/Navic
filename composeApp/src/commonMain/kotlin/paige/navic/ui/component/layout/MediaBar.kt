@@ -124,7 +124,7 @@ private class MediaBarScope(
 	val ctx: Ctx
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MediaBar() {
 	val ctx = LocalCtx.current
@@ -165,7 +165,11 @@ fun MediaBar() {
 	) {
 		val maxWidth = maxWidth
 		val artStartSize = MediaBarDefaults.collapsedArtSize
-		val artEndSize = if (playerState.isPaused) 260.dp else 300.dp
+		val artEndSize by animateDpAsState(
+			targetValue = if (playerState.isPaused) 260.dp else 300.dp,
+			animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
+			label = "AlbumArtSizeAnimation"
+		)
 
 		val currentArtSize = lerp(artStartSize, artEndSize, progress)
 
