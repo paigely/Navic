@@ -21,7 +21,6 @@
 		DD7BD7B161DBAB7DC568AFE6 /* Exceptions for "iosApp" folder in "iosApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppIcon.icon,
 				entitlements.xml,
 				Info.plist,
 			);
