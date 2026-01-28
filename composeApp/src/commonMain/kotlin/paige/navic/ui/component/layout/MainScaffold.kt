@@ -125,7 +125,7 @@ fun MainScaffold(
 							.background(MaterialTheme.colorScheme.surfaceContainer)
 							.fillMaxWidth()
 					) {
-						MediaBar(expanded)
+						MediaBar()
 						this@BottomSheetScaffold.AnimatedVisibility(
 							expanded,
 							enter = slideInVertically { -it } + fadeIn() + expandIn(),
