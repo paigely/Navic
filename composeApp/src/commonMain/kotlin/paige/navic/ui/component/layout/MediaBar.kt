@@ -37,6 +37,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -46,6 +47,7 @@ import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,10 +65,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
+import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
@@ -121,7 +130,7 @@ private class MediaBarScope(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MediaBar(expanded: Boolean) {
+fun MediaBar(expanded: Boolean){
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsStateWithLifecycle()
@@ -131,10 +140,28 @@ fun MediaBar(expanded: Boolean) {
 			auth = true
 		)
 	}
-	SharedTransitionLayout(Modifier.fillMaxHeight()) {
-		AnimatedContent(
-			expanded
-		) { targetState ->
+	var mediaBarTop by remember { mutableStateOf(0f) }
+	var initialTop by remember { mutableStateOf(0f) }
+
+	val progress by remember(mediaBarTop, initialTop) {
+		derivedStateOf {
+			if (initialTop == 0f) 0f else ((initialTop - mediaBarTop) / initialTop).coerceIn(0f, 1f)
+		}
+	}
+
+	val animationProgress = ((progress - 0.1f) / 0.9f).coerceIn(0f, 1f)
+	val expandedAt60 = animationProgress > 0f
+
+	SharedTransitionLayout(
+		Modifier
+			.fillMaxHeight()
+			.onGloballyPositioned { coordinates ->
+				val topPx = coordinates.positionInWindow().y
+				mediaBarTop = topPx
+				if (initialTop == 0f) initialTop = topPx
+			}
+	) {
+		AnimatedContent(expandedAt60) { targetState ->
 			MediaBarScope(
 				coverUri,
 				player,
@@ -144,9 +171,9 @@ fun MediaBar(expanded: Boolean) {
 				this@SharedTransitionLayout
 			).apply {
 				if (!targetState) {
-					MainContent()
+					MainContent(animationProgress) // use the fraction for smooth fade/slide
 				} else {
-					DetailsContent()
+					DetailsContent(animationProgress)
 				}
 			}
 		}
@@ -154,7 +181,7 @@ fun MediaBar(expanded: Boolean) {
 }
 
 @Composable
-private fun MediaBarScope.MainContent() {
+private fun MediaBarScope.MainContent(progress: Float) {
 	var alwaysShowSeekbar = Settings.shared.alwaysShowSeekbar
 	Column(Modifier.height(if (alwaysShowSeekbar)
 		MediaBarDefaults.height
@@ -168,10 +195,10 @@ private fun MediaBarScope.MainContent() {
 		) {
 			AlbumArtContainer(
 				Modifier.size(55.dp),
-				expanded = false
+				progress
 			)
 			Info(rowScope = this@Row)
-			Controls(expanded = false)
+			Controls(expanded = false, progress)
 		}
 		if (alwaysShowSeekbar) {
 			ProgressBar(expanded = false)
@@ -181,7 +208,7 @@ private fun MediaBarScope.MainContent() {
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun MediaBarScope.DetailsContent() {
+private fun MediaBarScope.DetailsContent(progress: Float) {
 	val pagerState = rememberPagerState(pageCount = { 2 })
 	val currentIndex = playerState.currentIndex
 	val currentTrack = playerState.tracks?.tracks?.getOrNull(currentIndex)
@@ -189,8 +216,8 @@ private fun MediaBarScope.DetailsContent() {
 		AlbumArt(
 			modifier = Modifier
 				.fillMaxSize()
-				.blur(150.dp, edgeTreatment = BlurredEdgeTreatment.Rectangle)
-				.graphicsLayer { alpha = 0.75f }
+				.blur(lerp(0.dp, 150.dp, progress), edgeTreatment = BlurredEdgeTreatment.Rectangle)
+				.graphicsLayer { alpha = lerp(1f, 0.75f, progress) }
 				.drawWithContent {
 					drawContent()
 					drawRect(
@@ -210,7 +237,7 @@ private fun MediaBarScope.DetailsContent() {
 			modifier = Modifier.statusBarsPadding().fillMaxSize()
 		) { page ->
 			when (page) {
-				0 -> PlayerView()
+				0 -> PlayerView(progress)
 				1 -> LyricsScreen(currentTrack)
 			}
 		}
@@ -244,7 +271,7 @@ private fun MediaBarScope.DetailsContent() {
 //region views
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun MediaBarScope.PlayerView() {
+private fun MediaBarScope.PlayerView(progress: Float) {
 	val paused = playerState.isPaused
 	val artSize by animateDpAsState(
 		if (paused)
@@ -260,7 +287,7 @@ private fun MediaBarScope.PlayerView() {
 	) {
 		AlbumArtContainer(
 			modifier = Modifier.widthIn(0.dp, artSize).aspectRatio(1f),
-			expanded = true
+			progress
 		)
 		Column(Modifier.padding(15.dp)) {
 			Row(
@@ -317,7 +344,7 @@ private fun MediaBarScope.PlayerView() {
 			}
 			ProgressBar(expanded = true)
 		}
-		Controls(expanded = true)
+		Controls(expanded = true, progress = progress)
 	}
 }
 //endregion views
@@ -327,7 +354,7 @@ private fun MediaBarScope.PlayerView() {
 @Composable
 private fun MediaBarScope.AlbumArtContainer(
 	modifier: Modifier = Modifier,
-	expanded: Boolean
+	progress: Float
 ) {
 	val animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Rect>()
 	with(sharedTransitionScope) {
@@ -337,7 +364,7 @@ private fun MediaBarScope.AlbumArtContainer(
 				animatedVisibilityScope = animatedVisibilityScope,
 				boundsTransform = { _, _ -> animationSpec }
 			),
-			shape = ContinuousRoundedRectangle(if (expanded) 18.dp else 12.dp),
+			shape = ContinuousRoundedRectangle(lerp(12.dp, 18.dp, progress)),
 			color = MaterialTheme.colorScheme.surfaceVariant
 		) {
 			AlbumArt()
@@ -402,10 +429,10 @@ private fun MediaBarScope.Info(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun MediaBarScope.Controls(expanded: Boolean) {
+private fun MediaBarScope.Controls(expanded: Boolean, progress: Float) {
 	val paused = playerState.isPaused
 	val size by animateDpAsState(
-		if (expanded) 40.dp else 32.dp,
+		lerp(32.dp, 40.dp, progress),
 		animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec()
 	)
 	val contentPadding = if (!expanded) PaddingValues(horizontal = 4.dp) else ButtonDefaults.contentPaddingFor(
