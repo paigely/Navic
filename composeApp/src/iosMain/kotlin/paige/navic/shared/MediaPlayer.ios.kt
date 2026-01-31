@@ -56,6 +56,8 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
 	private var preparedUrls: List<String> = emptyList()
+	private var lastScrobbledTrackId: String? = null
+	private var lastTrackForSubmission: Track? = null
 
 	init {
 		setupAudioSession()
@@ -132,13 +134,6 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 
 	override fun playSingle(track: Track) {
 		viewModelScope.launch {
-			_uiState.update {
-				it.copy(
-					currentTrack = track,
-					isLoading = true
-				)
-			}
-
 			runCatching {
 				val albumResponse = SessionManager.api.getAlbum(track.albumId.toString())
 				val album = albumResponse.data.album
@@ -154,13 +149,21 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 		val tracks = _uiState.value.tracks?.tracks ?: return
 		if (index !in tracks.indices || index !in preparedUrls.indices) return
 
-		if (index != _uiState.value.currentIndex) {
-			scrobbleNowPlaying(_uiState.value.currentIndex)
-			if (_uiState.value.progress >= Settings.shared.scrobblePercentage
-				&& (_uiState.value.currentTrack?.duration?.toFloat()
-					?: Settings.shared.minDurationToScrobble) >= Settings.shared.minDurationToScrobble) {
-				scrobbleSubmission(index)
+		val trackToPlay = tracks[index]
+
+		if (trackToPlay.id != lastScrobbledTrackId) {
+			lastTrackForSubmission?.takeIf {
+				it.duration?.toFloat()!! >= Settings.shared.minDurationToScrobble &&
+					_uiState.value.progress >= Settings.shared.scrobblePercentage
+			}?.let {
+				scrobbleSubmission(it.id)
 			}
+
+			scrobbleNowPlaying(trackToPlay.id)
+
+			// Update guards
+			lastScrobbledTrackId = trackToPlay.id
+			lastTrackForSubmission = trackToPlay
 		}
 
 		val urlStr = preparedUrls[index]
@@ -176,13 +179,13 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 		_uiState.update {
 			it.copy(
 				currentIndex = index,
-				currentTrack = tracks[index],
+				currentTrack = trackToPlay,
 				isPaused = false,
 				isLoading = false
 			)
 		}
 
-		updateNowPlayingInfo(tracks[index])
+		updateNowPlayingInfo(trackToPlay)
 	}
 
 	override fun resume() {

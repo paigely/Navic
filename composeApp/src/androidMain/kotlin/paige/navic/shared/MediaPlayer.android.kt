@@ -146,14 +146,15 @@ class AndroidMediaPlayerViewModel(
 	private fun updatePlaybackState() {
 		controller?.let { player ->
 			val index = player.currentMediaItemIndex
-			val oldIndex = _uiState.value.currentIndex
+			val currentTrack = player.currentMediaItem
+			val previousTrack = _uiState.value.currentTrack
 
-			if (index != oldIndex) {
-				scrobbleNowPlaying(index)
+			if (currentTrack?.mediaId != previousTrack?.id) {
+				scrobbleNowPlaying(currentTrack?.mediaId)
 				if (_uiState.value.progress >= Settings.shared.scrobblePercentage
 					&& (_uiState.value.currentTrack?.duration?.toFloat()
 						?: Settings.shared.minDurationToScrobble) >= Settings.shared.minDurationToScrobble) {
-					scrobbleSubmission(oldIndex)
+					scrobbleSubmission(previousTrack?.id)
 				}
 			}
 
@@ -217,13 +218,6 @@ class AndroidMediaPlayerViewModel(
 
 	override fun playSingle(track: Track) {
 		viewModelScope.launch {
-			_uiState.update {
-				it.copy(
-					currentTrack = track,
-					isLoading = true
-				)
-			}
-
 			runCatching {
 				val albumResponse = SessionManager.api.getAlbum(track.albumId.toString())
 				val album = albumResponse.data.album
