@@ -98,8 +98,7 @@ fun AlbumsScreen(
 			if (!nested) {
 				RootTopBar(
 					{ Text(stringResource(Res.string.title_albums)) },
-					scrollBehavior,
-					actions
+					scrollBehavior
 				)
 			} else {
 				NestedTopBar({ Text(stringResource(Res.string.title_albums)) }, actions)
