@@ -33,25 +33,31 @@ abstract class MediaPlayerViewModel : ViewModel() {
 	abstract fun next()
 	abstract fun previous()
 
-	protected fun scrobbleSubmission(oldIndex: Int) {
+	protected fun scrobbleSubmission(trackId: String?) {
 		viewModelScope.launch {
-			val tracks = _uiState.value.tracks?.tracks ?: return@launch
-			tracks.getOrNull(oldIndex)?.let { track ->
-				try {
-					SessionManager.api.scrobble(track.id, Clock.System.now().toEpochMilliseconds(), submission = true)
-				} catch (e: Exception) { println(e) }
-			}
+			try {
+				trackId?.let {
+					SessionManager.api.scrobble(
+						it,
+						Clock.System.now().toEpochMilliseconds(),
+						submission = true
+					)
+				}
+			} catch (_: Exception) {}
 		}
 	}
 
-	protected fun scrobbleNowPlaying(newIndex: Int) {
+	protected fun scrobbleNowPlaying(trackId: String?) {
 		viewModelScope.launch {
-			val tracks = _uiState.value.tracks?.tracks ?: return@launch
-			tracks.getOrNull(newIndex)?.let { track ->
-				try {
-					SessionManager.api.scrobble(track.id, Clock.System.now().toEpochMilliseconds(), submission = false)
-				} catch (e: Exception) { println(e) }
-			}
+			try {
+				trackId?.let {
+					SessionManager.api.scrobble(
+						it,
+						Clock.System.now().toEpochMilliseconds(),
+						submission = false
+					)
+				}
+			} catch (_: Exception) {}
 		}
 	}
 }
