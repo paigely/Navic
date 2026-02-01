@@ -174,6 +174,7 @@ class Settings(
 	var artGridItemsPerRow by preference(2)
 	var artGridItemSize by preference(150f)
 	var alwaysShowSeekbar by preference(true)
+	var useWavySlider by preference(true)
 	var lyricsAutoscroll by preference(true)
 	var lyricsBeatByBeat by preference(true)
 	var scrobblePercentage by preference(.7f)

@@ -38,6 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -530,6 +531,7 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 	var dragProgress by remember { mutableFloatStateOf(progress) }
 	var isDragging by remember { mutableStateOf(false) }
 	val shownProgress = if (isDragging) dragProgress else progress
+	val useWavySlider = Settings.shared.useWavySlider
 
 	val waveHeight by animateDpAsState(
 		if (paused) 0.dp else SliderDefaults.WaveHeight,
@@ -555,33 +557,60 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 			.padding(horizontal = 15.dp),
 		verticalArrangement = Arrangement.spacedBy(8.dp)
 	) {
-		WavySlider(
-			modifier = Modifier.fillMaxWidth(),
-			enabled = playerState.currentTrack != null,
-			colors = colors,
-			waveHeight = waveHeight,
-			animationSpecs = SliderDefaults.WaveAnimationSpecs.copy(
-				waveAppearanceAnimationSpec = snap()
-			),
-			value = shownProgress,
-			onValueChange = {
-				isDragging = true
-				dragProgress = it
-			},
-			onValueChangeFinished = {
-				isDragging = false
-				player.seek(dragProgress)
-			},
-			thumb = {
-				SliderDefaults.Thumb(
-					interactionSource = interactionSource,
-					colors = colors,
-					enabled = playerState.currentTrack != null,
-					thumbSize = DpSize(6.dp, 24.dp),
-					modifier = Modifier.clip(ContinuousCapsule)
-				)
-			}
-		)
+		if(useWavySlider){
+			WavySlider(
+				modifier = Modifier.fillMaxWidth(),
+				enabled = playerState.currentTrack != null,
+				colors = colors,
+				waveHeight = waveHeight,
+				animationSpecs = SliderDefaults.WaveAnimationSpecs.copy(
+					waveAppearanceAnimationSpec = snap()
+				),
+				value = shownProgress,
+				onValueChange = {
+					isDragging = true
+					dragProgress = it
+				},
+				onValueChangeFinished = {
+					isDragging = false
+					player.seek(dragProgress)
+				},
+				thumb = {
+					SliderDefaults.Thumb(
+						interactionSource = interactionSource,
+						colors = colors,
+						enabled = playerState.currentTrack != null,
+						thumbSize = DpSize(6.dp, 24.dp),
+						modifier = Modifier.clip(ContinuousCapsule)
+					)
+				}
+			)
+		} else {
+			Slider(
+				modifier = Modifier.fillMaxWidth(),
+				enabled = playerState.currentTrack != null,
+				value = shownProgress,
+				onValueChange = {
+					isDragging = true
+					dragProgress = it
+				},
+				onValueChangeFinished = {
+					isDragging = false
+					player.seek(dragProgress)
+				},
+				interactionSource = interactionSource,
+				colors = colors,
+				thumb = {
+					SliderDefaults.Thumb(
+						interactionSource = interactionSource,
+						colors = colors,
+						enabled = playerState.currentTrack != null,
+						thumbSize = DpSize(6.dp, 24.dp),
+						modifier = Modifier.clip(ContinuousCapsule)
+					)
+				}
+			)
+		}
 		Row(
 			Modifier.fillMaxWidth(),
 			verticalAlignment = Alignment.CenterVertically,

@@ -28,6 +28,7 @@
 	<string name="option_accent_colour">Colore di accento</string>
 	<string name="option_short_navigation_bar">Barra di navigazione più bassa</string>
 	<string name="option_always_show_seekbar">Mostra la barra di avanzamento</string>
+	<string name="option_use_wavy_slider">Barra di avanzamento animata</string>
 	<string name="option_cover_art_rounding">Arrotondamento copertina</string>
 	<string name="option_cover_art_size">Dimensione copertina</string>
     <string name="option_grid_items_per_row">Elementi per riga</string>

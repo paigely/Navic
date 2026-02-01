@@ -28,6 +28,7 @@
 	<string name="option_dynamic_colour">Use dynamic colour</string>
 	<string name="option_accent_colour">Accent colour</string>
 	<string name="option_short_navigation_bar">Shorter navigation bar</string>
+	<string name="option_use_wavy_slider">Wavy progress bar</string>
 	<string name="option_always_show_seekbar">Show seek bar</string>
 	<string name="option_cover_art_rounding">Cover artwork rounding</string>
 	<string name="option_cover_art_size">Cover artwork size</string>

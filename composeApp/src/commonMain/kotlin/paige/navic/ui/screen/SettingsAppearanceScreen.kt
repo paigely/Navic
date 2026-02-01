@@ -41,6 +41,7 @@ import navic.composeapp.generated.resources.option_grid_items_per_row
 import navic.composeapp.generated.resources.option_navbar_tab_positions
 import navic.composeapp.generated.resources.option_short_navigation_bar
 import navic.composeapp.generated.resources.option_system_font
+import navic.composeapp.generated.resources.option_use_wavy_slider
 import navic.composeapp.generated.resources.subtitle_grid_items_per_row
 import navic.composeapp.generated.resources.subtitle_system_font
 import navic.composeapp.generated.resources.title_appearance
@@ -229,6 +230,13 @@ fun SettingsAppearanceScreen() {
 						SettingSwitch(
 							checked = Settings.shared.alwaysShowSeekbar,
 							onCheckedChange = { Settings.shared.alwaysShowSeekbar = it }
+						)
+					}
+					FormRow {
+						Text(stringResource(Res.string.option_use_wavy_slider))
+						SettingSwitch(
+							checked = Settings.shared.useWavySlider,
+							onCheckedChange = { Settings.shared.useWavySlider = it }
 						)
 					}
 					FormRow(
