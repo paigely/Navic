@@ -60,6 +60,7 @@ import navic.composeapp.generated.resources.musicbrainz
 import navic.composeapp.generated.resources.play_arrow
 import navic.composeapp.generated.resources.share
 import navic.composeapp.generated.resources.shuffle
+import navic.composeapp.generated.resources.star
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -231,7 +232,9 @@ fun TracksScreen(
 												text = if (starred == true)
 													Res.string.action_remove_star
 												else Res.string.action_star,
-												leadingIcon = Res.drawable.unstar,
+												leadingIcon = if (starred == true)
+													Res.drawable.star
+												else Res.drawable.unstar,
 												onClick = {
 													if (starred == true)
 														viewModel.unstarSelectedTrack()

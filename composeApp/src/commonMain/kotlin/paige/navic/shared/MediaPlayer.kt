@@ -60,6 +60,13 @@ abstract class MediaPlayerViewModel : ViewModel() {
 			} catch (_: Exception) {}
 		}
 	}
+	suspend fun starTrack() {
+		SessionManager.api.star(_uiState.value.currentTrack?.id?.let { listOf(it) })
+	}
+
+	suspend fun unstarTrack() {
+		SessionManager.api.unstar(_uiState.value.currentTrack?.id?.let { listOf(it) })
+	}
 }
 
 @Composable

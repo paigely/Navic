@@ -53,6 +53,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,6 +81,7 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WaveHeight
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_more
@@ -92,6 +94,7 @@ import navic.composeapp.generated.resources.playlist_play
 import navic.composeapp.generated.resources.shuffle
 import navic.composeapp.generated.resources.skip_next
 import navic.composeapp.generated.resources.skip_previous
+import navic.composeapp.generated.resources.star
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -109,6 +112,7 @@ import paige.navic.ui.screen.LyricsScreen
 import paige.navic.util.toHHMMSS
 import paige.subsonic.api.model.Album
 import paige.subsonic.api.model.Playlist
+import paige.subsonic.api.model.Track
 import kotlin.time.Duration.Companion.seconds
 
 object MediaBarDefaults {
@@ -329,75 +333,105 @@ private fun MediaBarScope.PlayerView(
 	showArt: Boolean
 ) {
 	var moreShown by remember { mutableStateOf(false) }
+	var isStarred by remember(playerState.currentTrack) {
+		mutableStateOf(playerState.currentTrack?.starred != null)
+	}
+	val scope = rememberCoroutineScope()
 
-	Column(
-		Modifier.fillMaxSize(),
-		horizontalAlignment = Alignment.CenterHorizontally,
-		verticalArrangement = Arrangement.Top
-	) {
-		Spacer(Modifier.height(topPadding))
-		Surface(
-			modifier = Modifier
-				.size(artSize)
-				.graphicsLayer { alpha = if (showArt) 1f else 0f },
-			shape = ContinuousRoundedRectangle(18.dp),
-			color = MaterialTheme.colorScheme.surfaceVariant,
-			shadowElevation = 10.dp
-		) {
-			AlbumArt()
-		}
-
+	Box(Modifier.fillMaxSize()) {
 		Column(
-			Modifier
-				.widthIn(max = 500.dp)
-				.padding(horizontal = 15.dp)
-				.padding(top = 54.dp)
+			Modifier.fillMaxSize(),
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.Top
 		) {
-			Row(
-				Modifier.padding(horizontal = 15.dp),
-				verticalAlignment = Alignment.CenterVertically
+			Spacer(Modifier.height(topPadding))
+			Surface(
+				modifier = Modifier
+					.size(artSize)
+					.graphicsLayer { alpha = if (showArt) 1f else 0f },
+				shape = ContinuousRoundedRectangle(18.dp),
+				color = MaterialTheme.colorScheme.surfaceVariant,
+				shadowElevation = 10.dp
 			) {
-				Info(modifier = Modifier.weight(1f))
-				Box {
-					IconButton(onClick = { moreShown = true }) {
-						Icon(
-							vectorResource(Res.drawable.more_vert),
-							stringResource(Res.string.action_more)
-						)
-					}
-					Dropdown(
-						expanded = moreShown,
-						onDismissRequest = { moreShown = false }
-					) {
-						DropdownItem(
-							leadingIcon = Res.drawable.playlist_play,
-							text = Res.string.action_add_to_playlist
-						)
-						DropdownItem(
-							leadingIcon = Res.drawable.unstar,
-							text = Res.string.action_star
-						)
-						DropdownItem(
-							leadingIcon = Res.drawable.shuffle,
-							text = Res.string.action_shuffle,
+				AlbumArt()
+			}
+
+			Column(
+				Modifier
+					.widthIn(max = 500.dp)
+					.padding(horizontal = 15.dp)
+					.padding(top = 54.dp)
+			) {
+				Row(
+					Modifier.padding(horizontal = 15.dp),
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					Info(modifier = Modifier.weight(1f))
+					Box {
+						IconButton(
 							onClick = {
-								moreShown = false
-								playerState.tracks?.let {
-									when (it) {
-										is Album -> player.play(it.copy(song = it.song?.shuffled()), 0)
-										is Playlist -> player.play(it.copy(entry = it.entry?.shuffled()), 0)
+								isStarred = !isStarred
+								scope.launch {
+									if (isStarred) {
+										player.starTrack()
+									} else {
+										player.unstarTrack()
 									}
 								}
 							}
-						)
+						) {
+							Icon(
+								vectorResource(
+									if (isStarred) Res.drawable.star else Res.drawable.unstar
+								),
+								stringResource(Res.string.action_star)
+							)
+						}
 					}
 				}
+				ProgressBar(expanded = true)
 			}
-			ProgressBar(expanded = true)
+
+			Spacer(Modifier.height(30.dp))
+			Controls(expanded = true)
 		}
 
-		Spacer(Modifier.height(30.dp))
-		Controls(expanded = true)
+		Box(
+			modifier = Modifier
+				.align(Alignment.TopEnd)
+				.statusBarsPadding()
+				.padding(12.dp)
+		) {
+			IconButton(onClick = { moreShown = true }) {
+				Icon(
+					vectorResource(Res.drawable.more_vert),
+					stringResource(Res.string.action_more)
+				)
+			}
+
+			Dropdown(
+				expanded = moreShown,
+				onDismissRequest = { moreShown = false }
+			) {
+				DropdownItem(
+					leadingIcon = Res.drawable.playlist_play,
+					text = Res.string.action_add_to_playlist
+				)
+				DropdownItem(
+					leadingIcon = Res.drawable.shuffle,
+					text = Res.string.action_shuffle,
+					onClick = {
+						moreShown = false
+						playerState.tracks?.let {
+							when (it) {
+								is Album -> player.play(it.copy(song = it.song?.shuffled()), 0)
+								is Playlist -> player.play(it.copy(entry = it.entry?.shuffled()), 0)
+							}
+						}
+					}
+				)
+			}
+		}
 	}
 }
 
