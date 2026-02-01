@@ -91,6 +91,7 @@ import navic.composeapp.generated.resources.more_vert
 import navic.composeapp.generated.resources.pause
 import navic.composeapp.generated.resources.play_arrow
 import navic.composeapp.generated.resources.playlist_play
+import navic.composeapp.generated.resources.repeat
 import navic.composeapp.generated.resources.shuffle
 import navic.composeapp.generated.resources.skip_next
 import navic.composeapp.generated.resources.skip_previous
@@ -480,7 +481,7 @@ private fun MediaBarScope.Info(modifier: Modifier = Modifier) {
 @Composable
 private fun MediaBarScope.Controls(expanded: Boolean) {
 	val paused = playerState.isPaused
-	val size = if(expanded) 40.dp else 32.dp
+	val size = if(expanded) 36.dp else 32.dp
 
 	val contentPadding = if (!expanded) PaddingValues(horizontal = 4.dp) else ButtonDefaults.contentPaddingFor(60.dp)
 	val shapes = ToggleButtonShapes(
@@ -490,6 +491,8 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 	)
 
 	val modifier = Modifier.size(size)
+	val sideModifier = Modifier.size(24.dp)
+	val sidePadding = PaddingValues(4.dp)
 	val enabled = playerState.tracks != null
 	val colors = ToggleButtonColors(
 		containerColor = if (expanded) MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp) else Color.Transparent,
@@ -502,16 +505,31 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 
 	Row(
 		modifier = if (expanded) {
-			Modifier
-				.clip(ContinuousCapsule)
-				.background(MaterialTheme.colorScheme.surfaceContainer)
-				.padding(8.dp)
-				.clip(ContinuousCapsule)
+			Modifier.padding(8.dp)
 		} else {
 			Modifier
 		},
-		horizontalArrangement = Arrangement.spacedBy(8.dp)
+		horizontalArrangement = Arrangement.spacedBy(8.dp),
+		verticalAlignment = Alignment.CenterVertically
 	) {
+		if (expanded) {
+			ToggleButton(
+				enabled = false,
+				checked = false,
+				contentPadding = sidePadding,
+				shapes = shapes,
+				colors = colors,
+				onCheckedChange = {},
+				content = {
+					Icon(
+						vectorResource(Res.drawable.shuffle),
+						null,
+						sideModifier,
+						tint = Color.White
+					)
+				}
+			)
+		}
 		if (expanded) {
 			ToggleButton(
 				enabled = enabled,
@@ -552,6 +570,24 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 			},
 			content = { Icon(vectorResource(Res.drawable.skip_next), null, modifier) }
 		)
+		if (expanded) {
+			ToggleButton(
+				enabled = false,
+				checked = false,
+				contentPadding = sidePadding,
+				shapes = shapes,
+				colors = colors,
+				onCheckedChange = {},
+				content = {
+					Icon(
+						vectorResource(Res.drawable.repeat),
+						null,
+						sideModifier,
+						tint = Color.White
+					)
+				}
+			)
+		}
 	}
 }
 
