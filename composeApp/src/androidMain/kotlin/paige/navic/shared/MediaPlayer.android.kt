@@ -138,6 +138,14 @@ class AndroidMediaPlayerViewModel(
 					_uiState.update { it.copy(isLoading = playbackState == Player.STATE_BUFFERING) }
 					updatePlaybackState()
 				}
+
+				override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+					_uiState.update { it.copy(isShuffleEnabled = shuffleModeEnabled) }
+				}
+
+				override fun onRepeatModeChanged(repeatMode: Int) {
+					_uiState.update { it.copy(repeatMode = repeatMode) }
+				}
 			})
 			updatePlaybackState()
 		}
@@ -162,7 +170,9 @@ class AndroidMediaPlayerViewModel(
 				state.copy(
 					currentIndex = index,
 					currentTrack = state.tracks?.tracks?.getOrNull(index),
-					isPaused = !player.isPlaying
+					isPaused = !player.isPlaying,
+					isShuffleEnabled = player.shuffleModeEnabled,
+					repeatMode = player.repeatMode
 				)
 			}
 			updateProgress()
@@ -229,10 +239,29 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
+	override fun shufflePlay(tracks: TrackCollection) {
+		controller?.shuffleModeEnabled = true
+		play(tracks, 0)
+	}
+
+	override fun toggleRepeat() {
+		controller?.let { player ->
+			player.repeatMode = when (player.repeatMode) {
+				Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE
+				else -> Player.REPEAT_MODE_OFF
+			}
+		}
+	}
+
 	override fun pause() { controller?.pause() }
 	override fun resume() { controller?.play() }
 	override fun next() { if (controller?.hasNextMediaItem() == true) controller?.seekToNextMediaItem() }
 	override fun previous() { if (controller?.hasPreviousMediaItem() == true) controller?.seekToPreviousMediaItem() }
+	override fun toggleShuffle() {
+		controller?.let { player ->
+			player.shuffleModeEnabled = !player.shuffleModeEnabled
+		}
+	}
 
 	override fun seek(normalized: Float) {
 		controller?.let {

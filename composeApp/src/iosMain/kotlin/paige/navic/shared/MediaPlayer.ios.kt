@@ -214,6 +214,18 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 		}
 	}
 
+	override fun toggleShuffle() {
+		TODO("Not yet implemented")
+	}
+
+	override fun toggleRepeat() {
+		TODO("Not yet implemented")
+	}
+
+	override fun shufflePlay(tracks: TrackCollection) {
+		TODO("Not yet implemented")
+	}
+
 	override fun seek(normalized: Float) {
 		val duration = player.currentItem?.duration ?: return
 		val totalSeconds = CMTimeGetSeconds(duration)

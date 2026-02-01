@@ -85,14 +85,15 @@ import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_more
-import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.more_vert
 import navic.composeapp.generated.resources.pause
 import navic.composeapp.generated.resources.play_arrow
 import navic.composeapp.generated.resources.playlist_play
 import navic.composeapp.generated.resources.repeat
+import navic.composeapp.generated.resources.repeat_on
 import navic.composeapp.generated.resources.shuffle
+import navic.composeapp.generated.resources.shuffle_on
 import navic.composeapp.generated.resources.skip_next
 import navic.composeapp.generated.resources.skip_previous
 import navic.composeapp.generated.resources.star
@@ -111,8 +112,6 @@ import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.Marquee
 import paige.navic.ui.screen.LyricsScreen
 import paige.navic.util.toHHMMSS
-import paige.subsonic.api.model.Album
-import paige.subsonic.api.model.Playlist
 import kotlin.time.Duration.Companion.seconds
 
 object MediaBarDefaults {
@@ -417,19 +416,6 @@ private fun MediaBarScope.PlayerView(
 					leadingIcon = Res.drawable.playlist_play,
 					text = Res.string.action_add_to_playlist
 				)
-				DropdownItem(
-					leadingIcon = Res.drawable.shuffle,
-					text = Res.string.action_shuffle,
-					onClick = {
-						moreShown = false
-						playerState.tracks?.let {
-							when (it) {
-								is Album -> player.play(it.copy(song = it.song?.shuffled()), 0)
-								is Playlist -> player.play(it.copy(entry = it.entry?.shuffled()), 0)
-							}
-						}
-					}
-				)
 			}
 		}
 	}
@@ -489,6 +475,11 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 		pressedShape = ContinuousRoundedRectangle(12.dp),
 		checkedShape = ContinuousRoundedRectangle(12.dp)
 	)
+	val sideShapes = ToggleButtonShapes(
+		shape = ContinuousRoundedRectangle(8.dp),
+		pressedShape = ContinuousRoundedRectangle(6.dp),
+		checkedShape = ContinuousRoundedRectangle(8.dp)
+	)
 
 	val modifier = Modifier.size(size)
 	val sideModifier = Modifier.size(24.dp)
@@ -514,18 +505,17 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 	) {
 		if (expanded) {
 			ToggleButton(
-				enabled = false,
-				checked = false,
+				enabled = enabled,
+				checked = playerState.isShuffleEnabled,
 				contentPadding = sidePadding,
-				shapes = shapes,
+				shapes = sideShapes,
 				colors = colors,
-				onCheckedChange = {},
+				onCheckedChange = { player.toggleShuffle() },
 				content = {
 					Icon(
-						vectorResource(Res.drawable.shuffle),
+						vectorResource(if (playerState.isShuffleEnabled) Res.drawable.shuffle_on else Res.drawable.shuffle),
 						null,
-						sideModifier,
-						tint = Color.White
+						sideModifier
 					)
 				}
 			)
@@ -571,19 +561,26 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 			content = { Icon(vectorResource(Res.drawable.skip_next), null, modifier) }
 		)
 		if (expanded) {
+			val repeatMode = playerState.repeatMode
+			val isActive = repeatMode != 0
+
 			ToggleButton(
-				enabled = false,
-				checked = false,
+				enabled = enabled,
+				checked = isActive,
 				contentPadding = sidePadding,
-				shapes = shapes,
+				shapes = sideShapes,
 				colors = colors,
-				onCheckedChange = {},
+				onCheckedChange = { player.toggleRepeat() },
 				content = {
+					val iconRes = when (repeatMode) {
+					1 -> Res.drawable.repeat_on
+					else -> Res.drawable.repeat
+				}
+
 					Icon(
-						vectorResource(Res.drawable.repeat),
-						null,
+						vectorResource(iconRes),
+						contentDescription = null,
 						sideModifier,
-						tint = Color.White
 					)
 				}
 			)

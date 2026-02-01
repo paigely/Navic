@@ -17,6 +17,8 @@ data class PlayerUiState(
 	val currentTrack: Track? = null,
 	val currentIndex: Int = -1,
 	val isPaused: Boolean = false,
+	val isShuffleEnabled: Boolean = false,
+	val repeatMode: Int = 0,
 	val progress: Float = 0f,
 	val isLoading: Boolean = false
 )
@@ -32,6 +34,9 @@ abstract class MediaPlayerViewModel : ViewModel() {
 	abstract fun seek(normalized: Float)
 	abstract fun next()
 	abstract fun previous()
+	abstract fun toggleShuffle()
+	abstract fun toggleRepeat()
+	abstract fun shufflePlay(tracks: TrackCollection)
 
 	protected fun scrobbleSubmission(trackId: String?) {
 		viewModelScope.launch {

@@ -335,14 +335,7 @@ private fun TracksScreenScope.Metadata() {
 		OutlinedButton(
 			modifier = Modifier.weight(1f),
 			onClick = {
-				when (tracks) {
-					is Album -> player.play(tracks.copy(
-						song = tracks.song?.shuffled()
-					), 0)
-					is Playlist -> player.play(tracks.copy(
-						entry = tracks.entry?.shuffled()
-					), 0)
-				}
+				player.shufflePlay(tracks)
 			},
 			shape = shape
 		) {
