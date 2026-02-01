@@ -112,7 +112,6 @@ import paige.navic.ui.screen.LyricsScreen
 import paige.navic.util.toHHMMSS
 import paige.subsonic.api.model.Album
 import paige.subsonic.api.model.Playlist
-import paige.subsonic.api.model.Track
 import kotlin.time.Duration.Companion.seconds
 
 object MediaBarDefaults {
