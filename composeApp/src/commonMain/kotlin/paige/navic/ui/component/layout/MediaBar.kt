@@ -149,16 +149,20 @@ fun MediaBar(progress: Float) {
 	}
 
 	BoxWithConstraints(
-		Modifier
-			.fillMaxHeight()
+		Modifier.fillMaxHeight()
 	) {
-		val maxWidth = maxWidth
+		val baseArtSize = remember(maxHeight, maxWidth) {
+			val targetHeight = maxHeight * 0.38f
+			val maxAllowedWidth = maxWidth - 100.dp
+			minOf(targetHeight, maxAllowedWidth)
+		}
 		val artStartSize = MediaBarDefaults.collapsedArtSize
 		val artEndSize by animateDpAsState(
-			targetValue = if (playerState.isPaused) 260.dp else 300.dp,
+			targetValue = if (playerState.isPaused) baseArtSize - 40.dp else baseArtSize,
 			animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
 			label = "AlbumArtSizeAnimation"
 		)
+		val topPadding = (maxHeight * 0.1f).coerceIn(20.dp, 80.dp)
 
 		val currentArtSize = lerp(artStartSize, artEndSize, progress)
 
@@ -166,7 +170,8 @@ fun MediaBar(progress: Float) {
 		val startY = 15.dp
 
 		val endX = (maxWidth - artEndSize) / 2
-		val endY = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 100.dp
+		val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+		val endY = statusBarHeight + 80.dp
 
 		val currentArtX = lerp(startX, endX, progress)
 		val currentArtY = lerp(startY, endY, progress)
@@ -209,7 +214,7 @@ fun MediaBar(progress: Float) {
 			if (expandedAlpha > 0f) {
 				scope.ExpandedContent(
 					artSize = artEndSize,
-					topPadding = 80.dp,
+					topPadding = topPadding,
 					showArt = isFullyExpanded
 				)
 			}
@@ -340,7 +345,8 @@ private fun MediaBarScope.PlayerView(
 	Box(Modifier.fillMaxSize()) {
 		Column(
 			Modifier.fillMaxSize(),
-			horizontalAlignment = Alignment.CenterHorizontally
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.Top
 		) {
 			Spacer(Modifier.height(topPadding))
 			Surface(
@@ -353,12 +359,11 @@ private fun MediaBarScope.PlayerView(
 			) {
 				AlbumArt()
 			}
-
+			Spacer(Modifier.weight(0.5f))
 			Column(
 				Modifier
 					.widthIn(max = 500.dp)
 					.padding(horizontal = 15.dp)
-					.padding(top = 54.dp)
 			) {
 				Row(
 					Modifier.padding(horizontal = 15.dp),
@@ -398,11 +403,10 @@ private fun MediaBarScope.PlayerView(
 				}
 				ProgressBar(expanded = true)
 			}
-
-			Spacer(Modifier.height(30.dp))
+			Spacer(Modifier.weight(0.5f))
 			Controls(expanded = true)
+			Spacer(Modifier.weight(1f))
 		}
-		Spacer(Modifier.height(40.dp))
 	}
 }
 

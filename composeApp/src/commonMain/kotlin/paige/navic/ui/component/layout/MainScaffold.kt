@@ -21,6 +21,7 @@ import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -76,11 +78,17 @@ fun MainScaffold(
 	})
 	val dominantColorState = rememberDominantColorState(loader = networkLoader)
 	val coverArt = playerState.tracks?.coverArt
-	val scheme = if (coverArt != null && expanded) rememberDynamicColorScheme(
+	val musicScheme = if (coverArt != null) rememberDynamicColorScheme(
 		seedColor = dominantColorState.color,
 		isDark = isSystemInDarkTheme(),
 		specVersion = ColorSpec.SpecVersion.SPEC_2025,
 	) else null
+	val appScheme = MaterialTheme.colorScheme
+	val dynamicScheme = if (musicScheme != null) {
+		appScheme.lerp(musicScheme, progress)
+	} else {
+		appScheme
+	}
 	val alwaysShowSeekbar = Settings.shared.alwaysShowSeekbar
 
 	LaunchedEffect(coverArt) {
@@ -101,7 +109,7 @@ fun MainScaffold(
 			}
 		},
 		bottomBar = {
-			NavicTheme(scheme, forceColorScheme = expanded) {
+			NavicTheme(dynamicScheme, forceColorScheme = expanded) {
 				bottomBar()
 			}
 		}
@@ -122,7 +130,7 @@ fun MainScaffold(
 			sheetBackgroundColor = Color.Transparent,
 			sheetShape = ContinuousRoundedRectangle(24.dp, 24.dp, 0.dp, 0.dp),
 			sheetContent = {
-				NavicTheme(scheme, forceColorScheme = expanded) {
+				NavicTheme(dynamicScheme, forceColorScheme = expanded) {
 					Box(
 						modifier = Modifier
 							.background(MaterialTheme.colorScheme.surfaceContainer)
@@ -130,7 +138,7 @@ fun MainScaffold(
 					) {
 						MediaBar(progress)
 						this@BottomSheetScaffold.AnimatedVisibility(
-							expanded,
+							(progress > 0.5f),
 							enter = slideInVertically { -it } + fadeIn() + expandIn(),
 							exit = slideOutVertically { -it } + fadeOut() + shrinkOut(),
 							modifier = Modifier
@@ -154,4 +162,31 @@ fun MainScaffold(
 			content()
 		}
 	}
+}
+
+fun ColorScheme.lerp(target: ColorScheme, fraction: Float): ColorScheme {
+	return this.copy(
+		primary = lerp(this.primary, target.primary, fraction),
+		onPrimary = lerp(this.onPrimary, target.onPrimary, fraction),
+		primaryContainer = lerp(this.primaryContainer, target.primaryContainer, fraction),
+		onPrimaryContainer = lerp(this.onPrimaryContainer, target.onPrimaryContainer, fraction),
+		inversePrimary = lerp(this.inversePrimary, target.inversePrimary, fraction),
+		secondary = lerp(this.secondary, target.secondary, fraction),
+		onSecondary = lerp(this.onSecondary, target.onSecondary, fraction),
+		secondaryContainer = lerp(this.secondaryContainer, target.secondaryContainer, fraction),
+		onSecondaryContainer = lerp(this.onSecondaryContainer, target.onSecondaryContainer, fraction),
+		tertiary = lerp(this.tertiary, target.tertiary, fraction),
+		onTertiary = lerp(this.onTertiary, target.onTertiary, fraction),
+		tertiaryContainer = lerp(this.tertiaryContainer, target.tertiaryContainer, fraction),
+		onTertiaryContainer = lerp(this.onTertiaryContainer, target.onTertiaryContainer, fraction),
+		background = lerp(this.background, target.background, fraction),
+		onBackground = lerp(this.onBackground, target.onBackground, fraction),
+		surface = lerp(this.surface, target.surface, fraction),
+		onSurface = lerp(this.onSurface, target.onSurface, fraction),
+		surfaceVariant = lerp(this.surfaceVariant, target.surfaceVariant, fraction),
+		onSurfaceVariant = lerp(this.onSurfaceVariant, target.onSurfaceVariant, fraction),
+		outline = lerp(this.outline, target.outline, fraction),
+		outlineVariant = lerp(this.outlineVariant, target.outlineVariant, fraction),
+		surfaceContainer = lerp(this.surfaceContainer, target.surfaceContainer, fraction),
+	)
 }
