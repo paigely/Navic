@@ -107,7 +107,7 @@ fun App() {
 		NavicTheme {
 			MainScaffold(
 				snackbarState = snackbarState,
-				bottomBar = { BottomBar() }
+				bottomBar = { BottomBar(it) }
 			) {
 				NavDisplay(
 					modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface),

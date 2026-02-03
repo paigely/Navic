@@ -75,6 +75,7 @@ private enum class NavItem(
 
 @Composable
 fun BottomBar(
+	collapseSheet: () -> Unit,
 	viewModel: NavtabsViewModel = viewModel { NavtabsViewModel(com.russhwolf.settings.Settings(), Json) }
 ) {
 	val backStack = LocalNavStack.current
@@ -101,6 +102,7 @@ fun BottomBar(
 					NavigationBarItem(
 						selected = selected,
 						onClick = {
+							collapseSheet()
 							ctx.clickSound()
 							backStack.clear()
 							backStack.add(item.destination)
@@ -140,6 +142,7 @@ fun BottomBar(
 						else NavigationItemIconPosition.Top,
 						selected = backStack.last() == item.destination,
 						onClick = {
+							collapseSheet()
 							ctx.clickSound()
 							backStack.clear()
 							backStack.add(item.destination)

@@ -12,6 +12,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousRoundedRectangle
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.info_unknown_album
+import navic.composeapp.generated.resources.info_unknown_artist
+import navic.composeapp.generated.resources.info_unknown_year
+import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.subsonic.api.model.Track
@@ -34,11 +39,11 @@ fun TrackRow(
 		supportingContent = {
 			Text(
 				buildString {
-					append(track.album ?: "Unknown album")
+					append(track.album ?: stringResource(Res.string.info_unknown_album))
 					append(" • ")
-					append(track.artist ?: "Unknown artist(s)")
+					append(track.artist ?: stringResource(Res.string.info_unknown_artist))
 					append(" • ")
-					append(track.year ?: "Unknown year")
+					append(track.year ?: stringResource(Res.string.info_unknown_year))
 				},
 				maxLines = 1
 			)

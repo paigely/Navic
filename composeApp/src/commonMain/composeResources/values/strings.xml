@@ -76,6 +76,7 @@
 	<string name="action_ok">OK</string>
 	<string name="action_play">Play</string>
 	<string name="action_shuffle">Shuffle</string>
+	<string name="action_repeat">Repeat</string>
 	<string name="action_delete">Delete</string>
 	<string name="action_cancel">Cancel</string>
 	<string name="action_share">Share</string>
@@ -104,5 +105,6 @@
 	<string name="info_error_hide">Hide details</string>
 	<string name="info_unknown_album">Unknown Album</string>
 	<string name="info_unknown_artist">Unknown Artist</string>
+	<string name="info_unknown_year">Unknown Year</string>
 	<string name="info_needs_log_in">You need to log in first. Tap the account button in the top right.</string>
 </resources>

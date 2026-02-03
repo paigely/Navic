@@ -17,15 +17,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.minus
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetValue
-import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -54,7 +53,7 @@ import paige.navic.ui.theme.NavicTheme
 @Composable
 fun MainScaffold(
 	snackbarState: SnackbarHostState,
-	bottomBar: @Composable () -> Unit,
+	bottomBar: @Composable (collapseSheet: () -> Unit) -> Unit,
 	content: @Composable () -> Unit,
 ) {
 	val player = LocalMediaPlayer.current
@@ -62,11 +61,7 @@ fun MainScaffold(
 	val focusManager = LocalFocusManager.current
 	val scope = rememberCoroutineScope()
 	val scaffoldState = rememberBottomSheetScaffoldState()
-	val expanded = scaffoldState.bottomSheetState.isExpanded
-	val progress = scaffoldState.bottomSheetState.progress(
-		BottomSheetValue.Collapsed,
-		BottomSheetValue.Expanded
-	)
+	val expanded = scaffoldState.bottomSheetState.targetValue == SheetValue.Expanded
 	val networkLoader = rememberNetworkLoader(HttpClient().config {
 		install(HttpTimeout) {
 			requestTimeoutMillis = 60_000
@@ -102,7 +97,11 @@ fun MainScaffold(
 		},
 		bottomBar = {
 			NavicTheme(scheme, forceColorScheme = expanded) {
-				bottomBar()
+				bottomBar {
+					scope.launch {
+						scaffoldState.bottomSheetState.partialExpand()
+					}
+				}
 			}
 		}
 	) { innerPadding ->
@@ -119,8 +118,8 @@ fun MainScaffold(
 			sheetPeekHeight = if (alwaysShowSeekbar)
 				MediaBarDefaults.height
 			else MediaBarDefaults.heightNoSeekbar,
-			sheetBackgroundColor = Color.Transparent,
 			sheetShape = ContinuousRoundedRectangle(24.dp, 24.dp, 0.dp, 0.dp),
+			sheetDragHandle = {},
 			sheetContent = {
 				NavicTheme(scheme, forceColorScheme = expanded) {
 					Box(
@@ -128,7 +127,7 @@ fun MainScaffold(
 							.background(MaterialTheme.colorScheme.surfaceContainer)
 							.fillMaxWidth()
 					) {
-						MediaBar(progress)
+						MediaBar(expanded)
 						this@BottomSheetScaffold.AnimatedVisibility(
 							expanded,
 							enter = slideInVertically { -it } + fadeIn() + expandIn(),
@@ -141,7 +140,7 @@ fun MainScaffold(
 							BottomSheetDefaults.DragHandle(
 								modifier = Modifier.clickable {
 									scope.launch {
-										scaffoldState.bottomSheetState.collapse()
+										scaffoldState.bottomSheetState.partialExpand()
 									}
 								},
 								color = MaterialTheme.colorScheme.onSurface
