@@ -209,7 +209,7 @@ fun MediaBar(progress: Float) {
 			if (expandedAlpha > 0f) {
 				scope.ExpandedContent(
 					artSize = artEndSize,
-					topPadding = 100.dp,
+					topPadding = 80.dp,
 					showArt = isFullyExpanded
 				)
 			}
@@ -340,8 +340,7 @@ private fun MediaBarScope.PlayerView(
 	Box(Modifier.fillMaxSize()) {
 		Column(
 			Modifier.fillMaxSize(),
-			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.Top
+			horizontalAlignment = Alignment.CenterHorizontally
 		) {
 			Spacer(Modifier.height(topPadding))
 			Surface(
@@ -366,24 +365,33 @@ private fun MediaBarScope.PlayerView(
 					verticalAlignment = Alignment.CenterVertically
 				) {
 					Info(modifier = Modifier.weight(1f))
-					Box {
-						IconButton(
-							onClick = {
-								isStarred = !isStarred
-								scope.launch {
-									if (isStarred) {
-										player.starTrack()
-									} else {
-										player.unstarTrack()
-									}
-								}
+					IconButton(
+						onClick = {
+							isStarred = !isStarred
+							scope.launch {
+								if (isStarred) player.starTrack() else player.unstarTrack()
 							}
-						) {
+						}
+					) {
+						Icon(
+							imageVector = vectorResource(if (isStarred) Res.drawable.star else Res.drawable.unstar),
+							contentDescription = stringResource(Res.string.action_star)
+						)
+					}
+					Box {
+						IconButton(onClick = { moreShown = true }) {
 							Icon(
-								vectorResource(
-									if (isStarred) Res.drawable.star else Res.drawable.unstar
-								),
-								stringResource(Res.string.action_star)
+								imageVector = vectorResource(Res.drawable.more_vert),
+								contentDescription = stringResource(Res.string.action_more)
+							)
+						}
+						Dropdown(
+							expanded = moreShown,
+							onDismissRequest = { moreShown = false }
+						) {
+							DropdownItem(
+								leadingIcon = Res.drawable.playlist_play,
+								text = Res.string.action_add_to_playlist
 							)
 						}
 					}
@@ -394,30 +402,7 @@ private fun MediaBarScope.PlayerView(
 			Spacer(Modifier.height(30.dp))
 			Controls(expanded = true)
 		}
-
-		Box(
-			modifier = Modifier
-				.align(Alignment.TopEnd)
-				.statusBarsPadding()
-				.padding(12.dp)
-		) {
-			IconButton(onClick = { moreShown = true }) {
-				Icon(
-					vectorResource(Res.drawable.more_vert),
-					stringResource(Res.string.action_more)
-				)
-			}
-
-			Dropdown(
-				expanded = moreShown,
-				onDismissRequest = { moreShown = false }
-			) {
-				DropdownItem(
-					leadingIcon = Res.drawable.playlist_play,
-					text = Res.string.action_add_to_playlist
-				)
-			}
-		}
+		Spacer(Modifier.height(40.dp))
 	}
 }
 

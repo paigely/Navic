@@ -53,6 +53,9 @@ import navic.composeapp.generated.resources.action_clear_search
 import navic.composeapp.generated.resources.action_navigate_back
 import navic.composeapp.generated.resources.arrow_back
 import navic.composeapp.generated.resources.close
+import navic.composeapp.generated.resources.info_unknown_album
+import navic.composeapp.generated.resources.info_unknown_artist
+import navic.composeapp.generated.resources.info_unknown_year
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_search
@@ -137,11 +140,11 @@ fun SearchScreen(
 										supportingContent = {
 											Text(
 												buildString {
-													append(track.album ?: "Unknown album")
+													append(track.album ?: Res.string.info_unknown_album)
 													append(" • ")
-													append(track.artist ?: "Unknown artist(s)")
+													append(track.artist ?: Res.string.info_unknown_artist)
 													append(" • ")
-													append(track.year ?: "Unknown year")
+													append(track.year ?: Res.string.info_unknown_year)
 												},
 												maxLines = 1
 											)
