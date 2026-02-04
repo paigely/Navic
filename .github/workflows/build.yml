@@ -118,7 +118,7 @@ jobs:
 
   upload-artifacts-to-discord:
     name: Upload Artifacts to Discord
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     needs: [build-apk, build-ipa]
     runs-on: ubuntu-latest
     steps:
