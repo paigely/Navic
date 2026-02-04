@@ -3,8 +3,12 @@ package paige.navic.ui.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
@@ -27,6 +31,7 @@ import navic.composeapp.generated.resources.option_scrobble_percentage
 import navic.composeapp.generated.resources.subtitle_lyrics_beat_by_beat
 import navic.composeapp.generated.resources.title_behaviour
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.data.model.Settings
 import paige.navic.ui.component.common.Form
@@ -43,7 +48,8 @@ fun SettingsBehaviourScreen() {
 		topBar = { NestedTopBar(
 			{ Text(stringResource(Res.string.title_behaviour)) },
 			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
-		) }
+		) },
+		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp
@@ -52,8 +58,7 @@ fun SettingsBehaviourScreen() {
 				Modifier
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
-					.padding(12.dp)
-					.padding(bottom = 117.9.dp)
+					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
 					FormRow {
@@ -126,6 +131,7 @@ fun SettingsBehaviourScreen() {
 						}
 					}
 				}
+				Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 			}
 		}
 	}

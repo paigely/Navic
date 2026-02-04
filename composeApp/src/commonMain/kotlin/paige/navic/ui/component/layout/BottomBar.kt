@@ -2,9 +2,10 @@ package paige.navic.ui.component.layout
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationItemIconPosition
 import androidx.compose.material3.ShortNavigationBar
@@ -14,6 +15,8 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.json.Json
@@ -75,12 +78,14 @@ private enum class NavItem(
 
 @Composable
 fun BottomBar(
-	collapseSheet: () -> Unit,
+	modifier: Modifier = Modifier,
+	containerColor: Color = NavigationBarDefaults.containerColor,
 	viewModel: NavtabsViewModel = viewModel { NavtabsViewModel(com.russhwolf.settings.Settings(), Json) }
 ) {
 	val backStack = LocalNavStack.current
 	val ctx = LocalCtx.current
 	val state by viewModel.state.collectAsState()
+	val containerColor by animateColorAsState(containerColor)
 
 	AnimatedContent(
 		!Settings.shared.useShortNavbar
@@ -89,7 +94,10 @@ fun BottomBar(
 		val tabs = ((state as? UiState.Success)?.data ?: NavbarConfig.default)
 			.tabs.filter { tab -> tab.visible }
 		if (it) {
-			NavigationBar {
+			NavigationBar(
+				modifier = modifier,
+				containerColor = containerColor
+			) {
 				tabs.forEach { tab ->
 					val item = when (tab.id) {
 						NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
@@ -102,16 +110,12 @@ fun BottomBar(
 					NavigationBarItem(
 						selected = selected,
 						onClick = {
-							collapseSheet()
 							ctx.clickSound()
 							backStack.clear()
 							backStack.add(item.destination)
 						},
 						icon = {
-							Crossfade(
-								selected,
-								animationSpec = tween(3000)
-							) { selected ->
+							Crossfade(selected) { selected ->
 								if (selected) {
 									Icon(vectorResource(item.icon), null)
 								} else {
@@ -126,7 +130,10 @@ fun BottomBar(
 				}
 			}
 		} else {
-			ShortNavigationBar {
+			ShortNavigationBar(
+				modifier = modifier,
+				containerColor = containerColor
+			) {
 				tabs.forEach { tab ->
 					val item = when (tab.id) {
 						NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
@@ -142,15 +149,12 @@ fun BottomBar(
 						else NavigationItemIconPosition.Top,
 						selected = backStack.last() == item.destination,
 						onClick = {
-							collapseSheet()
 							ctx.clickSound()
 							backStack.clear()
 							backStack.add(item.destination)
 						},
 						icon = {
-							Crossfade(
-								selected
-							) { selected ->
+							Crossfade(selected) { selected ->
 								if (selected) {
 									Icon(vectorResource(item.icon), null)
 								} else {

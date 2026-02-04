@@ -62,6 +62,7 @@ import navic.composeapp.generated.resources.title_search
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
@@ -88,7 +89,7 @@ fun SearchScreen(
 	val ctx = LocalCtx.current
 
 	Column(
-		modifier = Modifier.padding(top = 32.dp)
+		modifier = Modifier.padding(top = 32.dp, bottom = LocalContentPadding.current.calculateBottomPadding())
 	) {
 		SearchTopBar(
 			query = query,
@@ -174,11 +175,11 @@ fun SearchScreen(
 								backStack.add(Screen.Artist(artist.id))
 							}
 						}
-						Spacer(Modifier.height(100.dp))
 					}
 				}
 			}
 		}
+		Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 	}
 }
 

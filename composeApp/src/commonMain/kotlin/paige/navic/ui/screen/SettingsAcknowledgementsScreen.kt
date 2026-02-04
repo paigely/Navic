@@ -1,8 +1,10 @@
 package paige.navic.ui.screen
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -15,6 +17,7 @@ import com.mikepenz.aboutlibraries.ui.compose.produceLibraries
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_acknowledgements
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.ui.component.layout.NestedTopBar
 
@@ -29,12 +32,15 @@ fun SettingsAcknowledgementsScreen() {
 		topBar = { NestedTopBar(
 			{ Text(stringResource(Res.string.title_acknowledgements)) },
 			hideBack = hideBack
-		) }
+		) },
+		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
 		LibrariesContainer(
 			libraries,
-			modifier = Modifier.padding(innerPadding).fillMaxSize(),
-			contentPadding = PaddingValues(bottom = 117.9.dp)
+			modifier = Modifier
+				.padding(top = 16.dp, end = 16.dp, start = 16.dp)
+				.fillMaxSize(),
+			contentPadding = PaddingValues(bottom = LocalContentPadding.current.calculateBottomPadding())
 		)
 	}
 }

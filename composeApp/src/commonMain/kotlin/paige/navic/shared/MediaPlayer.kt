@@ -65,6 +65,15 @@ abstract class MediaPlayerViewModel : ViewModel() {
 			} catch (_: Exception) {}
 		}
 	}
+
+	fun togglePlay() {
+		if (!_uiState.value.isPaused) {
+			pause()
+		} else {
+			resume()
+		}
+	}
+
 	suspend fun starTrack() {
 		SessionManager.api.star(_uiState.value.currentTrack?.id?.let { listOf(it) })
 	}

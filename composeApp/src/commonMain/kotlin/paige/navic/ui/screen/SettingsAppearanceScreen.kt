@@ -6,9 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -46,6 +50,7 @@ import navic.composeapp.generated.resources.subtitle_grid_items_per_row
 import navic.composeapp.generated.resources.subtitle_system_font
 import navic.composeapp.generated.resources.title_appearance
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.data.model.Settings
 import paige.navic.ui.component.common.Dropdown
@@ -65,7 +70,8 @@ fun SettingsAppearanceScreen() {
 		topBar = { NestedTopBar(
 			{ Text(stringResource(Res.string.title_appearance)) },
 			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
-		) }
+		) },
+		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp
@@ -74,8 +80,7 @@ fun SettingsAppearanceScreen() {
 				Modifier
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
-					.padding(12.dp)
-					.padding(bottom = 117.9.dp)
+					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
 					FormRow {
@@ -226,10 +231,10 @@ fun SettingsAppearanceScreen() {
 						)
 					}
 					FormRow {
-						Text(stringResource(Res.string.option_always_show_seekbar))
+						Text("Detached bottom bar")
 						SettingSwitch(
-							checked = Settings.shared.alwaysShowSeekbar,
-							onCheckedChange = { Settings.shared.alwaysShowSeekbar = it }
+							checked = Settings.shared.detachedBar,
+							onCheckedChange = { Settings.shared.detachedBar = it }
 						)
 					}
 					FormRow {
@@ -247,6 +252,7 @@ fun SettingsAppearanceScreen() {
 						Text(stringResource(Res.string.option_navbar_tab_positions))
 					}
 				}
+				Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 			}
 		}
 	}

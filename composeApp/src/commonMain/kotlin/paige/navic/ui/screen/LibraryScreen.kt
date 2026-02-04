@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -62,6 +64,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
@@ -100,10 +103,13 @@ fun LibraryScreen(
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
 	Scaffold(
-		topBar = { RootTopBar({ Text(stringResource(Res.string.title_library)) }, scrollBehavior) }
+		topBar = { RootTopBar({ Text(stringResource(Res.string.title_library)) }, scrollBehavior) },
+		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
 		RefreshBox(
-			modifier = Modifier.padding(innerPadding).background(MaterialTheme.colorScheme.surface),
+			modifier = Modifier
+				.padding(innerPadding)
+				.background(MaterialTheme.colorScheme.surface),
 			isRefreshing = recentsState is UiState.Loading
 				|| artistsState is UiState.Loading,
 			onRefresh = {
@@ -118,7 +124,7 @@ fun LibraryScreen(
 				columns = GridCells.Fixed(2),
 				contentPadding = PaddingValues(
 					top = topPadding + 16.dp,
-					bottom = 200.dp,
+					bottom = LocalContentPadding.current.calculateBottomPadding(),
 				),
 				verticalArrangement = Arrangement.spacedBy(6.dp),
 				horizontalArrangement = Arrangement.spacedBy(6.dp),

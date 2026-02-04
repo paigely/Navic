@@ -267,6 +267,9 @@ class AndroidMediaPlayerViewModel(
 		controller?.let {
 			val target = (it.duration * normalized).toLong()
 			it.seekTo(target)
+			_uiState.update { state ->
+				state.copy(progress = normalized)
+			}
 		}
 	}
 

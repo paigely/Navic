@@ -1,7 +1,11 @@
 package paige.navic.ui.screen
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +25,7 @@ import navic.composeapp.generated.resources.title_about
 import navic.composeapp.generated.resources.title_acknowledgements
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
@@ -39,14 +44,14 @@ fun SettingsAboutScreen() {
 		topBar = { NestedTopBar(
 			{ Text(stringResource(Res.string.title_about)) },
 			hideBack = hideBack
-		) }
+		) },
+		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
 		Column(
 			Modifier
 				.padding(innerPadding)
 				.verticalScroll(rememberScrollState())
-				.padding(12.dp)
-				.padding(bottom = 117.9.dp)
+				.padding(top = 12.dp, end = 12.dp, start = 12.dp)
 		) {
 			Form {
 				SelectionContainer {
@@ -69,6 +74,7 @@ fun SettingsAboutScreen() {
 					Icon(vectorResource(Res.drawable.forward), null)
 				}
 			}
+			Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 		}
 	}
 }

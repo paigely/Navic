@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
+import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.LocalImageBuilder
 import paige.navic.data.model.Settings
@@ -54,7 +55,7 @@ fun ArtGrid(
 			start = 16.dp,
 			top = 16.dp,
 			end = 16.dp,
-			bottom = 200.dp,
+			bottom = LocalContentPadding.current.calculateBottomPadding(),
 		),
 		verticalArrangement = Arrangement.spacedBy(12.dp),
 		horizontalArrangement = Arrangement.spacedBy(12.dp),
