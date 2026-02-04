@@ -64,6 +64,7 @@ jobs:
           name: navic-release-android
           path: composeApp/build/outputs/apk/**/*.apk
           compression-level: 0
+
   build-ipa:
     name: Build iOS IPA
     runs-on: macos-26
@@ -114,3 +115,30 @@ jobs:
           name: navic-release-ios
           path: Navic.ipa
           compression-level: 0
+
+  upload-artifacts-to-discord:
+    name: Upload Artifacts to Discord
+    if: github.event_name == 'push'
+    needs: [build-apk, build-ipa]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v7
+      - name: Unzip and post to Discord webhook
+        shell: bash
+        env:
+          CI_BUILD_WEBHOOK: ${{ secrets.CI_BUILD_WEBHOOK }}
+        run: |
+          shopt -s nullglob globstar
+
+          files=()
+          i=1
+          for file in **/*.{apk,ipa}; do
+            files+=("-F file${i}=@${file}")
+            ((i++))
+          done
+
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          payload=$(jq -n --arg content "Builds for [${GITHUB_SHA::7}](<$run_url>)" '{$content}')
+
+          curl -XPOST "$CI_BUILD_WEBHOOK" -F "payload_json=$payload" "${files[@]}"
