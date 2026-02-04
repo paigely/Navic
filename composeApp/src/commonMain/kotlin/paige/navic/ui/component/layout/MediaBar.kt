@@ -455,61 +455,94 @@ private fun MediaBarScope.Info(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaBarScope.Controls(expanded: Boolean) {
-	val paused = playerState.isPaused
-	val size = if(expanded) 36.dp else 32.dp
+	BoxWithConstraints {
+		val size = remember(maxWidth, maxHeight, expanded) {
+			val startSmall = if (expanded) 36.dp else 32.dp
+			val endLarge = if (expanded) 56.dp else 48.dp
+			val factor = (maxHeight / 200.dp).coerceIn(0.7f, 1.6f)
+			val t = ((factor - 0.7f) / (1.6f - 0.7f)).coerceIn(0f, 1f)
+			lerp(startSmall, endLarge, t)
+		}
+		val sideSize = size * 0.66f
+		val contentPadding = if (!expanded) PaddingValues(horizontal = 4.dp) else ButtonDefaults.contentPaddingFor(60.dp)
+		val shapes = ToggleButtonShapes(
+			shape = ContinuousRoundedRectangle(16.dp),
+			pressedShape = ContinuousRoundedRectangle(12.dp),
+			checkedShape = ContinuousRoundedRectangle(12.dp)
+		)
+		val sideShapes = ToggleButtonShapes(
+			shape = ContinuousRoundedRectangle(8.dp),
+			pressedShape = ContinuousRoundedRectangle(6.dp),
+			checkedShape = ContinuousRoundedRectangle(8.dp)
+		)
 
-	val contentPadding = if (!expanded) PaddingValues(horizontal = 4.dp) else ButtonDefaults.contentPaddingFor(60.dp)
-	val shapes = ToggleButtonShapes(
-		shape = ContinuousRoundedRectangle(16.dp),
-		pressedShape = ContinuousRoundedRectangle(12.dp),
-		checkedShape = ContinuousRoundedRectangle(12.dp)
-	)
-	val sideShapes = ToggleButtonShapes(
-		shape = ContinuousRoundedRectangle(8.dp),
-		pressedShape = ContinuousRoundedRectangle(6.dp),
-		checkedShape = ContinuousRoundedRectangle(8.dp)
-	)
+		val modifier = Modifier.size(size)
+		val sideModifier = Modifier.size(sideSize)
+		val sidePadding = PaddingValues(4.dp)
+		val enabled = playerState.tracks != null
+		val colors = ToggleButtonColors(
+			containerColor = if (expanded) MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp) else Color.Transparent,
+			contentColor = MaterialTheme.colorScheme.onSurface,
+			disabledContainerColor = Color.Transparent,
+			disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .5f),
+			checkedContainerColor = MaterialTheme.colorScheme.primary,
+			checkedContentColor = MaterialTheme.colorScheme.onPrimary
+		)
 
-	val modifier = Modifier.size(size)
-	val sideModifier = Modifier.size(24.dp)
-	val sidePadding = PaddingValues(4.dp)
-	val enabled = playerState.tracks != null
-	val colors = ToggleButtonColors(
-		containerColor = if (expanded) MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp) else Color.Transparent,
-		contentColor = MaterialTheme.colorScheme.onSurface,
-		disabledContainerColor = Color.Transparent,
-		disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .5f),
-		checkedContainerColor = MaterialTheme.colorScheme.primary,
-		checkedContentColor = MaterialTheme.colorScheme.onPrimary
-	)
-
-	Row(
-		modifier = if (expanded) {
-			Modifier.padding(8.dp)
-		} else {
-			Modifier
-		},
-		horizontalArrangement = Arrangement.spacedBy(8.dp),
-		verticalAlignment = Alignment.CenterVertically
-	) {
-		if (expanded) {
+		Row(
+			modifier = if (expanded) {
+				Modifier.padding(8.dp)
+			} else {
+				Modifier
+			},
+			horizontalArrangement = Arrangement.spacedBy(8.dp),
+			verticalAlignment = Alignment.CenterVertically
+		) {
+			if (expanded) {
+				ToggleButton(
+					enabled = enabled,
+					checked = playerState.isShuffleEnabled,
+					contentPadding = sidePadding,
+					shapes = sideShapes,
+					colors = colors,
+					onCheckedChange = { player.toggleShuffle() },
+					content = {
+						Icon(
+							vectorResource(if (playerState.isShuffleEnabled) Res.drawable.shuffle_on else Res.drawable.shuffle),
+							null,
+							sideModifier
+						)
+					}
+				)
+			}
+			if (expanded) {
+				ToggleButton(
+					enabled = enabled,
+					checked = false,
+					contentPadding = contentPadding,
+					shapes = shapes,
+					colors = colors,
+					onCheckedChange = {
+						ctx.clickSound()
+						player.previous()
+					},
+					content = { Icon(vectorResource(Res.drawable.skip_previous), null, modifier) }
+				)
+			}
 			ToggleButton(
 				enabled = enabled,
-				checked = playerState.isShuffleEnabled,
-				contentPadding = sidePadding,
-				shapes = sideShapes,
+				checked = !playerState.isPaused,
+				contentPadding = contentPadding,
+				shapes = shapes,
 				colors = colors,
-				onCheckedChange = { player.toggleShuffle() },
+				onCheckedChange = {
+					ctx.clickSound()
+					if (playerState.isPaused) player.resume() else player.pause()
+				},
 				content = {
-					Icon(
-						vectorResource(if (playerState.isShuffleEnabled) Res.drawable.shuffle_on else Res.drawable.shuffle),
-						null,
-						sideModifier
-					)
+					Icon(vectorResource(if (playerState.isPaused) Res.drawable.play_arrow else Res.drawable.pause), null, modifier)
 				}
 			)
-		}
-		if (expanded) {
 			ToggleButton(
 				enabled = enabled,
 				checked = false,
@@ -518,61 +551,35 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 				colors = colors,
 				onCheckedChange = {
 					ctx.clickSound()
-					player.previous()
+					player.next()
 				},
-				content = { Icon(vectorResource(Res.drawable.skip_previous), null, modifier) }
+				content = { Icon(vectorResource(Res.drawable.skip_next), null, modifier) }
 			)
-		}
-		ToggleButton(
-			enabled = enabled,
-			checked = !paused,
-			contentPadding = contentPadding,
-			shapes = shapes,
-			colors = colors,
-			onCheckedChange = {
-				ctx.clickSound()
-				if (paused) player.resume() else player.pause()
-			},
-			content = {
-				Icon(vectorResource(if (paused) Res.drawable.play_arrow else Res.drawable.pause), null, modifier)
+			if (expanded) {
+				val repeatMode = playerState.repeatMode
+				val isActive = repeatMode != 0
+
+				ToggleButton(
+					enabled = enabled,
+					checked = isActive,
+					contentPadding = sidePadding,
+					shapes = sideShapes,
+					colors = colors,
+					onCheckedChange = { player.toggleRepeat() },
+					content = {
+						val iconRes = when (repeatMode) {
+						1 -> Res.drawable.repeat_on
+						else -> Res.drawable.repeat
+					}
+
+						Icon(
+							vectorResource(iconRes),
+							contentDescription = null,
+							sideModifier,
+						)
+					}
+				)
 			}
-		)
-		ToggleButton(
-			enabled = enabled,
-			checked = false,
-			contentPadding = contentPadding,
-			shapes = shapes,
-			colors = colors,
-			onCheckedChange = {
-				ctx.clickSound()
-				player.next()
-			},
-			content = { Icon(vectorResource(Res.drawable.skip_next), null, modifier) }
-		)
-		if (expanded) {
-			val repeatMode = playerState.repeatMode
-			val isActive = repeatMode != 0
-
-			ToggleButton(
-				enabled = enabled,
-				checked = isActive,
-				contentPadding = sidePadding,
-				shapes = sideShapes,
-				colors = colors,
-				onCheckedChange = { player.toggleRepeat() },
-				content = {
-					val iconRes = when (repeatMode) {
-					1 -> Res.drawable.repeat_on
-					else -> Res.drawable.repeat
-				}
-
-					Icon(
-						vectorResource(iconRes),
-						contentDescription = null,
-						sideModifier,
-					)
-				}
-			)
 		}
 	}
 }
