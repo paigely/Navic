@@ -37,7 +37,6 @@ import dev.zt64.compose.pipette.CircularColorPicker
 import dev.zt64.compose.pipette.HsvColor
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_accent_colour
-import navic.composeapp.generated.resources.option_always_show_seekbar
 import navic.composeapp.generated.resources.option_cover_art_rounding
 import navic.composeapp.generated.resources.option_cover_art_size
 import navic.composeapp.generated.resources.option_dynamic_colour

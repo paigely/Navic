@@ -74,6 +74,7 @@ import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
+import paige.navic.data.model.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.Marquee
@@ -274,7 +275,11 @@ fun PlayerScreen(
 	}
 
 	val progressBar = @Composable {
-		val waveHeight by animateDpAsState(if (playerState.isPaused) 0.dp else 6.dp)
+		val waveHeight by animateDpAsState(
+			if (!playerState.isPaused && !Settings.shared.useWavySlider)
+				6.dp
+			else 0.dp
+		)
 		WavySlider(
 			value = playerState.progress,
 			onValueChange = { player.seek(it) },
