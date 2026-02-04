@@ -45,7 +45,7 @@ fun Swiper(
 	onSwipeLeft: () -> Unit,
 	onSwipeRight: () -> Unit,
 	modifier: Modifier = Modifier,
-	swipeThreshold: Float = 300f,
+	swipeThreshold: Float = 200f,
 	enableHaptics: Boolean = true,
 	content: @Composable BoxScope.() -> Unit
 ) {
@@ -75,7 +75,7 @@ fun Swiper(
 			offsetX.animateTo(
 				targetValue = 0f,
 				animationSpec = spring(
-					dampingRatio = Spring.DampingRatioMediumBouncy,
+					dampingRatio = Spring.DampingRatioLowBouncy,
 					stiffness = Spring.StiffnessLow
 				)
 			)
