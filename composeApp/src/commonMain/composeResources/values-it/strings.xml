@@ -15,6 +15,7 @@
 	<string name="title_albums">Album</string>
 	<string name="title_songs">Brani</string>
 	<string name="title_artists">Artisti</string>
+	<string name="title_similar_artists">Artisti simili</string>
 
 	<string name="subtitle_appearance">Personalizza l'aspetto</string>
 	<string name="subtitle_behaviour">Modifica il comportamento</string>
@@ -27,7 +28,6 @@
 	<string name="option_dynamic_colour">Usa colore dinamico</string>
 	<string name="option_accent_colour">Colore di accento</string>
 	<string name="option_short_navigation_bar">Barra di navigazione più bassa</string>
-	<string name="option_always_show_seekbar">Mostra la barra di avanzamento</string>
 	<string name="option_use_wavy_slider">Barra di avanzamento animata</string>
 	<string name="option_cover_art_rounding">Arrotondamento copertina</string>
 	<string name="option_cover_art_size">Dimensione copertina</string>
@@ -52,7 +52,6 @@
 	<string name="option_scrobble_percentage">Percentuale di scrobble</string>
 	<string name="option_min_duration_to_scrobble">Durata min. per lo scrobble</string>
 
-
 	<plurals name="count_songs">
 		<item quantity="one">%1$d brano</item>
 		<item quantity="other">%1$d brani</item>
@@ -76,6 +75,7 @@
 	<string name="action_ok">OK</string>
 	<string name="action_play">Riproduci</string>
 	<string name="action_shuffle">Casuale</string>
+	<string name="action_repeat">Ripeti</string>
 	<string name="action_delete">Elimina</string>
 	<string name="action_cancel">Annulla</string>
 	<string name="action_share">Condividi</string>
@@ -90,6 +90,7 @@
 	<string name="action_see_all">Vedi tutti</string>
 	<string name="action_view_on_lastfm">Vedi su last.fm</string>
 	<string name="action_view_on_musicbrainz">Vedi su MusicBrainz</string>
+	<string name="action_lyrics">Testo</string>
 
 	<string name="notice_deleted_playlist">Playlist eliminata.</string>
 	<string name="notice_deleted_share">Condivisione eliminata.</string>
@@ -104,5 +105,7 @@
 	<string name="info_error_hide">Nascondi dettagli</string>
 	<string name="info_unknown_album">Album sconosciuto</string>
 	<string name="info_unknown_artist">Artista sconosciuto</string>
+	<string name="info_unknown_year">Anno sconosciuto</string>
 	<string name="info_needs_log_in">Devi prima effettuare il login. Tocca il pulsante account in alto a destra.</string>
+	<string name="info_not_playing">Non in riproduzione</string>
 </resources>
