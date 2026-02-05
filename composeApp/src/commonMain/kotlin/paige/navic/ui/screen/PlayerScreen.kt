@@ -35,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +50,7 @@ import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.action_more
@@ -64,10 +66,11 @@ import navic.composeapp.generated.resources.pause
 import navic.composeapp.generated.resources.play_arrow
 import navic.composeapp.generated.resources.repeat
 import navic.composeapp.generated.resources.repeat_on
-import navic.composeapp.generated.resources.repeat_one_on
 import navic.composeapp.generated.resources.shuffle
+import navic.composeapp.generated.resources.shuffle_on
 import navic.composeapp.generated.resources.skip_next
 import navic.composeapp.generated.resources.skip_previous
+import navic.composeapp.generated.resources.star
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -105,6 +108,10 @@ fun PlayerScreen(
 
 	val enabled = playerState.currentTrack != null
 
+	var isStarred by remember(playerState.currentTrack) {
+		mutableStateOf(playerState.currentTrack?.starred != null)
+	}
+
 	val colors = ToggleButtonColors(
 		containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp),
 		contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -114,15 +121,27 @@ fun PlayerScreen(
 		checkedContentColor = MaterialTheme.colorScheme.onPrimary
 	)
 
+	val imagePadding by animateDpAsState(
+		targetValue = if (playerState.isPaused) 48.dp else 16.dp,
+		label = "AlbumArtPadding"
+	)
+
+	val scope = rememberCoroutineScope()
+
 	val starButton = @Composable {
 		IconButton(
-			onClick = {},
+			onClick = {
+				isStarred = !isStarred
+				scope.launch {
+					if (isStarred) player.starTrack() else player.unstarTrack()
+				}
+			},
 			colors = IconButtonDefaults.filledTonalIconButtonColors(),
 			modifier = Modifier.size(32.dp),
 			enabled = enabled
 		) {
 			Icon(
-				imageVector = vectorResource(Res.drawable.unstar),
+				vectorResource(if (isStarred) Res.drawable.star else Res.drawable.unstar),
 				contentDescription = stringResource(Res.string.action_star)
 			)
 		}
@@ -332,8 +351,8 @@ fun PlayerScreen(
 				Icon(
 					imageVector = when (playerState.repeatMode) {
 						0 -> vectorResource(Res.drawable.repeat)
-						1 -> vectorResource(Res.drawable.repeat_one_on)
-						else -> vectorResource(Res.drawable.repeat_on)
+						1 -> vectorResource(Res.drawable.repeat_on)
+						else -> vectorResource(Res.drawable.repeat)
 					},
 					contentDescription = stringResource(Res.string.action_repeat)
 				)
@@ -347,7 +366,7 @@ fun PlayerScreen(
 				enabled = enabled
 			) {
 				Icon(
-					imageVector = vectorResource(Res.drawable.shuffle),
+					imageVector = vectorResource(if (playerState.isShuffleEnabled) Res.drawable.shuffle_on else Res.drawable.shuffle),
 					contentDescription = stringResource(Res.string.action_shuffle)
 				)
 			}
@@ -392,7 +411,7 @@ fun PlayerScreen(
 					contentScale = ContentScale.Crop,
 					modifier = Modifier
 						.aspectRatio(1f)
-						.padding(16.dp)
+						.padding(imagePadding)
 						.fillMaxSize()
 						.clip(ContinuousRoundedRectangle(16.dp))
 						.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
@@ -402,17 +421,18 @@ fun PlayerScreen(
 						imageVector = vectorResource(Res.drawable.note),
 						contentDescription = null,
 						tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
-						modifier = Modifier.size(128.dp)
+						modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
 					)
 				}
 			}
 			infoRow()
 			progressBar()
 			durationsRow()
-			Spacer(modifier = Modifier.weight(1f))
+			Spacer(modifier = Modifier.weight(0.5f))
 			controlsRow()
 			Spacer(modifier = Modifier.weight(1f))
 			toolBar()
+			Spacer(modifier = Modifier.weight(1f))
 		}
 	}
 }
