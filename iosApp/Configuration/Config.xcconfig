@@ -1,5 +1,10 @@
-PRODUCT_NAME=Navic
-PRODUCT_BUNDLE_IDENTIFIER=paige.Navic
+NAVIC_PRODUCT_NAME=Navic
+NAVIC_PRODUCT_BUNDLE_IDENTIFIER=paige.Navic
 
-CURRENT_PROJECT_VERSION=1.0.0-alpha13
-MARKETING_VERSION=1.0.0-alpha13
+NAVIC_PROJECT_VERSION=1.0.0-alpha13
+
+// The `NAVIC_DISAMBIGUATOR` configuration is to make it easier to build
+// and run the project. Once you set your project's development team,
+// you'll have a unique bundle identifier. This is because the bundle identifier
+// is derived based on the 'NAVIC_DISAMBIGUATOR' value.
+NAVIC_DISAMBIGUATOR=${DEVELOPMENT_TEAM}
