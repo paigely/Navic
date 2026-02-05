@@ -39,13 +39,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
+import androidx.compose.ui.util.lerp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
@@ -80,6 +89,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
 import paige.navic.data.model.Settings
 import paige.navic.data.session.SessionManager
+import paige.navic.ui.component.common.BlendBackground
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.MarqueeText
 import paige.navic.ui.component.layout.Swiper
@@ -105,6 +115,7 @@ fun PlayerScreen(
 			auth = true
 		)
 	}
+	val coverPainter = rememberAsyncImagePainter(model = coverUri)
 
 	val enabled = playerState.currentTrack != null
 
@@ -381,49 +392,57 @@ fun PlayerScreen(
 		}
 	}
 
-	Swiper(
-		onSwipeLeft = {
-			player.next()
-		},
-		onSwipeRight = {
-			player.previous()
-		}
-	) {
-		Column(
-			modifier = Modifier
-				.padding(horizontal = 8.dp)
-				.fillMaxSize(),
-			horizontalAlignment = Alignment.CenterHorizontally
-		) {
-			Box(contentAlignment = Alignment.Center) {
-				AsyncImage(
-					model = coverUri,
-					contentDescription = null,
-					contentScale = ContentScale.Crop,
-					modifier = Modifier
-						.aspectRatio(1f)
-						.padding(imagePadding)
-						.fillMaxSize()
-						.clip(ContinuousRoundedRectangle(16.dp))
-						.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
-				)
-				if (coverUri.isNullOrEmpty()) {
-					Icon(
-						imageVector = vectorResource(Res.drawable.note),
-						contentDescription = null,
-						tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
-						modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
-					)
-				}
+	Box(modifier = Modifier.fillMaxSize()) {
+		BlendBackground(
+			painter = coverPainter,
+			modifier = Modifier.fillMaxSize(),
+			isPaused = playerState.isPaused
+		)
+
+		Swiper(
+			onSwipeLeft = {
+				player.next()
+			},
+			onSwipeRight = {
+				player.previous()
 			}
-			infoRow()
-			progressBar()
-			durationsRow()
-			Spacer(modifier = Modifier.weight(0.5f))
-			controlsRow()
-			Spacer(modifier = Modifier.weight(1f))
-			toolBar()
-			Spacer(modifier = Modifier.weight(1f))
+		) {
+			Column(
+				modifier = Modifier
+					.padding(horizontal = 8.dp)
+					.fillMaxSize(),
+				horizontalAlignment = Alignment.CenterHorizontally
+			) {
+				Box(contentAlignment = Alignment.Center) {
+					AsyncImage(
+						model = coverUri,
+						contentDescription = null,
+						contentScale = ContentScale.Crop,
+						modifier = Modifier
+							.aspectRatio(1f)
+							.padding(imagePadding)
+							.fillMaxSize()
+							.clip(ContinuousRoundedRectangle(16.dp))
+							.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
+					)
+					if (coverUri.isNullOrEmpty()) {
+						Icon(
+							imageVector = vectorResource(Res.drawable.note),
+							contentDescription = null,
+							tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
+							modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
+						)
+					}
+				}
+				infoRow()
+				progressBar()
+				durationsRow()
+				Spacer(modifier = Modifier.weight(0.5f))
+				controlsRow()
+				Spacer(modifier = Modifier.weight(1f))
+				toolBar()
+				Spacer(modifier = Modifier.weight(1f))
+			}
 		}
 	}
 }
