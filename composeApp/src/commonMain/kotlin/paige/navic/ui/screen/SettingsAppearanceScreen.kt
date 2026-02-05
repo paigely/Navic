@@ -44,9 +44,11 @@ import navic.composeapp.generated.resources.option_grid_items_per_row
 import navic.composeapp.generated.resources.option_navbar_tab_positions
 import navic.composeapp.generated.resources.option_short_navigation_bar
 import navic.composeapp.generated.resources.option_system_font
+import navic.composeapp.generated.resources.option_use_marquee_text
 import navic.composeapp.generated.resources.option_use_wavy_slider
 import navic.composeapp.generated.resources.subtitle_grid_items_per_row
 import navic.composeapp.generated.resources.subtitle_system_font
+import navic.composeapp.generated.resources.subtitle_use_marquee_text
 import navic.composeapp.generated.resources.title_appearance
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalContentPadding
@@ -219,6 +221,20 @@ fun SettingsAppearanceScreen() {
 								)
 							}
 						}
+					}
+					FormRow {
+						Column {
+							Text(stringResource(Res.string.option_use_marquee_text))
+							Text(
+								stringResource(Res.string.subtitle_use_marquee_text),
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						}
+						SettingSwitch(
+							checked = Settings.shared.useMarquee,
+							onCheckedChange = { Settings.shared.useMarquee = it }
+						)
 					}
 				}
 				Form {

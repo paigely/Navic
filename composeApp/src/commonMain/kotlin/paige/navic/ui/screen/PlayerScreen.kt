@@ -81,7 +81,7 @@ import paige.navic.data.model.Screen
 import paige.navic.data.model.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.ui.component.common.Dropdown
-import paige.navic.ui.component.common.Marquee
+import paige.navic.ui.component.common.MarqueeText
 import paige.navic.ui.component.layout.Swiper
 import paige.navic.ui.viewmodel.PlayerViewModel
 import paige.navic.util.toHHMMSS
@@ -176,29 +176,20 @@ fun PlayerScreen(
 		ListItem(
 			colors = ListItemDefaults.colors(Color.Transparent),
 			headlineContent = {
-				Marquee {
-					track?.title?.let { title ->
-						Text(title)
-					}
+				track?.title?.let { title ->
+					MarqueeText(title)
 				}
 			},
 			supportingContent = {
-				Marquee(
+				MarqueeText(
 					modifier = Modifier.clickable(enabled) {
 						track?.artistId?.let { id ->
 							backStack.remove(Screen.Player)
 							backStack.add(Screen.Artist(id))
 						}
-					}
-				) {
-					if (track != null) {
-						track.artist?.let { artist ->
-							Text(artist)
-						}
-					} else {
-						Text(track?.title ?: stringResource(Res.string.info_not_playing))
-					}
-				}
+					},
+					text = track?.artist ?: stringResource(Res.string.info_not_playing)
+				)
 			},
 			trailingContent = {
 				Row(

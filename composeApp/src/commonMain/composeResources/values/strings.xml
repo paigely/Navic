@@ -23,6 +23,7 @@
 	<string name="subtitle_system_font">If not, uses Google Sans.</string>
 	<string name="subtitle_lyrics_beat_by_beat">Use a fake beat by beat gradient effect.</string>
 	<string name="subtitle_grid_items_per_row">How many items to fit on each row of grids</string>
+	<string name="subtitle_use_marquee_text">Whether to scroll long text</string>
 
 	<string name="option_system_font">Use system font</string>
 	<string name="option_dynamic_colour">Use dynamic colour</string>
@@ -31,6 +32,7 @@
 	<string name="option_use_wavy_slider">Wavy progress bar</string>
 	<string name="option_cover_art_rounding">Cover artwork rounding</string>
 	<string name="option_cover_art_size">Cover artwork size</string>
+	<string name="option_use_marquee_text">Use marquee text</string>
 	<string name="option_grid_items_per_row">Grid items per row</string>
 	<string name="option_navbar_tab_positions">Edit tab positions</string>
 	<string name="option_share_expires">Expires</string>

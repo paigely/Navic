@@ -46,7 +46,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
 import paige.navic.data.model.Settings
 import paige.navic.data.session.SessionManager
-import paige.navic.ui.component.common.Marquee
+import paige.navic.ui.component.common.MarqueeText
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -219,21 +219,17 @@ fun PlayerBar(
 				}
 			},
 			content = {
-				Marquee {
-					track?.title?.let { title ->
-						Text(title)
-					}
+				track?.title?.let { title ->
+					MarqueeText(title)
 				}
 			},
 			supportingContent = {
-				Marquee {
-					if (track != null) {
-						track.artist?.let { artist ->
-							Text(artist)
-						}
-					} else {
-						Text(track?.title ?: stringResource(Res.string.info_not_playing))
+				if (track != null) {
+					track.artist?.let { artist ->
+						MarqueeText(artist)
 					}
+				} else {
+					MarqueeText(stringResource(Res.string.info_not_playing))
 				}
 			}
 		)

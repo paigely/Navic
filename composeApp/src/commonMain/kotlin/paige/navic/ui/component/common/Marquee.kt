@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -20,13 +21,29 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import paige.navic.data.model.Settings
+
+@Composable
+fun MarqueeText(
+	text: String,
+	modifier: Modifier = Modifier
+) {
+	if (Settings.shared.useMarquee) {
+		Marquee(modifier) {
+			Text(text, maxLines = 1)
+		}
+	} else {
+		Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+	}
+}
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun Marquee(
+private fun Marquee(
 	modifier: Modifier = Modifier,
 	edgeWidth: Dp = 16.dp,
 	animationSpec: AnimationSpec<Float> = tween(4000),

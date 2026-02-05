@@ -174,7 +174,7 @@ class Settings(
 	var artGridRounding by preference(16f)
 	var artGridItemsPerRow by preference(2)
 	var artGridItemSize by preference(150f)
-	var alwaysShowSeekbar by preference(true)
+	var useMarquee by preference(true)
 	var useWavySlider by preference(true)
 	var lyricsAutoscroll by preference(true)
 	var lyricsBeatByBeat by preference(true)

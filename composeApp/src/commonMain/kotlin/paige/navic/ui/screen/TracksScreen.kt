@@ -78,7 +78,7 @@ import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.ErrorBox
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
-import paige.navic.ui.component.common.Marquee
+import paige.navic.ui.component.common.MarqueeText
 import paige.navic.ui.component.dialog.ShareDialog
 import paige.navic.ui.component.layout.NestedTopBar
 import paige.navic.ui.component.layout.TopBarButton
@@ -380,9 +380,7 @@ private fun TracksScreenScope.TrackRow(
 			horizontalArrangement = Arrangement.spacedBy(12.dp)
 		) {
 			Column {
-				Marquee {
-					Text(track.title, maxLines = 1)
-				}
+				MarqueeText(track.title)
 				Text(
 					track.artist.orEmpty(),
 					style = MaterialTheme.typography.bodySmall,
