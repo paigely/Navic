@@ -132,7 +132,7 @@ jobs:
 
           files=()
           i=1
-          for file in **/*.{apk,ipa}; do
+          for file in **/*.apk; do  # TODO: Add ipa - too big for Discord 10mb limit (need boooosts)
             files+=("-F file${i}=@${file}")
             ((i++))
           done
