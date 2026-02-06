@@ -88,6 +88,7 @@ private val config = SavedStateConfiguration {
 
 			// misc
 			subclass(Screen.Player::class, Screen.Player.serializer())
+			subclass(Screen.Lyrics::class, Screen.Lyrics.serializer())
 			subclass(Screen.Search::class, Screen.Search.serializer())
 			subclass(Screen.Tracks::class, Screen.Tracks.serializer())
 			subclass(Screen.Artist::class, Screen.Artist.serializer())
