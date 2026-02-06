@@ -1,6 +1,10 @@
 package paige.navic.data.model
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,8 +16,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
@@ -45,16 +51,24 @@ internal class BottomSheetScene<T : Any>(
 	override val entries: List<NavEntry<T>> = listOf(entry)
 
 	override val content: @Composable (() -> Unit) = {
-		val (colorScheme, dominantColor) = colorSchemeForTrack()
-		NavicTheme(colorScheme) {
+		NavicTheme(colorSchemeForTrack()) {
 			ModalBottomSheet(
 				onDismissRequest = onBack,
 				properties = modalBottomSheetProperties,
-				containerColor = dominantColor,
 				sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-				sheetMaxWidth = sheetMaxWidth
+				sheetMaxWidth = sheetMaxWidth,
+				contentWindowInsets = { WindowInsets(0,0,0,0) },
+				dragHandle = {}
 			) {
-				entry.Content()
+				Box(Modifier.fillMaxSize()) {
+					entry.Content()
+
+					BottomSheetDefaults.DragHandle(
+						modifier = Modifier
+							.align(Alignment.TopCenter)
+							.padding(top = 32.dp)
+					)
+				}
 			}
 		}
 	}
@@ -110,7 +124,7 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 }
 
 @Composable
-private fun colorSchemeForTrack(): Pair<ColorScheme?, Color> {
+private fun colorSchemeForTrack(): ColorScheme? {
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
@@ -140,5 +154,5 @@ private fun colorSchemeForTrack(): Pair<ColorScheme?, Color> {
 		}
 	}
 
-	return Pair(scheme, dominantColorState.color)
+	return scheme
 }

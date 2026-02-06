@@ -416,6 +416,7 @@ fun PlayerScreen(
 					.fillMaxSize(),
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
+				Spacer(modifier = Modifier.weight(1f))
 				Box(contentAlignment = Alignment.Center) {
 					Image(
 						painter = sharedPainter,
