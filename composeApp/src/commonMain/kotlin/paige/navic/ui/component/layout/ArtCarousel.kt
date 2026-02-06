@@ -4,7 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,7 +41,7 @@ fun <T> ArtCarousel(
 				stringResource(title),
 				style = MaterialTheme.typography.titleMediumEmphasized,
 				fontWeight = FontWeight(600),
-				modifier = Modifier.height(32.dp).padding(top = 8.dp)
+				modifier = Modifier.heightIn(min = 32.dp).padding(top = 8.dp)
 			)
 			HorizontalMultiBrowseCarousel(
 				state = state,

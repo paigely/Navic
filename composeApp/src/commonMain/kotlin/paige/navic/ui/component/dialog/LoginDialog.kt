@@ -1,7 +1,18 @@
 package paige.navic.ui.component.dialog
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -9,6 +20,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedSecureTextField
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -16,11 +30,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyant.capsule.ContinuousCapsule
@@ -28,14 +48,24 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_log_in
+import navic.composeapp.generated.resources.badge
+import navic.composeapp.generated.resources.link
+import navic.composeapp.generated.resources.login
 import navic.composeapp.generated.resources.option_account_navidrome_instance
 import navic.composeapp.generated.resources.option_account_password
 import navic.composeapp.generated.resources.option_account_username
+import navic.composeapp.generated.resources.password
+import navic.composeapp.generated.resources.title_login_dialog
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
+import paige.navic.ui.component.common.ErrorBox
+import paige.navic.ui.theme.defaultFont
 import paige.navic.ui.viewmodel.LoginViewModel
 import paige.navic.util.LoginState
+import paige.navic.util.UiState
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LoginDialog(
 	viewModel: LoginViewModel = viewModel { LoginViewModel() },
@@ -45,6 +75,21 @@ fun LoginDialog(
 	val scrollState = rememberScrollState()
 
 	val loginState by viewModel.loginState.collectAsState()
+	val linkColor = MaterialTheme.colorScheme.primary
+	val noticeText = remember {
+		buildAnnotatedString {
+			append("Navic needs an instance of Navidrome to function. ")
+			append("Learn about Navidrome ")
+			withLink(LinkAnnotation.Url(url = "https://www.navidrome.org/")) {
+				withStyle(SpanStyle(color = linkColor)) {
+					append("here!")
+				}
+			}
+		}
+	}
+
+	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
+	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
 
 	AlertDialog(
 		onDismissRequest = {
@@ -52,26 +97,68 @@ fun LoginDialog(
 				onDismissRequest()
 			}
 		},
+		title = { Text(stringResource(Res.string.title_login_dialog)) },
 		text = {
-			Column(modifier = Modifier.verticalScroll(scrollState)) {
-				(loginState as? LoginState.Error)?.let {
-					Text(it.error.message ?: "$it")
+			Column(
+				modifier = Modifier
+					.fillMaxWidth()
+					.verticalScroll(scrollState)
+			) {
+				AnimatedContent(
+					(loginState as? LoginState.Error),
+					modifier = Modifier.fillMaxWidth(),
+					transitionSpec = {
+						(fadeIn(
+							animationSpec = effectSpec
+						) + scaleIn(
+							initialScale = 0.8f,
+							animationSpec = spatialSpec
+						)) togetherWith (fadeOut(
+							animationSpec = effectSpec
+						) + scaleOut(
+							animationSpec = spatialSpec
+						))
+					}
+				) {
+					if (it != null) {
+						ErrorBox(
+							UiState.Error(it.error),
+							padding = PaddingValues(0.dp),
+							modifier = Modifier.fillMaxWidth()
+						)
+					}
 				}
+				Spacer(Modifier.height(2.dp))
+				Text(noticeText)
+				Spacer(Modifier.height(2.dp))
 				OutlinedTextField(
 					state = viewModel.instanceState,
+					leadingIcon = { Icon(vectorResource(Res.drawable.link), null) },
 					label = { Text(stringResource(Res.string.option_account_navidrome_instance)) },
 					placeholder = { Text("demo.navidrome.org") },
 					lineLimits = TextFieldLineLimits.SingleLine,
+					modifier = Modifier.fillMaxWidth(),
 					keyboardOptions = KeyboardOptions(
 						autoCorrectEnabled = false,
 						keyboardType = KeyboardType.Uri
-					)
+					),
+					isError = viewModel.instanceError != null,
+					supportingText = {
+						viewModel.instanceError?.let { errorMsg ->
+							Text(
+								text = errorMsg,
+								color = MaterialTheme.colorScheme.error
+							)
+						}
+					}
 				)
+				Spacer(Modifier.height(8.dp))
 				OutlinedTextField(
 					state = viewModel.usernameState,
+					leadingIcon = { Icon(vectorResource(Res.drawable.badge), null) },
 					label = { Text(stringResource(Res.string.option_account_username)) },
 					lineLimits = TextFieldLineLimits.SingleLine,
-					modifier = Modifier.semantics {
+					modifier = Modifier.fillMaxWidth().semantics {
 						contentType = ContentType.Username
 					},
 					keyboardOptions = KeyboardOptions(
@@ -80,7 +167,9 @@ fun LoginDialog(
 				)
 				OutlinedSecureTextField(
 					state = viewModel.passwordState,
-					label = { Text(stringResource(Res.string.option_account_password)) }
+					leadingIcon = { Icon(vectorResource(Res.drawable.password), null) },
+					label = { Text(stringResource(Res.string.option_account_password)) },
+					modifier = Modifier.fillMaxWidth()
 				)
 			}
 		},
@@ -93,7 +182,9 @@ fun LoginDialog(
 				enabled = loginState !is LoginState.Loading,
 				content = {
 					if (loginState !is LoginState.Loading) {
-						Text(stringResource(Res.string.action_log_in))
+						Icon(vectorResource(Res.drawable.login), null)
+						Spacer(Modifier.width(8.dp))
+						Text(stringResource(Res.string.action_log_in), fontFamily = defaultFont(100))
 					} else {
 						CircularProgressIndicator(
 							modifier = Modifier.size(20.dp)

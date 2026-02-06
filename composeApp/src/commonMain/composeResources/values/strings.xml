@@ -16,6 +16,7 @@
 	<string name="title_songs">Songs</string>
 	<string name="title_artists">Artists</string>
 	<string name="title_similar_artists">Similar artists</string>
+	<string name="title_login_dialog">Login to Navidrome</string>
 
 	<string name="subtitle_appearance">Customise how things look</string>
 	<string name="subtitle_behaviour">Change how things work</string>
@@ -36,7 +37,7 @@
 	<string name="option_grid_items_per_row">Grid items per row</string>
 	<string name="option_navbar_tab_positions">Edit tab positions</string>
 	<string name="option_share_expires">Expires</string>
-	<string name="option_account_navidrome_instance">Instance</string>
+	<string name="option_account_navidrome_instance">Instance URL</string>
 	<string name="option_account_username">Username</string>
 	<string name="option_account_password">Password</string>
 	<string name="option_lyrics_autoscroll">Lyrics auto scrolling</string>
@@ -81,6 +82,7 @@
 	<string name="action_delete">Delete</string>
 	<string name="action_cancel">Cancel</string>
 	<string name="action_share">Share</string>
+	<string name="action_track_info">View track info</string>
 	<string name="action_star">Star</string>
 	<string name="action_remove_star">Unstar</string>
 	<string name="action_navigate_back">Back</string>
@@ -105,9 +107,24 @@
 	<string name="info_error">Something went wrong.</string>
 	<string name="info_error_show">Show details</string>
 	<string name="info_error_hide">Hide details</string>
+	<string name="info_unknown">Unknown</string>
 	<string name="info_unknown_album">Unknown Album</string>
 	<string name="info_unknown_artist">Unknown Artist</string>
 	<string name="info_unknown_year">Unknown Year</string>
 	<string name="info_needs_log_in">You need to log in first. Tap the account button in the top right.</string>
 	<string name="info_not_playing">Not Playing</string>
+	<string name="info_track_name">Name</string>
+	<string name="info_track_artist">Artist(s)</string>
+	<string name="info_track_artist_id">Artist ID</string>
+	<string name="info_track_bitrate">Bitrate</string>
+	<string name="info_track_bit_depth">Bit depth</string>
+	<string name="info_track_file_size">File size</string>
+	<string name="info_track_format">Format</string>
+	<string name="info_track_sampling_rate">Sampling rate</string>
+	<string name="info_track_channel_count">Channel count</string>
+	<string name="info_track_disc_number">Disc number</string>
+	<string name="info_track_genre">Genre</string>
+	<string name="info_track_duration">Duration</string>
+	<string name="info_track_id">ID</string>
+	<string name="info_track_path">Path</string>
 </resources>

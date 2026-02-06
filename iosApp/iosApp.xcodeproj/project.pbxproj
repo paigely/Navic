@@ -190,11 +190,14 @@
 				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_NAME)/entitlements.xml";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = "$(NAVIC_PROJECT_VERSION)";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_DEBUG_DYLIB = NO;
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(PROJECT_NAME)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "$(NAVIC_PRODUCT_NAME)";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "";
@@ -205,6 +208,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = "$(NAVIC_PROJECT_VERSION)";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(NAVIC_PRODUCT_BUNDLE_IDENTIFIER)$(NAVIC_DISAMBIGUATOR)";
+				PRODUCT_MODULE_NAME = "$(NAVIC_PRODUCT_NAME)";
+				PRODUCT_NAME = "$(NAVIC_PRODUCT_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -285,11 +292,14 @@
 				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_NAME)/entitlements.xml";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = "$(NAVIC_PROJECT_VERSION)";
 				DEVELOPMENT_TEAM = "${TEAM_ID}";
 				ENABLE_DEBUG_DYLIB = NO;
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(PROJECT_NAME)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "$(NAVIC_PRODUCT_NAME)";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "";
@@ -300,6 +310,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = "$(NAVIC_PROJECT_VERSION)";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(NAVIC_PRODUCT_BUNDLE_IDENTIFIER)$(NAVIC_DISAMBIGUATOR)";
+				PRODUCT_MODULE_NAME = "$(NAVIC_PRODUCT_NAME)";
+				PRODUCT_NAME = "$(NAVIC_PRODUCT_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

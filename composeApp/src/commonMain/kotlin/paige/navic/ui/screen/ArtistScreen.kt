@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -42,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
@@ -179,7 +181,7 @@ fun ArtistScreen(
 								style = MaterialTheme.typography.titleMediumEmphasized,
 								fontWeight = FontWeight(600),
 								modifier = Modifier
-									.height(32.dp)
+									.heightIn(min = 32.dp)
 									.padding(top = 8.dp)
 									.padding(horizontal = 20.dp)
 									.fillMaxWidth()

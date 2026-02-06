@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -157,12 +159,13 @@ fun LibraryScreen(
 					item(span = { GridItemSpan(maxLineSpan) }) {
 						Text(
 							stringResource(Res.string.info_needs_log_in),
-							color = MaterialTheme.colorScheme.onSurfaceVariant
+							color = MaterialTheme.colorScheme.onSurfaceVariant,
+							modifier = Modifier.padding(horizontal = 16.dp)
 						)
 					}
 					return@LazyVerticalGrid
 				}
-				horizontalAlbums(recentsState, albumsViewModel, { shareId = it })
+				horizontalAlbums(recentsState, albumsViewModel) { shareId = it }
 				horizontalPlaylists(playlistsState, playlistsViewModel, { shareId = it }, { deletionId = it })
 				horizontalArtists(artistsState, artistsViewModel)
 			}
@@ -196,7 +199,7 @@ private fun LazyGridScope.header(
 			stringResource(title, formatArgs),
 			style = MaterialTheme.typography.titleMediumEmphasized,
 			fontWeight = FontWeight(600),
-			modifier = Modifier.height(32.dp).padding(top = 8.dp, start = 16.dp)
+			modifier = Modifier.heightIn(min = 32.dp).padding(top = 8.dp, start = 16.dp)
 		)
 	}
 	item(span = { GridItemSpan(1) }) {
@@ -208,7 +211,7 @@ private fun LazyGridScope.header(
 			color = MaterialTheme.colorScheme.primary,
 			textAlign = TextAlign.Right,
 			modifier = Modifier
-				.height(32.dp)
+				.heightIn(min = 32.dp)
 				.padding(top = 8.dp, end = 16.dp)
 				.clickable(
 					interactionSource = null,
@@ -265,7 +268,11 @@ private fun LazyGridScope.overviewButton(
 					contentDescription = null
 				)
 				Spacer(Modifier.width(10.dp))
-				Text(stringResource(label))
+				Text(
+					stringResource(label),
+					maxLines = 1,
+					autoSize = TextAutoSize.StepBased(minFontSize = 1.sp, maxFontSize = 16.sp),
+				)
 			}
 		}
 	}

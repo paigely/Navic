@@ -1,6 +1,7 @@
 package paige.navic.data.model
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -11,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.Dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
@@ -35,6 +37,7 @@ internal class BottomSheetScene<T : Any>(
 	override val overlaidEntries: List<NavEntry<T>>,
 	private val entry: NavEntry<T>,
 	private val modalBottomSheetProperties: ModalBottomSheetProperties,
+	private val sheetMaxWidth: Dp,
 	private val onBack: () -> Unit,
 ) : OverlayScene<T> {
 
@@ -45,7 +48,8 @@ internal class BottomSheetScene<T : Any>(
 			ModalBottomSheet(
 				onDismissRequest = onBack,
 				properties = modalBottomSheetProperties,
-				sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+				sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+				sheetMaxWidth = sheetMaxWidth
 			) {
 				entry.Content()
 			}
@@ -64,7 +68,8 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 
 	override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
 		val lastEntry = entries.lastOrNull()
-		val bottomSheetProperties = lastEntry?.metadata?.get(BOTTOM_SHEET_KEY) as? ModalBottomSheetProperties
+		val bottomSheetProperties = lastEntry?.metadata?.get(PROPERTIES_KEY) as? ModalBottomSheetProperties
+		val sheetMaxWidth = lastEntry?.metadata?.get(MAX_WIDTH_KEY) as? Dp
 		return bottomSheetProperties?.let { properties ->
 			@Suppress("UNCHECKED_CAST")
 			BottomSheetScene(
@@ -73,6 +78,7 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 				overlaidEntries = entries.dropLast(1),
 				entry = lastEntry,
 				modalBottomSheetProperties = properties,
+				sheetMaxWidth = sheetMaxWidth ?: BottomSheetDefaults.SheetMaxWidth,
 				onBack = onBack
 			)
 		}
@@ -88,10 +94,15 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 		 */
 		@OptIn(ExperimentalMaterial3Api::class)
 		fun bottomSheet(
-			modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties()
-		): Map<String, Any> = mapOf(BOTTOM_SHEET_KEY to modalBottomSheetProperties)
+			modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
+			maxWidth: Dp = BottomSheetDefaults.SheetMaxWidth
+		): Map<String, Any> = mapOf(
+			PROPERTIES_KEY to modalBottomSheetProperties,
+			MAX_WIDTH_KEY to maxWidth
+		)
 
-		internal const val BOTTOM_SHEET_KEY = "bottomsheet"
+		internal const val PROPERTIES_KEY = "properties"
+		internal const val MAX_WIDTH_KEY = "max_width"
 	}
 }
 

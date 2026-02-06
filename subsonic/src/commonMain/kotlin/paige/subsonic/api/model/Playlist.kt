@@ -50,7 +50,7 @@ data class PlaylistEntry(
 	override val contentType: String?,
 	override val coverArt: String?,
 	override val created: String?,
-	val discNumber: Int?,
+	override val discNumber: Int?,
 	override val duration: Int?,
 	override val genre: String?,
 	override val id: String,
@@ -69,4 +69,7 @@ data class PlaylistEntry(
 	val transcodedSuffix: String?,
 	override val type: String?,
 	override val year: Int?,
+	override val bitDepth: Int?,
+	override val channelCount: Int?,
+	override val samplingRate: Int?,
 ) : Track
