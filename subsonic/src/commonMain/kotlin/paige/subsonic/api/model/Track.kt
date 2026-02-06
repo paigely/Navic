@@ -22,16 +22,20 @@ sealed interface TrackCollection {
 /**
  * Generic representation of a song or playlist entry.
  */
+@Serializable
 sealed interface Track {
 	val album: String?
 	val albumId: String?
 	val artist: String?
 	val artistId: String?
 	val bitRate: Int?
+	val bitDepth: Int?
+	val channelCount: Int?
 	val contentType: String?
 	val coverArt: String?
 	val created: String?
 	val duration: Int?
+	val discNumber: Int?
 	val genre: String?
 	val id: String
 	val isDir: Boolean?
@@ -39,6 +43,7 @@ sealed interface Track {
 	val parent: String?
 	val path: String?
 	val playCount: Int?
+	val samplingRate: Int?
 	val size: Int?
 	val suffix: String?
 	val title: String

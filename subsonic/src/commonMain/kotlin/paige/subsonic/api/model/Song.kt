@@ -74,4 +74,8 @@ data class Song(
 	override val starred: String?,
 	val averageRating: Double?,
 	override val userRating: Int?,
+	override val bitDepth: Int?,
+	override val channelCount: Int?,
+	override val discNumber: Int?,
+	override val samplingRate: Int?,
 ) : Track

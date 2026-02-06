@@ -53,8 +53,10 @@ import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.action_star
+import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
+import navic.composeapp.generated.resources.info
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_artist
 import navic.composeapp.generated.resources.lastfm
@@ -105,6 +107,7 @@ fun TracksScreen(
 		TracksViewModel(partialTracks)
 	}
 ) {
+	val backStack = LocalNavStack.current
 	val uriHandler = LocalUriHandler.current
 	val player = LocalMediaPlayer.current
 	val scrollState = rememberScrollState()
@@ -244,6 +247,15 @@ fun TracksScreen(
 													viewModel.clearSelection()
 												},
 												enabled = starred != null
+											)
+											DropdownItem(
+												containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+												text = Res.string.action_track_info,
+												leadingIcon = Res.drawable.info,
+												onClick = {
+													backStack.add(Screen.TrackInfo(track))
+													viewModel.clearSelection()
+												},
 											)
 										}
 									}

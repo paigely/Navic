@@ -70,6 +70,7 @@ import paige.navic.ui.screen.SettingsAcknowledgementsScreen
 import paige.navic.ui.screen.SettingsAppearanceScreen
 import paige.navic.ui.screen.SettingsBehaviourScreen
 import paige.navic.ui.screen.SettingsScreen
+import paige.navic.ui.screen.TrackInfoScreen
 import paige.navic.ui.screen.TracksScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.util.easedVerticalGradient
@@ -91,6 +92,7 @@ private val config = SavedStateConfiguration {
 			subclass(Screen.Lyrics::class, Screen.Lyrics.serializer())
 			subclass(Screen.Search::class, Screen.Search.serializer())
 			subclass(Screen.Tracks::class, Screen.Tracks.serializer())
+			subclass(Screen.TrackInfo::class, Screen.TrackInfo.serializer())
 			subclass(Screen.Artist::class, Screen.Artist.serializer())
 
 			// settings
@@ -224,6 +226,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Tracks>(metadata = detailPane("root")) { key ->
 			TracksScreen(key.partialCollection)
+		}
+		entry<Screen.TrackInfo> { key ->
+			TrackInfoScreen(key.track)
 		}
 		entry<Screen.Search> {
 			SearchScreen()

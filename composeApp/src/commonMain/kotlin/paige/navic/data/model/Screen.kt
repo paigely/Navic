@@ -3,6 +3,7 @@ package paige.navic.data.model
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import paige.subsonic.api.model.ListType
+import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
 
 sealed interface Screen : NavKey {
@@ -30,6 +31,7 @@ sealed interface Screen : NavKey {
 	@Serializable data object Player : NavKey
 	@Serializable data object Lyrics : NavKey
 	@Serializable data class Tracks(val partialCollection: TrackCollection) : NavKey
+	@Serializable data class TrackInfo(val track: Track) : NavKey
 	@Serializable data object Search : NavKey
 	@Serializable data class Artist(val artist: String) : NavKey
 
