@@ -1,6 +1,5 @@
 package paige.navic.ui.component.common
 
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -17,6 +16,7 @@ import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import kotlin.time.TimeSource
 
 @Composable
 fun BlendBackground(
@@ -24,31 +24,32 @@ fun BlendBackground(
 	modifier: Modifier = Modifier,
 	isPaused: Boolean = false
 ) {
-	val infiniteTransition = rememberInfiniteTransition(label = "BlendAnimations")
-
-	val frameRotation by infiniteTransition.animateFloat(
-		initialValue = 0f, targetValue = -360f,
-		animationSpec = infiniteRepeatable(
-			animation = tween(24000, easing = LinearEasing)
-		), label = "FrameRotation"
-	)
-
-	val topLeftRotation by infiniteTransition.animateFloat(
-		initialValue = 0f, targetValue = 360f,
-		animationSpec = infiniteRepeatable(
-			animation = tween(12000, easing = LinearEasing)
-		), label = "TLRotation"
-	)
-
-	val botRightRotation by infiniteTransition.animateFloat(
-		initialValue = 0f, targetValue = 360f,
-		animationSpec = infiniteRepeatable(
-			animation = tween(20000, easing = LinearEasing)
-		), label = "BRRotation"
-	)
+	var frameRotation by remember { mutableStateOf(0f) }
+	var topLeftRotation by remember { mutableStateOf(0f) }
+	var botRightRotation by remember { mutableStateOf(0f) }
 
 	val colorMatrix = remember {
 		ColorMatrix().apply { setToSaturation(2.2f) }
+	}
+
+	LaunchedEffect(isPaused) {
+		if (!isPaused) {
+			val timeSource = TimeSource.Monotonic
+			var lastFrameMark = timeSource.markNow()
+
+			while (true) {
+				withFrameNanos { _ ->
+					val now = timeSource.markNow()
+					val elapsed = now - lastFrameMark
+					val elapsedMillis = elapsed.toDouble(kotlin.time.DurationUnit.MILLISECONDS).toFloat()
+					lastFrameMark = now
+
+					frameRotation -= (360f / 24000f) * elapsedMillis
+					topLeftRotation += (360f / 12000f) * elapsedMillis
+					botRightRotation += (360f / 20000f) * elapsedMillis
+				}
+			}
+		}
 	}
 
 	Box(
@@ -67,7 +68,7 @@ fun BlendBackground(
 		Box(
 			modifier = Modifier
 				.fillMaxSize()
-				.rotate(if (isPaused) 0f else frameRotation)
+				.rotate(frameRotation)
 		) {
 			Box(
 				modifier = Modifier
@@ -83,7 +84,7 @@ fun BlendBackground(
 					colorFilter = ColorFilter.colorMatrix(colorMatrix),
 					modifier = Modifier
 						.fillMaxSize()
-						.rotate(if (isPaused) 0f else topLeftRotation)
+						.rotate(topLeftRotation)
 				)
 			}
 			Box(
@@ -100,7 +101,7 @@ fun BlendBackground(
 					colorFilter = ColorFilter.colorMatrix(colorMatrix),
 					modifier = Modifier
 						.fillMaxSize()
-						.rotate(if (isPaused) 0f else botRightRotation)
+						.rotate(botRightRotation)
 				)
 			}
 		}

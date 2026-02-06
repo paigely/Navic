@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.OverlayScene
@@ -44,10 +45,12 @@ internal class BottomSheetScene<T : Any>(
 	override val entries: List<NavEntry<T>> = listOf(entry)
 
 	override val content: @Composable (() -> Unit) = {
-		NavicTheme(colorSchemeForTrack()) {
+		val (colorScheme, dominantColor) = colorSchemeForTrack()
+		NavicTheme(colorScheme) {
 			ModalBottomSheet(
 				onDismissRequest = onBack,
 				properties = modalBottomSheetProperties,
+				containerColor = dominantColor,
 				sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
 				sheetMaxWidth = sheetMaxWidth
 			) {
@@ -107,7 +110,7 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 }
 
 @Composable
-private fun colorSchemeForTrack(): ColorScheme? {
+private fun colorSchemeForTrack(): Pair<ColorScheme?, Color> {
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
@@ -137,5 +140,5 @@ private fun colorSchemeForTrack(): ColorScheme? {
 		}
 	}
 
-	return scheme
+	return Pair(scheme, dominantColorState.color)
 }
