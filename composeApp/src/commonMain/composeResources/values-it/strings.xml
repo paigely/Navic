@@ -16,6 +16,7 @@
 	<string name="title_songs">Brani</string>
 	<string name="title_artists">Artisti</string>
 	<string name="title_similar_artists">Artisti simili</string>
+	<string name="title_login_dialog">Accesso a Navidrome</string>
 
 	<string name="subtitle_appearance">Personalizza l'aspetto</string>
 	<string name="subtitle_behaviour">Modifica il comportamento</string>
@@ -23,6 +24,7 @@
 	<string name="subtitle_system_font">Altrimenti, usa Google Sans.</string>
     <string name="subtitle_lyrics_beat_by_beat">Usa un effetto graduale finto parola per parola.</string>
     <string name="subtitle_grid_items_per_row">Quanti elementi visualizzare in ogni riga delle griglie</string>
+	<string name="subtitle_use_marquee_text">Se scorrere il testo lungo</string>
 
 	<string name="option_system_font">Usa il font di sistema</string>
 	<string name="option_dynamic_colour">Usa colore dinamico</string>
@@ -31,6 +33,7 @@
 	<string name="option_use_wavy_slider">Barra di avanzamento animata</string>
 	<string name="option_cover_art_rounding">Arrotondamento copertina</string>
 	<string name="option_cover_art_size">Dimensione copertina</string>
+	<string name="option_use_marquee_text">Usa testo marquee</string>
     <string name="option_grid_items_per_row">Elementi per riga</string>
 	<string name="option_navbar_tab_positions">Modifica la posizione delle schede</string>
 	<string name="option_share_expires">Scadenza</string>
@@ -79,6 +82,7 @@
 	<string name="action_delete">Elimina</string>
 	<string name="action_cancel">Annulla</string>
 	<string name="action_share">Condividi</string>
+	<string name="action_track_info">Visualizza informazioni sulla traccia</string>
 	<string name="action_star">Aggiungi ai preferiti</string>
 	<string name="action_remove_star">Rimuovi dai preferiti</string>
 	<string name="action_navigate_back">Indietro</string>
@@ -103,9 +107,24 @@
 	<string name="info_error">Qualcosa è andato storto.</string>
 	<string name="info_error_show">Mostra dettagli</string>
 	<string name="info_error_hide">Nascondi dettagli</string>
+	<string name="info_unknown">Sconosciuto</string>
 	<string name="info_unknown_album">Album sconosciuto</string>
 	<string name="info_unknown_artist">Artista sconosciuto</string>
 	<string name="info_unknown_year">Anno sconosciuto</string>
 	<string name="info_needs_log_in">Devi prima effettuare il login. Tocca il pulsante account in alto a destra.</string>
 	<string name="info_not_playing">Non in riproduzione</string>
+	<string name="info_track_name">Nome</string>
+	<string name="info_track_artist">Artista/i</string>
+	<string name="info_track_artist_id">ID Artista</string>
+	<string name="info_track_bitrate">Bitrate</string>
+	<string name="info_track_bit_depth">Bit depth</string>
+	<string name="info_track_file_size">Dimensioni File</string>
+	<string name="info_track_format">Formato</string>
+	<string name="info_track_sampling_rate">Sampling rate</string>
+	<string name="info_track_channel_count">Numero di canali</string>
+	<string name="info_track_disc_number">Numero disco</string>
+	<string name="info_track_genre">Genere</string>
+	<string name="info_track_duration">Durata</string>
+	<string name="info_track_id">ID</string>
+	<string name="info_track_path">Posizione</string>
 </resources>
