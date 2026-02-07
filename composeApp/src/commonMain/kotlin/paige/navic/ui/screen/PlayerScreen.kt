@@ -261,6 +261,22 @@ fun PlayerScreen(
 				track?.title?.let { title ->
 					MarqueeText(
 						title,
+						modifier = Modifier.clickable(enabled) {
+							track.albumId?.let {
+								backStack.removeLastOrNull()
+
+								val lastScreen = backStack.lastOrNull()
+
+								val isSameAlbum = if (lastScreen is Screen.Tracks) {
+									lastScreen.partialCollection.id == track.albumId
+								} else {
+									false
+								}
+
+								if (!isSameAlbum)
+									backStack.add(Screen.Tracks(playerState.tracks ?: return@clickable))
+							}
+						},
 						style = LocalTextStyle.current
 							.copy(shadow = textShadow),
 					)
