@@ -105,7 +105,7 @@ fun BottomBar(
 						NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
 						NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
 					}
-					val selected = backStack.last() == item.destination
+					val selected = backStack.lastOrNull() == item.destination
 
 					NavigationBarItem(
 						selected = selected,

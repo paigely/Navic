@@ -1,10 +1,12 @@
 package paige.navic.data.model
 
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,10 +18,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
@@ -27,12 +29,15 @@ import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import com.kmpalette.loader.rememberNetworkLoader
 import com.kmpalette.rememberDominantColorState
+import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.Url
+import kotlinx.coroutines.launch
 import paige.navic.LocalMediaPlayer
+import paige.navic.data.model.BottomSheetSceneStrategy.Companion.bottomSheet
 import paige.navic.data.session.SessionManager
 import paige.navic.ui.theme.NavicTheme
 
@@ -52,13 +57,15 @@ internal class BottomSheetScene<T : Any>(
 
 	override val content: @Composable (() -> Unit) = {
 		NavicTheme(colorSchemeForTrack()) {
+			val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+			val scope = rememberCoroutineScope()
 			ModalBottomSheet(
 				onDismissRequest = onBack,
 				properties = modalBottomSheetProperties,
-				sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+				sheetState = sheetState,
 				sheetMaxWidth = sheetMaxWidth,
-				contentWindowInsets = { WindowInsets(0,0,0,0) },
-				dragHandle = {}
+				contentWindowInsets = { WindowInsets() },
+				dragHandle = null
 			) {
 				Box(Modifier.fillMaxSize()) {
 					entry.Content()
@@ -66,7 +73,19 @@ internal class BottomSheetScene<T : Any>(
 					BottomSheetDefaults.DragHandle(
 						modifier = Modifier
 							.align(Alignment.TopCenter)
-							.padding(top = 32.dp)
+							.padding(
+								top = WindowInsets.statusBars
+									.asPaddingValues().calculateTopPadding()
+							)
+							.clickable {
+								scope
+									.launch { sheetState.hide() }
+									.invokeOnCompletion {
+										if (!sheetState.isVisible) {
+											onBack()
+										}
+									}
+							}
 					)
 				}
 			}
@@ -144,8 +163,10 @@ private fun colorSchemeForTrack(): ColorScheme? {
 	val dominantColorState = rememberDominantColorState(loader = networkLoader)
 	val scheme = if (coverUri != null) rememberDynamicColorScheme(
 		seedColor = dominantColorState.color,
-		isDark = isSystemInDarkTheme(),
-		specVersion = ColorSpec.SpecVersion.SPEC_2025,
+		// TODO: this is just forced because light mode has unreadable contrast
+		isDark = true,
+		style = PaletteStyle.Content,
+		specVersion = ColorSpec.SpecVersion.SPEC_2021,
 	) else null
 
 	LaunchedEffect(coverUri) {

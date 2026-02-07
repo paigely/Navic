@@ -47,6 +47,7 @@ fun Swiper(
 	modifier: Modifier = Modifier,
 	swipeThreshold: Float = 200f,
 	enableHaptics: Boolean = true,
+	background: @Composable (BoxScope.() -> Unit)? = null,
 	content: @Composable BoxScope.() -> Unit
 ) {
 	val coroutineScope = rememberCoroutineScope()
@@ -88,6 +89,8 @@ fun Swiper(
 		contentAlignment = Alignment.Center
 	) {
 		val progress = (abs(offsetX.value) / swipeThreshold).coerceAtLeast(0f)
+
+		background?.invoke(this@Box)
 
 		Row(
 			modifier = Modifier.matchParentSize().padding(horizontal = 16.dp),

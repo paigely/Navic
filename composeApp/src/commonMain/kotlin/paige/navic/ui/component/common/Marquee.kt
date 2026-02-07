@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -30,14 +32,15 @@ import paige.navic.data.model.Settings
 @Composable
 fun MarqueeText(
 	text: String,
+	style: TextStyle = LocalTextStyle.current,
 	modifier: Modifier = Modifier
 ) {
 	if (Settings.shared.useMarquee) {
 		Marquee(modifier) {
-			Text(text, maxLines = 1)
+			Text(text, maxLines = 1, style = style)
 		}
 	} else {
-		Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+		Text(text, maxLines = 1, style = style, overflow = TextOverflow.Ellipsis)
 	}
 }
 

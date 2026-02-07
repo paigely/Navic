@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -25,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -42,7 +46,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -135,6 +141,10 @@ fun PlayerScreen(
 		checkedContainerColor = MaterialTheme.colorScheme.primary,
 		checkedContentColor = MaterialTheme.colorScheme.onPrimary
 	)
+	val textShadow = Shadow(
+		color = MaterialTheme.colorScheme.inverseOnSurface,
+		blurRadius = 5f
+	)
 
 	val imagePadding by animateDpAsState(
 		targetValue = if (playerState.isPaused) 48.dp else 16.dp,
@@ -192,7 +202,11 @@ fun PlayerScreen(
 			colors = ListItemDefaults.colors(Color.Transparent),
 			headlineContent = {
 				track?.title?.let { title ->
-					MarqueeText(title)
+					MarqueeText(
+						title,
+						style = LocalTextStyle.current
+							.copy(shadow = textShadow),
+					)
 				}
 			},
 			supportingContent = {
@@ -203,6 +217,8 @@ fun PlayerScreen(
 							backStack.add(Screen.Artist(id))
 						}
 					},
+					style = LocalTextStyle.current
+						.copy(shadow = textShadow),
 					text = track?.artist ?: stringResource(Res.string.info_not_playing)
 				)
 			},
@@ -219,6 +235,11 @@ fun PlayerScreen(
 	val durationsRow = @Composable {
 		val duration = playerState.currentTrack?.duration
 		val style = MaterialTheme.typography.bodyMedium
+			.copy(shadow = Shadow(
+				color = MaterialTheme.colorScheme.inverseOnSurface,
+				offset = Offset(0f, 4f),
+				blurRadius = 10f
+			))
 		val color = MaterialTheme.colorScheme.onSurfaceVariant
 		ListItem(
 			colors = ListItemDefaults.colors(Color.Transparent),
@@ -395,57 +416,69 @@ fun PlayerScreen(
 			}
 		}
 	}
-	Box(modifier = Modifier.fillMaxHeight()) {
-		BlendBackground(
-			painter = sharedPainter,
-			isPaused = playerState.isPaused,
-			modifier = Modifier.fillMaxSize()
-		)
-
-		Swiper(
-			onSwipeLeft = {
-				player.next()
-			},
-			onSwipeRight = {
-				player.previous()
-			}
+	Swiper(
+		onSwipeLeft = {
+			player.next()
+		},
+		onSwipeRight = {
+			player.previous()
+		},
+		background = {
+			BlendBackground(
+				painter = sharedPainter,
+				isPaused = playerState.isPaused
+			)
+		}
+	) {
+		Column(
+			modifier = Modifier
+				.padding(horizontal = 8.dp)
+				.navigationBarsPadding()
+				.statusBarsPadding()
+				.fillMaxSize(),
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.Center
 		) {
-			Column(
+			Box(
+				contentAlignment = Alignment.Center,
 				modifier = Modifier
-					.padding(horizontal = 8.dp)
-					.fillMaxSize(),
-				horizontalAlignment = Alignment.CenterHorizontally
+					.fillMaxWidth()
+					.weight(1f)
 			) {
-				Spacer(modifier = Modifier.weight(1f))
-				Box(contentAlignment = Alignment.Center) {
-					Image(
-						painter = sharedPainter,
+				Image(
+					painter = sharedPainter,
+					contentDescription = null,
+					contentScale = ContentScale.Crop,
+					modifier = Modifier
+						.aspectRatio(1f)
+						.fillMaxSize()
+						.padding(imagePadding)
+						.clip(ContinuousRoundedRectangle(16.dp))
+						.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
+				)
+				if (coverUri.isNullOrEmpty()) {
+					Icon(
+						imageVector = vectorResource(Res.drawable.note),
 						contentDescription = null,
-						contentScale = ContentScale.Crop,
-						modifier = Modifier
-							.aspectRatio(1f)
-							.padding(imagePadding)
-							.fillMaxSize()
-							.clip(ContinuousRoundedRectangle(16.dp))
-							.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
+						tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
+						modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
 					)
-					if (coverUri.isNullOrEmpty()) {
-						Icon(
-							imageVector = vectorResource(Res.drawable.note),
-							contentDescription = null,
-							tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
-							modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
-						)
-					}
 				}
-				infoRow()
-				progressBar()
-				durationsRow()
-				Spacer(modifier = Modifier.weight(0.5f))
+			}
+			Column(
+				modifier = Modifier.wrapContentHeight(),
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.SpaceBetween
+			) {
+				Column {
+					infoRow()
+					progressBar()
+					durationsRow()
+				}
+				Spacer(Modifier.height(24.dp))
 				controlsRow()
-				Spacer(modifier = Modifier.weight(1f))
+				Spacer(Modifier.height(24.dp))
 				toolBar()
-				Spacer(modifier = Modifier.weight(1f))
 			}
 		}
 	}
