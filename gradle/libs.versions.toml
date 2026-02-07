@@ -17,7 +17,7 @@ media3 = "1.9.1"
 kmpalette = "3.1.0"
 material3Adaptive = "1.3.0-alpha04"
 aboutLibraries = "13.2.1"
-composeUnstyled = "1.49.6"
+animationGraphics = "1.10.2"
 
 [libraries]
 composeMultiplatform-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
@@ -54,6 +54,7 @@ aboutLibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref
 aboutLibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version = "1.10.2" }
 nativeTray = { module = "io.github.kdroidfilter:composenativetray", version = "1.0.4" }
+androidx-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics", version.ref = "animationGraphics" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

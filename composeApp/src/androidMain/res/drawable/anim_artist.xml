@@ -1,0 +1,90 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:aapt="http://schemas.android.com/aapt">
+	<aapt:attr name="android:drawable">
+		<vector
+			android:name="vector"
+			android:width="24dp"
+			android:height="24dp"
+			android:viewportWidth="24"
+			android:viewportHeight="24">
+			<group
+				android:name="group"
+				android:pivotX="10"
+				android:pivotY="20">
+				<path
+					android:name="path"
+					android:fillColor="#FFFFFFFF"
+					android:pathData="M 15 17.5 C 15 18.2 15.242 18.792 15.725 19.275 C 16.208 19.758 16.8 20 17.5 20 C 18.2 20 18.792 19.758 19.275 19.275 C 19.758 18.792 20 18.2 20 17.5 L 20 12 L 21 12 C 21.283 12 21.521 11.904 21.712 11.713 C 21.904 11.521 22 11.283 22 11 C 22 10.717 21.904 10.479 21.712 10.287 C 21.521 10.096 21.283 10 21 10 L 19.5 10 C 19.217 10 18.979 10.096 18.788 10.287 C 18.596 10.479 18.5 10.717 18.5 11 L 18.5 15.2 C 18.3 15.117 18.117 15.063 17.95 15.037 C 17.783 15.012 17.633 15 17.5 15 C 16.8 15 16.208 15.242 15.725 15.725 C 15.242 16.208 15 16.8 15 17.5 Z"
+					android:strokeWidth="1" />
+			</group>
+			<group
+				android:name="group_1"
+				android:pivotX="2"
+				android:pivotY="20">
+				<path
+					android:name="path_1"
+					android:fillColor="#FFFFFFFF"
+					android:pathData="M 8.175 10.825 C 7.392 10.042 7 9.1 7 8 C 7 6.9 7.392 5.958 8.175 5.175 C 8.958 4.392 9.9 4 11 4 C 12.1 4 13.042 4.392 13.825 5.175 C 14.608 5.958 15 6.9 15 8 C 15 9.1 14.608 10.042 13.825 10.825 C 13.042 11.608 12.1 12 11 12 C 9.9 12 8.958 11.608 8.175 10.825 Z M 4 20 C 3.717 20 3.479 19.904 3.288 19.712 C 3.096 19.521 3 19.283 3 19 L 3 17.2 C 3 16.617 3.146 16.092 3.438 15.625 C 3.729 15.158 4.117 14.8 4.6 14.55 C 5.633 14.033 6.683 13.646 7.75 13.387 C 8.817 13.129 9.9 13 11 13 C 11.467 13 11.929 13.025 12.387 13.075 C 12.846 13.125 13.308 13.2 13.775 13.3 C 14.058 13.367 14.238 13.542 14.313 13.825 C 14.387 14.108 14.308 14.367 14.075 14.6 C 13.725 15.017 13.463 15.471 13.287 15.963 C 13.113 16.454 13.025 16.967 13.025 17.5 C 13.025 17.717 13.037 17.929 13.063 18.137 C 13.088 18.346 13.133 18.558 13.2 18.775 C 13.283 19.075 13.246 19.354 13.088 19.613 C 12.929 19.871 12.708 20 12.425 20 L 4 20 Z"
+					android:strokeWidth="1" />
+			</group>
+		</vector>
+	</aapt:attr>
+	<target android:name="group">
+		<aapt:attr name="android:animation">
+			<set>
+				<objectAnimator
+					android:duration="160"
+					android:interpolator="@android:interpolator/fast_out_slow_in"
+					android:propertyName="rotation"
+					android:valueFrom="0"
+					android:valueTo="6"
+					android:valueType="floatType" />
+				<objectAnimator
+					android:duration="100"
+					android:interpolator="@android:anim/accelerate_interpolator"
+					android:propertyName="rotation"
+					android:startOffset="246"
+					android:valueFrom="6"
+					android:valueTo="-4"
+					android:valueType="floatType" />
+				<objectAnimator
+					android:duration="154"
+					android:interpolator="@android:anim/accelerate_interpolator"
+					android:propertyName="rotation"
+					android:startOffset="400"
+					android:valueFrom="-4"
+					android:valueTo="0"
+					android:valueType="floatType" />
+			</set>
+		</aapt:attr>
+	</target>
+	<target android:name="group_1">
+		<aapt:attr name="android:animation">
+			<set>
+				<objectAnimator
+					android:duration="217"
+					android:interpolator="@android:interpolator/fast_out_slow_in"
+					android:propertyName="rotation"
+					android:valueFrom="0"
+					android:valueTo="5"
+					android:valueType="floatType" />
+				<objectAnimator
+					android:duration="152"
+					android:interpolator="@android:anim/accelerate_interpolator"
+					android:propertyName="rotation"
+					android:startOffset="248"
+					android:valueFrom="5"
+					android:valueTo="-6"
+					android:valueType="floatType" />
+				<objectAnimator
+					android:duration="143"
+					android:interpolator="@android:anim/accelerate_interpolator"
+					android:propertyName="rotation"
+					android:startOffset="446"
+					android:valueFrom="-6"
+					android:valueTo="0"
+					android:valueType="floatType" />
+			</set>
+		</aapt:attr>
+	</target>
+</animated-vector>

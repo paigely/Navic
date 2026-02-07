@@ -65,7 +65,6 @@ import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.action_more
-import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_repeat
 import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.action_star
@@ -94,6 +93,7 @@ import paige.navic.data.session.SessionManager
 import paige.navic.ui.component.common.BlendBackground
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.MarqueeText
+import paige.navic.ui.component.common.playPauseIconPainter
 import paige.navic.ui.component.layout.Swiper
 import paige.navic.ui.viewmodel.PlayerViewModel
 import paige.navic.util.toHHMMSS
@@ -299,17 +299,24 @@ fun PlayerScreen(
 				shapes = shapes,
 				colors = colors
 			) {
-				Icon(
-					imageVector = vectorResource(
-						if (playerState.isPaused)
-							Res.drawable.play_arrow
-						else Res.drawable.pause
-					),
-					contentDescription = if (playerState.isPaused)
-						stringResource(Res.string.action_play)
-					else null,
-					modifier = Modifier.size(40.dp)
-				)
+				val painter = playPauseIconPainter(playerState.isPaused)
+				if (painter != null) {
+					Icon(
+						painter = painter,
+						contentDescription = null,
+						modifier = Modifier.size(40.dp)
+					)
+				} else {
+					Icon(
+						imageVector = vectorResource(
+							if (playerState.isPaused)
+								Res.drawable.play_arrow
+							else Res.drawable.pause
+						),
+						contentDescription = null,
+						modifier = Modifier.size(40.dp)
+					)
+				}
 			}
 			ToggleButton(
 				modifier = Modifier.weight(1f).height(90.dp),

@@ -16,7 +16,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,6 +46,7 @@ import paige.navic.data.model.Screen
 import paige.navic.data.model.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.ui.component.common.MarqueeText
+import paige.navic.ui.component.common.playPauseIconPainter
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -193,15 +193,24 @@ fun PlayerBar(
 						},
 						enabled = playerState.currentTrack != null
 					) {
-						Icon(
-							imageVector = vectorResource(
-								if (playerState.isPaused)
-									Res.drawable.play_arrow
-								else Res.drawable.pause
-							),
-							contentDescription = null,
-							modifier = Modifier.size(iconSize)
-						)
+						val painter = playPauseIconPainter(playerState.isPaused)
+						if (painter != null) {
+							Icon(
+								painter = painter,
+								contentDescription = null,
+								modifier = Modifier.size(iconSize)
+							)
+						} else {
+							Icon(
+								imageVector = vectorResource(
+									if (playerState.isPaused)
+										Res.drawable.play_arrow
+									else Res.drawable.pause
+								),
+								contentDescription = null,
+								modifier = Modifier.size(iconSize)
+							)
+						}
 					}
 					IconButton(
 						onClick = {

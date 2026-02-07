@@ -42,6 +42,7 @@ import paige.navic.data.model.NavbarConfig
 import paige.navic.data.model.NavbarTab
 import paige.navic.data.model.Screen
 import paige.navic.data.model.Settings
+import paige.navic.ui.component.common.animatedTabIconPainter
 import paige.navic.ui.component.dialog.NavtabsViewModel
 import paige.navic.util.UiState
 
@@ -115,13 +116,16 @@ fun BottomBar(
 							backStack.add(item.destination)
 						},
 						icon = {
-							Crossfade(selected) { selected ->
 								if (selected) {
-									Icon(vectorResource(item.icon), null)
+									val painter = animatedTabIconPainter(item.destination)
+									if (painter != null) {
+										Icon(painter = painter, null)
+									} else {
+										Icon(vectorResource(item.icon), null)
+									}
 								} else {
 									Icon(vectorResource(item.iconUnselected), null)
 								}
-							}
 						},
 						label = {
 							Text(stringResource(item.label))
@@ -154,13 +158,16 @@ fun BottomBar(
 							backStack.add(item.destination)
 						},
 						icon = {
-							Crossfade(selected) { selected ->
 								if (selected) {
-									Icon(vectorResource(item.icon), null)
+									val painter = animatedTabIconPainter(item.destination)
+									if (painter != null) {
+										Icon(painter = painter, null)
+									} else {
+										Icon(vectorResource(item.icon), null)
+									}
 								} else {
 									Icon(vectorResource(item.iconUnselected), null)
 								}
-							}
 						},
 						label = {
 							Text(stringResource(item.label))
