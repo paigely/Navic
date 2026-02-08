@@ -41,7 +41,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Build with Gradle (release)
-        if: ${{ github.event_name == 'push' }}
+        id: build_release
+        if: github.event_name == 'push' && env.SIGNING_KEY_ALIAS
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -54,11 +55,13 @@ jobs:
           rm release.keystore
 
       - name: Build with Gradle (debug)
-        if: ${{ github.event_name == 'pull_request' }}
+        id: build_debug
+        if: github.event_name == 'pull_request'
         run: |
           ./gradlew :composeApp:assembleDebug --stacktrace
 
       - name: Upload APK artifact
+        if: steps.build_release.outcome == 'success' || steps.build_debug.outcome == 'success'
         uses: actions/upload-artifact@v6
         with:
           name: navic-release-android
