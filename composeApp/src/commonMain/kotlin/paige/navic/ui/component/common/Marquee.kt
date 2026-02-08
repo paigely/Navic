@@ -1,6 +1,5 @@
 package paige.navic.ui.component.common
 
-import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
@@ -49,7 +48,6 @@ fun MarqueeText(
 private fun Marquee(
 	modifier: Modifier = Modifier,
 	edgeWidth: Dp = 16.dp,
-	animationSpec: AnimationSpec<Float> = tween(4000),
 	delayMillis: Int = 1000,
 	content: @Composable () -> Unit
 ) {
@@ -64,14 +62,14 @@ private fun Marquee(
 
 			scrollState.animateScrollTo(
 				value = scrollState.maxValue,
-				animationSpec = animationSpec
+				animationSpec = tween(Settings.shared.marqueeDuration)
 			)
 
 			delay(delayMillis.toLong())
 
 			scrollState.animateScrollTo(
 				value = 0,
-				animationSpec = animationSpec
+				animationSpec = tween(Settings.shared.marqueeDuration)
 			)
 		}
 	}

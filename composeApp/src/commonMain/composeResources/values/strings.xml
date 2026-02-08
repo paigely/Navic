@@ -44,6 +44,7 @@
 	<string name="option_cover_art_rounding">Cover artwork rounding</string>
 	<string name="option_cover_art_size">Cover artwork size</string>
 	<string name="option_use_marquee_text">Use marquee text</string>
+	<string name="option_marquee_duration">Marquee animation duration</string>
 	<string name="option_grid_items_per_row">Grid items per row</string>
 	<string name="option_navbar_tab_positions">Edit tab positions</string>
 	<string name="option_share_expires">Expires</string>
