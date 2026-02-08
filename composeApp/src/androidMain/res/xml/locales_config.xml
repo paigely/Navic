@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+You're supposed to auto-generate this file via android.androidResources.generateLocaleConfig in build.gradle.kts,
+but it doesn't seem to see locales inside commonMain/composeResources
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+	<locale android:name="en"/>
+	<locale android:name="de"/>
+	<locale android:name="it"/>
+</locale-config>
