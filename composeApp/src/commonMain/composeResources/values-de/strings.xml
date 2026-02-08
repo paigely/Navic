@@ -1,80 +1,203 @@
 <resources>
-	<string name="app_name" translatable="false">Navic</string>
-
-	<string name="title_library">Bibliothek</string>
-	<string name="title_playlists">Playlists</string>
-	<string name="title_settings">Einstellungen</string>
-	<string name="title_search">Suche</string>
-	<string name="title_appearance">Erscheinungsbild</string>
-	<string name="title_behaviour">Behaviour</string>
-	<string name="title_delete_playlist">Playlist löschen?</string>
-	<string name="title_delete_share">Freigabe löschen?</string>
-	<string name="title_create_share">Freigeben</string>
-	<string name="title_albums">Alben</string>
-	<string name="title_songs">Lieder</string>
-	<string name="title_artists">Künstler</string>
-
-	<string name="subtitle_appearance">Passe das Aussehen an</string>
-	<string name="subtitle_behaviour">Ändere wie Dinge funktionieren</string>
-	<string name="subtitle_system_font">Falls nicht, wird Google Sans verwendet.</string>
-
-	<string name="option_system_font">Systemschriftart verwenden</string>
-	<string name="option_dynamic_colour">Verwende dynamische Farben</string>
-	<string name="option_accent_colour">Akzentfarbe</string>
-	<string name="option_short_navigation_bar">Kurze Navigationsleiste verwenden</string>
-	<string name="option_always_show_seekbar">Immer Suchleiste anzeigen</string>
-	<string name="option_cover_art_rounding">Cover-Artwork-Abrundung</string>
-	<string name="option_cover_art_size">Albumcovergröße</string>
-	<string name="option_navbar_tab_positions">Registerkartenpositionen bearbeiten</string>
-	<string name="option_share_expires">Läuft ab</string>
-	<string name="option_account_navidrome_instance">Instanz</string>
-	<string name="option_account_username">Benutzername</string>
-	<string name="option_account_password">Passwort</string>
-
-	<plurals name="count_songs">
-		<item quantity="one">%1$d Lied</item>
-		<item quantity="other">%1$d Lieder</item>
-	</plurals>
-
-	<plurals name="count_albums">
-		<item quantity="one">%1$d Album</item>
-		<item quantity="other">%1$d Alben</item>
-	</plurals>
-
-	<plurals name="count_playlists">
-		<item quantity="one">%1$d playlists</item>
-		<item quantity="other">%1$d playlists</item>
-	</plurals>
-
-	<plurals name="count_artists">
-		<item quantity="one">%1$d artist</item>
-		<item quantity="other">%1$d artists</item>
-	</plurals>
-
-	<string name="action_ok">OK</string>
-	<string name="action_play">Abspielen</string>
-	<string name="action_shuffle">Zufallswiedergabe</string>
-	<string name="action_delete">Löschen</string>
-	<string name="action_cancel">Abbrechen</string>
-	<string name="action_share">Teilen</string>
-	<string name="action_star">Mit Stern markieren</string>
-	<string name="action_remove_star">Stern entfernen</string>
-	<string name="action_navigate_back">Zurück</string>
-	<string name="action_log_out">Abmelden</string>
-	<string name="action_log_in">Anmelden</string>
-	<string name="action_clear_search">Suche löschen</string>
-	<string name="action_more">Mehr</string>
-	<string name="action_add_to_playlist">Zur Playlist hinzufügen</string>
-
-	<string name="notice_deleted_playlist">Playlist gelöscht.</string>
-	<string name="notice_deleted_share">Freigabe gelöscht.</string>
-	<string name="notice_copied">In die Zwischenablage kopiert.</string>
-	<string name="notice_expiry">Läuft in %1$s ab.</string>
-
-	<string name="info_action_is_permanent">Dies kann nicht rückgängig gemacht werden!</string>
-	<string name="info_error">Etwas ist schiefgelaufen.</string>
-	<string name="info_error_show">Details anzeigen</string>
-	<string name="info_error_hide">Details ausblenden</string>
-	<string name="info_unknown_album">Unbekanntes Album</string>
-	<string name="info_unknown_artist">Unbekannter Künstler</string>
+    <!-- TODO: translate -->
+    <string name="action_add_all_to_playlist">Add All to Playlist</string>
+    <!-- TODO: translate -->
+    <string name="action_add_to_another_playlist">Add to Another Playlist</string>
+    <string name="action_add_to_playlist">Zur Playlist hinzufügen</string>
+    <string name="action_cancel">Abbrechen</string>
+    <string name="action_clear_search">Suche löschen</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_log_in">Anmelden</string>
+    <string name="action_log_out">Abmelden</string>
+    <!-- TODO: translate -->
+    <string name="action_lyrics">Lyrics</string>
+    <string name="action_more">Mehr</string>
+    <string name="action_navigate_back">Zurück</string>
+    <!-- TODO: translate -->
+    <string name="action_new">New</string>
+    <string name="action_ok">OK</string>
+    <string name="action_play">Abspielen</string>
+    <!-- TODO: translate -->
+    <string name="action_refresh">Refresh</string>
+    <!-- TODO: translate -->
+    <string name="action_remove_from_playlist">Remove from Playlist</string>
+    <string name="action_remove_star">Stern entfernen</string>
+    <!-- TODO: translate -->
+    <string name="action_repeat">Repeat</string>
+    <!-- TODO: translate -->
+    <string name="action_see_all">See all</string>
+    <string name="action_share">Teilen</string>
+    <string name="action_shuffle">Zufallswiedergabe</string>
+    <string name="action_star">Mit Stern markieren</string>
+    <!-- TODO: translate -->
+    <string name="action_track_info">View track info</string>
+    <!-- TODO: translate -->
+    <string name="action_view_album">View album</string>
+    <!-- TODO: translate -->
+    <string name="action_view_artist">View artist</string>
+    <!-- TODO: translate -->
+    <string name="action_view_on_lastfm">View on last.fm</string>
+    <!-- TODO: translate -->
+    <string name="action_view_on_musicbrainz">View on MusicBrainz</string>
+    <!-- TODO: translate -->
+    <string name="action_view_playlist">View playlist</string>
+    <string name="app_name">Navic</string>
+    <string name="info_action_is_permanent">Dies kann nicht rückgängig gemacht werden!</string>
+    <!-- TODO: translate -->
+    <string name="info_app_version">Navic %1$s</string>
+    <string name="info_error">Etwas ist schiefgelaufen.</string>
+    <string name="info_error_hide">Details ausblenden</string>
+    <string name="info_error_show">Details anzeigen</string>
+    <!-- TODO: translate -->
+    <string name="info_needs_log_in">You need to log in first. Tap the account button in the top right.</string>
+    <!-- TODO: translate -->
+    <string name="info_no_other_playlists">You have no playlists other than this one.</string>
+    <!-- TODO: translate -->
+    <string name="info_no_playlists">You have no playlists.</string>
+    <!-- TODO: translate -->
+    <string name="info_not_playing">Not Playing</string>
+    <!-- TODO: translate -->
+    <string name="info_track_artist">Artist(s)</string>
+    <!-- TODO: translate -->
+    <string name="info_track_artist_id">Artist ID</string>
+    <!-- TODO: translate -->
+    <string name="info_track_bit_depth">Bit depth</string>
+    <!-- TODO: translate -->
+    <string name="info_track_bitrate">Bitrate</string>
+    <!-- TODO: translate -->
+    <string name="info_track_channel_count">Channel count</string>
+    <!-- TODO: translate -->
+    <string name="info_track_disc_number">Disc number</string>
+    <!-- TODO: translate -->
+    <string name="info_track_duration">Duration</string>
+    <!-- TODO: translate -->
+    <string name="info_track_file_size">File size</string>
+    <!-- TODO: translate -->
+    <string name="info_track_format">Format</string>
+    <!-- TODO: translate -->
+    <string name="info_track_genre">Genre</string>
+    <!-- TODO: translate -->
+    <string name="info_track_id">ID</string>
+    <!-- TODO: translate -->
+    <string name="info_track_name">Name</string>
+    <!-- TODO: translate -->
+    <string name="info_track_path">Path</string>
+    <!-- TODO: translate -->
+    <string name="info_track_sampling_rate">Sampling rate</string>
+    <!-- TODO: translate -->
+    <string name="info_unknown">Unknown</string>
+    <string name="info_unknown_album">Unbekanntes Album</string>
+    <string name="info_unknown_artist">Unbekannter Künstler</string>
+    <!-- TODO: translate -->
+    <string name="info_unknown_genre">Unknown Genre</string>
+    <!-- TODO: translate -->
+    <string name="info_unknown_year">Unknown Year</string>
+    <string name="notice_copied">In die Zwischenablage kopiert.</string>
+    <string name="notice_deleted_playlist">Playlist gelöscht.</string>
+    <string name="notice_deleted_share">Freigabe gelöscht.</string>
+    <string name="notice_expiry">Läuft in %1$s ab.</string>
+    <!-- TODO: translate -->
+    <string name="notice_loading_lyrics">Loading lyrics...\nThis might take a while.</string>
+    <string name="option_accent_colour">Akzentfarbe</string>
+    <string name="option_account_navidrome_instance">Instanz</string>
+    <string name="option_account_password">Passwort</string>
+    <string name="option_account_username">Benutzername</string>
+    <string name="option_cover_art_rounding">Cover-Artwork-Abrundung</string>
+    <string name="option_cover_art_size">Albumcovergröße</string>
+    <string name="option_dynamic_colour">Verwende dynamische Farben</string>
+    <!-- TODO: translate -->
+    <string name="option_grid_items_per_row">Grid items per row</string>
+    <!-- TODO: translate -->
+    <string name="option_lyrics_autoscroll">Lyrics auto scrolling</string>
+    <!-- TODO: translate -->
+    <string name="option_lyrics_beat_by_beat">Beat-by-beat lyrics</string>
+    <!-- TODO: translate -->
+    <string name="option_marquee_duration">Marquee animation duration</string>
+    <!-- TODO: translate -->
+    <string name="option_min_duration_to_scrobble">Min. duration to scrobble</string>
+    <string name="option_navbar_tab_positions">Registerkartenpositionen bearbeiten</string>
+    <!-- TODO: translate -->
+    <string name="option_playlist_name">Name</string>
+    <!-- TODO: translate -->
+    <string name="option_playlist_songs">Songs</string>
+    <!-- TODO: translate -->
+    <string name="option_scrobble_percentage">Scrobble percentage</string>
+    <string name="option_share_expires">Läuft ab</string>
+    <string name="option_short_navigation_bar">Kurze Navigationsleiste verwenden</string>
+    <!-- TODO: translate -->
+    <string name="option_show_progress_in_bar">Show progress in bar</string>
+    <!-- TODO: translate -->
+    <string name="option_sort_alphabetical_by_artist">Alphabetical by Artist</string>
+    <!-- TODO: translate -->
+    <string name="option_sort_alphabetical_by_name">Alphabetical by Name</string>
+    <!-- TODO: translate -->
+    <string name="option_sort_by_genre">By Genre</string>
+    <!-- TODO: translate -->
+    <string name="option_sort_by_year">By Year</string>
+    <!-- TODO: translate -->
+    <string name="option_sort_frequent">Frequently played</string>
+    <!-- TODO: translate -->
+    <string name="option_sort_highest">Highest</string>
+    <!-- TODO: translate -->
+    <string name="option_sort_newest">Recently added</string>
+    <!-- TODO: translate -->
+    <string name="option_sort_random">Random</string>
+    <!-- TODO: translate -->
+    <string name="option_sort_recent">Recently played</string>
+    <!-- TODO: translate -->
+    <string name="option_sort_starred">Starred</string>
+    <!-- TODO: translate -->
+    <string name="option_static_player_background">Static player background</string>
+    <!-- TODO: translate -->
+    <string name="option_swipe_to_skip">Swipe to skip tracks</string>
+    <string name="option_system_font">Systemschriftart verwenden</string>
+    <!-- TODO: translate -->
+    <string name="option_use_detached_bar">Detached bottom bar</string>
+    <!-- TODO: translate -->
+    <string name="option_use_marquee_text">Use marquee text</string>
+    <!-- TODO: translate -->
+    <string name="option_use_wavy_slider">Wavy progress bar</string>
+    <!-- TODO: translate -->
+    <string name="subtitle_about">Version, licenses</string>
+    <string name="subtitle_appearance">Passe das Aussehen an</string>
+    <string name="subtitle_behaviour">Ändere wie Dinge funktionieren</string>
+    <!-- TODO: translate -->
+    <string name="subtitle_chat">Join the Discord</string>
+    <!-- TODO: translate -->
+    <string name="subtitle_grid_items_per_row">How many items to fit on each row of grids</string>
+    <!-- TODO: translate -->
+    <string name="subtitle_lyrics_beat_by_beat">Use a fake beat by beat gradient effect.</string>
+    <!-- TODO: translate -->
+    <string name="subtitle_playlist">Playlist</string>
+    <!-- TODO: translate -->
+    <string name="subtitle_source">View the source code</string>
+    <string name="subtitle_system_font">Falls nicht, wird Google Sans verwendet.</string>
+    <!-- TODO: translate -->
+    <string name="subtitle_use_marquee_text">Whether to scroll long text</string>
+    <!-- TODO: translate -->
+    <string name="title_about">About</string>
+    <!-- TODO: translate -->
+    <string name="title_acknowledgements">Acknowledgements</string>
+    <string name="title_albums">Alben</string>
+    <string name="title_appearance">Erscheinungsbild</string>
+    <string name="title_artists">Künstler</string>
+    <string name="title_behaviour">Behaviour</string>
+    <!-- TODO: translate -->
+    <string name="title_chat">Chat</string>
+    <!-- TODO: translate -->
+    <string name="title_create_playlist">Create playlist</string>
+    <string name="title_create_share">Freigeben</string>
+    <string name="title_delete_playlist">Playlist löschen?</string>
+    <string name="title_delete_share">Freigabe löschen?</string>
+    <string name="title_library">Bibliothek</string>
+    <!-- TODO: translate -->
+    <string name="title_login_dialog">Login to Navidrome</string>
+    <string name="title_playlists">Playlists</string>
+    <string name="title_search">Suche</string>
+    <string name="title_settings">Einstellungen</string>
+    <!-- TODO: translate -->
+    <string name="title_similar_artists">Similar artists</string>
+    <string name="title_songs">Lieder</string>
+    <!-- TODO: translate -->
+    <string name="title_source">Source code</string>
 </resources>
