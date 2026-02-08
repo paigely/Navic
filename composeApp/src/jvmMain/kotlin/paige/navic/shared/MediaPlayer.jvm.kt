@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
 
+// TODO: implement this class
 class JvmMediaPlayerViewModel : MediaPlayerViewModel() {
 	override fun play(tracks: TrackCollection, startIndex: Int) {
 	}
@@ -27,6 +28,14 @@ class JvmMediaPlayerViewModel : MediaPlayerViewModel() {
 	override fun previous() {
 	}
 
+	override fun toggleShuffle() {
+	}
+
+	override fun shufflePlay(tracks: TrackCollection) {
+	}
+
+	override fun toggleRepeat() {
+	}
 }
 
 @Composable
