@@ -168,6 +168,7 @@ class Settings(
 	var dynamicColour by preference(true)
 	var staticPlayerBackground by preference(false)
 	var detachedBar by preference(true)
+	var swipeToSkip by preference(true)
 	var accentColourH by preference(0f)
 	var accentColourS by preference(0f)
 	var accentColourV by preference(1f)

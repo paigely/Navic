@@ -37,6 +37,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.skip_next
 import navic.composeapp.generated.resources.skip_previous
 import org.jetbrains.compose.resources.vectorResource
+import paige.navic.data.model.Settings
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -113,6 +114,7 @@ fun Swiper(
 			modifier = Modifier
 				.offset { IntOffset(offsetX.value.roundToInt(), 0) }
 				.draggable(
+					enabled = Settings.shared.swipeToSkip,
 					orientation = Orientation.Horizontal,
 					state = rememberDraggableState { delta ->
 						coroutineScope.launch {

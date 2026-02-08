@@ -265,6 +265,7 @@ fun PlayerBar(
 						.fillMaxWidth()
 						.height(10.dp)
 						.pointerInput(Unit) {
+							if (track != null) {
 							detectDragGestures(
 								onDragStart = { dragging = true },
 								onDragEnd = { dragging = false }
@@ -272,6 +273,7 @@ fun PlayerBar(
 								player.seek((change.position.x / size.width.toFloat()).coerceIn(0f, 1f))
 								change.consume()
 							}
+								}
 						}
 						.align(Alignment.BottomStart),
 					contentAlignment = Alignment.BottomStart
@@ -285,7 +287,7 @@ fun PlayerBar(
 					Box(
 						Modifier
 							.background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
-							.fillMaxWidth(progress)
+							.fillMaxWidth(if (track != null) progress else 0f)
 							.height(3.dp)
 					)
 				}

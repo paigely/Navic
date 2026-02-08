@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.minus
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -33,6 +35,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,14 +44,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
 import navic.composeapp.generated.resources.action_view_on_lastfm
@@ -61,6 +71,7 @@ import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_similar_artists
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
@@ -95,7 +106,10 @@ fun ArtistScreen(
 			val state = (artistState as? UiState.Success)?.data
 			if (state != null) {
 				NestedTopBar(
-					title = { Text(state.artist.name) },
+					colors = TopAppBarDefaults.topAppBarColors(
+						containerColor = Color.Transparent
+					),
+					title = {},
 					actions = {
 						Box {
 							var expanded by remember { mutableStateOf(false) }
@@ -160,7 +174,7 @@ fun ArtistScreen(
 			},
 			modifier = Modifier
 				.fillMaxSize()
-				.padding(innerPadding)
+				.padding(innerPadding - PaddingValues(top = innerPadding.calculateTopPadding()))
 		) {
 			when (it) {
 				is UiState.Error -> Box(Modifier.fillMaxSize()) {
@@ -181,7 +195,9 @@ fun ArtistScreen(
 					) {
 						ArtistHeader(
 							artistName = state.artist.name,
-							imageUrl = state.artist.coverArt
+							imageUrl = state.artist.coverArt,
+							subtitle = (artistState as? UiState.Success)?.data?.info?.biography,
+							lastfm = (artistState as? UiState.Success)?.data?.info?.lastFmUrl
 						)
 						state.topSongs.takeIf { state.topSongs.isNotEmpty() }?.let { songs ->
 							Text(
@@ -248,6 +264,7 @@ fun ArtistScreen(
 								}
 							}
 						}
+						Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 					}
 				}
 			}
@@ -255,19 +272,34 @@ fun ArtistScreen(
 	}
 }
 
+fun truncateText(text: String, limit: Int): String {
+	return if (text.length > limit) {
+		text.take(limit) + "..."
+	} else {
+		text
+	}
+}
+
+
 @Composable
 fun ArtistHeader(
 	artistName: String,
-	imageUrl: String?
+	imageUrl: String?,
+	subtitle: String?,
+	lastfm: String?
 ) {
 	Box(
 		modifier = Modifier
 			.fillMaxWidth()
-			.height(300.dp)
-			.background(Color.DarkGray)
+			.height(400.dp)
+			.background(MaterialTheme.colorScheme.surfaceContainer)
 	) {
 		AsyncImage(
-			model = imageUrl,
+			model = ImageRequest.Builder(LocalPlatformContext.current)
+				.data(imageUrl)
+				.crossfade(true)
+				.crossfade(500)
+				.build(),
 			contentDescription = null,
 			contentScale = ContentScale.Crop,
 			modifier = Modifier.fillMaxSize()
@@ -276,15 +308,19 @@ fun ArtistHeader(
 			modifier = Modifier
 				.fillMaxSize()
 				.background(
-					Brush.verticalGradient(
-						colors = listOf(
-							Color.Transparent,
-							Color.Black.copy(alpha = 0.7f),
-							Color.Black
-						),
-						startY = 100f
+					Brush.linearGradient(
+						colors = listOf(Color.Black, Color.Transparent),
+						start = Offset(0f, Float.POSITIVE_INFINITY),
+						end = Offset(Float.POSITIVE_INFINITY, 0f)
 					)
 				)
+		)
+		Box(
+			modifier = Modifier
+				.align(Alignment.BottomCenter)
+				.fillMaxWidth()
+				.height(2.dp)
+				.background(Color.White.copy(alpha = .1f))
 		)
 
 		Column(
@@ -293,6 +329,21 @@ fun ArtistHeader(
 				.padding(horizontal = 20.dp, vertical = 24.dp),
 			verticalArrangement = Arrangement.spacedBy(8.dp)
 		) {
+			subtitle?.let { subtitle ->
+				Text(
+					text = buildAnnotatedString {
+						append(truncateText(subtitle, 200))
+						if (subtitle.length > 200 && lastfm != null) {
+							append(" ")
+							withLink(LinkAnnotation.Url(lastfm)) {
+								append(stringResource(Res.string.action_more))
+							}
+						}
+					},
+					style = MaterialTheme.typography.bodySmall,
+					color = Color.LightGray
+				)
+			}
 			Text(
 				text = artistName,
 				style = MaterialTheme.typography.displaySmall,

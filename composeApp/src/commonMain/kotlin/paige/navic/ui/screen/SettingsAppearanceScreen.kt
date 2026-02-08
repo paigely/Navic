@@ -45,6 +45,7 @@ import navic.composeapp.generated.resources.option_navbar_tab_positions
 import navic.composeapp.generated.resources.option_short_navigation_bar
 import navic.composeapp.generated.resources.option_show_progress_in_bar
 import navic.composeapp.generated.resources.option_static_player_background
+import navic.composeapp.generated.resources.option_swipe_to_skip
 import navic.composeapp.generated.resources.option_system_font
 import navic.composeapp.generated.resources.option_use_detached_bar
 import navic.composeapp.generated.resources.option_use_marquee_text
@@ -262,6 +263,13 @@ fun SettingsAppearanceScreen() {
 						SettingSwitch(
 							checked = Settings.shared.detachedBar,
 							onCheckedChange = { Settings.shared.detachedBar = it }
+						)
+					}
+					FormRow {
+						Text(stringResource(Res.string.option_swipe_to_skip))
+						SettingSwitch(
+							checked = Settings.shared.swipeToSkip,
+							onCheckedChange = { Settings.shared.swipeToSkip = it }
 						)
 					}
 					FormRow {
