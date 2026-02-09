@@ -1,5 +1,12 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.File
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
+import org.w3c.dom.Element
 
 plugins {
 	alias(libs.plugins.kotlinMultiplatform)
@@ -184,4 +191,73 @@ compose.desktop {
 			linux.iconFile = project.file("../.github/icon.png")
 		}
 	}
+}
+
+abstract class SyncComposeStringsTask : DefaultTask() {
+	@get:InputDirectory
+	abstract var baseDir: File
+
+	@TaskAction
+	fun sync() {
+		val resourceDir = baseDir.resolve("src/commonMain/composeResources")
+		val baseFile = resourceDir.resolve("values/strings.xml")
+
+		val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+		val baseDoc = documentBuilder.parse(baseFile).apply { documentElement.normalize() }
+
+		val baseStrings = baseDoc.getElementsByTagName("string")
+			.let { nodes ->
+				(0 until nodes.length)
+					.map { nodes.item(it) as Element }
+					.associate { it.getAttribute("name") to it.textContent }
+			}
+
+		resourceDir.listFiles { f -> f.isDirectory && f.name.startsWith("values-") }?.forEach { localeDir ->
+			val targetFile = localeDir.resolve("strings.xml")
+
+			val existingStrings = if (targetFile.exists()) {
+				val targetDoc = documentBuilder.parse(targetFile).apply { documentElement.normalize() }
+				targetDoc.getElementsByTagName("string")
+					.let { nodes -> (0 until nodes.length).map { nodes.item(it) as Element } }
+					.associate { it.getAttribute("name") to it.textContent }
+			} else {
+				emptyMap()
+			}
+
+			val mergedStrings = baseStrings.keys
+				.sorted()
+				.associateWith {  existingStrings[it] ?: baseStrings.getValue(it) }
+
+			val newDoc = documentBuilder.newDocument()
+			val resources = newDoc.createElement("resources")
+			newDoc.appendChild(resources)
+
+			mergedStrings.forEach { (key, value) ->
+				if (key !in existingStrings) {
+					resources.appendChild(newDoc.createComment(" TODO: translate "))
+				}
+				resources.appendChild(newDoc.createElement("string").apply {
+					setAttribute("name", key)
+					textContent = value
+				})
+			}
+
+			val transformer = TransformerFactory.newInstance().newTransformer().apply {
+				setOutputProperty(OutputKeys.INDENT, "yes")
+				setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4")
+				setOutputProperty(OutputKeys.ENCODING, "utf-8")
+				setOutputProperty(OutputKeys.METHOD, "xml")
+				setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
+			}
+
+			transformer.transform(DOMSource(newDoc), StreamResult(targetFile))
+			println("Updated: ${targetFile.path}")
+		}
+	}
+}
+
+tasks.register<SyncComposeStringsTask>("syncComposeStrings") {
+	group = "localization"
+	description = "Add missing strings to locale strings.xml"
+	baseDir = project.projectDir
 }
