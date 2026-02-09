@@ -141,6 +141,11 @@ android {
 				getDefaultProguardFile("proguard-android-optimize.txt")
 			)
 		}
+
+		getByName("debug") {
+			applicationIdSuffix = ".debug"
+			resValue("string", "app_name", "Navic (Dev)")
+		}
 	}
 
 	applicationVariants.all {

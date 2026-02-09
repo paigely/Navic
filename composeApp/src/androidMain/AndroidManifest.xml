@@ -2,7 +2,7 @@
 <manifest xmlns:tools="http://schemas.android.com/tools"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<permission
-		android:name="paige.navic.permission.PLAYBACK_SERVICE"
+		android:name="${applicationId}.permission.PLAYBACK_SERVICE"
 		android:protectionLevel="signature" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -10,7 +10,7 @@
 		tools:ignore="ForegroundServicesPolicy" />
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 	<uses-permission
-		android:name="paige.navic.permission.PLAYBACK_SERVICE" />
+		android:name="${applicationId}.permission.PLAYBACK_SERVICE" />
 
 	<application
 		tools:targetApi="33"
@@ -38,7 +38,7 @@
 			android:name=".shared.PlaybackService"
 			android:enabled="true"
 			android:foregroundServiceType="mediaPlayback"
-			android:permission="paige.navic.permission.PLAYBACK_SERVICE"
+			android:permission="${applicationId}.permission.PLAYBACK_SERVICE"
 			android:exported="true">
 			<intent-filter>
 				<action android:name="androidx.media3.session.MediaSessionService" />
