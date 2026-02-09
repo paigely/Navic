@@ -173,7 +173,7 @@ jobs:
         run: |
           shopt -s nullglob globstar
 
-          gh release create "${GITHUB_REF#refs/tags/}" **/*.{apk,ipa} \
-            --repo "${GITHUB_REPOSITORY}"
-            --title "Release ${GITHUB_REF#refs/tags/}"
+          gh release create "$GITHUB_REF_NAME" **/*.{apk,ipa} \
+            --repo "$GITHUB_REPOSITORY"
+            --title "Release $GITHUB_REF_NAME"
             --draft --generate-notes \
