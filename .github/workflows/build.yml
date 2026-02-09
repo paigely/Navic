@@ -9,6 +9,7 @@ on:
       - subsonic/**
       - build.gradle.kts
       - settings.gradle.kts
+      - .github/workflows/build.yml
   pull_request:
     paths:
       - composeApp/**
@@ -17,6 +18,7 @@ on:
       - subsonic/**
       - build.gradle.kts
       - settings.gradle.kts
+      - .github/workflows/build.yml
   workflow_dispatch:
 
 concurrency:
