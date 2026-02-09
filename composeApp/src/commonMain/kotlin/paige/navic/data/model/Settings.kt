@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
+import paige.subsonic.api.model.ListType
 import kotlin.enums.enumEntries
 import kotlin.reflect.KProperty
 
@@ -189,6 +190,7 @@ class Settings(
 	var windowPositionY by preference(100f)
 	var windowSizeX by preference(800f)
 	var windowSizeY by preference(600f)
+	var listType by preference(ListType.ALPHABETICAL_BY_ARTIST)
 	companion object {
 		val shared = paige.navic.data.model.Settings(
 			com.russhwolf.settings.Settings()

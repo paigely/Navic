@@ -80,8 +80,8 @@ import kotlin.time.Duration
 @Composable
 fun AlbumsScreen(
 	nested: Boolean = false,
-	listType: ListType,
-	viewModel: AlbumsViewModel = viewModel(key = listType.value) {
+	listType: ListType? = null,
+	viewModel: AlbumsViewModel = viewModel(key = listType?.value) {
 		AlbumsViewModel(listType)
 	}
 ) {

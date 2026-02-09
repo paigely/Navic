@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import paige.navic.data.model.Settings
 import paige.navic.data.repository.AlbumsRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.util.UiState
@@ -13,7 +14,7 @@ import paige.subsonic.api.model.Album
 import paige.subsonic.api.model.ListType
 
 open class AlbumsViewModel(
-	private val initialListType: ListType = ListType.ALPHABETICAL_BY_ARTIST,
+	initialListType: ListType?,
 	private val repository: AlbumsRepository = AlbumsRepository()
 ) : ViewModel() {
 	private val _albumsState = MutableStateFlow<UiState<List<Album>>>(UiState.Loading)
@@ -29,7 +30,7 @@ open class AlbumsViewModel(
 	private val _isPaginating = MutableStateFlow(false)
 	val isPaginating: StateFlow<Boolean> = _isPaginating
 
-	private val _listType = MutableStateFlow(initialListType)
+	private val _listType = MutableStateFlow(initialListType ?: Settings.shared.listType)
 	val listType = _listType.asStateFlow()
 
 	init {
@@ -54,6 +55,8 @@ open class AlbumsViewModel(
 	}
 
 	fun paginate() {
+		if (_albumsState.value !is UiState.Success || _isPaginating.value) return
+
 		viewModelScope.launch {
 			val newOffset = _offset.value + 30
 			_isPaginating.value = true
@@ -98,5 +101,6 @@ open class AlbumsViewModel(
 
 	fun setListType(listType: ListType) {
 		_listType.value = listType
+		Settings.shared.listType = listType
 	}
 }
