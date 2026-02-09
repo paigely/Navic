@@ -128,6 +128,7 @@ jobs:
       - uses: actions/download-artifact@v7
       - name: Unzip and post to Discord webhook
         shell: bash
+        if: env.CI_BUILD_WEBHOOK
         env:
           CI_BUILD_WEBHOOK: ${{ secrets.CI_BUILD_WEBHOOK }}
         run: |
@@ -139,6 +140,11 @@ jobs:
             files+=("-F file${i}=@${file}")
             ((i++))
           done
+
+          if (( ${#files[@]} == 0 )); then
+            echo "No files to upload"
+            exit 0
+          fi
 
           run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
