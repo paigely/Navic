@@ -24,7 +24,7 @@ sealed interface Screen : NavKey {
 	@Serializable
 	data class Albums(
 		val nested: Boolean = false,
-		val listType: ListType = ListType.ALPHABETICAL_BY_ARTIST
+		val listType: ListType? = null
 	) : NavKey
 
 	// misc
