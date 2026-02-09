@@ -10,6 +10,8 @@ on:
       - build.gradle.kts
       - settings.gradle.kts
       - .github/workflows/build.yml
+    tags:
+      - 'v*'
   pull_request:
     paths:
       - composeApp/**
@@ -128,7 +130,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v7
-      - name: Unzip and post to Discord webhook
+      - name: Post artifacts to Discord webhook
         shell: bash
         if: env.CI_BUILD_WEBHOOK
         env:
@@ -153,3 +155,25 @@ jobs:
           payload=$(jq -n --arg content "Builds for [${GITHUB_SHA::7}](<$run_url>)" '{$content}')
 
           curl -XPOST "$CI_BUILD_WEBHOOK" -F "payload_json=$payload" "${files[@]}"
+
+  create-release:
+    name: Create GitHub Release
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: [build-apk, build-ipa]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v7
+      - name: Create GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          shopt -s nullglob globstar
+
+          gh release create "${GITHUB_REF#refs/tags/}" **/*.{apk,ipa} \
+            --repo "${GITHUB_REPOSITORY}"
+            --title "Release ${GITHUB_REF#refs/tags/}"
+            --draft --generate-notes \
