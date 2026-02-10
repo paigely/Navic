@@ -176,7 +176,7 @@ class Settings(
 	var useShortNavbar by preference(false)
 	var showProgressInBar by preference(true)
 	var artGridRounding by preference(16f)
-	var artGridItemsPerRow by preference(2)
+	var gridSize by preference(GridSize.TwoByTwo)
 	var artGridItemSize by preference(150f)
 	var useMarquee by preference(true)
 	var marqueeSpeed by preference(MarqueeSpeed.Slow)
@@ -202,5 +202,10 @@ class Settings(
 		Slow(6000),
 		Medium(4000),
 		Fast(1000)
+	}
+	enum class GridSize(val value: Int, val label: String) {
+		TwoByTwo(2, "2x2"),
+		ThreeByThree(3, "3x3"),
+		FourByFour(4, "4x4")
 	}
 }

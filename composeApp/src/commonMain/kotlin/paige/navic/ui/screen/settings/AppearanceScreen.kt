@@ -60,8 +60,9 @@ import paige.navic.data.model.Settings
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
-import paige.navic.ui.component.common.Stepper
 import paige.navic.ui.component.dialog.ArtworkShapeDialog
+import paige.navic.ui.component.dialog.GridSizeDialog
+import paige.navic.ui.component.dialog.GridSizePreview
 import paige.navic.ui.component.dialog.MarqueeSpeedDialog
 import paige.navic.ui.component.dialog.Shapes
 import paige.navic.ui.component.layout.NestedTopBar
@@ -167,15 +168,70 @@ fun SettingsAppearanceScreen() {
 							)
 						}
 
-						val shape = ContinuousRoundedRectangle(Settings.shared.artGridRounding.dp / 1.5f)
-						Box(modifier = Modifier
-							.size(48.dp)
-							.clip(shape)
-							.background(MaterialTheme.colorScheme.onPrimary)
-							.border(2.dp, MaterialTheme.colorScheme.primary, shape)
+						val shape =
+							ContinuousRoundedRectangle(Settings.shared.artGridRounding.dp / 1.5f)
+						Box(
+							modifier = Modifier
+								.size(48.dp)
+								.clip(shape)
+								.background(MaterialTheme.colorScheme.onPrimary)
+								.border(2.dp, MaterialTheme.colorScheme.primary, shape)
 						)
 					}
 
+					var presented by remember { mutableStateOf(false) }
+					val onClick = { presented = true }
+					FormRow(
+						onClick = if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact)
+							onClick
+						else null
+					) {
+						if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
+
+							Column(Modifier.weight(1f)) {
+								Text(stringResource(Res.string.option_grid_items_per_row))
+								Text(
+									stringResource(Res.string.subtitle_grid_items_per_row),
+									style = MaterialTheme.typography.bodyMedium,
+									color = MaterialTheme.colorScheme.onSurfaceVariant
+								)
+							}
+
+							GridSizePreview(Settings.shared.gridSize.value)
+
+							GridSizeDialog(
+								presented = presented,
+								onDismissRequest = { presented = false }
+							)
+						} else {
+							Column(Modifier.fillMaxWidth()) {
+								Row(
+									modifier = Modifier.fillMaxWidth(),
+									horizontalArrangement = Arrangement.SpaceBetween
+								) {
+									Text(stringResource(Res.string.option_cover_art_size))
+									Text(
+										"${Settings.shared.artGridItemSize}",
+										fontFamily = mapleMono(),
+										fontWeight = FontWeight(400),
+										fontSize = 13.sp,
+										color = MaterialTheme.colorScheme.onSurfaceVariant,
+									)
+								}
+								Slider(
+									value = Settings.shared.artGridItemSize,
+									onValueChange = {
+										Settings.shared.artGridItemSize = it
+									},
+									valueRange = 50f..500f,
+									steps = 8,
+								)
+							}
+						}
+					}
+				}
+
+				Form {
 					var marqueeSpeedPresented by remember { mutableStateOf(false) }
 
 					SettingCollapsibleRow(
@@ -205,53 +261,6 @@ fun SettingsAppearanceScreen() {
 						value = Settings.shared.alphabeticalScroll,
 						onSetValue = { Settings.shared.alphabeticalScroll = it }
 					)
-
-					FormRow {
-						if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
-							Column(
-								modifier = Modifier
-									.weight(1f, fill = true)
-									.padding(end = 8.dp)
-							) {
-								Text(stringResource(Res.string.option_grid_items_per_row) + ": ${Settings.shared.artGridItemsPerRow}")
-								Text(
-									stringResource(Res.string.subtitle_grid_items_per_row),
-									style = MaterialTheme.typography.bodyMedium,
-									color = MaterialTheme.colorScheme.onSurfaceVariant
-								)
-							}
-							Stepper(
-								value = Settings.shared.artGridItemsPerRow,
-								onValueChange = { Settings.shared.artGridItemsPerRow = it },
-								minValue = 1,
-								maxValue = 32
-							)
-						} else {
-							Column(Modifier.fillMaxWidth()) {
-								Row(
-									modifier = Modifier.fillMaxWidth(),
-									horizontalArrangement = Arrangement.SpaceBetween
-								) {
-									Text(stringResource(Res.string.option_cover_art_size))
-									Text(
-										"${Settings.shared.artGridItemSize}",
-										fontFamily = mapleMono(),
-										fontWeight = FontWeight(400),
-										fontSize = 13.sp,
-										color = MaterialTheme.colorScheme.onSurfaceVariant,
-									)
-								}
-								Slider(
-									value = Settings.shared.artGridItemSize,
-									onValueChange = {
-										Settings.shared.artGridItemSize = it
-									},
-									valueRange = 50f..500f,
-									steps = 8,
-								)
-							}
-						}
-					}
 				}
 				Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 			}

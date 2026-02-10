@@ -44,13 +44,12 @@ fun ArtGrid(
 	content: LazyGridScope.() -> Unit
 ) {
 	val ctx = LocalCtx.current
-	val artGridItemsPerRow = Settings.shared.artGridItemsPerRow
 	val artGridItemSize = Settings.shared.artGridItemSize
 	LazyVerticalGrid(
 		modifier = modifier.fillMaxSize(),
 		state = state,
 		columns = if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact)
-			GridCells.Fixed(artGridItemsPerRow)
+			GridCells.Fixed(Settings.shared.gridSize.value)
 		else GridCells.Adaptive(artGridItemSize.dp),
 		contentPadding = PaddingValues(
 			start = 16.dp,
