@@ -1,6 +1,7 @@
 package paige.navic.ui.component.dialog
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,11 +14,11 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
@@ -26,7 +27,6 @@ import navic.composeapp.generated.resources.option_artwork_shape
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.model.Settings
 
-// TODO: come up with proper names and move to strings.xml
 val Shapes = arrayOf(
 	"Square" to 0f,
 	"Squircle" to 16f,
@@ -64,10 +64,15 @@ fun ArtworkShapeDialog(
 						horizontalArrangement = Arrangement.spacedBy(16.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
+						RadioButton(
+							selected = Settings.shared.artGridRounding == radius,
+							onClick = null
+						)
+						val shape = ContinuousRoundedRectangle(radius.dp / 2)
 						Box(modifier = Modifier
 							.size(48.dp)
-							.clip(ContinuousRoundedRectangle(radius.dp / 2))
-							.background(MaterialTheme.colorScheme.onPrimary)
+							.background(MaterialTheme.colorScheme.onPrimary, shape)
+							.border(2.dp, MaterialTheme.colorScheme.primary, shape)
 						)
 						Text(text = name)
 					}
