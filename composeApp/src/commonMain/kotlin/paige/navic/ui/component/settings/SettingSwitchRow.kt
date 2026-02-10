@@ -19,7 +19,7 @@ fun SettingSwitchRow(
 	value: Boolean,
 	onSetValue: (Boolean) -> Unit
 ) {
-	FormRow {
+	FormRow(onClick = { onSetValue(!value) }) {
 		Column(Modifier.weight(1f)) {
 			title()
 			CompositionLocalProvider(
