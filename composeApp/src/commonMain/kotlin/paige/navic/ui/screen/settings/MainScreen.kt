@@ -90,8 +90,8 @@ fun SettingsScreen() {
 					iconSize = 24.dp,
 					title = Res.string.title_bottom_app_bar,
 					subtitle = Res.string.subtitle_bottom_app_bar,
-					foregroundColor = Color(0xFF004D68),
-					backgroundColor = Color(0xFF67D4FF)
+					foregroundColor = Color(0xFF8C0052),
+					backgroundColor = Color(0xFFFDACE2)
 				)
 				PageRow(
 					destination = Screen.Settings.NowPlaying,
@@ -99,8 +99,8 @@ fun SettingsScreen() {
 					iconSize = 24.dp,
 					title = Res.string.title_now_playing,
 					subtitle = Res.string.subtitle_now_playing,
-					foregroundColor = Color(0xFF004D68),
-					backgroundColor = Color(0xFF67D4FF)
+					foregroundColor = Color(0xFF8C0052),
+					backgroundColor = Color(0xFFFDACE2)
 				)
 				PageRow(
 					destination = Screen.Settings.Scrobbling,
@@ -108,8 +108,8 @@ fun SettingsScreen() {
 					iconSize = 24.dp,
 					title = Res.string.title_scrobbling,
 					subtitle = Res.string.subtitle_scrobbling,
-					foregroundColor = Color(0xFF004D68),
-					backgroundColor = Color(0xFF67D4FF)
+					foregroundColor = Color(0xFF043F9E),
+					backgroundColor = Color(0xFFA0C7FD)
 				)
 			}
 			Form {

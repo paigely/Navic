@@ -36,8 +36,8 @@ import paige.navic.LocalCtx
 import paige.navic.data.model.Settings
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
-import paige.navic.ui.component.common.SettingSwitch
 import paige.navic.ui.component.layout.NestedTopBar
+import paige.navic.ui.component.settings.SettingSwitchRow
 import paige.navic.ui.theme.mapleMono
 import kotlin.math.roundToInt
 
@@ -61,27 +61,20 @@ fun SettingsBehaviourScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
-					FormRow {
-						Text(stringResource(Res.string.option_lyrics_autoscroll))
-						SettingSwitch(
-							checked = Settings.shared.lyricsAutoscroll,
-							onCheckedChange = { Settings.shared.lyricsAutoscroll = it }
-						)
-					}
-					FormRow {
-						Column {
-							Text(stringResource(Res.string.option_lyrics_beat_by_beat))
-							Text(
-								stringResource(Res.string.subtitle_lyrics_beat_by_beat),
-								style = MaterialTheme.typography.bodyMedium,
-								color = MaterialTheme.colorScheme.onSurfaceVariant
-							)
-						}
-						SettingSwitch(
-							checked = Settings.shared.lyricsBeatByBeat,
-							onCheckedChange = { Settings.shared.lyricsBeatByBeat = it }
-						)
-					}
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_lyrics_autoscroll)) },
+						subtitle = { Text(stringResource(Res.string.option_lyrics_autoscroll)) },
+						value = Settings.shared.lyricsAutoscroll,
+						onSetValue = { Settings.shared.lyricsAutoscroll = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_lyrics_beat_by_beat)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_lyrics_beat_by_beat)) },
+						value = Settings.shared.lyricsBeatByBeat,
+						onSetValue = { Settings.shared.lyricsBeatByBeat = it }
+					)
+
 					FormRow {
 						Column(Modifier.fillMaxWidth()) {
 							Row(
@@ -106,6 +99,7 @@ fun SettingsBehaviourScreen() {
 							)
 						}
 					}
+
 					FormRow {
 						Column(Modifier.fillMaxWidth()) {
 							Row(

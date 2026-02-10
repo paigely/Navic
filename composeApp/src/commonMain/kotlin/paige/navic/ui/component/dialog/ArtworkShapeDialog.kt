@@ -66,7 +66,7 @@ fun ArtworkShapeDialog(
 					) {
 						Box(modifier = Modifier
 							.size(48.dp)
-							.clip(ContinuousRoundedRectangle(radius.dp)) // FIXME: not correct shape
+							.clip(ContinuousRoundedRectangle(radius.dp / 2))
 							.background(MaterialTheme.colorScheme.onPrimary)
 						)
 						Text(text = name)

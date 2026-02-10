@@ -1,4 +1,4 @@
-package paige.navic.ui.component.common
+package paige.navic.ui.component.settings
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -20,7 +20,7 @@ fun SettingSwitch(
 		onCheckedChange = onCheckedChange,
 		thumbContent = {
 			Icon(
-				if (checked) Icons.Outlined.SwitchOff else Icons.Outlined.SwitchOn,
+				if (checked) Icons.Outlined.SwitchOn else Icons.Outlined.SwitchOff,
 				contentDescription = null,
 				modifier = Modifier.size(SwitchDefaults.IconSize)
 			)

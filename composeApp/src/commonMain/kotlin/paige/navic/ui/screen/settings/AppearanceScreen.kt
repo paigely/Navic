@@ -1,6 +1,7 @@
 package paige.navic.ui.screen.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,29 +31,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.compose.pipette.CircularColorPicker
 import dev.zt64.compose.pipette.HsvColor
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_accent_colour
 import navic.composeapp.generated.resources.option_alphabetical_scroll
 import navic.composeapp.generated.resources.option_artwork_shape
-import navic.composeapp.generated.resources.option_cover_art_rounding
 import navic.composeapp.generated.resources.option_cover_art_size
 import navic.composeapp.generated.resources.option_dynamic_colour
 import navic.composeapp.generated.resources.option_grid_items_per_row
 import navic.composeapp.generated.resources.option_marquee_duration
-import navic.composeapp.generated.resources.option_navbar_tab_positions
-import navic.composeapp.generated.resources.option_short_navigation_bar
-import navic.composeapp.generated.resources.option_show_progress_in_bar
-import navic.composeapp.generated.resources.option_static_player_background
-import navic.composeapp.generated.resources.option_swipe_to_skip
 import navic.composeapp.generated.resources.option_system_font
-import navic.composeapp.generated.resources.option_use_detached_bar
 import navic.composeapp.generated.resources.option_use_marquee_text
-import navic.composeapp.generated.resources.option_use_wavy_slider
+import navic.composeapp.generated.resources.subtitle_dynamic_colour
 import navic.composeapp.generated.resources.subtitle_grid_items_per_row
 import navic.composeapp.generated.resources.subtitle_system_font
 import navic.composeapp.generated.resources.subtitle_use_marquee_text
@@ -64,12 +60,12 @@ import paige.navic.data.model.Settings
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
-import paige.navic.ui.component.common.SettingSwitch
 import paige.navic.ui.component.common.Stepper
 import paige.navic.ui.component.dialog.ArtworkShapeDialog
-import paige.navic.ui.component.dialog.NavtabsDialog
 import paige.navic.ui.component.dialog.Shapes
 import paige.navic.ui.component.layout.NestedTopBar
+import paige.navic.ui.component.settings.SettingCollapsibleRow
+import paige.navic.ui.component.settings.SettingSwitchRow
 import paige.navic.ui.theme.mapleMono
 import kotlin.math.roundToInt
 
@@ -95,27 +91,20 @@ fun SettingsAppearanceScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
-					FormRow {
-						Column {
-							Text(stringResource(Res.string.option_system_font))
-							Text(
-								stringResource(Res.string.subtitle_system_font),
-								style = MaterialTheme.typography.bodyMedium,
-								color = MaterialTheme.colorScheme.onSurfaceVariant
-							)
-						}
-						SettingSwitch(
-							checked = Settings.shared.useSystemFont,
-							onCheckedChange = { Settings.shared.useSystemFont = it }
-						)
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_dynamic_colour))
-						SettingSwitch(
-							checked = Settings.shared.dynamicColour,
-							onCheckedChange = { Settings.shared.dynamicColour = it }
-						)
-					}
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_system_font)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_system_font)) },
+						value = Settings.shared.useSystemFont,
+						onSetValue = { Settings.shared.useSystemFont = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_dynamic_colour)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_dynamic_colour)) },
+						value = Settings.shared.dynamicColour,
+						onSetValue = { Settings.shared.dynamicColour = it }
+					)
+
 					if (!Settings.shared.dynamicColour) {
 						var expanded by remember { mutableStateOf(false) }
 						FormRow {
@@ -161,13 +150,14 @@ fun SettingsAppearanceScreen() {
 						}
 					}
 				}
+
 				Form {
 					FormRow(
 						onClick = {
 							showArtworkShapeDialog = true
 						}
 					) {
-						Column {
+						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_artwork_shape))
 							Text(
 								Shapes.firstOrNull { it.second == Settings.shared.artGridRounding }?.first
@@ -176,7 +166,53 @@ fun SettingsAppearanceScreen() {
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
 						}
+
+						val shape = ContinuousRoundedRectangle(Settings.shared.artGridRounding.dp / 1.5f)
+						Box(modifier = Modifier
+							.size(48.dp)
+							.clip(shape)
+							.background(MaterialTheme.colorScheme.onPrimary)
+							.border(2.dp, MaterialTheme.colorScheme.primary, shape)
+						)
 					}
+
+					SettingCollapsibleRow(
+						title = { Text(stringResource(Res.string.option_use_marquee_text)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_use_marquee_text)) },
+						value = Settings.shared.useMarquee,
+						onSetValue = { Settings.shared.useMarquee = it }
+					) {
+						Column(Modifier.fillMaxWidth()) {
+							Row(
+								modifier = Modifier.fillMaxWidth(),
+								horizontalArrangement = Arrangement.SpaceBetween
+							) {
+								Text(stringResource(Res.string.option_marquee_duration))
+								Text(
+									"${Settings.shared.marqueeDuration}",
+									fontFamily = mapleMono(),
+									fontWeight = FontWeight(400),
+									fontSize = 13.sp,
+									color = MaterialTheme.colorScheme.onSurfaceVariant,
+								)
+							}
+							Slider(
+								value = Settings.shared.marqueeDuration.toFloat(),
+								onValueChange = {
+									Settings.shared.marqueeDuration = it.roundToInt()
+								},
+								valueRange = 500f..5000f,
+								steps = 8
+							)
+						}
+					}
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_alphabetical_scroll)) },
+						value = Settings.shared.alphabeticalScroll,
+						onSetValue = { Settings.shared.alphabeticalScroll = it }
+					)
+
 					FormRow {
 						if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
 							Column(
@@ -222,54 +258,6 @@ fun SettingsAppearanceScreen() {
 								)
 							}
 						}
-					}
-					FormRow {
-						Column {
-							Text(stringResource(Res.string.option_use_marquee_text))
-							Text(
-								stringResource(Res.string.subtitle_use_marquee_text),
-								style = MaterialTheme.typography.bodyMedium,
-								color = MaterialTheme.colorScheme.onSurfaceVariant
-							)
-						}
-						SettingSwitch(
-							checked = Settings.shared.useMarquee,
-							onCheckedChange = { Settings.shared.useMarquee = it }
-						)
-					}
-					if (Settings.shared.useMarquee) {
-						FormRow {
-							Column(Modifier.fillMaxWidth()) {
-								Row(
-									modifier = Modifier.fillMaxWidth(),
-									horizontalArrangement = Arrangement.SpaceBetween
-								) {
-									Text(stringResource(Res.string.option_marquee_duration))
-									Text(
-										"${Settings.shared.marqueeDuration}",
-										fontFamily = mapleMono(),
-										fontWeight = FontWeight(400),
-										fontSize = 13.sp,
-										color = MaterialTheme.colorScheme.onSurfaceVariant,
-									)
-								}
-								Slider(
-									value = Settings.shared.marqueeDuration.toFloat(),
-									onValueChange = {
-										Settings.shared.marqueeDuration = it.roundToInt()
-									},
-									valueRange = 500f..5000f,
-									steps = 8
-								)
-							}
-						}
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_alphabetical_scroll))
-						SettingSwitch(
-							checked = Settings.shared.alphabeticalScroll,
-							onCheckedChange = { Settings.shared.alphabeticalScroll = it }
-						)
 					}
 				}
 				Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
