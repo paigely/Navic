@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import paige.navic.data.model.Settings
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
@@ -39,6 +40,7 @@ abstract class MediaPlayerViewModel : ViewModel() {
 	abstract fun shufflePlay(tracks: TrackCollection)
 
 	protected fun scrobbleSubmission(trackId: String?) {
+		if (!Settings.shared.enableScrobbling) return
 		viewModelScope.launch {
 			try {
 				trackId?.let {
@@ -53,6 +55,7 @@ abstract class MediaPlayerViewModel : ViewModel() {
 	}
 
 	protected fun scrobbleNowPlaying(trackId: String?) {
+		if (!Settings.shared.enableScrobbling) return
 		viewModelScope.launch {
 			try {
 				trackId?.let {
