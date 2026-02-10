@@ -68,16 +68,16 @@ import paige.navic.ui.screen.LyricsScreen
 import paige.navic.ui.screen.PlayerScreen
 import paige.navic.ui.screen.PlaylistsScreen
 import paige.navic.ui.screen.SearchScreen
-import paige.navic.ui.screen.settings.SettingsAboutScreen
-import paige.navic.ui.screen.settings.SettingsAcknowledgementsScreen
-import paige.navic.ui.screen.settings.SettingsAppearanceScreen
-import paige.navic.ui.screen.settings.SettingsBehaviourScreen
-import paige.navic.ui.screen.settings.SettingsScreen
 import paige.navic.ui.screen.TrackInfoScreen
 import paige.navic.ui.screen.TracksScreen
 import paige.navic.ui.screen.settings.BottomBarScreen
 import paige.navic.ui.screen.settings.NowPlayingScreen
 import paige.navic.ui.screen.settings.ScrobblingScreen
+import paige.navic.ui.screen.settings.SettingsAboutScreen
+import paige.navic.ui.screen.settings.SettingsAcknowledgementsScreen
+import paige.navic.ui.screen.settings.SettingsAppearanceScreen
+import paige.navic.ui.screen.settings.SettingsBehaviourScreen
+import paige.navic.ui.screen.settings.SettingsScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.util.easedVerticalGradient
 
@@ -107,6 +107,9 @@ private val config = SavedStateConfiguration {
 			subclass(Screen.Settings.Root::class, Screen.Settings.Root.serializer())
 			subclass(Screen.Settings.Appearance::class, Screen.Settings.Appearance.serializer())
 			subclass(Screen.Settings.Behaviour::class, Screen.Settings.Behaviour.serializer())
+			subclass(Screen.Settings.BottomAppBar::class, Screen.Settings.BottomAppBar.serializer())
+			subclass(Screen.Settings.NowPlaying::class, Screen.Settings.NowPlaying.serializer())
+			subclass(Screen.Settings.Scrobbling::class, Screen.Settings.Scrobbling.serializer())
 			subclass(Screen.Settings.About::class, Screen.Settings.About.serializer())
 			subclass(Screen.Settings.Acknowledgements::class, Screen.Settings.Acknowledgements.serializer())
 		}
