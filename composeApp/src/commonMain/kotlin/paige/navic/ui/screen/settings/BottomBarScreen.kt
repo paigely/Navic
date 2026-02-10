@@ -74,8 +74,8 @@ fun BottomBarScreen() {
 
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_swipe_to_skip)) },
-						value = Settings.shared.detachedBar,
-						onSetValue = { Settings.shared.detachedBar = it }
+						value = Settings.shared.swipeToSkip,
+						onSetValue = { Settings.shared.swipeToSkip = it }
 					)
 
 					SettingSwitchRow(

@@ -65,8 +65,8 @@ fun NowPlayingScreen() {
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_lyrics_beat_by_beat)) },
 						subtitle = { Text(stringResource(Res.string.subtitle_lyrics_beat_by_beat)) },
-						value = Settings.shared.lyricsAutoscroll,
-						onSetValue = { Settings.shared.lyricsAutoscroll = it }
+						value = Settings.shared.lyricsBeatByBeat,
+						onSetValue = { Settings.shared.lyricsBeatByBeat = it }
 					)
 				}
 				Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
