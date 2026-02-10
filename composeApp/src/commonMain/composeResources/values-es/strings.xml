@@ -1,0 +1,164 @@
+<resources>
+	<string name="app_name" translatable="false">Navic</string>
+
+	<string name="title_library">Biblioteca</string>
+	<string name="title_playlists">Lista de reproduccións</string>
+	<string name="title_settings">Ajustes</string>
+	<string name="title_search">Buscar</string>
+	<string name="title_appearance">Apariencia</string>
+	<string name="title_behaviour">Comportamiento</string>
+	<string name="title_now_playing">Escuchando</string>
+	<string name="title_bottom_app_bar">Barra inferior</string>
+	<string name="title_scrobbling">Scrobbling</string>
+	<string name="title_about">Acerca de</string>
+	<string name="title_acknowledgements">Reconocimientos</string>
+	<string name="title_delete_playlist">Eliminar lista?</string>
+	<string name="title_delete_share">Eliminar compartido?</string>
+	<string name="title_create_share">Crear compartido</string>
+	<string name="title_create_playlist">Crear lista de reproducción</string>
+	<string name="title_albums">Álbumes</string>
+	<string name="title_songs">Canciones</string>
+	<string name="title_artists">Artistas</string>
+	<string name="title_similar_artists">Artistas similares</string>
+	<string name="title_login_dialog">Inicia sesión en Navidrome</string>
+	<string name="title_source">Código fuente</string>
+	<string name="title_chat">Chat</string>
+
+	<string name="subtitle_appearance">Cambia el estilo y colores de la app</string>
+	<string name="subtitle_behaviour">Cambia el el funcionamiento general</string>
+	<string name="subtitle_now_playing">Personaliza el reproductor principal</string>
+	<string name="subtitle_bottom_app_bar">Personaliza la barra de reproducción y navegación</string>
+	<string name="subtitle_scrobbling">Registra automáticamente la música que escuchas</string>
+	<string name="subtitle_about">Versión, licencias</string>
+	<string name="subtitle_system_font">Por defecto, usa Google Sans.</string>
+	<string name="subtitle_lyrics_beat_by_beat">Use a fake beat by beat gradient effect.</string>
+	<string name="subtitle_grid_items_per_row">El tamaño de los elementos por cada fila</string>
+	<string name="subtitle_use_marquee_text">Alternar el desplazamiento en textos grandes</string>
+	<string name="subtitle_playlist">Lista de reproducción</string>
+	<string name="subtitle_source">Ver el código fuente</string>
+	<string name="subtitle_chat">Únete al Discord</string>
+	<string	name="subtitle_enable_scrobbling">Registra la música escuchada en tu servidor de Navidrome</string>
+	<string name="subtitle_dynamic_colour">Disponible para Android 12+</string>
+
+	<string name="option_system_font">Usar fuente del sistema</string>
+	<string name="option_dynamic_colour">Usar color dinámico</string>
+	<string name="option_player_animate_background">Fondo de reproductor animado</string>
+	<string name="option_accent_colour">Acentuar color</string>
+	<string name="option_short_navigation_bar">Barra de navegación más corta</string>
+	<string name="option_use_wavy_slider">Barra de progreso animada</string>
+	<string name="option_show_progress_in_bar">Mostrar progreso en la barra</string>
+	<string name="option_use_detached_bar">Barra inferior flotante</string>
+	<string name="option_swipe_to_skip">Desliza para saltar canciones</string>
+	<string name="option_artwork_shape">Forma de la portada</string>
+	<string name="option_cover_art_size">Tamaño de la portada</string>
+	<string name="option_use_marquee_text">Desplazamiento automático en textos grandes</string>
+	<string name="option_marquee_duration">Velocidad del desplazamiento automático</string>
+	<string name="option_alphabetical_scroll">Desplazamiento alfabético</string>
+	<string name="option_grid_items_per_row">Tamaño de elementos por fila</string>
+	<string name="option_navbar_tab_positions">Configurar opciones de la barra de navegación</string>
+	<string name="option_share_expires">Caduca</string>
+	<string name="option_account_navidrome_instance">URL del servidor</string>
+	<string name="option_account_username">Usuario</string>
+	<string name="option_account_password">Contraseña</string>
+	<string name="option_lyrics_autoscroll">Desplazamiento automático de letra</string>
+	<string name="option_lyrics_beat_by_beat">Letra sincronizada</string>
+	<string name="option_sort_random">Aleatorio</string>
+	<string name="option_sort_newest">Añadido recientemente</string>
+	<string name="option_sort_highest">Mejor</string>
+	<string name="option_sort_frequent">Escuchado frecuentemente</string>
+	<string name="option_sort_recent">Escuchado recientemente</string>
+	<string name="option_sort_alphabetical_by_name">Alfabético por título</string>
+	<string name="option_sort_alphabetical_by_artist">Alfabético por artista</string>
+	<string name="option_sort_starred">Destacado</string>
+	<string name="option_sort_by_year">Por año</string>
+	<string name="option_sort_by_genre">Por género</string>
+	<string name="option_scrobble_percentage">Porcentaje de registro</string>
+	<string name="option_min_duration_to_scrobble">Duración mínima para registrar</string>
+	<string name="option_playlist_name">Título</string>
+	<string name="option_playlist_songs">Canciones</string>
+	<string	name="option_enable_scrobbling">Activar registro automático</string>
+
+	<plurals name="count_songs">
+		<item quantity="one">%1$d canción</item>
+		<item quantity="other">%1$d canciones</item>
+	</plurals>
+
+	<plurals name="count_albums">
+		<item quantity="one">%1$d álbum</item>
+		<item quantity="other">%1$d álbumes</item>
+	</plurals>
+
+	<plurals name="count_playlists">
+		<item quantity="one">%1$d lista de reproducción</item>
+		<item quantity="other">%1$d listas de reproducción</item>
+	</plurals>
+
+	<plurals name="count_artists">
+		<item quantity="one">%1$d artist</item>
+		<item quantity="other">%1$d artists</item>
+	</plurals>
+
+	<string name="action_ok">OK</string>
+	<string name="action_play">Reproducir</string>
+	<string name="action_new">Nuevo</string>
+	<string name="action_shuffle">Aleatorio</string>
+	<string name="action_repeat">Repetir</string>
+	<string name="action_delete">Eliminar</string>
+	<string name="action_cancel">Cancelar</string>
+	<string name="action_refresh">Actualizar</string>
+	<string name="action_share">Compartir</string>
+	<string name="action_track_info">Ver canción</string>
+	<string name="action_view_album">Ver álbum</string>
+	<string name="action_view_playlist">Ver lista</string>
+	<string name="action_view_artist">Ver artista</string>
+	<string name="action_star">Favorito</string>
+	<string name="action_remove_star">Eliminar favorito</string>
+	<string name="action_navigate_back">Volver</string>
+	<string name="action_log_out">Cerrar sesión</string>
+	<string name="action_log_in">Iniciar sesión</string>
+	<string name="action_clear_search">Limpiar</string>
+	<string name="action_more">Más</string>
+	<string name="action_add_to_playlist">Añadir a lista</string>
+	<string name="action_add_to_another_playlist">Añadir a otra lista</string>
+	<string name="action_add_all_to_playlist">Añadir a todas las listas</string>
+	<string name="action_remove_from_playlist">Eliminar de la lista</string>
+	<string name="action_see_all">Ver todo</string>
+	<string name="action_view_on_lastfm">Abrir en last.fm</string>
+	<string name="action_view_on_musicbrainz">Abrir en MusicBrainz</string>
+	<string name="action_lyrics">Letra</string>
+
+	<string name="notice_deleted_playlist">Lista de reproducción eliminada.</string>
+	<string name="notice_deleted_share">Compartido eliminado.</string>
+	<string name="notice_copied">Copiado al portapapeles.</string>
+	<string name="notice_expiry">Caduca en %1$s.</string>
+	<string name="notice_loading_lyrics">Cargando letra...\nEsto puede llevar un tiempo.</string>
+
+	<string name="info_app_version">Navic %1$s</string>
+	<string name="info_action_is_permanent">No se puede deshacer!</string>
+	<string name="info_error">Algo salió mal.</string>
+	<string name="info_error_show">Mostrar detalles</string>
+	<string name="info_error_hide">Ocultar detalles</string>
+	<string name="info_unknown">Desconocido</string>
+	<string name="info_unknown_album">Álbum desconocido</string>
+	<string name="info_unknown_artist">Artista desconocido</string>
+	<string name="info_unknown_year">Año desconocido</string>
+	<string name="info_unknown_genre">Género desconocido</string>
+	<string name="info_needs_log_in">Tienes que iniciar sesión primero. Pulsa en el botón de "cuenta" de la esquina superior izquierda.</string>
+	<string name="info_not_playing">Sin reproducción</string>
+	<string name="info_no_playlists">No tienes listas de reproducción.</string>
+	<string name="info_no_other_playlists">No tienes más listas de reproducción.</string>
+	<string name="info_track_name">Título</string>
+	<string name="info_track_artist">Artista(s)</string>
+	<string name="info_track_artist_id">ID del Artista</string>
+	<string name="info_track_bitrate">Bitrate</string>
+	<string name="info_track_bit_depth">Bit depth</string>
+	<string name="info_track_file_size">Tamaño del archivo</string>
+	<string name="info_track_format">Formato</string>
+	<string name="info_track_sampling_rate">Frecuencia de muestreo</string>
+	<string name="info_track_channel_count">Número de canales</string>
+	<string name="info_track_disc_number">Número de disco</string>
+	<string name="info_track_genre">Género</string>
+	<string name="info_track_duration">Duración</string>
+	<string name="info_track_id">ID</string>
+	<string name="info_track_path">Ruta</string>
+</resources>
