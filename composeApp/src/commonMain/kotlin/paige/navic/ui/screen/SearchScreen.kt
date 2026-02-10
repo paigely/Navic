@@ -67,6 +67,7 @@ import navic.composeapp.generated.resources.title_all
 import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_search
 import navic.composeapp.generated.resources.title_songs
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
@@ -90,6 +91,13 @@ import paige.subsonic.api.model.Artist
 import paige.subsonic.api.model.ListType
 import paige.subsonic.api.model.Track
 
+enum class SearchCategory(val res: StringResource) {
+	ALL(Res.string.title_all),
+	SONGS(Res.string.title_songs),
+	ALBUMS(Res.string.title_albums),
+	ARTISTS(Res.string.title_artists)
+}
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
@@ -104,7 +112,7 @@ fun SearchScreen(
 	val artistsViewModel = viewModel { ArtistsViewModel() }
 	val albumsViewModel = viewModel { AlbumsViewModel(ListType.ALPHABETICAL_BY_NAME) }
 
-	var selectedCategory by remember { mutableStateOf("All") }
+	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
 
 	Column(
 		modifier = Modifier.padding(top = 32.dp, bottom = LocalContentPadding.current.calculateBottomPadding())
@@ -123,10 +131,10 @@ fun SearchScreen(
 				is UiState.Error -> ErrorBox(uiState)
 				is UiState.Success -> {
 					val results = uiState.data
-					val showAll = selectedCategory == "All"
-					val albums = if (showAll || selectedCategory == "Albums") results.filterIsInstance<Album>() else emptyList()
-					val artists = if (showAll || selectedCategory == "Artists") results.filterIsInstance<Artist>() else emptyList()
-					val tracks = if (showAll || selectedCategory == "Tracks") results.filterIsInstance<Track>() else emptyList()
+					val showAll = selectedCategory == SearchCategory.ALL
+					val albums = if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<Album>() else emptyList()
+					val artists = if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<Artist>() else emptyList()
+					val tracks = if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<Track>() else emptyList()
 
 					LazyVerticalGrid(
 						modifier = Modifier.fillMaxSize(),
@@ -217,8 +225,8 @@ fun SearchScreen(
 @Composable
 private fun SearchTopBar(
 	query: TextFieldState,
-	selectedCategory: String,
-	onCategorySelect: (String) -> Unit
+	selectedCategory: SearchCategory,
+	onCategorySelect: (SearchCategory) -> Unit
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
@@ -227,7 +235,7 @@ private fun SearchTopBar(
 	val focusRequester = remember { FocusRequester() }
 
 	val shape = RoundedCornerShape(12.dp)
-	val categories = listOf(Res.string.title_all, Res.string.title_songs, Res.string.title_albums, Res.string.title_artists)
+	val categories = listOf(SearchCategory.ALL, SearchCategory.SONGS, SearchCategory.ALBUMS, SearchCategory.ARTISTS)
 
 	LaunchedEffect(Unit) {
 		focusRequester.requestFocus()
@@ -301,11 +309,12 @@ private fun SearchTopBar(
 			horizontalArrangement = Arrangement.spacedBy(8.dp)
 		) {
 			items(categories) { category ->
-				val isSelected = category.toString() == selectedCategory
+				val isSelected = category == selectedCategory
+
 				OutlinedButton(
 					onClick = {
 						ctx.clickSound()
-						onCategorySelect(category.toString())
+						onCategorySelect(category)
 					},
 					shape = shape,
 					colors = ButtonDefaults.outlinedButtonColors(
@@ -318,7 +327,7 @@ private fun SearchTopBar(
 					),
 					elevation = ButtonDefaults.buttonElevation(0.dp)
 				) {
-					Text(stringResource(category))
+					Text(stringResource(category.res))
 				}
 			}
 		}
