@@ -62,12 +62,12 @@ import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
 import paige.navic.ui.component.common.Stepper
 import paige.navic.ui.component.dialog.ArtworkShapeDialog
+import paige.navic.ui.component.dialog.MarqueeSpeedDialog
 import paige.navic.ui.component.dialog.Shapes
 import paige.navic.ui.component.layout.NestedTopBar
 import paige.navic.ui.component.settings.SettingCollapsibleRow
 import paige.navic.ui.component.settings.SettingSwitchRow
 import paige.navic.ui.theme.mapleMono
-import kotlin.math.roundToInt
 
 @Composable
 fun SettingsAppearanceScreen() {
@@ -176,36 +176,29 @@ fun SettingsAppearanceScreen() {
 						)
 					}
 
+					var marqueeSpeedPresented by remember { mutableStateOf(false) }
+
 					SettingCollapsibleRow(
 						title = { Text(stringResource(Res.string.option_use_marquee_text)) },
 						subtitle = { Text(stringResource(Res.string.subtitle_use_marquee_text)) },
 						value = Settings.shared.useMarquee,
 						onSetValue = { Settings.shared.useMarquee = it }
 					) {
-						Column(Modifier.fillMaxWidth()) {
-							Row(
-								modifier = Modifier.fillMaxWidth(),
-								horizontalArrangement = Arrangement.SpaceBetween
-							) {
-								Text(stringResource(Res.string.option_marquee_duration))
-								Text(
-									"${Settings.shared.marqueeDuration}",
-									fontFamily = mapleMono(),
-									fontWeight = FontWeight(400),
-									fontSize = 13.sp,
-									color = MaterialTheme.colorScheme.onSurfaceVariant,
-								)
-							}
-							Slider(
-								value = Settings.shared.marqueeDuration.toFloat(),
-								onValueChange = {
-									Settings.shared.marqueeDuration = it.roundToInt()
-								},
-								valueRange = 500f..5000f,
-								steps = 8
-							)
+						Row(
+							modifier = Modifier.fillMaxWidth().clickable {
+								marqueeSpeedPresented = true
+							},
+							horizontalArrangement = Arrangement.SpaceBetween
+						) {
+							Text(stringResource(Res.string.option_marquee_duration))
+							Text(Settings.shared.marqueeSpeed.name)
 						}
 					}
+
+					MarqueeSpeedDialog(
+						presented = marqueeSpeedPresented,
+						onDismissRequest = { marqueeSpeedPresented = false }
+					)
 
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_alphabetical_scroll)) },

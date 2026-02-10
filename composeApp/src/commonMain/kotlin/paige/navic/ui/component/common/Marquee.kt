@@ -62,14 +62,14 @@ private fun Marquee(
 
 			scrollState.animateScrollTo(
 				value = scrollState.maxValue,
-				animationSpec = tween(Settings.shared.marqueeDuration)
+				animationSpec = tween(Settings.shared.marqueeSpeed.value)
 			)
 
 			delay(delayMillis.toLong())
 
 			scrollState.animateScrollTo(
 				value = 0,
-				animationSpec = tween(Settings.shared.marqueeDuration)
+				animationSpec = tween(Settings.shared.marqueeSpeed.value)
 			)
 		}
 	}

@@ -179,12 +179,12 @@ class Settings(
 	var artGridItemsPerRow by preference(2)
 	var artGridItemSize by preference(150f)
 	var useMarquee by preference(true)
-	var marqueeDuration by preference(4000)
+	var marqueeSpeed by preference(MarqueeSpeed.Slow)
 	var alphabeticalScroll by preference(false)
 	var useWavySlider by preference(true)
 	var lyricsAutoscroll by preference(true)
 	var lyricsBeatByBeat by preference(true)
-	var enableScrobbling by preference(true) // TODO: implement
+	var enableScrobbling by preference(true)
 	var scrobblePercentage by preference(.7f)
 	var minDurationToScrobble by preference(60f)
 	var windowPlacement by preference(0)
@@ -197,5 +197,10 @@ class Settings(
 		val shared = paige.navic.data.model.Settings(
 			com.russhwolf.settings.Settings()
 		)
+	}
+	enum class MarqueeSpeed(val value: Int) {
+		Slow(6000),
+		Medium(4000),
+		Fast(1000)
 	}
 }
