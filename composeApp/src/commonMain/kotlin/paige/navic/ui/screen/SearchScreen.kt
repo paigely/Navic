@@ -318,7 +318,7 @@ private fun SearchTopBar(
 					),
 					elevation = ButtonDefaults.buttonElevation(0.dp)
 				) {
-					Text(text = category.toString())
+					Text(stringResource(category))
 				}
 			}
 		}
