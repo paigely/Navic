@@ -1,4 +1,4 @@
-package paige.navic.ui.screen
+package paige.navic.ui.screen.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,13 +31,17 @@ import androidx.navigation3.runtime.NavKey
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.subtitle_about
 import navic.composeapp.generated.resources.subtitle_appearance
-import navic.composeapp.generated.resources.subtitle_behaviour
+import navic.composeapp.generated.resources.subtitle_bottom_app_bar
 import navic.composeapp.generated.resources.subtitle_chat
+import navic.composeapp.generated.resources.subtitle_now_playing
+import navic.composeapp.generated.resources.subtitle_scrobbling
 import navic.composeapp.generated.resources.subtitle_source
 import navic.composeapp.generated.resources.title_about
 import navic.composeapp.generated.resources.title_appearance
-import navic.composeapp.generated.resources.title_behaviour
+import navic.composeapp.generated.resources.title_bottom_app_bar
 import navic.composeapp.generated.resources.title_chat
+import navic.composeapp.generated.resources.title_now_playing
+import navic.composeapp.generated.resources.title_scrobbling
 import navic.composeapp.generated.resources.title_settings
 import navic.composeapp.generated.resources.title_source
 import org.jetbrains.compose.resources.StringResource
@@ -48,8 +52,10 @@ import paige.navic.data.model.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Discord
 import paige.navic.icons.brand.Github
+import paige.navic.icons.filled.Airwave
+import paige.navic.icons.filled.BottomNavigation
 import paige.navic.icons.filled.Palette
-import paige.navic.icons.filled.Settings
+import paige.navic.icons.filled.Play
 import paige.navic.icons.outlined.Info
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
@@ -79,11 +85,29 @@ fun SettingsScreen() {
 					backgroundColor = Color(0xFFFFB683)
 				)
 				PageRow(
-					destination = Screen.Settings.Behaviour,
-					icon = Icons.Filled.Settings,
+					destination = Screen.Settings.BottomAppBar,
+					icon = Icons.Filled.BottomNavigation,
 					iconSize = 24.dp,
-					title = Res.string.title_behaviour,
-					subtitle = Res.string.subtitle_behaviour,
+					title = Res.string.title_bottom_app_bar,
+					subtitle = Res.string.subtitle_bottom_app_bar,
+					foregroundColor = Color(0xFF004D68),
+					backgroundColor = Color(0xFF67D4FF)
+				)
+				PageRow(
+					destination = Screen.Settings.NowPlaying,
+					icon = Icons.Filled.Play,
+					iconSize = 24.dp,
+					title = Res.string.title_now_playing,
+					subtitle = Res.string.subtitle_now_playing,
+					foregroundColor = Color(0xFF004D68),
+					backgroundColor = Color(0xFF67D4FF)
+				)
+				PageRow(
+					destination = Screen.Settings.Scrobbling,
+					icon = Icons.Filled.Airwave,
+					iconSize = 24.dp,
+					title = Res.string.title_scrobbling,
+					subtitle = Res.string.subtitle_scrobbling,
 					foregroundColor = Color(0xFF004D68),
 					backgroundColor = Color(0xFF67D4FF)
 				)

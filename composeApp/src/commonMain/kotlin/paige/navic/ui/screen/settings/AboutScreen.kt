@@ -1,4 +1,4 @@
-package paige.navic.ui.screen
+package paige.navic.ui.screen.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

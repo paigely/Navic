@@ -68,13 +68,16 @@ import paige.navic.ui.screen.LyricsScreen
 import paige.navic.ui.screen.PlayerScreen
 import paige.navic.ui.screen.PlaylistsScreen
 import paige.navic.ui.screen.SearchScreen
-import paige.navic.ui.screen.SettingsAboutScreen
-import paige.navic.ui.screen.SettingsAcknowledgementsScreen
-import paige.navic.ui.screen.SettingsAppearanceScreen
-import paige.navic.ui.screen.SettingsBehaviourScreen
-import paige.navic.ui.screen.SettingsScreen
+import paige.navic.ui.screen.settings.SettingsAboutScreen
+import paige.navic.ui.screen.settings.SettingsAcknowledgementsScreen
+import paige.navic.ui.screen.settings.SettingsAppearanceScreen
+import paige.navic.ui.screen.settings.SettingsBehaviourScreen
+import paige.navic.ui.screen.settings.SettingsScreen
 import paige.navic.ui.screen.TrackInfoScreen
 import paige.navic.ui.screen.TracksScreen
+import paige.navic.ui.screen.settings.BottomBarScreen
+import paige.navic.ui.screen.settings.NowPlayingScreen
+import paige.navic.ui.screen.settings.ScrobblingScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.util.easedVerticalGradient
 
@@ -256,8 +259,17 @@ private fun entryProvider(
 		entry<Screen.Settings.Appearance>(metadata = detailPane("settings")) {
 			SettingsAppearanceScreen()
 		}
+		entry<Screen.Settings.BottomAppBar>(metadata = detailPane("settings")) {
+			BottomBarScreen()
+		}
+		entry<Screen.Settings.NowPlaying>(metadata = detailPane("settings")) {
+			NowPlayingScreen()
+		}
 		entry<Screen.Settings.Behaviour>(metadata = detailPane("settings")) {
 			SettingsBehaviourScreen()
+		}
+		entry<Screen.Settings.Scrobbling>(metadata = detailPane("settings")) {
+			ScrobblingScreen()
 		}
 		entry<Screen.Settings.About>(metadata = detailPane("settings")) {
 			SettingsAboutScreen()

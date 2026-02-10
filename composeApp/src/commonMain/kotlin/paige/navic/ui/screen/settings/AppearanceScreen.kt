@@ -1,4 +1,4 @@
-package paige.navic.ui.screen
+package paige.navic.ui.screen.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,6 +38,7 @@ import dev.zt64.compose.pipette.HsvColor
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_accent_colour
 import navic.composeapp.generated.resources.option_alphabetical_scroll
+import navic.composeapp.generated.resources.option_artwork_shape
 import navic.composeapp.generated.resources.option_cover_art_rounding
 import navic.composeapp.generated.resources.option_cover_art_size
 import navic.composeapp.generated.resources.option_dynamic_colour
@@ -65,7 +66,9 @@ import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
 import paige.navic.ui.component.common.SettingSwitch
 import paige.navic.ui.component.common.Stepper
+import paige.navic.ui.component.dialog.ArtworkShapeDialog
 import paige.navic.ui.component.dialog.NavtabsDialog
+import paige.navic.ui.component.dialog.Shapes
 import paige.navic.ui.component.layout.NestedTopBar
 import paige.navic.ui.theme.mapleMono
 import kotlin.math.roundToInt
@@ -73,7 +76,8 @@ import kotlin.math.roundToInt
 @Composable
 fun SettingsAppearanceScreen() {
 	val ctx = LocalCtx.current
-	var showNavtabsDialog by rememberSaveable { mutableStateOf(false) }
+	var showArtworkShapeDialog by rememberSaveable { mutableStateOf(false) }
+
 	Scaffold(
 		topBar = { NestedTopBar(
 			{ Text(stringResource(Res.string.title_appearance)) },
@@ -158,37 +162,18 @@ fun SettingsAppearanceScreen() {
 					}
 				}
 				Form {
-					FormRow {
-						Text(stringResource(Res.string.option_static_player_background))
-						SettingSwitch(
-							checked = Settings.shared.staticPlayerBackground,
-							onCheckedChange = { Settings.shared.staticPlayerBackground = it }
-						)
-					}
-				}
-				Form {
-					FormRow {
-						Column(Modifier.fillMaxWidth()) {
-							Row(
-								modifier = Modifier.fillMaxWidth(),
-								horizontalArrangement = Arrangement.SpaceBetween
-							) {
-								Text(stringResource(Res.string.option_cover_art_rounding))
-								Text(
-									"${Settings.shared.artGridRounding}",
-									fontFamily = mapleMono(),
-									fontWeight = FontWeight(400),
-									fontSize = 13.sp,
-									color = MaterialTheme.colorScheme.onSurfaceVariant,
-								)
-							}
-							Slider(
-								value = Settings.shared.artGridRounding,
-								onValueChange = {
-									Settings.shared.artGridRounding = it
-								},
-								valueRange = 0f..64f,
-								steps = 3,
+					FormRow(
+						onClick = {
+							showArtworkShapeDialog = true
+						}
+					) {
+						Column {
+							Text(stringResource(Res.string.option_artwork_shape))
+							Text(
+								Shapes.firstOrNull { it.second == Settings.shared.artGridRounding }?.first
+									?: Shapes[0].first,
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
 						}
 					}
@@ -287,56 +272,12 @@ fun SettingsAppearanceScreen() {
 						)
 					}
 				}
-				Form {
-					FormRow {
-						Text(stringResource(Res.string.option_short_navigation_bar))
-						SettingSwitch(
-							checked = Settings.shared.useShortNavbar,
-							onCheckedChange = { Settings.shared.useShortNavbar = it }
-						)
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_use_detached_bar))
-						SettingSwitch(
-							checked = Settings.shared.detachedBar,
-							onCheckedChange = { Settings.shared.detachedBar = it }
-						)
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_swipe_to_skip))
-						SettingSwitch(
-							checked = Settings.shared.swipeToSkip,
-							onCheckedChange = { Settings.shared.swipeToSkip = it }
-						)
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_show_progress_in_bar))
-						SettingSwitch(
-							checked = Settings.shared.showProgressInBar,
-							onCheckedChange = { Settings.shared.showProgressInBar = it }
-						)
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_use_wavy_slider))
-						SettingSwitch(
-							checked = Settings.shared.useWavySlider,
-							onCheckedChange = { Settings.shared.useWavySlider = it }
-						)
-					}
-					FormRow(
-						onClick = {
-							showNavtabsDialog = true
-						}
-					) {
-						Text(stringResource(Res.string.option_navbar_tab_positions))
-					}
-				}
 				Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 			}
 		}
+		ArtworkShapeDialog(
+			presented = showArtworkShapeDialog,
+			onDismissRequest = { showArtworkShapeDialog = false }
+		)
 	}
-	NavtabsDialog(
-		presented = showNavtabsDialog,
-		onDismissRequest = { showNavtabsDialog = false }
-	)
 }

@@ -42,7 +42,11 @@ sealed interface Screen : NavKey {
 		@Serializable data object Root : Settings
 		@Serializable data object Appearance : Settings
 		@Serializable data object Behaviour : Settings
+		@Serializable data object BottomAppBar : Settings
+		@Serializable data object NowPlaying : Settings
+		@Serializable data object Scrobbling : Settings
 		@Serializable data object About : Settings
 		@Serializable data object Acknowledgements : Settings
+
 	}
 }

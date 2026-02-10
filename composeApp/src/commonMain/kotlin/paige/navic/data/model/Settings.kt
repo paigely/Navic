@@ -167,7 +167,7 @@ class Settings(
 ) : BasePreferenceManager(settings) {
 	var useSystemFont by preference(false)
 	var dynamicColour by preference(true)
-	var staticPlayerBackground by preference(false)
+	var animatePlayerBackground by preference(true)
 	var detachedBar by preference(true)
 	var swipeToSkip by preference(true)
 	var accentColourH by preference(0f)
@@ -184,6 +184,7 @@ class Settings(
 	var useWavySlider by preference(true)
 	var lyricsAutoscroll by preference(true)
 	var lyricsBeatByBeat by preference(true)
+	var enableScrobbling by preference(true) // TODO: implement
 	var scrobblePercentage by preference(.7f)
 	var minDurationToScrobble by preference(60f)
 	var windowPlacement by preference(0)

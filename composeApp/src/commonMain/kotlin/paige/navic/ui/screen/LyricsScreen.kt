@@ -120,7 +120,7 @@ fun LyricsScreen(
 	val sharedPainter = rememberTrackPainter(track.id, track.coverArt)
 
 	Box(modifier = Modifier.fillMaxSize()) {
-		if (!Settings.shared.staticPlayerBackground) {
+		if (Settings.shared.animatePlayerBackground) {
 			BlendBackground(
 				painter = sharedPainter,
 				isPaused = playerState.isPaused

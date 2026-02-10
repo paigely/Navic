@@ -504,7 +504,7 @@ fun PlayerScreen(
 			player.previous()
 		},
 		background = {
-			if (!Settings.shared.staticPlayerBackground) {
+			if (Settings.shared.animatePlayerBackground) {
 				BlendBackground(
 					painter = sharedPainter,
 					isPaused = playerState.isPaused

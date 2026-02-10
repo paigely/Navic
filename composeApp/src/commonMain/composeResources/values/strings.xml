@@ -7,6 +7,9 @@
 	<string name="title_search">Search</string>
 	<string name="title_appearance">Appearance</string>
 	<string name="title_behaviour">Behaviour</string>
+	<string name="title_now_playing">Now Playing</string>
+	<string name="title_bottom_app_bar">Bottom App Bar</string>
+	<string name="title_scrobbling">Scrobbling</string>
 	<string name="title_about">About</string>
 	<string name="title_acknowledgements">Acknowledgements</string>
 	<string name="title_delete_playlist">Delete playlist?</string>
@@ -21,8 +24,11 @@
 	<string name="title_source">Source code</string>
 	<string name="title_chat">Chat</string>
 
-	<string name="subtitle_appearance">Customise how things look</string>
+	<string name="subtitle_appearance">Change the theme and colours of the app</string>
 	<string name="subtitle_behaviour">Change how things work</string>
+	<string name="subtitle_now_playing">Customize the main player</string>
+	<string name="subtitle_bottom_app_bar">Customize the bottom player and navigation bar</string>
+	<string name="subtitle_scrobbling">Scrobble the music you listen to</string>
 	<string name="subtitle_about">Version, licenses</string>
 	<string name="subtitle_system_font">If not, uses Google Sans.</string>
 	<string name="subtitle_lyrics_beat_by_beat">Use a fake beat by beat gradient effect.</string>
@@ -31,23 +37,24 @@
 	<string name="subtitle_playlist">Playlist</string>
 	<string name="subtitle_source">View the source code</string>
 	<string name="subtitle_chat">Join the Discord</string>
+	<string	name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
 
 	<string name="option_system_font">Use system font</string>
 	<string name="option_dynamic_colour">Use dynamic colour</string>
-	<string name="option_static_player_background">Static player background</string>
+	<string name="option_player_animate_background">Animate player background</string>
 	<string name="option_accent_colour">Accent colour</string>
 	<string name="option_short_navigation_bar">Shorter navigation bar</string>
 	<string name="option_use_wavy_slider">Wavy progress bar</string>
 	<string name="option_show_progress_in_bar">Show progress in bar</string>
 	<string name="option_use_detached_bar">Detached bottom bar</string>
 	<string name="option_swipe_to_skip">Swipe to skip tracks</string>
-	<string name="option_cover_art_rounding">Cover artwork rounding</string>
+	<string name="option_artwork_shape">Artwork shape</string>
 	<string name="option_cover_art_size">Cover artwork size</string>
 	<string name="option_use_marquee_text">Use marquee text</string>
 	<string name="option_marquee_duration">Marquee animation duration</string>
 	<string name="option_alphabetical_scroll">Alphabetical scrolling</string>
 	<string name="option_grid_items_per_row">Grid items per row</string>
-	<string name="option_navbar_tab_positions">Edit tab positions</string>
+	<string name="option_navbar_tab_positions">Configure navigation bar options</string>
 	<string name="option_share_expires">Expires</string>
 	<string name="option_account_navidrome_instance">Instance URL</string>
 	<string name="option_account_username">Username</string>
@@ -68,6 +75,7 @@
 	<string name="option_min_duration_to_scrobble">Min. duration to scrobble</string>
 	<string name="option_playlist_name">Name</string>
 	<string name="option_playlist_songs">Songs</string>
+	<string	name="option_enable_scrobbling">Enable Scrobbling</string>
 
 	<plurals name="count_songs">
 		<item quantity="one">%1$d song</item>
