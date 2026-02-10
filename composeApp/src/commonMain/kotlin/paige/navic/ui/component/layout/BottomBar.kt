@@ -2,7 +2,9 @@ package paige.navic.ui.component.layout
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
@@ -17,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.json.Json
@@ -127,7 +130,14 @@ fun BottomBar(
 								}
 						},
 						label = {
-							Text(stringResource(item.label))
+							Text(
+								stringResource(item.label),
+								maxLines = 1,
+								autoSize = TextAutoSize.StepBased(
+									minFontSize = 1.sp,
+									maxFontSize = MaterialTheme.typography.labelMedium.fontSize
+								)
+							)
 						}
 					)
 				}
