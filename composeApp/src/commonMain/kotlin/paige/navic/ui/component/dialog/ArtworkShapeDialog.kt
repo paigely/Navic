@@ -29,9 +29,9 @@ import paige.navic.data.model.Settings
 
 val Shapes = arrayOf(
 	"Square" to 0f,
-	"Squircle" to 16f,
-	"Idk" to 32f,
-	"Idk2" to 64f
+	"Soft" to 16f,
+	"Curved" to 32f,
+	"Circle" to 200f
 )
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
