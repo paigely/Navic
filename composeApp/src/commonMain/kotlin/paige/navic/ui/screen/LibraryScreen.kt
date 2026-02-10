@@ -1,8 +1,6 @@
 package paige.navic.ui.screen
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,16 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,15 +35,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_see_all
 import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.option_sort_newest
@@ -70,22 +62,18 @@ import paige.navic.icons.outlined.History
 import paige.navic.icons.outlined.LibraryAdd
 import paige.navic.icons.outlined.Shuffle
 import paige.navic.icons.outlined.Star
-import paige.navic.shared.systemGesturesExclusion
 import paige.navic.ui.component.common.RefreshBox
 import paige.navic.ui.component.dialog.DeletionDialog
 import paige.navic.ui.component.dialog.DeletionEndpoint
 import paige.navic.ui.component.dialog.ShareDialog
-import paige.navic.ui.component.layout.ArtGridPlaceholder
 import paige.navic.ui.component.layout.RootTopBar
-import paige.navic.ui.component.layout.artGridError
+import paige.navic.ui.component.layout.horizontalSection
 import paige.navic.ui.theme.defaultFont
 import paige.navic.ui.viewmodel.AlbumsViewModel
 import paige.navic.ui.viewmodel.ArtistsViewModel
 import paige.navic.ui.viewmodel.PlaylistsViewModel
 import paige.navic.util.UiState
-import paige.subsonic.api.model.Album
 import paige.subsonic.api.model.ListType
-import paige.subsonic.api.model.Playlist
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -98,6 +86,15 @@ fun LibraryScreen(
 	val recentsState by albumsViewModel.albumsState.collectAsState()
 	val playlistsState by playlistsViewModel.playlistsState.collectAsState()
 	val artistsState by artistsViewModel.artistsState.collectAsState()
+
+	val flatArtistsState = remember(artistsState) {
+		when (val s = artistsState) {
+			is UiState.Success -> UiState.Success(s.data.flatMap { it.artist })
+			is UiState.Loading -> UiState.Loading
+			is UiState.Error -> UiState.Error(s.error)
+		}
+	}
+
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	var deletionId by remember { mutableStateOf<String?>(null) }
@@ -163,11 +160,51 @@ fun LibraryScreen(
 							modifier = Modifier.padding(horizontal = 16.dp)
 						)
 					}
-					return@LazyVerticalGrid
+				} else {
+					horizontalSection(
+						title = Res.string.option_sort_recent,
+						destination = Screen.Albums(true, ListType.RECENT),
+						state = recentsState,
+						key = { it.id },
+						seeAll = true
+					) { album ->
+						AlbumsScreenItem(
+							modifier = Modifier.animateItem().width(150.dp),
+							album = album,
+							viewModel = albumsViewModel,
+							onSetShareId = { shareId = it }
+						)
+					}
+					horizontalSection(
+						title = Res.string.title_playlists,
+						destination = Screen.Playlists(true),
+						state = playlistsState,
+						key = { it.id },
+						seeAll = true
+					) { playlist ->
+						PlaylistsScreenItem(
+							modifier = Modifier.animateItem().width(150.dp),
+							playlist = playlist,
+							viewModel = playlistsViewModel,
+							onSetShareId = { shareId = it },
+							onSetDeletionId = { deletionId = it }
+						)
+					}
+
+					horizontalSection(
+						title = Res.string.title_artists,
+						destination = Screen.Artists(true),
+						state = flatArtistsState,
+						key = { it.id },
+						seeAll = true
+					) { artist ->
+						ArtistsScreenItem(
+							modifier = Modifier.animateItem().width(150.dp),
+							artist = artist,
+							viewModel = artistsViewModel
+						)
+					}
 				}
-				horizontalAlbums(recentsState, albumsViewModel) { shareId = it }
-				horizontalPlaylists(playlistsState, playlistsViewModel, { shareId = it }, { deletionId = it })
-				horizontalArtists(artistsState, artistsViewModel)
 			}
 		}
 	}
@@ -186,42 +223,6 @@ fun LibraryScreen(
 		id = deletionId,
 		onIdClear = { deletionId = null }
 	)
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyGridScope.header(
-	title: StringResource,
-	vararg formatArgs: Any,
-	destination: NavKey
-) {
-	item(span = { GridItemSpan(1) }) {
-		Text(
-			stringResource(title, formatArgs),
-			style = MaterialTheme.typography.titleMediumEmphasized,
-			fontWeight = FontWeight(600),
-			modifier = Modifier.heightIn(min = 32.dp).padding(top = 8.dp, start = 16.dp)
-		)
-	}
-	item(span = { GridItemSpan(1) }) {
-		val ctx = LocalCtx.current
-		val backStack = LocalNavStack.current
-		Text(
-			stringResource(Res.string.action_see_all),
-			fontSize = 12.sp,
-			color = MaterialTheme.colorScheme.primary,
-			textAlign = TextAlign.Right,
-			modifier = Modifier
-				.heightIn(min = 32.dp)
-				.padding(top = 8.dp, end = 16.dp)
-				.clickable(
-					interactionSource = null,
-					indication = null
-				) {
-					ctx.clickSound()
-					backStack.add(destination)
-				}
-		)
-	}
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -274,138 +275,6 @@ private fun LazyGridScope.overviewButton(
 					fontFamily = defaultFont(100, round = 100f),
 					autoSize = TextAutoSize.StepBased(minFontSize = 1.sp, maxFontSize = 14.sp),
 				)
-			}
-		}
-	}
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyGridScope.horizontalAlbums(
-	state: UiState<List<Album>>,
-	viewModel: AlbumsViewModel,
-	onSetShareId: (String) -> Unit
-) {
-	if (state !is UiState.Success || state.data.isNotEmpty()) {
-		header(Res.string.option_sort_recent, destination = Screen.Albums(true, ListType.RECENT))
-	}
-	when (state) {
-		is UiState.Error -> artGridError(state)
-		else -> item(
-			span = { GridItemSpan(maxLineSpan) }
-		) {
-			LazyRow(
-				modifier = Modifier
-					.animateContentSize(
-						animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-					)
-					.systemGesturesExclusion(),
-				horizontalArrangement = Arrangement.spacedBy(12.dp),
-				contentPadding = PaddingValues(horizontal = 16.dp)
-			) {
-				if (state is UiState.Loading) {
-					items(8) {
-						ArtGridPlaceholder(
-							Modifier.width(150.dp)
-						)
-					}
-				} else if (state is UiState.Success) {
-					items(state.data, { it.id }) { album ->
-						AlbumsScreenItem(
-							modifier = Modifier.animateItem().width(150.dp),
-							album = album,
-							viewModel = viewModel,
-							onSetShareId = onSetShareId
-						)
-					}
-				}
-			}
-		}
-	}
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyGridScope.horizontalPlaylists(
-	state: UiState<List<Playlist>>,
-	viewModel: PlaylistsViewModel,
-	onSetShareId: (String) -> Unit,
-	onSetDeletionId: (String) -> Unit
-) {
-	if (state !is UiState.Success || state.data.isNotEmpty()) {
-		header(Res.string.title_playlists, destination = Screen.Playlists(true))
-	}
-	when (state) {
-		is UiState.Error -> artGridError(state)
-		else -> item(
-			span = { GridItemSpan(maxLineSpan) }
-		) {
-			LazyRow(
-				modifier = Modifier
-					.animateContentSize(
-						animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-					)
-					.systemGesturesExclusion(),
-				horizontalArrangement = Arrangement.spacedBy(12.dp),
-				contentPadding = PaddingValues(horizontal = 16.dp)
-			) {
-				if (state is UiState.Loading) {
-					items(8) {
-						ArtGridPlaceholder(
-							Modifier.width(150.dp)
-						)
-					}
-				} else if (state is UiState.Success) {
-					items(state.data, { it.id }) { playlist ->
-						PlaylistsScreenItem(
-							modifier = Modifier.animateItem().width(150.dp),
-							playlist = playlist,
-							viewModel = viewModel,
-							onSetShareId = onSetShareId,
-							onSetDeletionId = onSetDeletionId
-						)
-					}
-				}
-			}
-		}
-	}
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyGridScope.horizontalArtists(
-	state: UiState<List<paige.subsonic.api.model.Artists.Index>>,
-	viewModel: ArtistsViewModel
-) {
-	if (state !is UiState.Success || state.data.isNotEmpty()) {
-		header(Res.string.title_artists, destination = Screen.Artists(true))
-	}
-	when (state) {
-		is UiState.Error -> artGridError(state)
-		else -> item(
-			span = { GridItemSpan(maxLineSpan) }
-		) {
-			LazyRow(
-				modifier = Modifier
-					.animateContentSize(
-						animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-					)
-					.systemGesturesExclusion(),
-				horizontalArrangement = Arrangement.spacedBy(12.dp),
-				contentPadding = PaddingValues(horizontal = 16.dp)
-			) {
-				if (state is UiState.Loading) {
-					items(8) {
-						ArtGridPlaceholder(
-							Modifier.width(150.dp)
-						)
-					}
-				} else if (state is UiState.Success) {
-					items(state.data.flatMap { it.artist }, { it.id }) { artist ->
-						ArtistsScreenItem(
-							Modifier.animateItem().width(150.dp),
-							artist,
-							viewModel
-						)
-					}
-				}
 			}
 		}
 	}
