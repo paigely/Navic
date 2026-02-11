@@ -99,7 +99,7 @@
     <string name="subtitle_about">Version, Lizenzen</string>
     <string name="subtitle_appearance">Passe das Aussehen an</string>
     <string name="subtitle_behaviour">Ändere wie Dinge funktionieren</string>
-    <string name="subtitle_chat">Trete dem Discord bei</string>
+    <string name="subtitle_chat">Tritt dem Discord bei</string>
     <string name="subtitle_grid_items_per_row">Wie viele Elemente pro Zeile anzeigen</string>
     <string name="subtitle_lyrics_beat_by_beat">Simulierter Farbverlauf</string>
     <string name="subtitle_playlist">Playlist</string>
