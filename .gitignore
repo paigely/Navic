@@ -20,3 +20,4 @@ node_modules/
 .theos
 iosApp/packages
 release
+acknowledgements.json
