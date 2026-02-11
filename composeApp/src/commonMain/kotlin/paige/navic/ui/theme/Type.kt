@@ -9,7 +9,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.google_sans
 import navic.composeapp.generated.resources.maple_mono
 import org.jetbrains.compose.resources.Font
-import paige.navic.data.model.Settings
+import paige.navic.data.models.Settings
 
 private val defaultTypography = Typography()
 

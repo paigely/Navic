@@ -11,7 +11,7 @@ import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
 import dev.zt64.compose.pipette.HsvColor
 import paige.navic.LocalCtx
-import paige.navic.data.model.Settings
+import paige.navic.data.models.Settings
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

@@ -8,10 +8,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import paige.navic.data.model.Settings
+import paige.navic.data.models.Settings
 import paige.navic.data.session.SessionManager
-import paige.subsonic.api.model.Track
-import paige.subsonic.api.model.TrackCollection
+import paige.subsonic.api.models.Track
+import paige.subsonic.api.models.TrackCollection
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive

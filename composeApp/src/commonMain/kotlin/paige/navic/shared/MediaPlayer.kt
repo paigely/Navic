@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.model.Settings
+import paige.navic.data.models.Settings
 import paige.navic.data.session.SessionManager
-import paige.subsonic.api.model.Track
-import paige.subsonic.api.model.TrackCollection
+import paige.subsonic.api.models.Track
+import paige.subsonic.api.models.TrackCollection
 import kotlin.time.Clock
 
 data class PlayerUiState(

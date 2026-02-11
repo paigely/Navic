@@ -2,8 +2,8 @@ package paige.navic.shared
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import paige.subsonic.api.model.Track
-import paige.subsonic.api.model.TrackCollection
+import paige.subsonic.api.models.Track
+import paige.subsonic.api.models.TrackCollection
 
 // TODO: implement this class
 class JvmMediaPlayerViewModel : MediaPlayerViewModel() {

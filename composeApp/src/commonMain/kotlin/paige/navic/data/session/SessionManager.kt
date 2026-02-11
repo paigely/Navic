@@ -9,7 +9,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import paige.navic.data.model.User
+import paige.navic.data.models.User
 import paige.subsonic.api.AuthType
 import paige.subsonic.api.SubsonicApi
 

@@ -18,7 +18,7 @@ import navic.composeapp.generated.resources.app_name
 import navic.composeapp.generated.resources.icon
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.model.Settings
+import paige.navic.data.models.Settings
 import java.awt.Dimension
 
 @Composable
