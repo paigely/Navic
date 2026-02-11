@@ -1,43 +1,38 @@
 package paige.navic.ui.screen
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -50,9 +45,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -77,8 +73,10 @@ import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
+import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
 import paige.navic.ui.component.common.ErrorBox
+import paige.navic.ui.component.common.MarqueeText
 import paige.navic.ui.component.layout.ArtGrid
 import paige.navic.ui.component.layout.artGridPlaceholder
 import paige.navic.ui.component.layout.horizontalSection
@@ -115,13 +113,18 @@ fun SearchScreen(
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
 
 	Column(
-		modifier = Modifier.padding(top = 32.dp, bottom = LocalContentPadding.current.calculateBottomPadding())
+		modifier = Modifier.padding(
+			top = LocalContentPadding.current.calculateTopPadding(),
+			bottom = LocalContentPadding.current.calculateBottomPadding()
+		)
 	) {
-		SearchTopBar(
-			query = query,
+		SearchTopBar(query = query)
+
+		SearchChips(
 			selectedCategory = selectedCategory,
 			onCategorySelect = { selectedCategory = it }
 		)
+
 		AnimatedContent(
 			state,
 			modifier = Modifier.fillMaxSize()
@@ -132,9 +135,12 @@ fun SearchScreen(
 				is UiState.Success -> {
 					val results = uiState.data
 					val showAll = selectedCategory == SearchCategory.ALL
-					val albums = if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<Album>() else emptyList()
-					val artists = if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<Artist>() else emptyList()
-					val tracks = if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<Track>() else emptyList()
+					val albums =
+						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<Album>() else emptyList()
+					val artists =
+						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<Artist>() else emptyList()
+					val tracks =
+						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<Track>() else emptyList()
 
 					LazyVerticalGrid(
 						modifier = Modifier.fillMaxSize(),
@@ -148,10 +154,15 @@ fun SearchScreen(
 									Text(
 										stringResource(Res.string.title_songs),
 										style = MaterialTheme.typography.headlineSmall,
-										modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+										modifier = Modifier.padding(
+											horizontal = 20.dp,
+											vertical = 8.dp
+										)
 									)
 								}
-								items(tracks.take(10).size, span = { GridItemSpan(maxLineSpan) }) { index ->
+								items(
+									tracks.take(10).size,
+									span = { GridItemSpan(maxLineSpan) }) { index ->
 									val track = tracks[index]
 									ListItem(
 										modifier = Modifier.clickable {
@@ -160,9 +171,8 @@ fun SearchScreen(
 										},
 										headlineContent = { Text(track.title) },
 										supportingContent = {
-											Text(
-												"${track.album ?: ""} • ${track.artist ?: ""} • ${track.year ?: ""}",
-												maxLines = 1
+											MarqueeText(
+												"${track.album ?: ""} • ${track.artist ?: ""} • ${track.year ?: ""}"
 											)
 										},
 										leadingContent = {
@@ -222,11 +232,57 @@ fun SearchScreen(
 	}
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun SearchTopBar(
-	query: TextFieldState,
+private fun SearchChips(
 	selectedCategory: SearchCategory,
 	onCategorySelect: (SearchCategory) -> Unit
+) {
+	val ctx = LocalCtx.current
+	Row(
+		modifier = Modifier.padding(horizontal = 16.dp).widthIn(max = 600.dp),
+		horizontalArrangement = Arrangement.spacedBy(8.dp)
+	) {
+		SearchCategory.entries.forEach { category ->
+			val isSelected = category == selectedCategory
+			FilterChip(
+				modifier = Modifier
+					.animateContentSize(
+						if (isSelected)
+							MaterialTheme.motionScheme.fastSpatialSpec()
+						else MaterialTheme.motionScheme.defaultEffectsSpec()
+					),
+				selected = isSelected,
+				onClick = {
+					ctx.clickSound()
+					onCategorySelect(category)
+				},
+				label = {
+					Text(
+						stringResource(category.res),
+						maxLines = 1
+					)
+				},
+				shape = ContinuousRoundedRectangle(8.dp),
+				leadingIcon = if (isSelected) {
+					{
+						Icon(
+							imageVector = Icons.Outlined.Check,
+							contentDescription = null,
+							modifier = Modifier.size(FilterChipDefaults.IconSize)
+						)
+					}
+				} else {
+					null
+				}
+			)
+		}
+	}
+}
+
+@Composable
+private fun SearchTopBar(
+	query: TextFieldState
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
@@ -234,100 +290,72 @@ private fun SearchTopBar(
 	val focusManager = LocalFocusManager.current
 	val focusRequester = remember { FocusRequester() }
 
-	val shape = RoundedCornerShape(12.dp)
-	val categories = listOf(SearchCategory.ALL, SearchCategory.SONGS, SearchCategory.ALBUMS, SearchCategory.ARTISTS)
-
 	LaunchedEffect(Unit) {
 		focusRequester.requestFocus()
 	}
 
 	Column {
 		Row(
-			modifier = Modifier
-				.padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 12.dp)
-				.height(IntrinsicSize.Min),
-			verticalAlignment = Alignment.CenterVertically,
+			verticalAlignment = Alignment.CenterVertically
 		) {
-			Column(
-				modifier = Modifier
-					.width(50.dp)
-					.fillMaxHeight()
-					.clip(shape)
-					.background(MaterialTheme.colorScheme.surfaceContainer, shape)
-					.clickable(
-						onClick = {
-							ctx.clickSound()
-							focusManager.clearFocus(true)
-							if (backStack.size > 1) backStack.removeLastOrNull()
-						}
-					),
-				verticalArrangement = Arrangement.Center,
-				horizontalAlignment = Alignment.CenterHorizontally,
+			Box(
+				modifier = Modifier.size(56.dp),
+				contentAlignment = Alignment.Center
 			) {
-				Icon(
-					Icons.Outlined.ArrowBack,
-					contentDescription = stringResource(Res.string.action_navigate_back),
-					tint = MaterialTheme.colorScheme.onSurfaceVariant
-				)
+				IconButton(
+					onClick = {
+						ctx.clickSound()
+						focusManager.clearFocus(true)
+						if (backStack.size > 1) backStack.removeLastOrNull()
+					}
+				) {
+					Icon(
+						Icons.Outlined.ArrowBack,
+						contentDescription = stringResource(Res.string.action_navigate_back),
+						tint = MaterialTheme.colorScheme.onSurfaceVariant
+					)
+				}
 			}
-			Spacer(Modifier.width(8.dp))
-			TextField(
+			BasicTextField(
+				state = query,
 				modifier = Modifier
 					.fillMaxWidth()
-					.background(MaterialTheme.colorScheme.surfaceContainer, shape)
+					.height(72.dp)
 					.focusRequester(focusRequester),
-				state = query,
 				lineLimits = TextFieldLineLimits.SingleLine,
 				keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
 				onKeyboardAction = { focusManager.clearFocus() },
-				placeholder = { Text(stringResource(Res.string.title_search)) },
-				trailingIcon = {
-					if (query.text.isNotEmpty()) {
-						IconButton(
-							onClick = {
-								ctx.clickSound()
-								query.clearText()
-							}
-						) {
-							Icon(
-								Icons.Outlined.Close,
-								contentDescription = stringResource(Res.string.action_clear_search)
+				textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
+				cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+				decorator = { innerTextField ->
+					Box(contentAlignment = Alignment.CenterStart) {
+						if (query.text.isEmpty()) {
+							Text(
+								text = stringResource(Res.string.title_search),
+								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
 						}
+						innerTextField()
 					}
-				},
-				colors = TextFieldDefaults.colors(
-					focusedContainerColor = Color.Transparent,
-					unfocusedContainerColor = Color.Transparent,
-					focusedIndicatorColor = Color.Transparent,
-					unfocusedIndicatorColor = Color.Transparent
-				)
+				}
 			)
-		}
-		LazyRow(
-			contentPadding = PaddingValues(horizontal = 20.dp),
-			horizontalArrangement = Arrangement.spacedBy(8.dp)
-		) {
-			items(categories) { category ->
-				val isSelected = category == selectedCategory
-
-				OutlinedButton(
-					onClick = {
-						ctx.clickSound()
-						onCategorySelect(category)
-					},
-					shape = shape,
-					colors = ButtonDefaults.outlinedButtonColors(
-						containerColor = if (isSelected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
-						contentColor = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-					),
-					border = if (isSelected) null else BorderStroke(
-						1.dp,
-						MaterialTheme.colorScheme.onSurfaceVariant
-					),
-					elevation = ButtonDefaults.buttonElevation(0.dp)
-				) {
-					Text(stringResource(category.res))
+			Box(
+				modifier = Modifier.size(56.dp),
+				contentAlignment = Alignment.Center
+			) {
+				if (query.text.isNotEmpty()) {
+					IconButton(
+						modifier = Modifier.padding(horizontal = 8.dp),
+						onClick = {
+							ctx.clickSound()
+							query.clearText()
+						}
+					) {
+						Icon(
+							Icons.Outlined.Close,
+							contentDescription = stringResource(Res.string.action_clear_search)
+						)
+					}
 				}
 			}
 		}
