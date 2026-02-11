@@ -66,7 +66,7 @@
     <string name="option_account_password">Passwort</string>
     <string name="option_account_username">Benutzername</string>
     <string name="option_alphabetical_scroll">Alphabetische Scrollleiste</string>
-    <string name="option_artwork_shape">Form des Albumcovers</string>
+    <string name="option_artwork_shape">Cover-Form</string>
     <string name="option_cover_art_size">Albumcovergröße</string>
     <string name="option_dynamic_colour">Verwende dynamische Farben</string>
     <string name="option_enable_scrobbling">Scrobbling aktivieren</string>
