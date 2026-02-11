@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -438,7 +439,12 @@ private fun TracksScreenScope.Metadata() {
 		) {
 			Icon(Icons.Filled.Play, null)
 			Text(
-				stringResource(Res.string.action_play)
+				stringResource(Res.string.action_play),
+				maxLines = 1,
+				autoSize = TextAutoSize.StepBased(
+					minFontSize = 1.sp,
+					maxFontSize = MaterialTheme.typography.labelLarge.fontSize
+				)
 			)
 		}
 		OutlinedButton(
@@ -450,7 +456,12 @@ private fun TracksScreenScope.Metadata() {
 		) {
 			Icon(Icons.Outlined.Shuffle, null)
 			Text(
-				stringResource(Res.string.action_shuffle)
+				stringResource(Res.string.action_shuffle),
+				maxLines = 1,
+				autoSize = TextAutoSize.StepBased(
+					minFontSize = 1.sp,
+					maxFontSize = MaterialTheme.typography.labelLarge.fontSize
+				)
 			)
 		}
 	}
