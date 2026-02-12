@@ -103,7 +103,7 @@ import paige.navic.ui.components.common.playPauseIconPainter
 import paige.navic.ui.components.layouts.Swiper
 import paige.navic.ui.viewmodels.PlayerViewModel
 import paige.navic.utils.rememberTrackPainter
-import paige.navic.utils.toHHMMSS
+import paige.navic.utils.toHoursMinutesSeconds
 import paige.subsonic.api.models.Playlist
 import kotlin.time.Duration.Companion.seconds
 
@@ -320,7 +320,7 @@ fun PlayerScreen(
 			headlineContent = {
 				if (duration != null) {
 					Text(
-						((duration * playerState.progress).toDouble().seconds).toHHMMSS(),
+						((duration * playerState.progress).toDouble().seconds).toHoursMinutesSeconds(),
 						color = color, style = style
 					)
 				} else {
@@ -329,7 +329,7 @@ fun PlayerScreen(
 			},
 			trailingContent = {
 				if (duration != null) {
-					Text(duration.seconds.toHHMMSS(), color = color, style = style)
+					Text(duration.seconds.toHoursMinutesSeconds(), color = color, style = style)
 				} else {
 					Text("--:--", color = color, style = style)
 				}

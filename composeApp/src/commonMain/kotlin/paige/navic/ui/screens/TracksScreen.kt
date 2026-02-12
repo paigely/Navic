@@ -99,7 +99,7 @@ import paige.navic.ui.theme.defaultFont
 import paige.navic.ui.viewmodels.TracksViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.shimmerLoading
-import paige.navic.utils.toHHMMSS
+import paige.navic.utils.toHoursMinutesSeconds
 import paige.subsonic.api.models.Album
 import paige.subsonic.api.models.Playlist
 import paige.subsonic.api.models.Track
@@ -505,7 +505,7 @@ private fun TrackRow(
 			}
 		}
 
-		track.duration?.seconds?.toHHMMSS()?.let {
+		track.duration?.seconds?.toHoursMinutesSeconds()?.let {
 			Text(
 				it,
 				style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),

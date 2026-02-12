@@ -43,7 +43,6 @@ import paige.navic.LocalSnackbarState
 import paige.navic.data.session.SessionManager
 import paige.navic.ui.components.common.DurationPicker
 import paige.navic.utils.UiState
-import paige.navic.utils.toHumanReadable
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
@@ -101,7 +100,7 @@ fun ShareDialog(
 					expiry?.let {
 						append(
 							"\n" + getString(
-								Res.string.notice_expiry, expiry.toHumanReadable()
+								Res.string.notice_expiry, expiry.toString()
 							)
 						)
 					}

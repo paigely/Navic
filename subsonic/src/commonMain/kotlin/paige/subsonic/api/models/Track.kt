@@ -38,13 +38,13 @@ sealed interface Track {
 	val discNumber: Int?
 	val genre: String?
 	val id: String
-	val isDir: Boolean?
+	val isDir: Boolean
 	val isVideo: Boolean?
 	val parent: String?
 	val path: String?
 	val playCount: Int?
 	val samplingRate: Int?
-	val size: Int?
+	val size: Long?
 	val suffix: String?
 	val title: String
 	val track: Int?

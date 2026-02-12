@@ -35,8 +35,8 @@ import paige.navic.LocalContentPadding
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
-import paige.navic.utils.formatAsSize
-import paige.navic.utils.toHHMMSS
+import paige.navic.utils.toFileSize
+import paige.navic.utils.toHoursMinutesSeconds
 import paige.subsonic.api.models.Track
 import kotlin.time.Duration.Companion.seconds
 
@@ -59,13 +59,13 @@ fun TrackInfoScreen(track: Track) {
 					Res.string.info_track_artist_id to track.artistId,
 					Res.string.info_track_bitrate to track.bitRate,
 					Res.string.info_track_bit_depth to track.bitDepth,
-					Res.string.info_track_file_size to track.size?.formatAsSize(),
+					Res.string.info_track_file_size to track.size?.toFileSize(),
 					Res.string.info_track_format to track.contentType,
 					Res.string.info_track_sampling_rate to track.samplingRate,
 					Res.string.info_track_channel_count to track.channelCount,
 					Res.string.info_track_disc_number to track.discNumber,
 					Res.string.info_track_genre to track.genre,
-					Res.string.info_track_duration to track.duration?.seconds?.toHHMMSS(),
+					Res.string.info_track_duration to track.duration?.seconds?.toHoursMinutesSeconds(),
 					Res.string.info_track_id to track.id,
 					Res.string.info_track_path to track.path,
 				).forEach { (key, value) ->
