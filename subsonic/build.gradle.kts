@@ -30,19 +30,17 @@ kotlin {
 
 	sourceSets {
 		commonMain.dependencies {
-			implementation(libs.ktor.client.core)
-			implementation(libs.ktor.client.content.negotiation)
-			implementation(libs.ktor.serialization.json)
+			implementation(libs.bundles.ktor)
 			implementation(libs.hash.md)
 		}
 		androidMain.dependencies {
-			implementation(libs.ktor.client.okhttp)
+			implementation(libs.bundles.ktor.android)
 		}
 		iosMain.dependencies {
-			implementation(libs.ktor.client.darwin)
+			implementation(libs.bundles.ktor.ios)
 		}
 		jvmMain.dependencies {
-			implementation(libs.ktor.client.okhttp)
+			implementation(libs.bundles.ktor.desktop)
 		}
 	}
 }

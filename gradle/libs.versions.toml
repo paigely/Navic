@@ -1,4 +1,5 @@
 [versions]
+#noinspection AndroidGradlePluginVersion
 agp = "8.13.2"
 #noinspection UnusedVersionCatalogEntry
 android-compileSdk = "36"
@@ -6,67 +7,94 @@ android-compileSdk = "36"
 android-minSdk = "24"
 #noinspection UnusedVersionCatalogEntry
 android-targetSdk = "36"
-androidx-activity = "1.12.3"
+kotlin = "2.3.10"
+
+androidx-activity = "1.12.4"
 androidx-lifecycle = "2.9.6"
-composeMultiplatform = "1.11.0-alpha02"
-kotlin = "2.3.0"
-coil = "3.3.0"
-ktor = "3.4.0"
-hash = "0.8.0"
-media3 = "1.9.2"
-kmpalette = "3.1.0"
-material3Adaptive = "1.3.0-alpha04"
-aboutLibraries = "13.2.1"
-animationGraphics = "1.10.2"
-glance = "1.2.0-rc01"
 datastore = "1.2.0"
 
+compose = "1.11.0-alpha02"
+material3-adaptive = "1.3.0-alpha04"
+navigation3 = "1.1.0-alpha02"
+
+ktor = "3.4.0"
+hash = "0.8.0"
+
+coil = "3.3.0"
+media3 = "1.9.2"
+kmpalette = "3.1.0"
+
+aboutLibraries = "13.2.1"
+glance = "1.2.0-rc01"
+
 [libraries]
-composeMultiplatform-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
-composeMultiplatform-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
-composeMultiplatform-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform" }
-composeMultiplatform-material3-adaptive-navigation3 = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation3", version.ref = "material3Adaptive" }
-composeMultiplatform-material3-windowSizeClass = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "composeMultiplatform" }
-composeMultiplatform-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
-composeMultiplatform-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
+cmp-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+cmp-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose" }
+cmp-material3-adaptive-nav = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation3", version.ref = "material3-adaptive" }
+cmp-material3-windowSize = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "compose" }
+cmp-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
+cmp-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
+cmp-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
+
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
-androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
-coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
-capsule = { module = "top.ltfan.capsule:capsule", version = "1.1.0" }
-wavySlider = { module = "ir.mahozad.multiplatform:wavy-slider", version = "2.2.0" }
+androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtime = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics", version = "1.10.3" }
+
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
-ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
-hash-md = { module = "org.kotlincrypto.hash:md", version.ref = "hash" }
-jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version = "1.1.0-alpha02" }
-androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
-androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
-androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
-androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
-kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpalette" }
-kmpalette-extensions-network = { module = "com.kmpalette:extensions-network", version.ref = "kmpalette" }
-materialKolor = { module = "com.materialkolor:material-kolor", version = "5.0.0-alpha06" }
-composePipette = { module = "dev.zt64.compose.pipette:compose-pipette", version = "2.0.0-beta03" }
-multiplatformSettings-noArg = { module = "com.russhwolf:multiplatform-settings-no-arg", version = "1.3.0" }
-reorderable = { module = "sh.calvin.reorderable:reorderable", version = "3.0.0" }
-aboutLibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
-aboutLibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
-kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version = "1.10.2" }
-nativeTray = { module = "io.github.kdroidfilter:composenativetray", version = "1.0.9" }
-androidx-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics", version.ref = "animationGraphics" }
+
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+
+media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
+media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
+media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
+
+navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
+
 glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
 glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glance" }
 
+capsule = { module = "top.ltfan.capsule:capsule", version = "1.1.1" }
+wavySlider = { module = "ir.mahozad.multiplatform:wavy-slider", version = "2.2.0" }
+hash-md = { module = "org.kotlincrypto.hash:md", version.ref = "hash" }
+kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpalette" }
+kmpalette-network = { module = "com.kmpalette:extensions-network", version.ref = "kmpalette" }
+materialKolor = { module = "com.materialkolor:material-kolor", version = "5.0.0-alpha06" }
+composePipette = { module = "dev.zt64.compose.pipette:compose-pipette", version = "2.0.0-beta03" }
+multiplatformSettings = { module = "com.russhwolf:multiplatform-settings-no-arg", version = "1.3.0" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version = "3.0.0" }
+nativeTray = { module = "io.github.kdroidfilter:composenativetray", version = "1.1.0" }
+aboutLibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
+aboutLibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.7.1" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version = "1.10.2" }
+
+[bundles]
+cmp = ["cmp-foundation", "cmp-material3", "cmp-material3-adaptive-nav", "cmp-material3-windowSize", "cmp-resources", "cmp-runtime", "cmp-ui"]
+coil = ["coil-compose", "coil-network-ktor3"]
+media3 = ["media3-exoplayer", "media3-session", "media3-ui"]
+glance = ["glance-appwidget", "glance-material3"]
+ktor = ["ktor-client-core", "ktor-client-contentNegotiation", "ktor-serialization-json"]
+ktor-ios = ["ktor-client-darwin"]
+ktor-android = ["ktor-client-okhttp"]
+ktor-desktop = ["ktor-client-okhttp"]
+cmpThirdParty = ["capsule", "wavySlider", "kmpalette-core", "kmpalette-network", "materialKolor", "composePipette", "multiplatformSettings", "reorderable", "aboutLibraries-compose", "aboutLibraries-core"]
+androidx-android = ["androidx-activity-compose", "androidx-datastore-preferences", "androidx-animation-graphics"]
+androidx-lifecycle = ["androidx-lifecycle-viewmodel", "androidx-lifecycle-runtime"]
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
-composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
 valkyrie = { id = "io.github.composegears.valkyrie", version = "0.3.0" }

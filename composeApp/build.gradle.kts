@@ -99,52 +99,32 @@ kotlin {
 	sourceSets {
 		commonMain.dependencies {
 			implementation(project(":subsonic"))
-			implementation(libs.composeMultiplatform.runtime)
-			implementation(libs.composeMultiplatform.foundation)
-			implementation(libs.composeMultiplatform.material3)
-			implementation(libs.composeMultiplatform.material3.adaptive.navigation3)
-			implementation(libs.composeMultiplatform.material3.windowSizeClass)
-			implementation(libs.composeMultiplatform.ui)
-			implementation(libs.composeMultiplatform.components.resources)
-			implementation(libs.androidx.lifecycle.viewmodelCompose)
-			implementation(libs.androidx.lifecycle.runtimeCompose)
-			implementation(libs.coil.compose)
-			implementation(libs.coil.network.ktor3)
-			implementation(libs.capsule)
-			implementation(libs.wavySlider)
-			implementation(libs.composePipette)
-			implementation(libs.materialKolor)
-			implementation(libs.ktor.client.content.negotiation)
-			implementation(libs.ktor.serialization.json)
-			implementation(libs.jetbrains.navigation3.ui)
-			implementation(libs.kmpalette.core)
-			implementation(libs.kmpalette.extensions.network)
-			implementation(libs.ktor.client.core)
-			implementation(libs.multiplatformSettings.noArg)
-			implementation(libs.reorderable)
-			implementation(libs.aboutLibraries.core)
-			implementation(libs.aboutLibraries.compose.m3)
+
+			implementation(libs.bundles.cmp)
+			implementation(libs.bundles.ktor)
+			implementation(libs.bundles.coil)
+			implementation(libs.bundles.cmpThirdParty)
+			implementation(libs.bundles.androidx.lifecycle)
+
+			implementation(libs.navigation3.ui)
+			implementation(libs.kotlinx.datetime)
 		}
+
 		androidMain.dependencies {
-			implementation(libs.androidx.activity.compose)
-			implementation(libs.androidx.datastore.preferences)
-			implementation(libs.ktor.client.okhttp)
-			implementation(libs.androidx.media3.exoplayer)
-			implementation(libs.androidx.media3.session)
-			implementation(libs.androidx.media3.ui)
-			implementation(libs.androidx.animation.graphics)
-			implementation(libs.glance.appwidget)
-			implementation(libs.glance.material3)
+			implementation(libs.bundles.ktor.android)
+			implementation(libs.bundles.androidx.android)
+			implementation(libs.bundles.media3)
+			implementation(libs.bundles.glance)
 		}
+
 		iosMain.dependencies {
-			implementation(
-				libs.ktor.client.darwin
-			)
+			implementation(libs.bundles.ktor.ios)
 		}
+
 		jvmMain.dependencies {
+			implementation(libs.bundles.ktor.desktop)
 			implementation(compose.desktop.currentOs)
-			implementation(libs.kotlinx.coroutinesSwing)
-			implementation(libs.ktor.client.okhttp)
+			implementation(libs.kotlinx.coroutines.swing)
 			implementation(libs.nativeTray)
 		}
 	}
