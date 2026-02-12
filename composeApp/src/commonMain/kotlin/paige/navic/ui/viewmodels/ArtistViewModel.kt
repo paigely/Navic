@@ -9,11 +9,11 @@ import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
 import paige.subsonic.api.models.Artist
 import paige.subsonic.api.models.ArtistInfo
-import paige.subsonic.api.models.Song
+import paige.subsonic.api.models.Track
 
 data class ArtistState(
 	val artist: Artist,
-	val topSongs: List<Song>,
+	val topSongs: List<Track>,
 	val info: ArtistInfo
 )
 

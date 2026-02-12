@@ -47,17 +47,16 @@ data class Album(
 	override val artistId: String?,
 	val artist: String?,
 	val created: String,
-	val name: String?,
-	val album: String?,
+	val name: String,
 	val playCount: Int?,
-	val song: List<Song>?,
+	val song: List<Track>?,
 	val songCount: Int?,
 	val userRating: Int?
 ) : TrackCollection {
-	override val title: String? = name
+	override val title: String = name
 	override val subtitle: String? = artist
 	override val tracks: List<Track> = song.orEmpty()
-	override val trackCount: Int = songCount ?: song?.count() ?: -1
+	override val trackCount: Int? = songCount
 }
 
 @Serializable
@@ -67,7 +66,7 @@ data class SearchResult3Response(
 
 @Serializable
 data class SearchResult3(
-	val song: List<Song>?,
+	val song: List<Track>?,
 	val album: List<Album>?,
 	val artist: List<Artist>?
 )

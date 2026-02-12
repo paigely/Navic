@@ -16,5 +16,5 @@ data class Starred2Response(
 data class StarredResult(
 	val album: List<Album>?,
 	val artist: List<Artist>?,
-	val song: List<Song>?,
+	val song: List<Track>?,
 )

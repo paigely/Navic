@@ -14,5 +14,5 @@ data class PlayQueue(
 	val username: String,
 	val changed: String,
 	val changedBy: String,
-	val entry: List<Song>
+	val entry: List<Track>
 )
