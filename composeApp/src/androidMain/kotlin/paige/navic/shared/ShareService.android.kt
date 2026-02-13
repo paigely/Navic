@@ -26,7 +26,6 @@ class AndroidShareService(private val context: Context) : ShareService {
 			return
 		}
 
-		// 3. Get the URI via FileProvider
 		val contentUri = FileProvider.getUriForFile(
 			context,
 			"${context.packageName}.fileprovider",
@@ -34,7 +33,7 @@ class AndroidShareService(private val context: Context) : ShareService {
 		)
 
 		val intent = Intent(Intent.ACTION_SEND).apply {
-			type = "image/png" // Be specific since we saved as PNG
+			type = "image/png"
 			putExtra(Intent.EXTRA_STREAM, contentUri)
 			addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 		}
