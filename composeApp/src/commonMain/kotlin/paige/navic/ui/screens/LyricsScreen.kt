@@ -1,6 +1,7 @@
 package paige.navic.ui.screens
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -12,11 +13,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,14 +32,18 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -62,16 +69,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.notice_loading_lyrics
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.Settings
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.Check
+import paige.navic.icons.outlined.Close
+import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.viewmodels.LyricsViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.rememberTrackPainter
 import paige.subsonic.api.models.Track
+import kotlin.math.abs
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -87,6 +100,11 @@ fun LyricsScreen(
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val state by viewModel.lyricsState.collectAsState()
+
+	var isSelectionMode by remember { mutableStateOf(false) }
+	val selectedIndices = remember { mutableStateListOf<Int>() }
+	var wasPlayingBeforeSelection by remember { mutableStateOf(false) }
+	var showShareSheet by remember { mutableStateOf(false) }
 
 	val placeholder = @Composable {
 		Column(
@@ -112,7 +130,7 @@ fun LyricsScreen(
 	val density = LocalDensity.current
 	val listState = rememberLazyListState()
 
-	val lyricsAutoscroll = Settings.shared.lyricsAutoscroll
+	val lyricsAutoscroll = Settings.shared.lyricsAutoscroll && !isSelectionMode
 
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
@@ -151,12 +169,15 @@ fun LyricsScreen(
 				is UiState.Loading -> LoadingScreen()
 				is UiState.Success -> {
 					val lyrics = uiState.data
+					val maxSelectionChars = 150
+					fun totalSelectedChars(): Int = selectedIndices.sumOf { lyrics?.getOrNull(it)?.second?.length ?: 0 }
+
 					if (!lyrics.isNullOrEmpty()) {
 						val activeIndex = lyrics.indexOfLast { (time, _) ->
 							currentDuration >= time
 						}
 
-						LaunchedEffect(activeIndex) {
+						LaunchedEffect(activeIndex, isSelectionMode) {
 							if (!lyricsAutoscroll) return@LaunchedEffect
 
 							val layoutInfo = listState.layoutInfo
@@ -170,7 +191,7 @@ fun LyricsScreen(
 								val distance = itemCenter - viewportCenter
 								val thresholdPx = with(density) { 24.dp.toPx() }
 
-								if (kotlin.math.abs(distance) > thresholdPx) {
+								if (abs(distance) > thresholdPx) {
 									listState.animateScrollBy(
 										value = distance.toFloat(),
 										animationSpec = tween(
@@ -202,6 +223,7 @@ fun LyricsScreen(
 						) {
 							itemsIndexed(lyrics) { index, (startTime, text) ->
 								val isActive = index == activeIndex
+								val isSelected = selectedIndices.contains(index)
 
 								val lineProgress = when {
 									index < activeIndex -> 1f
@@ -218,30 +240,75 @@ fun LyricsScreen(
 								}
 
 								val padding by animateDpAsState(
-									if (isActive) 20.dp else 12.dp, label = "padding",
+									if ((isActive && !isSelectionMode) || (isSelectionMode && isSelected)) 20.dp else 12.dp,
 									animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
 								)
 
+								val targetColor = if (isSelected)
+									MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+									else Color.Transparent
+								val animatedColor by androidx.compose.animation.animateColorAsState(
+									targetColor
+								)
+
+								val highlight = if (isSelectionMode) isSelected else isActive
+								val progress = if (isSelectionMode && isSelected) {
+									1.1f
+								} else if (!isSelectionMode && isActive) {
+									lineProgress
+								} else {
+									0f
+								}
+
 								KaraokeText(
 									text = text,
-									progress = lineProgress,
-									isActive = isActive,
+									progress = progress,
+									isActive = highlight,
 									onClick = {
-										player.seek((startTime / duration).toFloat())
-										if (playerState.isPaused) {
-											player.resume()
+										if (isSelectionMode) {
+											if (selectedIndices.isEmpty()) {
+												val chars = text.length
+												if (chars <= maxSelectionChars) selectedIndices.add(index)
+											} else {
+												if (selectedIndices.contains(index)) {
+													if (index == selectedIndices.first() || index == selectedIndices.last()) {
+														selectedIndices.remove(index)
+													} else {
+														selectedIndices.clear()
+														selectedIndices.add(index)
+													}
+												} else {
+													val minIndex = selectedIndices.minOrNull() ?: index
+													val maxIndex = selectedIndices.maxOrNull() ?: index
+													val newChars = totalSelectedChars() + text.length
+													if (newChars <= maxSelectionChars) {
+														if (index == minIndex - 1 || index == maxIndex + 1) {
+															selectedIndices.add(index)
+														} else {
+															selectedIndices.clear()
+															selectedIndices.add(index)
+														}
+													}
+												}
+											}
+										} else {
+											player.seek((startTime / duration).toFloat())
+											if (playerState.isPaused) {
+												player.resume()
+											}
 										}
 									},
-									modifier = Modifier.padding(
-										horizontal = 32.dp,
-										vertical = padding
-									).then(
-										if (index == 0) {
-											Modifier.padding(top = 16.dp)
-										} else {
-											Modifier
-										}
-									)
+									modifier = Modifier
+										.padding(horizontal = 32.dp, vertical = padding)
+										.background(animatedColor, RoundedCornerShape(12.dp))
+										.padding(if (isSelected) 8.dp else 0.dp)
+										.then(
+											if (index == 0) {
+												Modifier.padding(top = 16.dp)
+											} else {
+												Modifier
+											}
+										)
 								)
 							}
 						}
@@ -249,6 +316,88 @@ fun LyricsScreen(
 						placeholder()
 					}
 				}
+			}
+		}
+		Row(
+			modifier = Modifier
+				.align(Alignment.BottomStart)
+				.padding(12.dp),
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(12.dp)
+		) {
+			IconButton(
+				modifier = Modifier
+					.size(48.dp)
+					.background(
+						color = if (isSelectionMode) MaterialTheme.colorScheme.primary else Color.Black.copy(
+							alpha = 0.2f
+						),
+						shape = RoundedCornerShape(12.dp)
+					),
+				onClick = {
+					if (isSelectionMode) {
+						isSelectionMode = false
+						selectedIndices.clear()
+						if (wasPlayingBeforeSelection) {
+							player.resume()
+						}
+					} else {
+						wasPlayingBeforeSelection = !playerState.isPaused
+						player.pause()
+						isSelectionMode = true
+					}
+				}) {
+				Icon(
+					imageVector = if (isSelectionMode) Icons.Outlined.Close else Icons.Outlined.Share,
+					contentDescription = null,
+					tint = if (isSelectionMode) MaterialTheme.colorScheme.onPrimary else Color.White
+				)
+			}
+			AnimatedVisibility(
+				visible = isSelectionMode && selectedIndices.isNotEmpty(),
+				enter = scaleIn() + fadeIn(),
+				exit = scaleOut() + fadeOut()
+			) {
+				IconButton(
+					modifier = Modifier
+						.size(48.dp)
+						.background(
+							color = MaterialTheme.colorScheme.onPrimary,
+							shape = RoundedCornerShape(12.dp)
+						),
+					onClick = { showShareSheet = true }
+				) {
+					Icon(
+						imageVector = Icons.Outlined.Check,
+						contentDescription = stringResource(Res.string.action_share)
+					)
+				}
+			}
+		}
+
+		if (showShareSheet) {
+			val lyricsList = (state as? UiState.Success)?.data
+				?.map { (duration, text) ->
+					duration.inWholeMilliseconds to text
+				}
+
+			if (lyricsList != null) {
+				val sortedIndices = selectedIndices.sorted()
+				val stringsToShare = sortedIndices.mapNotNull { index ->
+					lyricsList.getOrNull(index)?.second
+				}
+
+			LyricsShareSheet(
+					track = track,
+					selectedLyrics = stringsToShare,
+					sharedPainter = sharedPainter,
+					onDismiss = { showShareSheet = false },
+					onShare = {
+						showShareSheet = false
+						isSelectionMode = false
+						selectedIndices.clear()
+					}
+				)
 			}
 		}
 	}
@@ -293,7 +442,7 @@ private fun KaraokeText(
 	val lyricsBeatByBeat = Settings.shared.lyricsBeatByBeat
 
 	val inactiveAlpha by animateFloatAsState(
-		if (isActive) 1f else 0.35f, label = "alpha",
+		if (isActive) 1f else 0.35f,
 		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
 	)
 

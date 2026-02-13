@@ -127,6 +127,7 @@
 	<string name="action_view_on_lastfm">View on last.fm</string>
 	<string name="action_view_on_musicbrainz">View on MusicBrainz</string>
 	<string name="action_lyrics">Lyrics</string>
+	<string name="action_share_lyrics">Share Lyrics</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
 	<string name="notice_deleted_share">Deleted share.</string>
