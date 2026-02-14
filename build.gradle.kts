@@ -6,4 +6,5 @@ plugins {
 	alias(libs.plugins.kotlinMultiplatformLibrary) apply false
 	alias(libs.plugins.aboutLibraries) apply false
 	alias(libs.plugins.valkyrie) apply false
+	alias(libs.plugins.ksp) apply false
 }

@@ -1,6 +1,9 @@
 
+import com.android.build.gradle.internal.tasks.factory.dependsOn
+import com.google.devtools.ksp.gradle.KspAATask
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.w3c.dom.Element
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
@@ -16,11 +19,19 @@ plugins {
 	alias(libs.plugins.composeCompiler)
 	alias(libs.plugins.aboutLibraries)
 	alias(libs.plugins.valkyrie)
+	alias(libs.plugins.ksp)
 }
 
-configurations.all {
-	exclude(group = "org.jetbrains.compose.material", module = "material")
-	exclude(group = "androidx.compose.material", module = "material")
+configurations {
+	all {
+		exclude(group = "org.jetbrains.compose.material", module = "material")
+		exclude(group = "androidx.compose.material", module = "material")
+	}
+	kspCommonMainMetadata {
+		dependencies {
+			ksp(libs.kotlinInject.compiler)
+		}
+	}
 }
 
 valkyrie {
@@ -64,11 +75,13 @@ aboutLibraries {
 }
 
 tasks {
-	named("copyNonXmlValueResourcesForCommonMain") {
-		dependsOn(":composeApp:exportLibraryDefinitions")
+	copyNonXmlValueResourcesForCommonMain
+		.dependsOn(exportLibraryDefinitions)
+	withType<KotlinNativeCompile>().configureEach {
+		dependsOn(generateValkyrieImageVector)
 	}
-	withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile> {
-		dependsOn(":composeApp:generateValkyrieImageVector")
+	withType<KspAATask>().configureEach {
+		dependsOn(generateValkyrieImageVector)
 	}
 }
 
@@ -108,6 +121,8 @@ kotlin {
 
 			implementation(libs.navigation3.ui)
 			implementation(libs.kotlinx.datetime)
+
+			implementation(libs.kotlinInject.runtime)
 		}
 
 		androidMain.dependencies {
@@ -128,7 +143,6 @@ kotlin {
 			implementation(libs.nativeTray)
 		}
 	}
-
 }
 
 android {
