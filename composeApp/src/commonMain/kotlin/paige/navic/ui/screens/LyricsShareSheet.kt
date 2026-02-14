@@ -122,93 +122,88 @@ fun LyricsShareSheet(
 			)
 
 			Box(
-				Modifier.drawWithContent {
-					graphicsLayer.record {
-						this@drawWithContent.drawContent()
+				modifier = Modifier
+					.padding(horizontal = 32.dp)
+					.drawWithContent {
+						graphicsLayer.record {
+							this@drawWithContent.drawContent()
+						}
+						drawLayer(graphicsLayer)
 					}
-					drawLayer(graphicsLayer)
-				}
+					.fillMaxWidth()
+					.aspectRatio(4f / 5f)
+					.clip(RoundedCornerShape(24.dp))
+					.background(color = selectedColor)
+					.padding(24.dp)
 			) {
-				Box(
-					modifier = Modifier
-						.padding(horizontal = 32.dp)
-						.fillMaxWidth()
-						.aspectRatio(4f / 5f)
-						.clip(RoundedCornerShape(24.dp))
-						.background(
-							color = selectedColor
-						)
-						.padding(24.dp)
+				Row(
+					modifier = Modifier.align(Alignment.TopStart),
+					verticalAlignment = Alignment.CenterVertically
 				) {
-					Row(
-						modifier = Modifier.align(Alignment.TopStart),
-						verticalAlignment = Alignment.CenterVertically
-					) {
-						Image(
-							painter = sharedPainter,
-							contentDescription = null,
-							contentScale = ContentScale.Crop,
-							modifier = Modifier
-								.size(48.dp)
-								.clip(ContinuousRoundedRectangle(8.dp))
-								.background(MaterialTheme.colorScheme.surfaceVariant)
-						)
-
-						Spacer(Modifier.width(12.dp))
-
-						Column {
-							Text(
-								text = track.title,
-								style = MaterialTheme.typography.titleMedium,
-								color = contentColor,
-								fontWeight = FontWeight.Bold
-							)
-
-							Text(
-								text = track.artist
-									?: stringResource(Res.string.info_unknown_artist),
-								style = MaterialTheme.typography.bodyMedium,
-								color = contentColor.copy(alpha = 0.8f)
-							)
-						}
-					}
-
-					Column(
+					Image(
+						painter = sharedPainter,
+						contentDescription = null,
+						contentScale = ContentScale.Crop,
 						modifier = Modifier
-							.align(Alignment.Center)
-							.fillMaxWidth(),
-						verticalArrangement = Arrangement.Center
-					) {
-						selectedLyrics.forEach { line ->
-							Text(
-								text = line,
-								style = MaterialTheme.typography.headlineSmall,
-								color = contentColor,
-								fontWeight = FontWeight.Bold,
-								textAlign = TextAlign.Start,
-								lineHeight = 32.sp,
-								modifier = Modifier.padding(vertical = 4.dp)
-							)
-						}
-					}
-					Row(
-						verticalAlignment = Alignment.CenterVertically,
-						modifier = Modifier.align(Alignment.BottomStart)
-					) {
-						Icon(
-							imageVector = Icons.Desktop.Navic,
-							contentDescription = null,
-							tint = contentColor,
-							modifier = Modifier.size(24.dp)
-						)
-						Spacer(modifier = Modifier.size(8.dp))
+							.size(48.dp)
+							.clip(ContinuousRoundedRectangle(8.dp))
+							.background(MaterialTheme.colorScheme.surfaceVariant)
+					)
+
+					Spacer(Modifier.width(12.dp))
+
+					Column {
 						Text(
-							text = stringResource(Res.string.app_name),
+							text = track.title,
+							style = MaterialTheme.typography.titleMedium,
 							color = contentColor,
-							style = MaterialTheme.typography.titleSmall,
 							fontWeight = FontWeight.Bold
 						)
+
+						Text(
+							text = track.artist
+								?: stringResource(Res.string.info_unknown_artist),
+							style = MaterialTheme.typography.bodyMedium,
+							color = contentColor.copy(alpha = 0.8f)
+						)
 					}
+				}
+
+				Column(
+					modifier = Modifier
+						.align(Alignment.Center)
+						.fillMaxWidth(),
+					verticalArrangement = Arrangement.Center
+				) {
+					selectedLyrics.forEach { line ->
+						Text(
+							text = line,
+							style = MaterialTheme.typography.headlineSmall,
+							color = contentColor,
+							fontWeight = FontWeight.Bold,
+							textAlign = TextAlign.Start,
+							lineHeight = 32.sp,
+							modifier = Modifier.padding(vertical = 4.dp)
+						)
+					}
+				}
+				Row(
+					verticalAlignment = Alignment.CenterVertically,
+					modifier = Modifier.align(Alignment.BottomStart)
+				) {
+					Icon(
+						imageVector = Icons.Desktop.Navic,
+						contentDescription = null,
+						tint = contentColor,
+						modifier = Modifier.size(24.dp)
+					)
+					Spacer(modifier = Modifier.size(8.dp))
+					Text(
+						text = stringResource(Res.string.app_name),
+						color = contentColor,
+						style = MaterialTheme.typography.titleSmall,
+						fontWeight = FontWeight.Bold
+					)
 				}
 			}
 
