@@ -53,8 +53,10 @@ import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
 import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.shared.ShareManager
 import paige.navic.shared.rememberCtx
 import paige.navic.shared.rememberMediaPlayer
+import paige.navic.shared.rememberShareManager
 import paige.navic.ui.components.layouts.BottomBar
 import paige.navic.ui.components.layouts.PlayerBar
 import paige.navic.ui.scenes.BottomSheetSceneStrategy
@@ -121,11 +123,13 @@ val LocalMediaPlayer = staticCompositionLocalOf<MediaPlayerViewModel> { error("n
 val LocalNavStack = staticCompositionLocalOf<NavBackStack<NavKey>> { error("no backstack") }
 val LocalImageBuilder = staticCompositionLocalOf<ImageRequest.Builder> { error("no image builder") }
 val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> { error("no snackbar state") }
+val LocalShareManager = staticCompositionLocalOf<ShareManager> { error("no share manager") }
 val LocalContentPadding = staticCompositionLocalOf { PaddingValues() }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun App() {
+	val shareManager = rememberShareManager()
 	val platformContext = LocalPlatformContext.current
 	val ctx = rememberCtx()
 	val mediaPlayer = rememberMediaPlayer()
@@ -138,7 +142,8 @@ fun App() {
 		LocalMediaPlayer provides mediaPlayer,
 		LocalNavStack provides backStack,
 		LocalImageBuilder provides imageBuilder,
-		LocalSnackbarState provides snackbarState
+		LocalSnackbarState provides snackbarState,
+		LocalShareManager provides shareManager
 	) {
 		NavicTheme {
 			Scaffold(

@@ -58,11 +58,12 @@ import navic.composeapp.generated.resources.action_share_lyrics
 import navic.composeapp.generated.resources.app_name
 import navic.composeapp.generated.resources.info_unknown_artist
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalShareManager
+import paige.navic.LocalSnackbarState
 import paige.navic.icons.Icons
 import paige.navic.icons.desktop.Navic
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Share
-import paige.navic.shared.ShareServiceProvider
 import paige.subsonic.api.models.Track
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,6 +75,8 @@ fun LyricsShareSheet(
 	onDismiss: () -> Unit,
 	onShare: () -> Unit
 ) {
+	val shareManager = LocalShareManager.current
+	val snackbarState = LocalSnackbarState.current
 	val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
 	val defaultColor = MaterialTheme.colorScheme.onPrimary
@@ -97,7 +100,7 @@ fun LyricsShareSheet(
 		Color.Black else Color.White
 
 	val graphicsLayer = rememberGraphicsLayer()
-	val coroutineScope = rememberCoroutineScope()
+	val scope = rememberCoroutineScope()
 
 	ModalBottomSheet(
 		onDismissRequest = onDismiss,
@@ -244,15 +247,19 @@ fun LyricsShareSheet(
 
 			Button(
 				onClick = {
-					coroutineScope.launch {
-						val bmp = graphicsLayer.toImageBitmap()
-
-						ShareServiceProvider.service.shareImage(
-							bitmap = bmp,
-							fileName = "lyrics.png"
-						)
+					scope.launch {
+						try {
+							val bmp = graphicsLayer.toImageBitmap()
+							shareManager.shareImage(
+								bitmap = bmp,
+								fileName = "lyrics.png"
+							)
+						} catch(e: Exception) {
+							snackbarState.showSnackbar(e.message ?: "Something went wrong.")
+						} finally {
+							onShare()
+						}
 					}
-					onShare()
 				},
 				modifier = Modifier
 					.fillMaxWidth()

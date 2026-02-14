@@ -3,14 +3,19 @@ package paige.navic.shared
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
-class AndroidShareService(private val context: Context) : ShareService {
-	override fun shareImage(bitmap: ImageBitmap, fileName: String) {
+actual class ShareManager(private val context: Context) {
+	actual suspend fun shareImage(bitmap: ImageBitmap, fileName: String) {
 		val androidBitmap = bitmap.asAndroidBitmap()
 
 		val imageFolder = File(context.cacheDir, "shared_images")
@@ -18,8 +23,10 @@ class AndroidShareService(private val context: Context) : ShareService {
 		val file = File(imageFolder, fileName)
 
 		try {
-			FileOutputStream(file).use { out ->
-				androidBitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+			withContext(Dispatchers.IO) {
+				FileOutputStream(file).use { out ->
+					androidBitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+				}
 			}
 		} catch (e: Exception) {
 			e.printStackTrace()
@@ -41,4 +48,10 @@ class AndroidShareService(private val context: Context) : ShareService {
 		chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 		context.startActivity(chooser)
 	}
+}
+
+@Composable
+actual fun rememberShareManager(): ShareManager {
+	val context = LocalContext.current
+	return remember { ShareManager(context) }
 }
