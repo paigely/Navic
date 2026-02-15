@@ -51,6 +51,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.materialkolor.utils.ColorUtils.calculateLuminance
+import dev.zt64.compose.pipette.CircularColorPicker
+import dev.zt64.compose.pipette.HsvColor
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_share_lyrics
@@ -62,7 +64,10 @@ import paige.navic.LocalSnackbarState
 import paige.navic.icons.Icons
 import paige.navic.icons.desktop.Navic
 import paige.navic.icons.outlined.Check
+import paige.navic.icons.outlined.Picker
 import paige.navic.icons.outlined.Share
+import paige.navic.ui.components.common.Dropdown
+import paige.navic.ui.components.common.FormRow
 import paige.subsonic.api.models.Track
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,6 +102,9 @@ fun LyricsShareSheet(
 
 	val contentColor = if (calculateLuminance(selectedColor.toArgb()) > 0.5)
 		Color.Black else Color.White
+
+	var customHsv by remember { mutableStateOf(HsvColor(210f, 1f, 1f)) }
+	var expanded by remember { mutableStateOf(false) }
 
 	val graphicsLayer = rememberGraphicsLayer()
 	val scope = rememberCoroutineScope()
@@ -210,28 +218,47 @@ fun LyricsShareSheet(
 
 			LazyRow(
 				contentPadding = PaddingValues(horizontal = 24.dp),
-				horizontalArrangement = Arrangement.spacedBy(12.dp)
+				horizontalArrangement = Arrangement.spacedBy(12.dp),
+				verticalAlignment = Alignment.CenterVertically,
+				overscrollEffect = null
 			) {
 				items(colors) { color ->
-					val isSelected = color == selectedColor
-					Box(
-						modifier = Modifier
-							.size(48.dp)
-							.clip(CircleShape)
-							.background(color)
-							.clickable { selectedColor = color }
-							.then(
-								if (isSelected) Modifier.border(3.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
-								else Modifier
-							),
-						contentAlignment = Alignment.Center
-					) {
-						if (isSelected) {
-							Icon(
-								imageVector = Icons.Outlined.Check,
-								contentDescription = null,
-								tint = if (calculateLuminance(color.toArgb()) > 0.5) Color.Black else Color.White
-							)
+					ColorCircle(
+						color = color,
+						isSelected = color == selectedColor,
+						onClick = { selectedColor = color },
+						isPicker = false
+					)
+				}
+
+				item {
+					Box {
+						ColorCircle(
+							color = customHsv.toColor(),
+							isSelected = selectedColor == customHsv.toColor(),
+							onClick = {
+								selectedColor = customHsv.toColor()
+								expanded = true
+							},
+							isPicker = true
+						)
+
+						Dropdown(
+							expanded = expanded,
+							onDismissRequest = { expanded = false }
+						) {
+							FormRow(
+								color = MaterialTheme.colorScheme.surfaceContainer,
+								horizontalArrangement = Arrangement.Center
+							) {
+								CircularColorPicker(
+									color = { customHsv },
+									onColorChange = { newHsv ->
+										customHsv = newHsv
+										selectedColor = newHsv.toColor()
+									}
+								)
+							}
 						}
 					}
 				}
@@ -269,6 +296,41 @@ fun LyricsShareSheet(
 				Spacer(modifier = Modifier.size(8.dp))
 				Text(stringResource(Res.string.action_share_lyrics), style = MaterialTheme.typography.titleMedium)
 			}
+		}
+	}
+}
+
+@Composable
+fun ColorCircle(
+	color: Color,
+	isSelected: Boolean,
+	onClick: () -> Unit,
+	isPicker: Boolean
+) {
+	Box(
+		modifier = Modifier
+			.size(48.dp)
+			.clip(CircleShape)
+			.background(color)
+			.clickable { onClick() }
+			.then(
+				if (isSelected) Modifier.border(3.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+				else Modifier.border(1.dp, Color.White.copy(alpha = 0.1f), CircleShape)
+			),
+		contentAlignment = Alignment.Center
+	) {
+		if (isSelected) {
+			Icon(
+				imageVector = Icons.Outlined.Check,
+				contentDescription = null,
+				tint = if (calculateLuminance(color.toArgb()) > 0.5) Color.Black else Color.White
+			)
+		} else if (isPicker){
+			Icon(
+				imageVector = Icons.Outlined.Picker,
+				contentDescription = null,
+				modifier = Modifier.size(16.dp),
+			)
 		}
 	}
 }
