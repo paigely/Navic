@@ -19,6 +19,7 @@
     <string name="action_repeat">Ripeti</string>
     <string name="action_see_all">Vedi tutti</string>
     <string name="action_share">Condividi</string>
+    <string name="action_share_lyrics">Condividi testo</string>
     <string name="action_shuffle">Casuale</string>
     <string name="action_star">Aggiungi ai preferiti</string>
     <string name="action_track_info">Info sulla traccia</string>
