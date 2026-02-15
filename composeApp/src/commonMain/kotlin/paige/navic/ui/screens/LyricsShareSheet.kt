@@ -50,7 +50,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kyant.capsule.ContinuousRoundedRectangle
 import com.materialkolor.utils.ColorUtils.calculateLuminance
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
@@ -146,7 +145,7 @@ fun LyricsShareSheet(
 						contentScale = ContentScale.Crop,
 						modifier = Modifier
 							.size(48.dp)
-							.clip(ContinuousRoundedRectangle(8.dp))
+							.clip(MaterialTheme.shapes.small)
 							.background(MaterialTheme.colorScheme.surfaceVariant)
 					)
 
@@ -264,7 +263,7 @@ fun LyricsShareSheet(
 					containerColor = MaterialTheme.colorScheme.primary,
 					contentColor = MaterialTheme.colorScheme.onPrimary
 				),
-				shape = RoundedCornerShape(28.dp)
+				shape = MaterialTheme.shapes.extraLarge
 			) {
 				Icon(Icons.Outlined.Share, null)
 				Spacer(modifier = Modifier.size(8.dp))

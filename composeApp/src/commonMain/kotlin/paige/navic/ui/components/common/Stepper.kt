@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import com.kyant.capsule.ContinuousRoundedRectangle
 
 @Composable
 fun Stepper(
@@ -27,7 +26,7 @@ fun Stepper(
 ) {
 	Surface(
 		modifier = modifier,
-		shape = ContinuousRoundedRectangle(12.dp),
+		shape = MaterialTheme.shapes.medium,
 		tonalElevation = 2.dp,
 		shadowElevation = 2.dp,
 		color = MaterialTheme.colorScheme.surfaceContainerHighest

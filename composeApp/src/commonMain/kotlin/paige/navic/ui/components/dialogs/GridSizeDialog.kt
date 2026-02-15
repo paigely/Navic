@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_grid_items_per_row
@@ -91,10 +90,10 @@ fun GridSizePreview(
 				horizontalArrangement = Arrangement.spacedBy(2.dp)
 			) {
 				repeat(size) {
-					val shape = ContinuousRoundedRectangle(when (size) {
-						2 -> 6.dp
-						else -> 4.dp
-					})
+					val shape = when (size) {
+						2 -> MaterialTheme.shapes.small
+						else -> MaterialTheme.shapes.extraSmall
+					}
 					Box(
 						modifier = Modifier
 							.weight(1f)

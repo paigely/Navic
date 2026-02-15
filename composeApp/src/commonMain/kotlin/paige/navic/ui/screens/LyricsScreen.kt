@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -300,7 +299,7 @@ fun LyricsScreen(
 									},
 									modifier = Modifier
 										.padding(horizontal = 32.dp, vertical = padding)
-										.background(animatedColor, RoundedCornerShape(12.dp))
+										.background(animatedColor, MaterialTheme.shapes.medium)
 										.padding(if (isSelected) 8.dp else 0.dp)
 										.then(
 											if (index == 0) {
@@ -332,7 +331,7 @@ fun LyricsScreen(
 						color = if (isSelectionMode) MaterialTheme.colorScheme.primary else Color.Black.copy(
 							alpha = 0.2f
 						),
-						shape = RoundedCornerShape(12.dp)
+						shape = MaterialTheme.shapes.medium
 					),
 				onClick = {
 					if (isSelectionMode) {
@@ -363,7 +362,7 @@ fun LyricsScreen(
 						.size(48.dp)
 						.background(
 							color = MaterialTheme.colorScheme.onPrimary,
-							shape = RoundedCornerShape(12.dp)
+							shape = MaterialTheme.shapes.medium
 						),
 					onClick = { showShareSheet = true }
 				) {

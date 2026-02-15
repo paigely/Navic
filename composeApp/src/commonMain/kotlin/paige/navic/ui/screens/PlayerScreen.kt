@@ -54,7 +54,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyant.capsule.ContinuousCapsule
-import com.kyant.capsule.ContinuousRoundedRectangle
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import kotlinx.coroutines.launch
@@ -334,9 +333,9 @@ fun PlayerScreen(
 	}
 	val controlsRow = @Composable {
 		val shapes = ToggleButtonShapes(
-			shape = ContinuousRoundedRectangle(20.dp),
-			pressedShape = ContinuousRoundedRectangle(8.dp),
-			checkedShape = ContinuousRoundedRectangle(20.dp)
+			shape = MaterialTheme.shapes.largeIncreased,
+			pressedShape = MaterialTheme.shapes.small,
+			checkedShape = MaterialTheme.shapes.largeIncreased
 		)
 		Row(
 			modifier = Modifier
@@ -429,9 +428,9 @@ fun PlayerScreen(
 	}
 	val toolBar = @Composable {
 		val shapes = ToggleButtonShapes(
-			shape = ContinuousRoundedRectangle(12.dp),
-			pressedShape = ContinuousRoundedRectangle(8.dp),
-			checkedShape = ContinuousRoundedRectangle(12.dp)
+			shape = MaterialTheme.shapes.medium,
+			pressedShape = MaterialTheme.shapes.small,
+			checkedShape = MaterialTheme.shapes.medium
 		)
 		Row(
 			modifier = Modifier
@@ -531,7 +530,7 @@ fun PlayerScreen(
 						.aspectRatio(1f)
 						.fillMaxSize()
 						.padding(imagePadding)
-						.clip(ContinuousRoundedRectangle(16.dp))
+						.clip(MaterialTheme.shapes.large)
 						.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
 				)
 				if (coverUri.isNullOrEmpty()) {

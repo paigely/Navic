@@ -29,7 +29,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.ui.theme.defaultFont
@@ -63,7 +62,7 @@ fun <Item>SelectionDropdown(
 					.padding(bottom = 8.dp)
 					.padding(horizontal = 8.dp),
 				color = MaterialTheme.colorScheme.surfaceContainerHigh,
-				shape = ContinuousRoundedRectangle(16.dp),
+				shape = MaterialTheme.shapes.large,
 				shadowElevation = 3.dp
 			) {
 				Column(
@@ -108,7 +107,7 @@ private fun SelectionDropdownItem(
 			.fillMaxWidth()
 			.padding(6.dp),
 		color = color,
-		shape = ContinuousRoundedRectangle(12.dp),
+		shape = MaterialTheme.shapes.medium,
 		shadowElevation = elevation,
 		onClick = { if (!selected) onClick() }
 	) {

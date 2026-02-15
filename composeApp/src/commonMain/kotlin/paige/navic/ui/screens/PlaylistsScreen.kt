@@ -24,9 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_new
@@ -88,7 +86,7 @@ fun PlaylistsScreen(
 		floatingActionButton = {
 			ExtendedFloatingActionButton(
 				modifier = Modifier.offset(y = -LocalContentPadding.current.calculateBottomPadding()),
-				shape = ContinuousRoundedRectangle(14.dp),
+				shape = MaterialTheme.shapes.large,
 				onClick = {
 					ctx.clickSound()
 					if (backStack.lastOrNull() !is Screen.CreatePlaylist) {

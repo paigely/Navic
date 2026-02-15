@@ -124,7 +124,7 @@ fun ArtGridPlaceholder(
 			modifier = Modifier
 				.fillMaxWidth()
 				.aspectRatio(1f)
-				.clip(ContinuousRoundedRectangle(16.dp))
+				.clip(MaterialTheme.shapes.large)
 				.shimmerLoading()
 		)
 		Box(

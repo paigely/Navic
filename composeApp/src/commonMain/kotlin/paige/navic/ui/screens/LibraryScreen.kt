@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
-import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.option_sort_frequent
@@ -246,8 +245,8 @@ private fun LazyGridScope.overviewButton(
 			contentPadding = PaddingValues(horizontal = 12.dp),
 			elevation = null,
 			shapes = ButtonDefaults.shapes(
-				shape = ContinuousRoundedRectangle(10.dp),
-				pressedShape = ContinuousRoundedRectangle(7.dp)
+				shape = MaterialTheme.shapes.medium,
+				pressedShape = MaterialTheme.shapes.small
 			),
 			colors = ButtonDefaults.buttonColors(
 				containerColor = MaterialTheme.colorScheme.surfaceContainer,

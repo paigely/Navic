@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kyant.capsule.ContinuousRoundedRectangle
 import com.materialkolor.ktx.darken
 import kotlinx.coroutines.delay
 import navic.composeapp.generated.resources.Res
@@ -96,7 +95,7 @@ fun ErrorBox(
 					Modifier
 						.background(
 							MaterialTheme.colorScheme.surfaceContainer,
-							ContinuousRoundedRectangle(3.dp)
+							MaterialTheme.shapes.extraSmall
 						)
 						.padding(8.dp)
 						.horizontalScroll(rememberScrollState())

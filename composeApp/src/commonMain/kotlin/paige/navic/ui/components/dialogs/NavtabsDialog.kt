@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kyant.capsule.ContinuousRoundedRectangle
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -182,7 +181,7 @@ private fun ReorderableCollectionItemScope.NavtabRow(
 	Surface(
 		shadowElevation = elevation,
 		modifier = Modifier.fillMaxWidth(),
-		shape = ContinuousRoundedRectangle(14.dp)
+		shape = MaterialTheme.shapes.large
 	) {
 		Row(
 			modifier = Modifier

@@ -15,6 +15,7 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SplitButtonDefaults
 import androidx.compose.material3.SplitButtonLayout
@@ -30,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_new
@@ -68,7 +68,7 @@ fun AddToPlaylistScreen(
 	val selectedPlaylist by viewModel.selectedPlaylist.collectAsState()
 
 	val list: @Composable (playlists: List<Playlist>) -> Unit = { playlists ->
-		LazyColumn(Modifier.selectableGroup().clip(ContinuousRoundedRectangle(20.dp))) {
+		LazyColumn(Modifier.selectableGroup().clip(MaterialTheme.shapes.largeIncreased)) {
 			items(playlists) { playlist ->
 				ListItem(
 					modifier = Modifier

@@ -54,7 +54,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
-import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_clear_search
 import navic.composeapp.generated.resources.action_navigate_back
@@ -189,7 +188,7 @@ fun SearchScreen(
 												modifier = Modifier
 													.padding(start = 6.5.dp)
 													.size(50.dp)
-													.clip(ContinuousRoundedRectangle(8.dp)),
+													.clip(MaterialTheme.shapes.small),
 												contentScale = ContentScale.Crop
 											)
 										}
@@ -265,7 +264,7 @@ private fun SearchChips(
 						maxLines = 1
 					)
 				},
-				shape = ContinuousRoundedRectangle(8.dp),
+				shape = MaterialTheme.shapes.small,
 				leadingIcon = if (isSelected) {
 					{
 						Icon(

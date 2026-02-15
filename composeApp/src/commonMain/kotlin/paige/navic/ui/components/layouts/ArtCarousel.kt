@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
-import com.kyant.capsule.ContinuousRoundedRectangle
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
@@ -85,7 +84,7 @@ fun CarouselItemScope.ArtCarouselItem(
 		modifier = Modifier
 			.fillMaxWidth()
 			.aspectRatio(1f)
-			.maskClip(ContinuousRoundedRectangle(15.dp))
+			.maskClip(MaterialTheme.shapes.large)
 			.clickable {
 				ctx.clickSound()
 				focusManager.clearFocus(true)

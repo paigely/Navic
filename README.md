@@ -19,12 +19,10 @@ Expressive design language.
 * An intuitive and familiar UI
 * Customizable, many settings and more to come
 * Pretty lightweight and fast
-* Secure and private: no permissions, doesn't connect to anything beside your instance[^1]
+* Secure and private: no permissions, doesn't connect to anything beside your instance
 * Integrated into your system: shows up on the lock screen + quick settings
 * Feature rich, implements most subsonic APIs
 * Open source: features are being added and bugs are being fixed actively
-
-[^1]: Navic also connects to lyric providers, that being your instance and [LRCLIB](https://lrclib.net/). This will be customisable in the future. The default set of providers is subject to change and support will likely expand in the future. Navic does not connect to these providers at all unless you open the lyrics screen.
 
 ## Screenshots
 |         Library          |         Player          |         Lyrics          |         Albums          |

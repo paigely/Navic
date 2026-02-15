@@ -11,6 +11,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,7 +28,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyant.capsule.ContinuousCapsule
-import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -69,6 +70,7 @@ class ShareViewModel : ViewModel() {
 	}
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ShareDialog(
 	viewModel: ShareViewModel = viewModel { ShareViewModel() },
@@ -165,6 +167,6 @@ fun ShareDialog(
 				onClick = { onIdClear() },
 			) { Text(stringResource(Res.string.action_cancel)) }
 		},
-		shape = ContinuousRoundedRectangle(42.dp)
+		shape = MaterialTheme.shapes.extraExtraLarge
 	)
 }

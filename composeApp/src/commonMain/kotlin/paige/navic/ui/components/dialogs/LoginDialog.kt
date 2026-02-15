@@ -44,7 +44,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyant.capsule.ContinuousCapsule
-import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_log_in
@@ -194,6 +193,6 @@ fun LoginDialog(
 				content = { Text(stringResource(Res.string.action_cancel)) }
 			)
 		},
-		shape = ContinuousRoundedRectangle(42.dp)
+		shape = MaterialTheme.shapes.extraExtraLarge
 	)
 }

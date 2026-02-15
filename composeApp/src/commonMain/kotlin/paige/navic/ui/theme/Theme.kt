@@ -6,7 +6,10 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
+import androidx.compose.material3.ShapeDefaults
+import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
+import com.kyant.capsule.ContinuousRoundedRectangle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
 import dev.zt64.compose.pipette.HsvColor
@@ -38,11 +41,21 @@ fun NavicTheme(
 	}
 
 	MaterialExpressiveTheme(
-		motionScheme = MotionScheme.expressive(),
 		colorScheme = colorScheme(),
+		motionScheme = MotionScheme.expressive(),
 		typography = if (Settings.shared.useSystemFont)
 			MaterialTheme.typography
 		else typography(),
+		shapes = Shapes(
+			extraSmall = ContinuousRoundedRectangle(ShapeDefaults.ExtraSmall.topStart),
+			small = ContinuousRoundedRectangle(ShapeDefaults.Small.topStart),
+			medium = ContinuousRoundedRectangle(ShapeDefaults.Medium.topStart),
+			large = ContinuousRoundedRectangle(ShapeDefaults.Large.topStart),
+			extraLarge = ContinuousRoundedRectangle(ShapeDefaults.ExtraLarge.topStart),
+			largeIncreased = ContinuousRoundedRectangle(ShapeDefaults.LargeIncreased.topStart),
+			extraLargeIncreased = ContinuousRoundedRectangle(ShapeDefaults.ExtraLargeIncreased.topStart),
+			extraExtraLarge = ContinuousRoundedRectangle(ShapeDefaults.ExtraExtraLarge.topStart)
+		),
 		content = content
 	)
 }

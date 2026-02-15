@@ -27,7 +27,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -126,8 +125,8 @@ private fun TimeCard(
 			Box(
 				modifier = Modifier
 					.width(120.dp)
-					.background(backgroundColor, ContinuousRoundedRectangle(12.dp))
-					.border(2.dp, borderColor, ContinuousRoundedRectangle(11.dp))
+					.background(backgroundColor, MaterialTheme.shapes.medium)
+					.border(2.dp, borderColor, MaterialTheme.shapes.medium)
 					.padding(vertical = 8.dp),
 				contentAlignment = Alignment.Center
 			) {
