@@ -15,7 +15,11 @@ fun rememberTrackPainter(trackId: String?, coverArt: String?): Painter {
 	val context = LocalPlatformContext.current
 
 	val coverUri = remember(coverArt) {
-		SessionManager.api.getCoverArtUrl(coverArt, auth = true)
+		if (coverArt?.startsWith("http") == true) {
+			coverArt
+		} else {
+			SessionManager.api.getCoverArtUrl(coverArt, auth = true)
+		}
 	}
 
 	val imageRequest = remember(coverUri, trackId) {

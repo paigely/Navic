@@ -2,16 +2,12 @@ package paige.navic.shared
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import paige.navic.data.models.Settings
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.models.Track
 import paige.subsonic.api.models.TrackCollection
-import kotlin.time.Clock
 
 data class PlayerUiState(
 	val queue: List<Track> = emptyList(),
@@ -43,36 +39,6 @@ abstract class MediaPlayerViewModel : ViewModel() {
 	abstract fun toggleShuffle()
 	abstract fun toggleRepeat()
 	abstract fun shufflePlay(tracks: TrackCollection)
-
-	protected fun scrobbleSubmission(trackId: String?) {
-		if (!Settings.shared.enableScrobbling) return
-		viewModelScope.launch {
-			try {
-				trackId?.let {
-					SessionManager.api.scrobble(
-						it,
-						Clock.System.now().toEpochMilliseconds(),
-						submission = true
-					)
-				}
-			} catch (_: Exception) {}
-		}
-	}
-
-	protected fun scrobbleNowPlaying(trackId: String?) {
-		if (!Settings.shared.enableScrobbling) return
-		viewModelScope.launch {
-			try {
-				trackId?.let {
-					SessionManager.api.scrobble(
-						it,
-						Clock.System.now().toEpochMilliseconds(),
-						submission = false
-					)
-				}
-			} catch (_: Exception) {}
-		}
-	}
 
 	fun togglePlay() {
 		if (!_uiState.value.isPaused) {

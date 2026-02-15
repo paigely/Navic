@@ -11,6 +11,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
@@ -23,6 +25,8 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,6 +37,8 @@ import paige.subsonic.api.models.TrackCollection
 
 class PlaybackService : MediaSessionService() {
 	private var mediaSession: MediaSession? = null
+	private val serviceScope = MainScope()
+	private var scrobbleManager: AndroidScrobbleManager? = null
 
 	@OptIn(UnstableApi::class)
 	override fun onCreate() {
@@ -51,13 +57,16 @@ class PlaybackService : MediaSessionService() {
 			.build()
 			.apply {
 				setAudioAttributes(
-					androidx.media3.common.AudioAttributes.Builder()
-						.setUsage(androidx.media3.common.C.USAGE_MEDIA)
-						.setContentType(androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC)
+					AudioAttributes.Builder()
+						.setUsage(C.USAGE_MEDIA)
+						.setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
 						.build(),
 					true
 				)
 			}
+
+		scrobbleManager = AndroidScrobbleManager(player, serviceScope)
+
 		val sessionIntent = Intent(this, MainActivity::class.java).apply {
 			flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or
 				Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -85,6 +94,8 @@ class PlaybackService : MediaSessionService() {
 	}
 
 	override fun onDestroy() {
+		scrobbleManager?.release()
+		serviceScope.cancel()
 		mediaSession?.run {
 			player.release()
 			release()
@@ -131,6 +142,19 @@ class AndroidMediaPlayerViewModel(
 				override fun onIsPlayingChanged(isPlaying: Boolean) {
 					_uiState.update { it.copy(isPaused = !isPlaying) }
 					if (isPlaying) startProgressLoop()
+					val intent = Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
+						setPackage(application.packageName)
+						putExtra("isPlaying", isPlaying)
+						putExtra("title", _uiState.value.currentTrack?.title ?: "Unknown track")
+						putExtra("artist", _uiState.value.currentTrack?.artist ?: "Unknown artist")
+						putExtra(
+							"artUrl", SessionManager.api.getCoverArtUrl(
+								id = _uiState.value.currentTrack?.coverArt, auth = true, size = 700
+							)
+						)
+					}
+
+					application.sendBroadcast(intent)
 				}
 
 				override fun onPlaybackStateChanged(playbackState: Int) {
