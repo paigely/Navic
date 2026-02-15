@@ -31,7 +31,9 @@ fun TrackRow(
 	ListItem(
 		modifier = modifier.clickable {
 			ctx.clickSound()
-			player.playSingle(track)
+			player.clearQueue()
+			player.addToQueueSingle(track)
+			player.playAt(0)
 		},
 		headlineContent = {
 			Text(track.title)

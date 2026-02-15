@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -41,7 +42,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_not_playing
@@ -51,7 +51,6 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
-import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
@@ -59,6 +58,7 @@ import paige.navic.icons.filled.Play
 import paige.navic.icons.filled.SkipNext
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
+import paige.navic.utils.rememberTrackPainter
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -72,11 +72,9 @@ fun PlayerBar(
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
 	val coverUri = remember(track?.coverArt) {
-		SessionManager.api.getCoverArtUrl(
-			track?.coverArt,
-			auth = true
-		)
+		track?.coverArt
 	}
+	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArt)
 
 	val detached = Settings.shared.detachedBar
 
@@ -175,8 +173,8 @@ fun PlayerBar(
 				onLongClick = onClick,
 				leadingContent = {
 					Box(contentAlignment = Alignment.Center) {
-						AsyncImage(
-							model = coverUri,
+						Image(
+							painter = sharedPainter,
 							contentDescription = null,
 							contentScale = ContentScale.Crop,
 							modifier = Modifier

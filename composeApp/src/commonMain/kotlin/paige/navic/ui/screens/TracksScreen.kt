@@ -247,7 +247,9 @@ fun TracksScreen(
 												track = track,
 												index = index,
 												onClick = {
-													player.play(tracks, index)
+													player.clearQueue()
+													player.addToQueue(tracks)
+													player.playAt(index)
 												},
 												onLongClick = {
 													viewModel.selectTrack(track, index)
@@ -434,7 +436,11 @@ private fun TracksScreenScope.Metadata() {
 		val shape = ContinuousRoundedRectangle(12.dp)
 		FilledTonalButton(
 			modifier = Modifier.weight(1f),
-			onClick = { player.play(tracks, 0) },
+			onClick = {
+				player.clearQueue()
+				player.addToQueue(tracks)
+				player.playAt(0)
+					  },
 			shape = shape
 		) {
 			Icon(Icons.Filled.Play, null)

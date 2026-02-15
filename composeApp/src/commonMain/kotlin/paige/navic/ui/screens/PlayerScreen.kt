@@ -76,7 +76,6 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
-import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
@@ -120,10 +119,7 @@ fun PlayerScreen(
 	val track = playerState.currentTrack
 
 	val coverUri = remember(track?.coverArt) {
-		SessionManager.api.getCoverArtUrl(
-			track?.coverArt,
-			auth = true
-		)
+		track?.coverArt
 	}
 	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArt)
 
@@ -194,7 +190,7 @@ fun PlayerScreen(
 			) {
 				DropdownItem(
 					onClick = {
-						playerState.tracks?.let { tracks ->
+						playerState.currentCollection?.let { tracks ->
 							expanded = false
 							backStack.remove(Screen.Player)
 							backStack.add(Screen.Tracks(tracks))
@@ -203,7 +199,7 @@ fun PlayerScreen(
 					text = {
 						Text(
 							stringResource(
-								when (playerState.tracks) {
+								when (playerState.currentCollection) {
 									is Playlist -> Res.string.action_view_playlist
 									else -> Res.string.action_view_album
 								}
@@ -214,7 +210,7 @@ fun PlayerScreen(
 				)
 				DropdownItem(
 					onClick = {
-						playerState.tracks?.artistId?.let { artistId ->
+						track?.artistId?.let { artistId ->
 							expanded = false
 							backStack.remove(Screen.Player)
 							backStack.add(Screen.Artist(artistId))
@@ -271,7 +267,7 @@ fun PlayerScreen(
 								if (!isSameAlbum)
 									backStack.add(
 										Screen.Tracks(
-											playerState.tracks ?: return@clickable
+											playerState.currentCollection ?: return@clickable
 										)
 									)
 							}

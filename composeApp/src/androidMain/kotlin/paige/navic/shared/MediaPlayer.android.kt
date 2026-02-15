@@ -23,13 +23,10 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import paige.navic.MainActivity
-import paige.navic.data.models.Settings
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.models.Track
 import paige.subsonic.api.models.TrackCollection
@@ -132,18 +129,6 @@ class AndroidMediaPlayerViewModel(
 				override fun onIsPlayingChanged(isPlaying: Boolean) {
 					_uiState.update { it.copy(isPaused = !isPlaying) }
 					if (isPlaying) startProgressLoop()
-
-					val intent = Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
-						setPackage(application.packageName)
-						putExtra("isPlaying", isPlaying)
-						putExtra("title", _uiState.value.currentTrack?.title ?: "Unknown track")
-						putExtra("artist", _uiState.value.currentTrack?.artist ?: "Unknown artist")
-						putExtra("artUrl", SessionManager.api.getCoverArtUrl(
-							id = _uiState.value.currentTrack?.coverArt, auth = true, size = 700
-						))
-					}
-
-					application.sendBroadcast(intent)
 				}
 
 				override fun onPlaybackStateChanged(playbackState: Int) {
@@ -166,22 +151,11 @@ class AndroidMediaPlayerViewModel(
 	private fun updatePlaybackState() {
 		controller?.let { player ->
 			val index = player.currentMediaItemIndex
-			val currentTrack = player.currentMediaItem
-			val previousTrack = _uiState.value.currentTrack
-
-			if (currentTrack?.mediaId != previousTrack?.id) {
-				scrobbleNowPlaying(currentTrack?.mediaId)
-				if (_uiState.value.progress >= Settings.shared.scrobblePercentage
-					&& (_uiState.value.currentTrack?.duration?.toFloat()
-						?: Settings.shared.minDurationToScrobble) >= Settings.shared.minDurationToScrobble) {
-					scrobbleSubmission(previousTrack?.id)
-				}
-			}
 
 			_uiState.update { state ->
 				state.copy(
 					currentIndex = index,
-					currentTrack = state.tracks?.tracks?.getOrNull(index),
+					currentTrack = state.queue.getOrNull(index),
 					isPaused = !player.isPlaying,
 					isShuffleEnabled = player.shuffleModeEnabled,
 					repeatMode = player.repeatMode
@@ -194,7 +168,10 @@ class AndroidMediaPlayerViewModel(
 	private fun startProgressLoop() {
 		viewModelScope.launch {
 			while (controller?.isPlaying == true) {
-				updateProgress()
+				val player = controller ?: break
+				val duration = player.duration.coerceAtLeast(1)
+				val progress = (player.currentPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+				_uiState.update { it.copy(progress = progress) }
 				delay(200)
 			}
 		}
@@ -209,60 +186,62 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun play(tracks: TrackCollection, startIndex: Int) {
-		_uiState.update { it.copy(tracks = tracks, isLoading = true) }
+	override fun addToQueueSingle(track: Track) {
+		controller?.addMediaItem(track.toMediaItem(true))
+		_uiState.update { it.copy(queue = it.queue + track) }
+	}
 
-		viewModelScope.launch(Dispatchers.IO) {
-			val mediaItems = tracks.tracks.map { track ->
-				val metadata = MediaMetadata.Builder()
-					.setTitle(track.title)
-					.setArtist(track.artist)
-					.setAlbumTitle(track.album)
-					.setArtworkUri(SessionManager.api.getCoverArtUrl(track.coverArt, auth = true)?.toUri())
-					.build()
+	override fun addToQueue(tracks: TrackCollection) {
+		val items = tracks.tracks.map { it.toMediaItem(false) }
+		controller?.addMediaItems(items)
+		_uiState.update { it.copy(queue = it.queue + tracks.tracks) }
+	}
 
-				MediaItem.Builder()
-					.setUri(SessionManager.api.streamUrl(track.id))
-					.setMediaId(track.id)
-					.setMediaMetadata(metadata)
-					.build()
-			}
-
-			withContext(Dispatchers.Main) {
-				controller?.let { player ->
-					player.setMediaItems(mediaItems, startIndex, 0L)
-					player.prepare()
-					player.play()
-				}
-			}
+	override fun removeFromQueue(index: Int) {
+		controller?.removeMediaItem(index)
+		_uiState.update { state ->
+			val newQueue = state.queue.toMutableList().apply { removeAt(index) }
+			state.copy(queue = newQueue)
 		}
 	}
 
-	override fun playSingle(track: Track) {
-		viewModelScope.launch {
-			runCatching {
-				val albumResponse = SessionManager.api.getAlbum(track.albumId.toString())
-				val album = albumResponse.data.album
-				val index = album.tracks.indexOfFirst { it.id == track.id }
-				if (index != -1) {
-					play(album, index)
-				}
+	override fun moveQueueItem(fromIndex: Int, toIndex: Int) {
+		controller?.moveMediaItem(fromIndex, toIndex)
+		_uiState.update { state ->
+			val newQueue = state.queue.toMutableList().apply {
+				val item = removeAt(fromIndex)
+				add(toIndex, item)
+			}
+			state.copy(queue = newQueue)
+		}
+	}
+
+	override fun clearQueue() {
+		controller?.clearMediaItems()
+		_uiState.update { it.copy(queue = emptyList(), currentTrack = null, currentIndex = -1) }
+	}
+
+	override fun playAt(index: Int) {
+		controller?.let { player ->
+			if (index in 0 until player.mediaItemCount) {
+				player.seekTo(index, 0L)
+				player.play()
 			}
 		}
 	}
 
 	override fun shufflePlay(tracks: TrackCollection) {
-		controller?.shuffleModeEnabled = true
-		play(tracks, 0)
-	}
+		val shuffledTracks = tracks.tracks.shuffled()
+		val mediaItems = shuffledTracks.map { it.toMediaItem(false) }
 
-	override fun toggleRepeat() {
 		controller?.let { player ->
-			player.repeatMode = when (player.repeatMode) {
-				Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE
-				else -> Player.REPEAT_MODE_OFF
-			}
+			player.shuffleModeEnabled = false
+			player.setMediaItems(mediaItems, 0, 0L)
+			player.prepare()
+			player.play()
 		}
+
+		_uiState.update { it.copy(queue = shuffledTracks) }
 	}
 
 	override fun pause() { controller?.pause() }
@@ -272,6 +251,14 @@ class AndroidMediaPlayerViewModel(
 	override fun toggleShuffle() {
 		controller?.let { player ->
 			player.shuffleModeEnabled = !player.shuffleModeEnabled
+		}
+	}
+	override fun toggleRepeat() {
+		controller?.let { player ->
+			player.repeatMode = when (player.repeatMode) {
+				Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE
+				else -> Player.REPEAT_MODE_OFF
+			}
 		}
 	}
 
@@ -288,6 +275,36 @@ class AndroidMediaPlayerViewModel(
 	override fun onCleared() {
 		super.onCleared()
 		controllerFuture?.let { MediaController.releaseFuture(it) }
+	}
+
+	private fun Track.toMediaItem(single: Boolean): MediaItem {
+		if (single) {
+			val metadata = MediaMetadata.Builder()
+				.setTitle(title)
+				.setArtist(artist)
+				.setAlbumTitle(album)
+				.setArtworkUri(coverArt?.toUri())
+				.build()
+
+			return MediaItem.Builder()
+				.setUri(SessionManager.api.streamUrl(id))
+				.setMediaId(id)
+				.setMediaMetadata(metadata)
+				.build()
+		} else {
+			val metadata = MediaMetadata.Builder()
+				.setTitle(title)
+				.setArtist(artist)
+				.setAlbumTitle(album)
+				.setArtworkUri(SessionManager.api.getCoverArtUrl(coverArt, auth = true)?.toUri())
+				.build()
+
+			return MediaItem.Builder()
+				.setUri(SessionManager.api.streamUrl(id))
+				.setMediaId(id)
+				.setMediaMetadata(metadata)
+				.build()
+		}
 	}
 }
 

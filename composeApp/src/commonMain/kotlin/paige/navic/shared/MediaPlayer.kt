@@ -14,8 +14,9 @@ import paige.subsonic.api.models.TrackCollection
 import kotlin.time.Clock
 
 data class PlayerUiState(
-	val tracks: TrackCollection? = null,
+	val queue: List<Track> = emptyList(),
 	val currentTrack: Track? = null,
+	val currentCollection: TrackCollection? = null,
 	val currentIndex: Int = -1,
 	val isPaused: Boolean = false,
 	val isShuffleEnabled: Boolean = false,
@@ -28,8 +29,12 @@ abstract class MediaPlayerViewModel : ViewModel() {
 	protected val _uiState = MutableStateFlow(PlayerUiState())
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
-	abstract fun play(tracks: TrackCollection, startIndex: Int)
-	abstract fun playSingle(track: Track)
+	abstract  fun addToQueueSingle(track: Track)
+	abstract  fun addToQueue(tracks: TrackCollection)
+	abstract fun removeFromQueue(index: Int)
+	abstract fun moveQueueItem(fromIndex: Int, toIndex: Int)
+	abstract fun clearQueue()
+	abstract fun playAt(index: Int)
 	abstract fun pause()
 	abstract fun resume()
 	abstract fun seek(normalized: Float)
