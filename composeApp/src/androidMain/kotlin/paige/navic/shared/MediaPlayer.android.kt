@@ -106,6 +106,8 @@ class AndroidMediaPlayerViewModel(
 	private var controller: MediaController? = null
 	private var controllerFuture: ListenableFuture<MediaController>? = null
 
+	private var loadingCollectionId: String? = null
+
 	init {
 		connectToService()
 	}
@@ -148,14 +150,43 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
+	private fun refreshCurrentCollection(albumId: String) {
+		if (loadingCollectionId == albumId) return
+			loadingCollectionId = albumId
+
+		viewModelScope.launch {
+			runCatching {
+				val albumResponse = SessionManager.api.getAlbum(albumId)
+				val album = albumResponse.data.album
+
+				_uiState.update { it.copy(currentCollection = album) }
+			}.onFailure {
+				loadingCollectionId = null
+			}
+		}
+	}
+
 	private fun updatePlaybackState() {
 		controller?.let { player ->
 			val index = player.currentMediaItemIndex
+			val currentTrack = _uiState.value.queue.getOrNull(index)
+
+			val derivedCollection = currentTrack?.let { track ->
+				val stateCollection = _uiState.value.currentCollection
+
+				if (stateCollection?.id == track.albumId.toString()) {
+					stateCollection
+				} else {
+					refreshCurrentCollection(track.albumId.toString())
+					null
+				}
+			}
 
 			_uiState.update { state ->
 				state.copy(
 					currentIndex = index,
-					currentTrack = state.queue.getOrNull(index),
+					currentTrack = currentTrack,
+					currentCollection = derivedCollection ?: state.currentCollection,
 					isPaused = !player.isPlaying,
 					isShuffleEnabled = player.shuffleModeEnabled,
 					repeatMode = player.repeatMode
