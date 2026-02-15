@@ -1,9 +1,6 @@
 package paige.navic.shared
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -18,7 +15,6 @@ import platform.UIKit.UIDevice
 )
 @Composable
 actual fun rememberCtx(): Ctx {
-	val darkTheme = isSystemInDarkTheme()
 	val sizeClass = calculateWindowSizeClass()
 	return remember {
 		object : Ctx {
@@ -32,10 +28,7 @@ actual fun rememberCtx(): Ctx {
 				(NSBundle.mainBundle.objectForInfoDictionaryKey(
 					"CFBundleShortVersionString"
 				) as? String).toString()
-			override val colorScheme
-				get() = if (darkTheme)
-					darkColorScheme()
-				else expressiveLightColorScheme()
+			override val colorScheme = null
 			override val sizeClass = sizeClass
 		}
 	}

@@ -49,6 +49,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalContentPadding
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.data.models.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Discord
 import paige.navic.icons.brand.Github
@@ -56,6 +57,7 @@ import paige.navic.icons.filled.Airwave
 import paige.navic.icons.filled.BottomNavigation
 import paige.navic.icons.filled.Palette
 import paige.navic.icons.filled.Play
+import paige.navic.icons.outlined.ChevronForward
 import paige.navic.icons.outlined.Info
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
@@ -174,23 +176,32 @@ private fun PageRow(
 			}
 		},
 		horizontalArrangement = Arrangement.spacedBy(12.dp),
-		contentPadding = PaddingValues(16.dp)
+		contentPadding = PaddingValues(if (Settings.shared.theme.isMaterialLike()) 16.dp else 12.dp)
 	) {
-		Column(
-			modifier = Modifier
-				.size(40.dp)
-				.background(backgroundColor, CircleShape),
-			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.Center
-		) {
+		if (Settings.shared.theme.isMaterialLike()) {
+			Column(
+				modifier = Modifier
+					.size(40.dp)
+					.background(backgroundColor, CircleShape),
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.Center
+			) {
+				Icon(
+					icon,
+					contentDescription = null,
+					modifier = Modifier.size(iconSize),
+					tint = foregroundColor
+				)
+			}
+		} else {
 			Icon(
 				icon,
 				contentDescription = null,
-				modifier = Modifier.size(iconSize),
-				tint = foregroundColor
+				modifier = Modifier.padding(start = 8.dp, end = 5.dp).size(22.dp),
+				tint = MaterialTheme.colorScheme.primary
 			)
 		}
-		Column {
+		Column(Modifier.weight(1f)) {
 			Text(
 				stringResource(title),
 				style = MaterialTheme.typography.titleSmall.copy(
@@ -204,6 +215,13 @@ private fun PageRow(
 					lineHeight = 15.sp
 				),
 				color = MaterialTheme.colorScheme.onSurfaceVariant
+			)
+		}
+		if (!Settings.shared.theme.isMaterialLike()) {
+			Icon(
+				Icons.Outlined.ChevronForward,
+				null,
+				tint = MaterialTheme.colorScheme.onSurfaceVariant
 			)
 		}
 	}

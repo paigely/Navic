@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -88,7 +89,7 @@ fun PlayerBar(
 		if (detached) 10.dp else 16.dp, effectsSpec
 	)
 	val shadowRadius by animateDpAsState(
-		if (detached) 5.dp else 8.dp, effectsSpec
+		if (detached) 10.dp else 8.dp, effectsSpec
 	)
 	val coverSize by animateDpAsState(
 		if (detached) 48.dp else 55.dp, spec
@@ -131,7 +132,6 @@ fun PlayerBar(
 		Box(
 			modifier = Modifier
 				.padding(bottom = outerPadding, start = outerPadding, end = outerPadding)
-				.clip(shape)
 		) {
 			ListItem(
 				modifier = modifier
@@ -139,7 +139,7 @@ fun PlayerBar(
 						shape,
 						Shadow(
 							radius = shadowRadius,
-							alpha = 0.5f
+							alpha = 0.25f
 						)
 					)
 					.pointerInput(Unit) {
@@ -159,7 +159,9 @@ fun PlayerBar(
 				contentPadding = PaddingValues(contentPadding),
 				verticalAlignment = Alignment.CenterVertically,
 				colors = ListItemDefaults.colors(
-					containerColor = MaterialTheme.colorScheme.surfaceContainer
+					containerColor = if (isSystemInDarkTheme() || (!isSystemInDarkTheme() && !detached))
+						MaterialTheme.colorScheme.surfaceContainer
+					else MaterialTheme.colorScheme.surface
 				),
 				shapes = ListItemDefaults.shapes(
 					shape = shape,
@@ -277,10 +279,23 @@ fun PlayerBar(
 				)
 				Box(
 					modifier = Modifier
-						.fillMaxWidth()
-						.height(14.dp)
-						.pointerInput(Unit) {
-							if (track != null) {
+						.matchParentSize()
+						.clip(shape)
+						.align(Alignment.BottomStart),
+					contentAlignment = Alignment.BottomStart
+				) {
+					Box(
+						Modifier
+							.background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
+							.fillMaxWidth(if (track != null) progress else 0f)
+							.height(3.dp)
+					)
+					Box(
+						Modifier
+							.fillMaxWidth()
+							.height(14.dp)
+							.pointerInput(Unit) {
+								if (track == null) return@pointerInput
 								detectDragGestures(
 									onDragStart = { dragging = true },
 									onDragEnd = { dragging = false }
@@ -294,21 +309,6 @@ fun PlayerBar(
 									change.consume()
 								}
 							}
-						}
-						.align(Alignment.BottomStart),
-					contentAlignment = Alignment.BottomStart
-				) {
-					Box(
-						Modifier
-							.background(MaterialTheme.colorScheme.surfaceContainerHighest)
-							.fillMaxWidth()
-							.height(3.dp)
-					)
-					Box(
-						Modifier
-							.background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
-							.fillMaxWidth(if (track != null) progress else 0f)
-							.height(3.dp)
 					)
 				}
 			}

@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 interface Ctx {
 	val name: String
 	val appVersion: String
-	val colorScheme: ColorScheme
+	val colorScheme: ColorScheme?
 	val sizeClass: WindowSizeClass
 	fun clickSound()
 }

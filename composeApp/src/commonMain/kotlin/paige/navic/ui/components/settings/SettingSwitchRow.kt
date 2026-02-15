@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import paige.navic.data.models.Settings
 import paige.navic.ui.components.common.FormRow
 
 @Composable
@@ -30,7 +31,9 @@ fun SettingSwitchRow(
 				subtitle()
 			}
 		}
-		VerticalDivider(Modifier.height(32.dp).padding(horizontal = 14.dp))
+		if (Settings.shared.theme.isMaterialLike()) {
+			VerticalDivider(Modifier.height(32.dp).padding(horizontal = 14.dp))
+		}
 		SettingSwitch(
 			checked = value,
 			onCheckedChange = { onSetValue(it) }

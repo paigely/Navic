@@ -1,9 +1,6 @@
 package paige.navic.shared
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -16,18 +13,15 @@ import androidx.compose.ui.Modifier
 )
 @Composable
 actual fun rememberCtx(): Ctx {
-	val darkTheme = isSystemInDarkTheme()
 	val sizeClass = calculateWindowSizeClass()
-	return remember(darkTheme, sizeClass) {
+	return remember(sizeClass) {
 		object : Ctx {
 			override fun clickSound() {
 				// none for jvm
 			}
 			override val name = "Desktop (Java ${System.getProperty("java.version")})"
 			override val appVersion: String = System.getProperty("jpackage.app-version") ?: "unknown version"
-			override val colorScheme = if (darkTheme)
-				darkColorScheme()
-			else expressiveLightColorScheme()
+			override val colorScheme = null
 			override val sizeClass = sizeClass
 		}
 	}

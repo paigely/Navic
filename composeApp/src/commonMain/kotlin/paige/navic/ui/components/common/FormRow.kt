@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.LocalCtx
+import paige.navic.data.models.Settings
 import paige.navic.utils.onRightClick
 
 @Composable
@@ -50,7 +51,9 @@ fun FormRow(
 				else Modifier
 			),
 		color = color ?: MaterialTheme.colorScheme.surfaceContainer,
-		shape = ContinuousRoundedRectangle(rounding)
+		shape = ContinuousRoundedRectangle(
+			if (Settings.shared.theme.isMaterialLike()) rounding else 0.dp
+		)
 	) {
 		Row(
 			horizontalArrangement = horizontalArrangement,

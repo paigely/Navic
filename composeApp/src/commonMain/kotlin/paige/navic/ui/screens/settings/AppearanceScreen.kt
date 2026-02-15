@@ -42,13 +42,13 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_accent_colour
 import navic.composeapp.generated.resources.option_alphabetical_scroll
 import navic.composeapp.generated.resources.option_artwork_shape
+import navic.composeapp.generated.resources.option_choose_theme
 import navic.composeapp.generated.resources.option_cover_art_size
-import navic.composeapp.generated.resources.option_dynamic_colour
 import navic.composeapp.generated.resources.option_grid_items_per_row
 import navic.composeapp.generated.resources.option_marquee_duration
 import navic.composeapp.generated.resources.option_system_font
 import navic.composeapp.generated.resources.option_use_marquee_text
-import navic.composeapp.generated.resources.subtitle_dynamic_colour
+import navic.composeapp.generated.resources.subtitle_choose_theme
 import navic.composeapp.generated.resources.subtitle_grid_items_per_row
 import navic.composeapp.generated.resources.subtitle_system_font
 import navic.composeapp.generated.resources.subtitle_use_marquee_text
@@ -65,6 +65,7 @@ import paige.navic.ui.components.dialogs.GridSizeDialog
 import paige.navic.ui.components.dialogs.GridSizePreview
 import paige.navic.ui.components.dialogs.MarqueeSpeedDialog
 import paige.navic.ui.components.dialogs.Shapes
+import paige.navic.ui.components.dialogs.ThemeDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.settings.SettingCollapsibleRow
 import paige.navic.ui.components.settings.SettingSwitchRow
@@ -99,14 +100,30 @@ fun SettingsAppearanceScreen() {
 						onSetValue = { Settings.shared.useSystemFont = it }
 					)
 
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_dynamic_colour)) },
-						subtitle = { Text(stringResource(Res.string.subtitle_dynamic_colour)) },
-						value = Settings.shared.dynamicColour,
-						onSetValue = { Settings.shared.dynamicColour = it }
-					)
+					var showThemeDialog by rememberSaveable { mutableStateOf(false) }
+					FormRow(
+						onClick = {
+							showThemeDialog = true
+						}
+					) {
+						Column(Modifier.weight(1f)) {
+							Text(stringResource(Res.string.option_choose_theme))
+							Text(
+								stringResource(Res.string.subtitle_choose_theme),
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						}
+					}
 
-					if (!Settings.shared.dynamicColour) {
+					if (showThemeDialog) {
+						ThemeDialog(
+							presented = showThemeDialog,
+							onDismissRequest = { showThemeDialog = false }
+						)
+					}
+
+					if (Settings.shared.theme == Settings.Theme.Seeded) {
 						var expanded by remember { mutableStateOf(false) }
 						FormRow {
 							Text(stringResource(Res.string.option_accent_colour))
@@ -174,7 +191,7 @@ fun SettingsAppearanceScreen() {
 							modifier = Modifier
 								.size(48.dp)
 								.clip(shape)
-								.background(MaterialTheme.colorScheme.onPrimary)
+								.background(MaterialTheme.colorScheme.primaryContainer)
 								.border(2.dp, MaterialTheme.colorScheme.primary, shape)
 						)
 					}

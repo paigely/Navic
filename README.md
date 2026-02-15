@@ -29,9 +29,13 @@ Expressive design language.
 |:------------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
 | ![](.github/library.png) | ![](.github/player.png) | ![](.github/lyrics.png) | ![](.github/albums.png) |
 
-Widgets:
+### Misc. screenshots
 
-![](https://github.com/user-attachments/assets/066f4b1b-352d-49bd-a5d9-2d20db2cd7a2)
+| Widgets                                                                              | Theme presets setting (#1)                                                                                | Theme presets setting (#2)                                                                                |
+|:------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|
+| ![](https://github.com/user-attachments/assets/066f4b1b-352d-49bd-a5d9-2d20db2cd7a2) | <img width="300" src="https://github.com/user-attachments/assets/75a7c7ac-bd0f-40ee-bc02-a75079d3c8e3" /> | <img width="300" src="https://github.com/user-attachments/assets/afe24e10-b452-4cc9-bd20-132ce87f4df4" /> |
+
+<sub>Themes are just a fun optional gimmick, this app will continue to use Material design by default</sub>
 
 ## Star History
 <a href="https://star-history.com/#paigely/Navic&Date">

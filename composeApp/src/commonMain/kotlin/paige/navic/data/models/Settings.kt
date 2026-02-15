@@ -4,11 +4,37 @@
 
 package paige.navic.data.models
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.expressiveLightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
+import com.materialkolor.dynamiccolor.ColorSpec
+import com.materialkolor.rememberDynamicColorScheme
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
+import dev.zt64.compose.pipette.HsvColor
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.theme_apple_music
+import navic.composeapp.generated.resources.theme_dynamic
+import navic.composeapp.generated.resources.theme_ios
+import navic.composeapp.generated.resources.theme_seeded
+import navic.composeapp.generated.resources.theme_spotify
+import navic.composeapp.generated.resources.theme_subtitle_apple_music
+import navic.composeapp.generated.resources.theme_subtitle_dynamic
+import navic.composeapp.generated.resources.theme_subtitle_ios
+import navic.composeapp.generated.resources.theme_subtitle_seeded
+import navic.composeapp.generated.resources.theme_subtitle_spotify
+import org.jetbrains.compose.resources.StringResource
+import paige.navic.LocalCtx
+import paige.navic.utils.darkIosColorScheme
+import paige.navic.utils.lightIosColorScheme
 import paige.subsonic.api.models.ListType
 import kotlin.enums.enumEntries
 import kotlin.reflect.KProperty
@@ -166,13 +192,9 @@ class Settings(
 	settings: com.russhwolf.settings.Settings
 ) : BasePreferenceManager(settings) {
 	var useSystemFont by preference(false)
-	var dynamicColour by preference(true)
 	var animatePlayerBackground by preference(true)
 	var detachedBar by preference(true)
 	var swipeToSkip by preference(true)
-	var accentColourH by preference(0f)
-	var accentColourS by preference(0f)
-	var accentColourV by preference(1f)
 	var useShortNavbar by preference(false)
 	var showProgressInBar by preference(true)
 	var artGridRounding by preference(16f)
@@ -193,19 +215,112 @@ class Settings(
 	var windowSizeX by preference(800f)
 	var windowSizeY by preference(600f)
 	var listType by preference(ListType.ALPHABETICAL_BY_ARTIST)
+
+	// theme related settings
+	var theme by preference(Theme.Dynamic)
+	var accentColourH by preference(0f)
+	var accentColourS by preference(0f)
+	var accentColourV by preference(1f)
+
 	companion object {
 		val shared = paige.navic.data.models.Settings(
 			com.russhwolf.settings.Settings()
 		)
 	}
+
 	enum class MarqueeSpeed(val value: Int) {
 		Slow(6000),
 		Medium(4000),
 		Fast(1000)
 	}
+
+	/**
+	 * Different grid sizes which the user can choose from.
+	 * Applies to all grids across the app.
+	 *
+	 * @property value The grid size
+	 * @property label The label for this size, to be seen in settings
+	 */
 	enum class GridSize(val value: Int, val label: String) {
 		TwoByTwo(2, "2x2"),
 		ThreeByThree(3, "3x3"),
 		FourByFour(4, "4x4")
+	}
+
+	/**
+	 * Theme choices that the user can choose from
+	 */
+	enum class Theme(
+		val title: StringResource, val subtitle: StringResource
+	) {
+
+		/**
+		 * The app will be themed based on whatever the user
+		 * chose in system settings. Android only.
+		 */
+		Dynamic(Res.string.theme_dynamic, Res.string.theme_subtitle_dynamic),
+
+		/**
+		 * The app will be themed based on a "seed" colour.
+		 *
+		 * When this is selected, `accentColor(H/S/V)` settings
+		 * will be exposed in the UI as a colour picker.
+		 */
+		Seeded(Res.string.theme_seeded, Res.string.theme_subtitle_seeded),
+
+		/**
+		 * The app will be themed according to Apple's HIG.
+		 * TODO: this should pull from UIColor
+		 */
+		@Suppress("EnumEntryName")
+		iOS(Res.string.theme_ios, Res.string.theme_subtitle_ios),
+
+		/**
+		 * The same as iOS, but with a pink-ish accent.
+		 */
+		AppleMusic(Res.string.theme_apple_music, Res.string.theme_subtitle_apple_music),
+
+		/**
+		 * The same as iOS, but with a green accent.
+		 */
+		Spotify(Res.string.theme_spotify, Res.string.theme_subtitle_spotify);
+
+		@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+		@Composable
+		fun colorScheme(): ColorScheme {
+			val ctx = LocalCtx.current
+			val isDark = isSystemInDarkTheme()
+			return when (this) {
+				Dynamic -> ctx.colorScheme ?: remember(isDark) {
+					if (isDark)
+						darkColorScheme()
+					else expressiveLightColorScheme()
+				}
+				Seeded -> rememberDynamicColorScheme(
+					seedColor = HsvColor(
+						shared.accentColourH,
+						shared.accentColourS,
+						shared.accentColourV
+					).toColor(),
+					isDark = isSystemInDarkTheme(),
+					specVersion = ColorSpec.SpecVersion.SPEC_2025,
+				)
+				iOS -> if (isDark)
+					darkIosColorScheme(Color(0, 145, 255))
+				else lightIosColorScheme(Color(0, 136, 255))
+				AppleMusic -> if (isDark)
+					darkIosColorScheme(Color(255, 55, 95))
+				else lightIosColorScheme(Color(255, 45, 85))
+				Spotify -> if (isDark)
+					darkIosColorScheme(Color(30, 215, 96))
+				else lightIosColorScheme(Color(30, 215, 96))
+			}
+		}
+
+		fun isMaterialLike(): Boolean = when (this) {
+			Dynamic,
+			Seeded -> true
+			else -> false
+		}
 	}
 }

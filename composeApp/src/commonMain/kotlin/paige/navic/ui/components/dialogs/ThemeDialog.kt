@@ -1,19 +1,15 @@
 package paige.navic.ui.components.dialogs
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -23,12 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
-import navic.composeapp.generated.resources.option_grid_items_per_row
+import navic.composeapp.generated.resources.option_choose_theme
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.models.Settings
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun GridSizeDialog(
+fun ThemeDialog(
 	presented: Boolean,
 	onDismissRequest: () -> Unit
 ) {
@@ -36,33 +33,40 @@ fun GridSizeDialog(
 
 	AlertDialog(
 		title = {
-			Text(stringResource(Res.string.option_grid_items_per_row))
+			Text(stringResource(Res.string.option_choose_theme))
 		},
 		text = {
 			Column(
 				modifier = Modifier
 					.fillMaxWidth()
-					.heightIn(max = 300.dp),
+					.verticalScroll(rememberScrollState()),
 				verticalArrangement = Arrangement.spacedBy(16.dp)
 			) {
-				Settings.GridSize.entries.forEach { size ->
+				Settings.Theme.entries.forEach { theme ->
 					Row(
 						modifier = Modifier
 							.fillMaxWidth()
 							.clickable(onClick = {
-								Settings.shared.gridSize = size
+								Settings.shared.theme = theme
 								onDismissRequest()
-							})
-							.padding(8.dp),
+							}),
 						horizontalArrangement = Arrangement.spacedBy(16.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						RadioButton(
-							selected = Settings.shared.gridSize == size,
+							selected = Settings.shared.theme == theme,
 							onClick = null
 						)
-						GridSizePreview(size = size.value)
-						Text(text = size.label, style = MaterialTheme.typography.bodyLarge)
+						Column(Modifier.weight(1f)) {
+							Text(
+								stringResource(theme.title),
+								color = MaterialTheme.colorScheme.onSurface
+							)
+							Text(
+								stringResource(theme.subtitle),
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						}
 					}
 				}
 			}
@@ -74,35 +78,4 @@ fun GridSizeDialog(
 			}
 		}
 	)
-}
-
-@Composable
-fun GridSizePreview(
-	size: Int
-) {
-	Column(
-		modifier = Modifier.size(48.dp),
-		verticalArrangement = Arrangement.spacedBy(2.dp)
-	) {
-		repeat(size) {
-			Row(
-				modifier = Modifier.weight(1f),
-				horizontalArrangement = Arrangement.spacedBy(2.dp)
-			) {
-				repeat(size) {
-					val shape = when (size) {
-						2 -> MaterialTheme.shapes.small
-						else -> MaterialTheme.shapes.extraSmall
-					}
-					Box(
-						modifier = Modifier
-							.weight(1f)
-							.fillMaxHeight()
-							.background(MaterialTheme.colorScheme.primaryContainer, shape)
-							.border(2.dp, MaterialTheme.colorScheme.primary, shape)
-					)
-				}
-			}
-		}
-	}
 }

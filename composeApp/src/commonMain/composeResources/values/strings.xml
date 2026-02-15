@@ -39,10 +39,9 @@
 	<string name="subtitle_source">View the source code</string>
 	<string name="subtitle_chat">Join the Discord</string>
 	<string	name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
-	<string name="subtitle_dynamic_colour">Available on Android 12+</string>
+	<string name="subtitle_choose_theme">Choose from a selection of themes</string>
 
 	<string name="option_system_font">Use system font</string>
-	<string name="option_dynamic_colour">Use dynamic colour</string>
 	<string name="option_player_animate_background">Animate player background</string>
 	<string name="option_accent_colour">Accent colour</string>
 	<string name="option_short_navigation_bar">Shorter navigation bar</string>
@@ -78,6 +77,18 @@
 	<string name="option_playlist_name">Name</string>
 	<string name="option_playlist_songs">Songs</string>
 	<string	name="option_enable_scrobbling">Enable Scrobbling</string>
+	<string name="option_choose_theme">Choose theme</string>
+
+	<string name="theme_dynamic">Dynamic</string>
+	<string name="theme_subtitle_dynamic">Available on Android 12 and above</string>
+	<string name="theme_seeded">Tinted</string>
+	<string name="theme_subtitle_seeded">One colour for all</string>
+	<string name="theme_ios">Cupertino</string>
+	<string name="theme_subtitle_ios">A city in California</string>
+	<string name="theme_apple_music">Music.app</string>
+	<string name="theme_subtitle_apple_music">A theme with red/pink highlights</string>
+	<string name="theme_spotify">Spotlight</string>
+	<string name="theme_subtitle_spotify">A theme with green highlights</string>
 
 	<plurals name="count_songs">
 		<item quantity="one">%1$d song</item>
