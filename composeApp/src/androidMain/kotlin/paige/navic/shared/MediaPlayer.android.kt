@@ -19,6 +19,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
@@ -31,6 +32,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import paige.navic.MainActivity
+import paige.navic.R
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.models.Track
 import paige.subsonic.api.models.TrackCollection
@@ -52,6 +54,10 @@ class PlaybackService : MediaSessionService() {
 			)
 			.setBackBuffer(10_000, true)
 			.build()
+
+		val notificationProvider = DefaultMediaNotificationProvider.Builder(this)
+			.build().apply { setSmallIcon(R.drawable.ic_navic) }
+
 		val player = ExoPlayer.Builder(this)
 			.setLoadControl(loadControl)
 			.build()
@@ -63,6 +69,7 @@ class PlaybackService : MediaSessionService() {
 						.build(),
 					true
 				)
+				setMediaNotificationProvider(notificationProvider)
 			}
 
 		scrobbleManager = AndroidScrobbleManager(player, serviceScope)
