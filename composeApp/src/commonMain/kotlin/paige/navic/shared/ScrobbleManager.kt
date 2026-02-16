@@ -23,10 +23,13 @@ class ScrobbleManager(
 	private var currentMediaId: String? = null
 	private var hasScrobbledCurrent = false
 	private var progressJob: Job? = null
+	private var accumulatedPlayTime: Long = 0
 
 	fun onMediaChanged(mediaId: String?) {
 		currentMediaId = mediaId
 		hasScrobbledCurrent = false
+		accumulatedPlayTime = 0
+
 		progressJob?.cancel()
 
 		scrobbleNowPlaying(mediaId)
@@ -43,7 +46,15 @@ class ScrobbleManager(
 	private fun startProgressTracker() {
 		progressJob?.cancel()
 		progressJob = scope.launch(Dispatchers.Main) {
+			var lastTickTime = Clock.System.now().toEpochMilliseconds()
+
 			while (isActive) {
+				val now = Clock.System.now().toEpochMilliseconds()
+				val timePassed = now - lastTickTime
+				lastTickTime = now
+
+				accumulatedPlayTime += timePassed
+
 				checkProgress()
 				delay(2000)
 			}
@@ -54,11 +65,9 @@ class ScrobbleManager(
 		if (hasScrobbledCurrent) return
 
 		val duration = playerSource.duration
-		val position = playerSource.currentPosition
-
 		if (duration <= 0) return
 
-		val percent = position.toFloat() / duration.toFloat()
+		val percent = accumulatedPlayTime.toFloat() / duration.toFloat()
 		val playedEnoughPercent = percent >= Settings.shared.scrobblePercentage
 		val isValidTrack = duration > Settings.shared.minDurationToScrobble
 
