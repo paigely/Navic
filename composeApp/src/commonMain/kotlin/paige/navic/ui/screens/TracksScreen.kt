@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -17,6 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
@@ -37,6 +40,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
@@ -88,7 +93,6 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.ErrorBox
-import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.RefreshBox
@@ -231,122 +235,174 @@ fun TracksScreen(
 							player,
 							tracks
 						).apply {
-							Column(
+							LazyColumn(
 								modifier = Modifier
 									.background(MaterialTheme.colorScheme.surface)
-									.verticalScroll(scrollState)
-									.padding(top = 16.dp, end = 16.dp, start = 16.dp),
-								horizontalAlignment = Alignment.CenterHorizontally
+									.fillMaxSize(),
+								horizontalAlignment = Alignment.CenterHorizontally,
+								contentPadding = PaddingValues(
+									top = 16.dp,
+									end = 16.dp,
+									start = 16.dp,
+									bottom = LocalContentPadding.current.calculateBottomPadding()
+								)
 							) {
-								Metadata()
-								Spacer(Modifier.height(10.dp))
-								Form {
-									tracks.tracks.onEachIndexed { index, track ->
-										Box {
-											TrackRow(
-												track = track,
-												index = index,
+								item {
+									Metadata()
+									Spacer(Modifier.height(10.dp))
+								}
+								// we can't use Form here because it's not lazy and if there's
+								// around 40 items you can't interact with them after the 40th
+								itemsIndexed(tracks.tracks) { index, track ->
+									Box {
+										TrackRow(
+											modifier = Modifier
+												// workaround that mimics the styling of Form
+												// this is temporary and should be cleaned up
+												// because it's garbage
+												//
+												// ideally we should do this everywhere in the
+												// app and just stop using non-lazy things where
+												// possible
+												.clip(when (index) {
+													0 -> ContinuousRoundedRectangle(
+														topStart = 18.dp,
+														topEnd = 18.dp
+													)
+													tracks.tracks.lastIndex -> ContinuousRoundedRectangle(
+														bottomStart = 18.dp,
+														bottomEnd = 18.dp
+													)
+													else -> RectangleShape
+												})
+												.background(
+													if (Settings.shared.theme != Settings.Theme.iOS
+														&& Settings.shared.theme != Settings.Theme.Spotify
+														&& Settings.shared.theme != Settings.Theme.AppleMusic
+													) Color.Unspecified else MaterialTheme.colorScheme.surfaceContainerHighest
+												)
+												.padding(
+													bottom = if (index != tracks.tracks.lastIndex)
+														if (Settings.shared.theme.isMaterialLike())
+															3.dp
+														else 1.dp
+													else 0.dp
+												),
+											track = track,
+											index = index,
+											onClick = {
+												player.play(tracks, index)
+											},
+											onLongClick = {
+												viewModel.selectTrack(track, index)
+											}
+										)
+										Dropdown(
+											expanded = selection == track && selectedIndex == index,
+											onDismissRequest = {
+												viewModel.clearSelection()
+											}
+										) {
+											DropdownItem(
+												containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+												text = { Text(stringResource(Res.string.action_share)) },
+												leadingIcon = { Icon(Icons.Outlined.Share, null) },
 												onClick = {
+													shareId = track.id
+													viewModel.clearSelection()
+												},
+											)
+											val starred =
+												(starredState as? UiState.Success)?.data
+											DropdownItem(
+												containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+												text = {
+													Text(
+														stringResource(
+															if (starred == true)
+																Res.string.action_remove_star
+															else Res.string.action_star
+														)
+													)
+												},
+												leadingIcon = {
+													Icon(
+														if (starred == true)
+															Icons.Filled.Star
+														else Icons.Outlined.Star,
+														null
+													)
+												},
+												onClick = {
+<<<<<<< dev
 													player.clearQueue()
 													player.addToQueue(tracks)
 													player.playAt(index)
-												},
-												onLongClick = {
-													viewModel.selectTrack(track, index)
-												}
-											)
-											Dropdown(
-												expanded = selection == track && selectedIndex == index,
-												onDismissRequest = {
+=======
+													if (starred == true)
+														viewModel.unstarSelectedTrack()
+													else viewModel.starSelectedTrack()
 													viewModel.clearSelection()
-												}
-											) {
-												DropdownItem(
-													containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-													text = { Text(stringResource(Res.string.action_share)) },
-													leadingIcon = { Icon(Icons.Outlined.Share, null) },
-													onClick = {
-														shareId = track.id
-														viewModel.clearSelection()
-													},
-												)
-												val starred =
-													(starredState as? UiState.Success)?.data
-												DropdownItem(
-													containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-													text = {
-														Text(
-															stringResource(
-																if (starred == true)
-																	Res.string.action_remove_star
-																else Res.string.action_star
+>>>>>>> master
+												},
+												enabled = starred != null
+											)
+											DropdownItem(
+												containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+												text = { Text(stringResource(Res.string.action_track_info)) },
+												leadingIcon = { Icon(Icons.Outlined.Info, null) },
+												onClick = {
+													backStack.add(Screen.TrackInfo(track))
+													viewModel.clearSelection()
+												},
+											)
+											DropdownItem(
+												containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+												text = {
+													Text(
+														stringResource(
+															if (tracks is Playlist)
+																Res.string.action_add_to_another_playlist
+															else Res.string.action_add_to_playlist
+														)
+													)
+												},
+												leadingIcon = {
+													Icon(
+														Icons.Outlined.PlaylistAdd,
+														null
+													)
+												},
+												onClick = {
+													viewModel.clearSelection()
+													if (backStack.lastOrNull() !is Screen.AddToPlaylist) {
+														backStack.add(
+															Screen.AddToPlaylist(
+																listOf(track),
+																playlistToExclude = tracks.id
 															)
 														)
-													},
+													}
+												},
+											)
+											if (tracks is Playlist) {
+												DropdownItem(
+													containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+													text = { Text(stringResource(Res.string.action_remove_from_playlist)) },
 													leadingIcon = {
 														Icon(
-															if (starred == true)
-																Icons.Filled.Star
-															else Icons.Outlined.Star,
+															Icons.Outlined.PlaylistRemove,
 															null
 														)
 													},
 													onClick = {
-														if (starred == true)
-															viewModel.unstarSelectedTrack()
-														else viewModel.starSelectedTrack()
-														viewModel.clearSelection()
-													},
-													enabled = starred != null
-												)
-												DropdownItem(
-													containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-													text = { Text(stringResource(Res.string.action_track_info)) },
-													leadingIcon = { Icon(Icons.Outlined.Info, null) },
-													onClick = {
-														backStack.add(Screen.TrackInfo(track))
-														viewModel.clearSelection()
+														viewModel.removeFromPlaylist()
 													},
 												)
-												DropdownItem(
-													containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-													text = {
-														Text(
-															stringResource(
-																if (tracks is Playlist)
-																	Res.string.action_add_to_another_playlist
-																else Res.string.action_add_to_playlist
-															)
-														)
-													},
-													leadingIcon = { Icon(Icons.Outlined.PlaylistAdd, null) },
-													onClick = {
-														viewModel.clearSelection()
-														if (backStack.lastOrNull() !is Screen.AddToPlaylist) {
-															backStack.add(
-																Screen.AddToPlaylist(
-																	listOf(track),
-																	playlistToExclude = tracks.id
-																)
-															)
-														}
-													},
-												)
-												if (tracks is Playlist) {
-													DropdownItem(
-														containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-														text = { Text(stringResource(Res.string.action_remove_from_playlist)) },
-														leadingIcon = { Icon(Icons.Outlined.PlaylistRemove, null) },
-														onClick = {
-															viewModel.removeFromPlaylist()
-														},
-													)
-												}
 											}
 										}
 									}
 								}
-								Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 							}
 						}
 					}
@@ -418,7 +474,11 @@ private fun TracksScreenScope.Metadata() {
 		}
 		Text(
 			if (tracks !is Playlist)
-				"${tracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${tracks.year ?: stringResource(Res.string.info_unknown_year)}"
+				"${tracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${
+					tracks.year ?: stringResource(
+						Res.string.info_unknown_year
+					)
+				}"
 			else stringResource(Res.string.subtitle_playlist),
 			color = MaterialTheme.colorScheme.onSurfaceVariant,
 			style = MaterialTheme.typography.bodySmall,
@@ -475,16 +535,17 @@ private fun TracksScreenScope.Metadata() {
 
 @Composable
 private fun TrackRow(
+	modifier: Modifier = Modifier,
 	track: Track,
 	index: Int,
 	onClick: (() -> Unit)? = null,
 	onLongClick: (() -> Unit)? = null
 ) {
 	FormRow(
+		modifier = modifier.fillMaxWidth(),
 		onClick = onClick,
 		onLongClick = onLongClick,
-		horizontalArrangement = Arrangement.spacedBy(12.dp),
-		modifier = Modifier.fillMaxWidth()
+		horizontalArrangement = Arrangement.spacedBy(12.dp)
 	) {
 		Text(
 			"${index + 1}",
