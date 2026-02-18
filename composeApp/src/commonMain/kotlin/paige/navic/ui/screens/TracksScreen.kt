@@ -66,7 +66,6 @@ import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
-import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_artist
 import navic.composeapp.generated.resources.info_unknown_genre
 import navic.composeapp.generated.resources.info_unknown_year
@@ -127,7 +126,6 @@ fun TracksScreen(
 	val backStack = LocalNavStack.current
 	val uriHandler = LocalUriHandler.current
 	val player = LocalMediaPlayer.current
-	val scrollState = rememberScrollState()
 
 	val tracks by viewModel.tracksState.collectAsState()
 	val selection by viewModel.selectedTrack.collectAsState()
@@ -291,7 +289,9 @@ fun TracksScreen(
 											track = track,
 											index = index,
 											onClick = {
-												player.play(tracks, index)
+												player.clearQueue()
+												player.addToQueue(tracks)
+												player.playAt(index)
 											},
 											onLongClick = {
 												viewModel.selectTrack(track, index)
@@ -334,16 +334,10 @@ fun TracksScreen(
 													)
 												},
 												onClick = {
-<<<<<<< dev
-													player.clearQueue()
-													player.addToQueue(tracks)
-													player.playAt(index)
-=======
 													if (starred == true)
 														viewModel.unstarSelectedTrack()
 													else viewModel.starSelectedTrack()
 													viewModel.clearSelection()
->>>>>>> master
 												},
 												enabled = starred != null
 											)
@@ -451,7 +445,7 @@ private fun TracksScreenScope.Metadata() {
 	Spacer(Modifier.height(10.dp))
 	Column(horizontalAlignment = Alignment.CenterHorizontally) {
 		Text(
-			tracks.title ?: stringResource(Res.string.info_unknown_album),
+			tracks.title,
 			style = MaterialTheme.typography.headlineSmall,
 			textAlign = TextAlign.Center
 		)
