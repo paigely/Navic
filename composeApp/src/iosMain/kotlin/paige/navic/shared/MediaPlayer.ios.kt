@@ -4,11 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import paige.navic.data.models.Settings
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.models.Track
 import paige.subsonic.api.models.TrackCollection
@@ -55,9 +51,7 @@ import platform.UIKit.UIImage
 class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
-	private var preparedUrls: List<String> = emptyList()
-	private var lastScrobbledTrackId: String? = null
-	private var lastTrackForSubmission: Track? = null
+	private val scrobbleManager = IOSScrobbleManager(player, viewModelScope)
 
 	init {
 		setupAudioSession()
@@ -69,7 +63,10 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 			`object` = null,
 			queue = NSOperationQueue.mainQueue
 		) { _ ->
-			next()
+			when (_uiState.value.repeatMode) {
+				1 -> { seek(0f); resume() }
+				else -> next()
+			}
 		}
 	}
 
@@ -117,63 +114,14 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 		}
 	}
 
-	override fun play(tracks: TrackCollection, startIndex: Int) {
-		_uiState.update { it.copy(tracks = tracks, isLoading = true) }
+	override fun playAt(index: Int) {
+		val trackToPlay = _uiState.value.queue.getOrNull(index) ?: return
 
-		viewModelScope.launch(Dispatchers.Default) {
-			val urls = tracks.tracks.map { track ->
-				try { SessionManager.api.streamUrl(track.id) } catch (e: Exception) { "" }
-			}
-
-			withContext(Dispatchers.Main) {
-				preparedUrls = urls
-				playIndex(startIndex)
-			}
-		}
-	}
-
-	override fun playSingle(track: Track) {
-		viewModelScope.launch {
-			runCatching {
-				val albumResponse = SessionManager.api.getAlbum(track.albumId.toString())
-				val album = albumResponse.data.album
-				val index = album.tracks.indexOfFirst { it.id == track.id }
-				if (index != -1) {
-					play(album, index)
-				}
-			}
-		}
-	}
-
-	private fun playIndex(index: Int) {
-		val tracks = _uiState.value.tracks?.tracks ?: return
-		if (index !in tracks.indices || index !in preparedUrls.indices) return
-
-		val trackToPlay = tracks[index]
-
-		if (trackToPlay.id != lastScrobbledTrackId) {
-			lastTrackForSubmission?.takeIf {
-				it.duration?.toFloat()!! >= Settings.shared.minDurationToScrobble &&
-					_uiState.value.progress >= Settings.shared.scrobblePercentage
-			}?.let {
-				scrobbleSubmission(it.id)
-			}
-
-			scrobbleNowPlaying(trackToPlay.id)
-
-			// Update guards
-			lastScrobbledTrackId = trackToPlay.id
-			lastTrackForSubmission = trackToPlay
-		}
-
-		val urlStr = preparedUrls[index]
-		if (urlStr.isEmpty()) {
-			if (index < tracks.size - 1) playIndex(index + 1)
-			return
-		}
-
-		val playerItem = AVPlayerItem(NSURL.URLWithString(urlStr)!!)
-		player.replaceCurrentItemWithPlayerItem(playerItem)
+		player.replaceCurrentItemWithPlayerItem(
+			AVPlayerItem(
+				NSURL.URLWithString(SessionManager.api.streamUrl(trackToPlay.id))!!
+			)
+		)
 		player.play()
 
 		_uiState.update {
@@ -185,53 +133,104 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 			)
 		}
 
+		scrobbleManager.onMediaChanged(trackToPlay.id)
+		scrobbleManager.onIsPlayingChanged(true)
 		updateNowPlayingInfo(trackToPlay)
+	}
+
+	override fun addToQueueSingle(track: Track) {
+		_uiState.update { it.copy(queue = it.queue + track) }
+	}
+
+	override fun addToQueue(tracks: TrackCollection) {
+		_uiState.update { it.copy(queue = it.queue + tracks.tracks) }
+	}
+
+	override fun removeFromQueue(index: Int) {
+		_uiState.update { state ->
+			val newQueue = state.queue.toMutableList().apply {
+				if (index in indices) removeAt(index)
+			}
+			state.copy(queue = newQueue)
+		}
+	}
+
+	override fun moveQueueItem(fromIndex: Int, toIndex: Int) {
+		_uiState.update { state ->
+			val newQueue = state.queue.toMutableList().apply {
+				if (fromIndex in indices && toIndex in 0..size) {
+					val item = removeAt(fromIndex)
+					add(toIndex, item)
+				}
+			}
+			state.copy(queue = newQueue)
+		}
+	}
+
+	override fun clearQueue() {
+		player.replaceCurrentItemWithPlayerItem(null)
+		_uiState.update {
+			it.copy(queue = emptyList(), currentTrack = null, currentIndex = -1, progress = 0f)
+		}
+		scrobbleManager.onIsPlayingChanged(false)
+		updateNowPlayingInfo(null)
 	}
 
 	override fun resume() {
 		player.play()
 		_uiState.update { it.copy(isPaused = false) }
+		scrobbleManager.onIsPlayingChanged(true)
 		updateNowPlayingInfo(_uiState.value.currentTrack)
 	}
 
 	override fun pause() {
 		player.pause()
 		_uiState.update { it.copy(isPaused = true) }
+		scrobbleManager.onIsPlayingChanged(false)
 		updateNowPlayingInfo(_uiState.value.currentTrack)
 	}
 
 	override fun next() {
-		val nextIdx = _uiState.value.currentIndex + 1
-		if (nextIdx < (_uiState.value.tracks?.tracks?.size ?: 0)) {
-			playIndex(nextIdx)
+		if (_uiState.value.currentIndex + 1 < _uiState.value.queue.size) {
+			playAt(_uiState.value.currentIndex + 1)
 		}
 	}
 
 	override fun previous() {
-		val prevIdx = _uiState.value.currentIndex - 1
-		if (prevIdx >= 0) {
-			playIndex(prevIdx)
+		if ((_uiState.value.currentIndex - 1) >= 0) {
+			playAt(_uiState.value.currentIndex - 1)
+		} else {
+			seek(0f)
 		}
 	}
 
 	override fun toggleShuffle() {
-		// todo: Not yet implemented
+		_uiState.update { it.copy(isShuffleEnabled = !it.isShuffleEnabled) }
 	}
 
 	override fun toggleRepeat() {
-		// todo: Not yet implemented
+		_uiState.update {
+			it.copy(repeatMode = if (it.repeatMode == 0) 1 else 0)
+		}
 	}
 
 	override fun shufflePlay(tracks: TrackCollection) {
-		// todo: Not yet implemented
+		val shuffledTracks = tracks.tracks.shuffled()
+		_uiState.update {
+			it.copy(
+				queue = shuffledTracks,
+				isShuffleEnabled = true
+			)
+		}
+		playAt(0)
 	}
 
 	override fun seek(normalized: Float) {
 		val duration = player.currentItem?.duration ?: return
 		val totalSeconds = CMTimeGetSeconds(duration)
 		if (!totalSeconds.isNaN()) {
-			val targetTime = CMTimeMakeWithSeconds(totalSeconds * normalized, 1000)
-			player.seekToTime(targetTime)
+			seekToTime(totalSeconds * normalized)
+			_uiState.update { it.copy(progress = normalized) }
 		}
 	}
 
