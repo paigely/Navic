@@ -24,6 +24,7 @@
 	<string name="title_login_dialog">Login to Navidrome</string>
 	<string name="title_source">Source code</string>
 	<string name="title_chat">Chat</string>
+	<string name="title_shares">Shares</string>
 
 	<string name="subtitle_appearance">Change the theme and colours of the app</string>
 	<string name="subtitle_behaviour">Change how things work</string>
@@ -128,6 +129,7 @@
 	<string name="action_navigate_back">Back</string>
 	<string name="action_log_out">Logout</string>
 	<string name="action_log_in">Login</string>
+	<string name="action_view_shares">Shares</string>
 	<string name="action_clear_search">Clear</string>
 	<string name="action_more">More</string>
 	<string name="action_add_to_playlist">Add to Playlist</string>
@@ -139,6 +141,9 @@
 	<string name="action_view_on_musicbrainz">View on MusicBrainz</string>
 	<string name="action_lyrics">Lyrics</string>
 	<string name="action_share_lyrics">Share Lyrics</string>
+	<string name="action_update_app">Update</string>
+	<string name="action_open_in_browser">Open in Browser</string>
+	<string name="action_copy_link">Copy Link</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
 	<string name="notice_deleted_share">Deleted share.</string>
@@ -174,4 +179,10 @@
 	<string name="info_track_duration">Duration</string>
 	<string name="info_track_id">ID</string>
 	<string name="info_track_path">Path</string>
+	<string name="info_update_app">A new version of Navic is available.</string>
+	<string name="info_unknown_share">Share %1$s</string>
+	<string name="info_shared_by">Shared by %1$s</string>
+	<string name="info_share_expires_in">Expires in %1$s</string>
+	<string name="info_share_expires_never">Never expires</string>
+	<string name="info_no_shares">No shares</string>
 </resources>

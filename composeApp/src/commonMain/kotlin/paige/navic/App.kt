@@ -18,14 +18,17 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.listPane
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,6 +36,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.Dp
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
@@ -47,8 +51,13 @@ import androidx.savedstate.serialization.SavedStateConfiguration
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_update_app
+import navic.composeapp.generated.resources.info_update_app
+import org.jetbrains.compose.resources.getString
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
 import paige.navic.shared.Ctx
@@ -70,6 +79,7 @@ import paige.navic.ui.screens.LyricsScreen
 import paige.navic.ui.screens.PlayerScreen
 import paige.navic.ui.screens.PlaylistsScreen
 import paige.navic.ui.screens.SearchScreen
+import paige.navic.ui.screens.SharesScreen
 import paige.navic.ui.screens.TrackInfoScreen
 import paige.navic.ui.screens.TracksScreen
 import paige.navic.ui.screens.settings.BottomBarScreen
@@ -81,39 +91,14 @@ import paige.navic.ui.screens.settings.SettingsAppearanceScreen
 import paige.navic.ui.screens.settings.SettingsBehaviourScreen
 import paige.navic.ui.screens.settings.SettingsScreen
 import paige.navic.ui.theme.NavicTheme
+import paige.navic.utils.checkForUpdate
 import paige.navic.utils.easedVerticalGradient
 
-// rememberNavBackStack on android will automatically
-// make this, but since other platforms don't have
-// reflection this needs to be made in kmp manually
+@OptIn(ExperimentalSerializationApi::class)
 private val config = SavedStateConfiguration {
 	serializersModule = SerializersModule {
 		polymorphic(NavKey::class) {
-			// tabs
-			subclass(Screen.Library::class, Screen.Library.serializer())
-			subclass(Screen.Albums::class, Screen.Albums.serializer())
-			subclass(Screen.Playlists::class, Screen.Playlists.serializer())
-			subclass(Screen.Artists::class, Screen.Artists.serializer())
-
-			// misc
-			subclass(Screen.Player::class, Screen.Player.serializer())
-			subclass(Screen.Lyrics::class, Screen.Lyrics.serializer())
-			subclass(Screen.Search::class, Screen.Search.serializer())
-			subclass(Screen.Tracks::class, Screen.Tracks.serializer())
-			subclass(Screen.TrackInfo::class, Screen.TrackInfo.serializer())
-			subclass(Screen.Artist::class, Screen.Artist.serializer())
-			subclass(Screen.AddToPlaylist::class, Screen.AddToPlaylist.serializer())
-			subclass(Screen.CreatePlaylist::class, Screen.CreatePlaylist.serializer())
-
-			// settings
-			subclass(Screen.Settings.Root::class, Screen.Settings.Root.serializer())
-			subclass(Screen.Settings.Appearance::class, Screen.Settings.Appearance.serializer())
-			subclass(Screen.Settings.Behaviour::class, Screen.Settings.Behaviour.serializer())
-			subclass(Screen.Settings.BottomAppBar::class, Screen.Settings.BottomAppBar.serializer())
-			subclass(Screen.Settings.NowPlaying::class, Screen.Settings.NowPlaying.serializer())
-			subclass(Screen.Settings.Scrobbling::class, Screen.Settings.Scrobbling.serializer())
-			subclass(Screen.Settings.About::class, Screen.Settings.About.serializer())
-			subclass(Screen.Settings.Acknowledgements::class, Screen.Settings.Acknowledgements.serializer())
+			subclassesOfSealed<Screen>()
 		}
 	}
 }
@@ -131,11 +116,27 @@ val LocalContentPadding = staticCompositionLocalOf { PaddingValues() }
 fun App() {
 	val shareManager = rememberShareManager()
 	val platformContext = LocalPlatformContext.current
+	val uriHandler = LocalUriHandler.current
 	val ctx = rememberCtx()
 	val mediaPlayer = rememberMediaPlayer()
 	val backStack = rememberNavBackStack(config, Screen.Library())
 	val imageBuilder = remember { ImageRequest.Builder(platformContext).crossfade(true) }
 	val snackbarState = remember { SnackbarHostState() }
+
+	// todo: this should survive config changes but im lazy ykyk
+	LaunchedEffect(Unit) {
+		checkForUpdate(ctx.appVersion)?.let { newRelease ->
+ 			val result = snackbarState.showSnackbar(
+				message = getString(Res.string.info_update_app),
+				actionLabel = getString(Res.string.action_update_app),
+				withDismissAction = true,
+				duration = SnackbarDuration.Indefinite
+			)
+			if (result == SnackbarResult.ActionPerformed) {
+				uriHandler.openUri(newRelease.url)
+			}
+		}
+	}
 
 	CompositionLocalProvider(
 		LocalCtx provides ctx,
@@ -249,6 +250,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Search> {
 			SearchScreen()
+		}
+		entry<Screen.Shares> {
+			SharesScreen()
 		}
 		entry<Screen.Artist>(metadata = detailPane("root")) { key ->
 			ArtistScreen(key.artist)

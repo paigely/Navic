@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -61,7 +62,6 @@ import paige.navic.icons.outlined.History
 import paige.navic.icons.outlined.LibraryAdd
 import paige.navic.icons.outlined.Shuffle
 import paige.navic.icons.outlined.Star
-import paige.navic.ui.components.common.RefreshBox
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.dialogs.ShareDialog
@@ -104,24 +104,24 @@ fun LibraryScreen(
 		topBar = { RootTopBar({ Text(stringResource(Res.string.title_library)) }, scrollBehavior) },
 		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
-		RefreshBox(
+		PullToRefreshBox(
 			modifier = Modifier
-				.padding(innerPadding)
+				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			isRefreshing = recentsState is UiState.Loading
 				|| artistsState is UiState.Loading,
 			onRefresh = {
-				if (!isLoggedIn) return@RefreshBox
+				if (!isLoggedIn) return@PullToRefreshBox
 				albumsViewModel.refreshAlbums()
 				playlistsViewModel.refreshPlaylists()
 				artistsViewModel.refreshArtists()
 			}
-		) { topPadding ->
+		) {
 			LazyVerticalGrid(
 				modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
 				columns = GridCells.Fixed(2),
 				contentPadding = PaddingValues(
-					top = topPadding + 16.dp,
+					top = 16.dp,
 					bottom = LocalContentPadding.current.calculateBottomPadding(),
 				),
 				verticalArrangement = Arrangement.spacedBy(6.dp),

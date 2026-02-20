@@ -154,11 +154,9 @@ class AndroidMediaPlayerViewModel(
 						putExtra("isPlaying", isPlaying)
 						putExtra("title", _uiState.value.currentTrack?.title ?: "Unknown track")
 						putExtra("artist", _uiState.value.currentTrack?.artist ?: "Unknown artist")
-						putExtra(
-							"artUrl", SessionManager.api.getCoverArtUrl(
-								id = _uiState.value.currentTrack?.coverArt, auth = true, size = 700
-							)
-						)
+						putExtra("artUrl", SessionManager.api.getCoverArtUrl(
+							id = _uiState.value.currentTrack?.coverArt, auth = true
+						))
 					}
 
 					application.sendBroadcast(intent)

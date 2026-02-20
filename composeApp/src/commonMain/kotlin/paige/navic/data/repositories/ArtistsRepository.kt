@@ -8,16 +8,7 @@ class ArtistsRepository {
 	suspend fun getArtists(): List<Artists.Index> {
 		return SessionManager.api
 			.getArtists()
-			.data.artists.index.map { index ->
-				index.copy(
-					artist = index.artist.map { artist ->
-						artist.copy(
-							coverArt = SessionManager.api
-								.getCoverArtUrl(artist.coverArt, size = 512, auth = true)
-						)
-					}
-				)
-			}
+			.data.artists.index
 	}
 	suspend fun isArtistStarred(artist: Artist): Boolean? {
 		return SessionManager.api.getStarred()

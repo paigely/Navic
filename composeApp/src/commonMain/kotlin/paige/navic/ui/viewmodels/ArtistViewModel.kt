@@ -26,28 +26,8 @@ class ArtistViewModel(
 	init {
 		viewModelScope.launch {
 			try {
-				val artist = SessionManager.api.getArtist(artistId).data.artist.let {
-					it.copy(
-						coverArt = SessionManager.api
-							.getCoverArtUrl(it.coverArt, size = 512, auth = true),
-						album = it.album.orEmpty().map { album ->
-							album.copy(
-								coverArt = SessionManager.api
-									.getCoverArtUrl(album.coverArt, size = 512, auth = true)
-							)
-						}
-					)
-				}
-				val topSongs = SessionManager.api.getTopSongs(artist.name).data.topSongs.let {
-					it.copy(
-						song = it.song?.map { song ->
-							song.copy(
-								coverArt = SessionManager.api
-									.getCoverArtUrl(song.coverArt, size = 128, auth = true)
-							)
-						}
-					)
-				}.song.orEmpty()
+				val artist = SessionManager.api.getArtist(artistId).data.artist
+				val topSongs = SessionManager.api.getTopSongs(artist.name).data.topSongs.song.orEmpty()
 				val artistInfo = SessionManager.api.getArtistInfo(artist.id).data.artistInfo
 				_artistState.value = UiState.Success(ArtistState(
 					artist,

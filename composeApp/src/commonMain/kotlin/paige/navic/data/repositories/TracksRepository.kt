@@ -10,12 +10,8 @@ import paige.subsonic.api.models.TrackCollection
 class TracksRepository {
 	suspend fun fetchWithAllTracks(collection: TrackCollection): TrackCollection {
 		return when (collection) {
-			is Album -> SessionManager.api.getAlbum(collection.id).data.album.copy(
-				coverArt = SessionManager.api.getCoverArtUrl(collection.id, auth = true)
-			)
-			is Playlist -> SessionManager.api.getPlaylist(collection.id).data.playlist.copy(
-				coverArt = SessionManager.api.getCoverArtUrl(collection.id, auth = true)
-			)
+			is Album -> SessionManager.api.getAlbum(collection.id).data.album
+			is Playlist -> SessionManager.api.getPlaylist(collection.id).data.playlist
 		}
 	}
 

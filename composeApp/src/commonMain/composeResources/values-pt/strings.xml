@@ -1,0 +1,177 @@
+<resources>
+	<string name="app_name" translatable="false">Navic</string>
+
+	<string name="title_library">Biblioteca</string>
+	<string name="title_playlists">Playlists</string>
+	<string name="title_settings">Configurações</string>
+	<string name="title_search">Pesquisar</string>
+	<string name="title_appearance">Aparência</string>
+	<string name="title_behaviour">Comportamento</string>
+	<string name="title_now_playing">Tocando agora</string>
+	<string name="title_bottom_app_bar">Barra inferior</string>
+	<string name="title_scrobbling">Scrobbling</string>
+	<string name="title_about">Sobre</string>
+	<string name="title_acknowledgements">Agradecimentos</string>
+	<string name="title_delete_playlist">Apagar playlist?</string>
+	<string name="title_delete_share">Apagar compartilhamento?</string>
+	<string name="title_create_share">Criar compartilhamento</string>
+	<string name="title_create_playlist">Criar playlist</string>
+	<string name="title_albums">Álbuns</string>
+	<string name="title_songs">Músicas</string>
+	<string name="title_artists">Artistas</string>
+	<string name="title_all">Tudo</string>
+	<string name="title_similar_artists">Artistas similares</string>
+	<string name="title_login_dialog">Iniciar sessão no Navidrome</string>
+	<string name="title_source">Código fonte</string>
+	<string name="title_chat">Chat</string>
+
+	<string name="subtitle_appearance">Muda o tema e as cores do aplicativo</string>
+	<string name="subtitle_behaviour">Muda o funcionamento das coisas</string>
+	<string name="subtitle_now_playing">Personaliza o reprodutor principal</string>
+	<string name="subtitle_bottom_app_bar">Personaliza a barra de reprodução e navegação</string>
+	<string name="subtitle_scrobbling">Registra as músicas que você ouve</string>
+	<string name="subtitle_about">Versão, licenças</string>
+	<string name="subtitle_system_font">Caso contrário, usa Google Sans.</string>
+	<string name="subtitle_lyrics_beat_by_beat">Use um gradiente que simula sincronização.</string>
+	<string name="subtitle_grid_items_per_row">O tamanho das grades usadas no aplicativo</string>
+	<string name="subtitle_use_marquee_text">Rolar textos longos automaticamente</string>
+	<string name="subtitle_playlist">Playlist</string>
+	<string name="subtitle_source">Ver o código fonte</string>
+	<string name="subtitle_chat">Entre no Discord</string>
+	<string	name="subtitle_enable_scrobbling">Fazer scrobble das músicas tocadas para seu servidor Navidrome</string>
+	<string name="subtitle_choose_theme">Escolha a partir de uma seleção de temas</string>
+
+	<string name="option_system_font">Usar fonte do sistema</string>
+	<string name="option_player_animate_background">Usar fundo animado no reprodutor</string>
+	<string name="option_accent_colour">Cor de destaque</string>
+	<string name="option_short_navigation_bar">Barra de navegação menor</string>
+	<string name="option_use_wavy_slider">Barra de progresso ondulada</string>
+	<string name="option_show_progress_in_bar">Mostrar progresso na barra</string>
+	<string name="option_use_detached_bar">Barra inferior flutuante</string>
+	<string name="option_swipe_to_skip">Deslizar para pular músicas</string>
+	<string name="option_artwork_shape">Formato da capa</string>
+	<string name="option_cover_art_size">Tamanho da arte da capa</string>
+	<string name="option_use_marquee_text">Rolamento automático de textos longos</string>
+	<string name="option_marquee_duration">Velocidade do rolamento automático</string>
+	<string name="option_alphabetical_scroll">Rolamento alfabético</string>
+	<string name="option_grid_items_per_row">Tamanho da grade</string>
+	<string name="option_navbar_tab_positions">Configurar opções da barra de navegação</string>
+	<string name="option_share_expires">Expira</string>
+	<string name="option_account_navidrome_instance">URL da instância</string>
+	<string name="option_account_username">Nome de usuário</string>
+	<string name="option_account_password">Senha</string>
+	<string name="option_lyrics_autoscroll">Rolamento automático da letra</string>
+	<string name="option_lyrics_beat_by_beat">Letra sincronizada</string>
+	<string name="option_sort_random">Aleatório</string>
+	<string name="option_sort_newest">Adicionado recentemente</string>
+	<string name="option_sort_highest">Highest</string>
+	<string name="option_sort_frequent">Tocado frequentemente</string>
+	<string name="option_sort_recent">Tocado recentemente</string>
+	<string name="option_sort_alphabetical_by_name">Alfabético por título</string>
+	<string name="option_sort_alphabetical_by_artist">Alfabético por artista</string>
+	<string name="option_sort_starred">Favoritos</string>
+	<string name="option_sort_by_year">Por ano</string>
+	<string name="option_sort_by_genre">Por gênero</string>
+	<string name="option_scrobble_percentage">Porcentagem para scrobble</string>
+	<string name="option_min_duration_to_scrobble">Duração mínima para scrobble</string>
+	<string name="option_playlist_name">Título</string>
+	<string name="option_playlist_songs">Músicas</string>
+	<string	name="option_enable_scrobbling">Ativar scrobbling</string>
+	<string name="option_choose_theme">Escolher tema</string>
+
+	<string name="theme_dynamic">Dinâmico</string>
+	<string name="theme_subtitle_dynamic">Disponível no Android 12 ou mais recente</string>
+	<string name="theme_seeded">Tinted</string>
+	<string name="theme_subtitle_seeded">Uma cor para tudo</string>
+	<string name="theme_ios">Cupertino</string>
+	<string name="theme_subtitle_ios">Uma cidade na Califórnia</string>
+	<string name="theme_apple_music">Music.app</string>
+	<string name="theme_subtitle_apple_music">Um tema com destaques em vermelho/rosa</string>
+	<string name="theme_spotify">Spotlight</string>
+	<string name="theme_subtitle_spotify">Um tema com destaques em verde</string>
+
+	<plurals name="count_songs">
+		<item quantity="one">%1$d música</item>
+		<item quantity="other">%1$d músicas</item>
+	</plurals>
+
+	<plurals name="count_albums">
+		<item quantity="one">%1$d álbum</item>
+		<item quantity="other">%1$d álbuns</item>
+	</plurals>
+
+	<plurals name="count_playlists">
+		<item quantity="one">%1$d playlist</item>
+		<item quantity="other">%1$d playlists</item>
+	</plurals>
+
+	<plurals name="count_artists">
+		<item quantity="one">%1$d artista</item>
+		<item quantity="other">%1$d artistas</item>
+	</plurals>
+
+	<string name="action_ok">OK</string>
+	<string name="action_play">Tocar</string>
+	<string name="action_new">Novo</string>
+	<string name="action_shuffle">Aleatório</string>
+	<string name="action_repeat">Repetir</string>
+	<string name="action_delete">Apagar</string>
+	<string name="action_cancel">Cancelar</string>
+	<string name="action_refresh">Atualizar</string>
+	<string name="action_share">Compartilhar</string>
+	<string name="action_track_info">Ver detalhes da faixa</string>
+	<string name="action_view_album">Ver álbum</string>
+	<string name="action_view_playlist">Ver playlist</string>
+	<string name="action_view_artist">Ver artista</string>
+	<string name="action_star">Favorito</string>
+	<string name="action_remove_star">Apagar favorito</string>
+	<string name="action_navigate_back">Voltar</string>
+	<string name="action_log_out">Sair da sessão</string>
+	<string name="action_log_in">Iniciar sessão</string>
+	<string name="action_clear_search">Limpar</string>
+	<string name="action_more">Mais</string>
+	<string name="action_add_to_playlist">Adicionar à playlist</string>
+	<string name="action_add_to_another_playlist">Adicionar à outra playlist</string>
+	<string name="action_add_all_to_playlist">Adicionar tudo à playlist</string>
+	<string name="action_remove_from_playlist">Remover da playlist</string>
+	<string name="action_see_all">Ver tudo</string>
+	<string name="action_view_on_lastfm">Ver no last.fm</string>
+	<string name="action_view_on_musicbrainz">Ver no MusicBrainz</string>
+	<string name="action_lyrics">Letra</string>
+	<string name="action_share_lyrics">Compartilhar letra</string>
+
+	<string name="notice_deleted_playlist">Playlist apagada.</string>
+	<string name="notice_deleted_share">Compartilhamento apagado.</string>
+	<string name="notice_copied">Copiado para a área de transferência.</string>
+	<string name="notice_expiry">Expira em %1$s.</string>
+	<string name="notice_loading_lyrics">Carregando letra...\nIsso pode levar algum tempo.</string>
+
+	<string name="info_app_version">Navic %1$s</string>
+	<string name="info_action_is_permanent">Essa ação não pode ser desfeita!</string>
+	<string name="info_error">Algo deu errado.</string>
+	<string name="info_error_show">Mostrar detalhes</string>
+	<string name="info_error_hide">Esconder detalhes</string>
+	<string name="info_unknown">Desconhecido</string>
+	<string name="info_unknown_album">Álbum desconhecido</string>
+	<string name="info_unknown_artist">Artista desconhecido</string>
+	<string name="info_unknown_year">Ano desconhecido</string>
+	<string name="info_unknown_genre">Gênero desconhecido</string>
+	<string name="info_needs_log_in">É necessário estar logado. Toque no ícone de conta no canto superior direito.</string>
+	<string name="info_not_playing">Nada tocando</string>
+	<string name="info_no_playlists">Você não tem nenhuma playlist.</string>
+	<string name="info_no_other_playlists">Você não tem nenhuma outra playlist.</string>
+	<string name="info_track_name">Título</string>
+	<string name="info_track_artist">Artista(s)</string>
+	<string name="info_track_artist_id">ID do artista</string>
+	<string name="info_track_bitrate">Bitrate</string>
+	<string name="info_track_bit_depth">Bit depth</string>
+	<string name="info_track_file_size">Tamanho do arquivo</string>
+	<string name="info_track_format">Formato</string>
+	<string name="info_track_sampling_rate">Taxa de amostragem</string>
+	<string name="info_track_channel_count">Número de canais</string>
+	<string name="info_track_disc_number">Número do disco</string>
+	<string name="info_track_genre">Gênero</string>
+	<string name="info_track_duration">Duração</string>
+	<string name="info_track_id">ID</string>
+	<string name="info_track_path">Caminho</string>
+</resources>

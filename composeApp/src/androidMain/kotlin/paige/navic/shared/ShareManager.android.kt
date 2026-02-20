@@ -48,6 +48,16 @@ actual class ShareManager(private val context: Context) {
 		chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 		context.startActivity(chooser)
 	}
+	actual suspend fun shareString(string: String) {
+		val intent = Intent(Intent.ACTION_SEND).apply {
+			type = "text/plain"
+			putExtra(Intent.EXTRA_TEXT, string)
+		}
+
+		val chooser = Intent.createChooser(intent, "Share")
+		chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+		context.startActivity(chooser)
+	}
 }
 
 @Composable

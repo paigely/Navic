@@ -26,7 +26,6 @@ import navic.composeapp.generated.resources.option_short_navigation_bar
 import navic.composeapp.generated.resources.option_show_progress_in_bar
 import navic.composeapp.generated.resources.option_swipe_to_skip
 import navic.composeapp.generated.resources.option_use_detached_bar
-import navic.composeapp.generated.resources.option_use_wavy_slider
 import navic.composeapp.generated.resources.title_bottom_app_bar
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalContentPadding
@@ -82,12 +81,6 @@ fun BottomBarScreen() {
 						title = { Text(stringResource(Res.string.option_show_progress_in_bar)) },
 						value = Settings.shared.showProgressInBar,
 						onSetValue = { Settings.shared.showProgressInBar = it }
-					)
-
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_use_wavy_slider)) },
-						value = Settings.shared.useWavySlider,
-						onSetValue = { Settings.shared.useWavySlider = it }
 					)
 
 					FormRow(

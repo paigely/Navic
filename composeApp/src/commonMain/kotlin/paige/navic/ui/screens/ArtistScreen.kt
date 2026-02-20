@@ -8,7 +8,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -72,6 +71,7 @@ import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
@@ -196,7 +196,7 @@ fun ArtistScreen(
 					) {
 						ArtistHeader(
 							artistName = state.artist.name,
-							imageUrl = state.artist.coverArt,
+							coverArt = state.artist.coverArt,
 							subtitle = (artistState as? UiState.Success)?.data?.info?.biography,
 							lastfm = (artistState as? UiState.Success)?.data?.info?.lastFmUrl
 						)
@@ -253,13 +253,12 @@ fun ArtistScreen(
 							) {
 								items(similarArtists) { artist ->
 									ArtGridItem(
-										imageModifier = Modifier.size(150.dp).combinedClickable(
-											onClick = {
-												ctx.clickSound()
-												backStack.add(Screen.Artist(artist.id))
-											}
-										),
-										imageUrl = artist.artistImageUrl,
+										imageModifier = Modifier.size(150.dp),
+										onClick = {
+											ctx.clickSound()
+											backStack.add(Screen.Artist(artist.id))
+										},
+										coverArt = artist.coverArt,
 										title = artist.name
 									)
 								}
@@ -285,10 +284,21 @@ fun truncateText(text: String, limit: Int): String {
 @Composable
 fun ArtistHeader(
 	artistName: String,
-	imageUrl: String?,
+	coverArt: String?,
 	subtitle: String?,
 	lastfm: String?
 ) {
+	val platformContext = LocalPlatformContext.current
+	val model = remember(coverArt) {
+		ImageRequest.Builder(platformContext)
+			.data(SessionManager.api.getCoverArtUrl(coverArt, auth = true))
+			.memoryCacheKey(coverArt)
+			.diskCacheKey(coverArt)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.crossfade(500)
+			.build()
+	}
 	Box(
 		modifier = Modifier
 			.fillMaxWidth()
@@ -296,15 +306,7 @@ fun ArtistHeader(
 			.background(MaterialTheme.colorScheme.surfaceContainer)
 	) {
 		AsyncImage(
-			model = ImageRequest.Builder(LocalPlatformContext.current)
-				.data(imageUrl)
-				.memoryCacheKey(imageUrl)
-				.diskCacheKey(imageUrl)
-				.diskCachePolicy(CachePolicy.ENABLED)
-				.memoryCachePolicy(CachePolicy.ENABLED)
-				.crossfade(true)
-				.crossfade(500)
-				.build(),
+			model = model,
 			contentDescription = null,
 			contentScale = ContentScale.Crop,
 			modifier = Modifier.fillMaxSize()

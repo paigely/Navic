@@ -108,6 +108,7 @@ kotlin {
 
 			implementation(libs.navigation3.ui)
 			implementation(libs.kotlinx.datetime)
+			implementation(libs.kotlinx.serialization.json)
 		}
 
 		androidMain.dependencies {
@@ -138,8 +139,8 @@ android {
 		applicationId = "paige.navic"
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
-		versionCode = 6
-		versionName = "1.0.0-alpha16"
+		versionCode = 8
+		versionName = "v1.0.0-alpha18"
 	}
 
 	signingConfigs {

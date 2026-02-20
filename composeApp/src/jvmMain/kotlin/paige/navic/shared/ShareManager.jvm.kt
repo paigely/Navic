@@ -31,6 +31,21 @@ actual class ShareManager(
 		)
 		snackbarState.showSnackbar("Copied to clipboard")
 	}
+	actual suspend fun shareString(string: String) {
+		Toolkit.getDefaultToolkit().systemClipboard.setContents(
+			object : Transferable {
+				override fun getTransferDataFlavors(): Array<DataFlavor> =
+					arrayOf(DataFlavor.stringFlavor)
+
+				override fun isDataFlavorSupported(flavor: DataFlavor): Boolean =
+					flavor == DataFlavor.stringFlavor
+
+				override fun getTransferData(flavor: DataFlavor): Any = string
+			},
+			null
+		)
+		snackbarState.showSnackbar("Copied to clipboard")
+	}
 }
 
 @Composable

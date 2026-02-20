@@ -2,7 +2,6 @@ package paige.navic.ui.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -23,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,7 +39,6 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_star
-import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_artist
 import navic.composeapp.generated.resources.option_sort_alphabetical_by_artist
 import navic.composeapp.generated.resources.option_sort_alphabetical_by_name
@@ -59,7 +58,6 @@ import paige.navic.icons.outlined.Sort
 import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
-import paige.navic.ui.components.common.RefreshBox
 import paige.navic.ui.components.common.SelectionDropdown
 import paige.navic.ui.components.dialogs.ShareDialog
 import paige.navic.ui.components.layouts.ArtGrid
@@ -71,7 +69,6 @@ import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.viewmodels.AlbumsViewModel
 import paige.navic.utils.UiState
-import paige.navic.utils.onRightClick
 import paige.subsonic.api.models.Album
 import paige.subsonic.api.models.ListType
 import kotlin.time.Duration
@@ -90,6 +87,7 @@ fun AlbumsScreen(
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 	val gridState = rememberLazyGridState()
+	val isRefreshing by viewModel.isRefreshing.collectAsState()
 	val isPaginating by viewModel.isPaginating.collectAsState()
 	val actions: @Composable RowScope.() -> Unit = {
 		SortButton(!nested, viewModel)
@@ -109,14 +107,14 @@ fun AlbumsScreen(
 		},
 		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
-		RefreshBox(
+		PullToRefreshBox(
 			modifier = Modifier
-				.padding(innerPadding)
+				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = albumsState is UiState.Loading,
+			isRefreshing = isRefreshing || albumsState is UiState.Loading,
 			onRefresh = { viewModel.refreshAlbums() }
-		) { topPadding ->
-			AnimatedContent(albumsState::class, Modifier.padding(top = topPadding)) {
+		) {
+			AnimatedContent(albumsState::class) {
 				ArtGrid(
 					modifier = if (!nested)
 						Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -245,24 +243,14 @@ fun AlbumsScreenItem(
 	val starredState by viewModel.starredState.collectAsState()
 	Box(modifier) {
 		ArtGridItem(
-			imageModifier = Modifier
-				.combinedClickable(
-					onClick = {
-						ctx.clickSound()
-						backStack.add(Screen.Tracks(album))
-					},
-					onLongClick = {
-						viewModel.selectAlbum(album)
-					}
-				)
-				.onRightClick {
-					viewModel.selectAlbum(album)
-				},
-			imageUrl = album.coverArt,
-			title = album.name
-				?: stringResource(Res.string.info_unknown_album),
-			subtitle = (album.artist
-				?: stringResource(Res.string.info_unknown_artist)) + "\n",
+			onClick = {
+				ctx.clickSound()
+				backStack.add(Screen.Tracks(album))
+			},
+			onLongClick = { viewModel.selectAlbum(album) },
+			coverArt = album.coverArt,
+			title = album.name,
+			subtitle = album.artist ?: stringResource(Res.string.info_unknown_artist),
 		)
 		Dropdown(
 			expanded = selection == album,

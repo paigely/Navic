@@ -42,6 +42,7 @@ import coil3.compose.AsyncImage
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_log_in
 import navic.composeapp.generated.resources.action_log_out
+import navic.composeapp.generated.resources.action_view_shares
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
@@ -52,6 +53,7 @@ import paige.navic.icons.filled.Settings
 import paige.navic.icons.outlined.AccountCircle
 import paige.navic.icons.outlined.Logout
 import paige.navic.icons.outlined.Search
+import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.dialogs.LoginDialog
@@ -164,9 +166,17 @@ private fun Actions(
 					onDismissRequest = { expanded = false }
 				) {
 					DropdownItem(
+						text = { Text(stringResource(Res.string.action_view_shares)) },
+						onClick = {
+							expanded = false
+							backStack.add(Screen.Shares)
+						},
+						leadingIcon = { Icon(Icons.Outlined.Share, null) }
+					)
+					DropdownItem(
 						text = { Text(stringResource(Res.string.action_log_out)) },
 						onClick = {
-							ctx.clickSound()
+							expanded = false
 							onLogOut()
 							onSetShowLogin(false)
 						},

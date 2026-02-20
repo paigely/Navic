@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,7 +53,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.kyant.capsule.ContinuousCapsule
+import coil3.compose.LocalPlatformContext
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_all_to_playlist
@@ -76,6 +82,7 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
+import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
@@ -94,7 +101,6 @@ import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.MarqueeText
-import paige.navic.ui.components.common.RefreshBox
 import paige.navic.ui.components.dialogs.ShareDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.TopBarButton
@@ -213,17 +219,14 @@ fun TracksScreen(
 		},
 		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
-		RefreshBox(
+		PullToRefreshBox(
 			modifier = Modifier
 				.padding(innerPadding)
 				.background(MaterialTheme.colorScheme.surface),
 			isRefreshing = tracks is UiState.Loading,
 			onRefresh = { viewModel.refreshTracks() }
-		) { topPadding ->
-			AnimatedContent(
-				tracks,
-				modifier = Modifier.padding(top = topPadding)
-			) {
+		) {
+			AnimatedContent(tracks) {
 				when (it) {
 					is UiState.Loading -> TracksScreenPlaceholder()
 					is UiState.Error -> ErrorBox(it)
@@ -417,11 +420,22 @@ fun TracksScreen(
 
 @Composable
 private fun TracksScreenScope.Metadata() {
+	val platformContext = LocalPlatformContext.current
 	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
 	val artGridRounding = Settings.shared.artGridRounding
+	val model = remember(tracks.coverArt) {
+		ImageRequest.Builder(platformContext)
+			.data(SessionManager.api.getCoverArtUrl(tracks.coverArt, auth = true))
+			.memoryCacheKey(tracks.coverArt)
+			.diskCacheKey(tracks.coverArt)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.crossfade(500)
+			.build()
+	}
 	AsyncImage(
-		model = tracks.coverArt,
+		model = model,
 		contentDescription = tracks.title,
 		contentScale = ContentScale.Crop,
 		modifier = Modifier
@@ -437,7 +451,7 @@ private fun TracksScreenScope.Metadata() {
 			)
 			.background(MaterialTheme.colorScheme.surfaceContainer)
 			.clickable {
-				tracks.coverArt?.let { uri ->
+				(model.data as? String)?.let { uri ->
 					uriHandler.openUri(uri)
 				}
 			}
@@ -603,7 +617,9 @@ private fun TracksScreenPlaceholder(
 					end = 64.dp
 				)
 				.aspectRatio(1f)
-				.clip(MaterialTheme.shapes.large)
+				// placeholders shouldn't use continuous corners
+				// because it's less performant
+				.clip(RoundedCornerShape(16.0.dp))
 				.background(MaterialTheme.colorScheme.surfaceContainer)
 				.shimmerLoading()
 		)
@@ -613,7 +629,7 @@ private fun TracksScreenPlaceholder(
 				.padding(top = 8.dp)
 				.fillMaxWidth(0.6f)
 				.height(24.dp)
-				.clip(ContinuousCapsule)
+				.clip(CircleShape)
 				.shimmerLoading()
 		)
 
@@ -622,7 +638,7 @@ private fun TracksScreenPlaceholder(
 				.padding(top = 4.dp)
 				.fillMaxWidth(0.4f)
 				.height(16.dp)
-				.clip(ContinuousCapsule)
+				.clip(CircleShape)
 				.shimmerLoading()
 		)
 
@@ -634,14 +650,14 @@ private fun TracksScreenPlaceholder(
 				modifier = Modifier
 					.width(120.dp)
 					.height(36.dp)
-					.clip(ContinuousCapsule)
+					.clip(CircleShape)
 					.shimmerLoading()
 			)
 			Box(
 				modifier = Modifier
 					.width(120.dp)
 					.height(36.dp)
-					.clip(ContinuousCapsule)
+					.clip(CircleShape)
 					.shimmerLoading()
 			)
 		}
@@ -661,7 +677,7 @@ private fun TracksScreenPlaceholder(
 						modifier = Modifier
 							.width(25.dp)
 							.height(14.dp)
-							.clip(ContinuousCapsule)
+							.clip(CircleShape)
 							.shimmerLoading()
 					)
 
@@ -674,14 +690,14 @@ private fun TracksScreenPlaceholder(
 							modifier = Modifier
 								.fillMaxWidth(0.7f)
 								.height(16.dp)
-								.clip(ContinuousCapsule)
+								.clip(CircleShape)
 								.shimmerLoading()
 						)
 						Box(
 							modifier = Modifier
 								.fillMaxWidth(0.5f)
 								.height(14.dp)
-								.clip(ContinuousCapsule)
+								.clip(CircleShape)
 								.shimmerLoading()
 						)
 					}
@@ -690,7 +706,7 @@ private fun TracksScreenPlaceholder(
 						modifier = Modifier
 							.width(36.dp)
 							.height(14.dp)
-							.clip(ContinuousCapsule)
+							.clip(CircleShape)
 							.shimmerLoading()
 					)
 				}

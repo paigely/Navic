@@ -2,7 +2,6 @@ package paige.navic.ui.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.offset
@@ -16,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,7 +44,6 @@ import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
-import paige.navic.ui.components.common.RefreshBox
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.dialogs.ShareDialog
@@ -56,7 +55,6 @@ import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.viewmodels.PlaylistsViewModel
 import paige.navic.utils.UiState
-import paige.navic.utils.onRightClick
 import paige.subsonic.api.models.Playlist
 import kotlin.time.Duration
 
@@ -69,6 +67,8 @@ fun PlaylistsScreen(
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val playlistsState by viewModel.playlistsState.collectAsState()
+	val isRefreshing by viewModel.isRefreshing.collectAsState()
+
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	var deletionId by remember { mutableStateOf<String?>(null) }
@@ -105,20 +105,20 @@ fun PlaylistsScreen(
 			)
 		}
 	) { innerPadding ->
-		RefreshBox(
+		PullToRefreshBox(
 			modifier = Modifier
 				.padding(innerPadding)
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = playlistsState is UiState.Loading,
+			isRefreshing = isRefreshing || playlistsState is UiState.Loading,
 			onRefresh = { viewModel.refreshPlaylists() }
-		) { topPadding ->
-			AnimatedContent(playlistsState, Modifier.padding(top = topPadding)) {
+		) {
+			AnimatedContent(playlistsState::class) {
 				ArtGrid(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
-					when (it) {
+					when (val state = playlistsState) {
 						is UiState.Loading -> artGridPlaceholder()
-						is UiState.Error -> artGridError(it)
+						is UiState.Error -> artGridError(state)
 						is UiState.Success -> {
-							items(it.data, { it.id }) { playlist ->
+							items(state.data, { it.id }) { playlist ->
 								PlaylistsScreenItem(
 									modifier = Modifier.animateItem(),
 									playlist = playlist,
@@ -167,20 +167,12 @@ fun PlaylistsScreenItem(
 	val selection by viewModel.selectedPlaylist.collectAsState()
 	Box(modifier) {
 		ArtGridItem(
-			imageModifier = Modifier
-				.combinedClickable(
-					onClick = {
-						ctx.clickSound()
-						backStack.add(Screen.Tracks(playlist))
-					},
-					onLongClick = {
-						viewModel.selectPlaylist(playlist)
-					}
-				)
-				.onRightClick {
-					viewModel.selectPlaylist(playlist)
-				},
-			imageUrl = playlist.coverArt,
+			onClick = {
+				ctx.clickSound()
+				backStack.add(Screen.Tracks(playlist))
+			},
+			onLongClick = { viewModel.selectPlaylist(playlist) },
+			coverArt = playlist.coverArt,
 			title = playlist.name,
 			subtitle = buildString {
 				append(
@@ -188,10 +180,10 @@ fun PlaylistsScreenItem(
 						Res.plurals.count_songs,
 						playlist.songCount,
 						playlist.songCount
-					) + "\n"
+					)
 				)
 				playlist.comment?.let {
-					append("${playlist.comment}\n")
+					append("\n${playlist.comment}\n")
 				}
 			}
 		)

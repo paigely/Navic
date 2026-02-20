@@ -83,7 +83,7 @@ fun <Item> SelectionDropdown(
 							selected = selection == item,
 							onClick = { onSelect(item) }
 						)
-						if (items.last() != item) {
+						if (items.last() != item && !Settings.shared.theme.isMaterialLike()) {
 							HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest)
 						}
 					}

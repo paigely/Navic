@@ -11,12 +11,7 @@ open class AlbumsRepository {
 	): List<Album> {
 		return SessionManager.api
 			.getAlbumList(type = listType, size = 30, offset = offset)
-			.data.albumList.album.orEmpty().map { album ->
-				album.copy(
-					coverArt = SessionManager.api
-						.getCoverArtUrl(album.coverArt, size = 512, auth = true)
-				)
-			}
+			.data.albumList.album.orEmpty()
 	}
 	suspend fun isAlbumStarred(album: Album): Boolean? {
 		return SessionManager.api.getStarred()

@@ -8,19 +8,10 @@ class SearchRepository {
 			.search3(query)
 			.data
 			.searchResult3
-		val album = data.album?.map {
-			it.copy(coverArt = SessionManager.api.getCoverArtUrl(it.id, 400, true))
-		}
-		val artist = data.artist?.map {
-			it.copy(coverArt = SessionManager.api.getCoverArtUrl(it.id, 400, true))
-		}
-		val song = data.song?.map {
-			it.copy(coverArt = SessionManager.api.getCoverArtUrl(it.id, 400, true))
-		}
 		return listOf(
-			album,
-			artist,
-			song
+			data.album,
+			data.artist,
+			data.song
 		).flatMap { it.orEmpty() }
 	}
 }

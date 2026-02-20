@@ -32,6 +32,7 @@ kotlin {
 		commonMain.dependencies {
 			implementation(libs.bundles.ktor)
 			implementation(libs.hash.md)
+			implementation(libs.kotlinx.serialization.json)
 		}
 		androidMain.dependencies {
 			implementation(libs.bundles.ktor.android)

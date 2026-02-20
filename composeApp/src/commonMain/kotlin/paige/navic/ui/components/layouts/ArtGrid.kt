@@ -1,6 +1,9 @@
 package paige.navic.ui.components.layouts
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,25 +19,30 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
-import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.LocalImageBuilder
 import paige.navic.data.models.Settings
+import paige.navic.data.session.SessionManager
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.utils.UiState
+import paige.navic.utils.onRightClick
 import paige.navic.utils.shimmerLoading
 
 @Composable
@@ -67,24 +75,37 @@ fun ArtGrid(
 @Composable
 fun ArtGridItem(
 	imageModifier: Modifier = Modifier,
-	imageUrl: String?,
+	onClick: () -> Unit,
+	onLongClick: (() -> Unit)? = null,
+	coverArt: String?,
 	title: String,
 	subtitle: String? = null
 ) {
+	val interactionSource = remember { MutableInteractionSource() }
 	val imageBuilder = LocalImageBuilder.current
 	val artGridRounding = Settings.shared.artGridRounding
+	val model = remember(coverArt) {
+		imageBuilder
+			.data(SessionManager.api.getCoverArtUrl(coverArt, auth = true))
+			.memoryCacheKey(coverArt)
+			.diskCacheKey(coverArt)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.build()
+	}
 	Column(
 		modifier = Modifier
 			.fillMaxWidth()
+			.combinedClickable(
+				interactionSource = interactionSource,
+				indication = null,
+				onClick = onClick,
+				onLongClick = onLongClick
+			)
+			.onRightClick { onLongClick?.invoke() }
 	) {
 		AsyncImage(
-			model = imageBuilder
-				.data(imageUrl)
-				.memoryCacheKey(imageUrl)
-				.diskCacheKey(imageUrl)
-				.diskCachePolicy(CachePolicy.ENABLED)
-				.memoryCachePolicy(CachePolicy.ENABLED)
-				.build(),
+			model = model,
 			contentDescription = title,
 			contentScale = ContentScale.Crop,
 			modifier = Modifier
@@ -93,6 +114,7 @@ fun ArtGridItem(
 				.clip(
 					ContinuousRoundedRectangle(artGridRounding.dp)
 				)
+				.indication(interactionSource, ripple())
 				.background(MaterialTheme.colorScheme.surfaceContainer)
 				.then(imageModifier)
 		)
@@ -124,7 +146,9 @@ fun ArtGridPlaceholder(
 			modifier = Modifier
 				.fillMaxWidth()
 				.aspectRatio(1f)
-				.clip(MaterialTheme.shapes.large)
+				// placeholders shouldn't use continuous corners
+				// because it's less performant
+				.clip(RoundedCornerShape(16.0.dp))
 				.shimmerLoading()
 		)
 		Box(
@@ -132,7 +156,7 @@ fun ArtGridPlaceholder(
 				.padding(top = 6.dp)
 				.fillMaxWidth(0.8f)
 				.height(16.dp)
-				.clip(ContinuousCapsule)
+				.clip(CircleShape)
 				.shimmerLoading()
 		)
 		Box(
@@ -140,7 +164,7 @@ fun ArtGridPlaceholder(
 				.padding(top = 4.dp)
 				.fillMaxWidth(0.6f)
 				.height(14.dp)
-				.clip(ContinuousCapsule)
+				.clip(CircleShape)
 				.shimmerLoading()
 		)
 	}

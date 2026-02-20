@@ -29,6 +29,7 @@ import paige.subsonic.api.models.PlaylistResponse
 import paige.subsonic.api.models.PlaylistsResponse
 import paige.subsonic.api.models.RandomSongsResponse
 import paige.subsonic.api.models.SearchResult3Response
+import paige.subsonic.api.models.SharesResponse
 import paige.subsonic.api.models.SongResponse
 import paige.subsonic.api.models.Starred2Response
 import paige.subsonic.api.models.StarredResponse
@@ -399,12 +400,18 @@ class SubsonicApi(
 
 	suspend fun deleteShare(
 		id: String
-	): SubsonicResponse<CreateShareResponse> {
+	): SubsonicResponse<EmptyResponse> {
 		return client
 			.get("rest/deleteShare") {
 				parameter("id", id)
 			}
-			.body<SubsonicResponse<CreateShareResponse>>()
+			.body<SubsonicResponse<EmptyResponse>>()
+	}
+
+	suspend fun getShares(): SubsonicResponse<SharesResponse> {
+		return client
+			.get("rest/getShares")
+			.body<SubsonicResponse<SharesResponse>>()
 	}
 
 	fun downloadUrl(id: String): String = buildUrl("download", mapOf("id" to id)).toString()

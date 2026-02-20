@@ -14,17 +14,9 @@ import paige.navic.data.session.SessionManager
 fun rememberTrackPainter(trackId: String?, coverArt: String?): Painter {
 	val context = LocalPlatformContext.current
 
-	val coverUri = remember(coverArt) {
-		if (coverArt?.startsWith("http") == true) {
-			coverArt
-		} else {
-			SessionManager.api.getCoverArtUrl(coverArt, auth = true)
-		}
-	}
-
-	val imageRequest = remember(coverUri, trackId) {
+	val imageRequest = remember(coverArt) {
 		ImageRequest.Builder(context)
-			.data(coverUri)
+			.data(SessionManager.api.getCoverArtUrl(coverArt, auth = true))
 			.crossfade(500)
 			.memoryCacheKey(trackId)
 			.diskCacheKey(trackId)

@@ -53,7 +53,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_clear_search
 import navic.composeapp.generated.resources.action_navigate_back
@@ -66,10 +69,10 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
-import paige.navic.LocalImageBuilder
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
 import paige.navic.icons.outlined.Check
@@ -103,7 +106,7 @@ fun SearchScreen(
 	val query = viewModel.searchQuery
 	val state by viewModel.searchState.collectAsState()
 	val ctx = LocalCtx.current
-	val imageBuilder = LocalImageBuilder.current
+	val platformContext = LocalPlatformContext.current
 	val player = LocalMediaPlayer.current
 
 	val artistsViewModel = viewModel { ArtistsViewModel() }
@@ -163,6 +166,16 @@ fun SearchScreen(
 									tracks.take(10).size,
 									span = { GridItemSpan(maxLineSpan) }) { index ->
 									val track = tracks[index]
+									val model = remember(track.coverArt) {
+										ImageRequest.Builder(platformContext)
+											.data(SessionManager.api.getCoverArtUrl(track.coverArt, auth = true))
+											.memoryCacheKey(track.coverArt)
+											.diskCacheKey(track.coverArt)
+											.diskCachePolicy(CachePolicy.ENABLED)
+											.memoryCachePolicy(CachePolicy.ENABLED)
+											.crossfade(500)
+											.build()
+									}
 									ListItem(
 										modifier = Modifier.clickable {
 											ctx.clickSound()
@@ -178,12 +191,7 @@ fun SearchScreen(
 										},
 										leadingContent = {
 											AsyncImage(
-												model = imageBuilder
-													.data(track.coverArt)
-													.memoryCacheKey(track.coverArt)
-													.diskCacheKey(track.coverArt)
-													.diskCachePolicy(CachePolicy.ENABLED)
-													.memoryCachePolicy(CachePolicy.ENABLED).build(),
+												model = model,
 												contentDescription = null,
 												modifier = Modifier
 													.padding(start = 6.5.dp)

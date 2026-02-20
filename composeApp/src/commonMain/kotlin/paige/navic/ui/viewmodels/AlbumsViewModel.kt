@@ -20,6 +20,9 @@ open class AlbumsViewModel(
 	private val _albumsState = MutableStateFlow<UiState<List<Album>>>(UiState.Loading)
 	val albumsState = _albumsState.asStateFlow()
 
+	private val _isRefreshing = MutableStateFlow(false)
+	val isRefreshing = _isRefreshing.asStateFlow()
+
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
 	val starredState = _starredState.asStateFlow()
 
@@ -44,12 +47,25 @@ open class AlbumsViewModel(
 	fun refreshAlbums() {
 		viewModelScope.launch {
 			_offset.value = 0
-			_albumsState.value = UiState.Loading
+
+			val currentState = _albumsState.value
+			val hasExistingData = currentState is UiState.Success && currentState.data.isNotEmpty()
+
+			if (hasExistingData) {
+				_isRefreshing.value = true
+			} else {
+				_albumsState.value = UiState.Loading
+			}
+
 			try {
 				val albums = repository.getAlbums(listType = _listType.value, offset = _offset.value)
 				_albumsState.value = UiState.Success(albums)
 			} catch (e: Exception) {
-				_albumsState.value = UiState.Error(e)
+				if (!hasExistingData) {
+					_albumsState.value = UiState.Error(e)
+				}
+			} finally {
+				_isRefreshing.value = false
 			}
 		}
 	}
