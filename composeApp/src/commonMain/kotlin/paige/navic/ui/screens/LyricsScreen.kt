@@ -19,6 +19,7 @@ import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -219,6 +220,7 @@ fun LyricsScreen(
 							state = listState,
 							contentPadding = WindowInsets.statusBars.asPaddingValues()
 								+ WindowInsets.systemBars.asPaddingValues()
+								+ PaddingValues(vertical = 40.dp)
 						) {
 							itemsIndexed(lyrics) { index, (startTime, text) ->
 								val isActive = index == activeIndex

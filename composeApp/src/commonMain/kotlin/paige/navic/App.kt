@@ -234,7 +234,10 @@ private fun entryProvider(
 		}
 
 		// misc
-		entry<Screen.Player>(metadata = BottomSheetSceneStrategy.bottomSheet(maxWidth = Dp.Unspecified)) {
+		entry<Screen.Player>(metadata = BottomSheetSceneStrategy.bottomSheet(
+			maxWidth = Dp.Unspecified,
+			screenType = "player"
+		)) {
 			PlayerScreen()
 		}
 		entry<Screen.Lyrics>(metadata = BottomSheetSceneStrategy.bottomSheet()) {

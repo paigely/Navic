@@ -70,7 +70,7 @@ fun QueueScreen() {
 			modifier = Modifier.matchParentSize(),
 			contentPadding = WindowInsets.statusBars.asPaddingValues()
 				+ WindowInsets.systemBars.asPaddingValues()
-				+ PaddingValues(16.dp),
+				+ PaddingValues(vertical = 70.dp, horizontal = 16.dp),
 			verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
 		) {
 			itemsIndexed(queue) { index, track ->
@@ -103,20 +103,29 @@ private fun QueueScreenItem(
 	isSelected: Boolean,
 	onClick: () -> Unit
 ) {
-	val color = MaterialTheme.colorScheme.surface.copy(alpha = .5f)
+	val color = MaterialTheme.colorScheme.surface.copy(
+		alpha = if (isSelected) .7f else .5f
+	)
+	val contentColor = if (isSelected)
+		MaterialTheme.colorScheme.primary
+	else MaterialTheme.colorScheme.onSurface
+	val supportingContentColor = if (isSelected)
+		MaterialTheme.colorScheme.primary.copy(alpha = .7f)
+	else MaterialTheme.colorScheme.onSurfaceVariant
 	SegmentedListItem(
 		onClick = onClick,
 		colors = ListItemDefaults.colors(
 			containerColor = color,
-			selectedContainerColor = color.copy(alpha = .7f),
+			selectedContainerColor = color,
 			disabledContainerColor = color,
-			draggedContainerColor = color
+			draggedContainerColor = color,
+			contentColor = contentColor,
+			supportingContentColor = supportingContentColor
 		),
 		shapes = ListItemDefaults.segmentedShapes(
 			index = index,
 			count = count
 		),
-		selected = isSelected,
 		verticalAlignment = Alignment.CenterVertically,
 		content = {
 			MarqueeText(track.title)

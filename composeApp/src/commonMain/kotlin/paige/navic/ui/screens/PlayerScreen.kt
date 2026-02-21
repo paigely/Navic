@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,9 +35,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButtonColors
 import androidx.compose.material3.ripple
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -63,10 +60,7 @@ import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
-import navic.composeapp.generated.resources.action_cast
-import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.action_more
-import navic.composeapp.generated.resources.action_queue
 import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.action_view_album
@@ -83,17 +77,16 @@ import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
 import paige.navic.icons.filled.Play
+import paige.navic.icons.filled.RepeatOn
+import paige.navic.icons.filled.ShuffleOn
 import paige.navic.icons.filled.SkipNext
 import paige.navic.icons.filled.SkipPrevious
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Artist
-import paige.navic.icons.outlined.Cast
 import paige.navic.icons.outlined.Info
-import paige.navic.icons.outlined.Lyrics
 import paige.navic.icons.outlined.MoreHoriz
 import paige.navic.icons.outlined.PlaylistAdd
-import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.Repeat
 import paige.navic.icons.outlined.Shuffle
 import paige.navic.icons.outlined.Star
@@ -132,19 +125,6 @@ fun PlayerScreen(
 		mutableStateOf(playerState.currentTrack?.starred != null)
 	}
 
-	val colors = ToggleButtonColors(
-		containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp),
-		contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-		disabledContainerColor = Color.Transparent,
-		disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .5f),
-		checkedContainerColor = MaterialTheme.colorScheme.primary,
-		checkedContentColor = MaterialTheme.colorScheme.onPrimary
-	)
-	val textShadow = Shadow(
-		color = MaterialTheme.colorScheme.inverseOnSurface,
-		blurRadius = 5f
-	)
-
 	val imagePadding by animateDpAsState(
 		targetValue = if (playerState.isPaused) 48.dp else 16.dp,
 		label = "AlbumArtPadding"
@@ -170,6 +150,7 @@ fun PlayerScreen(
 			)
 		}
 	}
+
 	val moreButton = @Composable {
 		Box {
 			var expanded by remember { mutableStateOf(false) }
@@ -309,6 +290,7 @@ fun PlayerScreen(
 			}
 		}
 	}
+
 	val durationsRow = @Composable {
 		val duration = playerState.currentTrack?.duration
 		val style = MaterialTheme.typography.bodyMedium
@@ -337,6 +319,7 @@ fun PlayerScreen(
 			}
 		}
 	}
+
 	val controlsRow = @Composable {
 		val interactionSource = remember { MutableInteractionSource() }
 		val isPressed by interactionSource.collectIsPressedAsState()
@@ -358,7 +341,7 @@ fun PlayerScreen(
 					)
 				}
 			} else {
-				scale.snapTo(0.95f)
+				scale.animateTo(0.95f)
 			}
 		}
 
@@ -373,7 +356,9 @@ fun PlayerScreen(
 				enabled = enabled,
 			) {
 				Icon(
-					imageVector = Icons.Outlined.Shuffle,
+					imageVector = if (playerState.isShuffleEnabled)
+						Icons.Filled.ShuffleOn
+					else Icons.Outlined.Shuffle,
 					contentDescription = null,
 					modifier = Modifier.size(24.dp)
 				)
@@ -444,7 +429,10 @@ fun PlayerScreen(
 				enabled = enabled,
 			) {
 				Icon(
-					imageVector = Icons.Outlined.Repeat,
+					imageVector = when (playerState.repeatMode) {
+						1 -> Icons.Filled.RepeatOn
+						else -> Icons.Outlined.Repeat
+					},
 					contentDescription = null,
 					modifier = Modifier.size(24.dp)
 				)
@@ -476,61 +464,7 @@ fun PlayerScreen(
 			)
 		)
 	}
-	val toolBar = @Composable {
-		Row(
-			modifier = Modifier.widthIn(max = 400.dp),
-			horizontalArrangement = Arrangement.spacedBy(16.dp),
-			verticalAlignment = Alignment.CenterVertically
-		) {
-			IconButton(
-				modifier = Modifier.weight(1f).aspectRatio(1f),
-				onClick = {
-					ctx.clickSound()
-					if (!backStack.contains(Screen.Lyrics)) {
-						backStack.add(Screen.Lyrics)
-					}
-				},
-				enabled = enabled
-			) {
-				Icon(
-					imageVector = Icons.Outlined.Lyrics,
-					contentDescription = stringResource(Res.string.action_lyrics),
-					modifier = Modifier.size(24.dp)
-				)
-			}
-			Box(Modifier.weight(1f).aspectRatio(1f))
-			IconButton(
-				modifier = Modifier.weight(1.25f).aspectRatio(1f),
-				onClick = {
-					ctx.clickSound()
-				},
-				enabled = enabled
-			) {
-				Icon(
-					imageVector = Icons.Outlined.Cast,
-					contentDescription = stringResource(Res.string.action_cast),
-					modifier = Modifier.size(24.dp)
-				)
-			}
-			Box(Modifier.weight(1f).aspectRatio(1f))
-			IconButton(
-				modifier = Modifier.weight(1f).aspectRatio(1f),
-				onClick = {
-					ctx.clickSound()
-					if (!backStack.contains(Screen.Queue)) {
-						backStack.add(Screen.Queue)
-					}
-				},
-				enabled = enabled
-			) {
-				Icon(
-					imageVector = Icons.Outlined.Queue,
-					contentDescription = stringResource(Res.string.action_queue),
-					modifier = Modifier.size(24.dp)
-				)
-			}
-		}
-	}
+
 	Swiper(
 		onSwipeLeft = {
 			player.next()
@@ -550,7 +484,7 @@ fun PlayerScreen(
 		Column(
 			modifier = Modifier
 				.padding(horizontal = 8.dp)
-				.padding(top = 24.dp, bottom = 12.dp)
+				.padding(top = 90.dp)
 				.navigationBarsPadding()
 				.statusBarsPadding()
 				.fillMaxSize(),
@@ -586,16 +520,14 @@ fun PlayerScreen(
 			Column(
 				modifier = Modifier.weight(1f),
 				horizontalAlignment = Alignment.CenterHorizontally,
-				verticalArrangement = Arrangement.SpaceBetween
+				verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterVertically)
 			) {
-				Spacer(Modifier.height(16.dp))
 				Column {
 					infoRow()
 					progressBar()
 					durationsRow()
 				}
 				controlsRow()
-				toolBar()
 			}
 		}
 	}
