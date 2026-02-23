@@ -265,17 +265,21 @@ fun TracksScreen(
 												// ideally we should do this everywhere in the
 												// app and just stop using non-lazy things where
 												// possible
-												.clip(when (index) {
-													0 -> ContinuousRoundedRectangle(
-														topStart = 18.dp,
-														topEnd = 18.dp
-													)
-													tracks.tracks.lastIndex -> ContinuousRoundedRectangle(
-														bottomStart = 18.dp,
-														bottomEnd = 18.dp
-													)
-													else -> RectangleShape
-												})
+												.clip(
+													if (tracks.tracks.count() == 1)
+														ContinuousRoundedRectangle(18.dp)
+													else when (index) {
+														0 -> ContinuousRoundedRectangle(
+															topStart = 18.dp,
+															topEnd = 18.dp
+														)
+														tracks.tracks.lastIndex -> ContinuousRoundedRectangle(
+															bottomStart = 18.dp,
+															bottomEnd = 18.dp
+														)
+														else -> RectangleShape
+													}
+												)
 												.background(
 													if (Settings.shared.theme != Settings.Theme.iOS
 														&& Settings.shared.theme != Settings.Theme.Spotify
