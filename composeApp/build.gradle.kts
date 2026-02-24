@@ -1,6 +1,8 @@
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.w3c.dom.Element
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
@@ -72,6 +74,19 @@ tasks {
 	}
 }
 
+private fun KotlinMultiplatformExtension.apple(
+	configure: KotlinNativeTarget.() -> Unit = {}
+) {
+	val isMacOs = System.getProperty("os.name").lowercase().contains("mac")
+
+	if (!isMacOs) return
+
+	listOf(
+		iosArm64(),
+		iosSimulatorArm64()
+	).forEach(configure)
+}
+
 kotlin {
 	@Suppress("DEPRECATION")
 	androidTarget {
@@ -80,11 +95,8 @@ kotlin {
 		}
 	}
 
-	listOf(
-		iosArm64(),
-		iosSimulatorArm64()
-	).forEach { target ->
-		target.binaries.framework {
+	apple {
+		binaries.framework {
 			baseName = "ComposeApp"
 			isStatic = true
 		}

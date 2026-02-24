@@ -1,0 +1,51 @@
+Subject: [PATCH] fix apple on non mac
+---
+Index: composeApp/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/composeApp/build.gradle.kts b/composeApp/build.gradle.kts
+--- a/composeApp/build.gradle.kts    (revision 3509f704c057a411f2b0bb49b0ca22b3667e5de9)
++++ b/composeApp/build.gradle.kts    (date 1771899244802)
+@@ -1,6 +1,8 @@
+
+ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
++import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
++import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+ import org.w3c.dom.Element
+ import javax.xml.parsers.DocumentBuilderFactory
+ import javax.xml.transform.OutputKeys
+@@ -72,6 +74,17 @@
+     }
+ }
+
++private fun KotlinMultiplatformExtension.apple(configure: KotlinNativeTarget.() -> Unit = {}) {
++    val isMacOs = System.getProperty("os.name").lowercase().contains("mac")
++
++    if (!isMacOs) return
++
++    listOf(
++        iosX64(),
++        iosArm64()
++    ).forEach(configure)
++}
++
+ kotlin {
+     @Suppress("DEPRECATION")
+     androidTarget {
+@@ -80,11 +93,8 @@
+         }
+     }
+
+-    listOf(
+-        iosArm64(),
+-        iosSimulatorArm64()
+-    ).forEach { target ->
+-        target.binaries.framework {
++    apple {
++        binaries.framework {
+             baseName = "ComposeApp"
+             isStatic = true
+         }
