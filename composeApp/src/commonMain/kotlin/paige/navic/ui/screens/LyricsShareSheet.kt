@@ -6,11 +6,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -46,8 +48,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.materialkolor.utils.ColorUtils.calculateLuminance
@@ -143,74 +147,75 @@ fun LyricsShareSheet(
 					.background(color = selectedColor)
 					.padding(24.dp)
 			) {
-				Row(
-					modifier = Modifier.align(Alignment.TopStart),
-					verticalAlignment = Alignment.CenterVertically
+				Column(
+					modifier = Modifier.fillMaxSize()
 				) {
-					Image(
-						painter = sharedPainter,
-						contentDescription = null,
-						contentScale = ContentScale.Crop,
+					Row(
+						modifier = Modifier.fillMaxWidth(),
+						verticalAlignment = Alignment.CenterVertically
+					) {
+						Image(
+							painter = sharedPainter,
+							contentDescription = null,
+							contentScale = ContentScale.Crop,
+							modifier = Modifier
+								.size(48.dp)
+								.clip(MaterialTheme.shapes.small)
+								.background(MaterialTheme.colorScheme.surfaceVariant)
+						)
+
+						Spacer(Modifier.width(12.dp))
+
+						Column {
+							Text(
+								text = track.title,
+								style = MaterialTheme.typography.titleMedium,
+								color = contentColor,
+								fontWeight = FontWeight.Bold
+							)
+
+							Text(
+								text = track.artist
+									?: stringResource(Res.string.info_unknown_artist),
+								style = MaterialTheme.typography.bodyMedium,
+								color = contentColor.copy(alpha = 0.8f)
+							)
+						}
+					}
+					Box(
 						modifier = Modifier
-							.size(48.dp)
-							.clip(MaterialTheme.shapes.small)
-							.background(MaterialTheme.colorScheme.surfaceVariant)
-					)
+							.weight(1f)
+							.fillMaxWidth()
+							.padding(vertical = 16.dp),
+						contentAlignment = Alignment.CenterStart
+					) {
+						val combinedLyrics = remember(selectedLyrics) {
+							selectedLyrics.joinToString("\n")
+						}
 
-					Spacer(Modifier.width(12.dp))
-
-					Column {
+						AutoResizedText(
+							text = combinedLyrics,
+							color = contentColor
+						)
+					}
+					Row(
+						verticalAlignment = Alignment.CenterVertically,
+						modifier = Modifier.fillMaxWidth()
+					) {
+						Icon(
+							imageVector = Icons.Desktop.Navic,
+							contentDescription = null,
+							tint = contentColor,
+							modifier = Modifier.size(24.dp)
+						)
+						Spacer(modifier = Modifier.size(8.dp))
 						Text(
-							text = track.title,
-							style = MaterialTheme.typography.titleMedium,
+							text = stringResource(Res.string.app_name),
 							color = contentColor,
+							style = MaterialTheme.typography.titleSmall,
 							fontWeight = FontWeight.Bold
 						)
-
-						Text(
-							text = track.artist
-								?: stringResource(Res.string.info_unknown_artist),
-							style = MaterialTheme.typography.bodyMedium,
-							color = contentColor.copy(alpha = 0.8f)
-						)
 					}
-				}
-
-				Column(
-					modifier = Modifier
-						.align(Alignment.Center)
-						.fillMaxWidth(),
-					verticalArrangement = Arrangement.Center
-				) {
-					selectedLyrics.forEach { line ->
-						Text(
-							text = line,
-							style = MaterialTheme.typography.headlineSmall,
-							color = contentColor,
-							fontWeight = FontWeight.Bold,
-							textAlign = TextAlign.Start,
-							lineHeight = 32.sp,
-							modifier = Modifier.padding(vertical = 4.dp)
-						)
-					}
-				}
-				Row(
-					verticalAlignment = Alignment.CenterVertically,
-					modifier = Modifier.align(Alignment.BottomStart)
-				) {
-					Icon(
-						imageVector = Icons.Desktop.Navic,
-						contentDescription = null,
-						tint = contentColor,
-						modifier = Modifier.size(24.dp)
-					)
-					Spacer(modifier = Modifier.size(8.dp))
-					Text(
-						text = stringResource(Res.string.app_name),
-						color = contentColor,
-						style = MaterialTheme.typography.titleSmall,
-						fontWeight = FontWeight.Bold
-					)
 				}
 			}
 
@@ -332,5 +337,54 @@ fun ColorCircle(
 				modifier = Modifier.size(16.dp),
 			)
 		}
+	}
+}
+
+@Composable
+fun AutoResizedText(
+	text: String,
+	color: Color,
+	modifier: Modifier = Modifier,
+	sizeFactor: Float = 0.12f,
+	minFontSize: TextUnit = 10.sp
+) {
+	BoxWithConstraints(modifier = modifier) {
+		val density = LocalDensity.current
+
+		val referenceDimension = minOf(maxWidth, maxHeight)
+		val proportionalBaseSize = with(density) { (referenceDimension * sizeFactor).toSp() }
+
+		var scaledStyle by remember(text, proportionalBaseSize) {
+			mutableStateOf(
+				TextStyle(
+					fontSize = proportionalBaseSize,
+					lineHeight = proportionalBaseSize * 1.2f,
+					fontWeight = FontWeight.Bold
+				)
+			)
+		}
+
+		var readyToDraw by remember(text) { mutableStateOf(false) }
+
+		Text(
+			text = text,
+			color = if (readyToDraw) color else Color.Transparent,
+			style = scaledStyle,
+			modifier = Modifier.fillMaxWidth(),
+			onTextLayout = { textLayoutResult ->
+				if (textLayoutResult.hasVisualOverflow || textLayoutResult.didOverflowHeight) {
+					if (scaledStyle.fontSize > minFontSize) {
+						scaledStyle = scaledStyle.copy(
+							fontSize = scaledStyle.fontSize * 0.9f,
+							lineHeight = scaledStyle.lineHeight * 0.9f
+						)
+					} else {
+						readyToDraw = true
+					}
+				} else {
+					readyToDraw = true
+				}
+			}
+		)
 	}
 }
