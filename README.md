@@ -29,15 +29,6 @@ Expressive design language.
 |:------------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
 | ![](https://github.com/user-attachments/assets/fd83280c-69ee-401b-8bf6-158fb2eae321) | ![](https://github.com/user-attachments/assets/092f10f7-b7ed-4c76-a546-5eaa95ac64c3) | ![](https://github.com/user-attachments/assets/b81fefc0-8883-4c71-914d-9b5528b1bb2c) | ![](https://github.com/user-attachments/assets/f49f0846-67c4-4c3b-a871-a5632e82a455) |
 
-## Star History
-<a href="https://star-history.com/#paigely/Navic&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=paigely/Navic&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=paigely/Navic&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=paigely/Navic&type=Date" />
- </picture>
-</a>
-
 ## Contributing
 Don't use AI please, it wastes my time and I will close your PR if you do
 
