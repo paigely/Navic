@@ -40,7 +40,7 @@ jobs:
     
             - name: Build with Gradle (release)
               id: build_release
-              if: github.event_name == 'push' && env.SIGNING_KEY_ALIAS
+              if: github.event_name == 'push'
               env:
                   SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
                   SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -126,7 +126,7 @@ jobs:
         name: Upload Artifacts to Discord
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         needs: [build-apk] # [build-apk, build-ipa]
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-20.04
         steps:
             - uses: actions/download-artifact@v7
             - name: Post artifacts to Discord webhook
