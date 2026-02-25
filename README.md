@@ -34,6 +34,15 @@ Expressive design language.
 |:------------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
 | ![](https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/library.png) | ![](https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/player.png) | ![](https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/lyrics.png) | ![](https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/albums.png) |
 
+## Star History
+<a href="https://star-history.com/#paigely/Navic&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=paigely/Navic&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=paigely/Navic&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=paigely/Navic&type=Date" />
+ </picture>
+</a>
+
 ## Contributing
 Don't use AI please, it wastes my time and I will close your PR if you do
 

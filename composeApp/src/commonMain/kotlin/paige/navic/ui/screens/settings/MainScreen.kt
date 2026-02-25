@@ -51,8 +51,8 @@ import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
 import paige.navic.icons.Icons
-import paige.navic.icons.brand.Codeberg
 import paige.navic.icons.brand.Discord
+import paige.navic.icons.brand.Github
 import paige.navic.icons.filled.Airwave
 import paige.navic.icons.filled.BottomNavigation
 import paige.navic.icons.filled.Palette
@@ -124,8 +124,8 @@ fun SettingsScreen() {
 					backgroundColor = Color(0xFFC7C7C7)
 				)
 				PageRow(
-					link = "https://codeberg.org/paige/Navic",
-					icon = Icons.Brand.Codeberg,
+					link = "https://github.com/paigely/Navic",
+					icon = Icons.Brand.Github,
 					title = Res.string.title_source,
 					subtitle = Res.string.subtitle_source,
 					foregroundColor = Color(0xFF2C2C2C),
