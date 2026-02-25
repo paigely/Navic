@@ -9,14 +9,14 @@
 Navidrome client app for Android and iOS, featuring the Material 3
 Expressive design language.
 
-[![Add to Obtainium](https://codeberg.org/Navic/Branding/raw/branch/main/assets/obtainium.svg)][ADD_TO_OBTAINIUM]
-[![AltSource provides links for most sideloading apps, like Feather](https://codeberg.org/Navic/Branding/raw/branch/main/assets/altsource.svg)][ALTSOURCE]
-[![Link to the latest release where you can download the APK or IPA directly](https://codeberg.org/Navic/Branding/raw/branch/main/assets/direct_download.svg)][LATEST_RELEASE]
-[![Discord](https://codeberg.org/Navic/Branding/raw/branch/main/assets/discord.svg)](https://discord.gg/TBcnNX66PH)
-[![Translate](https://codeberg.org/Navic/Branding/raw/branch/main/assets/translate.svg)](https://github.com/paigely/Navic/issues/3)
-[![Codeberg](https://codeberg.org/Navic/Branding/raw/branch/main/assets/codeberg.svg)](https://codeberg.org/paige/Navic)
+[![Add to Obtainium](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/obtainium.svg)][ADD_TO_OBTAINIUM]
+[![AltSource provides links for most sideloading apps, like Feather](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/altsource.svg)][ALTSOURCE]
+[![Link to the latest release where you can download the APK or IPA directly](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/direct_download.svg)][LATEST_RELEASE]
+[![Discord](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/discord.svg)](https://discord.gg/TBcnNX66PH)
+[![Translate](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/translate.svg)](https://github.com/paigely/Navic/issues/3)
+[![Codeberg](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/codeberg.svg)](https://codeberg.org/paige/Navic)
 
-<!--[![Matrix](https://codeberg.org/Navic/Branding/raw/branch/main/assets/matrix.svg)](https://matrix.to/#/#navic:nin0.dev)-->
+<!--[![Matrix](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/matrix.svg)](https://matrix.to/#/#navic:nin0.dev)-->
 
 </div>
 
@@ -32,7 +32,7 @@ Expressive design language.
 ## Screenshots
 |         Library          |         Player          |         Lyrics          |         Albums          |
 |:------------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
-| ![](https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/library.png) | ![](https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/player.png) | ![](https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/lyrics.png) | ![](https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/albums.png) |
+| ![](https://github.com/NavicApp/Branding/blob/main/screenshots/library.png?raw=true) | ![](https://github.com/NavicApp/Branding/blob/main/screenshots/player.png?raw=true) | ![](https://github.com/NavicApp/Branding/blob/main/screenshots/lyrics.png?raw=true) | ![](https://github.com/NavicApp/Branding/blob/main/screenshots/albums.png?raw=true) |
 
 ## Star History
 <a href="https://star-history.com/#paigely/Navic&Date">

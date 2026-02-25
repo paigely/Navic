@@ -2,7 +2,7 @@
   "name": "Navic Repository",
   "identifier": "paige.navic.repo",
   "website": "https://github.com/paigely/Navic",
-  "iconURL": "https://codeberg.org/Navic/Branding/raw/branch/main/icons/ios.png",
+  "iconURL": "https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/icons/ios.png",
   "apps": [
     {
       "name": "Navic",
@@ -11,7 +11,7 @@
       "localizedDescription": "Navidrome client for Android and iOS with Material 3 Expressive design ",
       "subtitle": "Material 3 expressive Navidrome client",
       "tintColor": "ffffff",
-      "iconURL": "https://codeberg.org/Navic/Branding/raw/branch/main/icons/ios.png",
+      "iconURL": "https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/icons/ios.png",
       "versions": [
         {
           "version": "v1.0.0-alpha20",
@@ -22,10 +22,10 @@
       ],
       "appPermissions": {},
       "screenshotURLs": [
-        "https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/albums.png",
-        "https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/library.png",
-        "https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/lyrics.png",
-        "https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/player.png"
+        "https://github.com/NavicApp/Branding/blob/main/screenshots/albums.png?raw=true",
+        "https://github.com/NavicApp/Branding/blob/main/screenshots/library.png?raw=true",
+        "https://github.com/NavicApp/Branding/blob/main/screenshots/lyrics.png?raw=true",
+        "https://github.com/NavicApp/Branding/blob/main/screenshots/player.png?raw=true"
       ],
       "version": "v1.0.0-alpha20",
       "versionDate": "2026-02-25T11:28:24Z",
