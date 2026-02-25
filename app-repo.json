@@ -1,7 +1,7 @@
 {
   "name": "Navic Repository",
   "identifier": "paige.navic.repo",
-  "website": "https://codeberg.org/paige/Navic",
+  "website": "https://github.com/paigely/Navic",
   "iconURL": "https://codeberg.org/Navic/Branding/raw/branch/main/icons/ios.png",
   "apps": [
     {
