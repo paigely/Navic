@@ -42,6 +42,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+          cache: gradle
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
@@ -180,5 +181,5 @@ jobs:
 
           gh release create "$GITHUB_REF_NAME" **/*.{apk,ipa} \
             --repo "$GITHUB_REPOSITORY" \
-            --title "Navic $GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
             --draft --generate-notes
