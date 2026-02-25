@@ -30,54 +30,50 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    # TODO: This should only run on tag creation,
-    # and the codeberg-medium runner will probably
-    # not be good enough to run it anyway, so we
-    # also need a selfhosted runner
-    #
-    # build-apk:
-    #     name: Build Android APK
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Checkout repository
-    #           uses: actions/checkout@v5
+    build-apk:
+        name: Build Android APK
+        runs-on: ubuntu-20.04
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v5
 
-    #         - name: Setup JDK
-    #           uses: actions/setup-java@v5
-    #           with:
-    #               distribution: temurin
-    #               java-version: 17
-    #
-    #         - name: Setup Gradle
-    #           uses: gradle/actions/setup-gradle@v5
-    #
-    #         - name: Build with Gradle (release)
-    #           id: build_release
-    #           if: github.event_name == 'push' && env.SIGNING_KEY_ALIAS
-    #           env:
-    #               SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-    #               SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-    #               SIGNING_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-    #               SIGNING_STORE_FILE: ${{ github.workspace }}/release.keystore
-    #               RELEASE: true
-    #           run: |
-    #               echo "${{ secrets.KEYSTORE }}" | base64 -d > release.keystore
-    #               ./gradlew :composeApp:packageRelease --stacktrace
-    #               rm release.keystore
-    #
-    #         - name: Build with Gradle (debug)
-    #           id: build_debug
-    #           if: github.event_name == 'pull_request'
-    #           run: |
-    #               ./gradlew :composeApp:assembleDebug --stacktrace
-    #
-    #         - name: Upload APK artifact
-    #           if: steps.build_release.outcome == 'success' || steps.build_debug.outcome == 'success'
-    #           uses: actions/upload-artifact@v6
-    #           with:
-    #               name: navic-release-android
-    #               path: composeApp/build/outputs/apk/**/*.apk
-    #               compression-level: 0
+            - name: Setup JDK
+              uses: actions/setup-java@v5
+              with:
+                  java-version: 17
+                  distribution: temurin
+                  cache: gradle
+    
+            - name: Setup Gradle
+              uses: gradle/actions/setup-gradle@v5
+    
+            - name: Build with Gradle (release)
+              id: build_release
+              if: github.event_name == 'push' && env.SIGNING_KEY_ALIAS
+              env:
+                  SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+                  SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+                  SIGNING_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+                  SIGNING_STORE_FILE: ${{ github.workspace }}/release.keystore
+                  RELEASE: true
+              run: |
+                  echo "${{ secrets.KEYSTORE }}" | base64 -d > release.keystore
+                  ./gradlew :composeApp:packageRelease --stacktrace
+                  rm release.keystore
+    
+            - name: Build with Gradle (debug)
+              id: build_debug
+              if: github.event_name == 'pull_request'
+              run: |
+                  ./gradlew :composeApp:assembleDebug --stacktrace
+    
+            - name: Upload APK artifact
+              if: steps.build_release.outcome == 'success' || steps.build_debug.outcome == 'success'
+              uses: actions/upload-artifact@v6
+              with:
+                  name: navic-release-android
+                  path: composeApp/build/outputs/apk/**/*.apk
+                  compression-level: 0
 
     # TODO: We need a selfhosted runner for macOS
     #
@@ -135,40 +131,38 @@ jobs:
     #               path: Navic.ipa
     #               compression-level: 0
 
-    # TODO: Somewhat pointless until we have a per-commit build
-    #
-    # upload-artifacts-to-discord:
-    #     name: Upload Artifacts to Discord
-    #     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    #     needs: [build-apk, build-ipa]
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - uses: actions/download-artifact@v7
-    #         - name: Post artifacts to Discord webhook
-    #           shell: bash
-    #           if: env.CI_BUILD_WEBHOOK
-    #           env:
-    #               CI_BUILD_WEBHOOK: ${{ secrets.CI_BUILD_WEBHOOK }}
-    #           run: |
-    #               shopt -s nullglob globstar
-    #
-    #               files=()
-    #               i=1
-    #               for file in **/*.apk; do  # TODO: Add ipa - too big for Discord 10mb limit (need boooosts)
-    #                 files+=("-F file${i}=@${file}")
-    #                 ((i++))
-    #               done
-    #
-    #               if (( ${#files[@]} == 0 )); then
-    #                 echo "No files to upload"
-    #                 exit 0
-    #               fi
-    #
-    #               run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-    #
-    #               payload=$(jq -n --arg content "Builds for [${GITHUB_SHA::7}](<$run_url>)" '{$content}')
-    #
-    #               curl -XPOST "$CI_BUILD_WEBHOOK" -F "payload_json=$payload" "${files[@]}"
+    upload-artifacts-to-discord:
+        name: Upload Artifacts to Discord
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        needs: [build-apk] # [build-apk, build-ipa]
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/download-artifact@v7
+            - name: Post artifacts to Discord webhook
+              shell: bash
+              if: env.CI_BUILD_WEBHOOK
+              env:
+                  CI_BUILD_WEBHOOK: ${{ secrets.CI_BUILD_WEBHOOK }}
+              run: |
+                  shopt -s nullglob globstar
+    
+                  files=()
+                  i=1
+                  for file in **/*.apk; do  # TODO: Add ipa - too big for Discord 10mb limit (need boooosts)
+                    files+=("-F file${i}=@${file}")
+                    ((i++))
+                  done
+    
+                  if (( ${#files[@]} == 0 )); then
+                    echo "No files to upload"
+                    exit 0
+                  fi
+    
+                  run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+    
+                  payload=$(jq -n --arg content "Builds for [${GITHUB_SHA::7}](<$run_url>)" '{$content}')
+    
+                  curl -XPOST "$CI_BUILD_WEBHOOK" -F "payload_json=$payload" "${files[@]}"
 
     # TODO: This needs to be refactored for codeberg
     #
