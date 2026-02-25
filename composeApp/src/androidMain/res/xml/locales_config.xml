@@ -9,4 +9,5 @@ but it doesn't seem to see locales inside commonMain/composeResources
 	<locale android:name="ru" />
 	<locale android:name="es" />
 	<locale android:name="pt" />
+	<locale android:name="fr" />
 </locale-config>
