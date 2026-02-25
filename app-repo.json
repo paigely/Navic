@@ -14,10 +14,10 @@
       "iconURL": "https://codeberg.org/Navic/Branding/raw/branch/main/icons/ios.png",
       "versions": [
         {
-          "version": "v1.0.0-alpha18",
-          "date": "2026-02-20T19:41:23+01:00",
-          "size": 18225152,
-          "downloadURL": "https://codeberg.org/paige/Navic/releases/download/v1.0.0-alpha18/Navic.ipa"
+          "version": "v1.0.0-alpha20",
+          "date": "2026-02-25T11:28:24Z",
+          "size": 20211868,
+          "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha20/Navic.ipa"
         }
       ],
       "appPermissions": {},
@@ -27,10 +27,10 @@
         "https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/lyrics.png",
         "https://codeberg.org/Navic/Branding/raw/branch/main/screenshots/player.png"
       ],
-      "version": "v1.0.0-alpha18",
-      "versionDate": "2026-02-20T19:41:23+01:00",
-      "size": 18225152,
-      "downloadURL": "https://codeberg.org/paige/Navic/releases/download/v1.0.0-alpha18/Navic.ipa"
+      "version": "v1.0.0-alpha20",
+      "versionDate": "2026-02-25T11:28:24Z",
+      "size": 20211868,
+      "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha20/Navic.ipa"
     }
   ]
 }
