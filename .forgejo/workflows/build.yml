@@ -14,15 +14,6 @@ on:
             - "v*"
         branches:
             - "*"
-    pull_request:
-        paths:
-            - composeApp/**
-            - gradle/**
-            - iosApp/**
-            - subsonic/**
-            - build.gradle.kts
-            - settings.gradle.kts
-            - .forgejo/workflows/build.yml
     workflow_dispatch:
 
 concurrency:
