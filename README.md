@@ -13,7 +13,7 @@ Expressive design language.
 [![AltSource provides links for most sideloading apps, like Feather](https://codeberg.org/Navic/Branding/raw/branch/main/assets/altsource.svg)][ALTSOURCE]
 [![Link to the latest release where you can download the APK or IPA directly](https://codeberg.org/Navic/Branding/raw/branch/main/assets/direct_download.svg)][LATEST_RELEASE]
 [![Discord](https://codeberg.org/Navic/Branding/raw/branch/main/assets/discord.svg)](https://discord.gg/TBcnNX66PH)
-[![Translate](https://codeberg.org/Navic/Branding/raw/branch/main/assets/translate.svg)](https://codeberg.org/paige/Navic/issues/3)
+[![Translate](https://codeberg.org/Navic/Branding/raw/branch/main/assets/translate.svg)](https://github.com/paigely/Navic/issues/3)
 [![Codeberg](https://codeberg.org/Navic/Branding/raw/branch/main/assets/codeberg.svg)](https://codeberg.org/paige/Navic)
 
 <!--[![Matrix](https://codeberg.org/Navic/Branding/raw/branch/main/assets/matrix.svg)](https://matrix.to/#/#navic:nin0.dev)-->
