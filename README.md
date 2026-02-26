@@ -14,6 +14,7 @@ Expressive design language.
 [![Link to the latest release where you can download the APK or IPA directly](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/direct_download.svg)][LATEST_RELEASE]
 [![Discord](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/discord.svg)](https://discord.gg/TBcnNX66PH)
 [![Translate](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/translate.svg)](https://github.com/paigely/Navic/issues/3)
+[![Matrix](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/matrix.svg)](https://matrix.to/#/#navic:maize.moe)
 [![Codeberg](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/codeberg.svg)](https://codeberg.org/paige/Navic)
 
 <!--[![Matrix](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/matrix.svg)](https://matrix.to/#/#navic:nin0.dev)-->
