@@ -21,11 +21,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.option_auto_hide_bar
 import navic.composeapp.generated.resources.option_navbar_tab_positions
 import navic.composeapp.generated.resources.option_short_navigation_bar
 import navic.composeapp.generated.resources.option_show_progress_in_bar
 import navic.composeapp.generated.resources.option_swipe_to_skip
 import navic.composeapp.generated.resources.option_use_detached_bar
+import navic.composeapp.generated.resources.subtitle_auto_hide_bar
 import navic.composeapp.generated.resources.title_bottom_app_bar
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalContentPadding
@@ -69,6 +71,13 @@ fun BottomBarScreen() {
 						title = { Text(stringResource(Res.string.option_use_detached_bar)) },
 						value = Settings.shared.detachedBar,
 						onSetValue = { Settings.shared.detachedBar = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_auto_hide_bar)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_auto_hide_bar)) },
+						value = Settings.shared.autoHideBar,
+						onSetValue = { Settings.shared.autoHideBar = it }
 					)
 
 					SettingSwitchRow(

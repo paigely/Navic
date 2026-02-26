@@ -121,6 +121,7 @@ fun App() {
 	val uriHandler = LocalUriHandler.current
 	val ctx = rememberCtx()
 	val mediaPlayer = rememberMediaPlayer()
+	val playerState by mediaPlayer.uiState.collectAsState()
 	val backStack = rememberNavBackStack(config, Screen.Library())
 	val imageBuilder = remember { ImageRequest.Builder(platformContext).crossfade(true) }
 	val snackbarState = remember { SnackbarHostState() }
@@ -154,6 +155,7 @@ fun App() {
 					SnackbarHost(hostState = snackbarState)
 				},
 				bottomBar = {
+					val isVisible = !Settings.shared.autoHideBar || playerState.queue.isNotEmpty()
 					Column(
 						modifier = if (Settings.shared.detachedBar)
 							Modifier.background(
@@ -161,9 +163,9 @@ fun App() {
 							)
 						else Modifier
 					) {
-						PlayerBar()
+						if (isVisible) PlayerBar()
 						BottomBar(
-							containerColor = if (Settings.shared.detachedBar)
+							containerColor = if (Settings.shared.detachedBar && isVisible)
 								NavigationBarDefaults.containerColor.copy(alpha = 0f)
 							else NavigationBarDefaults.containerColor
 						)
