@@ -27,7 +27,7 @@ Expressive design language.
 * Lightweight & fast: zero bloat
 * Feature rich: covers almost the entirety of the Subsonic API
 
-## Screenshots
+## 🌆 Screenshots
 |         Library          |         Player          |         Lyrics          |         Albums          |
 |:------------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
 | ![](https://github.com/NavicApp/Branding/blob/main/screenshots/library.png?raw=true) | ![](https://github.com/NavicApp/Branding/blob/main/screenshots/player.png?raw=true) | ![](https://github.com/NavicApp/Branding/blob/main/screenshots/lyrics.png?raw=true) | ![](https://github.com/NavicApp/Branding/blob/main/screenshots/albums.png?raw=true) |
