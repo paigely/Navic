@@ -216,6 +216,12 @@ class Settings(
 	var windowSizeY by preference(600f)
 	var listType by preference(ListType.ALPHABETICAL_BY_ARTIST)
 
+	/**
+	 * If we have informed the user (on Android) about
+	 * Google locking down sideloading.
+	 */
+	var showedSideloadingWarning by preference(false)
+
 	// theme related settings
 	var theme by preference(Theme.Dynamic)
 	var accentColourH by preference(0f)

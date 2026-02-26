@@ -66,6 +66,7 @@ import paige.navic.shared.ShareManager
 import paige.navic.shared.rememberCtx
 import paige.navic.shared.rememberMediaPlayer
 import paige.navic.shared.rememberShareManager
+import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.layouts.BottomBar
 import paige.navic.ui.components.layouts.PlayerBar
 import paige.navic.ui.scenes.BottomSheetSceneStrategy
@@ -200,6 +201,10 @@ fun App() {
 						}
 					)
 				}
+			}
+			if (!Settings.shared.showedSideloadingWarning
+				&& ctx.name.lowercase().contains("android")) {
+				SideloadingDialog()
 			}
 		}
 	}
