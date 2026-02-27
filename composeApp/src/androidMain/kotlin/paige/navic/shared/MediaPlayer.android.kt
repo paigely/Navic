@@ -307,7 +307,14 @@ class AndroidMediaPlayerViewModel(
 	override fun pause() { controller?.pause() }
 	override fun resume() { controller?.play() }
 	override fun next() { if (controller?.hasNextMediaItem() == true) controller?.seekToNextMediaItem() }
-	override fun previous() { if (controller?.hasPreviousMediaItem() == true) controller?.seekToPreviousMediaItem() }
+	override fun previous() {
+		val controller = controller ?: return
+		if (controller.hasPreviousMediaItem() && controller.currentPosition <= 1000) {
+			controller.seekToPreviousMediaItem()
+		} else {
+			controller.seekTo(0)
+		}
+	}
 	override fun toggleShuffle() {
 		controller?.let { player ->
 			player.shuffleModeEnabled = !player.shuffleModeEnabled
