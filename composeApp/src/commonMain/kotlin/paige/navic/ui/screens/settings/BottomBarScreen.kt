@@ -23,11 +23,13 @@ import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_auto_hide_bar
 import navic.composeapp.generated.resources.option_navbar_tab_positions
+import navic.composeapp.generated.resources.option_progress_in_bar_is_seekable
 import navic.composeapp.generated.resources.option_short_navigation_bar
 import navic.composeapp.generated.resources.option_show_progress_in_bar
 import navic.composeapp.generated.resources.option_swipe_to_skip
 import navic.composeapp.generated.resources.option_use_detached_bar
 import navic.composeapp.generated.resources.subtitle_auto_hide_bar
+import navic.composeapp.generated.resources.suibtitle_progress_in_bar_is_seekable
 import navic.composeapp.generated.resources.title_bottom_app_bar
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalContentPadding
@@ -91,6 +93,15 @@ fun BottomBarScreen() {
 						value = Settings.shared.showProgressInBar,
 						onSetValue = { Settings.shared.showProgressInBar = it }
 					)
+
+					if (Settings.shared.showProgressInBar) {
+						SettingSwitchRow(
+							title = { Text(stringResource(Res.string.option_progress_in_bar_is_seekable)) },
+							subtitle = { Text(stringResource(Res.string.suibtitle_progress_in_bar_is_seekable)) },
+							value = Settings.shared.progressInBarIsSeekable,
+							onSetValue = { Settings.shared.progressInBarIsSeekable = it }
+						)
+					}
 
 					FormRow(
 						onClick = { showNavtabsDialog = true }

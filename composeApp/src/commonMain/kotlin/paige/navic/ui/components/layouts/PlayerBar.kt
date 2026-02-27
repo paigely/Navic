@@ -39,8 +39,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
@@ -69,6 +71,7 @@ fun PlayerBar(
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
 	val backStack = LocalNavStack.current
+	val haptics = LocalHapticFeedback.current
 
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
@@ -294,21 +297,30 @@ fun PlayerBar(
 						Modifier
 							.fillMaxWidth()
 							.height(14.dp)
-							.pointerInput(Unit) {
-								if (track == null) return@pointerInput
-								detectDragGestures(
-									onDragStart = { dragging = true },
-									onDragEnd = { dragging = false }
-								) { change, _ ->
-									player.seek(
-										(change.position.x / size.width.toFloat()).coerceIn(
-											0f,
-											1f
-										)
-									)
-									change.consume()
-								}
-							}
+							.then(
+								if (track != null && Settings.shared.progressInBarIsSeekable)
+									Modifier.pointerInput(Unit) {
+										detectDragGestures(
+											onDragStart = {
+												dragging = true
+												haptics.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+											},
+											onDragEnd = {
+												dragging = false
+												haptics.performHapticFeedback(HapticFeedbackType.GestureEnd)
+											}
+										) { change, _ ->
+											player.seek(
+												(change.position.x / size.width.toFloat()).coerceIn(
+													0f,
+													1f
+												)
+											)
+											change.consume()
+										}
+									}
+								else Modifier
+							)
 					)
 				}
 			}

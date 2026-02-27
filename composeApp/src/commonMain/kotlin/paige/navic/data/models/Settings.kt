@@ -198,6 +198,7 @@ class Settings(
 	var swipeToSkip by preference(true)
 	var useShortNavbar by preference(false)
 	var showProgressInBar by preference(true)
+	var progressInBarIsSeekable by preference(true)
 	var artGridRounding by preference(16f)
 	var gridSize by preference(GridSize.TwoByTwo)
 	var artGridItemSize by preference(150f)
