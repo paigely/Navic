@@ -119,12 +119,14 @@ class PlaybackService : MediaSessionService() {
 }
 
 class AndroidMediaPlayerViewModel(
-	private val application: Application
-) : MediaPlayerViewModel() {
+	private val application: Application, storage: PlayerStateStorage
+) : MediaPlayerViewModel(storage) {
 	private var controller: MediaController? = null
 	private var controllerFuture: ListenableFuture<MediaController>? = null
 
 	private var loadingCollectionId: String? = null
+
+	private var pendingSyncState: PlayerUiState? = null
 
 	init {
 		connectToService()
@@ -176,6 +178,11 @@ class AndroidMediaPlayerViewModel(
 				}
 			})
 			updatePlaybackState()
+
+			pendingSyncState?.let { state ->
+				syncPlayerWithState(state)
+				pendingSyncState = null
+			}
 		}
 	}
 
@@ -223,6 +230,30 @@ class AndroidMediaPlayerViewModel(
 			}
 			updateProgress()
 		}
+	}
+
+	override fun syncPlayerWithState(state: PlayerUiState) {
+		val player = controller
+
+		if (player == null) {
+			pendingSyncState = state
+			return
+		}
+
+		if (state.queue.isEmpty() || player.mediaItemCount > 0) return
+
+		val mediaItems = state.queue.map { it.toMediaItem(false) }
+
+		player.setMediaItems(mediaItems)
+
+		player.shuffleModeEnabled = state.isShuffleEnabled
+		player.repeatMode = state.repeatMode
+
+		val index = if (state.currentIndex in 0 until mediaItems.size) state.currentIndex else 0
+
+		player.seekToDefaultPosition(index)
+
+		player.prepare()
 	}
 
 	private fun startProgressLoop() {
@@ -378,5 +409,14 @@ class AndroidMediaPlayerViewModel(
 @Composable
 actual fun rememberMediaPlayer(): MediaPlayerViewModel {
 	val context = LocalContext.current.applicationContext as Application
-	return viewModel { AndroidMediaPlayerViewModel(context) }
+
+	return viewModel {
+		val producePath = {
+			context.filesDir.resolve(DATASTORE_FILE_NAME).absolutePath
+		}
+		val dataStore = DataStoreSingleton.getInstance(producePath)
+		val storage = DataStorePlayerStorage(dataStore)
+
+		AndroidMediaPlayerViewModel(context, storage)
+	}
 }
