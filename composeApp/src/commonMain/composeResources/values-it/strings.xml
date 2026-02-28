@@ -81,9 +81,9 @@
     <string name="option_account_username">Nome utente</string>
     <string name="option_alphabetical_scroll">Scorrimento alfabetico</string>
     <string name="option_artwork_shape">Forma della copertina</string>
+    <string name="option_auto_hide_bar">Nascondi automaticamente la barra inferiore</string>
     <string name="option_choose_theme">Scegli un tema</string>
     <string name="option_cover_art_size">Dimensione copertina</string>
-    <string name="option_dynamic_colour">Usa colore dinamico</string>
     <string name="option_enable_scrobbling">Attiva Scrobbling</string>
     <string name="option_grid_items_per_row">Elementi per riga</string>
     <string name="option_lyrics_autoscroll">Scorrimento automatico testo</string>
@@ -94,6 +94,7 @@
     <string name="option_player_animate_background">Anima sfondo del player</string>
     <string name="option_playlist_name">Nome</string>
     <string name="option_playlist_songs">Tracce</string>
+    <string name="option_progress_in_bar_is_seekable">È possibile scorrere tramite la barra di avanzamento</string>
     <string name="option_scrobble_percentage">Percentuale di scrobble</string>
     <string name="option_share_expires">Scadenza</string>
     <string name="option_short_navigation_bar">Barra di navigazione più bassa</string>
@@ -113,8 +114,13 @@
     <string name="option_use_detached_bar">Barra inferiore separata</string>
     <string name="option_use_marquee_text">Usa testo marquee</string>
     <string name="option_use_wavy_slider">Barra di avanzamento animata</string>
+    <string name="sideloading_warning_description">Sebbene i dettagli esatti di questo cambiamento non siano ancora completamente noti, potrebbe comportare il blocco DI QUALSIASI forma di sideloading, a meno che lo sviluppatore dell’app non riveli la propria identità a Google e/o pubblicamente.\n\nSe sei abbastanza esperto da installare una ROM personalizzata sul tuo dispositivo, ORA È IL MOMENTO DI FARLO.\nLeggi di più su cosa puoi fare e su come far sentire la tua voce.</string>
+    <string name="sideloading_warning_link_mask">qui.</string>
+    <string name="sideloading_warning_subtitle">Google sta pianificando di eliminare il sideloading su TUTTI i dispositivi con Google Play Services installato!\n</string>
+    <string name="sideloading_warning_title">LEGGI !!!!</string>
     <string name="subtitle_about">Versioni, licenze</string>
     <string name="subtitle_appearance">Personalizza l'aspetto</string>
+    <string name="subtitle_auto_hide_bar">Nascondi la barra inferiore quando non c’è nulla in riproduzione</string>
     <string name="subtitle_behaviour">Modifica il comportamento</string>
     <string name="subtitle_bottom_app_bar">Personalizza il player inferiore e la barra di navigazione</string>
     <string name="subtitle_chat">Unisciti al Discord</string>
@@ -128,6 +134,7 @@
     <string name="subtitle_source">Vedi il codice sorgente</string>
     <string name="subtitle_system_font">Altrimenti, usa Google Sans.</string>
     <string name="subtitle_use_marquee_text">Se scorrere il testo lungo</string>
+    <string name="suibtitle_progress_in_bar_is_seekable">Se la barra di avanzamento può essere trascinata nella barra del lettore</string>
     <string name="theme_apple_music">Music.app</string>
     <string name="theme_dynamic">Dinamico</string>
     <string name="theme_ios">Cupertino</string>
