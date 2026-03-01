@@ -111,6 +111,9 @@ fun PlayerScreen(
 	val player = LocalMediaPlayer.current
 	val backStack = LocalNavStack.current
 
+	val currentScreen = backStack.lastOrNull()
+	val isPlayerCurrent = currentScreen is Screen.Player
+
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
 
@@ -481,53 +484,55 @@ fun PlayerScreen(
 			}
 		}
 	) {
-		Column(
-			modifier = Modifier
-				.padding(horizontal = 8.dp)
-				.padding(top = 90.dp)
-				.navigationBarsPadding()
-				.statusBarsPadding()
-				.fillMaxSize(),
-			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.Center
-		) {
-			Box(
-				contentAlignment = Alignment.Center,
-				modifier = Modifier
-					.fillMaxWidth()
-					.weight(1f)
-			) {
-				Image(
-					painter = sharedPainter,
-					contentDescription = null,
-					contentScale = ContentScale.Crop,
-					modifier = Modifier
-						.aspectRatio(1f)
-						.fillMaxSize()
-						.padding(imagePadding)
-						.clip(MaterialTheme.shapes.large)
-						.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
-				)
-				if (coverUri.isNullOrEmpty()) {
-					Icon(
-						imageVector = Icons.Filled.Note,
-						contentDescription = null,
-						tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
-						modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
-					)
-				}
-			}
+		if (isPlayerCurrent) {
 			Column(
-				modifier = Modifier.weight(1f),
+				modifier = Modifier
+					.padding(horizontal = 8.dp)
+					.padding(top = 90.dp)
+					.navigationBarsPadding()
+					.statusBarsPadding()
+					.fillMaxSize(),
 				horizontalAlignment = Alignment.CenterHorizontally,
-				verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterVertically)
+				verticalArrangement = Arrangement.Center
 			) {
-				Column {
-					infoRow()
-					progressBar()
-					durationsRow()
+				Box(
+					contentAlignment = Alignment.Center,
+					modifier = Modifier
+						.fillMaxWidth()
+						.weight(1f)
+				) {
+					Image(
+						painter = sharedPainter,
+						contentDescription = null,
+						contentScale = ContentScale.Crop,
+						modifier = Modifier
+							.aspectRatio(1f)
+							.fillMaxSize()
+							.padding(imagePadding)
+							.clip(MaterialTheme.shapes.large)
+							.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
+					)
+					if (coverUri.isNullOrEmpty()) {
+						Icon(
+							imageVector = Icons.Filled.Note,
+							contentDescription = null,
+							tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
+							modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
+						)
+					}
 				}
-				controlsRow()
+				Column(
+					modifier = Modifier.weight(1f),
+					horizontalAlignment = Alignment.CenterHorizontally,
+					verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterVertically)
+				) {
+					Column {
+						infoRow()
+						progressBar()
+						durationsRow()
+					}
+					controlsRow()
+				}
 			}
 		}
 	}

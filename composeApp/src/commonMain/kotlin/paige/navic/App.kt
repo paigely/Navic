@@ -247,13 +247,13 @@ private fun entryProvider(
 		)) {
 			PlayerScreen()
 		}
-		entry<Screen.Lyrics>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
+		entry<Screen.Lyrics>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
 			val player = LocalMediaPlayer.current
 			val playerState by player.uiState.collectAsState()
 			val track = playerState.currentTrack
 			LyricsScreen(track)
 		}
-		entry<Screen.Queue>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
+		entry<Screen.Queue>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
 			QueueScreen()
 		}
 		entry<Screen.Tracks>(metadata = detailPane("root")) { key ->

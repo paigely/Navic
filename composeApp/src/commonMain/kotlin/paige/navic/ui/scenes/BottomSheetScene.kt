@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -80,7 +81,8 @@ internal class BottomSheetScene<T : Any>(
 	private val modalBottomSheetProperties: ModalBottomSheetProperties,
 	private val sheetMaxWidth: Dp,
 	private val onBack: () -> Unit,
-	private val screenType: String?
+	private val screenType: String?,
+	private val isTransparent: Boolean
 ) : OverlayScene<T> {
 
 	override val entries: List<NavEntry<T>> = listOf(entry)
@@ -91,7 +93,15 @@ internal class BottomSheetScene<T : Any>(
 			val scope = rememberCoroutineScope()
 			val ctx = LocalCtx.current
 			val backStack = LocalNavStack.current
+
+			val currentScreen = backStack.lastOrNull()
+			val isPlayerCurrent = currentScreen is Screen.Player
 			ModalBottomSheet(
+				containerColor = if (isTransparent) {
+					Color.Transparent
+				} else {
+					BottomSheetDefaults.ContainerColor
+				},
 				onDismissRequest = onBack,
 				properties = modalBottomSheetProperties,
 				sheetState = sheetState,
@@ -130,7 +140,7 @@ internal class BottomSheetScene<T : Any>(
 						) {
 							Icon(Icons.Outlined.KeyboardArrowDown, null)
 						}
-						if (screenType == "player") {
+						if (screenType == "player" && isPlayerCurrent) {
 							Text(
 								stringResource(Res.string.title_now_playing),
 								fontFamily = defaultFont(round = 100f),
@@ -210,6 +220,7 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 			lastEntry?.metadata?.get(PROPERTIES_KEY) as? ModalBottomSheetProperties
 		val sheetMaxWidth = lastEntry?.metadata?.get(MAX_WIDTH_KEY) as? Dp
 		val screenType = lastEntry?.metadata?.get(SCREEN_TYPE_KEY) as? String
+		val isTransparent = lastEntry?.metadata?.get(IS_TRANSPARENT_KEY) as? Boolean ?: false
 		return bottomSheetProperties?.let { properties ->
 			@Suppress("UNCHECKED_CAST")
 			BottomSheetScene(
@@ -220,7 +231,8 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 				modalBottomSheetProperties = properties,
 				sheetMaxWidth = sheetMaxWidth ?: BottomSheetDefaults.SheetMaxWidth,
 				onBack = onBack,
-				screenType = screenType
+				screenType = screenType,
+				isTransparent = isTransparent
 			)
 		}
 	}
@@ -237,16 +249,19 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 		fun bottomSheet(
 			modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
 			maxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
-			screenType: String = ""
+			screenType: String = "",
+			isTransparent: Boolean = false
 		): Map<String, Any> = mapOf(
 			PROPERTIES_KEY to modalBottomSheetProperties,
 			MAX_WIDTH_KEY to maxWidth,
-			SCREEN_TYPE_KEY to screenType
+			SCREEN_TYPE_KEY to screenType,
+			IS_TRANSPARENT_KEY to isTransparent
 		)
 
 		internal const val PROPERTIES_KEY = "properties"
 		internal const val MAX_WIDTH_KEY = "max_width"
 		internal const val SCREEN_TYPE_KEY = "screen_type"
+		internal const val IS_TRANSPARENT_KEY = "is_transparent"
 	}
 }
 

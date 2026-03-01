@@ -78,7 +78,6 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.Share
-import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.viewmodels.LyricsViewModel
 import paige.navic.utils.UiState
@@ -138,12 +137,6 @@ fun LyricsScreen(
 	val sharedPainter = rememberTrackPainter(track.id, track.coverArt)
 
 	Box(modifier = Modifier.fillMaxSize()) {
-		if (Settings.shared.animatePlayerBackground) {
-			BlendBackground(
-				painter = sharedPainter,
-				isPaused = playerState.isPaused
-			)
-		}
 		AnimatedContent(
 			state,
 			modifier = Modifier.fillMaxSize(),
