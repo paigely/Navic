@@ -249,7 +249,7 @@ fun LyricsScreen(
 
 								val highlight = if (isSelectionMode) isSelected else isActive
 								val progress = if (isSelectionMode && isSelected) {
-									1.1f
+									1.0f
 								} else if (!isSelectionMode && isActive) {
 									lineProgress
 								} else {
