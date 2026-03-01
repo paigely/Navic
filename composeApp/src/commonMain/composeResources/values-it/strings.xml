@@ -160,7 +160,7 @@
     <string name="title_delete_share">Eliminare la condivisione?</string>
     <string name="title_library">Libreria</string>
     <string name="title_login_dialog">Accesso a Navidrome</string>
-    <string name="title_now_playing">Riproducendo</string>
+    <string name="title_now_playing">Player</string>
     <string name="title_playlists">Playlist</string>
     <string name="title_scrobbling">Scrobbling</string>
     <string name="title_search">Cerca</string>
