@@ -61,6 +61,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -472,28 +473,39 @@ private fun KaraokeText(
 							(layout.getLineRight(it) - layout.getLineLeft(it)).toDouble()
 						}.toFloat()
 
-						val currentPixelTarget = totalWidth * smoothProgress
-
 						val feather = 30f
+						val adjustedTotalWidth = totalWidth + (feather * 2)
+						val currentPixelTarget = (adjustedTotalWidth * smoothProgress) - feather
+
 						var accumulatedWidth = 0f
 
 						for (i in 0 until layout.lineCount) {
 							val lineLeft = layout.getLineLeft(i)
 							val lineRight = layout.getLineRight(i)
 							val lineWidth = lineRight - lineLeft
+
+							if (lineWidth <= 0f) continue
+
 							val lineTop = layout.getLineTop(i)
 							val lineBottom = layout.getLineBottom(i)
 
+							val lineStartOffset = layout.getLineStart(i)
+							val direction = layout.getBidiRunDirection(lineStartOffset)
+							val isRtl = direction == ResolvedTextDirection.Rtl
+
 							val startOffFadeIn = currentPixelTarget - accumulatedWidth - feather
 							val endOfFadeIn = currentPixelTarget - accumulatedWidth + feather
+
+							val startX = if (isRtl) lineRight else lineLeft
+							val endX = if (isRtl) lineLeft else lineRight
 
 							val brush = Brush.linearGradient(
 								0.0f to Color.White,
 								(startOffFadeIn / lineWidth).coerceIn(0f, 1f) to Color.White,
 								(endOfFadeIn / lineWidth).coerceIn(0f, 1f) to Color.Transparent,
 								1.0f to Color.Transparent,
-								start = Offset(lineLeft, 0f),
-								end = Offset(lineRight, 0f)
+								start = Offset(startX, 0f),
+								end = Offset(endX, 0f)
 							)
 
 							drawRect(
