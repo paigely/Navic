@@ -55,3 +55,5 @@ actual fun rememberCtx(): Ctx {
 @Composable
 actual fun Modifier.systemGesturesExclusion(): Modifier
 	= this.systemGestureExclusion()
+
+actual fun <T> synchronized(lock: Any, block: () -> T): T = kotlin.synchronized(lock, block)

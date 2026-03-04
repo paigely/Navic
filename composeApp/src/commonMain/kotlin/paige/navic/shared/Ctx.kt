@@ -18,3 +18,5 @@ expect fun rememberCtx(): Ctx
 
 @Composable
 expect fun Modifier.systemGesturesExclusion(): Modifier
+
+expect fun <T> synchronized(lock: Any, block: () -> T): T

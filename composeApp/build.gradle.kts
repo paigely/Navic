@@ -233,7 +233,7 @@ compose.desktop {
 	application {
 		mainClass = "paige.navic.MainKt"
 		nativeDistributions {
-			targetFormats(TargetFormat.Msi, TargetFormat.Dmg, TargetFormat.AppImage)
+			targetFormats(TargetFormat.Msi, TargetFormat.Dmg)
 			packageName = "paige.Navic"
 		}
 	}

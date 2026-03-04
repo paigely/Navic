@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package paige.navic.shared
 
 import androidx.compose.runtime.Composable
@@ -28,9 +30,12 @@ import platform.CoreMedia.CMTimeGetSeconds
 import platform.CoreMedia.CMTimeMake
 import platform.CoreMedia.CMTimeMakeWithSeconds
 import platform.Foundation.NSData
+import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSFileManager
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
 import platform.Foundation.NSURL
+import platform.Foundation.NSUserDomainMask
 import platform.Foundation.dataWithContentsOfURL
 import platform.MediaPlayer.MPChangePlaybackPositionCommandEvent
 import platform.MediaPlayer.MPMediaItemArtwork
@@ -47,11 +52,13 @@ import platform.MediaPlayer.MPRemoteCommandHandlerStatusCommandFailed
 import platform.MediaPlayer.MPRemoteCommandHandlerStatusSuccess
 import platform.UIKit.UIImage
 
-@OptIn(ExperimentalForeignApi::class)
-class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
+class IOSMediaPlayerViewModel(
+	storage: PlayerStateStorage
+) : MediaPlayerViewModel(storage) {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
 	private val scrobbleManager = IOSScrobbleManager(player, viewModelScope)
+	private var pendingSyncState: PlayerUiState? = null
 
 	init {
 		setupAudioSession()
@@ -67,6 +74,11 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 				1 -> { seek(0f); resume() }
 				else -> next()
 			}
+		}
+
+		pendingSyncState?.let { state ->
+			syncPlayerWithState(state)
+			pendingSyncState = null
 		}
 	}
 
@@ -294,9 +306,33 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 		timeObserver?.let { player.removeTimeObserver(it) }
 		player.replaceCurrentItemWithPlayerItem(null)
 	}
+
+	override fun syncPlayerWithState(state: PlayerUiState) {
+		val track = state.queue.getOrNull(state.currentIndex) ?: return
+		val url = NSURL.URLWithString(SessionManager.api.streamUrl(track.id)) ?: return
+		player.replaceCurrentItemWithPlayerItem(AVPlayerItem(url))
+		updateNowPlayingInfo(track)
+	}
 }
+
 
 @Composable
 actual fun rememberMediaPlayer(): MediaPlayerViewModel {
-	return viewModel { IOSMediaPlayerViewModel() }
+	return viewModel {
+		val producePath = {
+			val directory = NSFileManager.defaultManager.URLForDirectory(
+				directory = NSDocumentDirectory,
+				inDomain = NSUserDomainMask,
+				appropriateForURL = null,
+				create = true,
+				error = null
+			)
+			directory?.path + "/$DATASTORE_FILE_NAME"
+		}
+
+		val dataStore = DataStoreSingleton.getInstance(producePath)
+		val storage = DataStorePlayerStorage(dataStore)
+
+		IOSMediaPlayerViewModel(storage)
+	}
 }
