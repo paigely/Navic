@@ -39,6 +39,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.russhwolf.settings.Settings
+import kotlinx.serialization.json.Json
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_log_in
 import navic.composeapp.generated.resources.action_log_out
@@ -46,6 +48,8 @@ import navic.composeapp.generated.resources.action_view_shares
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
+import paige.navic.data.models.NavbarConfig
+import paige.navic.data.models.NavbarTab
 import paige.navic.data.models.Screen
 import paige.navic.data.models.User
 import paige.navic.icons.Icons
@@ -57,8 +61,10 @@ import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.dialogs.LoginDialog
+import paige.navic.ui.components.dialogs.NavtabsViewModel
 import paige.navic.ui.viewmodels.LoginViewModel
 import paige.navic.utils.LoginState
+import paige.navic.utils.UiState
 
 @OptIn(
 	ExperimentalMaterial3Api::class,
@@ -70,9 +76,13 @@ fun RootTopBar(
 	scrollBehavior: TopAppBarScrollBehavior,
 	actions: @Composable RowScope.() -> Unit = {},
 	viewModel: LoginViewModel = viewModel { LoginViewModel() },
+	navViewModel: NavtabsViewModel = viewModel { NavtabsViewModel(Settings(), Json) }
 ) {
 	val loginState by viewModel.loginState.collectAsState()
 	var showLogin by remember { mutableStateOf(false) }
+
+	val navState by navViewModel.state.collectAsState()
+	val config = (navState as? UiState.Success)?.data
 
 	MediumFlexibleTopAppBar(
 		title = {
@@ -85,7 +95,8 @@ fun RootTopBar(
 			Actions(
 				loginState = loginState,
 				onLogOut = { viewModel.logout() },
-				onSetShowLogin = { showLogin = it }
+				onSetShowLogin = { showLogin = it },
+				config = config,
 			)
 		},
 		scrollBehavior = scrollBehavior,
@@ -105,23 +116,30 @@ fun RootTopBar(
 private fun Actions(
 	loginState: LoginState<User?>,
 	onLogOut: () -> Unit,
-	onSetShowLogin: (shown: Boolean) -> Unit
+	onSetShowLogin: (shown: Boolean) -> Unit,
+	config: NavbarConfig?,
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val user = (loginState as? LoginState.Success)?.data
 
-	IconButton(
-		onClick = {
-			ctx.clickSound()
-			backStack.add(Screen.Search(nested = true))
-		},
-		enabled = user != null
-	) {
-		Icon(
-			Icons.Outlined.Search,
-			contentDescription = null
-		)
+	val isSearchEnabled = config?.tabs?.any {
+		it.id == NavbarTab.Id.SEARCH && it.visible
+	} == true
+
+	if (!isSearchEnabled) {
+		IconButton(
+			onClick = {
+				ctx.clickSound()
+				backStack.add(Screen.Search(nested = true))
+			},
+			enabled = user != null
+		) {
+			Icon(
+				Icons.Outlined.Search,
+				contentDescription = null
+			)
+		}
 	}
 
 	IconButton(onClick = {
