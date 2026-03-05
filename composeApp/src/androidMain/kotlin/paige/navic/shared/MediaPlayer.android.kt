@@ -251,8 +251,15 @@ class AndroidMediaPlayerViewModel(
 
 		val index = if (state.currentIndex in 0 until mediaItems.size) state.currentIndex else 0
 
-		player.seekToDefaultPosition(index)
+		val trackDurationMs = state.queue.getOrNull(index)?.duration?.times(1000L) ?: 0L
 
+		val position = if (trackDurationMs > 0) {
+			(state.progress * trackDurationMs).toLong()
+		} else {
+			0L
+		}
+
+		player.seekTo(index, position)
 		player.prepare()
 	}
 
