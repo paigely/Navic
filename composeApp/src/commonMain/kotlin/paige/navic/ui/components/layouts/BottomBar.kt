@@ -123,7 +123,9 @@ fun BottomBar(
 						selected = selected,
 						onClick = {
 							ctx.clickSound()
-							backStack.clear()
+							if (item != NavItem.LIBRARY) {
+								backStack.add(NavItem.LIBRARY.destination)
+							}
 							backStack.add(item.destination)
 						},
 						icon = {
