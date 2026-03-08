@@ -96,6 +96,8 @@ internal class BottomSheetScene<T : Any>(
 
 			val currentScreen = backStack.lastOrNull()
 			val isPlayerCurrent = currentScreen is Screen.Player
+			val isPlayerMode = screenType == "player" && isPlayerCurrent
+			val isStandardMode = screenType != "player" && !isPlayerCurrent
 			ModalBottomSheet(
 				containerColor = if (isTransparent) {
 					Color.Transparent
@@ -126,8 +128,8 @@ internal class BottomSheetScene<T : Any>(
 						horizontalArrangement = Arrangement.spacedBy(12.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
-						TopBarButton(
-							onClick = {
+						if (isPlayerMode) {
+							TopBarButton(onClick = {
 								ctx.clickSound()
 								scope
 									.launch { sheetState.hide() }
@@ -137,10 +139,9 @@ internal class BottomSheetScene<T : Any>(
 										}
 									}
 							}
-						) {
-							Icon(Icons.Outlined.KeyboardArrowDown, null)
-						}
-						if (screenType == "player" && isPlayerCurrent) {
+							) {
+								Icon(Icons.Outlined.KeyboardArrowDown, null)
+							}
 							Text(
 								stringResource(Res.string.title_now_playing),
 								fontFamily = defaultFont(round = 100f),
@@ -173,6 +174,19 @@ internal class BottomSheetScene<T : Any>(
 									ctx.clickSound()
 									if (!backStack.contains(Screen.Queue)) backStack.add(Screen.Queue)
 								}
+							}
+						} else if (isStandardMode) {
+							TopBarButton(onClick = {
+								ctx.clickSound()
+								scope
+									.launch { sheetState.hide() }
+									.invokeOnCompletion {
+										if (!sheetState.isVisible) {
+											onBack()
+										}
+									}
+							}) {
+								Icon(Icons.Outlined.KeyboardArrowDown, null)
 							}
 						}
 					}
