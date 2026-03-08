@@ -15,12 +15,15 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -485,53 +488,113 @@ fun PlayerScreen(
 		}
 	) {
 		if (isPlayerCurrent) {
-			Column(
+			BoxWithConstraints(
 				modifier = Modifier
 					.padding(horizontal = 8.dp)
-					.padding(top = 90.dp)
 					.navigationBarsPadding()
 					.statusBarsPadding()
-					.fillMaxSize(),
-				horizontalAlignment = Alignment.CenterHorizontally,
-				verticalArrangement = Arrangement.Center
+					.fillMaxSize()
 			) {
-				Box(
-					contentAlignment = Alignment.Center,
-					modifier = Modifier
-						.fillMaxWidth()
-						.weight(1f)
-				) {
-					Image(
-						painter = sharedPainter,
-						contentDescription = null,
-						contentScale = ContentScale.Crop,
+				val isLandscape = maxWidth > maxHeight
+
+				if (isLandscape) {
+					Row(
 						modifier = Modifier
-							.aspectRatio(1f)
 							.fillMaxSize()
-							.padding(imagePadding)
-							.clip(MaterialTheme.shapes.large)
-							.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
-					)
-					if (coverUri.isNullOrEmpty()) {
-						Icon(
-							imageVector = Icons.Filled.Note,
-							contentDescription = null,
-							tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
-							modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
-						)
+							.padding(top = 50.dp),
+						horizontalArrangement = Arrangement.SpaceEvenly,
+						verticalAlignment = Alignment.CenterVertically
+					) {
+						Box(
+							contentAlignment = Alignment.Center,
+							modifier = Modifier
+								.weight(1f)
+								.fillMaxHeight()
+						) {
+							Image(
+								painter = sharedPainter,
+								contentDescription = null,
+								contentScale = ContentScale.Crop,
+								modifier = Modifier
+									.fillMaxHeight()
+									.aspectRatio(1f)
+									.padding(imagePadding)
+									.clip(MaterialTheme.shapes.large)
+									.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
+							)
+							if (coverUri.isNullOrEmpty()) {
+								Icon(
+									imageVector = Icons.Filled.Note,
+									contentDescription = null,
+									tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
+									modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
+								)
+							}
+						}
+
+						Column(
+							modifier = Modifier
+								.weight(1f)
+								.fillMaxHeight(),
+							horizontalAlignment = Alignment.CenterHorizontally,
+							verticalArrangement = Arrangement.Center
+						) {
+							Column {
+								infoRow()
+								progressBar()
+								durationsRow()
+							}
+							Spacer(modifier = Modifier.height(24.dp))
+							controlsRow()
+						}
 					}
-				}
-				Column(
-					modifier = Modifier.weight(1f),
-					horizontalAlignment = Alignment.CenterHorizontally,
-					verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterVertically)
-				) {
-					Column {
-						infoRow()
-						progressBar()
-						durationsRow()
+				} else {
+					Column(
+						modifier = Modifier
+							.fillMaxSize()
+							.padding(top = 90.dp),
+						horizontalAlignment = Alignment.CenterHorizontally,
+						verticalArrangement = Arrangement.Center
+					) {
+						Box(
+							contentAlignment = Alignment.Center,
+							modifier = Modifier
+								.fillMaxWidth()
+								.weight(1f)
+						) {
+							Image(
+								painter = sharedPainter,
+								contentDescription = null,
+								contentScale = ContentScale.Crop,
+								modifier = Modifier
+									.aspectRatio(1f)
+									.fillMaxSize()
+									.padding(imagePadding)
+									.clip(MaterialTheme.shapes.large)
+									.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
+							)
+							if (coverUri.isNullOrEmpty()) {
+								Icon(
+									imageVector = Icons.Filled.Note,
+									contentDescription = null,
+									tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
+									modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
+								)
+							}
+						}
+						Column(
+							modifier = Modifier.weight(1f),
+							horizontalAlignment = Alignment.CenterHorizontally,
+							verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterVertically)
+						) {
+							Column {
+								infoRow()
+								progressBar()
+								durationsRow()
+							}
+							controlsRow()
+						}
 					}
-					controlsRow()
 				}
 			}
 		}
