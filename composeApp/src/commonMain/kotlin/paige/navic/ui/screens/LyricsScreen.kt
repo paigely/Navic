@@ -3,12 +3,10 @@ package paige.navic.ui.screens
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -192,9 +190,9 @@ fun LyricsScreen(
 								if (abs(distance) > thresholdPx) {
 									listState.animateScrollBy(
 										value = distance.toFloat(),
-										animationSpec = tween(
-											durationMillis = 350,
-											easing = FastOutSlowInEasing
+										animationSpec = spring(
+											stiffness = Spring.StiffnessLow,
+											dampingRatio = Spring.DampingRatioNoBouncy
 										)
 									)
 								}
@@ -248,7 +246,7 @@ fun LyricsScreen(
 								val animatedColor by animateColorAsState(
 									targetColor
 								)
-								val targetScale = if (isActive && !isSelectionMode) 1.1f else 1f
+								val targetScale = if (isActive && !isSelectionMode) 1.06f else 1f
 								val animatedScale by animateFloatAsState(
 									targetValue = targetScale,
 									animationSpec = spring(stiffness = Spring.StiffnessLow)
