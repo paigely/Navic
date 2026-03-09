@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
@@ -309,10 +310,7 @@ fun LyricsScreen(
 									},
 									modifier = Modifier
 										.padding(horizontal = 32.dp, vertical = padding)
-										.graphicsLayer {
-											scaleX = animatedScale
-											scaleY = animatedScale
-										}
+										.scale(animatedScale)
 										.background(animatedColor, MaterialTheme.shapes.medium)
 										.padding(if (isSelected) 8.dp else 0.dp)
 										.then(
