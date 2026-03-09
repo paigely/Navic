@@ -2,6 +2,7 @@ package paige.navic.ui.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -75,6 +76,7 @@ import navic.composeapp.generated.resources.notice_loading_lyrics
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.Settings
+import paige.navic.data.repositories.LyricWord
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
@@ -86,6 +88,7 @@ import paige.navic.utils.rememberTrackPainter
 import paige.subsonic.api.models.Track
 import kotlin.math.abs
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -165,11 +168,11 @@ fun LyricsScreen(
 				is UiState.Success -> {
 					val lyrics = uiState.data
 					val maxSelectionChars = 150
-					fun totalSelectedChars(): Int = selectedIndices.sumOf { lyrics?.getOrNull(it)?.second?.length ?: 0 }
+					fun totalSelectedChars(): Int = selectedIndices.sumOf { lyrics?.getOrNull(it)?.text?.length ?: 0 }
 
 					if (!lyrics.isNullOrEmpty()) {
-						val activeIndex = lyrics.indexOfLast { (time, _) ->
-							currentDuration >= time
+						val activeIndex = lyrics.indexOfLast { line ->
+							line.time != null && currentDuration >= line.time
 						}
 
 						LaunchedEffect(activeIndex, isSelectionMode) {
@@ -190,7 +193,7 @@ fun LyricsScreen(
 									listState.animateScrollBy(
 										value = distance.toFloat(),
 										animationSpec = tween(
-											durationMillis = 450,
+											durationMillis = 350,
 											easing = FastOutSlowInEasing
 										)
 									)
@@ -217,22 +220,21 @@ fun LyricsScreen(
 								+ WindowInsets.systemBars.asPaddingValues()
 								+ PaddingValues(vertical = 40.dp)
 						) {
-							itemsIndexed(lyrics) { index, (startTime, text) ->
+							itemsIndexed(lyrics) { index, line ->
 								val isActive = index == activeIndex
 								val isSelected = selectedIndices.contains(index)
 
+								val lineTime = line.time ?: 0.milliseconds
+								val preEmphasis = 200.milliseconds
+								val nextTime = lyrics.getOrNull(index + 1)?.time ?: duration
+								val lineDuration = (nextTime - lineTime).coerceAtLeast(1.milliseconds)
+								val effectiveStart = lineTime - preEmphasis
+								val effectiveDuration = lineDuration + preEmphasis
+
 								val lineProgress = when {
-									index < activeIndex -> 1f
-									index > activeIndex -> 0f
-									else -> {
-										val nextTime =
-											lyrics.getOrNull(index + 1)?.first ?: duration
-										val lineDuration = nextTime - startTime
-										if (lineDuration > Duration.ZERO) {
-											((currentDuration - startTime) / lineDuration).toFloat()
-												.coerceIn(0f, 1f)
-										} else 1f
-									}
+									currentDuration < effectiveStart -> 0f
+									currentDuration >= effectiveStart + effectiveDuration -> 1f
+									else -> ((currentDuration - effectiveStart) / effectiveDuration).toFloat().coerceIn(0f, 1f)
 								}
 
 								val padding by animateDpAsState(
@@ -243,27 +245,36 @@ fun LyricsScreen(
 								val targetColor = if (isSelected)
 									MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
 									else Color.Transparent
-								val animatedColor by androidx.compose.animation.animateColorAsState(
+								val animatedColor by animateColorAsState(
 									targetColor
+								)
+								val targetScale = if (isActive && !isSelectionMode) 1.1f else 1f
+								val animatedScale by animateFloatAsState(
+									targetValue = targetScale,
+									animationSpec = spring(stiffness = Spring.StiffnessLow)
 								)
 
 								val highlight = if (isSelectionMode) isSelected else isActive
 								val progress = if (isSelectionMode && isSelected) {
 									1.0f
 								} else if (!isSelectionMode && isActive) {
-									lineProgress
+									if (line.words.isNullOrEmpty()) {
+										lineProgress
+									} else {
+										calculateWordProgress(line.words, line.text, currentDuration)
+									}
 								} else {
 									0f
 								}
 
 								KaraokeText(
-									text = text,
+									text = line.text,
 									progress = progress,
 									isActive = highlight,
 									onClick = {
 										if (isSelectionMode) {
 											if (selectedIndices.isEmpty()) {
-												val chars = text.length
+												val chars = line.text.length
 												if (chars <= maxSelectionChars) selectedIndices.add(index)
 											} else {
 												if (selectedIndices.contains(index)) {
@@ -276,7 +287,7 @@ fun LyricsScreen(
 												} else {
 													val minIndex = selectedIndices.minOrNull() ?: index
 													val maxIndex = selectedIndices.maxOrNull() ?: index
-													val newChars = totalSelectedChars() + text.length
+													val newChars = totalSelectedChars() + line.text.length
 													if (newChars <= maxSelectionChars) {
 														if (index == minIndex - 1 || index == maxIndex + 1) {
 															selectedIndices.add(index)
@@ -288,7 +299,7 @@ fun LyricsScreen(
 												}
 											}
 										} else {
-											player.seek((startTime / duration).toFloat())
+											player.seek((lineTime / duration).toFloat())
 											if (playerState.isPaused) {
 												player.resume()
 											}
@@ -296,6 +307,10 @@ fun LyricsScreen(
 									},
 									modifier = Modifier
 										.padding(horizontal = 32.dp, vertical = padding)
+										.graphicsLayer {
+											scaleX = animatedScale
+											scaleY = animatedScale
+										}
 										.background(animatedColor, MaterialTheme.shapes.medium)
 										.padding(if (isSelected) 8.dp else 0.dp)
 										.then(
@@ -373,8 +388,8 @@ fun LyricsScreen(
 
 		if (showShareSheet) {
 			val lyricsList = (state as? UiState.Success)?.data
-				?.map { (duration, text) ->
-					duration.inWholeMilliseconds to text
+				?.map { line ->
+					(line.time?.inWholeMilliseconds ?: 0L) to line.text
 				}
 
 			if (lyricsList != null) {
@@ -383,7 +398,7 @@ fun LyricsScreen(
 					lyricsList.getOrNull(index)?.second
 				}
 
-			LyricsShareSheet(
+				LyricsShareSheet(
 					track = track,
 					selectedLyrics = stringsToShare,
 					sharedPainter = sharedPainter,
@@ -522,4 +537,46 @@ private fun KaraokeText(
 			)
 		}
 	}
+}
+
+private fun calculateWordProgress(
+	words: List<LyricWord>,
+	fullText: String,
+	currentDuration: Duration
+): Float {
+	if (words.isEmpty() || fullText.isEmpty()) return 0f
+
+	val currentMs = currentDuration.inWholeMilliseconds
+	val totalChars = fullText.length.toFloat()
+
+	if (currentMs < words.first().time.inWholeMilliseconds) return 0f
+
+	var currentCharacterIndex = 0
+
+	for (i in words.indices) {
+		val word = words[i]
+		val wordStartMs = word.time.inWholeMilliseconds
+		val wordEndMs = wordStartMs + word.duration.inWholeMilliseconds
+
+		val wordIndexInString = fullText.indexOf(word.text, startIndex = currentCharacterIndex, ignoreCase = true)
+
+		if (wordIndexInString == -1) {
+			continue
+		}
+
+		if (currentMs in wordStartMs until wordEndMs) {
+			val wordProgress = (currentMs - wordStartMs).toFloat() / word.duration.inWholeMilliseconds.coerceAtLeast(1)
+			val charProgressWithinWord = word.text.length * wordProgress
+
+			return (wordIndexInString + charProgressWithinWord) / totalChars
+		}
+
+		if (currentMs < wordStartMs) {
+			return wordIndexInString / totalChars
+		}
+
+		currentCharacterIndex = wordIndexInString + word.text.length
+	}
+
+	return 1f
 }
