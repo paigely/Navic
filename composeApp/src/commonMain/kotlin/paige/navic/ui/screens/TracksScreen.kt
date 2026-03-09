@@ -58,6 +58,10 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kyant.capsule.ContinuousRoundedRectangle
+import dev.zt64.subsonic.api.model.Album
+import dev.zt64.subsonic.api.model.Playlist
+import dev.zt64.subsonic.api.model.Song
+import dev.zt64.subsonic.api.model.SongCollection
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_all_to_playlist
 import navic.composeapp.generated.resources.action_add_to_another_playlist
@@ -109,22 +113,18 @@ import paige.navic.ui.viewmodels.TracksViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.shimmerLoading
 import paige.navic.utils.toHoursMinutesSeconds
-import paige.subsonic.api.models.Album
-import paige.subsonic.api.models.Playlist
-import paige.subsonic.api.models.Track
-import paige.subsonic.api.models.TrackCollection
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 private class TracksScreenScope(
 	val player: MediaPlayerViewModel,
-	val tracks: TrackCollection
+	val tracks: SongCollection
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TracksScreen(
-	partialTracks: TrackCollection,
+	partialTracks: SongCollection,
 	viewModel: TracksViewModel = viewModel(key = partialTracks.toString()) {
 		TracksViewModel(partialTracks)
 	}
@@ -207,7 +207,7 @@ fun TracksScreen(
 								if (backStack.lastOrNull() !is Screen.AddToPlaylist) {
 									backStack.add(
 										Screen.AddToPlaylist(
-											(tracks as? UiState.Success)?.data?.tracks.orEmpty()
+											(tracks as? UiState.Success)?.data?.songs.orEmpty()
 										)
 									)
 								}
@@ -231,10 +231,10 @@ fun TracksScreen(
 					is UiState.Loading -> TracksScreenPlaceholder()
 					is UiState.Error -> ErrorBox(it)
 					is UiState.Success -> {
-						val tracks = it.data
+						val SongCollection = it.data
 						TracksScreenScope(
 							player,
-							tracks
+							SongCollection
 						).apply {
 							LazyColumn(
 								modifier = Modifier
@@ -254,7 +254,7 @@ fun TracksScreen(
 								}
 								// we can't use Form here because it's not lazy and if there's
 								// around 40 items you can't interact with them after the 40th
-								itemsIndexed(tracks.tracks) { index, track ->
+								itemsIndexed(SongCollection.songs) { index, track ->
 									Box {
 										TrackRow(
 											modifier = Modifier
@@ -266,14 +266,14 @@ fun TracksScreen(
 												// app and just stop using non-lazy things where
 												// possible
 												.clip(
-													if (tracks.tracks.count() == 1)
+													if (SongCollection.songs.count() == 1)
 														ContinuousRoundedRectangle(18.dp)
 													else when (index) {
 														0 -> ContinuousRoundedRectangle(
 															topStart = 18.dp,
 															topEnd = 18.dp
 														)
-														tracks.tracks.lastIndex -> ContinuousRoundedRectangle(
+														SongCollection.songs.lastIndex -> ContinuousRoundedRectangle(
 															bottomStart = 18.dp,
 															bottomEnd = 18.dp
 														)
@@ -287,7 +287,7 @@ fun TracksScreen(
 													) Color.Unspecified else MaterialTheme.colorScheme.surfaceContainerHighest
 												)
 												.padding(
-													bottom = if (index != tracks.tracks.lastIndex)
+													bottom = if (index != SongCollection.songs.lastIndex)
 														if (Settings.shared.theme.isMaterialLike())
 															3.dp
 														else 1.dp
@@ -297,7 +297,7 @@ fun TracksScreen(
 											index = index,
 											onClick = {
 												player.clearQueue()
-												player.addToQueue(tracks)
+												player.addToQueue(SongCollection)
 												player.playAt(index)
 											},
 											onLongClick = {
@@ -362,7 +362,7 @@ fun TracksScreen(
 												text = {
 													Text(
 														stringResource(
-															if (tracks is Playlist)
+															if (SongCollection is Playlist)
 																Res.string.action_add_to_another_playlist
 															else Res.string.action_add_to_playlist
 														)
@@ -380,15 +380,15 @@ fun TracksScreen(
 														backStack.add(
 															Screen.AddToPlaylist(
 																listOf(track),
-																playlistToExclude = if (tracks is Playlist)
-																	tracks.id
+																playlistToExclude = if (SongCollection is Playlist)
+																	SongCollection.id
 																else null
 															)
 														)
 													}
 												},
 											)
-											if (tracks is Playlist) {
+											if (SongCollection is Playlist) {
 												DropdownItem(
 													containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
 													text = { Text(stringResource(Res.string.action_remove_from_playlist)) },
@@ -430,11 +430,11 @@ private fun TracksScreenScope.Metadata() {
 	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
 	val artGridRounding = Settings.shared.artGridRounding
-	val model = remember(tracks.coverArt) {
+	val model = remember(tracks.coverArtId) {
 		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(tracks.coverArt, auth = true))
-			.memoryCacheKey(tracks.coverArt)
-			.diskCacheKey(tracks.coverArt)
+			.data(SessionManager.api.getCoverArtUrl(tracks.coverArtId!!, auth = true))
+			.memoryCacheKey(tracks.coverArtId)
+			.diskCacheKey(tracks.coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)
 			.memoryCachePolicy(CachePolicy.ENABLED)
 			.crossfade(500)
@@ -442,7 +442,7 @@ private fun TracksScreenScope.Metadata() {
 	}
 	AsyncImage(
 		model = model,
-		contentDescription = tracks.title,
+		contentDescription = tracks.name,
 		contentScale = ContentScale.Crop,
 		modifier = Modifier
 			.widthIn(0.dp, 420.dp)
@@ -465,29 +465,31 @@ private fun TracksScreenScope.Metadata() {
 	Spacer(Modifier.height(10.dp))
 	Column(horizontalAlignment = Alignment.CenterHorizontally) {
 		Text(
-			tracks.title,
+			text = tracks.name,
 			style = MaterialTheme.typography.headlineSmall,
 			textAlign = TextAlign.Center
 		)
 		val subtitle = when (tracks) {
-			is Album -> tracks.subtitle ?: stringResource(Res.string.info_unknown_artist)
-			is Playlist -> tracks.subtitle
+			is Album -> tracks.artistName ?: stringResource(Res.string.info_unknown_artist)
+			is Playlist -> tracks.comment
 		}
 		subtitle?.let { subtitle ->
 			Text(
 				subtitle,
 				color = MaterialTheme.colorScheme.primary,
-				modifier = Modifier.clickable(tracks.artistId != null) {
-					tracks.artistId?.let { id ->
-						backStack.add(Screen.Artist(id))
+				modifier = if (tracks is Album) {
+					Modifier.clickable {
+						tracks.artistId?.let { id ->
+							backStack.add(Screen.Artist(id))
+						}
 					}
-				},
+				} else Modifier,
 				style = MaterialTheme.typography.bodyMedium,
 				fontFamily = defaultFont(grade = 100, round = 100f)
 			)
 		}
 		Text(
-			if (tracks !is Playlist)
+			if (tracks is Album)
 				"${tracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${
 					tracks.year ?: stringResource(
 						Res.string.info_unknown_year
@@ -550,7 +552,7 @@ private fun TracksScreenScope.Metadata() {
 @Composable
 private fun TrackRow(
 	modifier: Modifier = Modifier,
-	track: Track,
+	track: Song,
 	index: Int,
 	onClick: (() -> Unit)? = null,
 	onLongClick: (() -> Unit)? = null
@@ -579,16 +581,16 @@ private fun TrackRow(
 			Column {
 				MarqueeText(track.title)
 				Text(
-					track.artist.orEmpty(),
+					track.artistName.orEmpty(),
 					style = MaterialTheme.typography.bodySmall,
 					maxLines = 1
 				)
 			}
 		}
 
-		track.duration?.seconds?.toHoursMinutesSeconds()?.let {
+		track.duration.toHoursMinutesSeconds().let {
 			Text(
-				it,
+				text = it,
 				style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),
 				fontWeight = FontWeight(400),
 				fontSize = 13.sp,
@@ -720,4 +722,3 @@ private fun TracksScreenPlaceholder(
 		}
 	}
 }
-

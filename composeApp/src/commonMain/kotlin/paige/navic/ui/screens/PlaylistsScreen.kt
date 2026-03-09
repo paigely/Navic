@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.zt64.subsonic.api.model.Playlist
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_new
@@ -55,7 +56,6 @@ import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.viewmodels.PlaylistsViewModel
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Playlist
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -172,7 +172,7 @@ fun PlaylistsScreenItem(
 				backStack.add(Screen.Tracks(playlist))
 			},
 			onLongClick = { viewModel.selectPlaylist(playlist) },
-			coverArt = playlist.coverArt,
+			coverArt = playlist.coverArtId,
 			title = playlist.name,
 			subtitle = buildString {
 				append(

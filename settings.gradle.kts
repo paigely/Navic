@@ -30,4 +30,4 @@ dependencyResolutionManagement {
 	}
 }
 
-include(":composeApp", ":subsonic")
+include(":composeApp")

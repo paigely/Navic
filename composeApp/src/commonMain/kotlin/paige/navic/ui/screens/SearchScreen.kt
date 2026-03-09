@@ -56,6 +56,10 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import dev.zt64.subsonic.api.model.Album
+import dev.zt64.subsonic.api.model.AlbumListType
+import dev.zt64.subsonic.api.model.Artist
+import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_clear_search
 import navic.composeapp.generated.resources.action_navigate_back
@@ -72,6 +76,7 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.session.SessionManager
+import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
 import paige.navic.icons.outlined.Check
@@ -85,10 +90,6 @@ import paige.navic.ui.viewmodels.AlbumsViewModel
 import paige.navic.ui.viewmodels.ArtistsViewModel
 import paige.navic.ui.viewmodels.SearchViewModel
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Album
-import paige.subsonic.api.models.Artist
-import paige.subsonic.api.models.ListType
-import paige.subsonic.api.models.Track
 
 enum class SearchCategory(val res: StringResource) {
 	ALL(Res.string.title_all),
@@ -110,7 +111,7 @@ fun SearchScreen(
 	val player = LocalMediaPlayer.current
 
 	val artistsViewModel = viewModel { ArtistsViewModel() }
-	val albumsViewModel = viewModel { AlbumsViewModel(ListType.ALPHABETICAL_BY_NAME) }
+	val albumsViewModel = viewModel { AlbumsViewModel(AlbumListType.AlphabeticalByName) }
 
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
 
@@ -142,7 +143,7 @@ fun SearchScreen(
 					val artists =
 						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<Artist>() else emptyList()
 					val tracks =
-						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<Track>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<Song>() else emptyList()
 
 					LazyVerticalGrid(
 						modifier = Modifier.fillMaxSize(),
@@ -166,11 +167,11 @@ fun SearchScreen(
 									tracks.take(10).size,
 									span = { GridItemSpan(maxLineSpan) }) { index ->
 									val track = tracks[index]
-									val model = remember(track.coverArt) {
+									val model = remember(track.coverArtId) {
 										ImageRequest.Builder(platformContext)
-											.data(SessionManager.api.getCoverArtUrl(track.coverArt, auth = true))
-											.memoryCacheKey(track.coverArt)
-											.diskCacheKey(track.coverArt)
+											.data(SessionManager.api.getCoverArtUrl(track.coverArtId))
+											.memoryCacheKey(track.coverArtId)
+											.diskCacheKey(track.coverArtId)
 											.diskCachePolicy(CachePolicy.ENABLED)
 											.memoryCachePolicy(CachePolicy.ENABLED)
 											.crossfade(500)
@@ -186,7 +187,7 @@ fun SearchScreen(
 										headlineContent = { Text(track.title) },
 										supportingContent = {
 											MarqueeText(
-												"${track.album ?: ""} • ${track.artist ?: ""} • ${track.year ?: ""}"
+												"${track.albumTitle ?: ""} • ${track.artistName ?: ""} • ${track.year ?: ""}"
 											)
 										},
 										leadingContent = {

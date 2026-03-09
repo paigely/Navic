@@ -1,5 +1,6 @@
 package paige.navic.data.repositories
 
+import dev.zt64.subsonic.api.model.Song
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.DefaultRequest
@@ -17,7 +18,6 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import paige.navic.data.session.SessionManager
-import paige.subsonic.api.models.Track
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
@@ -84,31 +84,18 @@ class LyricsRepository(
 			.toList()
 			.sortedBy { it.first }
 
-	suspend fun fetchLyrics(track: Track): List<Pair<Duration, String>>? {
-		val artist = track.artist ?: return null
-		val album = track.album ?: return null
+	suspend fun fetchLyrics(track: Song): List<Pair<Duration, String>>? {
+		val artist = track.artistName ?: return null
+		val album = track.albumTitle ?: return null
 		val duration = track.duration ?: return null
 
 		runCatching {
-			val jsonString = SessionManager.api.getLyricsBySongId(track.id)
-			val json = Json.parseToJsonElement(jsonString)
+			val lyrics = SessionManager.api.getLyrics(track).firstOrNull()
 
-			val structuredLyrics = json.jsonObject["subsonic-response"]
-				?.jsonObject?.get("lyricsList")
-				?.jsonObject?.get("structuredLyrics")
-				?.jsonArray
-
-			val syncedLyrics = structuredLyrics
-				?.firstOrNull { it.jsonObject["synced"]?.jsonPrimitive?.booleanOrNull == true }
-				?: structuredLyrics?.firstOrNull()
-
-			val lines = syncedLyrics?.jsonObject?.get("line")?.jsonArray
-			if (!lines.isNullOrEmpty()) {
-				return lines.mapNotNull { line ->
-					val startMs = line.jsonObject["start"]?.jsonPrimitive?.contentOrNull?.toLongOrNull()
-					val value = line.jsonObject["value"]?.jsonPrimitive?.contentOrNull
-					if (startMs != null && value != null) startMs.milliseconds to value else null
-				}.sortedBy { it.first }
+			if (!lyrics?.lines.isNullOrEmpty()) {
+				return lyrics.lines.sortedBy { it.start }.map {
+					it.start.milliseconds to it.value
+				}
 			}
 		}
 

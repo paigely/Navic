@@ -2,6 +2,8 @@ package paige.navic.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.zt64.subsonic.api.model.Playlist
+import dev.zt64.subsonic.api.model.Song
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,11 +11,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Playlist
-import paige.subsonic.api.models.Track
 
 class AddToPlaylistViewModel(
-	private val tracks: List<Track>,
+	private val tracks: List<Song>,
 	private val playlistToExclude: String?
 ) : ViewModel() {
 	private val _playlistsState = MutableStateFlow<UiState<List<Playlist>>>(UiState.Loading)
@@ -38,7 +38,7 @@ class AddToPlaylistViewModel(
 			_playlistsState.value = UiState.Loading
 			try {
 				val results =
-					SessionManager.api.getPlaylists().data.playlists.playlist ?: emptyList()
+					SessionManager.api.getPlaylists()
 				_playlistsState.value = UiState.Success(results.filter { it.id != playlistToExclude })
 			} catch (e: Exception) {
 				_playlistsState.value = UiState.Error(e)
@@ -56,7 +56,7 @@ class AddToPlaylistViewModel(
 			try {
 				SessionManager.api.updatePlaylist(
 					_selectedPlaylist.value!!.id,
-					tracksToAdd = tracks
+					songIdsToAdd = tracks.map { it.id }
 				)
 				_confirmState.value = UiState.Success(null)
 				_events.send(Event.Dismiss)

@@ -2,18 +2,18 @@ package paige.navic.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.zt64.subsonic.api.model.Artist
+import dev.zt64.subsonic.api.model.ArtistInfo
+import dev.zt64.subsonic.api.model.Song
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Artist
-import paige.subsonic.api.models.ArtistInfo
-import paige.subsonic.api.models.Track
 
 data class ArtistState(
 	val artist: Artist,
-	val topSongs: List<Track>,
+	val topSongs: List<Song>,
 	val info: ArtistInfo
 )
 
@@ -26,9 +26,9 @@ class ArtistViewModel(
 	init {
 		viewModelScope.launch {
 			try {
-				val artist = SessionManager.api.getArtist(artistId).data.artist
-				val topSongs = SessionManager.api.getTopSongs(artist.name).data.topSongs.song.orEmpty()
-				val artistInfo = SessionManager.api.getArtistInfo(artist.id).data.artistInfo
+				val artist = SessionManager.api.getArtist(artistId)!!
+				val topSongs = SessionManager.api.getTopSongs(artist)
+				val artistInfo = SessionManager.api.getArtistInfo(artist)
 				_artistState.value = UiState.Success(ArtistState(
 					artist,
 					topSongs,

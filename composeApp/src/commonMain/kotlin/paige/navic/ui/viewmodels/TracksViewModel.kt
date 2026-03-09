@@ -2,6 +2,10 @@ package paige.navic.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.zt64.subsonic.api.model.Album
+import dev.zt64.subsonic.api.model.AlbumInfo
+import dev.zt64.subsonic.api.model.Song
+import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,20 +13,16 @@ import kotlinx.coroutines.launch
 import paige.navic.data.repositories.TracksRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Album
-import paige.subsonic.api.models.AlbumInfo
-import paige.subsonic.api.models.Track
-import paige.subsonic.api.models.TrackCollection
 
 class TracksViewModel(
-	private val partialCollection: TrackCollection,
+	private val partialCollection: SongCollection,
 	private val repository: TracksRepository = TracksRepository()
 ) : ViewModel() {
-	private val _tracksState = MutableStateFlow<UiState<TrackCollection>>(UiState.Loading)
-	val tracksState: StateFlow<UiState<TrackCollection>> = _tracksState.asStateFlow()
+	private val _tracksState = MutableStateFlow<UiState<SongCollection>>(UiState.Loading)
+	val tracksState: StateFlow<UiState<SongCollection>> = _tracksState.asStateFlow()
 
-	private val _selectedTrack = MutableStateFlow<Track?>(null)
-	val selectedTrack: StateFlow<Track?> = _selectedTrack.asStateFlow()
+	private val _selectedTrack = MutableStateFlow<Song?>(null)
+	val selectedTrack: StateFlow<Song?> = _selectedTrack.asStateFlow()
 
 	private val _selectedIndex = MutableStateFlow<Int?>(null)
 	val selectedIndex: StateFlow<Int?> = _selectedIndex.asStateFlow()
@@ -63,7 +63,7 @@ class TracksViewModel(
 		}
 	}
 
-	fun selectTrack(track: Track, index: Int) {
+	fun selectTrack(track: Song, index: Int) {
 		viewModelScope.launch {
 			_selectedTrack.value = track
 			_selectedIndex.value = index
@@ -89,8 +89,8 @@ class TracksViewModel(
 		viewModelScope.launch {
 			try {
 				SessionManager.api.updatePlaylist(
-					playlistId = partialCollection.id,
-					indexesToRemove = listOf(selection)
+					id = partialCollection.id,
+					songIndicesToRemove = listOf(selection)
 				)
 				refreshTracks()
 			} catch (_: Exception) { }

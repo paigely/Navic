@@ -17,6 +17,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_artist
@@ -25,21 +26,21 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.data.session.SessionManager
-import paige.subsonic.api.models.Track
+import paige.navic.data.session.SessionManager.getCoverArtUrl
 
 @Composable
 fun TrackRow(
 	modifier: Modifier = Modifier,
-	track: Track
+	track: Song
 ) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
 	val platformContext = LocalPlatformContext.current
-	val model = remember(track.coverArt) {
+	val model = remember(track.coverArtId) {
 		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(track.coverArt, auth = true))
-			.memoryCacheKey(track.coverArt)
-			.diskCacheKey(track.coverArt)
+			.data(SessionManager.api.getCoverArtUrl(track.coverArtId))
+			.memoryCacheKey(track.coverArtId)
+			.diskCacheKey(track.coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)
 			.memoryCachePolicy(CachePolicy.ENABLED)
 			.crossfade(500)
@@ -58,9 +59,9 @@ fun TrackRow(
 		supportingContent = {
 			Text(
 				buildString {
-					append(track.album ?: stringResource(Res.string.info_unknown_album))
+					append(track.albumTitle ?: stringResource(Res.string.info_unknown_album))
 					append(" • ")
-					append(track.artist ?: stringResource(Res.string.info_unknown_artist))
+					append(track.artistName ?: stringResource(Res.string.info_unknown_artist))
 					append(" • ")
 					append(track.year ?: stringResource(Res.string.info_unknown_year))
 				},

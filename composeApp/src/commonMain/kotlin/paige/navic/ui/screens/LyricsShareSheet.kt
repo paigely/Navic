@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.sp
 import com.materialkolor.utils.ColorUtils.calculateLuminance
 import dev.zt64.compose.pipette.CircularColorPicker
 import dev.zt64.compose.pipette.HsvColor
+import dev.zt64.subsonic.api.model.Song
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_share_lyrics
@@ -72,12 +73,11 @@ import paige.navic.icons.outlined.Picker
 import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.FormRow
-import paige.subsonic.api.models.Track
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LyricsShareSheet(
-	track: Track,
+	track: Song,
 	selectedLyrics: List<String>,
 	sharedPainter: Painter,
 	onDismiss: () -> Unit,
@@ -175,7 +175,7 @@ fun LyricsShareSheet(
 							)
 
 							Text(
-								text = track.artist
+								text = track.artistName
 									?: stringResource(Res.string.info_unknown_artist),
 								style = MaterialTheme.typography.bodyMedium,
 								color = contentColor.copy(alpha = 0.8f)

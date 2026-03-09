@@ -31,6 +31,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.session.SessionManager
+import paige.navic.data.session.SessionManager.getCoverArtUrl
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -78,7 +79,7 @@ fun CarouselItemScope.ArtCarouselItem(
 	val platformContext = LocalPlatformContext.current
 	val model = remember(coverArt) {
 		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(coverArt, auth = true))
+			.data(SessionManager.api.getCoverArtUrl(coverArt))
 			.memoryCacheKey(coverArt)
 			.diskCacheKey(coverArt)
 			.diskCachePolicy(CachePolicy.ENABLED)

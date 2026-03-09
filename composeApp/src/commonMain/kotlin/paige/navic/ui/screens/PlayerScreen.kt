@@ -58,6 +58,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.zt64.subsonic.api.model.Playlist
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import kotlinx.coroutines.launch
@@ -102,7 +103,6 @@ import paige.navic.ui.components.layouts.Swiper
 import paige.navic.ui.viewmodels.PlayerViewModel
 import paige.navic.utils.rememberTrackPainter
 import paige.navic.utils.toHoursMinutesSeconds
-import paige.subsonic.api.models.Playlist
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -120,15 +120,15 @@ fun PlayerScreen(
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
 
-	val coverUri = remember(track?.coverArt) {
-		track?.coverArt
+	val coverUri = remember(track?.coverArtId) {
+		track?.coverArtId
 	}
-	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArt)
+	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArtId)
 
 	val enabled = playerState.currentTrack != null
 
 	var isStarred by remember(playerState.currentTrack) {
-		mutableStateOf(playerState.currentTrack?.starred != null)
+		mutableStateOf(playerState.currentTrack?.starredAt != null)
 	}
 
 	val imagePadding by animateDpAsState(
@@ -285,7 +285,7 @@ fun PlayerScreen(
 							color = MaterialTheme.colorScheme.onSurfaceVariant,
 							fontSize = MaterialTheme.typography.bodyMedium.fontSize * 1.1
 						),
-					text = track?.artist ?: stringResource(Res.string.info_not_playing)
+					text = track?.artistName ?: stringResource(Res.string.info_not_playing)
 				)
 			}
 			Row(
@@ -311,7 +311,7 @@ fun PlayerScreen(
 		Row(Modifier.padding(horizontal = 16.dp)) {
 			if (duration != null) {
 				Text(
-					((duration * playerState.progress).toDouble().seconds).toHoursMinutesSeconds(),
+					text = ((duration.inWholeSeconds * playerState.progress).toDouble().seconds).toHoursMinutesSeconds(),
 					color = color, style = style
 				)
 			} else {
@@ -319,7 +319,7 @@ fun PlayerScreen(
 			}
 			Spacer(Modifier.weight(1f))
 			if (duration != null) {
-				Text(duration.seconds.toHoursMinutesSeconds(), color = color, style = style)
+				Text(duration.toHoursMinutesSeconds(), color = color, style = style)
 			} else {
 				Text("--:--", color = color, style = style)
 			}

@@ -72,6 +72,7 @@ import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.session.SessionManager
+import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
@@ -196,7 +197,7 @@ fun ArtistScreen(
 					) {
 						ArtistHeader(
 							artistName = state.artist.name,
-							coverArt = state.artist.coverArt,
+							coverArt = state.artist.coverArtId,
 							subtitle = (artistState as? UiState.Success)?.data?.info?.biography,
 							lastfm = (artistState as? UiState.Success)?.data?.info?.lastFmUrl
 						)
@@ -228,42 +229,41 @@ fun ArtistScreen(
 								Res.string.title_albums,
 								albums.sortedByDescending { it.playCount }
 							) { album ->
-								ArtCarouselItem(album.coverArt, album.name) {
+								ArtCarouselItem(album.coverArtId, album.name) {
 									backStack.add(Screen.Tracks(album))
 								}
 							}
 						}
-						state.info.similarArtist?.let { similarArtists ->
-							Text(
-								stringResource(Res.string.title_similar_artists),
-								style = MaterialTheme.typography.titleMediumEmphasized,
-								fontWeight = FontWeight(600),
-								modifier = Modifier
-									.height(32.dp)
-									.padding(top = 8.dp)
-									.padding(horizontal = 20.dp)
-									.fillMaxWidth()
-							)
-							LazyRow(
-								modifier = Modifier.fillMaxWidth().animateContentSize(
-									animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-								),
-								horizontalArrangement = Arrangement.spacedBy(8.dp),
-								contentPadding = PaddingValues(horizontal = 20.dp)
-							) {
-								items(similarArtists) { artist ->
-									ArtGridItem(
-										imageModifier = Modifier.size(150.dp),
-										onClick = {
-											ctx.clickSound()
-											backStack.add(Screen.Artist(artist.id))
-										},
-										coverArt = artist.coverArt,
-										title = artist.name
-									)
-								}
+						Text(
+							stringResource(Res.string.title_similar_artists),
+							style = MaterialTheme.typography.titleMediumEmphasized,
+							fontWeight = FontWeight(600),
+							modifier = Modifier
+								.height(32.dp)
+								.padding(top = 8.dp)
+								.padding(horizontal = 20.dp)
+								.fillMaxWidth()
+						)
+						LazyRow(
+							modifier = Modifier.fillMaxWidth().animateContentSize(
+								animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
+							),
+							horizontalArrangement = Arrangement.spacedBy(8.dp),
+							contentPadding = PaddingValues(horizontal = 20.dp)
+						) {
+							items(state.info.similarArtists) { artist ->
+								ArtGridItem(
+									imageModifier = Modifier.size(150.dp),
+									onClick = {
+										ctx.clickSound()
+										backStack.add(Screen.Artist(artist.id))
+									},
+									coverArt = artist.coverArtId,
+									title = artist.name
+								)
 							}
 						}
+
 						Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 					}
 				}
@@ -291,7 +291,7 @@ fun ArtistHeader(
 	val platformContext = LocalPlatformContext.current
 	val model = remember(coverArt) {
 		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(coverArt, auth = true))
+			.data(SessionManager.api.getCoverArtUrl(coverArt))
 			.memoryCacheKey(coverArt)
 			.diskCacheKey(coverArt)
 			.diskCachePolicy(CachePolicy.ENABLED)

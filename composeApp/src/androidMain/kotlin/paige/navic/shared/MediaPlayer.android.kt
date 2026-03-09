@@ -26,6 +26,8 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import dev.zt64.subsonic.api.model.Song
+import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -34,8 +36,6 @@ import kotlinx.coroutines.launch
 import paige.navic.MainActivity
 import paige.navic.R
 import paige.navic.data.session.SessionManager
-import paige.subsonic.api.models.Track
-import paige.subsonic.api.models.TrackCollection
 
 class PlaybackService : MediaSessionService() {
 	private var mediaSession: MediaSession? = null
@@ -155,10 +155,10 @@ class AndroidMediaPlayerViewModel(
 						setPackage(application.packageName)
 						putExtra("isPlaying", isPlaying)
 						putExtra("title", _uiState.value.currentTrack?.title ?: "Unknown track")
-						putExtra("artist", _uiState.value.currentTrack?.artist ?: "Unknown artist")
-						putExtra("artUrl", SessionManager.api.getCoverArtUrl(
-							id = _uiState.value.currentTrack?.coverArt, auth = true
-						))
+						putExtra("artist", _uiState.value.currentTrack?.artistName ?: "Unknown artist")
+						putExtra("artUrl", _uiState.value.currentTrack?.coverArtId?.let { id ->
+							SessionManager.api.getCoverArtUrl(id, auth = true)
+						})
 					}
 
 					application.sendBroadcast(intent)
@@ -192,8 +192,7 @@ class AndroidMediaPlayerViewModel(
 
 		viewModelScope.launch {
 			runCatching {
-				val albumResponse = SessionManager.api.getAlbum(albumId)
-				val album = albumResponse.data.album
+				val album = SessionManager.api.getAlbum(albumId)
 
 				_uiState.update { it.copy(currentCollection = album) }
 			}.onFailure {
@@ -251,7 +250,7 @@ class AndroidMediaPlayerViewModel(
 
 		val index = if (state.currentIndex in 0 until mediaItems.size) state.currentIndex else 0
 
-		val trackDurationMs = state.queue.getOrNull(index)?.duration?.times(1000L) ?: 0L
+		val trackDurationMs = state.queue.getOrNull(index)?.duration?.inWholeMilliseconds ?: 0L
 
 		val position = if (trackDurationMs > 0) {
 			(state.progress * trackDurationMs).toLong()
@@ -284,15 +283,15 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueueSingle(track: Track) {
+	override fun addToQueueSingle(track: Song) {
 		controller?.addMediaItem(track.toMediaItem(true))
 		_uiState.update { it.copy(queue = it.queue + track) }
 	}
 
-	override fun addToQueue(tracks: TrackCollection) {
-		val items = tracks.tracks.map { it.toMediaItem(false) }
+	override fun addToQueue(tracks: SongCollection) {
+		val items = tracks.songs.map { it.toMediaItem(false) }
 		controller?.addMediaItems(items)
-		_uiState.update { it.copy(queue = it.queue + tracks.tracks) }
+		_uiState.update { it.copy(queue = it.queue + tracks.songs) }
 	}
 
 	override fun removeFromQueue(index: Int) {
@@ -328,8 +327,8 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun shufflePlay(tracks: TrackCollection) {
-		val shuffledTracks = tracks.tracks.shuffled()
+	override fun shufflePlay(tracks: SongCollection) {
+		val shuffledTracks = tracks.songs.shuffled()
 		val mediaItems = shuffledTracks.map { it.toMediaItem(false) }
 
 		controller?.let { player ->
@@ -382,30 +381,30 @@ class AndroidMediaPlayerViewModel(
 		controllerFuture?.let { MediaController.releaseFuture(it) }
 	}
 
-	private fun Track.toMediaItem(single: Boolean): MediaItem {
+	private fun Song.toMediaItem(single: Boolean): MediaItem {
 		if (single) {
 			val metadata = MediaMetadata.Builder()
 				.setTitle(title)
-				.setArtist(artist)
-				.setAlbumTitle(album)
-				.setArtworkUri(coverArt?.toUri())
+				.setArtist(artistName)
+				.setAlbumTitle(albumTitle)
+				.setArtworkUri(coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true).toUri() })
 				.build()
 
 			return MediaItem.Builder()
-				.setUri(SessionManager.api.streamUrl(id))
+				.setUri(SessionManager.api.getStreamUrl(id))
 				.setMediaId(id)
 				.setMediaMetadata(metadata)
 				.build()
 		} else {
 			val metadata = MediaMetadata.Builder()
 				.setTitle(title)
-				.setArtist(artist)
-				.setAlbumTitle(album)
-				.setArtworkUri(SessionManager.api.getCoverArtUrl(coverArt, auth = true)?.toUri())
+				.setArtist(artistName)
+				.setAlbumTitle(albumTitle)
+				.setArtworkUri(coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true).toUri() })
 				.build()
 
 			return MediaItem.Builder()
-				.setUri(SessionManager.api.streamUrl(id))
+				.setUri(SessionManager.api.getStreamUrl(id))
 				.setMediaId(id)
 				.setMediaMetadata(metadata)
 				.build()

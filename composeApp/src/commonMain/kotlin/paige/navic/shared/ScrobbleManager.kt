@@ -84,7 +84,6 @@ class ScrobbleManager(
 				trackId?.let {
 					SessionManager.api.scrobble(
 						it,
-						Clock.System.now().toEpochMilliseconds(),
 						submission = true
 					)
 				}
@@ -100,7 +99,6 @@ class ScrobbleManager(
 				trackId?.let {
 					SessionManager.api.scrobble(
 						it,
-						Clock.System.now().toEpochMilliseconds(),
 						submission = false
 					)
 				}

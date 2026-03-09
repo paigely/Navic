@@ -16,7 +16,7 @@ fun rememberTrackPainter(trackId: String?, coverArt: String?): Painter {
 
 	val imageRequest = remember(coverArt) {
 		ImageRequest.Builder(context)
-			.data(SessionManager.api.getCoverArtUrl(coverArt, auth = true))
+			.data(coverArt?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
 			.crossfade(500)
 			.memoryCacheKey(trackId)
 			.diskCacheKey(trackId)

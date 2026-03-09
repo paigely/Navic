@@ -2,6 +2,8 @@ package paige.navic.shared
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
+import dev.zt64.subsonic.api.model.Song
+import dev.zt64.subsonic.api.model.SongCollection
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,14 +14,12 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import paige.navic.data.session.SessionManager
-import paige.subsonic.api.models.Track
-import paige.subsonic.api.models.TrackCollection
 
 @Serializable
 data class PlayerUiState(
-	val queue: List<Track> = emptyList(),
-	val currentTrack: Track? = null,
-	val currentCollection: TrackCollection? = null,
+	val queue: List<Song> = emptyList(),
+	val currentTrack: Song? = null,
+	val currentCollection: SongCollection? = null,
 	val currentIndex: Int = -1,
 	val isPaused: Boolean = false,
 	val isShuffleEnabled: Boolean = false,
@@ -41,8 +41,8 @@ abstract class MediaPlayerViewModel(
 		}
 	}
 
-	abstract  fun addToQueueSingle(track: Track)
-	abstract  fun addToQueue(tracks: TrackCollection)
+	abstract  fun addToQueueSingle(track: Song)
+	abstract  fun addToQueue(tracks: SongCollection)
 	abstract fun removeFromQueue(index: Int)
 	abstract fun moveQueueItem(fromIndex: Int, toIndex: Int)
 	abstract fun clearQueue()
@@ -54,7 +54,7 @@ abstract class MediaPlayerViewModel(
 	abstract fun previous()
 	abstract fun toggleShuffle()
 	abstract fun toggleRepeat()
-	abstract fun shufflePlay(tracks: TrackCollection)
+	abstract fun shufflePlay(tracks: SongCollection)
 
 	fun togglePlay() {
 		if (!_uiState.value.isPaused) {
@@ -65,11 +65,15 @@ abstract class MediaPlayerViewModel(
 	}
 
 	suspend fun starTrack() {
-		SessionManager.api.star(_uiState.value.currentTrack?.id?.let { listOf(it) })
+		_uiState.value.currentTrack?.let {
+			SessionManager.api.star(it)
+		}
 	}
 
 	suspend fun unstarTrack() {
-		SessionManager.api.unstar(_uiState.value.currentTrack?.id?.let { listOf(it) })
+		_uiState.value.currentTrack?.let {
+			SessionManager.api.unstar(it)
+		}
 	}
 
 	abstract fun syncPlayerWithState(state: PlayerUiState)

@@ -75,10 +75,10 @@ fun PlayerBar(
 
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
-	val coverUri = remember(track?.coverArt) {
-		track?.coverArt
+	val coverUri = remember(track?.coverArtId) {
+		track?.coverArtId
 	}
-	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArt)
+	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArtId)
 
 	val detached = Settings.shared.detachedBar
 
@@ -264,7 +264,7 @@ fun PlayerBar(
 				},
 				supportingContent = {
 					if (track != null) {
-						track.artist?.let { artist ->
+						track.artistName?.let { artist ->
 							MarqueeText(artist)
 						}
 					} else {

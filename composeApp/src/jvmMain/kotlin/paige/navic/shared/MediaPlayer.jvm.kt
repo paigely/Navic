@@ -3,11 +3,11 @@ package paige.navic.shared
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import paige.subsonic.api.models.Track
-import paige.subsonic.api.models.TrackCollection
+import paige.subsonic.api.models.SongCollection
 
 // TODO: implement this class
 class JvmMediaPlayerViewModel : MediaPlayerViewModel() {
-	override fun play(tracks: TrackCollection, startIndex: Int) {
+	override fun play(tracks: SongCollection, startIndex: Int) {
 	}
 
 	override fun playSingle(track: Track) {
@@ -31,7 +31,7 @@ class JvmMediaPlayerViewModel : MediaPlayerViewModel() {
 	override fun toggleShuffle() {
 	}
 
-	override fun shufflePlay(tracks: TrackCollection) {
+	override fun shufflePlay(tracks: SongCollection) {
 	}
 
 	override fun toggleRepeat() {

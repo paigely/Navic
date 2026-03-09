@@ -35,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.zt64.subsonic.api.model.Album
+import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
@@ -70,15 +72,13 @@ import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.viewmodels.AlbumsViewModel
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Album
-import paige.subsonic.api.models.ListType
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AlbumsScreen(
 	nested: Boolean = false,
-	listType: ListType? = null,
+	listType: AlbumListType? = null,
 	viewModel: AlbumsViewModel = viewModel(key = listType?.value) {
 		AlbumsViewModel(listType)
 	}
@@ -175,11 +175,14 @@ fun SortButton(
 ) {
 	val currentListType by viewModel.listType.collectAsState()
 	val items = remember {
-		ListType.entries
-			.filter { it != ListType.BY_GENRE
-				&& it != ListType.BY_YEAR
-				&& it != ListType.HIGHEST }
-			.sortedBy { it.ordinal }
+		listOf(
+			AlbumListType.Random,
+			AlbumListType.Newest,
+			AlbumListType.Frequent,
+			AlbumListType.Recent,
+			AlbumListType.Starred,
+			AlbumListType.AlphabeticalByArtist,
+		)
 	}
 	Box {
 		var expanded by remember { mutableStateOf(false) }
@@ -219,15 +222,15 @@ fun SortButton(
 }
 
 @Composable
-private fun ListType.label() =
+private fun AlbumListType.label() =
 	when (this) {
-		ListType.RANDOM -> stringResource(Res.string.option_sort_random)
-		ListType.NEWEST -> stringResource(Res.string.option_sort_newest)
-		ListType.FREQUENT -> stringResource(Res.string.option_sort_frequent)
-		ListType.RECENT -> stringResource(Res.string.option_sort_recent)
-		ListType.ALPHABETICAL_BY_NAME -> stringResource(Res.string.option_sort_alphabetical_by_name)
-		ListType.ALPHABETICAL_BY_ARTIST -> stringResource(Res.string.option_sort_alphabetical_by_artist)
-		ListType.STARRED -> stringResource(Res.string.option_sort_starred)
+		AlbumListType.Random -> stringResource(Res.string.option_sort_random)
+		AlbumListType.Newest -> stringResource(Res.string.option_sort_newest)
+		AlbumListType.Frequent -> stringResource(Res.string.option_sort_frequent)
+		AlbumListType.Recent -> stringResource(Res.string.option_sort_recent)
+		AlbumListType.AlphabeticalByName -> stringResource(Res.string.option_sort_alphabetical_by_name)
+		AlbumListType.AlphabeticalByArtist -> stringResource(Res.string.option_sort_alphabetical_by_artist)
+		AlbumListType.Starred -> stringResource(Res.string.option_sort_starred)
 		else -> "$this"
 	}
 
@@ -249,9 +252,9 @@ fun AlbumsScreenItem(
 				backStack.add(Screen.Tracks(album))
 			},
 			onLongClick = { viewModel.selectAlbum(album) },
-			coverArt = album.coverArt,
+			coverArt = album.coverArtId,
 			title = album.name,
-			subtitle = album.artist ?: stringResource(Res.string.info_unknown_artist),
+			subtitle = album.artistName ?: stringResource(Res.string.info_unknown_artist),
 		)
 		Dropdown(
 			expanded = selection == album,

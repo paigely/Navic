@@ -2,7 +2,9 @@ package paige.navic.data.session
 
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
-import io.ktor.client.HttpClient
+import dev.zt64.subsonic.api.SubsonicApi
+import dev.zt64.subsonic.client.SubsonicAuth
+import dev.zt64.subsonic.client.SubsonicClient
 import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.cache.storage.CacheStorage
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -10,8 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import paige.navic.data.models.User
-import paige.subsonic.api.AuthType
-import paige.subsonic.api.SubsonicApi
 
 object SessionManager {
 	private val settings = Settings()
@@ -21,24 +21,25 @@ object SessionManager {
 	// platform specified http cache storage
 	var cacheStorage: CacheStorage? = null
 
-	val api: SubsonicApi
-		get() {
-			return SubsonicApi(
-				baseUrl = settings.getString("instanceUrl", ""),
-				username = settings.getString("username", ""),
-				password = settings.getString("password", ""),
-				apiVersion = "1.16.1",
-				clientId = "Navic",
-				authType = AuthType.Token(),
-				baseClient = HttpClient {
-					install(HttpCache) {
-						cacheStorage?.let {
-							publicStorage(it)
-						}
-					}
+	val api = SubsonicClient(
+		baseUrl = "https://navi.maize.moe/rest/",
+		auth = SubsonicAuth.Token(
+			username = settings.getString("username", ""),
+			password = settings.getString("password", ""),
+		),
+		client = "Navic",
+		clientConfig = {
+			install(HttpCache) {
+				cacheStorage?.let {
+					publicStorage(it)
 				}
-			)
+			}
 		}
+	)
+
+	fun SubsonicApi.getCoverArtUrl(coverArtId: String?): String? {
+		return coverArtId?.let { api.getCoverArtUrl(it) }
+	}
 
 	val currentUser: User?
 		get() {
@@ -48,7 +49,7 @@ object SessionManager {
 			_isLoggedIn.value = true
 			return User(
 				name = username,
-				avatarUrl = api.avatarUrl(username, true)
+				avatarUrl = api.getAvatarUrl(username)
 			)
 		}
 

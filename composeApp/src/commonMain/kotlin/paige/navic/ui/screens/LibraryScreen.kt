@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
+import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.option_sort_frequent
@@ -72,13 +73,14 @@ import paige.navic.ui.viewmodels.AlbumsViewModel
 import paige.navic.ui.viewmodels.ArtistsViewModel
 import paige.navic.ui.viewmodels.PlaylistsViewModel
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.ListType
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
-	albumsViewModel: AlbumsViewModel = viewModel(key = "libraryAlbums") { AlbumsViewModel(ListType.RECENT) },
+	albumsViewModel: AlbumsViewModel = viewModel(key = "libraryAlbums") {
+		AlbumsViewModel(AlbumListType.Recent)
+	},
 	playlistsViewModel: PlaylistsViewModel = viewModel { PlaylistsViewModel() },
 	artistsViewModel: ArtistsViewModel = viewModel { ArtistsViewModel() },
 ) {
@@ -88,7 +90,7 @@ fun LibraryScreen(
 
 	val flatArtistsState = remember(artistsState) {
 		when (val s = artistsState) {
-			is UiState.Success -> UiState.Success(s.data.flatMap { it.artist })
+			is UiState.Success -> UiState.Success(s.data)
 			is UiState.Loading -> UiState.Loading
 			is UiState.Error -> UiState.Error(s.error)
 		}
@@ -130,25 +132,25 @@ fun LibraryScreen(
 				overviewButton(
 					icon = Icons.Outlined.LibraryAdd,
 					label = Res.string.option_sort_newest,
-					destination = Screen.Albums(true, ListType.NEWEST),
+					destination = Screen.Albums(true, AlbumListType.Newest),
 					start = true
 				)
 				overviewButton(
 					icon = Icons.Outlined.Shuffle,
 					label = Res.string.option_sort_random,
-					destination = Screen.Albums(true, ListType.RANDOM),
+					destination = Screen.Albums(true, AlbumListType.Random),
 					start = false
 				)
 				overviewButton(
 					icon = Icons.Outlined.Star,
 					label = Res.string.option_sort_starred,
-					destination = Screen.Albums(true, ListType.STARRED),
+					destination = Screen.Albums(true, AlbumListType.Starred),
 					start = true
 				)
 				overviewButton(
 					icon = Icons.Outlined.History,
 					label = Res.string.option_sort_frequent,
-					destination = Screen.Albums(true, ListType.FREQUENT),
+					destination = Screen.Albums(true, AlbumListType.Frequent),
 					start = false
 				)
 				if (!isLoggedIn) {
@@ -162,7 +164,7 @@ fun LibraryScreen(
 				} else {
 					horizontalSection(
 						title = Res.string.option_sort_recent,
-						destination = Screen.Albums(true, ListType.RECENT),
+						destination = Screen.Albums(true, AlbumListType.Recent),
 						state = recentsState,
 						key = { it.id },
 						seeAll = true

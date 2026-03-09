@@ -2,6 +2,7 @@ package paige.navic.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.zt64.subsonic.api.model.Share
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,7 +10,6 @@ import kotlinx.coroutines.launch
 import paige.navic.data.repositories.SharesRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Share
 
 class SharesViewModel(
 	private val repository: SharesRepository = SharesRepository()

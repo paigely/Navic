@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_ok
@@ -28,11 +29,10 @@ import paige.navic.icons.outlined.Badge
 import paige.navic.ui.components.layouts.CustomDialog
 import paige.navic.ui.viewmodels.CreatePlaylistViewModel
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Track
 
 @Composable
 fun CreatePlaylistScreen(
-	tracks: List<Track>,
+	tracks: List<Song>,
 	viewModel: CreatePlaylistViewModel = viewModel(key = tracks.joinToString()) { CreatePlaylistViewModel(tracks) }
 ) {
 	val ctx = LocalCtx.current

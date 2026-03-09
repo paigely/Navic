@@ -2,6 +2,8 @@ package paige.navic.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.zt64.subsonic.api.model.Artist
+import dev.zt64.subsonic.api.model.Artists
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,13 +11,11 @@ import kotlinx.coroutines.launch
 import paige.navic.data.repositories.ArtistsRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Artist
-import paige.subsonic.api.models.Artists
 
 class ArtistsViewModel(
 	private val repository: ArtistsRepository = ArtistsRepository()
 ) : ViewModel() {
-	private val _artistsState = MutableStateFlow<UiState<List<Artists.Index>>>(UiState.Loading)
+	private val _artistsState = MutableStateFlow<UiState<List<Artist>>>(UiState.Loading)
 	val artistsState = _artistsState.asStateFlow()
 
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))

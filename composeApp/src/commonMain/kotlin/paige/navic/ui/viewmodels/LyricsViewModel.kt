@@ -2,16 +2,16 @@ package paige.navic.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.zt64.subsonic.api.model.Song
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.data.repositories.LyricsRepository
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Track
 import kotlin.time.Duration
 
 class LyricsViewModel(
-	private val track: Track?,
+	private val track: Song?,
 	private val repository: LyricsRepository = LyricsRepository()
 ) : ViewModel() {
 	private val _lyricsState = MutableStateFlow<UiState<List<Pair<Duration, String>>?>>(UiState.Success(null))

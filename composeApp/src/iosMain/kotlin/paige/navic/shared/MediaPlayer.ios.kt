@@ -9,7 +9,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.models.Track
-import paige.subsonic.api.models.TrackCollection
+import paige.subsonic.api.models.SongCollection
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
@@ -154,7 +154,7 @@ class IOSMediaPlayerViewModel(
 		_uiState.update { it.copy(queue = it.queue + track) }
 	}
 
-	override fun addToQueue(tracks: TrackCollection) {
+	override fun addToQueue(tracks: SongCollection) {
 		_uiState.update { it.copy(queue = it.queue + tracks.tracks) }
 	}
 
@@ -226,7 +226,7 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	override fun shufflePlay(tracks: TrackCollection) {
+	override fun shufflePlay(tracks: SongCollection) {
 		val shuffledTracks = tracks.tracks.shuffled()
 		_uiState.update {
 			it.copy(

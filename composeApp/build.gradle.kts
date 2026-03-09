@@ -134,8 +134,6 @@ kotlin {
 
 	sourceSets {
 		commonMain.dependencies {
-			implementation(project(":subsonic"))
-
 			implementation(libs.bundles.cmp)
 			implementation(libs.bundles.ktor)
 			implementation(libs.bundles.coil)
@@ -146,6 +144,8 @@ kotlin {
 			implementation(libs.kotlinx.datetime)
 			implementation(libs.kotlinx.serialization.json)
 			implementation(libs.androidx.datastore.preferences)
+
+			implementation(libs.subsonicKotlin)
 		}
 
 		androidMain.dependencies {

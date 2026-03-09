@@ -50,6 +50,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.kyant.capsule.ContinuousRoundedRectangle
+import dev.zt64.subsonic.api.model.Share
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
@@ -71,6 +72,7 @@ import paige.navic.LocalShareManager
 import paige.navic.LocalSnackbarState
 import paige.navic.data.models.Settings
 import paige.navic.data.session.SessionManager
+import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Share
@@ -83,7 +85,6 @@ import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.viewmodels.SharesViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.toHoursMinutesSeconds
-import paige.subsonic.api.models.Share
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
@@ -186,8 +187,8 @@ private fun SharesScreenItem(
 		}
 	}
 
-	LaunchedEffect(share.expires) {
-		while (share.expires != null) {
+	LaunchedEffect(share.expiresAt) {
+		while (share.expiresAt != null) {
 			delay(1.seconds)
 			currentTime = Clock.System.now()
 		}
@@ -214,7 +215,7 @@ private fun SharesScreenItem(
 				ListItem(
 					modifier = modifier,
 					leadingContent = {
-						ShareCover(coverArt = share.entry?.firstOrNull()?.coverArt)
+						ShareCover(coverArt = share.items.firstOrNull()?.coverArtId)
 					},
 					content = {
 						Text(
@@ -226,9 +227,9 @@ private fun SharesScreenItem(
 						Text(stringResource(Res.string.info_shared_by, share.username))
 					},
 					overlineContent = {
-						val expires = share.expires
+						val expires = share.expiresAt
 						if (expires != null) {
-							val remaining = Instant.parse(expires) - currentTime
+							val remaining = expires - currentTime
 							if (remaining.isPositive()) {
 								Text(
 									stringResource(
@@ -294,7 +295,7 @@ private fun ShareCover(
 	val artGridRounding = Settings.shared.artGridRounding
 	val model = remember(coverArt) {
 		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(coverArt, auth = true))
+			.data(SessionManager.api.getCoverArtUrl(coverArt))
 			.memoryCacheKey(coverArt)
 			.diskCacheKey(coverArt)
 			.diskCachePolicy(CachePolicy.ENABLED)

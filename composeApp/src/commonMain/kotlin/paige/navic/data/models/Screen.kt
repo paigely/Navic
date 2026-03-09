@@ -1,10 +1,10 @@
 package paige.navic.data.models
 
 import androidx.navigation3.runtime.NavKey
+import dev.zt64.subsonic.api.model.AlbumListType
+import dev.zt64.subsonic.api.model.Song
+import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.serialization.Serializable
-import paige.subsonic.api.models.ListType
-import paige.subsonic.api.models.Track
-import paige.subsonic.api.models.TrackCollection
 
 @Serializable
 sealed interface Screen : NavKey {
@@ -25,22 +25,22 @@ sealed interface Screen : NavKey {
 	@Serializable
 	data class Albums(
 		val nested: Boolean = false,
-		val listType: ListType? = null
+		val listType: AlbumListType? = null
 	) : Screen
 
 	// misc
 	@Serializable data object Player : Screen
 	@Serializable data object Lyrics : Screen
 	@Serializable data object Queue : Screen
-	@Serializable data class Tracks(val partialCollection: TrackCollection) : Screen
-	@Serializable data class TrackInfo(val track: Track) : Screen
+	@Serializable data class Tracks(val partialCollection: SongCollection) : Screen
+	@Serializable data class TrackInfo(val track: Song) : Screen
 	@Serializable data class Search(
 		val nested: Boolean = false
 	) : Screen
 	@Serializable data object Shares : Screen
 	@Serializable data class Artist(val artist: String) : Screen
-	@Serializable data class AddToPlaylist(val tracks: List<Track>, val playlistToExclude: String? = null) : Screen
-	@Serializable data class CreatePlaylist(val tracks: List<Track> = emptyList()) : Screen
+	@Serializable data class AddToPlaylist(val tracks: List<Song>, val playlistToExclude: String? = null) : Screen
+	@Serializable data class CreatePlaylist(val tracks: List<Song> = emptyList()) : Screen
 
 	// settings
 	@Serializable

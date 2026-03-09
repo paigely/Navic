@@ -20,6 +20,7 @@ import com.materialkolor.rememberDynamicColorScheme
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
 import dev.zt64.compose.pipette.HsvColor
+import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.theme_apple_music
 import navic.composeapp.generated.resources.theme_dynamic
@@ -35,7 +36,6 @@ import org.jetbrains.compose.resources.StringResource
 import paige.navic.LocalCtx
 import paige.navic.utils.darkIosColorScheme
 import paige.navic.utils.lightIosColorScheme
-import paige.subsonic.api.models.ListType
 import kotlin.enums.enumEntries
 import kotlin.reflect.KProperty
 
@@ -216,7 +216,6 @@ class Settings(
 	var windowPositionY by preference(100f)
 	var windowSizeX by preference(800f)
 	var windowSizeY by preference(600f)
-	var listType by preference(ListType.ALPHABETICAL_BY_ARTIST)
 
 	/**
 	 * If we have informed the user (on Android) about

@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_track_artist
 import navic.composeapp.generated.resources.info_track_artist_id
@@ -37,11 +38,9 @@ import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.utils.toFileSize
 import paige.navic.utils.toHoursMinutesSeconds
-import paige.subsonic.api.models.Track
-import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun TrackInfoScreen(track: Track) {
+fun TrackInfoScreen(track: Song) {
 	Scaffold(
 		topBar = { NestedTopBar({ Text(track.title) }) },
 		contentWindowInsets = WindowInsets.statusBars
@@ -55,19 +54,19 @@ fun TrackInfoScreen(track: Track) {
 			Form {
 				mapOf(
 					Res.string.info_track_name to track.title,
-					Res.string.info_track_artist to track.artist,
+					Res.string.info_track_artist to track.artistId,
 					Res.string.info_track_artist_id to track.artistId,
 					Res.string.info_track_bitrate to track.bitRate,
 					Res.string.info_track_bit_depth to track.bitDepth,
-					Res.string.info_track_file_size to track.size?.toFileSize(),
-					Res.string.info_track_format to track.contentType,
-					Res.string.info_track_sampling_rate to track.samplingRate,
-					Res.string.info_track_channel_count to track.channelCount,
+					Res.string.info_track_file_size to track.fileSize?.toFileSize(),
+					Res.string.info_track_format to track.mimeType,
+					Res.string.info_track_sampling_rate to track.sampleRate,
+					Res.string.info_track_channel_count to track.audioChannelCount,
 					Res.string.info_track_disc_number to track.discNumber,
 					Res.string.info_track_genre to track.genre,
-					Res.string.info_track_duration to track.duration?.seconds?.toHoursMinutesSeconds(),
+					Res.string.info_track_duration to track.duration.toHoursMinutesSeconds(),
 					Res.string.info_track_id to track.id,
-					Res.string.info_track_path to track.path,
+					Res.string.info_track_path to track.filePath,
 				).forEach { (key, value) ->
 					FormRow {
 						Text(stringResource(key))

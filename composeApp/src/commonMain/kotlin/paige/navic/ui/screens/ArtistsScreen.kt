@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.zt64.subsonic.api.model.Artist
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_star
@@ -49,7 +50,6 @@ import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.viewmodels.ArtistsViewModel
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Artist
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,13 +82,12 @@ fun ArtistsScreen(
 					}
 
 					is UiState.Success -> {
-						val totalArtistCount = it.data.sumOf { section -> section.artist.size }
+						val totalArtistCount = it.data.size
 
-						val grouped = it.data.flatMap { section ->
-							section.artist.groupBy { it.name.firstOrNull()?.uppercaseChar() ?: '#' }
-								.toList()
-								.sortedBy { it.first }
-						}
+						val grouped = it.data.groupBy { it.name.firstOrNull()?.uppercaseChar() ?: '#' }
+							.toList()
+							.sortedBy { it.first }
+
 						val headerIndices = remember(grouped) {
 							var currentIndex = 1
 							grouped.map { (letter, artists) ->
@@ -170,7 +169,7 @@ fun ArtistsScreenItem(
 				backStack.add(Screen.Artist(artist.id))
 			},
 			onLongClick = { viewModel.selectArtist(artist) },
-			coverArt = artist.coverArt,
+			coverArt = artist.coverArtId,
 			title = artist.name,
 			subtitle = pluralStringResource(
 				Res.plurals.count_albums,

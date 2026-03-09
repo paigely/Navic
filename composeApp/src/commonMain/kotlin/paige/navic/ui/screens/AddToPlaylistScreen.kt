@@ -31,6 +31,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.zt64.subsonic.api.model.Playlist
+import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_new
@@ -49,13 +51,11 @@ import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.layouts.CustomDialog
 import paige.navic.ui.viewmodels.AddToPlaylistViewModel
 import paige.navic.utils.UiState
-import paige.subsonic.api.models.Playlist
-import paige.subsonic.api.models.Track
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AddToPlaylistScreen(
-	tracks: List<Track>,
+	tracks: List<Song>,
 	playlistToExclude: String?,
 	viewModel: AddToPlaylistViewModel = viewModel(
 		key = tracks.joinToString() + playlistToExclude
@@ -81,12 +81,7 @@ fun AddToPlaylistScreen(
 							role = Role.RadioButton
 						),
 					headlineContent = {
-						Text(playlist.title)
-					},
-					supportingContent = {
-						playlist.subtitle?.let { subtitle ->
-							Text(subtitle)
-						}
+						Text(playlist.name)
 					},
 					leadingContent = {
 						RadioButton(

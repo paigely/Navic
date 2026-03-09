@@ -1,12 +1,8 @@
 package paige.navic.data.repositories
 
+import dev.zt64.subsonic.api.model.Playlist
 import paige.navic.data.session.SessionManager
-import paige.subsonic.api.models.Playlist
 
 class PlaylistsRepository {
-	suspend fun getPlaylists(): List<Playlist> {
-		return SessionManager.api
-			.getPlaylists()
-			.data.playlists.playlist.orEmpty()
-	}
+	suspend fun getPlaylists(): List<Playlist> = SessionManager.api.getPlaylists()
 }

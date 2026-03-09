@@ -44,6 +44,7 @@ import paige.navic.ui.components.common.FormButton
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.settings.SettingSwitchRow
 import paige.navic.utils.UiState
+import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
@@ -58,9 +59,9 @@ class ShareViewModel : ViewModel() {
 		viewModelScope.launch {
 			_state.value = UiState.Loading
 			try {
+				val expiration = expiry?.let { Clock.System.now() + it  }
 				val url = SessionManager.api
-					.createShare(id, expiry)
-					.data.shares.values.first().first()
+					.createShare(listOf(id), expiresAt = expiration)
 					.url
 				_state.value = UiState.Success(url)
 			} catch(e: Exception) {

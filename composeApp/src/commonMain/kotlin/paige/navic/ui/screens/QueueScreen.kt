@@ -38,13 +38,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown_artist
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
+import paige.navic.data.models.Settings
+import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.components.common.MarqueeText
-import paige.subsonic.api.models.Track
+import paige.navic.utils.rememberTrackPainter
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -54,8 +57,15 @@ fun QueueScreen() {
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val currentTrack = playerState.currentTrack
 	val queue = playerState.queue
+	val sharedPainter = rememberTrackPainter(currentTrack?.id, currentTrack?.coverArtId)
 
 	Box(modifier = Modifier.fillMaxSize()) {
+		if (Settings.shared.animatePlayerBackground) {
+			BlendBackground(
+				painter = sharedPainter,
+				isPaused = playerState.isPaused
+			)
+		}
 		LazyColumn(
 			modifier = Modifier.matchParentSize(),
 			contentPadding = WindowInsets.statusBars.asPaddingValues()
@@ -88,7 +98,7 @@ fun QueueScreen() {
 private fun QueueScreenItem(
 	index: Int,
 	count: Int,
-	track: Track,
+	track: Song,
 	isPlaying: Boolean,
 	isSelected: Boolean,
 	onClick: () -> Unit
@@ -121,7 +131,7 @@ private fun QueueScreenItem(
 			MarqueeText(track.title)
 		},
 		supportingContent = {
-			MarqueeText(track.artist ?: stringResource(Res.string.info_unknown_artist))
+			MarqueeText(track.artistName ?: stringResource(Res.string.info_unknown_artist))
 		},
 		leadingContent = {
 			Text(
