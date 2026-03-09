@@ -16,6 +16,7 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.jetbrains.compose.resources.StringResource
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.models.Track
 import kotlin.time.Duration
@@ -31,8 +32,19 @@ data class LyricLine(
 	val words: List<LyricWord>? = null
 )
 
+data class LyricsResult(
+	val lines: List<LyricLine>,
+	val provider: LyricsProvider
+)
+
 @Serializable
-enum class LyricsProvider { LYRICS_PLUS, SUBSONIC, LRCLIB }
+enum class LyricsProvider(
+	val displayName: String
+) {
+	LYRICS_PLUS("Lyrics Plus"),
+	SUBSONIC("Subsonic"),
+	LRCLIB("Lrclib")
+}
 
 @Serializable
 data class LyricsConfig(
@@ -71,8 +83,6 @@ private data class YoulySyllable(
 	val duration: Long = 0L,
 	val text: String = ""
 )
-
-
 
 object LyricsContentParser {
 	private val jsonParser = Json {
@@ -193,7 +203,7 @@ class LyricsRepository(
 		}
 	}
 
-	suspend fun fetchLyrics(track: Track): List<LyricLine>? {
+	suspend fun fetchLyrics(track: Track): LyricsResult? {
 		val currentConfig = getConfig()
 		for (provider in currentConfig.priority) {
 			try {
@@ -203,9 +213,12 @@ class LyricsRepository(
 					LyricsProvider.LRCLIB -> fetchRawLrcLib(track, currentConfig)
 				}
 				val parsedLyrics = rawContent?.let { LyricsContentParser.parse(it) }
-
-				if (!parsedLyrics.isNullOrEmpty()) return parsedLyrics
-
+				if (!parsedLyrics.isNullOrEmpty()) {
+					return LyricsResult(
+						lines = parsedLyrics,
+						provider = provider
+					)
+				}
 			} catch (e: Exception) {
 				println("Provider ${provider.name} failed: ${e.message}")
 				continue

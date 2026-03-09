@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
@@ -70,6 +71,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_share
+import navic.composeapp.generated.resources.info_lyrics_provider
+import navic.composeapp.generated.resources.info_no_lyrics
 import navic.composeapp.generated.resources.notice_loading_lyrics
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
@@ -114,7 +117,7 @@ fun LyricsScreen(
 			verticalArrangement = Arrangement.Center
 		) {
 			Text(
-				"No lyrics",
+				stringResource(Res.string.info_no_lyrics),
 				style = MaterialTheme.typography.headlineMedium,
 				textAlign = TextAlign.Center,
 				modifier = Modifier.alpha(.5f)
@@ -164,7 +167,8 @@ fun LyricsScreen(
 
 				is UiState.Loading -> LoadingScreen()
 				is UiState.Success -> {
-					val lyrics = uiState.data
+					val lyrics = uiState.data?.lines
+					val provider = uiState.data?.provider
 					val maxSelectionChars = 150
 					fun totalSelectedChars(): Int = selectedIndices.sumOf { lyrics?.getOrNull(it)?.text?.length ?: 0 }
 
@@ -320,6 +324,18 @@ fun LyricsScreen(
 										)
 								)
 							}
+							provider?.let { provider ->
+								item {
+									Text(
+										stringResource(
+											Res.string.info_lyrics_provider,
+											provider.displayName
+										),
+										textAlign = TextAlign.Center,
+										modifier = Modifier.fillMaxWidth()
+									)
+								}
+							}
 						}
 					} else {
 						placeholder()
@@ -385,7 +401,7 @@ fun LyricsScreen(
 		}
 
 		if (showShareSheet) {
-			val lyricsList = (state as? UiState.Success)?.data
+			val lyricsList = (state as? UiState.Success)?.data?.lines
 				?.map { line ->
 					(line.time?.inWholeMilliseconds ?: 0L) to line.text
 				}

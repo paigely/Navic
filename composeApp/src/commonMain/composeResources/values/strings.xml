@@ -151,6 +151,7 @@
 	<string name="action_open_in_browser">Open in Browser</string>
 	<string name="action_copy_link">Copy Link</string>
 	<string name="action_queue">Queue</string>
+	<string name="action_reorder">Reorder</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
 	<string name="notice_deleted_share">Deleted share.</string>
@@ -193,6 +194,8 @@
 	<string name="info_share_expires_never">Never expires</string>
 	<string name="info_share_expired">Expired</string>
 	<string name="info_no_shares">No shares</string>
+	<string name="info_no_lyrics">No lyrics</string>
+	<string name="info_lyrics_provider">Lyrics provided by %1$s</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>

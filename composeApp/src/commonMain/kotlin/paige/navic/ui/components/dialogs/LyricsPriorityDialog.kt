@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
+import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.option_lyrics_priority
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.repositories.LyricsProvider
@@ -130,13 +131,7 @@ private fun ReorderableCollectionItemScope.ProviderRow(
 			horizontalArrangement = Arrangement.SpaceBetween,
 			verticalAlignment = Alignment.CenterVertically
 		) {
-			val displayName = provider.name
-				.lowercase()
-				.split("_")
-				.joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
-
-			Text(displayName)
-
+			Text(provider.displayName)
 			IconButton(
 				modifier = Modifier.draggableHandle(
 					onDragStarted = {
@@ -150,7 +145,7 @@ private fun ReorderableCollectionItemScope.ProviderRow(
 			) {
 				Icon(
 					Icons.Outlined.DragHandle,
-					contentDescription = "Reorder"
+					contentDescription = stringResource(Res.string.action_reorder)
 				)
 			}
 		}

@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
+import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.option_navbar_tab_positions
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.models.NavbarConfig
@@ -215,7 +216,7 @@ private fun ReorderableCollectionItemScope.NavtabRow(
 			) {
 				Icon(
 					Icons.Outlined.DragHandle,
-					contentDescription = null
+					contentDescription = stringResource(Res.string.action_reorder)
 				)
 			}
 		}
