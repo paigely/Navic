@@ -1,18 +1,15 @@
 package paige.navic.data.repositories
 
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.plugins.DefaultRequest
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.isSuccess
-import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
@@ -35,17 +32,19 @@ data class LyricLine(
 
 enum class LyricsProvider { LYRICS_PLUS, SUBSONIC, LRCLIB }
 
-@Serializable
-private data class ApiError(
-	val message: String? = null,
-	val name: String? = null,
-	val code: Int? = null
-)
 
-@Serializable
-private data class LrcLibResponse(
-	val syncedLyrics: String? = null,
-	val plainLyrics: String? = null
+data class LyricsConfig(
+	val priority: List<LyricsProvider> = listOf(
+		LyricsProvider.LYRICS_PLUS,
+		LyricsProvider.SUBSONIC,
+		LyricsProvider.LRCLIB
+	),
+	val lyricsPlusMirrors: List<String> = listOf(
+		"https://lyricsplus.atomix.one",
+		"https://lyricsplus-seven.vercel.app",
+		"https://lyricsplus.prjktla.workers.dev"
+	),
+	val lrcLibBaseUrl: String = "https://lrclib.net/api/get"
 )
 
 @Serializable
@@ -68,36 +67,83 @@ private data class YoulySyllable(
 )
 
 
-class LyricsRepository(
-	baseClient: HttpClient = HttpClient()
-) {
-	private val jsonConfig = Json {
+
+object LyricsContentParser {
+	private val jsonParser = Json {
 		isLenient = true
 		explicitNulls = false
-		prettyPrint = true
 		ignoreUnknownKeys = true
 	}
 
-	private val client = baseClient.config {
-		install(ContentNegotiation) {
-			json(json = jsonConfig)
-		}
-		install(DefaultRequest) {
-			url("https://lrclib.net/")
+	fun parse(content: String): List<LyricLine>? {
+		val text = content.trim()
+		if (text.isEmpty()) return null
+
+		return try {
+			if (text.startsWith("{")) {
+				parseJson(text)
+			} else {
+				parseLrc(text)
+			}
+		} catch (e: Exception) {
+			println("Lyrics parsing failed: ${e.message}")
+			null
 		}
 	}
 
-	private suspend inline fun <reified T> HttpResponse.getOrThrow(): T {
-		if (this.status.isSuccess()) {
-			return this.body<T>()
-		} else {
-			val errorBody = runCatching { this.body<ApiError>() }.getOrNull()
-			throw Exception(errorBody?.message ?: "Request failed with status: ${this.status}")
+	private fun parseJson(jsonString: String): List<LyricLine>? {
+		val jsonObject = jsonParser.parseToJsonElement(jsonString).jsonObject
+
+		return when {
+			jsonObject.containsKey("subsonic-response") -> {
+				parseSubsonicJson(jsonObject)
+			}
+			jsonObject.containsKey("syncedLyrics") -> {
+				val syncedStr = jsonObject["syncedLyrics"]?.jsonPrimitive?.contentOrNull
+				if (!syncedStr.isNullOrEmpty()) parseLrc(syncedStr) else null
+			}
+			jsonObject.containsKey("lyrics") -> {
+				val youlyResponse = jsonParser.decodeFromString<YoulyResponse>(jsonString)
+				parseYoulyResponse(youlyResponse)
+			}
+			else -> null
 		}
 	}
 
-	private fun parseLrcLibLyrics(input: String): List<LyricLine> =
-		input.lineSequence()
+	private fun parseSubsonicJson(root: JsonObject): List<LyricLine>? {
+		val response = root["subsonic-response"]?.jsonObject ?: return null
+
+		if (response["status"]?.jsonPrimitive?.contentOrNull == "failed") return null
+
+		val structuredLyrics = response["lyricsList"]?.jsonObject?.get("structuredLyrics")?.jsonArray
+		val syncedLyrics = structuredLyrics?.firstOrNull {
+			it.jsonObject["synced"]?.jsonPrimitive?.booleanOrNull == true
+		} ?: structuredLyrics?.firstOrNull()
+
+		return syncedLyrics?.jsonObject?.get("line")?.jsonArray?.mapNotNull { line ->
+			val startMs = line.jsonObject["start"]?.jsonPrimitive?.contentOrNull?.toLongOrNull()
+			val value = line.jsonObject["value"]?.jsonPrimitive?.contentOrNull
+			if (startMs != null && value != null) {
+				LyricLine(time = startMs.milliseconds, text = value)
+			} else null
+		}?.sortedBy { it.time }
+	}
+
+	private fun parseYoulyResponse(response: YoulyResponse): List<LyricLine>? {
+		if (response.lyrics.isEmpty()) return null
+		return response.lyrics.map { line ->
+			LyricLine(
+				time = line.time.milliseconds,
+				text = line.text,
+				words = line.syllabus?.map { syl ->
+					LyricWord(syl.time.milliseconds, syl.duration.milliseconds, syl.text)
+				}
+			)
+		}.sortedBy { it.time }
+	}
+
+	private fun parseLrc(input: String): List<LyricLine> {
+		return input.lineSequence()
 			.filter { it.isNotBlank() && it.startsWith("[") && it.contains("]") }
 			.mapNotNull { line ->
 				try {
@@ -112,10 +158,7 @@ class LyricsRepository(
 					val seconds = parts[1].toLong()
 					val hundredths = parts.getOrNull(2)?.toLong() ?: 0L
 
-					val duration =
-						minutes.minutes +
-							seconds.seconds +
-							(hundredths * 10).milliseconds
+					val duration = minutes.minutes + seconds.seconds + (hundredths * 10).milliseconds
 
 					LyricLine(time = duration, text = text)
 				} catch (_: Exception) {
@@ -124,23 +167,25 @@ class LyricsRepository(
 			}
 			.toList()
 			.sortedBy { it.time }
+	}
+}
 
-	suspend fun fetchLyrics(
-		track: Track,
-		priority: List<LyricsProvider> = listOf(
-			LyricsProvider.LYRICS_PLUS,
-			LyricsProvider.SUBSONIC,
-			LyricsProvider.LRCLIB
-		)
-	): List<LyricLine>? {
-		for (provider in priority) {
+class LyricsRepository(
+	private val client: HttpClient = HttpClient(),
+	private val config: LyricsConfig = LyricsConfig()
+) {
+	suspend fun fetchLyrics(track: Track): List<LyricLine>? {
+		for (provider in config.priority) {
 			try {
-				val lyrics = when (provider) {
-					LyricsProvider.LYRICS_PLUS -> fetchLyricsPlus(track)
-					LyricsProvider.SUBSONIC -> fetchSubsonicLyrics(track)
-					LyricsProvider.LRCLIB -> fetchLrcLibLyrics(track)
+				val rawContent = when (provider) {
+					LyricsProvider.LYRICS_PLUS -> fetchRawLyricsPlus(track)
+					LyricsProvider.SUBSONIC -> fetchRawSubsonic(track)
+					LyricsProvider.LRCLIB -> fetchRawLrcLib(track)
 				}
-				if (!lyrics.isNullOrEmpty()) return lyrics
+				val parsedLyrics = rawContent?.let { LyricsContentParser.parse(it) }
+
+				if (!parsedLyrics.isNullOrEmpty()) return parsedLyrics
+
 			} catch (e: Exception) {
 				println("Provider ${provider.name} failed: ${e.message}")
 				continue
@@ -149,75 +194,35 @@ class LyricsRepository(
 		return null
 	}
 
-	private suspend fun fetchSubsonicLyrics(track: Track): List<LyricLine>? {
+	private suspend fun fetchRawSubsonic(track: Track): String? {
 		return runCatching {
-			val jsonString = SessionManager.api.getLyricsBySongId(track.id)
-			val jsonRoot = jsonConfig.parseToJsonElement(jsonString).jsonObject
-
-			val subsonicResponse = jsonRoot["subsonic-response"]?.jsonObject
-			if (subsonicResponse?.get("status")?.jsonPrimitive?.contentOrNull == "failed") {
-				val errorJson = subsonicResponse["error"]?.jsonObject
-				val apiError = ApiError(
-					message = errorJson?.get("message")?.jsonPrimitive?.contentOrNull,
-					code = errorJson?.get("code")?.jsonPrimitive?.contentOrNull?.toIntOrNull()
-				)
-				throw Exception(apiError.message ?: "Subsonic API Error")
-			}
-
-			val structuredLyrics = subsonicResponse?.get("lyricsList")
-				?.jsonObject?.get("structuredLyrics")
-				?.jsonArray
-
-			val syncedLyrics = structuredLyrics
-				?.firstOrNull { it.jsonObject["synced"]?.jsonPrimitive?.booleanOrNull == true }
-				?: structuredLyrics?.firstOrNull()
-
-			syncedLyrics?.jsonObject?.get("line")?.jsonArray?.mapNotNull { line ->
-				val startMs = line.jsonObject["start"]?.jsonPrimitive?.contentOrNull?.toLongOrNull()
-				val value = line.jsonObject["value"]?.jsonPrimitive?.contentOrNull
-				if (startMs != null && value != null) {
-					LyricLine(time = startMs.milliseconds, text = value)
-				} else null
-			}?.sortedBy { it.time }
-		}.getOrElse { throw it }
+			SessionManager.api.getLyricsBySongId(track.id)
+		}.getOrNull()
 	}
 
-	private suspend fun fetchLrcLibLyrics(track: Track): List<LyricLine>? {
+	private suspend fun fetchRawLrcLib(track: Track): String? {
 		val artist = track.artist ?: return null
 		val album = track.album ?: return null
 		val duration = track.duration ?: return null
 
 		return try {
-			val response = client.get("https://lrclib.net/api/get") {
+			val response = client.get(config.lrcLibBaseUrl) {
 				parameter("track_name", track.title)
 				parameter("artist_name", artist)
 				parameter("album_name", album)
 				parameter("duration", duration)
 				accept(ContentType.Application.Json)
 			}
-
-			val lrcData = response.body<LrcLibResponse>()
-			val syncedStr = lrcData.syncedLyrics
-
-			if (!syncedStr.isNullOrEmpty()) {
-				parseLrcLibLyrics(syncedStr)
-			} else {
-				null
-			}
+			if (response.status.isSuccess()) response.bodyAsText() else null
 		} catch (_: Exception) {
 			null
 		}
 	}
 
-	private suspend fun fetchLyricsPlus(track: Track): List<LyricLine>? {
+	private suspend fun fetchRawLyricsPlus(track: Track): String? {
 		val artist = track.artist ?: return null
-		val mirrors = listOf(
-			"https://lyricsplus.atomix.one",
-			"https://lyricsplus-seven.vercel.app",
-			"https://lyricsplus.prjktla.workers.dev"
-		)
 
-		for (baseUrl in mirrors) {
+		for (baseUrl in config.lyricsPlusMirrors) {
 			try {
 				val response = client.get("$baseUrl/v2/lyrics/get") {
 					parameter("title", track.title)
@@ -226,20 +231,11 @@ class LyricsRepository(
 					parameter("duration", track.duration)
 					accept(ContentType.Application.Json)
 				}
-
-				val apiResponse = response.getOrThrow<YoulyResponse>()
-				if (apiResponse.lyrics.isNotEmpty()) {
-					return apiResponse.lyrics.map { line ->
-						LyricLine(
-							time = line.time.milliseconds,
-							text = line.text,
-							words = line.syllabus?.map { syl ->
-								LyricWord(syl.time.milliseconds, syl.duration.milliseconds, syl.text)
-							}
-						)
-					}
+				if (response.status.isSuccess()) {
+					return response.bodyAsText()
 				}
 			} catch (_: Exception) {
+				continue
 			}
 		}
 		return null
