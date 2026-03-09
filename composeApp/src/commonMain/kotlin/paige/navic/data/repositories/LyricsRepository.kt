@@ -1,5 +1,6 @@
 package paige.navic.data.repositories
 
+import com.russhwolf.settings.Settings
 import io.ktor.client.HttpClient
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
@@ -30,9 +31,10 @@ data class LyricLine(
 	val words: List<LyricWord>? = null
 )
 
+@Serializable
 enum class LyricsProvider { LYRICS_PLUS, SUBSONIC, LRCLIB }
 
-
+@Serializable
 data class LyricsConfig(
 	val priority: List<LyricsProvider> = listOf(
 		LyricsProvider.LYRICS_PLUS,
@@ -45,7 +47,11 @@ data class LyricsConfig(
 		"https://lyricsplus.prjktla.workers.dev"
 	),
 	val lrcLibBaseUrl: String = "https://lrclib.net/api/get"
-)
+) {
+	companion object {
+		const val KEY = "lyrics_config_prefs"
+	}
+}
 
 @Serializable
 private data class YoulyResponse(
@@ -172,15 +178,29 @@ object LyricsContentParser {
 
 class LyricsRepository(
 	private val client: HttpClient = HttpClient(),
-	private val config: LyricsConfig = LyricsConfig()
+	private val settings: Settings = Settings()
 ) {
+
+	private val json = Json { ignoreUnknownKeys = true }
+
+	private fun getConfig(): LyricsConfig {
+		val raw = settings.getStringOrNull(LyricsConfig.KEY)
+		return try {
+			if (raw != null) json.decodeFromString<LyricsConfig>(raw)
+			else LyricsConfig()
+		} catch (_: Exception) {
+			LyricsConfig()
+		}
+	}
+
 	suspend fun fetchLyrics(track: Track): List<LyricLine>? {
-		for (provider in config.priority) {
+		val currentConfig = getConfig()
+		for (provider in currentConfig.priority) {
 			try {
 				val rawContent = when (provider) {
-					LyricsProvider.LYRICS_PLUS -> fetchRawLyricsPlus(track)
+					LyricsProvider.LYRICS_PLUS -> fetchRawLyricsPlus(track, currentConfig)
 					LyricsProvider.SUBSONIC -> fetchRawSubsonic(track)
-					LyricsProvider.LRCLIB -> fetchRawLrcLib(track)
+					LyricsProvider.LRCLIB -> fetchRawLrcLib(track, currentConfig)
 				}
 				val parsedLyrics = rawContent?.let { LyricsContentParser.parse(it) }
 
@@ -200,7 +220,7 @@ class LyricsRepository(
 		}.getOrNull()
 	}
 
-	private suspend fun fetchRawLrcLib(track: Track): String? {
+	private suspend fun fetchRawLrcLib(track: Track, config: LyricsConfig): String? {
 		val artist = track.artist ?: return null
 		val album = track.album ?: return null
 		val duration = track.duration ?: return null
@@ -219,7 +239,7 @@ class LyricsRepository(
 		}
 	}
 
-	private suspend fun fetchRawLyricsPlus(track: Track): String? {
+	private suspend fun fetchRawLyricsPlus(track: Track, config: LyricsConfig): String? {
 		val artist = track.artist ?: return null
 
 		for (baseUrl in config.lyricsPlusMirrors) {
