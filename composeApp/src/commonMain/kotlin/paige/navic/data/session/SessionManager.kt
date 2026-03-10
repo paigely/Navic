@@ -22,7 +22,7 @@ object SessionManager {
 	var cacheStorage: CacheStorage? = null
 
 	val api = SubsonicClient(
-		baseUrl = "https://navi.maize.moe/rest/",
+		baseUrl = settings.getString("instanceUrl", ""),
 		auth = SubsonicAuth.Token(
 			username = settings.getString("username", ""),
 			password = settings.getString("password", ""),
