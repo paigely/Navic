@@ -6,7 +6,6 @@ on:
       - composeApp/**
       - gradle/**
       - iosApp/**
-      - subsonic/**
       - build.gradle.kts
       - settings.gradle.kts
       - .github/workflows/build.yml
@@ -19,7 +18,6 @@ on:
       - composeApp/**
       - gradle/**
       - iosApp/**
-      - subsonic/**
       - build.gradle.kts
       - settings.gradle.kts
       - .github/workflows/build.yml
