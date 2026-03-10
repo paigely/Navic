@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,84 +25,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.russhwolf.settings.Settings
-import com.russhwolf.settings.set
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.json.Json
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.action_reorder
-import navic.composeapp.generated.resources.option_navbar_tab_positions
+import navic.composeapp.generated.resources.option_lyrics_priority
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.models.NavbarConfig
-import paige.navic.data.models.NavbarTab
+import paige.navic.data.repositories.LyricsProvider
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle
 import paige.navic.ui.components.common.ErrorBox
+import paige.navic.ui.viewmodels.LyricsPriorityViewModel
 import paige.navic.utils.UiState
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-class NavtabsViewModel(
-	private val settings: Settings,
-	private val json: Json
-) : ViewModel() {
-	private val _state = MutableStateFlow<UiState<NavbarConfig>>(UiState.Loading)
-	val state = _state.asStateFlow()
-
-	init {
-		try {
-			_state.value = UiState.Success(loadConfig())
-		} catch (e: Exception) {
-			_state.value = UiState.Error(e)
-		}
-	}
-
-	private fun loadConfig(): NavbarConfig {
-		val raw = settings.getStringOrNull(NavbarConfig.KEY)
-			?: return NavbarConfig.default
-		val config: NavbarConfig = json.decodeFromString(raw)
-		return config.takeIf { it.version == NavbarConfig.VERSION }
-			?: NavbarConfig.default
-	}
-
-	private fun setConfig(newConfig: NavbarConfig) {
-		_state.value = UiState.Success(newConfig)
-		settings[NavbarConfig.KEY] = json.encodeToString(newConfig)
-	}
-
-	fun move(from: Int, to: Int) {
-		val config = (_state.value as UiState.Success).data
-		setConfig(config.copy(
-			tabs = config.tabs.toMutableList().apply {
-				add(to, removeAt(from))
-			}
-		))
-	}
-
-	fun toggleVisibility(id: NavbarTab.Id) {
-		val config = (_state.value as UiState.Success).data
-		setConfig(
-			config.copy(
-				tabs = config.tabs.map {
-					if (it.id == id) it.copy(visible = !it.visible) else it
-				}
-			)
-		)
-	}
-}
-
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun NavtabsDialog(
+fun LyricsPriorityDialog(
 	presented: Boolean,
 	onDismissRequest: () -> Unit,
-	viewModel: NavtabsViewModel = viewModel { NavtabsViewModel(Settings(), Json) }
+	viewModel: LyricsPriorityViewModel = viewModel { LyricsPriorityViewModel() }
 ) {
 	if (!presented) return
 
@@ -123,7 +66,7 @@ fun NavtabsDialog(
 			val config = (state as UiState.Success).data
 			AlertDialog(
 				title = {
-					Text(stringResource(Res.string.option_navbar_tab_positions))
+					Text(stringResource(Res.string.option_lyrics_priority))
 				},
 				text = {
 					LazyColumn(
@@ -134,22 +77,19 @@ fun NavtabsDialog(
 						verticalArrangement = Arrangement.spacedBy(8.dp)
 					) {
 						items(
-							items = config.tabs,
-							key = { tab -> tab.id }
-						) { tab ->
+							items = config.priority,
+							key = { provider -> provider.name }
+						) { provider ->
 							ReorderableItem(
 								reorderableState,
-								key = tab.id,
+								key = provider.name,
 								animateItemModifier = Modifier.animateItem(
 									placementSpec = MaterialTheme.motionScheme.fastSpatialSpec()
 								)
 							) { isDragging ->
-								NavtabRow(
-									tab = tab,
-									isDragging = isDragging,
-									onToggleVisibility = {
-										viewModel.toggleVisibility(tab.id)
-									}
+								ProviderRow(
+									provider = provider,
+									isDragging = isDragging
 								)
 							}
 						}
@@ -168,15 +108,15 @@ fun NavtabsDialog(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun ReorderableCollectionItemScope.NavtabRow(
-	tab: NavbarTab,
-	isDragging: Boolean,
-	onToggleVisibility: () -> Unit
+private fun ReorderableCollectionItemScope.ProviderRow(
+	provider: LyricsProvider,
+	isDragging: Boolean
 ) {
 	val haptic = LocalHapticFeedback.current
 	val elevation by animateDpAsState(
 		if (isDragging) 4.dp else 0.dp,
-		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
+		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
+		label = "drag_elevation"
 	)
 
 	Surface(
@@ -187,29 +127,18 @@ private fun ReorderableCollectionItemScope.NavtabRow(
 		Row(
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(8.dp),
+				.padding(horizontal = 16.dp, vertical = 8.dp),
 			horizontalArrangement = Arrangement.SpaceBetween,
 			verticalAlignment = Alignment.CenterVertically
 		) {
-			Checkbox(
-				enabled = tab.id != NavbarTab.Id.LIBRARY,
-				checked = tab.visible,
-				onCheckedChange = {
-					onToggleVisibility()
-				}
-			)
-			Text(tab.id.name.lowercase().replaceFirstChar { it.uppercase() })
+			Text(provider.displayName)
 			IconButton(
 				modifier = Modifier.draggableHandle(
 					onDragStarted = {
-						haptic.performHapticFeedback(
-							HapticFeedbackType.GestureThresholdActivate
-						)
+						haptic.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
 					},
 					onDragStopped = {
-						haptic.performHapticFeedback(
-							HapticFeedbackType.GestureEnd
-						)
+						haptic.performHapticFeedback(HapticFeedbackType.GestureEnd)
 					}
 				),
 				onClick = {}

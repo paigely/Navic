@@ -6,7 +6,9 @@ import dev.zt64.subsonic.api.model.Song
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import paige.navic.data.repositories.LyricLine
 import paige.navic.data.repositories.LyricsRepository
+import paige.navic.data.repositories.LyricsResult
 import paige.navic.utils.UiState
 import kotlin.time.Duration
 
@@ -14,7 +16,7 @@ class LyricsViewModel(
 	private val track: Song?,
 	private val repository: LyricsRepository = LyricsRepository()
 ) : ViewModel() {
-	private val _lyricsState = MutableStateFlow<UiState<List<Pair<Duration, String>>?>>(UiState.Success(null))
+	private val _lyricsState = MutableStateFlow<UiState<LyricsResult?>>(UiState.Loading)
 	val lyricsState = _lyricsState.asStateFlow()
 
 	init {

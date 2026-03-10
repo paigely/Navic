@@ -176,8 +176,8 @@ android {
 		applicationId = "paige.navic"
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
-		versionCode = 11
-		versionName = "v1.0.0-alpha21"
+		versionCode = 12
+		versionName = "v1.0.0-alpha22"
 	}
 
 	signingConfigs {

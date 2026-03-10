@@ -14,11 +14,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_lyrics_autoscroll
 import navic.composeapp.generated.resources.option_lyrics_beat_by_beat
+import navic.composeapp.generated.resources.option_lyrics_priority
 import navic.composeapp.generated.resources.option_player_animate_background
 import navic.composeapp.generated.resources.option_use_wavy_slider
 import navic.composeapp.generated.resources.subtitle_lyrics_beat_by_beat
@@ -28,12 +33,16 @@ import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.data.models.Settings
 import paige.navic.ui.components.common.Form
+import paige.navic.ui.components.common.FormRow
+import paige.navic.ui.components.dialogs.LyricsPriorityDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.settings.SettingSwitchRow
 
 @Composable
 fun NowPlayingScreen() {
 	val ctx = LocalCtx.current
+	var showLyricsPriorityDialog by rememberSaveable { mutableStateOf(false) }
+
 	Scaffold(
 		topBar = { NestedTopBar(
 			{ Text(stringResource(Res.string.title_now_playing)) },
@@ -75,9 +84,19 @@ fun NowPlayingScreen() {
 						value = Settings.shared.useWavySlider,
 						onSetValue = { Settings.shared.useWavySlider = it }
 					)
+
+					FormRow(
+						onClick = { showLyricsPriorityDialog = true }
+					) {
+						Text(stringResource(Res.string.option_lyrics_priority))
+					}
 				}
 				Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 			}
 		}
+		LyricsPriorityDialog(
+			presented = showLyricsPriorityDialog,
+			onDismissRequest = { showLyricsPriorityDialog = false }
+		)
 	}
 }
