@@ -18,7 +18,7 @@ data class NavbarConfig(
 				NavbarTab(NavbarTab.Id.ARTISTS, false),
 				NavbarTab(NavbarTab.Id.SEARCH, false)
 			),
-			version = NavbarConfig.VERSION
+			version = VERSION
 		)
 	}
 }

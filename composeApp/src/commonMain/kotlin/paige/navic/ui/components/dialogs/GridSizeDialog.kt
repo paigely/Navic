@@ -20,11 +20,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_grid_items_per_row
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
 import paige.navic.data.models.Settings
 
 @Composable
@@ -33,6 +35,8 @@ fun GridSizeDialog(
 	onDismissRequest: () -> Unit
 ) {
 	if (!presented) return
+
+	val ctx = LocalCtx.current
 
 	AlertDialog(
 		title = {
@@ -49,10 +53,12 @@ fun GridSizeDialog(
 					Row(
 						modifier = Modifier
 							.fillMaxWidth()
-							.clickable(onClick = {
+							.clip(MaterialTheme.shapes.small)
+							.clickable {
+								ctx.clickSound()
 								Settings.shared.gridSize = size
 								onDismissRequest()
-							})
+							}
 							.padding(8.dp),
 						horizontalArrangement = Arrangement.spacedBy(16.dp),
 						verticalAlignment = Alignment.CenterVertically
@@ -69,7 +75,10 @@ fun GridSizeDialog(
 		},
 		onDismissRequest = onDismissRequest,
 		confirmButton = {
-			Button(onClick = onDismissRequest) {
+			Button(onClick = {
+				ctx.clickSound()
+				onDismissRequest()
+			}) {
 				Text(stringResource(Res.string.action_ok))
 			}
 		}

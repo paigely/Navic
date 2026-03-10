@@ -19,12 +19,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_artwork_shape
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
 import paige.navic.data.models.Settings
 
 val Shapes = arrayOf(
@@ -42,6 +44,8 @@ fun ArtworkShapeDialog(
 ) {
 	if (!presented) return
 
+	val ctx = LocalCtx.current
+
 	AlertDialog(
 		title = {
 			Text(stringResource(Res.string.option_artwork_shape))
@@ -57,10 +61,12 @@ fun ArtworkShapeDialog(
 					Row(
 						modifier = Modifier
 							.fillMaxWidth()
-							.clickable(onClick = {
+							.clip(MaterialTheme.shapes.small)
+							.clickable {
+								ctx.clickSound()
 								Settings.shared.artGridRounding = radius
 								onDismissRequest()
-							}),
+							},
 						horizontalArrangement = Arrangement.spacedBy(16.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
@@ -81,7 +87,10 @@ fun ArtworkShapeDialog(
 		},
 		onDismissRequest = onDismissRequest,
 		confirmButton = {
-			Button(onClick = onDismissRequest) {
+			Button(onClick = {
+				ctx.clickSound()
+				onDismissRequest()
+			}) {
 				Text(stringResource(Res.string.action_ok))
 			}
 		}

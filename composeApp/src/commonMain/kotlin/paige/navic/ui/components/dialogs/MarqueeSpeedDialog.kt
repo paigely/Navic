@@ -19,6 +19,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_marquee_duration
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
 import paige.navic.data.models.Settings
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -28,6 +29,8 @@ fun MarqueeSpeedDialog(
 	onDismissRequest: () -> Unit
 ) {
 	if (!presented) return
+
+	val ctx = LocalCtx.current
 
 	AlertDialog(
 		title = {
@@ -44,10 +47,11 @@ fun MarqueeSpeedDialog(
 					Row(
 						modifier = Modifier
 							.fillMaxWidth()
-							.clickable(onClick = {
+							.clickable {
+								ctx.clickSound()
 								Settings.shared.marqueeSpeed = speed
 								onDismissRequest()
-							}),
+							},
 						horizontalArrangement = Arrangement.spacedBy(16.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
@@ -62,7 +66,10 @@ fun MarqueeSpeedDialog(
 		},
 		onDismissRequest = onDismissRequest,
 		confirmButton = {
-			Button(onClick = onDismissRequest) {
+			Button(onClick = {
+				ctx.clickSound()
+				onDismissRequest()
+			}) {
 				Text(stringResource(Res.string.action_ok))
 			}
 		}

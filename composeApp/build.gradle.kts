@@ -72,6 +72,9 @@ tasks {
 	withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile> {
 		dependsOn(":composeApp:generateValkyrieImageVector")
 	}
+	withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+		compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
+	}
 	matching { it.name.startsWith("compileKotlinIos") }.configureEach {
 		// “truly horrifying workaround” for a crash in SearchScreen.kt
 		// https://youtrack.jetbrains.com/issue/KT-84055/Reference-to-lambda-in-lambda-in-function-TextField-can-not-be-evaluated#focus=Comments-27-13188532.0-0

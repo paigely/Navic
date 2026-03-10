@@ -130,8 +130,8 @@ fun Swiper(
 
 		LaunchedEffect(offsetX.value) {
 			val pastLimit = abs(offsetX.value) > swipeThreshold
-			if (pastLimit && !isPastThreshold) {
-				if (enableHaptics) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+			if (pastLimit && !isPastThreshold && enableHaptics) {
+				haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 			}
 			isPastThreshold = pastLimit
 		}

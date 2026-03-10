@@ -32,7 +32,6 @@ import navic.composeapp.generated.resources.title_delete_share
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
 import paige.navic.LocalSnackbarState
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
@@ -79,7 +78,6 @@ fun DeletionDialog(
 	id: String?,
 	onIdClear: () -> Unit
 ) {
-	val ctx = LocalCtx.current
 	val snackbarState = LocalSnackbarState.current
 	val state by viewModel.state.collectAsState()
 

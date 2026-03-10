@@ -96,6 +96,10 @@
 	<string name="theme_spotify">Spotlight</string>
 	<string name="theme_subtitle_spotify">A theme with green highlights</string>
 
+	<string name="theme_mode_system">System</string>
+	<string name="theme_mode_dark">Dark</string>
+	<string name="theme_mode_light">Light</string>
+
 	<plurals name="count_songs">
 		<item quantity="one">%1$d song</item>
 		<item quantity="other">%1$d songs</item>

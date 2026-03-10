@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.zt64.subsonic.api.model.Share
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.data.repositories.SharesRepository
@@ -20,23 +19,12 @@ class SharesViewModel(
 	private val _isRefreshing = MutableStateFlow(false)
 	val isRefreshing = _isRefreshing.asStateFlow()
 
-	private val _selectedShare = MutableStateFlow<Share?>(null)
-	val selectedShare: StateFlow<Share?> = _selectedShare.asStateFlow()
-
 	init {
 		viewModelScope.launch {
 			SessionManager.isLoggedIn.collect {
 				refreshShares()
 			}
 		}
-	}
-
-	fun selectShare(share: Share) {
-		_selectedShare.value = share
-	}
-
-	fun clearSelection() {
-		_selectedShare.value = null
 	}
 
 	fun refreshShares() {

@@ -68,7 +68,6 @@ import paige.navic.icons.outlined.KeyboardArrowDown
 import paige.navic.icons.outlined.Lyrics
 import paige.navic.icons.outlined.Queue
 import paige.navic.ui.components.layouts.TopBarButton
-import paige.navic.ui.scenes.BottomSheetSceneStrategy.Companion.bottomSheet
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.ui.theme.defaultFont
 

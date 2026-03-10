@@ -17,6 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import paige.navic.data.models.Settings
+import paige.navic.data.models.Settings.ThemeMode
 
 @OptIn(
 	ExperimentalMaterial3WindowSizeClassApi::class,
@@ -26,9 +28,16 @@ import androidx.compose.ui.platform.LocalView
 actual fun rememberCtx(): Ctx {
 	val view = LocalView.current
 	val context = LocalContext.current
-	val darkTheme = isSystemInDarkTheme()
+	val inDarkTheme = isSystemInDarkTheme()
+	val isDark = remember(Settings.shared.themeMode) {
+		when (Settings.shared.themeMode) {
+			ThemeMode.System -> inDarkTheme
+			ThemeMode.Dark -> true
+			ThemeMode.Light -> false
+		}
+	}
 	val sizeClass = calculateWindowSizeClass(LocalActivity.current!!)
-	return remember {
+	return remember(isDark, sizeClass) {
 		object : Ctx {
 			override fun clickSound() {
 				view.playSoundEffect(SoundEffectConstants.CLICK)
@@ -40,11 +49,11 @@ actual fun rememberCtx(): Ctx {
 					.versionName.toString()
 			override val colorScheme
 				get() = if (Build.VERSION.SDK_INT >= 31)
-					if (darkTheme)
+					if (isDark)
 						dynamicDarkColorScheme(context)
 					else dynamicLightColorScheme(context)
 				else
-					if (darkTheme)
+					if (isDark)
 						darkColorScheme()
 					else expressiveLightColorScheme()
 			override val sizeClass = sizeClass

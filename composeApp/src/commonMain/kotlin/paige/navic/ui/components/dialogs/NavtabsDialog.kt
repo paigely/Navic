@@ -38,6 +38,7 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.option_navbar_tab_positions
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
 import paige.navic.data.models.NavbarConfig
 import paige.navic.data.models.NavbarTab
 import paige.navic.icons.Icons
@@ -173,6 +174,7 @@ private fun ReorderableCollectionItemScope.NavtabRow(
 	isDragging: Boolean,
 	onToggleVisibility: () -> Unit
 ) {
+	val ctx = LocalCtx.current
 	val haptic = LocalHapticFeedback.current
 	val elevation by animateDpAsState(
 		if (isDragging) 4.dp else 0.dp,
@@ -194,7 +196,8 @@ private fun ReorderableCollectionItemScope.NavtabRow(
 			Checkbox(
 				enabled = tab.id != NavbarTab.Id.LIBRARY,
 				checked = tab.visible,
-				onCheckedChange = {
+				onCheckedChange = { _ ->
+					ctx.clickSound()
 					onToggleVisibility()
 				}
 			)

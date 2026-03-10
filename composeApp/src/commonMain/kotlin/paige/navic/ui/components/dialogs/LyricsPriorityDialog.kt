@@ -31,6 +31,7 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.option_lyrics_priority
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
 import paige.navic.data.repositories.LyricsProvider
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle
@@ -50,6 +51,7 @@ fun LyricsPriorityDialog(
 ) {
 	if (!presented) return
 
+	val ctx = LocalCtx.current
 	val haptic = LocalHapticFeedback.current
 	val lazyListState = rememberLazyListState()
 	val state by viewModel.state.collectAsState()
@@ -97,7 +99,10 @@ fun LyricsPriorityDialog(
 				},
 				onDismissRequest = onDismissRequest,
 				confirmButton = {
-					Button(onClick = onDismissRequest) {
+					Button(onClick = {
+						ctx.clickSound()
+						onDismissRequest()
+					}) {
 						Text(stringResource(Res.string.action_ok))
 					}
 				}
