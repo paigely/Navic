@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -44,10 +42,11 @@ import paige.navic.data.models.NavbarTab
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle
 import paige.navic.ui.components.common.ErrorBox
+import paige.navic.utils.DraggableListState
 import paige.navic.utils.UiState
-import sh.calvin.reorderable.ReorderableCollectionItemScope
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyListState
+import paige.navic.utils.dragHandle
+import paige.navic.utils.draggableItems
+import paige.navic.utils.rememberDraggableListState
 
 class NavtabsViewModel(
 	private val settings: Settings,
@@ -109,11 +108,10 @@ fun NavtabsDialog(
 	if (!presented) return
 
 	val haptic = LocalHapticFeedback.current
-	val lazyListState = rememberLazyListState()
 	val state by viewModel.state.collectAsState()
 
-	val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
-		viewModel.move(from.index, to.index)
+	val draggableState = rememberDraggableListState { from, to ->
+		viewModel.move(from, to)
 		haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
 	}
 
@@ -131,28 +129,22 @@ fun NavtabsDialog(
 						modifier = Modifier
 							.fillMaxWidth()
 							.heightIn(max = 300.dp),
-						state = lazyListState,
+						state = draggableState.listState,
 						verticalArrangement = Arrangement.spacedBy(8.dp)
 					) {
-						items(
+						draggableItems(
+							state = draggableState,
 							items = config.tabs,
 							key = { tab -> tab.id }
-						) { tab ->
-							ReorderableItem(
-								reorderableState,
-								key = tab.id,
-								animateItemModifier = Modifier.animateItem(
-									placementSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-								)
-							) { isDragging ->
-								NavtabRow(
-									tab = tab,
-									isDragging = isDragging,
-									onToggleVisibility = {
-										viewModel.toggleVisibility(tab.id)
-									}
-								)
-							}
+						) { tab, isDragging ->
+							NavtabRow(
+								tab = tab,
+								state = draggableState,
+								isDragging = isDragging,
+								onToggleVisibility = {
+									viewModel.toggleVisibility(tab.id)
+								}
+							)
 						}
 					}
 				},
@@ -169,13 +161,13 @@ fun NavtabsDialog(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun ReorderableCollectionItemScope.NavtabRow(
+private fun NavtabRow(
 	tab: NavbarTab,
+	state: DraggableListState,
 	isDragging: Boolean,
 	onToggleVisibility: () -> Unit
 ) {
 	val ctx = LocalCtx.current
-	val haptic = LocalHapticFeedback.current
 	val elevation by animateDpAsState(
 		if (isDragging) 4.dp else 0.dp,
 		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
@@ -203,17 +195,9 @@ private fun ReorderableCollectionItemScope.NavtabRow(
 			)
 			Text(tab.id.name.lowercase().replaceFirstChar { it.uppercase() })
 			IconButton(
-				modifier = Modifier.draggableHandle(
-					onDragStarted = {
-						haptic.performHapticFeedback(
-							HapticFeedbackType.GestureThresholdActivate
-						)
-					},
-					onDragStopped = {
-						haptic.performHapticFeedback(
-							HapticFeedbackType.GestureEnd
-						)
-					}
+				modifier = Modifier.dragHandle(
+					state = state,
+					key = tab.id
 				),
 				onClick = {}
 			) {

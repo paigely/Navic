@@ -9,19 +9,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontVariation
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.google_sans
-import navic.composeapp.generated.resources.inter
-import navic.composeapp.generated.resources.maple_mono
-import navic.composeapp.generated.resources.noto_sans
 import org.jetbrains.compose.resources.Font
 import paige.navic.data.models.Settings
 
 private val defaultTypography = Typography()
-
-@Composable
-fun mapleMono(): FontFamily {
-	val font = Font(Res.font.maple_mono)
-	return remember { FontFamily(font) }
-}
 
 @Composable
 fun googleSans(
@@ -40,18 +31,6 @@ fun googleSans(
 	return remember { FontFamily(font) }
 }
 
-@Composable
-fun notoSans(): FontFamily {
-	val font = Font(Res.font.noto_sans)
-	return remember { FontFamily(font) }
-}
-
-@Composable
-fun inter(): FontFamily {
-	val font = Font(Res.font.inter)
-	return remember { FontFamily(font) }
-}
-
 @OptIn(ExperimentalTextApi::class)
 @Composable
 fun defaultFont(
@@ -60,14 +39,10 @@ fun defaultFont(
 	round: Float = 0f
 ): FontFamily {
 	val googleSans = googleSans(grade, width, round)
-	val notoSans = notoSans()
-	val inter = inter()
 	return remember(Settings.shared.font, Settings.shared.fontPath) {
 		when (Settings.shared.font) {
 			Settings.FontOption.System -> FontFamily.Default
 			Settings.FontOption.GoogleSans -> googleSans
-			Settings.FontOption.NotoSans -> notoSans
-			Settings.FontOption.Inter -> inter
 			Settings.FontOption.Custom -> FontFamily.Default
 		}
 	}

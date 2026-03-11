@@ -53,7 +53,6 @@ coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.r
 
 media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
 media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 
 navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 
@@ -68,7 +67,6 @@ kmpalette-network = { module = "com.kmpalette:extensions-network", version.ref =
 materialKolor = { module = "com.materialkolor:material-kolor", version = "5.0.0-alpha07" }
 composePipette = { module = "dev.zt64.compose.pipette:compose-pipette", version = "2.0.0" }
 multiplatformSettings = { module = "com.russhwolf:multiplatform-settings-no-arg", version = "1.3.0" }
-reorderable = { module = "sh.calvin.reorderable:reorderable", version = "3.0.0" }
 nativeTray = { module = "io.github.kdroidfilter:composenativetray", version = "1.1.0" }
 aboutLibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
 aboutLibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
@@ -82,13 +80,13 @@ subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.
 [bundles]
 cmp = ["cmp-foundation", "cmp-material3", "cmp-material3-adaptive-nav", "cmp-material3-windowSize", "cmp-resources", "cmp-runtime", "cmp-ui"]
 coil = ["coil-compose", "coil-network-ktor3"]
-media3 = ["media3-exoplayer", "media3-session", "media3-ui"]
+media3 = ["media3-exoplayer", "media3-session"]
 glance = ["glance-appwidget", "glance-material3"]
 ktor = ["ktor-client-core", "ktor-client-contentNegotiation", "ktor-serialization-json"]
 ktor-ios = ["ktor-client-darwin"]
 ktor-android = ["ktor-client-okhttp"]
 ktor-desktop = ["ktor-client-okhttp"]
-cmpThirdParty = ["capsule", "wavySlider", "kmpalette-core", "kmpalette-network", "materialKolor", "composePipette", "multiplatformSettings", "reorderable", "aboutLibraries-compose", "aboutLibraries-core"]
+cmpThirdParty = ["capsule", "wavySlider", "kmpalette-core", "kmpalette-network", "materialKolor", "composePipette", "multiplatformSettings", "aboutLibraries-compose", "aboutLibraries-core"]
 androidx-android = ["androidx-activity-compose", "androidx-datastore-preferences", "androidx-animation-graphics"]
 androidx-lifecycle = ["androidx-lifecycle-viewmodel", "androidx-lifecycle-runtime"]
 

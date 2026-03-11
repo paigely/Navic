@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -37,10 +35,11 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.viewmodels.LyricsPriorityViewModel
+import paige.navic.utils.DraggableListState
 import paige.navic.utils.UiState
-import sh.calvin.reorderable.ReorderableCollectionItemScope
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyListState
+import paige.navic.utils.dragHandle
+import paige.navic.utils.draggableItems
+import paige.navic.utils.rememberDraggableListState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -53,11 +52,10 @@ fun LyricsPriorityDialog(
 
 	val ctx = LocalCtx.current
 	val haptic = LocalHapticFeedback.current
-	val lazyListState = rememberLazyListState()
 	val state by viewModel.state.collectAsState()
 
-	val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
-		viewModel.move(from.index, to.index)
+	val draggableState = rememberDraggableListState { from, to ->
+		viewModel.move(from, to)
 		haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
 	}
 
@@ -75,25 +73,19 @@ fun LyricsPriorityDialog(
 						modifier = Modifier
 							.fillMaxWidth()
 							.heightIn(max = 300.dp),
-						state = lazyListState,
+						state = draggableState.listState,
 						verticalArrangement = Arrangement.spacedBy(8.dp)
 					) {
-						items(
+						draggableItems(
+							state = draggableState,
 							items = config.priority,
 							key = { provider -> provider.name }
-						) { provider ->
-							ReorderableItem(
-								reorderableState,
-								key = provider.name,
-								animateItemModifier = Modifier.animateItem(
-									placementSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-								)
-							) { isDragging ->
-								ProviderRow(
-									provider = provider,
-									isDragging = isDragging
-								)
-							}
+						) { provider, isDragging ->
+							ProviderRow(
+								provider = provider,
+								isDragging = isDragging,
+								state = draggableState
+							)
 						}
 					}
 				},
@@ -113,17 +105,15 @@ fun LyricsPriorityDialog(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun ReorderableCollectionItemScope.ProviderRow(
+private fun ProviderRow(
+	state: DraggableListState,
 	provider: LyricsProvider,
 	isDragging: Boolean
 ) {
-	val haptic = LocalHapticFeedback.current
 	val elevation by animateDpAsState(
 		if (isDragging) 4.dp else 0.dp,
-		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
-		label = "drag_elevation"
+		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
 	)
-
 	Surface(
 		shadowElevation = elevation,
 		modifier = Modifier.fillMaxWidth(),
@@ -138,13 +128,9 @@ private fun ReorderableCollectionItemScope.ProviderRow(
 		) {
 			Text(provider.displayName)
 			IconButton(
-				modifier = Modifier.draggableHandle(
-					onDragStarted = {
-						haptic.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
-					},
-					onDragStopped = {
-						haptic.performHapticFeedback(HapticFeedbackType.GestureEnd)
-					}
+				modifier = Modifier.dragHandle(
+					state = state,
+					key = provider.name
 				),
 				onClick = {}
 			) {

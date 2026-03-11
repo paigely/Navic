@@ -32,6 +32,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -73,7 +74,6 @@ import paige.navic.ui.components.dialogs.ThemeDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.settings.SettingCollapsibleRow
 import paige.navic.ui.components.settings.SettingSwitchRow
-import paige.navic.ui.theme.mapleMono
 import paige.navic.utils.fadeFromTop
 
 @Composable
@@ -244,7 +244,7 @@ fun SettingsAppearanceScreen() {
 									Text(stringResource(Res.string.option_cover_art_size))
 									Text(
 										"${Settings.shared.artGridItemSize}",
-										fontFamily = mapleMono(),
+										fontFamily = FontFamily.Monospace,
 										fontWeight = FontWeight(400),
 										fontSize = 13.sp,
 										color = MaterialTheme.colorScheme.onSurfaceVariant,

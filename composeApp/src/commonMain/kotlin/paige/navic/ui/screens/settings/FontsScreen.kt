@@ -3,9 +3,7 @@ package paige.navic.ui.screens.settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -36,9 +34,6 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.theme.googleSans
-import paige.navic.ui.theme.inter
-import paige.navic.ui.theme.mapleMono
-import paige.navic.ui.theme.notoSans
 import paige.navic.utils.fadeFromTop
 
 @Composable
@@ -82,7 +77,7 @@ private fun LazyListScope.inbuiltFonts() {
 			fontName = "System",
 			fontFamily = FontFamily.Default,
 			index = 0,
-			count = 4,
+			count = 2,
 			onClick = {
 				Settings.shared.font = Settings.FontOption.System
 			},
@@ -94,37 +89,12 @@ private fun LazyListScope.inbuiltFonts() {
 			fontName = "Google Sans",
 			fontFamily = googleSans(),
 			index = 1,
-			count = 4,
+			count = 2,
 			onClick = {
 				Settings.shared.font = Settings.FontOption.GoogleSans
 			},
 			selected = Settings.shared.font == Settings.FontOption.GoogleSans
 		)
-	}
-	item {
-		FontRow(
-			fontName = "Noto Sans",
-			fontFamily = notoSans(),
-			index = 2,
-			count = 4,
-			onClick = {
-				Settings.shared.font = Settings.FontOption.NotoSans
-			},
-			selected = Settings.shared.font == Settings.FontOption.NotoSans
-		)
-	}
-	item {
-		FontRow(
-			fontName = "Inter",
-			fontFamily = inter(),
-			index = 3,
-			count = 4,
-			onClick = {
-				Settings.shared.font = Settings.FontOption.Inter
-			},
-			selected = Settings.shared.font == Settings.FontOption.Inter
-		)
-		Spacer(Modifier.height(10.dp))
 	}
 }
 

@@ -20,6 +20,7 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,7 +38,6 @@ import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.settings.SettingSwitchRow
-import paige.navic.ui.theme.mapleMono
 import paige.navic.utils.fadeFromTop
 import kotlin.math.roundToInt
 
@@ -78,7 +78,7 @@ fun ScrobblingScreen() {
 								Text(stringResource(Res.string.option_scrobble_percentage))
 								Text(
 									"${(Settings.shared.scrobblePercentage * 100).roundToInt()}%",
-									fontFamily = mapleMono(),
+									fontFamily = FontFamily.Monospace,
 									fontWeight = FontWeight(400),
 									fontSize = 13.sp,
 									color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -102,7 +102,7 @@ fun ScrobblingScreen() {
 								Text(stringResource(Res.string.option_min_duration_to_scrobble))
 								Text(
 									"${Settings.shared.minDurationToScrobble.toInt()}s",
-									fontFamily = mapleMono(),
+									fontFamily = FontFamily.Monospace,
 									fontWeight = FontWeight(400),
 									fontSize = 13.sp,
 									color = MaterialTheme.colorScheme.onSurfaceVariant,

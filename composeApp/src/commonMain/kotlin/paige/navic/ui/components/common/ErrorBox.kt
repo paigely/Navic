@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.materialkolor.ktx.darken
@@ -40,7 +41,6 @@ import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Copy
 import paige.navic.icons.outlined.KeyboardArrowDown
 import paige.navic.icons.outlined.Refresh
-import paige.navic.ui.theme.mapleMono
 import paige.navic.utils.UiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -121,7 +121,7 @@ fun ErrorBox(
 				) {
 					Text(
 						error.error.stackTraceToString(),
-						fontFamily = mapleMono(),
+						fontFamily = FontFamily.Monospace,
 						fontSize = 12.sp,
 						color = MaterialTheme.colorScheme.onSurface
 					)
