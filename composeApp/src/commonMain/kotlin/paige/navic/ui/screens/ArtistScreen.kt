@@ -260,7 +260,9 @@ fun ArtistScreen(
 										backStack.add(Screen.Artist(artist.id))
 									},
 									coverArt = artist.coverArtId,
-									title = artist.name
+									title = artist.name,
+									id = artist.id,
+									tab = "artist"
 								)
 							}
 						}
