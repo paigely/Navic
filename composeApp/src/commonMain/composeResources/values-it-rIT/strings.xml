@@ -18,11 +18,13 @@
     <string name="action_play">Riproduci</string>
     <string name="action_queue">Coda</string>
     <string name="action_refresh">Ricarica</string>
+    <string name="action_remove_from_history">Rimuovi dalla cronologia</string>
     <string name="action_remove_from_playlist">Rimuovi dalla Playlist</string>
     <string name="action_remove_from_queue">Rimuovi dalla coda</string>
     <string name="action_remove_star">Rimuovi dai preferiti</string>
     <string name="action_reorder">Riordina</string>
     <string name="action_repeat">Ripeti</string>
+    <string name="action_search_history">Ricerche recenti</string>
     <string name="action_see_all">Vedi tutti</string>
     <string name="action_share">Condividi</string>
     <string name="action_share_lyrics">Condividi testo</string>
