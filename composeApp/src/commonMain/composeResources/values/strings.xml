@@ -25,6 +25,9 @@
 	<string name="title_source">Source code</string>
 	<string name="title_chat">Chat</string>
 	<string name="title_shares">Shares</string>
+	<string name="title_choose_font">Choose app font</string>
+	<string name="title_fonts_inbuilt">In-built</string>
+	<string name="title_fonts_external">External</string>
 
 	<string name="subtitle_appearance">Change the theme and colours of the app</string>
 	<string name="subtitle_behaviour">Change how things work</string>
@@ -41,6 +44,7 @@
 	<string name="subtitle_chat">Join the Discord</string>
 	<string	name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
 	<string name="subtitle_choose_theme">Choose from a selection of themes</string>
+	<string name="subtitle_choose_font">Choose a font to use across the app</string>
 	<string name="subtitle_auto_hide_bar">Hide the bottom bar when nothing is playing</string>
 	<string name="suibtitle_progress_in_bar_is_seekable">Whether or not the progress bar can be dragged in the player bar</string>
 
@@ -84,6 +88,9 @@
 	<string name="option_playlist_songs">Songs</string>
 	<string	name="option_enable_scrobbling">Enable Scrobbling</string>
 	<string name="option_choose_theme">Choose theme</string>
+	<string name="option_now_playing_toolbar_position">Toolbar position</string>
+	<string name="option_position_top">Top</string>
+	<string name="option_position_bottom">Bottom</string>
 
 	<string name="theme_dynamic">Dynamic</string>
 	<string name="theme_subtitle_dynamic">Available on Android 12 and above</string>

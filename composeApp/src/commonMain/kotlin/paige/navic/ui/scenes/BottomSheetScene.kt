@@ -2,11 +2,9 @@ package paige.navic.ui.scenes
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -43,7 +41,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -76,6 +73,7 @@ import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.data.models.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
@@ -141,12 +139,22 @@ internal class BottomSheetScene<T : Any>(
 					Row(
 						modifier = Modifier
 							.fillMaxWidth()
-							.padding(
-								top = WindowInsets.statusBars
-									.asPaddingValues().calculateTopPadding() + 18.dp,
-								start = 20.dp,
-								end = 24.dp
-							),
+							.then(if (Settings.shared.nowPlayingToolbarPosition
+								== Settings.ToolbarPosition.Top || screenType !== "player") {
+								Modifier.padding(
+									top = WindowInsets.statusBars
+										.asPaddingValues().calculateTopPadding() + 18.dp,
+									start = 20.dp, end = 24.dp
+								)
+							} else {
+								Modifier.padding(
+									bottom = WindowInsets.statusBars
+										.asPaddingValues().calculateBottomPadding() + 26.dp,
+									start = 20.dp,
+									end = 24.dp,
+									top = 20.dp
+								).align(Alignment.BottomCenter)
+							}),
 						horizontalArrangement = Arrangement.spacedBy(12.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
@@ -157,16 +165,18 @@ internal class BottomSheetScene<T : Any>(
 							enter = fadeIn() + slideInVertically() + expandVertically(clip = false),
 							exit = fadeOut() + slideOutVertically() + shrinkVertically(clip = false)
 						) {
-							TopBarButton(onClick = {
-								ctx.clickSound()
-								scope
-									.launch { sheetState.hide() }
-									.invokeOnCompletion {
-										if (!sheetState.isVisible) {
-											onBack()
+							TopBarButton(
+								onClick = {
+									ctx.clickSound()
+									scope
+										.launch { sheetState.hide() }
+										.invokeOnCompletion {
+											if (!sheetState.isVisible) {
+												onBack()
+											}
 										}
-									}
-							}
+								},
+								shadowElevation = 4.dp
 							) {
 								Icon(Icons.Outlined.KeyboardArrowDown, null)
 							}
@@ -199,21 +209,19 @@ internal class BottomSheetScene<T : Any>(
 							enter = fadeIn() + slideInVertically() + expandVertically(clip = false),
 							exit = fadeOut() + slideOutVertically() + shrinkVertically(clip = false)
 						) {
-							Row(
-								modifier = Modifier
-									.clip(MaterialTheme.shapes.medium),
-								horizontalArrangement = Arrangement.spacedBy(4.dp)
-							) {
+							Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
 								SheetTopButton(
 									icon = Icons.Outlined.Lyrics,
-									contentDescription = stringResource(Res.string.action_lyrics)
+									contentDescription = stringResource(Res.string.action_lyrics),
+									isStartRounded = true
 								) {
 									ctx.clickSound()
 									if (!backStack.contains(Screen.Lyrics)) backStack.add(Screen.Lyrics)
 								}
 								SheetTopButton(
 									icon = Icons.Outlined.Queue,
-									contentDescription = stringResource(Res.string.action_queue)
+									contentDescription = stringResource(Res.string.action_queue),
+									isEndRounded = true
 								) {
 									ctx.clickSound()
 									if (!backStack.contains(Screen.Queue)) backStack.add(Screen.Queue)
@@ -231,18 +239,27 @@ internal class BottomSheetScene<T : Any>(
 private fun SheetTopButton(
 	icon: ImageVector,
 	contentDescription: String,
-	onClick: () -> Unit
+	isStartRounded: Boolean = false,
+	isEndRounded: Boolean = false,
+	onClick: () -> Unit,
 ) {
 	val interactionSource = remember { MutableInteractionSource() }
 	val isPressed by interactionSource.collectIsPressedAsState()
-	val radius by animateDpAsState(if (isPressed) 12.dp else 4.dp)
+	val startRadius by animateDpAsState(if (isPressed) 4.dp else if (isStartRounded) 12.dp else 4.dp)
+	val endRadius by animateDpAsState(if (isPressed) 4.dp else if (isEndRounded) 12.dp else 4.dp)
 	Surface(
 		onClick = onClick,
-		shape = ContinuousRoundedRectangle(radius),
+		shape = ContinuousRoundedRectangle(
+			topStart = startRadius,
+			bottomStart = startRadius,
+			topEnd = endRadius,
+			bottomEnd = endRadius
+		),
 		color = MaterialTheme.colorScheme.surfaceContainer,
 		contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
 		modifier = Modifier.size(45.dp, 40.dp),
-		interactionSource = interactionSource
+		interactionSource = interactionSource,
+		shadowElevation = 4.dp
 	) {
 		Box(contentAlignment = Alignment.Center) {
 			Icon(

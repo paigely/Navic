@@ -48,14 +48,18 @@ import navic.composeapp.generated.resources.option_grid_items_per_row
 import navic.composeapp.generated.resources.option_marquee_duration
 import navic.composeapp.generated.resources.option_system_font
 import navic.composeapp.generated.resources.option_use_marquee_text
+import navic.composeapp.generated.resources.subtitle_choose_font
 import navic.composeapp.generated.resources.subtitle_choose_theme
 import navic.composeapp.generated.resources.subtitle_grid_items_per_row
 import navic.composeapp.generated.resources.subtitle_system_font
 import navic.composeapp.generated.resources.subtitle_use_marquee_text
 import navic.composeapp.generated.resources.title_appearance
+import navic.composeapp.generated.resources.title_choose_font
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
+import paige.navic.LocalNavStack
+import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.Form
@@ -75,6 +79,7 @@ import paige.navic.utils.fadeFromTop
 @Composable
 fun SettingsAppearanceScreen() {
 	val ctx = LocalCtx.current
+	val backStack = LocalNavStack.current
 	var showArtworkShapeDialog by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
@@ -95,12 +100,20 @@ fun SettingsAppearanceScreen() {
 					.fadeFromTop()
 			) {
 				Form {
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_system_font)) },
-						subtitle = { Text(stringResource(Res.string.subtitle_system_font)) },
-						value = Settings.shared.useSystemFont,
-						onSetValue = { Settings.shared.useSystemFont = it }
-					)
+					FormRow(
+						onClick = {
+							backStack.add(Screen.Settings.Fonts)
+						}
+					) {
+						Column(Modifier.weight(1f)) {
+							Text(stringResource(Res.string.title_choose_font))
+							Text(
+								stringResource(Res.string.subtitle_choose_font),
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						}
+					}
 
 					var showThemeDialog by rememberSaveable { mutableStateOf(false) }
 					FormRow(

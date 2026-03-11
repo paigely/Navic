@@ -53,5 +53,6 @@ sealed interface Screen : NavKey {
 		@Serializable data object Scrobbling : Settings
 		@Serializable data object About : Settings
 		@Serializable data object Acknowledgements : Settings
+		@Serializable data object Fonts : Settings
 	}
 }

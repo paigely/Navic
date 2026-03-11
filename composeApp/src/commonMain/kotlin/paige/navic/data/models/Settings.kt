@@ -22,6 +22,8 @@ import com.russhwolf.settings.set
 import dev.zt64.compose.pipette.HsvColor
 import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.option_position_bottom
+import navic.composeapp.generated.resources.option_position_top
 import navic.composeapp.generated.resources.theme_apple_music
 import navic.composeapp.generated.resources.theme_dynamic
 import navic.composeapp.generated.resources.theme_ios
@@ -194,7 +196,8 @@ internal inline fun <reified E : Enum<E>> com.russhwolf.settings.Settings.putEnu
 class Settings(
 	settings: com.russhwolf.settings.Settings
 ) : BasePreferenceManager(settings) {
-	var useSystemFont by preference(false)
+	var font by preference(FontOption.GoogleSans)
+	var fontPath by preference("")
 	var animatePlayerBackground by preference(true)
 	var detachedBar by preference(true)
 	var autoHideBar by preference(true)
@@ -219,6 +222,8 @@ class Settings(
 	var windowPositionY by preference(100f)
 	var windowSizeX by preference(800f)
 	var windowSizeY by preference(600f)
+	var listType by preference(AlbumListType.ALPHABETICAL_BY_ARTIST)
+	var nowPlayingToolbarPosition by preference(ToolbarPosition.Bottom)
 
 	/**
 	 * If we have informed the user (on Android) about
@@ -237,6 +242,14 @@ class Settings(
 		val shared = Settings(
 			com.russhwolf.settings.Settings()
 		)
+	}
+
+	enum class FontOption {
+		System,
+		GoogleSans,
+		NotoSans,
+		Inter,
+		Custom
 	}
 
 	enum class MarqueeSpeed(val value: Int) {
@@ -346,5 +359,10 @@ class Settings(
 			Seeded -> true
 			else -> false
 		}
+	}
+
+	enum class ToolbarPosition(val displayName: StringResource) {
+		Top(Res.string.option_position_top),
+		Bottom(Res.string.option_position_bottom)
 	}
 }

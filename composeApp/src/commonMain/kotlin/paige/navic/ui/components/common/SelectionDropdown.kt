@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import paige.navic.LocalCtx
 import paige.navic.data.models.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
@@ -91,7 +92,10 @@ fun <Item> SelectionDropdown(
 						SelectionDropdownItem(
 							label = label(item),
 							selected = selection == item,
-							onClick = { onSelect(item) },
+							onClick = {
+								onDismissRequest()
+								onSelect(item)
+							},
 							index = index
 						)
 						if (items.last() != item && !Settings.shared.theme.isMaterialLike()) {
@@ -112,6 +116,7 @@ private fun SelectionDropdownItem(
 	index: Int,
 	onClick: () -> Unit
 ) {
+	val ctx = LocalCtx.current
 	val color by animateColorAsState(
 		if (selected && Settings.shared.theme.isMaterialLike())
 			MaterialTheme.colorScheme.tertiary
@@ -153,7 +158,10 @@ private fun SelectionDropdownItem(
 		color = color,
 		shape = if (Settings.shared.theme.isMaterialLike()) MaterialTheme.shapes.medium else RectangleShape,
 		shadowElevation = elevation,
-		onClick = { if (!selected) onClick() }
+		onClick = {
+			ctx.clickSound()
+			onClick()
+		}
 	) {
 		Row(
 			modifier = Modifier.padding(

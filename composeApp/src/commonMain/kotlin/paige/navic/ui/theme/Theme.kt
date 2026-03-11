@@ -23,9 +23,7 @@ fun NavicTheme(
 		colorScheme = colorScheme
 			?: chosenScheme,
 		motionScheme = MotionScheme.expressive(),
-		typography = if (Settings.shared.useSystemFont)
-			MaterialTheme.typography
-		else typography(),
+		typography = typography(),
 		shapes = Shapes(
 			extraSmall = ContinuousRoundedRectangle(ShapeDefaults.ExtraSmall.topStart),
 			small = ContinuousRoundedRectangle(ShapeDefaults.Small.topStart),

@@ -1,6 +1,5 @@
 package paige.navic.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -19,6 +18,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -54,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -503,10 +504,15 @@ fun PlayerScreen() {
 				.fadeFromTop()
 		) {
 			val isLandscape = maxWidth > maxHeight
-			val contentPadding = if (isLandscape) 50.dp else 90.dp
+			val padding = if (Settings.shared.nowPlayingToolbarPosition == Settings.ToolbarPosition.Top)
+				PaddingValues(top = if (isLandscape) 50.dp else 90.dp)
+			else PaddingValues(
+				top = if (isLandscape) 0.dp else 50.dp,
+				bottom = 50.dp
+			)
 			if (isLandscape) {
 				Row(
-					modifier = Modifier.fillMaxSize().padding(top = contentPadding),
+					modifier = Modifier.fillMaxSize().padding(padding),
 					horizontalArrangement = Arrangement.SpaceEvenly,
 					verticalAlignment = Alignment.CenterVertically
 				) {
@@ -529,7 +535,7 @@ fun PlayerScreen() {
 				}
 			} else {
 				Column(
-					modifier = Modifier.fillMaxSize().padding(top = contentPadding),
+					modifier = Modifier.fillMaxSize().padding(padding),
 					horizontalAlignment = Alignment.CenterHorizontally,
 					verticalArrangement = Arrangement.Center
 				) {
@@ -582,6 +588,7 @@ private fun PlayerArtwork(
 				.aspectRatio(1f)
 				.then(if (isLandscape) Modifier.fillMaxHeight() else Modifier.fillMaxSize())
 				.padding(imagePadding)
+				.shadow(8.dp, MaterialTheme.shapes.large)
 				.clip(MaterialTheme.shapes.large)
 				.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
 		)

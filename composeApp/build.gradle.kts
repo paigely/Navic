@@ -118,7 +118,7 @@ kotlin {
 	@Suppress("DEPRECATION")
 	androidTarget {
 		compilerOptions {
-			jvmTarget.set(JvmTarget.JVM_17)
+			jvmTarget.set(JvmTarget.JVM_21)
 		}
 	}
 
@@ -131,7 +131,7 @@ kotlin {
 
 	jvm {
 		compilerOptions {
-			jvmTarget.set(JvmTarget.JVM_17)
+			jvmTarget.set(JvmTarget.JVM_21)
 		}
 	}
 
@@ -179,8 +179,8 @@ android {
 		applicationId = "paige.navic"
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
-		versionCode = 12
-		versionName = "v1.0.0-alpha22"
+		versionCode = 13
+		versionName = "v1.0.0-alpha23"
 	}
 
 	signingConfigs {
@@ -251,8 +251,8 @@ android {
 	}
 
 	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_17
-		targetCompatibility = JavaVersion.VERSION_17
+		sourceCompatibility = JavaVersion.VERSION_21
+		targetCompatibility = JavaVersion.VERSION_21
 	}
 }
 

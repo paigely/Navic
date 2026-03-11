@@ -1,5 +1,6 @@
 package paige.navic.ui.screens.settings
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -24,6 +25,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_lyrics_autoscroll
 import navic.composeapp.generated.resources.option_lyrics_beat_by_beat
 import navic.composeapp.generated.resources.option_lyrics_priority
+import navic.composeapp.generated.resources.option_now_playing_toolbar_position
 import navic.composeapp.generated.resources.option_player_animate_background
 import navic.composeapp.generated.resources.option_use_wavy_slider
 import navic.composeapp.generated.resources.subtitle_lyrics_beat_by_beat
@@ -34,6 +36,7 @@ import paige.navic.LocalCtx
 import paige.navic.data.models.Settings
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
+import paige.navic.ui.components.common.SelectionDropdown
 import paige.navic.ui.components.dialogs.LyricsPriorityDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.settings.SettingSwitchRow
@@ -43,6 +46,7 @@ import paige.navic.utils.fadeFromTop
 fun NowPlayingScreen() {
 	val ctx = LocalCtx.current
 	var showLyricsPriorityDialog by rememberSaveable { mutableStateOf(false) }
+	var showToolbarPositions by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
 		topBar = { NestedTopBar(
@@ -86,6 +90,27 @@ fun NowPlayingScreen() {
 						value = Settings.shared.useWavySlider,
 						onSetValue = { Settings.shared.useWavySlider = it }
 					)
+
+					FormRow(
+						onClick = { showToolbarPositions = true }
+					) {
+						Text(
+							stringResource(Res.string.option_now_playing_toolbar_position),
+							modifier = Modifier.weight(1f)
+						)
+						Box {
+							Text(stringResource(Settings.shared.nowPlayingToolbarPosition.displayName))
+
+							SelectionDropdown(
+								items = Settings.ToolbarPosition.entries,
+								label = { stringResource(it.displayName) },
+								expanded = showToolbarPositions,
+								onDismissRequest = { showToolbarPositions = false },
+								selection = Settings.shared.nowPlayingToolbarPosition,
+								onSelect = { Settings.shared.nowPlayingToolbarPosition = it }
+							)
+						}
+					}
 
 					FormRow(
 						onClick = { showLyricsPriorityDialog = true }

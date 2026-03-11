@@ -88,6 +88,7 @@ import paige.navic.ui.screens.SharesScreen
 import paige.navic.ui.screens.TrackInfoScreen
 import paige.navic.ui.screens.TracksScreen
 import paige.navic.ui.screens.settings.BottomBarScreen
+import paige.navic.ui.screens.settings.FontsScreen
 import paige.navic.ui.screens.settings.NowPlayingScreen
 import paige.navic.ui.screens.settings.ScrobblingScreen
 import paige.navic.ui.screens.settings.SettingsAboutScreen
@@ -318,6 +319,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Settings.Acknowledgements>(metadata = detailPane("settings")) {
 			SettingsAcknowledgementsScreen()
+		}
+		entry<Screen.Settings.Fonts> {
+			FontsScreen()
 		}
 	}
 }
