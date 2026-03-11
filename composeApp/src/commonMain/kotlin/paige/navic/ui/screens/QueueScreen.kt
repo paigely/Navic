@@ -44,10 +44,7 @@ import navic.composeapp.generated.resources.info_unknown_artist
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
-import paige.navic.data.models.Settings
-import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.components.common.MarqueeText
-import paige.navic.utils.rememberTrackPainter
 import paige.navic.utils.fadeFromTop
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -58,7 +55,6 @@ fun QueueScreen() {
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val currentTrack = playerState.currentTrack
 	val queue = playerState.queue
-	val sharedPainter = rememberTrackPainter(currentTrack?.id, currentTrack?.coverArtId)
 
 	LazyColumn(
 		modifier = Modifier.fillMaxSize().fadeFromTop(),

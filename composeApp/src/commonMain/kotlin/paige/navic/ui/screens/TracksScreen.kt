@@ -1,12 +1,6 @@
 package paige.navic.ui.screens
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -122,7 +116,6 @@ import paige.navic.utils.fadeFromTop
 import paige.navic.utils.shimmerLoading
 import paige.navic.utils.toHoursMinutesSeconds
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 private class TracksScreenScope(
 	val player: MediaPlayerViewModel,
@@ -133,7 +126,7 @@ private class TracksScreenScope(
 @Composable
 fun TracksScreen(
 	partialTracks: SongCollection,
-  tab: String,
+	tab: String,
 	viewModel: TracksViewModel = viewModel(key = partialTracks.toString()) {
 		TracksViewModel(partialTracks)
 	}
@@ -492,15 +485,15 @@ private fun TracksScreenScope.Metadata(
 				textAlign = TextAlign.Center
 			)
 			val subtitle = when (tracks) {
-				is Album -> tracks.subtitle ?: stringResource(Res.string.info_unknown_artist)
-				is Playlist -> tracks.subtitle
+				is Album -> tracks.artistName
+				is Playlist -> tracks.comment
 			}
 			subtitle?.let { subtitle ->
 				Text(
 					subtitle,
 					color = MaterialTheme.colorScheme.primary,
-					modifier = Modifier.clickable(tracks.artistId != null) {
-						tracks.artistId?.let { id ->
+					modifier = Modifier.clickable(tracks is Album) {
+						(tracks as? Album)?.artistId?.let { id ->
 							backStack.add(Screen.Artist(id))
 						}
 					},
@@ -509,12 +502,8 @@ private fun TracksScreenScope.Metadata(
 				)
 			}
 			Text(
-				if (tracks !is Playlist)
-					"${tracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${
-						tracks.year ?: stringResource(
-							Res.string.info_unknown_year
-						)
-					}"
+				if (tracks is Album)
+					"${tracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${tracks.year}"
 				else stringResource(Res.string.subtitle_playlist),
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 				style = MaterialTheme.typography.bodySmall,
