@@ -25,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -62,6 +63,7 @@ import paige.navic.icons.filled.SkipNext
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
 import paige.navic.utils.rememberTrackPainter
+import java.lang.System.exit
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -97,6 +99,16 @@ fun PlayerBar(
 	val coverSize by animateDpAsState(
 		if (detached) 48.dp else 55.dp, spec
 	)
+	val coverRounding by animateDpAsState(
+		if (playerState.isLoading)
+			46.dp
+		else if (detached) 12.dp else 10.dp
+	)
+	val coverPadding by animateDpAsState(
+		if (playerState.isLoading)
+			8.dp
+		else 0.dp
+	)
 	val iconSize by animateDpAsState(
 		if (detached) 24.dp else 32.dp, spec
 	)
@@ -122,7 +134,6 @@ fun PlayerBar(
 	}
 
 	val enabled = playerState.currentTrack != null
-		&& !playerState.isLoading
 
 	Swiper(
 		onSwipeLeft = {
@@ -175,7 +186,10 @@ fun PlayerBar(
 					draggedShape = shape
 				),
 				onClick = onClick,
-				onLongClick = onClick,
+				onLongClick = {
+					haptics.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+					onClick()
+				},
 				leadingContent = {
 					Box(contentAlignment = Alignment.Center) {
 						Image(
@@ -183,13 +197,12 @@ fun PlayerBar(
 							contentDescription = null,
 							contentScale = ContentScale.Crop,
 							modifier = Modifier
+								.size(coverSize)
+								.padding(coverPadding)
 								.clip(
-									ContinuousRoundedRectangle(
-										if (detached) 12.dp else 10.dp
-									)
+									ContinuousRoundedRectangle(coverRounding)
 								)
 								.background(MaterialTheme.colorScheme.surfaceVariant)
-								.size(coverSize)
 						)
 						if (coverUri.isNullOrEmpty()) {
 							Icon(
@@ -200,13 +213,16 @@ fun PlayerBar(
 						}
 						AnimatedVisibility(
 							playerState.isLoading,
-							modifier = Modifier.matchParentSize().padding(10.dp),
+							modifier = Modifier.matchParentSize(),
 							enter = scaleIn(MaterialTheme.motionScheme.defaultSpatialSpec())
 								+ fadeIn(MaterialTheme.motionScheme.defaultEffectsSpec()),
 							exit = scaleOut(MaterialTheme.motionScheme.defaultSpatialSpec())
 								+ fadeOut(MaterialTheme.motionScheme.defaultEffectsSpec())
 						) {
-							CircularProgressIndicator(Modifier.matchParentSize())
+							CircularProgressIndicator(
+								Modifier.matchParentSize(),
+								trackColor = MaterialTheme.colorScheme.primaryContainer
+							)
 						}
 					}
 				},

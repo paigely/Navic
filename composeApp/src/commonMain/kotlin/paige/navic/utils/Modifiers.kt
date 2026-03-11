@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -29,7 +30,7 @@ import paige.navic.ui.navigation.EmphasizedDecelerateEasing
 
 @Composable
 fun Modifier.fadeFromTop(): Modifier {
-	var visible by remember { mutableStateOf(true) }
+	var visible by rememberSaveable { mutableStateOf(true) }
 	val progress by animateFloatAsState(
 		targetValue = if (visible) 0f else 1f,
 		animationSpec = tween(durationMillis = 900, easing = EmphasizedDecelerateEasing)

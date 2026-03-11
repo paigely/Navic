@@ -285,20 +285,32 @@ class AndroidMediaPlayerViewModel(
 
 	override fun addToQueueSingle(track: Song) {
 		controller?.addMediaItem(track.toMediaItem(true))
-		_uiState.update { it.copy(queue = it.queue + track) }
+		_uiState.update { it.copy(
+			queue = it.queue + track,
+			currentIndex = it.queue.indexOf(it.currentTrack),
+			currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
+		) }
 	}
 
 	override fun addToQueue(tracks: SongCollection) {
 		val items = tracks.songs.map { it.toMediaItem(false) }
 		controller?.addMediaItems(items)
-		_uiState.update { it.copy(queue = it.queue + tracks.songs) }
+		_uiState.update { it.copy(
+			queue = it.queue + tracks.songs,
+			currentIndex = it.queue.indexOf(it.currentTrack),
+			currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
+		) }
 	}
 
 	override fun removeFromQueue(index: Int) {
 		controller?.removeMediaItem(index)
 		_uiState.update { state ->
 			val newQueue = state.queue.toMutableList().apply { removeAt(index) }
-			state.copy(queue = newQueue)
+			state.copy(
+				queue = newQueue,
+				currentIndex = newQueue.indexOf(state.currentTrack),
+				currentTrack = if (newQueue.indexOf(state.currentTrack) == -1) null else state.currentTrack
+			)
 		}
 	}
 
@@ -309,7 +321,11 @@ class AndroidMediaPlayerViewModel(
 				val item = removeAt(fromIndex)
 				add(toIndex, item)
 			}
-			state.copy(queue = newQueue)
+			state.copy(
+				queue = newQueue,
+				currentIndex = newQueue.indexOf(state.currentTrack),
+				currentTrack = if (newQueue.indexOf(state.currentTrack) == -1) null else state.currentTrack
+			)
 		}
 	}
 
@@ -338,7 +354,11 @@ class AndroidMediaPlayerViewModel(
 			player.play()
 		}
 
-		_uiState.update { it.copy(queue = shuffledTracks) }
+		_uiState.update { it.copy(
+			queue = shuffledTracks,
+			currentIndex = it.queue.indexOf(it.currentTrack),
+			currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
+		) }
 	}
 
 	override fun pause() { controller?.pause() }

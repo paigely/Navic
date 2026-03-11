@@ -23,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.insert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
@@ -63,6 +64,8 @@ import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_clear_search
 import navic.composeapp.generated.resources.action_navigate_back
+import navic.composeapp.generated.resources.action_remove_from_history
+import navic.composeapp.generated.resources.action_search_history
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_all
 import navic.composeapp.generated.resources.title_artists
@@ -81,6 +84,7 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
+import paige.navic.icons.outlined.History
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.layouts.ArtGrid
@@ -106,6 +110,9 @@ fun SearchScreen(
 ) {
 	val query = viewModel.searchQuery
 	val state by viewModel.searchState.collectAsState()
+
+	val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
+
 	val ctx = LocalCtx.current
 	val platformContext = LocalPlatformContext.current
 	val player = LocalMediaPlayer.current
@@ -121,7 +128,13 @@ fun SearchScreen(
 			bottom = LocalContentPadding.current.calculateBottomPadding()
 		)
 	) {
-		SearchTopBar(query = query, nested = nested)
+		SearchTopBar(
+			query = query,
+			nested = nested,
+			onSearch = { submittedQuery ->
+				viewModel.addToSearchHistory(submittedQuery)
+			}
+		)
 
 		SearchChips(
 			selectedCategory = selectedCategory,
@@ -235,6 +248,47 @@ fun SearchScreen(
 									tab = "search"
 								)
 							}
+						} else {
+							if (searchHistory.isNotEmpty()) {
+								item(span = { GridItemSpan(maxLineSpan) }) {
+									Text(
+										text = stringResource(Res.string.action_search_history),
+										style = MaterialTheme.typography.titleMedium,
+										color = MaterialTheme.colorScheme.primary,
+										modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+									)
+								}
+								items(searchHistory.size, span = { GridItemSpan(maxLineSpan) }) { index ->
+									val historyItem = searchHistory[index]
+									ListItem(
+										modifier = Modifier.clickable {
+											ctx.clickSound()
+											query.clearText()
+											query.edit { insert(0, historyItem) }
+										},
+										headlineContent = { Text(historyItem) },
+										leadingContent = {
+											Icon(
+												imageVector = Icons.Outlined.History,
+												contentDescription = null,
+												tint = MaterialTheme.colorScheme.onSurfaceVariant
+											)
+										},
+										trailingContent = {
+											IconButton(onClick = {
+												ctx.clickSound()
+												viewModel.removeFromSearchHistory(historyItem)
+											}) {
+												Icon(
+													imageVector = Icons.Outlined.Close,
+													contentDescription = stringResource(Res.string.action_remove_from_history),
+													tint = MaterialTheme.colorScheme.onSurfaceVariant
+												)
+											}
+										}
+									)
+								}
+							}
 						}
 					}
 				}
@@ -295,7 +349,8 @@ private fun SearchChips(
 @Composable
 private fun SearchTopBar(
 	query: TextFieldState,
-	nested: Boolean
+	nested: Boolean,
+	onSearch: (String) -> Unit
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
@@ -340,7 +395,12 @@ private fun SearchTopBar(
 					.focusRequester(focusRequester),
 				lineLimits = TextFieldLineLimits.SingleLine,
 				keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-				onKeyboardAction = { focusManager.clearFocus() },
+				onKeyboardAction = {
+					focusManager.clearFocus()
+					if (query.text.isNotBlank()) {
+						onSearch(query.text.toString())
+					}
+				},
 				textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
 				cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
 				decorator = { innerTextField ->

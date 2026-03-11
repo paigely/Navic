@@ -8,8 +8,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
 import paige.navic.data.session.SessionManager
-import paige.subsonic.api.models.Track
-import paige.subsonic.api.models.SongCollection
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
@@ -150,12 +148,20 @@ class IOSMediaPlayerViewModel(
 		updateNowPlayingInfo(trackToPlay)
 	}
 
-	override fun addToQueueSingle(track: Track) {
-		_uiState.update { it.copy(queue = it.queue + track) }
+	override fun addToQueueSingle(track: Song) {
+		_uiState.update { it.copy(
+			queue = it.queue + track,
+			currentIndex = it.queue.indexOf(it.currentTrack),
+			currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
+		) }
 	}
 
 	override fun addToQueue(tracks: SongCollection) {
-		_uiState.update { it.copy(queue = it.queue + tracks.tracks) }
+		_uiState.update { it.copy(
+			queue = it.queue + tracks.songs,
+			currentIndex = it.queue.indexOf(it.currentTrack),
+			currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
+		) }
 	}
 
 	override fun removeFromQueue(index: Int) {
@@ -163,7 +169,11 @@ class IOSMediaPlayerViewModel(
 			val newQueue = state.queue.toMutableList().apply {
 				if (index in indices) removeAt(index)
 			}
-			state.copy(queue = newQueue)
+			state.copy(
+				queue = newQueue,
+				currentIndex = newQueue.indexOf(state.currentTrack),
+				currentTrack = if (newQueue.indexOf(state.currentTrack) == -1) null else state.currentTrack
+			)
 		}
 	}
 
@@ -175,7 +185,11 @@ class IOSMediaPlayerViewModel(
 					add(toIndex, item)
 				}
 			}
-			state.copy(queue = newQueue)
+			state.copy(
+				queue = newQueue,
+				currentIndex = newQueue.indexOf(state.currentTrack),
+				currentTrack = if (newQueue.indexOf(state.currentTrack) == -1) null else state.currentTrack
+			)
 		}
 	}
 
@@ -227,11 +241,13 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun shufflePlay(tracks: SongCollection) {
-		val shuffledTracks = tracks.tracks.shuffled()
+		val shuffledTracks = tracks.songs.shuffled()
 		_uiState.update {
 			it.copy(
 				queue = shuffledTracks,
-				isShuffleEnabled = true
+				isShuffleEnabled = true,
+				currentIndex = it.queue.indexOf(it.currentTrack),
+				currentTrack = if (it.queue.indexOf(it.currentTrack) == -1) null else it.currentTrack
 			)
 		}
 		playAt(0)
@@ -265,7 +281,7 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	private fun updateNowPlayingInfo(track: Track?) {
+	private fun updateNowPlayingInfo(track: Song?) {
 		if (track == null) {
 			MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = null
 			return
@@ -273,8 +289,8 @@ class IOSMediaPlayerViewModel(
 
 		val info = mutableMapOf<Any?, Any?>()
 		info[MPMediaItemPropertyTitle] = track.title
-		info[MPMediaItemPropertyArtist] = track.artist ?: ""
-		info[MPMediaItemPropertyAlbumTitle] = track.album ?: ""
+		info[MPMediaItemPropertyArtist] = track.artistName
+		info[MPMediaItemPropertyAlbumTitle] = track.albumName
 
 		val duration = player.currentItem?.duration
 		if (duration != null) {

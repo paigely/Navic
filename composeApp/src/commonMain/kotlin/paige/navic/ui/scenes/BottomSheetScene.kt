@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -112,7 +113,7 @@ internal class BottomSheetScene<T : Any>(
 			val isPlayerMode = screenType == "player" && isPlayerCurrent
 			val isStandardMode = screenType != "player" && !isPlayerCurrent
 
-			var buttonsVisible by remember { mutableStateOf(false) }
+			var buttonsVisible by rememberSaveable { mutableStateOf(false) }
 			LaunchedEffect(Unit) {
 				delay(150)
 				buttonsVisible = true

@@ -1,5 +1,6 @@
 package paige.navic.ui.screens
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -8,7 +9,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
@@ -32,7 +32,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -49,7 +52,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,13 +63,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.zt64.subsonic.api.model.Playlist
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import kotlinx.coroutines.delay
@@ -84,6 +91,7 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
+import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
@@ -101,13 +109,11 @@ import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.Repeat
 import paige.navic.icons.outlined.Shuffle
 import paige.navic.icons.outlined.Star
-import paige.navic.shared.PlayerUiState
 import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
-import paige.navic.ui.components.layouts.Swiper
 import paige.navic.utils.fadeFromTop
 import paige.navic.utils.rememberTrackPainter
 import paige.navic.utils.toHoursMinutesSeconds
@@ -126,21 +132,14 @@ fun PlayerScreen() {
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
 
-	val coverUri = remember(track?.coverArtId) {
-		track?.coverArtId
-	}
 	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArtId)
 
+	val isBuffering = playerState.isLoading
 	val enabled = playerState.currentTrack != null
 
 	var isStarred by remember(playerState.currentTrack) {
 		mutableStateOf(playerState.currentTrack?.starredAt != null)
 	}
-
-	val imagePadding by animateDpAsState(
-		targetValue = if (playerState.isPaused) 48.dp else 16.dp,
-		label = "AlbumArtPadding"
-	)
 
 	val scope = rememberCoroutineScope()
 
@@ -403,20 +402,30 @@ fun PlayerScreen() {
 				interactionSource = interactionSource
 			) {
 				val painter = playPauseIconPainter(playerState.isPaused)
-				if (painter != null) {
-					Icon(
-						painter = painter,
-						contentDescription = null,
-						modifier = Modifier.size(40.dp)
-					)
-				} else {
-					Icon(
-						imageVector = if (playerState.isPaused)
-							Icons.Filled.Play
-						else Icons.Filled.Pause,
-						contentDescription = null,
-						modifier = Modifier.size(40.dp)
-					)
+				AnimatedContent(isBuffering) { isBuffering ->
+					if (!isBuffering) {
+						if (painter != null) {
+							Icon(
+								painter = painter,
+								contentDescription = null,
+								modifier = Modifier.size(40.dp)
+							)
+						} else {
+							Icon(
+								imageVector = if (playerState.isPaused)
+									Icons.Filled.Play
+								else Icons.Filled.Pause,
+								contentDescription = null,
+								modifier = Modifier.size(40.dp)
+							)
+						}
+					} else {
+						CircularProgressIndicator(
+							Modifier.size(40.dp),
+							color = MaterialTheme.colorScheme.onPrimary,
+							trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = .5f),
+						)
+					}
 				}
 			}
 			IconButton(
@@ -478,23 +487,12 @@ fun PlayerScreen() {
 		)
 	}
 
-	Swiper(
-		onSwipeLeft = {
-			player.next()
-		},
-		onSwipeRight = {
-			player.previous()
-		},
-		background = {
-			if (Settings.shared.animatePlayerBackground) {
-				BlendBackground(
-					painter = sharedPainter,
-					isPaused = playerState.isPaused
-				)
-			}
-		}
-	) {
-		if (!isPlayerCurrent) return@Swiper
+	Box(Modifier.fillMaxSize()) {
+		BlendBackground(
+			painter = sharedPainter,
+			isPaused = playerState.isPaused
+		)
+		if (!isPlayerCurrent) return@Box
 		BoxWithConstraints(
 			modifier = Modifier
 				.padding(horizontal = 8.dp)
@@ -516,13 +514,9 @@ fun PlayerScreen() {
 					horizontalArrangement = Arrangement.SpaceEvenly,
 					verticalAlignment = Alignment.CenterVertically
 				) {
-					PlayerArtwork(
+					ArtworkPager(
 						modifier = Modifier.weight(1f).fillMaxHeight(),
-						isLandscape = true,
-						sharedPainter = sharedPainter,
-						coverUri = coverUri,
-						playerState = playerState,
-						imagePadding = imagePadding
+						isLandscape = true
 					)
 					PlayerControls(
 						modifier = Modifier.weight(1f).fillMaxHeight(),
@@ -539,13 +533,9 @@ fun PlayerScreen() {
 					horizontalAlignment = Alignment.CenterHorizontally,
 					verticalArrangement = Arrangement.Center
 				) {
-					PlayerArtwork(
+					ArtworkPager(
 						modifier = Modifier.weight(1f).fillMaxWidth(),
-						isLandscape = false,
-						sharedPainter = sharedPainter,
-						coverUri = coverUri,
-						playerState = playerState,
-						imagePadding = imagePadding
+						isLandscape = false
 					)
 					PlayerControls(
 						modifier = Modifier.weight(1f),
@@ -565,39 +555,97 @@ fun PlayerScreen() {
 private fun PlayerArtwork(
 	modifier: Modifier = Modifier,
 	isLandscape: Boolean,
-	sharedPainter: Painter,
-	coverUri: String?,
-	playerState: PlayerUiState,
-	imagePadding: Dp
+	track: Track
 ) {
-	var visible by remember { mutableStateOf(false) }
-	val scale by animateFloatAsState(if (visible) 1f else 0f)
-	LaunchedEffect(Unit) {
-		delay(100)
-		visible = true
+	val player = LocalMediaPlayer.current
+	val playerState by player.uiState.collectAsState()
+	val platformContext = LocalPlatformContext.current
+	val model = remember(track.coverArt) {
+		ImageRequest.Builder(platformContext)
+			.data(SessionManager.api.getCoverArtUrl(track.coverArt, auth = true))
+			.memoryCacheKey(track.coverArt)
+			.diskCacheKey(track.coverArt)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.build()
 	}
+	val padding by animateDpAsState(
+		targetValue = if (playerState.isPaused || playerState.currentTrack?.id !== track.id)
+			48.dp
+		else 16.dp
+	)
 	Box(
 		contentAlignment = Alignment.Center,
-		modifier = modifier.scale(scale)
+		modifier = modifier
 	) {
-		Image(
-			painter = sharedPainter,
+		AsyncImage(
+			model = model,
 			contentDescription = null,
 			contentScale = ContentScale.Crop,
 			modifier = Modifier
 				.aspectRatio(1f)
 				.then(if (isLandscape) Modifier.fillMaxHeight() else Modifier.fillMaxSize())
-				.padding(imagePadding)
+				.padding(padding)
 				.shadow(8.dp, MaterialTheme.shapes.large)
 				.clip(MaterialTheme.shapes.large)
 				.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
 		)
-		if (coverUri.isNullOrEmpty()) {
+		if (track.coverArt.isNullOrEmpty()) {
 			Icon(
 				imageVector = Icons.Filled.Note,
 				contentDescription = null,
 				tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
-				modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
+				modifier = Modifier.size(96.dp)
+			)
+		}
+	}
+}
+
+@Composable
+private fun ArtworkPager(
+	modifier: Modifier = Modifier,
+	isLandscape: Boolean
+) {
+	val player = LocalMediaPlayer.current
+	val playerState by player.uiState.collectAsState()
+
+	val pagerState = rememberPagerState(
+		initialPage = playerState.currentIndex.coerceAtLeast(0),
+		pageCount = { playerState.queue.size }
+	)
+
+	LaunchedEffect(playerState.currentIndex) {
+		if (playerState.currentIndex != -1 && playerState.currentIndex != pagerState.currentPage) {
+			pagerState.animateScrollToPage(playerState.currentIndex)
+		}
+	}
+
+	LaunchedEffect(pagerState) {
+		snapshotFlow { pagerState.currentPage }.collect { page ->
+			if (!pagerState.isScrollInProgress) return@collect
+			if (page == playerState.currentIndex) return@collect
+			val wasPaused = playerState.isPaused
+			player.playAt(page)
+			if (wasPaused) {
+				player.pause()
+			}
+		}
+	}
+
+	HorizontalPager(
+		modifier = modifier,
+		state = pagerState,
+		contentPadding = PaddingValues(horizontal = if (isLandscape) 0.dp else 8.dp),
+		userScrollEnabled = Settings.shared.swipeToSkip
+	) { page ->
+		val track = playerState.queue[page]
+		Box(
+			modifier = Modifier.fillMaxSize(),
+			contentAlignment = Alignment.Center
+		) {
+			PlayerArtwork(
+				track = track,
+				isLandscape = isLandscape
 			)
 		}
 	}
@@ -612,7 +660,7 @@ private fun PlayerControls(
 	durationsRow: @Composable () -> Unit,
 	controlsRow: @Composable () -> Unit
 ) {
-	var visible by remember { mutableStateOf(false) }
+	var visible by rememberSaveable { mutableStateOf(false) }
 	val scale by animateFloatAsState(if (visible) 1f else 0f)
 	val offset by animateDpAsState(if (visible) 0.dp else 200.dp)
 	LaunchedEffect(Unit) {
