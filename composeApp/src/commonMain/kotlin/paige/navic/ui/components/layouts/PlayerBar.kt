@@ -25,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -63,7 +62,6 @@ import paige.navic.icons.filled.SkipNext
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
 import paige.navic.utils.rememberTrackPainter
-import java.lang.System.exit
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
