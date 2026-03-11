@@ -72,7 +72,6 @@ import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
-import navic.composeapp.generated.resources.info_unknown_artist
 import navic.composeapp.generated.resources.info_unknown_genre
 import navic.composeapp.generated.resources.info_unknown_year
 import navic.composeapp.generated.resources.subtitle_playlist
@@ -242,7 +241,7 @@ fun TracksScreen(
 					return@LazyColumn
 				}
 				if (tracks == null) {
-					tracksScreenPlaceholder(partialTracks.trackCount)
+					tracksScreenPlaceholder(partialTracks.songCount)
 					return@LazyColumn
 				}
 
@@ -250,7 +249,7 @@ fun TracksScreen(
 
 				// we can't use Form here because it's not lazy and if there's
 				// around 40 items you can't interact with them after the 40th
-				itemsIndexed(tracks.tracks) { index, track ->
+				itemsIndexed(tracks.songs) { index, track ->
 					Box {
 						TrackRow(
 							modifier = Modifier
@@ -262,7 +261,7 @@ fun TracksScreen(
 								// app and just stop using non-lazy things where
 								// possible
 								.clip(
-									if (tracks.tracks.count() == 1)
+									if (tracks.songs.count() == 1)
 										ContinuousRoundedRectangle(18.dp)
 									else when (index) {
 										0 -> ContinuousRoundedRectangle(
@@ -270,7 +269,7 @@ fun TracksScreen(
 											topEnd = 18.dp
 										)
 
-										tracks.tracks.lastIndex -> ContinuousRoundedRectangle(
+										tracks.songs.lastIndex -> ContinuousRoundedRectangle(
 											bottomStart = 18.dp,
 											bottomEnd = 18.dp
 										)
@@ -285,7 +284,7 @@ fun TracksScreen(
 									) Color.Unspecified else MaterialTheme.colorScheme.surfaceContainerHighest
 								)
 								.padding(
-									bottom = if (index != tracks.tracks.lastIndex)
+									bottom = if (index != tracks.songs.lastIndex)
 										if (Settings.shared.theme.isMaterialLike())
 											3.dp
 										else 1.dp
@@ -419,26 +418,28 @@ fun TracksScreen(
 
 @Composable
 private fun Metadata(
-	partialTracks: TrackCollection,
+	partialTracks: SongCollection,
 	tab: String
 ) {
 	val platformContext = LocalPlatformContext.current
 	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
 	val artGridRounding = Settings.shared.artGridRounding
-	val model = remember(partialTracks.coverArt) {
-		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(partialTracks.coverArt, auth = true))
-			.memoryCacheKey(partialTracks.coverArt)
-			.diskCacheKey(partialTracks.coverArt)
-			.diskCachePolicy(CachePolicy.ENABLED)
-			.memoryCachePolicy(CachePolicy.ENABLED)
-			.build()
+	val model = remember(partialTracks.coverArtId) {
+		partialTracks.coverArtId?.let { id ->
+			ImageRequest.Builder(platformContext)
+				.data(SessionManager.api.getCoverArtUrl(id, auth = true))
+				.memoryCacheKey(id)
+				.diskCacheKey(id)
+				.diskCachePolicy(CachePolicy.ENABLED)
+				.memoryCachePolicy(CachePolicy.ENABLED)
+				.build()
+		}
 	}
 	with(LocalSharedTransitionScope.current) {
 		AsyncImage(
 			model = model,
-			contentDescription = partialTracks.title,
+			contentDescription = partialTracks.name,
 			contentScale = ContentScale.Crop,
 			modifier = Modifier
 				.widthIn(0.dp, 420.dp)
@@ -457,7 +458,7 @@ private fun Metadata(
 				)
 				.background(MaterialTheme.colorScheme.surfaceContainer)
 				.clickable {
-					(model.data as? String)?.let { uri ->
+					(model?.data as? String)?.let { uri ->
 						uriHandler.openUri(uri)
 					}
 				}
@@ -465,20 +466,20 @@ private fun Metadata(
 		Spacer(Modifier.height(10.dp))
 		Column(horizontalAlignment = Alignment.CenterHorizontally) {
 			Text(
-				partialTracks.title,
+				partialTracks.name,
 				style = MaterialTheme.typography.headlineSmall,
 				textAlign = TextAlign.Center
 			)
 			val subtitle = when (partialTracks) {
-				is Album -> partialTracks.subtitle ?: stringResource(Res.string.info_unknown_artist)
-				is Playlist -> partialTracks.subtitle
+				is Album -> partialTracks.artistName
+				is Playlist -> partialTracks.comment
 			}
 			subtitle?.let { subtitle ->
 				Text(
 					subtitle,
 					color = MaterialTheme.colorScheme.primary,
-					modifier = Modifier.clickable(partialTracks.artistId != null) {
-						partialTracks.artistId?.let { id ->
+					modifier = Modifier.clickable(partialTracks is Album) {
+						(partialTracks as? Album)?.artistId?.let { id ->
 							backStack.add(Screen.Artist(id))
 						}
 					},
@@ -487,7 +488,7 @@ private fun Metadata(
 				)
 			}
 			Text(
-				if (partialTracks !is Playlist)
+				if (partialTracks is Album)
 					"${partialTracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${
 						partialTracks.year ?: stringResource(
 							Res.string.info_unknown_year
@@ -504,7 +505,7 @@ private fun Metadata(
 
 @Composable
 private fun Buttons(
-	tracks: TrackCollection
+	tracks: SongCollection
 ) {
 	val player = LocalMediaPlayer.current
 	Row(
