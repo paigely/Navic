@@ -48,6 +48,7 @@ import paige.navic.data.models.Settings
 import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.utils.rememberTrackPainter
+import paige.navic.utils.fadeFromTop
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -59,36 +60,28 @@ fun QueueScreen() {
 	val queue = playerState.queue
 	val sharedPainter = rememberTrackPainter(currentTrack?.id, currentTrack?.coverArtId)
 
-	Box(modifier = Modifier.fillMaxSize()) {
-		if (Settings.shared.animatePlayerBackground) {
-			BlendBackground(
-				painter = sharedPainter,
-				isPaused = playerState.isPaused
-			)
-		}
-		LazyColumn(
-			modifier = Modifier.matchParentSize(),
-			contentPadding = WindowInsets.statusBars.asPaddingValues()
-				+ WindowInsets.systemBars.asPaddingValues()
-				+ PaddingValues(vertical = 70.dp, horizontal = 16.dp),
-			verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
-		) {
-			itemsIndexed(queue) { index, track ->
-				QueueScreenItem(
-					index = index,
-					count = queue.count(),
-					track = track,
-					isPlaying = currentTrack?.id == track.id
-						&& !playerState.isPaused,
-					isSelected = currentTrack?.id == track.id,
-					onClick = {
-						ctx.clickSound()
-						if (currentTrack?.id !== track.id) {
-							player.playAt(index)
-						}
+	LazyColumn(
+		modifier = Modifier.fillMaxSize().fadeFromTop(),
+		contentPadding = WindowInsets.statusBars.asPaddingValues()
+			+ WindowInsets.systemBars.asPaddingValues()
+			+ PaddingValues(vertical = 70.dp, horizontal = 16.dp),
+		verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
+	) {
+		itemsIndexed(queue) { index, track ->
+			QueueScreenItem(
+				index = index,
+				count = queue.count(),
+				track = track,
+				isPlaying = currentTrack?.id == track.id
+					&& !playerState.isPaused,
+				isSelected = currentTrack?.id == track.id,
+				onClick = {
+					ctx.clickSound()
+					if (currentTrack?.id !== track.id) {
+						player.playAt(index)
 					}
-				)
-			}
+				}
+			)
 		}
 	}
 }

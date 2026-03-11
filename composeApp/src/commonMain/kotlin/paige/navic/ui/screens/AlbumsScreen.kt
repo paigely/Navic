@@ -1,6 +1,6 @@
 package paige.navic.ui.screens
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -115,7 +115,7 @@ fun AlbumsScreen(
 			isRefreshing = isRefreshing || albumsState is UiState.Loading,
 			onRefresh = { viewModel.refreshAlbums() }
 		) {
-			AnimatedContent(albumsState::class) {
+			Crossfade(albumsState::class) {
 				ArtGrid(
 					modifier = if (!nested)
 						Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -131,6 +131,7 @@ fun AlbumsScreen(
 									modifier = Modifier.animateItem(),
 									album = album,
 									viewModel = viewModel,
+									tab = "albums",
 									onSetShareId = { newShareId ->
 										shareId = newShareId
 									}
@@ -238,6 +239,7 @@ private fun AlbumListType.label() =
 fun AlbumsScreenItem(
 	modifier: Modifier = Modifier,
 	album: Album,
+	tab: String,
 	viewModel: AlbumsViewModel,
 	onSetShareId: (String) -> Unit
 ) {
@@ -249,12 +251,14 @@ fun AlbumsScreenItem(
 		ArtGridItem(
 			onClick = {
 				ctx.clickSound()
-				backStack.add(Screen.Tracks(album))
+				backStack.add(Screen.Tracks(album, tab))
 			},
 			onLongClick = { viewModel.selectAlbum(album) },
 			coverArt = album.coverArtId,
 			title = album.name,
 			subtitle = album.artistName ?: stringResource(Res.string.info_unknown_artist),
+			id = album.id,
+			tab = tab
 		)
 		Dropdown(
 			expanded = selection == album,

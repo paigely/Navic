@@ -1,9 +1,20 @@
 package paige.navic.ui.scenes
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,8 +37,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,12 +58,14 @@ import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import com.kmpalette.loader.rememberNetworkLoader
 import com.kmpalette.rememberDominantColorState
+import com.kyant.capsule.ContinuousRoundedRectangle
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.Url
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_lyrics
@@ -98,6 +113,13 @@ internal class BottomSheetScene<T : Any>(
 			val isPlayerCurrent = currentScreen is Screen.Player
 			val isPlayerMode = screenType == "player" && isPlayerCurrent
 			val isStandardMode = screenType != "player" && !isPlayerCurrent
+
+			var buttonsVisible by remember { mutableStateOf(false) }
+			LaunchedEffect(Unit) {
+				delay(150)
+				buttonsVisible = true
+			}
+
 			ModalBottomSheet(
 				containerColor = if (isTransparent) {
 					Color.Transparent
@@ -128,7 +150,13 @@ internal class BottomSheetScene<T : Any>(
 						horizontalArrangement = Arrangement.spacedBy(12.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
-						if (isPlayerMode) {
+
+						// collapse
+						AnimatedVisibility(
+							visible = (isPlayerMode || isStandardMode) && buttonsVisible,
+							enter = fadeIn() + slideInVertically() + expandVertically(clip = false),
+							exit = fadeOut() + slideOutVertically() + shrinkVertically(clip = false)
+						) {
 							TopBarButton(onClick = {
 								ctx.clickSound()
 								scope
@@ -142,6 +170,15 @@ internal class BottomSheetScene<T : Any>(
 							) {
 								Icon(Icons.Outlined.KeyboardArrowDown, null)
 							}
+						}
+
+						// title
+						AnimatedVisibility(
+							visible = isPlayerMode && buttonsVisible,
+							modifier = Modifier.weight(1f),
+							enter = fadeIn() + slideInVertically() + expandVertically(clip = false),
+							exit = fadeOut() + slideOutVertically() + shrinkVertically(clip = false)
+						) {
 							Text(
 								stringResource(Res.string.title_now_playing),
 								fontFamily = defaultFont(round = 100f),
@@ -154,7 +191,14 @@ internal class BottomSheetScene<T : Any>(
 										)
 									),
 							)
-							Spacer(Modifier.weight(1f))
+						}
+
+						// lyrics/queue buttons
+						AnimatedVisibility(
+							visible = isPlayerMode && buttonsVisible,
+							enter = fadeIn() + slideInVertically() + expandVertically(clip = false),
+							exit = fadeOut() + slideOutVertically() + shrinkVertically(clip = false)
+						) {
 							Row(
 								modifier = Modifier
 									.clip(MaterialTheme.shapes.medium),
@@ -175,19 +219,6 @@ internal class BottomSheetScene<T : Any>(
 									if (!backStack.contains(Screen.Queue)) backStack.add(Screen.Queue)
 								}
 							}
-						} else if (isStandardMode) {
-							TopBarButton(onClick = {
-								ctx.clickSound()
-								scope
-									.launch { sheetState.hide() }
-									.invokeOnCompletion {
-										if (!sheetState.isVisible) {
-											onBack()
-										}
-									}
-							}) {
-								Icon(Icons.Outlined.KeyboardArrowDown, null)
-							}
 						}
 					}
 				}
@@ -202,12 +233,16 @@ private fun SheetTopButton(
 	contentDescription: String,
 	onClick: () -> Unit
 ) {
+	val interactionSource = remember { MutableInteractionSource() }
+	val isPressed by interactionSource.collectIsPressedAsState()
+	val radius by animateDpAsState(if (isPressed) 12.dp else 4.dp)
 	Surface(
 		onClick = onClick,
-		shape = MaterialTheme.shapes.extraSmall,
+		shape = ContinuousRoundedRectangle(radius),
 		color = MaterialTheme.colorScheme.surfaceContainer,
 		contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-		modifier = Modifier.size(45.dp, 40.dp)
+		modifier = Modifier.size(45.dp, 40.dp),
+		interactionSource = interactionSource
 	) {
 		Box(contentAlignment = Alignment.Center) {
 			Icon(

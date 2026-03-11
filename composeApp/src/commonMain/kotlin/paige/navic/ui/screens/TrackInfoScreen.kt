@@ -36,6 +36,7 @@ import paige.navic.LocalContentPadding
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.utils.fadeFromTop
 import paige.navic.utils.toFileSize
 import paige.navic.utils.toHoursMinutesSeconds
 
@@ -50,6 +51,7 @@ fun TrackInfoScreen(track: Song) {
 				.padding(innerPadding)
 				.verticalScroll(rememberScrollState())
 				.padding(top = 12.dp, end = 12.dp, start = 12.dp)
+				.fadeFromTop()
 		) {
 			Form {
 				mapOf(

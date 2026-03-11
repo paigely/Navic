@@ -1,6 +1,6 @@
 package paige.navic.ui.screens
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -110,7 +110,7 @@ fun SharesScreen(
 			isRefreshing = isRefreshing || sharesState is UiState.Loading,
 			onRefresh = { viewModel.refreshShares() }
 		) {
-			AnimatedContent(sharesState::class) {
+			Crossfade(sharesState::class) {
 				LazyVerticalGrid(
 					modifier = Modifier
 						.fillMaxSize()

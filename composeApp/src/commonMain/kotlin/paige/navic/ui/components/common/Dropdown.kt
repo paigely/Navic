@@ -1,9 +1,11 @@
 package paige.navic.ui.components.common
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.DropdownMenu
@@ -14,7 +16,11 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -69,6 +75,11 @@ fun DropdownItem(
 		},
 		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
 	)
+	var visible by remember { mutableStateOf(false) }
+	val height by animateDpAsState(if (visible) 48.dp else 30.dp)
+	LaunchedEffect(Unit) {
+		visible = true
+	}
 	FormRow(
 		color = containerColor,
 		rounding = rounding,
@@ -92,7 +103,7 @@ fun DropdownItem(
 				ctx.clickSound()
 				onClick()
 			},
-			modifier = modifier,
+			modifier = modifier.height(height),
 			leadingIcon = {
 				CompositionLocalProvider(
 					LocalContentColor provides color

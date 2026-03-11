@@ -1,6 +1,6 @@
 package paige.navic.ui.screens
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -112,7 +112,7 @@ fun PlaylistsScreen(
 			isRefreshing = isRefreshing || playlistsState is UiState.Loading,
 			onRefresh = { viewModel.refreshPlaylists() }
 		) {
-			AnimatedContent(playlistsState::class) {
+			Crossfade(playlistsState::class) {
 				ArtGrid(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
 					when (val state = playlistsState) {
 						is UiState.Loading -> artGridPlaceholder()
@@ -122,6 +122,7 @@ fun PlaylistsScreen(
 								PlaylistsScreenItem(
 									modifier = Modifier.animateItem(),
 									playlist = playlist,
+									tab = "playlists",
 									viewModel = viewModel,
 									onSetShareId = { newShareId ->
 										shareId = newShareId
@@ -158,6 +159,7 @@ fun PlaylistsScreen(
 fun PlaylistsScreenItem(
 	modifier: Modifier = Modifier,
 	playlist: Playlist,
+	tab: String,
 	viewModel: PlaylistsViewModel,
 	onSetShareId: (String) -> Unit,
 	onSetDeletionId: (String) -> Unit
@@ -169,7 +171,7 @@ fun PlaylistsScreenItem(
 		ArtGridItem(
 			onClick = {
 				ctx.clickSound()
-				backStack.add(Screen.Tracks(playlist))
+				backStack.add(Screen.Tracks(playlist, "playlists"))
 			},
 			onLongClick = { viewModel.selectPlaylist(playlist) },
 			coverArt = playlist.coverArtId,
@@ -185,7 +187,9 @@ fun PlaylistsScreenItem(
 				playlist.comment?.let {
 					append("\n${playlist.comment}\n")
 				}
-			}
+			},
+			id = playlist.id,
+			tab = tab
 		)
 		Dropdown(
 			expanded = selection == playlist,

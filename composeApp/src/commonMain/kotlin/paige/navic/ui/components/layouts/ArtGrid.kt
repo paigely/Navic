@@ -32,12 +32,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.LocalImageBuilder
+import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.data.session.SessionManager.getCoverArtUrl
@@ -80,7 +82,12 @@ fun ArtGridItem(
 	onLongClick: (() -> Unit)? = null,
 	coverArt: String?,
 	title: String,
-	subtitle: String? = null
+	subtitle: String? = null,
+	id: String,
+	// this parameter is a shitty workaround for shared element
+	// transitions being performed when switching between tabs
+	// this can just be an empty string if the tab is unknown
+	tab: String
 ) {
 	val interactionSource = remember { MutableInteractionSource() }
 	val imageBuilder = LocalImageBuilder.current
@@ -94,46 +101,50 @@ fun ArtGridItem(
 			.memoryCachePolicy(CachePolicy.ENABLED)
 			.build()
 	}
-	Column(
-		modifier = Modifier
-			.fillMaxWidth()
-			.combinedClickable(
-				interactionSource = interactionSource,
-				indication = null,
-				onClick = onClick,
-				onLongClick = onLongClick
-			)
-			.onRightClick { onLongClick?.invoke() }
-	) {
-		AsyncImage(
-			model = model,
-			contentDescription = title,
-			contentScale = ContentScale.Crop,
+	with(LocalSharedTransitionScope.current) {
+		Column(
 			modifier = Modifier
 				.fillMaxWidth()
-				.aspectRatio(1f)
-				.clip(
-					ContinuousRoundedRectangle(artGridRounding.dp)
+				.combinedClickable(
+					interactionSource = interactionSource,
+					indication = null,
+					onClick = onClick,
+					onLongClick = onLongClick
 				)
-				.indication(interactionSource, ripple())
-				.background(MaterialTheme.colorScheme.surfaceContainer)
-				.then(imageModifier)
-		)
-		Text(
-			text = title,
-			style = MaterialTheme.typography.titleSmallEmphasized,
-			modifier = Modifier
-				.fillMaxWidth()
-				.padding(top = 6.dp)
-		)
-		subtitle?.let {
-			Text(
-				text = subtitle,
-				style = MaterialTheme.typography.bodySmall,
-				color = MaterialTheme.colorScheme.onSurfaceVariant,
-				modifier = Modifier.fillMaxWidth(),
-				maxLines = 2
+				.onRightClick { onLongClick?.invoke() }
+		) {
+			AsyncImage(
+				model = model,
+				contentDescription = title,
+				contentScale = ContentScale.Crop,
+				modifier = Modifier
+					.fillMaxWidth()
+					.aspectRatio(1f)
+					.sharedElement(
+						sharedContentState = this@with.rememberSharedContentState("${tab}-${id}-cover"),
+						animatedVisibilityScope = LocalNavAnimatedContentScope.current
+					)
+					.clip(
+						ContinuousRoundedRectangle(artGridRounding.dp)
+					)
+					.indication(interactionSource, ripple())
+					.background(MaterialTheme.colorScheme.surfaceContainer)
+					.then(imageModifier)
 			)
+			Text(
+				text = title,
+				style = MaterialTheme.typography.titleSmallEmphasized,
+				modifier = Modifier.fillMaxWidth().padding(top = 6.dp)
+			)
+			subtitle?.let {
+				Text(
+					text = subtitle,
+					style = MaterialTheme.typography.bodySmall,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+					modifier = Modifier.fillMaxWidth(),
+					maxLines = 2
+				)
+			}
 		}
 	}
 }

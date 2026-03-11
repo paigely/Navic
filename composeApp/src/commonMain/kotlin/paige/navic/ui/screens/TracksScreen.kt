@@ -1,6 +1,12 @@
 package paige.navic.ui.screens
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +28,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,6 +57,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
@@ -84,6 +90,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalContentPadding
 import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
+import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
 import paige.navic.data.session.SessionManager
@@ -111,6 +118,7 @@ import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.theme.defaultFont
 import paige.navic.ui.viewmodels.TracksViewModel
 import paige.navic.utils.UiState
+import paige.navic.utils.fadeFromTop
 import paige.navic.utils.shimmerLoading
 import paige.navic.utils.toHoursMinutesSeconds
 import kotlin.time.Duration
@@ -125,6 +133,7 @@ private class TracksScreenScope(
 @Composable
 fun TracksScreen(
 	partialTracks: SongCollection,
+  tab: String,
 	viewModel: TracksViewModel = viewModel(key = partialTracks.toString()) {
 		TracksViewModel(partialTracks)
 	}
@@ -226,9 +235,14 @@ fun TracksScreen(
 			isRefreshing = tracks is UiState.Loading,
 			onRefresh = { viewModel.refreshTracks() }
 		) {
-			AnimatedContent(tracks) {
+			Crossfade(
+				targetState = tracks
+			) {
 				when (it) {
-					is UiState.Loading -> TracksScreenPlaceholder()
+					is UiState.Loading -> TracksScreenPlaceholder(
+						coverId = partialTracks.id,
+						tab = tab
+					)
 					is UiState.Error -> ErrorBox(it)
 					is UiState.Success -> {
 						val SongCollection = it.data
@@ -239,7 +253,8 @@ fun TracksScreen(
 							LazyColumn(
 								modifier = Modifier
 									.background(MaterialTheme.colorScheme.surface)
-									.fillMaxSize(),
+									.fillMaxSize()
+									.fadeFromTop(),
 								horizontalAlignment = Alignment.CenterHorizontally,
 								contentPadding = PaddingValues(
 									top = 16.dp,
@@ -249,7 +264,7 @@ fun TracksScreen(
 								)
 							) {
 								item {
-									Metadata()
+									Metadata(tab)
 									Spacer(Modifier.height(10.dp))
 								}
 								// we can't use Form here because it's not lazy and if there's
@@ -425,7 +440,9 @@ fun TracksScreen(
 }
 
 @Composable
-private fun TracksScreenScope.Metadata() {
+private fun TracksScreenScope.Metadata(
+	tab: String
+) {
 	val platformContext = LocalPlatformContext.current
 	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
@@ -440,111 +457,115 @@ private fun TracksScreenScope.Metadata() {
 			.crossfade(500)
 			.build()
 	}
-	AsyncImage(
-		model = model,
-		contentDescription = tracks.name,
-		contentScale = ContentScale.Crop,
-		modifier = Modifier
-			.widthIn(0.dp, 420.dp)
-			.padding(
-				top = 10.dp,
-				start = 64.dp,
-				end = 64.dp
-			)
-			.aspectRatio(1f)
-			.clip(
-				ContinuousRoundedRectangle(artGridRounding.dp)
-			)
-			.background(MaterialTheme.colorScheme.surfaceContainer)
-			.clickable {
-				(model.data as? String)?.let { uri ->
-					uriHandler.openUri(uri)
+	with(LocalSharedTransitionScope.current) {
+		AsyncImage(
+			model = model,
+			contentDescription = tracks.name,
+			contentScale = ContentScale.Crop,
+			modifier = Modifier
+				.widthIn(0.dp, 420.dp)
+				.padding(
+					top = 10.dp,
+					start = 64.dp,
+					end = 64.dp
+				)
+				.aspectRatio(1f)
+				.sharedElement(
+					sharedContentState = this@with.rememberSharedContentState("${tab}-${tracks.id}-cover"),
+					animatedVisibilityScope = LocalNavAnimatedContentScope.current
+				)
+				.clip(
+					ContinuousRoundedRectangle(artGridRounding.dp)
+				)
+				.background(MaterialTheme.colorScheme.surfaceContainer)
+				.clickable {
+					(model.data as? String)?.let { uri ->
+						uriHandler.openUri(uri)
+					}
 				}
-			}
-	)
-	Spacer(Modifier.height(10.dp))
-	Column(horizontalAlignment = Alignment.CenterHorizontally) {
-		Text(
-			text = tracks.name,
-			style = MaterialTheme.typography.headlineSmall,
-			textAlign = TextAlign.Center
 		)
-		val subtitle = when (tracks) {
-			is Album -> tracks.artistName ?: stringResource(Res.string.info_unknown_artist)
-			is Playlist -> tracks.comment
-		}
-		subtitle?.let { subtitle ->
+		Spacer(Modifier.height(10.dp))
+		Column(horizontalAlignment = Alignment.CenterHorizontally) {
 			Text(
-				subtitle,
-				color = MaterialTheme.colorScheme.primary,
-				modifier = if (tracks is Album) {
-					Modifier.clickable {
+				tracks.name,
+				style = MaterialTheme.typography.headlineSmall,
+				textAlign = TextAlign.Center
+			)
+			val subtitle = when (tracks) {
+				is Album -> tracks.subtitle ?: stringResource(Res.string.info_unknown_artist)
+				is Playlist -> tracks.subtitle
+			}
+			subtitle?.let { subtitle ->
+				Text(
+					subtitle,
+					color = MaterialTheme.colorScheme.primary,
+					modifier = Modifier.clickable(tracks.artistId != null) {
 						tracks.artistId?.let { id ->
 							backStack.add(Screen.Artist(id))
 						}
-					}
-				} else Modifier,
-				style = MaterialTheme.typography.bodyMedium,
+					},
+					style = MaterialTheme.typography.bodyMedium,
+					fontFamily = defaultFont(grade = 100, round = 100f)
+				)
+			}
+			Text(
+				if (tracks !is Playlist)
+					"${tracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${
+						tracks.year ?: stringResource(
+							Res.string.info_unknown_year
+						)
+					}"
+				else stringResource(Res.string.subtitle_playlist),
+				color = MaterialTheme.colorScheme.onSurfaceVariant,
+				style = MaterialTheme.typography.bodySmall,
 				fontFamily = defaultFont(grade = 100, round = 100f)
 			)
 		}
-		Text(
-			if (tracks is Album)
-				"${tracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${
-					tracks.year ?: stringResource(
-						Res.string.info_unknown_year
+		Spacer(Modifier.height(10.dp))
+		Row(
+			modifier = Modifier.padding(horizontal = 15.dp),
+			horizontalArrangement = Arrangement.spacedBy(
+				10.dp,
+				alignment = Alignment.CenterHorizontally
+			)
+		) {
+			val shape = MaterialTheme.shapes.medium
+			FilledTonalButton(
+				modifier = Modifier.weight(1f),
+				onClick = {
+					player.clearQueue()
+					player.addToQueue(tracks)
+					player.playAt(0)
+				},
+				shape = shape
+			) {
+				Icon(Icons.Filled.Play, null)
+				Text(
+					stringResource(Res.string.action_play),
+					maxLines = 1,
+					autoSize = TextAutoSize.StepBased(
+						minFontSize = 1.sp,
+						maxFontSize = MaterialTheme.typography.labelLarge.fontSize
 					)
-				}"
-			else stringResource(Res.string.subtitle_playlist),
-			color = MaterialTheme.colorScheme.onSurfaceVariant,
-			style = MaterialTheme.typography.bodySmall,
-			fontFamily = defaultFont(grade = 100, round = 100f)
-		)
-	}
-	Spacer(Modifier.height(10.dp))
-	Row(
-		modifier = Modifier.padding(horizontal = 15.dp),
-		horizontalArrangement = Arrangement.spacedBy(
-			10.dp,
-			alignment = Alignment.CenterHorizontally
-		)
-	) {
-		val shape = MaterialTheme.shapes.medium
-		FilledTonalButton(
-			modifier = Modifier.weight(1f),
-			onClick = {
-				player.clearQueue()
-				player.addToQueue(tracks)
-				player.playAt(0)
-					  },
-			shape = shape
-		) {
-			Icon(Icons.Filled.Play, null)
-			Text(
-				stringResource(Res.string.action_play),
-				maxLines = 1,
-				autoSize = TextAutoSize.StepBased(
-					minFontSize = 1.sp,
-					maxFontSize = MaterialTheme.typography.labelLarge.fontSize
 				)
-			)
-		}
-		OutlinedButton(
-			modifier = Modifier.weight(1f),
-			onClick = {
-				player.shufflePlay(tracks)
-			},
-			shape = shape
-		) {
-			Icon(Icons.Outlined.Shuffle, null)
-			Text(
-				stringResource(Res.string.action_shuffle),
-				maxLines = 1,
-				autoSize = TextAutoSize.StepBased(
-					minFontSize = 1.sp,
-					maxFontSize = MaterialTheme.typography.labelLarge.fontSize
+			}
+			OutlinedButton(
+				modifier = Modifier.weight(1f),
+				onClick = {
+					player.shufflePlay(tracks)
+				},
+				shape = shape
+			) {
+				Icon(Icons.Outlined.Shuffle, null)
+				Text(
+					stringResource(Res.string.action_shuffle),
+					maxLines = 1,
+					autoSize = TextAutoSize.StepBased(
+						minFontSize = 1.sp,
+						maxFontSize = MaterialTheme.typography.labelLarge.fontSize
+					)
 				)
-			)
+			}
 		}
 	}
 }
@@ -604,8 +625,11 @@ private fun TrackRow(
 @Composable
 private fun TracksScreenPlaceholder(
 	modifier: Modifier = Modifier,
-	rowCount: Int = 10
+	rowCount: Int = 10,
+	coverId: String,
+	tab: String
 ) {
+	val artGridRounding = Settings.shared.artGridRounding
 	Column(
 		modifier = modifier
 			.fillMaxSize()
@@ -616,21 +640,27 @@ private fun TracksScreenPlaceholder(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.spacedBy(10.dp)
 	) {
-		Box(
-			modifier = Modifier
-				.widthIn(0.dp, 420.dp)
-				.padding(
-					top = 10.dp,
-					start = 64.dp,
-					end = 64.dp
-				)
-				.aspectRatio(1f)
-				// placeholders shouldn't use continuous corners
-				// because it's less performant
-				.clip(RoundedCornerShape(16.0.dp))
-				.background(MaterialTheme.colorScheme.surfaceContainer)
-				.shimmerLoading()
-		)
+		with(LocalSharedTransitionScope.current) {
+			Box(
+				modifier = Modifier
+					.widthIn(0.dp, 420.dp)
+					.padding(
+						top = 10.dp,
+						start = 64.dp,
+						end = 64.dp
+					)
+					.aspectRatio(1f)
+					.sharedElement(
+						sharedContentState = this@with.rememberSharedContentState("${tab}-${coverId}-cover"),
+						animatedVisibilityScope = LocalNavAnimatedContentScope.current
+					)
+					.clip(
+						ContinuousRoundedRectangle(artGridRounding.dp)
+					)
+					.background(MaterialTheme.colorScheme.surfaceContainer)
+					.shimmerLoading()
+			)
+		}
 
 		Box(
 			modifier = Modifier

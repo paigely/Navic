@@ -1,6 +1,7 @@
 package paige.navic.ui.components.common
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,20 +22,27 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import paige.navic.data.models.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
@@ -52,7 +61,8 @@ fun <Item> SelectionDropdown(
 	CompositionLocalProvider(
 		LocalTextStyle provides TextStyle(
 			fontFamily = defaultFont(100, round = 100f)
-		)
+		),
+		LocalMinimumInteractiveComponentSize provides 0.dp
 	) {
 		DropdownMenu(
 			expanded = expanded,
@@ -77,11 +87,12 @@ fun <Item> SelectionDropdown(
 				Column(
 					modifier = Modifier.verticalScroll(rememberScrollState())
 				) {
-					items.forEach { item ->
+					items.forEachIndexed { index, item ->
 						SelectionDropdownItem(
 							label = label(item),
 							selected = selection == item,
-							onClick = { onSelect(item) }
+							onClick = { onSelect(item) },
+							index = index
 						)
 						if (items.last() != item && !Settings.shared.theme.isMaterialLike()) {
 							HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest)
@@ -98,6 +109,7 @@ fun <Item> SelectionDropdown(
 private fun SelectionDropdownItem(
 	label: String,
 	selected: Boolean,
+	index: Int,
 	onClick: () -> Unit
 ) {
 	val color by animateColorAsState(
@@ -127,6 +139,13 @@ private fun SelectionDropdownItem(
 			).size(20.dp).alpha(alpha)
 		)
 	}
+	var visible by remember { mutableStateOf(false) }
+	val verticalPadding by animateDpAsState(if (visible) 13.dp else 5.dp)
+	val scaleY by animateFloatAsState(if (visible) 1f else 0.5f)
+	LaunchedEffect(Unit) {
+		delay(10L * index)
+		visible = true
+	}
 	Surface(
 		modifier = Modifier
 			.fillMaxWidth()
@@ -137,7 +156,10 @@ private fun SelectionDropdownItem(
 		onClick = { if (!selected) onClick() }
 	) {
 		Row(
-			modifier = Modifier.padding(13.dp),
+			modifier = Modifier.padding(
+				horizontal = 13.dp,
+				vertical = verticalPadding
+			).scale(1f, scaleY),
 			verticalAlignment = Alignment.CenterVertically,
 			horizontalArrangement = Arrangement.SpaceBetween
 		) {

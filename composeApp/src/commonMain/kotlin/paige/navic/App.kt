@@ -1,10 +1,10 @@
 package paige.navic
 
 import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.Dp
@@ -69,6 +71,7 @@ import paige.navic.shared.rememberShareManager
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.layouts.BottomBar
 import paige.navic.ui.components.layouts.PlayerBar
+import paige.navic.ui.navigation.Material3Transitions
 import paige.navic.ui.scenes.BottomSheetSceneStrategy
 import paige.navic.ui.screens.AddToPlaylistScreen
 import paige.navic.ui.screens.AlbumsScreen
@@ -112,6 +115,7 @@ val LocalImageBuilder = staticCompositionLocalOf<ImageRequest.Builder> { error("
 val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> { error("no snackbar state") }
 val LocalShareManager = staticCompositionLocalOf<ShareManager> { error("no share manager") }
 val LocalContentPadding = staticCompositionLocalOf { PaddingValues() }
+val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope> { error("no shared transition scope") }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -125,6 +129,7 @@ fun App() {
 	val backStack = rememberNavBackStack(config, Screen.Library())
 	val imageBuilder = remember { ImageRequest.Builder(platformContext).crossfade(true) }
 	val snackbarState = remember { SnackbarHostState() }
+	val density = LocalDensity.current
 
 	// todo: this should survive config changes but im lazy ykyk
 	LaunchedEffect(Unit) {
@@ -150,58 +155,69 @@ fun App() {
 		LocalShareManager provides shareManager
 	) {
 		NavicTheme {
-			Scaffold(
-				snackbarHost = {
-					SnackbarHost(hostState = snackbarState)
-				},
-				bottomBar = {
-					val isVisible = !Settings.shared.autoHideBar || playerState.queue.isNotEmpty()
-					Column(
-						modifier = if (Settings.shared.detachedBar)
-							Modifier.background(
-								Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surface)
+			SharedTransitionLayout {
+				Scaffold(
+					snackbarHost = {
+						SnackbarHost(hostState = snackbarState) { snackbarData ->
+							Snackbar(
+								snackbarData = snackbarData,
+								shape = MaterialTheme.shapes.large
 							)
-						else Modifier
+						}
+					},
+					bottomBar = {
+						val isVisible = !Settings.shared.autoHideBar || playerState.queue.isNotEmpty()
+						Column(
+							modifier = if (Settings.shared.detachedBar)
+								Modifier.background(
+									Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surface)
+								)
+							else Modifier
+						) {
+							if (isVisible) PlayerBar()
+							BottomBar(
+								containerColor = if (Settings.shared.detachedBar && isVisible)
+									NavigationBarDefaults.containerColor.copy(alpha = 0f)
+								else NavigationBarDefaults.containerColor
+							)
+						}
+					}
+				) { contentPadding ->
+					CompositionLocalProvider(
+						LocalContentPadding provides contentPadding,
+						LocalSharedTransitionScope provides this@SharedTransitionLayout
 					) {
-						if (isVisible) PlayerBar()
-						BottomBar(
-							containerColor = if (Settings.shared.detachedBar && isVisible)
-								NavigationBarDefaults.containerColor.copy(alpha = 0f)
-							else NavigationBarDefaults.containerColor
+						NavDisplay(
+							modifier = Modifier
+								.padding(
+									start = contentPadding.calculateStartPadding(
+										LocalLayoutDirection.current
+									),
+									end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
+								)
+								.fillMaxSize()
+								.background(MaterialTheme.colorScheme.surface),
+							backStack = backStack,
+							sceneStrategy = remember { BottomSheetSceneStrategy<NavKey>() }
+								then remember { DialogSceneStrategy() }
+								then rememberListDetailSceneStrategy(),
+							onBack = { backStack.removeLastOrNull() },
+							entryProvider = entryProvider(backStack),
+							transitionSpec = {
+								Material3Transitions.SharedXAxisEnterTransition(density) togetherWith Material3Transitions.SharedXAxisExitTransition(
+									density
+								)
+							},
+							popTransitionSpec = {
+								Material3Transitions.SharedXAxisPopEnterTransition(density) togetherWith Material3Transitions.SharedXAxisPopExitTransition(
+									density
+								)
+							},
+							predictivePopTransitionSpec = {
+								Material3Transitions.SharedZAxisEnterTransition togetherWith Material3Transitions.SharedZAxisExitTransition
+							}
 						)
 					}
-				}
-			) { contentPadding ->
-				CompositionLocalProvider(
-					LocalContentPadding provides contentPadding
-				) {
-					NavDisplay(
-						modifier = Modifier
-							.padding(
-								start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-								end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
-							)
-							.fillMaxSize()
-							.background(MaterialTheme.colorScheme.surface),
-						backStack = backStack,
-						sceneStrategy = remember { BottomSheetSceneStrategy<NavKey>() }
-							then remember { DialogSceneStrategy() }
-							then rememberListDetailSceneStrategy(),
-						onBack = { backStack.removeLastOrNull() },
-						entryProvider = entryProvider(backStack),
-						transitionSpec = {
-							slideInHorizontally(initialOffsetX = { it }) togetherWith
-								slideOutHorizontally(targetOffsetX = { -it })
-						},
-						popTransitionSpec = {
-							slideInHorizontally(initialOffsetX = { -it }) togetherWith
-								slideOutHorizontally(targetOffsetX = { it })
-						},
-						predictivePopTransitionSpec = {
-							slideInHorizontally(initialOffsetX = { -it }) togetherWith
-								slideOutHorizontally(targetOffsetX = { it })
-						}
-					)
 				}
 			}
 			if (!Settings.shared.showedSideloadingWarning
@@ -257,7 +273,7 @@ private fun entryProvider(
 			QueueScreen()
 		}
 		entry<Screen.Tracks>(metadata = detailPane("root")) { key ->
-			TracksScreen(key.partialCollection)
+			TracksScreen(key.partialCollection, key.tab)
 		}
 		entry<Screen.TrackInfo> { key ->
 			TrackInfoScreen(key.track)

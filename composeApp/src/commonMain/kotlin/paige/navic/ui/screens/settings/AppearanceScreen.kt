@@ -70,6 +70,7 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.settings.SettingCollapsibleRow
 import paige.navic.ui.components.settings.SettingSwitchRow
 import paige.navic.ui.theme.mapleMono
+import paige.navic.utils.fadeFromTop
 
 @Composable
 fun SettingsAppearanceScreen() {
@@ -91,6 +92,7 @@ fun SettingsAppearanceScreen() {
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
+					.fadeFromTop()
 			) {
 				Form {
 					SettingSwitchRow(

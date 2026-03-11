@@ -173,7 +173,8 @@ fun LibraryScreen(
 							modifier = Modifier.animateItem().width(150.dp),
 							album = album,
 							viewModel = albumsViewModel,
-							onSetShareId = { shareId = it }
+							onSetShareId = { shareId = it },
+							tab = "library"
 						)
 					}
 					horizontalSection(
@@ -188,7 +189,8 @@ fun LibraryScreen(
 							playlist = playlist,
 							viewModel = playlistsViewModel,
 							onSetShareId = { shareId = it },
-							onSetDeletionId = { deletionId = it }
+							onSetDeletionId = { deletionId = it },
+							tab = "library"
 						)
 					}
 
@@ -202,7 +204,8 @@ fun LibraryScreen(
 						ArtistsScreenItem(
 							modifier = Modifier.animateItem().width(150.dp),
 							artist = artist,
-							viewModel = artistsViewModel
+							viewModel = artistsViewModel,
+							tab = "library"
 						)
 					}
 				}

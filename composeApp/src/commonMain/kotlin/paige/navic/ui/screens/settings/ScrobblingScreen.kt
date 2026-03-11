@@ -38,6 +38,7 @@ import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.settings.SettingSwitchRow
 import paige.navic.ui.theme.mapleMono
+import paige.navic.utils.fadeFromTop
 import kotlin.math.roundToInt
 
 @Composable
@@ -58,6 +59,7 @@ fun ScrobblingScreen() {
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
+					.fadeFromTop()
 			) {
 				Form {
 					SettingSwitchRow(

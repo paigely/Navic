@@ -216,7 +216,8 @@ fun SearchScreen(
 									modifier = Modifier.animateItem().width(150.dp),
 									album = album,
 									viewModel = albumsViewModel,
-									onSetShareId = { }
+									onSetShareId = { },
+									tab = "search"
 								)
 							}
 
@@ -230,7 +231,8 @@ fun SearchScreen(
 								ArtistsScreenItem(
 									modifier = Modifier.animateItem().width(150.dp),
 									artist = artist,
-									viewModel = artistsViewModel
+									viewModel = artistsViewModel,
+									tab = "search"
 								)
 							}
 						}

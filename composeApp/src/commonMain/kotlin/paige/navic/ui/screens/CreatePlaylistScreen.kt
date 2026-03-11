@@ -45,7 +45,7 @@ fun CreatePlaylistScreen(
 				is CreatePlaylistViewModel.Event.Dismiss -> {
 					if (backStack.lastOrNull() is Screen.CreatePlaylist) {
 						backStack.removeLastOrNull()
-						backStack.add(Screen.Tracks(event.playlist))
+						backStack.add(Screen.Tracks(event.playlist, "playlists"))
 					}
 				}
 			}

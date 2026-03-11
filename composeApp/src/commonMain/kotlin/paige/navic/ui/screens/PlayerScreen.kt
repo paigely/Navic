@@ -1,9 +1,11 @@
 package paige.navic.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -25,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -54,12 +57,16 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.zt64.subsonic.api.model.Playlist
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
@@ -93,12 +100,14 @@ import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.Repeat
 import paige.navic.icons.outlined.Shuffle
 import paige.navic.icons.outlined.Star
+import paige.navic.shared.PlayerUiState
 import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
 import paige.navic.ui.components.layouts.Swiper
+import paige.navic.utils.fadeFromTop
 import paige.navic.utils.rememberTrackPainter
 import paige.navic.utils.toHoursMinutesSeconds
 import kotlin.time.Duration.Companion.seconds
@@ -179,7 +188,7 @@ fun PlayerScreen() {
 						playerState.currentCollection?.let { tracks ->
 							expanded = false
 							backStack.remove(Screen.Player)
-							backStack.add(Screen.Tracks(tracks))
+							backStack.add(Screen.Tracks(tracks, ""))
 						}
 					},
 					text = {
@@ -258,7 +267,8 @@ fun PlayerScreen() {
 								if (!isSameAlbum)
 									backStack.add(
 										Screen.Tracks(
-											playerState.currentCollection ?: return@clickable
+											playerState.currentCollection ?: return@clickable,
+											""
 										)
 									)
 							}
@@ -483,116 +493,138 @@ fun PlayerScreen() {
 			}
 		}
 	) {
-		if (isPlayerCurrent) {
-			BoxWithConstraints(
-				modifier = Modifier
-					.padding(horizontal = 8.dp)
-					.navigationBarsPadding()
-					.statusBarsPadding()
-					.fillMaxSize()
-			) {
-				val isLandscape = maxWidth > maxHeight
-
-				if (isLandscape) {
-					Row(
-						modifier = Modifier
-							.fillMaxSize()
-							.padding(top = 50.dp),
-						horizontalArrangement = Arrangement.SpaceEvenly,
-						verticalAlignment = Alignment.CenterVertically
-					) {
-						Box(
-							contentAlignment = Alignment.Center,
-							modifier = Modifier
-								.weight(1f)
-								.fillMaxHeight()
-						) {
-							Image(
-								painter = sharedPainter,
-								contentDescription = null,
-								contentScale = ContentScale.Crop,
-								modifier = Modifier
-									.fillMaxHeight()
-									.aspectRatio(1f)
-									.padding(imagePadding)
-									.clip(MaterialTheme.shapes.large)
-									.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
-							)
-							if (coverUri.isNullOrEmpty()) {
-								Icon(
-									imageVector = Icons.Filled.Note,
-									contentDescription = null,
-									tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
-									modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
-								)
-							}
-						}
-
-						Column(
-							modifier = Modifier
-								.weight(1f)
-								.fillMaxHeight(),
-							horizontalAlignment = Alignment.CenterHorizontally,
-							verticalArrangement = Arrangement.Center
-						) {
-							Column {
-								infoRow()
-								progressBar()
-								durationsRow()
-							}
-							Spacer(modifier = Modifier.height(24.dp))
-							controlsRow()
-						}
-					}
-				} else {
-					Column(
-						modifier = Modifier
-							.fillMaxSize()
-							.padding(top = 90.dp),
-						horizontalAlignment = Alignment.CenterHorizontally,
-						verticalArrangement = Arrangement.Center
-					) {
-						Box(
-							contentAlignment = Alignment.Center,
-							modifier = Modifier
-								.fillMaxWidth()
-								.weight(1f)
-						) {
-							Image(
-								painter = sharedPainter,
-								contentDescription = null,
-								contentScale = ContentScale.Crop,
-								modifier = Modifier
-									.aspectRatio(1f)
-									.fillMaxSize()
-									.padding(imagePadding)
-									.clip(MaterialTheme.shapes.large)
-									.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
-							)
-							if (coverUri.isNullOrEmpty()) {
-								Icon(
-									imageVector = Icons.Filled.Note,
-									contentDescription = null,
-									tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
-									modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
-								)
-							}
-						}
-						Column(
-							modifier = Modifier.weight(1f),
-							horizontalAlignment = Alignment.CenterHorizontally,
-							verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterVertically)
-						) {
-							Column {
-								infoRow()
-								progressBar()
-								durationsRow()
-							}
-							controlsRow()
-						}
-					}
+		if (!isPlayerCurrent) return@Swiper
+		BoxWithConstraints(
+			modifier = Modifier
+				.padding(horizontal = 8.dp)
+				.navigationBarsPadding()
+				.statusBarsPadding()
+				.fillMaxSize()
+				.fadeFromTop()
+		) {
+			val isLandscape = maxWidth > maxHeight
+			val contentPadding = if (isLandscape) 50.dp else 90.dp
+			if (isLandscape) {
+				Row(
+					modifier = Modifier.fillMaxSize().padding(top = contentPadding),
+					horizontalArrangement = Arrangement.SpaceEvenly,
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					PlayerArtwork(
+						modifier = Modifier.weight(1f).fillMaxHeight(),
+						isLandscape = true,
+						sharedPainter = sharedPainter,
+						coverUri = coverUri,
+						playerState = playerState,
+						imagePadding = imagePadding
+					)
+					PlayerControls(
+						modifier = Modifier.weight(1f).fillMaxHeight(),
+						isLandscape = true,
+						infoRow = { infoRow() },
+						progressBar = { progressBar() },
+						durationsRow = { durationsRow() },
+						controlsRow = { controlsRow() }
+					)
+				}
+			} else {
+				Column(
+					modifier = Modifier.fillMaxSize().padding(top = contentPadding),
+					horizontalAlignment = Alignment.CenterHorizontally,
+					verticalArrangement = Arrangement.Center
+				) {
+					PlayerArtwork(
+						modifier = Modifier.weight(1f).fillMaxWidth(),
+						isLandscape = false,
+						sharedPainter = sharedPainter,
+						coverUri = coverUri,
+						playerState = playerState,
+						imagePadding = imagePadding
+					)
+					PlayerControls(
+						modifier = Modifier.weight(1f),
+						isLandscape = false,
+						infoRow = { infoRow() },
+						progressBar = { progressBar() },
+						durationsRow = { durationsRow() },
+						controlsRow = { controlsRow() }
+					)
 				}
 			}
 		}
+	}
+}
+
+@Composable
+private fun PlayerArtwork(
+	modifier: Modifier = Modifier,
+	isLandscape: Boolean,
+	sharedPainter: Painter,
+	coverUri: String?,
+	playerState: PlayerUiState,
+	imagePadding: Dp
+) {
+	var visible by remember { mutableStateOf(false) }
+	val scale by animateFloatAsState(if (visible) 1f else 0f)
+	LaunchedEffect(Unit) {
+		delay(100)
+		visible = true
+	}
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = modifier.scale(scale)
+	) {
+		Image(
+			painter = sharedPainter,
+			contentDescription = null,
+			contentScale = ContentScale.Crop,
+			modifier = Modifier
+				.aspectRatio(1f)
+				.then(if (isLandscape) Modifier.fillMaxHeight() else Modifier.fillMaxSize())
+				.padding(imagePadding)
+				.clip(MaterialTheme.shapes.large)
+				.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
+		)
+		if (coverUri.isNullOrEmpty()) {
+			Icon(
+				imageVector = Icons.Filled.Note,
+				contentDescription = null,
+				tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
+				modifier = Modifier.size(if (playerState.isPaused) 96.dp else 128.dp)
+			)
+		}
+	}
+}
+
+@Composable
+private fun PlayerControls(
+	modifier: Modifier = Modifier,
+	isLandscape: Boolean,
+	infoRow: @Composable () -> Unit,
+	progressBar: @Composable () -> Unit,
+	durationsRow: @Composable () -> Unit,
+	controlsRow: @Composable () -> Unit
+) {
+	var visible by remember { mutableStateOf(false) }
+	val scale by animateFloatAsState(if (visible) 1f else 0f)
+	val offset by animateDpAsState(if (visible) 0.dp else 200.dp)
+	LaunchedEffect(Unit) {
+		delay(200)
+		visible = true
+	}
+	Column(
+		modifier = modifier.scale(scale).offset {
+			IntOffset(x = 0, y = offset.roundToPx())
+		},
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.Center
+	) {
+		Column {
+			infoRow()
+			progressBar()
+			durationsRow()
+		}
+		Spacer(modifier = Modifier.height(if (isLandscape) 24.dp else 30.dp))
+		controlsRow()
 	}
 }

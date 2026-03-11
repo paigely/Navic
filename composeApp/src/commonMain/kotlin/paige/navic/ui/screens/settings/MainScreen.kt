@@ -63,6 +63,7 @@ import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.theme.defaultFont
+import paige.navic.utils.fadeFromTop
 
 @Composable
 fun SettingsScreen() {
@@ -75,6 +76,7 @@ fun SettingsScreen() {
 				.padding(innerPadding)
 				.verticalScroll(rememberScrollState())
 				.padding(top = 16.dp, end = 16.dp, start = 16.dp)
+				.fadeFromTop()
 		) {
 			Form {
 				PageRow(

@@ -21,6 +21,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.utils.fadeFromTop
 
 @Composable
 fun SettingsAcknowledgementsScreen() {
@@ -40,7 +41,8 @@ fun SettingsAcknowledgementsScreen() {
 			libraries,
 			modifier = Modifier
 				.padding(top = 16.dp, end = 16.dp, start = 16.dp)
-				.fillMaxSize(),
+				.fillMaxSize()
+				.fadeFromTop(),
 			contentPadding = innerPadding + PaddingValues(
 				bottom = LocalContentPadding.current.calculateBottomPadding()
 			)

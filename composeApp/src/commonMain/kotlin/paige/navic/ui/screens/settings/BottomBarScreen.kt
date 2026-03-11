@@ -40,6 +40,7 @@ import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.dialogs.NavtabsDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.settings.SettingSwitchRow
+import paige.navic.utils.fadeFromTop
 
 @Composable
 fun BottomBarScreen() {
@@ -61,6 +62,7 @@ fun BottomBarScreen() {
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
+					.fadeFromTop()
 			) {
 				Form {
 					SettingSwitchRow(
