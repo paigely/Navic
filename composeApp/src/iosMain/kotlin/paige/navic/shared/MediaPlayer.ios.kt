@@ -292,7 +292,7 @@ class IOSMediaPlayerViewModel(
 		val info = mutableMapOf<Any?, Any?>()
 		info[MPMediaItemPropertyTitle] = track.title
 		info[MPMediaItemPropertyArtist] = track.artistName
-		info[MPMediaItemPropertyAlbumTitle] = track.albumName
+		info[MPMediaItemPropertyAlbumTitle] = track.albumTitle
 
 		val duration = player.currentItem?.duration
 		if (duration != null) {
