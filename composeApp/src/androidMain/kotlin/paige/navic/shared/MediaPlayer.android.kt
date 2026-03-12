@@ -60,6 +60,7 @@ class PlaybackService : MediaSessionService() {
 
 		val player = ExoPlayer.Builder(this)
 			.setLoadControl(loadControl)
+			.setHandleAudioBecomingNoisy(true)
 			.build()
 			.apply {
 				setAudioAttributes(
@@ -241,7 +242,7 @@ class AndroidMediaPlayerViewModel(
 
 		if (state.queue.isEmpty() || player.mediaItemCount > 0) return
 
-		val mediaItems = state.queue.map { it.toMediaItem(false) }
+		val mediaItems = state.queue.map { it.toMediaItem() }
 
 		player.setMediaItems(mediaItems)
 
@@ -284,7 +285,7 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	override fun addToQueueSingle(track: Song) {
-		controller?.addMediaItem(track.toMediaItem(true))
+		controller?.addMediaItem(track.toMediaItem())
 		_uiState.update { it.copy(
 			queue = it.queue + track,
 			currentIndex = it.queue.indexOf(it.currentTrack),
@@ -293,7 +294,7 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	override fun addToQueue(tracks: SongCollection) {
-		val items = tracks.songs.map { it.toMediaItem(false) }
+		val items = tracks.songs.map { it.toMediaItem() }
 		controller?.addMediaItems(items)
 		_uiState.update { it.copy(
 			queue = it.queue + tracks.songs,
@@ -345,7 +346,7 @@ class AndroidMediaPlayerViewModel(
 
 	override fun shufflePlay(tracks: SongCollection) {
 		val shuffledTracks = tracks.songs.shuffled()
-		val mediaItems = shuffledTracks.map { it.toMediaItem(false) }
+		val mediaItems = shuffledTracks.map { it.toMediaItem() }
 
 		controller?.let { player ->
 			player.shuffleModeEnabled = false
@@ -401,34 +402,21 @@ class AndroidMediaPlayerViewModel(
 		controllerFuture?.let { MediaController.releaseFuture(it) }
 	}
 
-	private fun Song.toMediaItem(single: Boolean): MediaItem {
-		if (single) {
-			val metadata = MediaMetadata.Builder()
-				.setTitle(title)
-				.setArtist(artistName)
-				.setAlbumTitle(albumTitle)
-				.setArtworkUri(coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true).toUri() })
-				.build()
+	private fun Track.toMediaItem(): MediaItem {
+		val metadata = MediaMetadata.Builder()
+			.setTitle(title)
+			.setArtist(artistName)
+			.setAlbumTitle(albumTitle)
+			.setArtworkUri(
+				coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true).toUri() }
+			)
+			.build()
 
-			return MediaItem.Builder()
-				.setUri(SessionManager.api.getStreamUrl(id))
-				.setMediaId(id)
-				.setMediaMetadata(metadata)
-				.build()
-		} else {
-			val metadata = MediaMetadata.Builder()
-				.setTitle(title)
-				.setArtist(artistName)
-				.setAlbumTitle(albumTitle)
-				.setArtworkUri(coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true).toUri() })
-				.build()
-
-			return MediaItem.Builder()
-				.setUri(SessionManager.api.getStreamUrl(id))
-				.setMediaId(id)
-				.setMediaMetadata(metadata)
-				.build()
-		}
+		return MediaItem.Builder()
+			.setUri(SessionManager.api.getStreamUrl(id))
+			.setMediaId(id)
+			.setMediaMetadata(metadata)
+			.build()
 	}
 }
 
