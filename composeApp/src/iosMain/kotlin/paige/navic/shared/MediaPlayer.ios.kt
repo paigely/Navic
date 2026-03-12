@@ -5,6 +5,8 @@ package paige.navic.shared
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.zt64.subsonic.api.model.Song
+import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
 import paige.navic.data.session.SessionManager
@@ -129,7 +131,7 @@ class IOSMediaPlayerViewModel(
 
 		player.replaceCurrentItemWithPlayerItem(
 			AVPlayerItem(
-				NSURL.URLWithString(SessionManager.api.streamUrl(trackToPlay.id))!!
+				NSURL.URLWithString(SessionManager.api.getStreamUrl(trackToPlay.id))!!
 			)
 		)
 		player.play()
@@ -306,7 +308,7 @@ class IOSMediaPlayerViewModel(
 		info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
 			boundsSize = CGSizeMake(512.0, 512.0),
 			requestHandler = {
-				return@MPMediaItemArtwork track.coverArt
+				return@MPMediaItemArtwork track.coverArtId
 					?.let { SessionManager.api.getCoverArtUrl(it, auth = true) }
 					?.let { NSURL.URLWithString(it) }
 					?.let { NSData.dataWithContentsOfURL(it) }
@@ -325,7 +327,7 @@ class IOSMediaPlayerViewModel(
 
 	override fun syncPlayerWithState(state: PlayerUiState) {
 		val track = state.queue.getOrNull(state.currentIndex) ?: return
-		val url = NSURL.URLWithString(SessionManager.api.streamUrl(track.id)) ?: return
+		val url = NSURL.URLWithString(SessionManager.api.getStreamUrl(track.id)) ?: return
 		player.replaceCurrentItemWithPlayerItem(AVPlayerItem(url))
 		updateNowPlayingInfo(track)
 	}
