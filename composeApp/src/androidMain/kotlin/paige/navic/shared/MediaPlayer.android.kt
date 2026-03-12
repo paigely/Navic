@@ -402,7 +402,7 @@ class AndroidMediaPlayerViewModel(
 		controllerFuture?.let { MediaController.releaseFuture(it) }
 	}
 
-	private fun Track.toMediaItem(): MediaItem {
+	private fun Song.toMediaItem(): MediaItem {
 		val metadata = MediaMetadata.Builder()
 			.setTitle(title)
 			.setArtist(artistName)
