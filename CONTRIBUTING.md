@@ -14,7 +14,6 @@ This project is structured like most Compose Multiplatform apps are.
 |--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `composeApp` | Almost everything is here. This might change in the future and be split up into multiple modules.                                                                                |
 | `iosApp`     | The Xcode project for iOS. There is usually no reason to modify this at all.                                                                                                     |
-| `subsonic`   | Library for interacting with Subsonic's API. **Being obsoleted soon by [subsonic-kotlin](https://github.com/zt64/subsonic-kotlin), do not make drastic changes to this library** |
 
 #### Packages
 | Package              | Description                                                    |
