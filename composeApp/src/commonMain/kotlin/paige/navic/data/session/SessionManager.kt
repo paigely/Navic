@@ -21,11 +21,22 @@ object SessionManager {
 	// platform specified http cache storage
 	var cacheStorage: CacheStorage? = null
 
-	val api = SubsonicClient(
-		baseUrl = settings.getString("instanceUrl", ""),
+	var api: SubsonicClient = createClient(
+		instanceUrl = settings.getString("instanceUrl", ""),
+		username = settings.getString("username", ""),
+		password = settings.getString("password", ""),
+	)
+		private set
+
+	private fun createClient(
+		instanceUrl: String,
+		username: String,
+		password: String,
+	) = SubsonicClient(
+		baseUrl = instanceUrl,
 		auth = SubsonicAuth.Token(
-			username = settings.getString("username", ""),
-			password = settings.getString("password", ""),
+			username = username,
+			password = password,
 		),
 		client = "Navic",
 		clientConfig = {
@@ -43,10 +54,8 @@ object SessionManager {
 
 	val currentUser: User?
 		get() {
-			val username = settings.getStringOrNull("username")
-				?.takeIf { it.isNotBlank() }
-				?: return null
-			_isLoggedIn.value = true
+			val username = settings.getStringOrNull("username") ?: return null
+
 			return User(
 				name = username,
 				avatarUrl = api.getAvatarUrl(username)
@@ -59,18 +68,21 @@ object SessionManager {
 		username: String,
 		password: String
 	) {
+		val client = createClient(instanceUrl, username, password)
+
+		try {
+			client.ping()
+		} catch (e: Exception) {
+			throw Exception("Failed to connect to the instance. Please check your credentials and try again.", e)
+		}
+
 		settings["instanceUrl"] = instanceUrl
 		settings["username"] = username
 		settings["password"] = password
 
-		try {
-			api.getUser(username)
-			_isLoggedIn.value = true
-		} catch (e: Throwable) {
-			throw e
-		}
+		api = client
+		_isLoggedIn.value = true
 	}
-
 
 	fun logout() {
 		settings["username"] = null
