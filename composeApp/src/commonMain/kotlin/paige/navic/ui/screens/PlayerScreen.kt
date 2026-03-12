@@ -637,7 +637,8 @@ private fun ArtworkPager(
 		modifier = modifier,
 		state = pagerState,
 		contentPadding = PaddingValues(horizontal = if (isLandscape) 0.dp else 8.dp),
-		userScrollEnabled = Settings.shared.swipeToSkip
+		userScrollEnabled = Settings.shared.swipeToSkip,
+		overscrollEffect = null
 	) { page ->
 		val track = playerState.queue[page]
 		Box(
