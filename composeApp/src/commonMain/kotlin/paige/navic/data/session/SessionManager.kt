@@ -56,6 +56,8 @@ object SessionManager {
 		get() {
 			val username = settings.getStringOrNull("username") ?: return null
 
+			_isLoggedIn.value = true
+
 			return User(
 				name = username,
 				avatarUrl = api.getAvatarUrl(username)
