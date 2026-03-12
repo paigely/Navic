@@ -72,6 +72,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import dev.zt64.subsonic.api.model.Song
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import kotlinx.coroutines.delay
@@ -92,6 +93,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
 import paige.navic.data.session.SessionManager
+import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
@@ -555,16 +557,16 @@ fun PlayerScreen() {
 private fun PlayerArtwork(
 	modifier: Modifier = Modifier,
 	isLandscape: Boolean,
-	track: Track
+	track: Song
 ) {
 	val player = LocalMediaPlayer.current
 	val playerState by player.uiState.collectAsState()
 	val platformContext = LocalPlatformContext.current
-	val model = remember(track.coverArt) {
+	val model = remember(track.coverArtId) {
 		ImageRequest.Builder(platformContext)
-			.data(SessionManager.api.getCoverArtUrl(track.coverArt, auth = true))
-			.memoryCacheKey(track.coverArt)
-			.diskCacheKey(track.coverArt)
+			.data(SessionManager.api.getCoverArtUrl(track.coverArtId))
+			.memoryCacheKey(track.coverArtId)
+			.diskCacheKey(track.coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)
 			.memoryCachePolicy(CachePolicy.ENABLED)
 			.build()
@@ -590,7 +592,7 @@ private fun PlayerArtwork(
 				.clip(MaterialTheme.shapes.large)
 				.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
 		)
-		if (track.coverArt.isNullOrEmpty()) {
+		if (track.coverArtId.isNullOrEmpty()) {
 			Icon(
 				imageVector = Icons.Filled.Note,
 				contentDescription = null,
