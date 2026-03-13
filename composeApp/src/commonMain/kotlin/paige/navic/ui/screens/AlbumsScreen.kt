@@ -256,7 +256,7 @@ fun AlbumsScreenItem(
 			onLongClick = { viewModel.selectAlbum(album) },
 			coverArt = album.coverArtId,
 			title = album.name,
-			subtitle = album.artistName ?: stringResource(Res.string.info_unknown_artist),
+			subtitle = album.artistName,
 			id = album.id,
 			tab = tab
 		)

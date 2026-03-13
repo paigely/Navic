@@ -175,8 +175,7 @@ fun LyricsShareSheet(
 							)
 
 							Text(
-								text = track.artistName
-									?: stringResource(Res.string.info_unknown_artist),
+								text = track.artistName,
 								style = MaterialTheme.typography.bodyMedium,
 								color = contentColor.copy(alpha = 0.8f)
 							)

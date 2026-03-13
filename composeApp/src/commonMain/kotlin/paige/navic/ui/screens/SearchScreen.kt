@@ -200,7 +200,7 @@ fun SearchScreen(
 										headlineContent = { Text(track.title) },
 										supportingContent = {
 											MarqueeText(
-												"${track.albumTitle ?: ""} • ${track.artistName ?: ""} • ${track.year ?: ""}"
+												"${track.albumTitle ?: ""} • ${track.artistName} • ${track.year ?: ""}"
 											)
 										},
 										leadingContent = {

@@ -50,7 +50,7 @@ class ArtistsViewModel(
 			_starredState.value = UiState.Loading
 			try {
 				val isStarred = repository.isArtistStarred(artist)
-				_starredState.value = UiState.Success(isStarred ?: false)
+				_starredState.value = UiState.Success(isStarred)
 			} catch(e: Exception) {
 				_starredState.value = UiState.Error(e)
 			}

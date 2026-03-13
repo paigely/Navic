@@ -61,7 +61,7 @@ fun TrackRow(
 				buildString {
 					append(track.albumTitle ?: stringResource(Res.string.info_unknown_album))
 					append(" • ")
-					append(track.artistName ?: stringResource(Res.string.info_unknown_artist))
+					append(track.artistName)
 					append(" • ")
 					append(track.year ?: stringResource(Res.string.info_unknown_year))
 				},

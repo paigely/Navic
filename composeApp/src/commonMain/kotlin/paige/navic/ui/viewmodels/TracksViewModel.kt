@@ -71,7 +71,7 @@ class TracksViewModel(
 			_albumInfoState.value = UiState.Loading
 			try {
 				val isStarred = repository.isTrackStarred(track)
-				_starredState.value = UiState.Success(isStarred ?: false)
+				_starredState.value = UiState.Success(isStarred)
 			} catch(e: Exception) {
 				_starredState.value = UiState.Error(e)
 			}

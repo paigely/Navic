@@ -218,10 +218,7 @@ private fun SharesScreenItem(
 						ShareCover(coverArt = share.items.firstOrNull()?.coverArtId)
 					},
 					content = {
-						Text(
-							share.description
-								?: stringResource(Res.string.info_unknown_share, share.id)
-						)
+						Text(share.description)
 					},
 					supportingContent = {
 						Text(stringResource(Res.string.info_shared_by, share.username))
