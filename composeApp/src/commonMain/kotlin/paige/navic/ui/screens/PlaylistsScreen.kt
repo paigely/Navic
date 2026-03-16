@@ -31,6 +31,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.count_songs
+import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.option_sort_ascending
 import navic.composeapp.generated.resources.option_sort_descending
 import navic.composeapp.generated.resources.title_create_playlist
@@ -42,6 +43,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.models.PlaylistSortMode
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
+import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
 import paige.navic.icons.outlined.PlaylistRemove
@@ -83,6 +85,7 @@ fun PlaylistsScreen(
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	var deletionId by remember { mutableStateOf<String?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+	val isLoggedIn = SessionManager.isLoggedIn.collectAsState()
 
 	Scaffold(
 		topBar = {
@@ -126,6 +129,14 @@ fun PlaylistsScreen(
 			isRefreshing = isRefreshing || playlistsState is UiState.Loading,
 			onRefresh = { viewModel.refreshPlaylists() }
 		) {
+			if (!isLoggedIn.value) {
+				Text(
+					stringResource(Res.string.info_needs_log_in),
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+					modifier = Modifier.padding(horizontal = 16.dp)
+				)
+				return@PullToRefreshBox
+			}
 			Crossfade(playlistsState) { state ->
 				ArtGrid(
 					modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

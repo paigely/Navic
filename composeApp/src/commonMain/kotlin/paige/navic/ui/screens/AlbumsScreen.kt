@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_star
@@ -50,6 +51,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Share
@@ -90,6 +92,7 @@ fun AlbumsScreen(
 	val actions: @Composable RowScope.() -> Unit = {
 		SortButton(!nested, viewModel)
 	}
+	val isLoggedIn = SessionManager.isLoggedIn.collectAsState()
 
 	Scaffold(
 		topBar = {
@@ -112,6 +115,14 @@ fun AlbumsScreen(
 			isRefreshing = isRefreshing || albumsState is UiState.Loading,
 			onRefresh = { viewModel.refreshAlbums() }
 		) {
+			if (!isLoggedIn.value) {
+				Text(
+					stringResource(Res.string.info_needs_log_in),
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+					modifier = Modifier.padding(horizontal = 16.dp)
+				)
+				return@PullToRefreshBox
+			}
 			Crossfade(albumsState) { state ->
 				ArtGrid(
 					modifier = if (!nested)
