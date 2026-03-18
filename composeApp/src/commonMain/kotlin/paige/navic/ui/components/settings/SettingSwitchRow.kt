@@ -22,7 +22,7 @@ fun SettingSwitchRow(
 	onSetValue: (Boolean) -> Unit,
 	enabled: Boolean = true,
 	contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 18.dp),
-	isDividerShown: Boolean = true
+	isDividerShown: Boolean = false
 ) {
 	FormRow(
 		onClick = { onSetValue(!value) },

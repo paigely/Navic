@@ -150,8 +150,7 @@ fun ShareDialog(
 					onSetValue = {
 						onExpiryChange(if (it) 1.hours else null)
 					},
-					contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
-					isDividerShown = false
+					contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp)
 				)
 				expiry?.let {
 					FormRow {
