@@ -33,7 +33,9 @@ class Settings(
 	var playlistSortMode by preference(PlaylistSortMode.DateAdded)
 	var playlistsReversed by preference(false)
 	var showBarsOnAllScreens by preference(false)
-	var replayGain by preference(true)
+	var replayGain by preference(false)
+	var gaplessPlayback by preference(true)
+	var audioOffload by preference(false)
 	var playerSliderStyle by preference(PlayerSliderStyle.Squiggly)
 
 	// navigation bar settings

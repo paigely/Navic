@@ -25,12 +25,15 @@ import navic.composeapp.generated.resources.info_track_genre
 import navic.composeapp.generated.resources.info_track_id
 import navic.composeapp.generated.resources.info_track_name
 import navic.composeapp.generated.resources.info_track_path
+import navic.composeapp.generated.resources.info_track_replay_gain
+import navic.composeapp.generated.resources.info_track_replay_gain_effective
 import navic.composeapp.generated.resources.info_track_sampling_rate
 import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.utils.effectiveGain
 import paige.navic.utils.fadeFromTop
 import paige.navic.utils.toFileSize
 import paige.navic.utils.toHoursMinutesSeconds
@@ -63,6 +66,8 @@ fun TrackInfoScreen(track: Song) {
 					Res.string.info_track_duration to track.duration.toHoursMinutesSeconds(),
 					Res.string.info_track_id to track.id,
 					Res.string.info_track_path to track.filePath,
+					Res.string.info_track_replay_gain to track.replayGain?.toString(),
+					Res.string.info_track_replay_gain_effective to track.replayGain?.effectiveGain()
 				).forEach { (key, value) ->
 					FormRow {
 						Text(stringResource(key))

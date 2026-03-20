@@ -42,6 +42,7 @@ fun SettingSwitchRow(
 			VerticalDivider(Modifier.height(32.dp).padding(horizontal = 14.dp))
 		}
 		SettingSwitch(
+			modifier = Modifier.padding(start = 4.dp),
 			checked = value,
 			onCheckedChange = { onSetValue(it) },
 			enabled = enabled

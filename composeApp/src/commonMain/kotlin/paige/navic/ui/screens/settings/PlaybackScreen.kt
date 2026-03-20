@@ -26,14 +26,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_lyrics
+import navic.composeapp.generated.resources.option_audio_offload
 import navic.composeapp.generated.resources.option_enable_scrobbling
+import navic.composeapp.generated.resources.option_gapless_playback
 import navic.composeapp.generated.resources.option_lyrics_autoscroll
 import navic.composeapp.generated.resources.option_lyrics_beat_by_beat
 import navic.composeapp.generated.resources.option_lyrics_priority
 import navic.composeapp.generated.resources.option_min_duration_to_scrobble
 import navic.composeapp.generated.resources.option_replay_gain
 import navic.composeapp.generated.resources.option_scrobble_percentage
+import navic.composeapp.generated.resources.subtitle_audio_offload
 import navic.composeapp.generated.resources.subtitle_enable_scrobbling
+import navic.composeapp.generated.resources.subtitle_gapless_playback
 import navic.composeapp.generated.resources.title_behaviour
 import navic.composeapp.generated.resources.title_playback
 import org.jetbrains.compose.resources.stringResource
@@ -54,10 +58,12 @@ fun SettingsPlaybackScreen() {
 	var showLyricsPriorityDialog by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
-		topBar = { NestedTopBar(
-			{ Text(stringResource(Res.string.title_playback)) },
-			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
-		) }
+		topBar = {
+			NestedTopBar(
+				{ Text(stringResource(Res.string.title_playback)) },
+				hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+			)
+		}
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp
@@ -69,6 +75,28 @@ fun SettingsPlaybackScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 					.fadeFromTop()
 			) {
+				if (!listOf("ipados", "ios").contains(ctx.name.lowercase())) {
+					Form {
+						SettingSwitchRow(
+							title = { Text(stringResource(Res.string.option_replay_gain)) },
+							value = Settings.shared.replayGain,
+							onSetValue = { Settings.shared.replayGain = it }
+						)
+						SettingSwitchRow(
+							title = { Text(stringResource(Res.string.option_gapless_playback)) },
+							subtitle = { Text(stringResource(Res.string.subtitle_gapless_playback)) },
+							value = Settings.shared.gaplessPlayback,
+							onSetValue = { Settings.shared.gaplessPlayback = it }
+						)
+						SettingSwitchRow(
+							title = { Text(stringResource(Res.string.option_audio_offload)) },
+							subtitle = { Text(stringResource(Res.string.subtitle_audio_offload)) },
+							value = Settings.shared.audioOffload,
+							onSetValue = { Settings.shared.audioOffload = it }
+						)
+					}
+				}
+
 				FormTitle(stringResource(Res.string.action_lyrics))
 				Form {
 					SettingSwitchRow(
@@ -92,12 +120,6 @@ fun SettingsPlaybackScreen() {
 
 				FormTitle(stringResource(Res.string.title_behaviour))
 				Form {
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_replay_gain)) },
-						value = Settings.shared.replayGain,
-						onSetValue = { Settings.shared.replayGain = it }
-					)
-
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_enable_scrobbling)) },
 						subtitle = { Text(stringResource(Res.string.subtitle_enable_scrobbling)) },

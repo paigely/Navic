@@ -46,6 +46,8 @@
 	<string name="subtitle_system_font">If not, uses Google Sans.</string>
 	<string name="subtitle_playlist">Playlist</string>
 	<string	name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
+	<string name="subtitle_gapless_playback">Requires application restart. Experimental. If audio offload is enabled, this might not work on some hardware</string>
+	<string name="subtitle_audio_offload">Requires application restart. Experimental. If gapless playback is enabled, this might not work on some hardware</string>
 
 	<string name="option_player_background_style">Background style</string>
 	<string name="option_player_background_style_description">Choose static if you have performance issues</string>
@@ -90,6 +92,8 @@
 	<string	name="option_enable_scrobbling">Enable Scrobbling</string>
 	<string name="option_choose_theme">Application theme</string>
 	<string name="option_replay_gain">ReplayGain</string>
+	<string name="option_gapless_playback">Gapless playback</string>
+	<string name="option_audio_offload">Audio offload</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>
@@ -225,6 +229,8 @@
 	<string name="info_track_duration">Duration</string>
 	<string name="info_track_id">ID</string>
 	<string name="info_track_path">Path</string>
+	<string name="info_track_replay_gain">ReplayGain</string>
+	<string name="info_track_replay_gain_effective">ReplayGain effective value</string>
 	<string name="info_update_app">A new version of Navic is available.</string>
 	<string name="info_unknown_share">Share %1$s</string>
 	<string name="info_shared_by">Shared by %1$s</string>

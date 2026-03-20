@@ -19,11 +19,13 @@ import paige.navic.icons.outlined.SwitchOn
 
 @Composable
 fun SettingSwitch(
+	modifier: Modifier = Modifier,
 	checked: Boolean,
 	onCheckedChange: (Boolean) -> Unit,
 	enabled: Boolean = true
 ) {
 	Switch(
+		modifier = modifier,
 		checked = checked,
 		onCheckedChange = onCheckedChange,
 		enabled = enabled,

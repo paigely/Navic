@@ -16,6 +16,7 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
+import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
@@ -35,7 +36,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import paige.navic.MainActivity
 import paige.navic.R
+import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
+import paige.navic.utils.effectiveGain
 
 class PlaybackService : MediaSessionService() {
 	private var mediaSession: MediaSession? = null
@@ -71,6 +74,19 @@ class PlaybackService : MediaSessionService() {
 					true
 				)
 				setMediaNotificationProvider(notificationProvider)
+				trackSelectionParameters = trackSelectionParameters.buildUpon().setAudioOffloadPreferences(
+					TrackSelectionParameters.AudioOffloadPreferences
+						.Builder()
+						.setIsGaplessSupportRequired(Settings.shared.gaplessPlayback)
+						.setAudioOffloadMode(
+							if (Settings.shared.audioOffload) {
+								TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED
+							} else {
+								TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_DISABLED
+							}
+						)
+						.build()
+				).build()
 			}
 
 		scrobbleManager = AndroidScrobbleManager(player, serviceScope)
@@ -228,7 +244,18 @@ class AndroidMediaPlayerViewModel(
 					repeatMode = player.repeatMode
 				)
 			}
+			applyReplayGain()
 			updateProgress()
+		}
+	}
+
+	private fun applyReplayGain() {
+		if (Settings.shared.replayGain) {
+			(_uiState.value.currentTrack)?.replayGain?.let { replayGain ->
+				controller?.volume = replayGain.effectiveGain()
+			}
+		} else {
+			controller?.volume = 1f
 		}
 	}
 
