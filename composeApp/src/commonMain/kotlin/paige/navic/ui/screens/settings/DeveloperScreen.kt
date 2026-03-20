@@ -13,10 +13,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.title_bottom_app_bar
+import navic.composeapp.generated.resources.title_developer
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
-import paige.navic.ui.components.common.Form
+import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.utils.fadeFromTop
 
@@ -25,7 +25,7 @@ fun SettingsDeveloperScreen() {
 	val ctx = LocalCtx.current
 	Scaffold(
 		topBar = { NestedTopBar(
-			{ Text(stringResource(Res.string.title_bottom_app_bar)) },
+			{ Text(stringResource(Res.string.title_developer)) },
 			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 		) }
 	) { innerPadding ->
@@ -39,9 +39,7 @@ fun SettingsDeveloperScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 					.fadeFromTop()
 			) {
-				Form {
-
-				}
+				FormTitle("wip")
 			}
 		}
 	}

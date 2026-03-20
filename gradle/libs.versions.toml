@@ -74,7 +74,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version 
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version = "1.10.2" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.10.0" }
 
-subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.0-alpha04" }
+subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.0-alpha06" }
 
 [bundles]
 cmp = ["cmp-foundation", "cmp-material3", "cmp-material3-adaptive-nav", "cmp-material3-windowSize", "cmp-resources", "cmp-runtime", "cmp-ui"]
