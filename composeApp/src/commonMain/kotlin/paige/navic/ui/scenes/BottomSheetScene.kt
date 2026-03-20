@@ -124,7 +124,7 @@ internal class BottomSheetScene<T : Any>(
 				containerColor = if (isTransparent) {
 					Color.Transparent
 				} else {
-					BottomSheetDefaults.ContainerColor
+					MaterialTheme.colorScheme.surface
 				},
 				onDismissRequest = onBack,
 				properties = modalBottomSheetProperties,

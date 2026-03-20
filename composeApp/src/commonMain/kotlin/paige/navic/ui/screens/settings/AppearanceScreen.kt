@@ -35,8 +35,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.zt64.compose.pipette.CircularColorPicker
 import dev.zt64.compose.pipette.HsvColor
+import dev.zt64.compose.pipette.RingColorPicker
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_accent_colour
 import navic.composeapp.generated.resources.option_alphabetical_scroll
@@ -45,11 +45,10 @@ import navic.composeapp.generated.resources.option_choose_theme
 import navic.composeapp.generated.resources.option_cover_art_size
 import navic.composeapp.generated.resources.option_grid_items_per_row
 import navic.composeapp.generated.resources.option_use_marquee_text
-import navic.composeapp.generated.resources.subtitle_choose_font
-import navic.composeapp.generated.resources.subtitle_choose_theme
-import navic.composeapp.generated.resources.subtitle_grid_items_per_row
 import navic.composeapp.generated.resources.title_appearance
 import navic.composeapp.generated.resources.title_choose_font
+import navic.composeapp.generated.resources.title_layout
+import navic.composeapp.generated.resources.title_miscellaneous
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
@@ -60,6 +59,7 @@ import paige.navic.data.models.settings.enums.Theme
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
+import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.dialogs.ArtworkShapeDialog
 import paige.navic.ui.components.dialogs.GridSizeDialog
 import paige.navic.ui.components.dialogs.GridSizePreview
@@ -102,7 +102,7 @@ fun SettingsAppearanceScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.title_choose_font))
 							Text(
-								stringResource(Res.string.subtitle_choose_font),
+								Settings.shared.font.displayName,
 								style = MaterialTheme.typography.bodyMedium,
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
@@ -118,19 +118,17 @@ fun SettingsAppearanceScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_choose_theme))
 							Text(
-								stringResource(Res.string.subtitle_choose_theme),
+								stringResource(Settings.shared.theme.title),
 								style = MaterialTheme.typography.bodyMedium,
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
 						}
 					}
 
-					if (showThemeDialog) {
-						ThemeDialog(
-							presented = showThemeDialog,
-							onDismissRequest = { showThemeDialog = false }
-						)
-					}
+					ThemeDialog(
+						presented = showThemeDialog,
+						onDismissRequest = { showThemeDialog = false }
+					)
 
 					if (Settings.shared.theme == Theme.Seeded) {
 						var expanded by remember { mutableStateOf(false) }
@@ -139,10 +137,11 @@ fun SettingsAppearanceScreen() {
 							Box {
 								Box(
 									Modifier
+										.clip(CircleShape)
 										.background(
 											HsvColor(
 												Settings.shared.accentColourH, Settings.shared.accentColourS, Settings.shared.accentColourV
-											).toColor(), CircleShape
+											).toColor()
 										)
 										.size(40.dp)
 										.clickable {
@@ -157,7 +156,7 @@ fun SettingsAppearanceScreen() {
 										color = MaterialTheme.colorScheme.surfaceContainerHigh,
 										horizontalArrangement = Arrangement.Center
 									) {
-										CircularColorPicker(
+										RingColorPicker(
 											color = {
 												HsvColor(
 													Settings.shared.accentColourH,
@@ -166,9 +165,11 @@ fun SettingsAppearanceScreen() {
 												)
 											},
 											onColorChange = {
-												Settings.shared.accentColourH = it.hue
-												Settings.shared.accentColourS = it.saturation
-												Settings.shared.accentColourV = it.value
+												Settings.shared.apply {
+													accentColourH = it.hue
+													accentColourS = it.saturation
+													accentColourV = it.value
+												}
 											}
 										)
 									}
@@ -178,6 +179,7 @@ fun SettingsAppearanceScreen() {
 					}
 				}
 
+				FormTitle(stringResource(Res.string.title_layout))
 				Form {
 					FormRow(
 						onClick = {
@@ -217,7 +219,7 @@ fun SettingsAppearanceScreen() {
 							Column(Modifier.weight(1f)) {
 								Text(stringResource(Res.string.option_grid_items_per_row))
 								Text(
-									stringResource(Res.string.subtitle_grid_items_per_row),
+									Settings.shared.gridSize.label,
 									style = MaterialTheme.typography.bodyMedium,
 									color = MaterialTheme.colorScheme.onSurfaceVariant
 								)
@@ -257,6 +259,7 @@ fun SettingsAppearanceScreen() {
 					}
 				}
 
+				FormTitle(stringResource(Res.string.title_miscellaneous))
 				Form {
 					SettingSelectionRow(
 						title = { Text(stringResource(Res.string.option_use_marquee_text)) },

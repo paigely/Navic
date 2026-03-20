@@ -85,6 +85,8 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.PlayerBackgroundStyle
+import paige.navic.data.models.settings.enums.PlayerSliderStyle
 import paige.navic.data.models.settings.enums.ToolbarPosition
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
@@ -459,7 +461,8 @@ fun PlayerScreen() {
 
 	val progressBar = @Composable {
 		val waveHeight by animateDpAsState(
-			if (!playerState.isPaused && Settings.shared.useWavySlider)
+			if (!playerState.isPaused
+				&& Settings.shared.playerSliderStyle == PlayerSliderStyle.Squiggly)
 				6.dp
 			else 0.dp
 		)
@@ -483,10 +486,15 @@ fun PlayerScreen() {
 	}
 
 	Box(Modifier.fillMaxSize()) {
-		BlendBackground(
-			painter = sharedPainter,
-			isPaused = playerState.isPaused
-		)
+		when (Settings.shared.playerBackgroundStyle) {
+			PlayerBackgroundStyle.Static -> Unit
+			PlayerBackgroundStyle.Dynamic -> {
+				BlendBackground(
+					painter = sharedPainter,
+					isPaused = playerState.isPaused
+				)
+			}
+		}
 		if (!isPlayerCurrent) return@Box
 		BoxWithConstraints(
 			modifier = Modifier

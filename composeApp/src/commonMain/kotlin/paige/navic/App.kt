@@ -82,12 +82,12 @@ import paige.navic.ui.screens.SharesScreen
 import paige.navic.ui.screens.genres.GenresScreen
 import paige.navic.ui.screens.settings.BottomBarScreen
 import paige.navic.ui.screens.settings.FontsScreen
-import paige.navic.ui.screens.settings.NowPlayingScreen
-import paige.navic.ui.screens.settings.ScrobblingScreen
 import paige.navic.ui.screens.settings.SettingsAboutScreen
 import paige.navic.ui.screens.settings.SettingsAcknowledgementsScreen
 import paige.navic.ui.screens.settings.SettingsAppearanceScreen
-import paige.navic.ui.screens.settings.SettingsBehaviourScreen
+import paige.navic.ui.screens.settings.SettingsDeveloperScreen
+import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
+import paige.navic.ui.screens.settings.SettingsPlaybackScreen
 import paige.navic.ui.screens.settings.SettingsScreen
 import paige.navic.ui.screens.tracks.TrackInfoScreen
 import paige.navic.ui.screens.tracks.TracksScreen
@@ -288,13 +288,13 @@ private fun entryProvider(
 			BottomBarScreen()
 		}
 		entry<Screen.Settings.NowPlaying>(metadata = detailPane("settings")) {
-			NowPlayingScreen()
+			SettingsNowPlayingScreen()
 		}
-		entry<Screen.Settings.Behaviour>(metadata = detailPane("settings")) {
-			SettingsBehaviourScreen()
+		entry<Screen.Settings.Playback>(metadata = detailPane("settings")) {
+			SettingsPlaybackScreen()
 		}
-		entry<Screen.Settings.Scrobbling>(metadata = detailPane("settings")) {
-			ScrobblingScreen()
+		entry<Screen.Settings.Developer>(metadata = detailPane("settings")) {
+			SettingsDeveloperScreen()
 		}
 		entry<Screen.Settings.About>(metadata = detailPane("settings")) {
 			SettingsAboutScreen()

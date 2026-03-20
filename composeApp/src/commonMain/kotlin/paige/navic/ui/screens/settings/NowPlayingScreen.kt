@@ -1,12 +1,11 @@
 package paige.navic.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -19,37 +18,34 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.option_lyrics_autoscroll
-import navic.composeapp.generated.resources.option_lyrics_beat_by_beat
-import navic.composeapp.generated.resources.option_lyrics_priority
 import navic.composeapp.generated.resources.option_now_playing_toolbar_position
-import navic.composeapp.generated.resources.option_player_animate_background
-import navic.composeapp.generated.resources.option_use_wavy_slider
-import navic.composeapp.generated.resources.subtitle_lyrics_beat_by_beat
-import navic.composeapp.generated.resources.title_now_playing
+import navic.composeapp.generated.resources.option_player_background_style
+import navic.composeapp.generated.resources.option_player_background_style_description
+import navic.composeapp.generated.resources.option_player_slider_style
+import navic.composeapp.generated.resources.option_swipe_to_skip
+import navic.composeapp.generated.resources.title_player
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.PlayerBackgroundStyle
 import paige.navic.data.models.settings.enums.ToolbarPosition
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
-import paige.navic.ui.components.dialogs.LyricsPriorityDialog
+import paige.navic.ui.components.dialogs.PlayerSliderStyleDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.settings.SettingSelectionRow
 import paige.navic.ui.components.settings.SettingSwitchRow
 import paige.navic.utils.fadeFromTop
 
 @Composable
-fun NowPlayingScreen() {
+fun SettingsNowPlayingScreen() {
 	val ctx = LocalCtx.current
-	var showLyricsPriorityDialog by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
 		topBar = { NestedTopBar(
-			{ Text(stringResource(Res.string.title_now_playing)) },
+			{ Text(stringResource(Res.string.title_player)) },
 			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
-		) },
-		contentWindowInsets = WindowInsets.statusBars
+		) }
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp
@@ -63,28 +59,39 @@ fun NowPlayingScreen() {
 			) {
 				Form {
 					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_player_animate_background)) },
-						value = Settings.shared.animatePlayerBackground,
-						onSetValue = { Settings.shared.animatePlayerBackground = it }
+						title = { Text(stringResource(Res.string.option_swipe_to_skip)) },
+						value = Settings.shared.swipeToSkip,
+						onSetValue = { Settings.shared.swipeToSkip = it }
 					)
 
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_lyrics_autoscroll)) },
-						value = Settings.shared.lyricsAutoscroll,
-						onSetValue = { Settings.shared.lyricsAutoscroll = it }
+					SettingSelectionRow(
+						items = PlayerBackgroundStyle.entries,
+						label = { stringResource(it.displayName) },
+						selection = Settings.shared.playerBackgroundStyle,
+						onSelect = { Settings.shared.playerBackgroundStyle = it },
+						description = stringResource(Res.string.option_player_background_style_description),
+						title = { Text(stringResource(Res.string.option_player_background_style)) }
 					)
 
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_lyrics_beat_by_beat)) },
-						subtitle = { Text(stringResource(Res.string.subtitle_lyrics_beat_by_beat)) },
-						value = Settings.shared.lyricsBeatByBeat,
-						onSetValue = { Settings.shared.lyricsBeatByBeat = it }
-					)
+					var showSliderStyleDialog by rememberSaveable { mutableStateOf(false) }
+					FormRow(
+						onClick = {
+							showSliderStyleDialog = true
+						}
+					) {
+						Column(Modifier.weight(1f)) {
+							Text(stringResource(Res.string.option_player_slider_style))
+							Text(
+								stringResource(Settings.shared.playerSliderStyle.displayName),
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						}
+					}
 
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_use_wavy_slider)) },
-						value = Settings.shared.useWavySlider,
-						onSetValue = { Settings.shared.useWavySlider = it }
+					PlayerSliderStyleDialog(
+						presented = showSliderStyleDialog,
+						onDismissRequest = { showSliderStyleDialog = false }
 					)
 
 					SettingSelectionRow(
@@ -94,18 +101,8 @@ fun NowPlayingScreen() {
 						onSelect = { Settings.shared.nowPlayingToolbarPosition = it },
 						title = { Text(stringResource(Res.string.option_now_playing_toolbar_position)) }
 					)
-
-					FormRow(
-						onClick = { showLyricsPriorityDialog = true }
-					) {
-						Text(stringResource(Res.string.option_lyrics_priority))
-					}
 				}
 			}
 		}
-		LyricsPriorityDialog(
-			presented = showLyricsPriorityDialog,
-			onDismissRequest = { showLyricsPriorityDialog = false }
-		)
 	}
 }

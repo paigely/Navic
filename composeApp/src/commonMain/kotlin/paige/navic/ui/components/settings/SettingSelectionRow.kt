@@ -22,6 +22,7 @@ fun <Item> SettingSelectionRow(
 	title: @Composable () -> Unit,
 	items: List<Item>,
 	label: @Composable (item: Item) -> String,
+	description: String? = null,
 	selection: Item,
 	onSelect: (item: Item) -> Unit,
 	footer: (@Composable () -> Unit)? = null
@@ -39,7 +40,12 @@ fun <Item> SettingSelectionRow(
 						color = MaterialTheme.colorScheme.onSurfaceVariant
 					)
 				) {
-					Text(label(selection))
+					Text(buildString {
+						append(label(selection))
+						description?.let { description ->
+							append(" // $description")
+						}
+					})
 				}
 				SelectionDropdown(
 					items = items,

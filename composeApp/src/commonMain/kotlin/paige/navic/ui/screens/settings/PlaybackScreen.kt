@@ -3,10 +3,8 @@ package paige.navic.ui.screens.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
@@ -17,36 +15,49 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.option_enable_scrobbling
+import navic.composeapp.generated.resources.option_lyrics_autoscroll
+import navic.composeapp.generated.resources.option_lyrics_beat_by_beat
+import navic.composeapp.generated.resources.option_lyrics_priority
 import navic.composeapp.generated.resources.option_min_duration_to_scrobble
+import navic.composeapp.generated.resources.option_replay_gain
 import navic.composeapp.generated.resources.option_scrobble_percentage
 import navic.composeapp.generated.resources.subtitle_enable_scrobbling
-import navic.composeapp.generated.resources.title_scrobbling
+import navic.composeapp.generated.resources.title_behaviour
+import navic.composeapp.generated.resources.title_now_playing
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
+import paige.navic.ui.components.common.FormTitle
+import paige.navic.ui.components.dialogs.LyricsPriorityDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.settings.SettingSwitchRow
 import paige.navic.utils.fadeFromTop
 import kotlin.math.roundToInt
 
 @Composable
-fun ScrobblingScreen() {
+fun SettingsPlaybackScreen() {
 	val ctx = LocalCtx.current
+	var showLyricsPriorityDialog by rememberSaveable { mutableStateOf(false) }
+
 	Scaffold(
 		topBar = { NestedTopBar(
-			{ Text(stringResource(Res.string.title_scrobbling)) },
+			{ Text(stringResource(Res.string.title_now_playing)) },
 			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
-		) },
-		contentWindowInsets = WindowInsets.statusBars
+		) }
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp
@@ -58,7 +69,35 @@ fun ScrobblingScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 					.fadeFromTop()
 			) {
+				FormTitle(stringResource(Res.string.action_lyrics))
 				Form {
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_lyrics_autoscroll)) },
+						value = Settings.shared.lyricsAutoscroll,
+						onSetValue = { Settings.shared.lyricsAutoscroll = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_lyrics_beat_by_beat)) },
+						value = Settings.shared.lyricsBeatByBeat,
+						onSetValue = { Settings.shared.lyricsBeatByBeat = it }
+					)
+
+					FormRow(
+						onClick = { showLyricsPriorityDialog = true }
+					) {
+						Text(stringResource(Res.string.option_lyrics_priority))
+					}
+				}
+
+				FormTitle(stringResource(Res.string.title_behaviour))
+				Form {
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_replay_gain)) },
+						value = Settings.shared.replayGain,
+						onSetValue = { Settings.shared.replayGain = it }
+					)
+
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_enable_scrobbling)) },
 						subtitle = { Text(stringResource(Res.string.subtitle_enable_scrobbling)) },
@@ -117,5 +156,9 @@ fun ScrobblingScreen() {
 				}
 			}
 		}
+		LyricsPriorityDialog(
+			presented = showLyricsPriorityDialog,
+			onDismissRequest = { showLyricsPriorityDialog = false }
+		)
 	}
 }

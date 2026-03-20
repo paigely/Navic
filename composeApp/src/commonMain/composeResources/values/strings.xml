@@ -8,8 +8,10 @@
 	<string name="title_appearance">Appearance</string>
 	<string name="title_behaviour">Behaviour</string>
 	<string name="title_now_playing">Now Playing</string>
-	<string name="title_bottom_app_bar">Bottom App Bar</string>
-	<string name="title_scrobbling">Scrobbling</string>
+	<string name="title_player">Player</string>
+	<string name="title_bottom_app_bar">Bottom bar</string>
+	<string name="title_playback">Playback</string>
+	<string name="title_developer">Developer options</string>
 	<string name="title_about">About</string>
 	<string name="title_acknowledgements">Acknowledgements</string>
 	<string name="title_delete_playlist">Delete playlist?</string>
@@ -25,33 +27,35 @@
 	<string name="title_source">Source code</string>
 	<string name="title_chat">Chat</string>
 	<string name="title_shares">Shares</string>
-	<string name="title_choose_font">Choose app font</string>
+	<string name="title_choose_font">Application font</string>
 	<string name="title_fonts_inbuilt">In-built</string>
 	<string name="title_fonts_external">External</string>
 	<string name="title_more_by_artist">More by %1$s</string>
 	<string name="title_genres">Genres</string>
 	<string name="title_navigation_bar">Navigation Bar</string>
-	<string name="title_player_bar">Player Bar</string>
+	<string name="title_player_bar">Mini Player</string>
+	<string name="title_miscellaneous">Miscellaneous</string>
+	<string name="title_layout">Layout</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
-	<string name="subtitle_behaviour">Change how things work</string>
-	<string name="subtitle_now_playing">Customize the main player</string>
-	<string name="subtitle_bottom_app_bar">Customize the bottom player and navigation bar</string>
-	<string name="subtitle_scrobbling">Scrobble the music you listen to</string>
+	<string name="subtitle_now_playing">Customise the main fullscreen player</string>
+	<string name="subtitle_bottom_app_bar">Customise the bottom bar &amp; mini player</string>
+	<string name="subtitle_playback">Audio behaviour, scrobbling, lyrics</string>
+	<string name="subtitle_developer">Debugging, testing</string>
 	<string name="subtitle_about">App info, version, licenses</string>
 	<string name="subtitle_system_font">If not, uses Google Sans.</string>
-	<string name="subtitle_lyrics_beat_by_beat">Use a fake beat by beat gradient effect.</string>
-	<string name="subtitle_grid_items_per_row">The size of grids across the app</string>
 	<string name="subtitle_playlist">Playlist</string>
 	<string	name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
-	<string name="subtitle_choose_theme">Choose from a selection of themes</string>
-	<string name="subtitle_choose_font">Choose a font to use across the app</string>
 
-	<string name="option_system_font">Use system font</string>
-	<string name="option_player_animate_background">Animate player background</string>
+	<string name="option_player_background_style">Background style</string>
+	<string name="option_player_background_style_description">Choose static if you have performance issues</string>
+	<string name="option_player_background_style_static">Static</string>
+	<string name="option_player_background_style_dynamic">Dynamic</string>
 	<string name="option_accent_colour">Accent colour</string>
-	<string name="option_use_wavy_slider">Wavy progress bar</string>
-	<string name="option_swipe_to_skip">Swipe to skip tracks</string>
+	<string name="option_player_slider_style">Slider style</string>
+	<string name="option_player_slider_style_flat">Flat</string>
+	<string name="option_player_slider_style_squiggly">Squiggly</string>
+	<string name="option_swipe_to_skip">Swipe to change songs</string>
 	<string name="option_artwork_shape">Artwork shape</string>
 	<string name="option_cover_art_size">Cover artwork size</string>
 	<string name="option_use_marquee_text">Text auto-scroll speed</string>
@@ -62,7 +66,7 @@
 	<string name="option_account_navidrome_instance">Instance URL</string>
 	<string name="option_account_username">Username</string>
 	<string name="option_account_password">Password</string>
-	<string name="option_lyrics_autoscroll">Lyrics auto scrolling</string>
+	<string name="option_lyrics_autoscroll">Lyrics auto-scrolling</string>
 	<string name="option_lyrics_beat_by_beat">Beat-by-beat lyrics</string>
 	<string name="option_sort_random">Random</string>
 	<string name="option_sort_newest">Recently added</string>
@@ -84,7 +88,8 @@
 	<string name="option_playlist_name">Name</string>
 	<string name="option_playlist_songs">Songs</string>
 	<string	name="option_enable_scrobbling">Enable Scrobbling</string>
-	<string name="option_choose_theme">Choose theme</string>
+	<string name="option_choose_theme">Application theme</string>
+	<string name="option_replay_gain">ReplayGain</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>
@@ -103,10 +108,10 @@
 	<string name="option_navigation_bar_style_short">Short</string>
 	<string name="option_navigation_bar_tabs">Reorder navigation bar tabs</string>
 
-	<string name="option_player_bar_style">Player bar style</string>
+	<string name="option_player_bar_style">Mini player style</string>
 	<string name="option_player_bar_style_unified">Unified</string>
 	<string name="option_player_bar_style_detached">Detached</string>
-	<string name="option_player_bar_progress_style">Player bar progress style</string>
+	<string name="option_player_bar_progress_style">Mini player progress style</string>
 	<string name="option_player_bar_progress_style_hidden">Hidden</string>
 	<string name="option_player_bar_progress_style_visible">Visible</string>
 	<string name="option_player_bar_progress_style_seekable">Seekable</string>

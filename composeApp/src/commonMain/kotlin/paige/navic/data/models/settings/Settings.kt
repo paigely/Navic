@@ -12,14 +12,13 @@ class Settings(
 ) : BasePreferenceManager(settings) {
 	var font by preference(FontOption.GoogleSans)
 	var fontPath by preference("")
-	var animatePlayerBackground by preference(true)
+	var playerBackgroundStyle by preference(PlayerBackgroundStyle.Dynamic)
 	var swipeToSkip by preference(true)
 	var artGridRounding by preference(16f)
 	var gridSize by preference(GridSize.TwoByTwo)
 	var artGridItemSize by preference(150f)
 	var marqueeSpeed by preference(MarqueeSpeed.Slow)
 	var alphabeticalScroll by preference(false)
-	var useWavySlider by preference(true)
 	var lyricsAutoscroll by preference(true)
 	var lyricsBeatByBeat by preference(true)
 	var enableScrobbling by preference(true)
@@ -34,6 +33,8 @@ class Settings(
 	var playlistSortMode by preference(PlaylistSortMode.DateAdded)
 	var playlistsReversed by preference(false)
 	var showBarsOnAllScreens by preference(false)
+	var replayGain by preference(true)
+	var playerSliderStyle by preference(PlayerSliderStyle.Squiggly)
 
 	// navigation bar settings
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)
