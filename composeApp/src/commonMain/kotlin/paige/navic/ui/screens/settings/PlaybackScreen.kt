@@ -35,7 +35,7 @@ import navic.composeapp.generated.resources.option_replay_gain
 import navic.composeapp.generated.resources.option_scrobble_percentage
 import navic.composeapp.generated.resources.subtitle_enable_scrobbling
 import navic.composeapp.generated.resources.title_behaviour
-import navic.composeapp.generated.resources.title_now_playing
+import navic.composeapp.generated.resources.title_playback
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
@@ -55,7 +55,7 @@ fun SettingsPlaybackScreen() {
 
 	Scaffold(
 		topBar = { NestedTopBar(
-			{ Text(stringResource(Res.string.title_now_playing)) },
+			{ Text(stringResource(Res.string.title_playback)) },
 			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 		) }
 	) { innerPadding ->
