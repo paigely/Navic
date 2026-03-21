@@ -71,7 +71,8 @@ import paige.navic.utils.rememberTrackPainter
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerBar(
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	enabled: Boolean = true
 ) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
@@ -146,18 +147,21 @@ fun PlayerBar(
 		}
 	}
 
-	val enabled = playerState.currentTrack != null
+	val hasTrack = track != null
+	val isInteractive = enabled && hasTrack
 
 	Swiper(
 		onSwipeLeft = {
-			player.next()
+			if (isInteractive) player.next()
 		},
 		onSwipeRight = {
-			player.previous()
-		}
+			if (isInteractive) player.previous()
+		},
+		modifier = modifier,
+		enabled = isInteractive
 	) {
 		Box(
-			modifier = modifier
+			modifier = Modifier
 				.widthIn(max = if (detached) 600.dp else Dp.Unspecified)
 				.padding(bottom = outerPadding, start = outerPadding, end = outerPadding)
 				.align(Alignment.Center)
@@ -171,7 +175,8 @@ fun PlayerBar(
 							alpha = 0.25f
 						)
 					)
-					.pointerInput(Unit) {
+					.pointerInput(isInteractive) {
+						if (!isInteractive) return@pointerInput
 						var totalDrag = 0f
 						detectVerticalDragGestures(
 							onVerticalDrag = { _, dragAmount ->
@@ -258,7 +263,7 @@ fun PlayerBar(
 									player.pause()
 								}
 							},
-							enabled = enabled,
+							enabled = isInteractive,
 							colors = colors
 						) {
 							val painter = playPauseIconPainter(playerState.isPaused)
@@ -283,7 +288,7 @@ fun PlayerBar(
 								ctx.clickSound()
 								player.next()
 							},
-							enabled = enabled,
+							enabled = isInteractive,
 							colors = colors
 						) {
 							Icon(
