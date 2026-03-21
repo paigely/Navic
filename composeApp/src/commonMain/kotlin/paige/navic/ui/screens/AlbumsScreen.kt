@@ -96,7 +96,7 @@ fun AlbumsScreen(
 			SortButton(!nested, viewModel)
 		}
 	}
-	val isLoggedIn = SessionManager.isLoggedIn.collectAsState()
+	val isLoggedIn by SessionManager.isLoggedIn.collectAsState()
 
 	Scaffold(
 		topBar = {
@@ -123,7 +123,7 @@ fun AlbumsScreen(
 			isRefreshing = isRefreshing || albumsState is UiState.Loading,
 			onRefresh = { viewModel.refreshAlbums() }
 		) {
-			if (!isLoggedIn.value) {
+			if (!isLoggedIn) {
 				Text(
 					stringResource(Res.string.info_needs_log_in),
 					color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -145,7 +145,7 @@ fun AlbumsScreen(
 						is UiState.Success -> {
 							items(state.data, { it.id }) { album ->
 								AlbumsScreenItem(
-									modifier = Modifier.animateItem(),
+									modifier = Modifier.animateItem(fadeInSpec = null),
 									album = album,
 									viewModel = viewModel,
 									tab = "albums",
