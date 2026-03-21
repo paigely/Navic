@@ -83,9 +83,20 @@ fun TrackInfoScreen(track: Song) {
 					Res.string.info_track_replay_gain_effective to track.replayGain?.effectiveGain()
 				).forEach { (key, value) ->
 					FormRow {
-						Text(stringResource(key))
-						SelectionContainer {
-							Text("${value ?: stringResource(Res.string.info_unknown)}")
+						Column(Modifier.padding(vertical = 4.dp)) {
+							// The Label (e.g., "File Path")
+							Text(
+								text = stringResource(key),
+								style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
+								color = androidx.compose.material3.MaterialTheme.colorScheme.primary
+							)
+							// The Value (Wraps to 2 or 3 lines if needed)
+							SelectionContainer {
+								Text(
+									text = "${value ?: stringResource(Res.string.info_unknown)}",
+									style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
+								)
+							}
 						}
 					}
 				}
