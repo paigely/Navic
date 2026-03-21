@@ -80,7 +80,7 @@ fun ArtistsScreen(
 		},
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			if (Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}
