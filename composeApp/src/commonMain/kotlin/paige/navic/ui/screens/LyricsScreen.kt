@@ -82,7 +82,9 @@ import paige.navic.data.repositories.LyricWord
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
+import paige.navic.icons.outlined.Lyrics
 import paige.navic.icons.outlined.Share
+import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.viewmodels.LyricsViewModel
 import paige.navic.utils.UiState
@@ -110,18 +112,11 @@ fun LyricsScreen(
 	var showShareSheet by remember { mutableStateOf(false) }
 
 	val placeholder = @Composable {
-		Column(
+		ContentUnavailable(
 			modifier = Modifier.fillMaxSize(),
-			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.Center
-		) {
-			Text(
-				stringResource(Res.string.info_no_lyrics),
-				style = MaterialTheme.typography.headlineMedium,
-				textAlign = TextAlign.Center,
-				modifier = Modifier.alpha(.5f)
-			)
-		}
+			icon = Icons.Outlined.Lyrics,
+			label = stringResource(Res.string.info_no_lyrics)
+		)
 	}
 
 	val track = track ?: return placeholder()

@@ -56,12 +56,15 @@ import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_from_queue
 import navic.composeapp.generated.resources.action_reorder
+import navic.composeapp.generated.resources.info_no_queue
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.DragHandle
+import paige.navic.icons.outlined.PlaylistRemove
+import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.viewmodels.QueueViewModel
 import paige.navic.utils.DraggableListState
@@ -93,7 +96,9 @@ fun QueueScreen(
 		contentPadding = WindowInsets.statusBars.asPaddingValues()
 			+ WindowInsets.systemBars.asPaddingValues()
 			+ PaddingValues(vertical = 70.dp, horizontal = 16.dp),
-		verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
+		verticalArrangement = if (queue.isNotEmpty())
+			Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
+		else Arrangement.Center
 	) {
 		draggableItems(
 			state = draggableState,
@@ -122,6 +127,14 @@ fun QueueScreen(
 					player.removeFromQueue(index)
 				}
 			)
+		}
+		if (queue.isEmpty()) {
+			item {
+				ContentUnavailable(
+					icon = Icons.Outlined.PlaylistRemove,
+					label = stringResource(Res.string.info_no_queue)
+				)
+			}
 		}
 	}
 }

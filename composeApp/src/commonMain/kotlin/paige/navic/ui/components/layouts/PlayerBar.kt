@@ -310,7 +310,8 @@ fun PlayerBar(
 					} else {
 						MarqueeText(stringResource(Res.string.info_not_playing))
 					}
-				}
+				},
+				enabled = clicksEnabled
 			)
 			if (Settings.shared.playerBarProgressStyle == PlayerBarProgressStyle.Visible
 				|| Settings.shared.playerBarProgressStyle == PlayerBarProgressStyle.Seekable) {
@@ -346,7 +347,9 @@ fun PlayerBar(
 							.fillMaxWidth()
 							.height(14.dp)
 							.then(
-								if (track != null && Settings.shared.playerBarProgressStyle == PlayerBarProgressStyle.Seekable)
+								if (track != null
+									&& Settings.shared.playerBarProgressStyle == PlayerBarProgressStyle.Seekable
+									&& clicksEnabled)
 									Modifier.pointerInput(Unit) {
 										detectDragGestures(
 											onDragStart = {

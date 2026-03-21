@@ -2,7 +2,9 @@ package paige.navic.ui.screens.genres
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -19,9 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
+import navic.composeapp.generated.resources.info_no_genres
 import navic.composeapp.generated.resources.title_genres
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.session.SessionManager
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.Genre
+import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.RootBottomBar
@@ -82,13 +88,26 @@ fun GenresScreen(
 						Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
 					else Modifier,
 					contentPadding = innerPadding.withoutTop(),
-					state = viewModel.gridState
+					state = viewModel.gridState,
+					verticalArrangement = if ((state as? UiState.Success)?.data?.isEmpty() == true)
+						Arrangement.Center
+					else Arrangement.spacedBy(12.dp)
 				) {
 					when (state) {
 						is UiState.Error -> artGridError(state)
 						is UiState.Loading -> items(10) { GenreCardPlaceholder() }
-						is UiState.Success -> items(state.data, { it.genre.name }) { genre ->
-							GenreCard(genre = genre)
+						is UiState.Success -> {
+							items(state.data, { it.genre.name }) { genre ->
+								GenreCard(genre = genre)
+							}
+							if (state.data.isEmpty()) {
+								item(span = { GridItemSpan(maxLineSpan) }) {
+									ContentUnavailable(
+										icon = Icons.Outlined.Genre,
+										label = stringResource(Res.string.info_no_genres)
+									)
+								}
+							}
 						}
 					}
 				}

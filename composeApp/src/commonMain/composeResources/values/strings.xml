@@ -241,6 +241,12 @@
 	<string name="info_share_expired">Expired</string>
 	<string name="info_no_shares">No shares</string>
 	<string name="info_no_lyrics">No lyrics</string>
+	<string name="info_no_albums">No albums</string>
+	<string name="info_no_artists">No artists</string>
+	<string name="info_no_tracks">No tracks</string>
+	<string name="info_no_queue">Nothing queued</string>
+	<string name="info_no_genres">No genres</string>
+	<string name="info_no_playlists_short">No playlists</string>
 	<string name="info_lyrics_provider">Lyrics provided by %1$s</string>
 	<string name="info_image_failed_to_load">Failed to load</string>
 

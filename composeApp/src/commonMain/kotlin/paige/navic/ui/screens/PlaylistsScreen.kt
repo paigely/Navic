@@ -11,9 +11,11 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -43,6 +45,7 @@ import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.count_songs
 import navic.composeapp.generated.resources.info_needs_log_in
+import navic.composeapp.generated.resources.info_no_playlists_short
 import navic.composeapp.generated.resources.option_sort_ascending
 import navic.composeapp.generated.resources.option_sort_descending
 import navic.composeapp.generated.resources.title_create_playlist
@@ -62,6 +65,7 @@ import paige.navic.icons.outlined.Add
 import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Sort
+import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.SelectionDropdown
@@ -181,7 +185,10 @@ fun PlaylistsScreen(
 				ArtGrid(
 					modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
 					state = viewModel.gridState,
-					contentPadding = innerPadding.withoutTop()
+					contentPadding = innerPadding.withoutTop(),
+					verticalArrangement = if ((state as? UiState.Success)?.data?.isEmpty() == true)
+						Arrangement.Center
+					else Arrangement.spacedBy(12.dp)
 				) {
 					when (state) {
 						is UiState.Loading -> artGridPlaceholder()
@@ -189,7 +196,7 @@ fun PlaylistsScreen(
 						is UiState.Success -> {
 							items(state.data, { it.id }) { playlist ->
 								PlaylistsScreenItem(
-									modifier = Modifier.animateItem(),
+									modifier = Modifier.animateItem(fadeInSpec = null),
 									playlist = playlist,
 									tab = "playlists",
 									viewModel = viewModel,
@@ -200,6 +207,14 @@ fun PlaylistsScreen(
 										deletionId = newDeletionId
 									}
 								)
+							}
+							if (state.data.isEmpty()) {
+								item(span = { GridItemSpan(maxLineSpan) }) {
+									ContentUnavailable(
+										icon = Icons.Outlined.PlaylistRemove,
+										label = stringResource(Res.string.info_no_playlists_short)
+									)
+								}
 							}
 						}
 					}

@@ -47,6 +47,7 @@ fun Swiper(
 	modifier: Modifier = Modifier,
 	enabled: Boolean = true,
 	swipeThreshold: Float = 200f,
+	enabled: Boolean = true,
 	enableHaptics: Boolean = true,
 	background: @Composable (BoxScope.() -> Unit)? = null,
 	content: @Composable BoxScope.() -> Unit

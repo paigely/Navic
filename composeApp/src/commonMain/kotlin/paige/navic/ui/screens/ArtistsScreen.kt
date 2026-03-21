@@ -2,6 +2,7 @@ package paige.navic.ui.screens
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +32,7 @@ import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.count_albums
 import navic.composeapp.generated.resources.count_artists
+import navic.composeapp.generated.resources.info_no_artists
 import navic.composeapp.generated.resources.title_artists
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -41,8 +43,10 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
+import paige.navic.icons.outlined.Artist
 import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.AlphabeticalScroller
+import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.ErrorBox
@@ -119,7 +123,10 @@ fun ArtistsScreen(
 									Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)
 								else Modifier.fillMaxSize(),
 								state = viewModel.gridState,
-								contentPadding = innerPadding.withoutTop()
+								contentPadding = innerPadding.withoutTop(),
+								verticalArrangement = if (grouped.isEmpty())
+									Arrangement.Center
+								else Arrangement.spacedBy(12.dp)
 							) {
 								item(span = { GridItemSpan(maxLineSpan) }) {
 									Row(
@@ -153,6 +160,15 @@ fun ArtistsScreen(
 										}
 									}
 									artistsScreenItems(artists, viewModel, "artists")
+								}
+
+								if (grouped.isEmpty()) {
+									item(span = { GridItemSpan(maxLineSpan) }) {
+										ContentUnavailable(
+											icon = Icons.Outlined.Artist,
+											label = stringResource(Res.string.info_no_artists)
+										)
+									}
 								}
 							}
 							AlphabeticalScroller(

@@ -25,9 +25,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.SongCollection
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.info_no_tracks
+import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.Note
+import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.dialogs.ShareDialog
 import paige.navic.ui.components.layouts.RootBottomBar
@@ -107,6 +113,7 @@ fun TracksScreen(
 					.fillMaxSize()
 					.fadeFromTop(),
 				horizontalAlignment = Alignment.CenterHorizontally,
+
 				contentPadding = contentPadding.withoutTop() + PaddingValues(
 					top = 16.dp
 				),
@@ -158,6 +165,15 @@ fun TracksScreen(
 							track = track,
 							onRemoveFromPlaylist = { viewModel.removeFromPlaylist() },
 							starredState = starredState
+						)
+					}
+				}
+
+				if (tracks.songs.isEmpty()) {
+					item {
+						ContentUnavailable(
+							icon = Icons.Outlined.Note,
+							label = stringResource(Res.string.info_no_tracks)
 						)
 					}
 				}

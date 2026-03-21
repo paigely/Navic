@@ -219,7 +219,7 @@ fun SearchScreen(
 								seeAll = false
 							) { album ->
 								AlbumsScreenItem(
-									modifier = Modifier.animateItem().width(150.dp),
+									modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
 									album = album,
 									viewModel = albumsViewModel,
 									onSetShareId = { },
@@ -235,7 +235,7 @@ fun SearchScreen(
 								seeAll = false
 							) { artist ->
 								ArtistsScreenItem(
-									modifier = Modifier.animateItem().width(150.dp),
+									modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
 									artist = artist,
 									viewModel = artistsViewModel,
 									tab = "search"

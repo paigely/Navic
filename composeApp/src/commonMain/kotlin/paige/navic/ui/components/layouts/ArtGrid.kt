@@ -44,6 +44,8 @@ fun ArtGrid(
 	modifier: Modifier = Modifier,
 	state: LazyGridState = rememberLazyGridState(),
 	contentPadding: PaddingValues,
+	horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(12.dp),
+	verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(12.dp),
 	content: LazyGridScope.() -> Unit
 ) {
 	val ctx = LocalCtx.current
@@ -59,8 +61,8 @@ fun ArtGrid(
 			top = 16.dp,
 			end = 16.dp
 		),
-		verticalArrangement = Arrangement.spacedBy(12.dp),
-		horizontalArrangement = Arrangement.spacedBy(12.dp),
+		horizontalArrangement = horizontalArrangement,
+		verticalArrangement = verticalArrangement,
 		content = content
 	)
 }
@@ -168,7 +170,7 @@ fun LazyGridScope.artGridError(
 ) {
 	item(span = { GridItemSpan(maxLineSpan) }) {
 		ErrorBox(
-			modifier = Modifier.animateItem(),
+			modifier = Modifier.animateItem(fadeInSpec = null),
 			error = state
 		)
 	}

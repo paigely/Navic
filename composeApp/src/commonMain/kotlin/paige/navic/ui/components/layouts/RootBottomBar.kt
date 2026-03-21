@@ -52,7 +52,8 @@ fun RootBottomBar(
 				translationY = ((1f - progress) * (size.height * 2)).coerceAtLeast(
 					if (Settings.shared.playerBarStyle == PlayerBarStyle.Detached) -2048f else 0f
 				)
-			}
+			},
+			clicksEnabled = !scrolled
 		)
 		BottomBar(
 			containerColor = if (Settings.shared.playerBarStyle == PlayerBarStyle.Detached)
@@ -64,7 +65,8 @@ fun RootBottomBar(
 				translationY =((1f - progress) * size.height).coerceAtLeast(
 					if (Settings.shared.playerBarStyle == PlayerBarStyle.Detached) -2048f else 0f
 				)
-			}
+			},
+			enabled = !scrolled
 		)
 	}
 }

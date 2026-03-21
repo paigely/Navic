@@ -102,6 +102,7 @@ fun BottomBar(
 	modifier: Modifier = Modifier,
 	containerColor: Color = NavigationBarDefaults.containerColor,
 	windowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
+	enabled: Boolean = true,
 	viewModel: NavtabsViewModel = viewModel {
 		NavtabsViewModel(
 			com.russhwolf.settings.Settings(),
@@ -139,6 +140,7 @@ fun BottomBar(
 
 					NavigationBarItem(
 						selected = selected,
+						enabled = enabled,
 						onClick = {
 							ctx.clickSound()
 							backStack.apply {
@@ -192,6 +194,7 @@ fun BottomBar(
 							NavigationItemIconPosition.Start
 						else NavigationItemIconPosition.Top,
 						selected = backStack.last() == item.destination,
+						enabled = enabled,
 						onClick = {
 							ctx.clickSound()
 							backStack.apply {
