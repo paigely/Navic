@@ -225,7 +225,7 @@
 	<string name="info_track_format">Format</string>
 	<string name="info_track_sampling_rate">Sampling rate</string>
 	<string name="info_track_channel_count">Channel count</string>
-	<string name="info_track_number">Track Number</string>
+	<string name="info_track_number">Track number</string>
 	<string name="info_track_disc_number">Disc number</string>
 	<string name="info_track_genre">Genre</string>
 	<string name="info_track_duration">Duration</string>
