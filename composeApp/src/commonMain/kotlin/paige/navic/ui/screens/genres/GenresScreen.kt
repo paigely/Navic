@@ -28,6 +28,7 @@ import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.viewmodels.GenresViewModel
+import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 
@@ -54,8 +55,9 @@ fun GenresScreen(
 			}
 		},
 		bottomBar = {
+			val scrollManager = LocalBottomBarScrollManager.current
 			if (!nested) {
-				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
+				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}
 	) { innerPadding ->

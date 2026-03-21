@@ -73,6 +73,7 @@ import paige.navic.ui.viewmodels.AlbumsViewModel
 import paige.navic.ui.viewmodels.ArtistsViewModel
 import paige.navic.ui.viewmodels.GenresViewModel
 import paige.navic.ui.viewmodels.PlaylistsViewModel
+import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 import kotlin.time.Duration
@@ -110,7 +111,10 @@ fun LibraryScreen(
 
 	Scaffold(
 		topBar = { RootTopBar({ Text(stringResource(Res.string.title_library)) }, scrollBehavior) },
-		bottomBar = { RootBottomBar(scrolled = gridState.lastScrolledForward) }
+		bottomBar = {
+			val scrollManager = LocalBottomBarScrollManager.current
+			RootBottomBar(scrolled = scrollManager.isTriggered)
+		}
 	) { innerPadding ->
 		PullToRefreshBox(
 			modifier = Modifier

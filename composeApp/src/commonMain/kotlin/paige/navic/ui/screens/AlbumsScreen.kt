@@ -72,6 +72,7 @@ import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.viewmodels.AlbumsViewModel
+import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 import kotlin.time.Duration
@@ -111,8 +112,9 @@ fun AlbumsScreen(
 			}
 		},
 		bottomBar = {
+			val scrollManager = LocalBottomBarScrollManager.current
 			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
-				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
+				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}
 	) { innerPadding ->

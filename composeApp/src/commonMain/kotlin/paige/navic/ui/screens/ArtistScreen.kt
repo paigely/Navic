@@ -105,6 +105,7 @@ import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.viewmodels.ArtistState
 import paige.navic.ui.viewmodels.ArtistViewModel
+import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 import paige.navic.utils.fadeFromTop
 
@@ -138,8 +139,9 @@ fun ArtistScreen(
 			)
 		},
 		bottomBar = {
+			val scrollManager = LocalBottomBarScrollManager.current
 			if (Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
-				RootBottomBar(scrolled = viewModel.scrollState.lastScrolledForward)
+				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}
 	) { contentPadding ->

@@ -32,10 +32,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -92,6 +94,8 @@ import paige.navic.ui.screens.settings.SettingsScreen
 import paige.navic.ui.screens.tracks.TrackInfoScreen
 import paige.navic.ui.screens.tracks.TracksScreen
 import paige.navic.ui.theme.NavicTheme
+import paige.navic.utils.BottomBarScrollManager
+import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.checkForUpdate
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -124,6 +128,9 @@ fun App() {
 	val imageBuilder = remember { ImageRequest.Builder(platformContext).crossfade(true) }
 	val snackbarState = remember { SnackbarHostState() }
 	val density = LocalDensity.current
+	val scrollManager = remember {
+		BottomBarScrollManager(with(density) { 50.dp.toPx() })
+	}
 
 	// todo: this should survive config changes but im lazy ykyk
 	LaunchedEffect(Unit) {
@@ -148,10 +155,12 @@ fun App() {
 			LocalImageBuilder provides imageBuilder,
 			LocalSnackbarState provides snackbarState,
 			LocalShareManager provides shareManager,
-			LocalSharedTransitionScope provides this@SharedTransitionLayout
+			LocalSharedTransitionScope provides this@SharedTransitionLayout,
+			LocalBottomBarScrollManager provides scrollManager
 		) {
 			NavicTheme {
 				Scaffold(
+					modifier = Modifier.nestedScroll(scrollManager.connection),
 					snackbarHost = {
 						SnackbarHost(hostState = snackbarState) { snackbarData ->
 							Snackbar(

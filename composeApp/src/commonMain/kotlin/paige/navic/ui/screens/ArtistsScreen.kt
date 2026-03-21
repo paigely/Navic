@@ -53,6 +53,7 @@ import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.viewmodels.ArtistsViewModel
+import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 
@@ -74,8 +75,9 @@ fun ArtistsScreen(
 			}
 		},
 		bottomBar = {
-			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
-				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
+			val scrollManager = LocalBottomBarScrollManager.current
+			if (Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}
 	) { innerPadding ->

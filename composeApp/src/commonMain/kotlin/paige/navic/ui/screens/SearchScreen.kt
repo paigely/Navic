@@ -90,6 +90,7 @@ import paige.navic.ui.components.layouts.horizontalSection
 import paige.navic.ui.viewmodels.AlbumsViewModel
 import paige.navic.ui.viewmodels.ArtistsViewModel
 import paige.navic.ui.viewmodels.SearchViewModel
+import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 
 enum class SearchCategory(val res: StringResource) {
@@ -140,8 +141,9 @@ fun SearchScreen(
 			}
 		},
 		bottomBar = {
+			val scrollManager = LocalBottomBarScrollManager.current
 			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
-				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
+				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}
 	) { contentPadding ->
