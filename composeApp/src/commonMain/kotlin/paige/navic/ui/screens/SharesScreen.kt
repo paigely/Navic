@@ -118,7 +118,7 @@ fun SharesScreen(
 						is UiState.Success -> {
 							items(state.data, { it.id }) { share ->
 								SharesScreenItem(
-									modifier = Modifier.animateItem(),
+									modifier = Modifier.animateItem(fadeInSpec = null),
 									share = share,
 									onSetDeletionId = { newDeletionId ->
 										deletionId = newDeletionId

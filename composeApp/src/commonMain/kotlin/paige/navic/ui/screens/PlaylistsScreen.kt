@@ -187,7 +187,7 @@ fun PlaylistsScreen(
 						is UiState.Success -> {
 							items(state.data, { it.id }) { playlist ->
 								PlaylistsScreenItem(
-									modifier = Modifier.animateItem(),
+									modifier = Modifier.animateItem(fadeInSpec = null),
 									playlist = playlist,
 									tab = "playlists",
 									viewModel = viewModel,

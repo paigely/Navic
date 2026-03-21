@@ -168,7 +168,7 @@ fun LazyGridScope.artGridError(
 ) {
 	item(span = { GridItemSpan(maxLineSpan) }) {
 		ErrorBox(
-			modifier = Modifier.animateItem(),
+			modifier = Modifier.animateItem(fadeInSpec = null),
 			error = state
 		)
 	}

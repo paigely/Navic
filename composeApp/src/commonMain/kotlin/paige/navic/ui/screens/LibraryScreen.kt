@@ -177,7 +177,7 @@ fun LibraryScreen(
 						seeAll = true
 					) { album ->
 						AlbumsScreenItem(
-							modifier = Modifier.animateItem().width(150.dp),
+							modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
 							album = album,
 							viewModel = albumsViewModel,
 							onSetShareId = { shareId = it },
@@ -192,7 +192,7 @@ fun LibraryScreen(
 						seeAll = true
 					) { playlist ->
 						PlaylistsScreenItem(
-							modifier = Modifier.animateItem().width(150.dp),
+							modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
 							playlist = playlist,
 							viewModel = playlistsViewModel,
 							onSetShareId = { shareId = it },
@@ -209,7 +209,7 @@ fun LibraryScreen(
 						seeAll = true
 					) { artist ->
 						ArtistsScreenItem(
-							modifier = Modifier.animateItem().width(150.dp),
+							modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
 							artist = artist,
 							viewModel = artistsViewModel,
 							tab = "library"
