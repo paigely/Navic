@@ -25,12 +25,16 @@ fun LazyListScope.tracksScreenMoreByArtistRow(
 			ArtCarousel(
 				title = stringResource(Res.string.title_more_by_artist, artist.name),
 				items = artist.album
-					.filter { it.id != tracks.id }
-					.sortedByDescending { it.playCount }
+					.filter { it.id != tracks.id }.sortedByDescending { it.playCount }
 			) { album ->
-				ArtCarouselItem(album.coverArtId, album.name) {
-					backStack.add(Screen.Tracks(album, tab))
-				}
+				ArtCarouselItem(
+					coverArtId = album.coverArtId,
+					title = album.name,
+					contentDescription = album.name,
+					onClick = {
+						backStack.add(Screen.Tracks(album, tab))
+					}
+				)
 			}
 		}
 	}

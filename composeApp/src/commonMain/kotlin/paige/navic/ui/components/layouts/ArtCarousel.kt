@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import paige.navic.LocalCtx
 import paige.navic.ui.components.common.CoverArt
@@ -60,23 +61,41 @@ fun <T> ArtCarousel(
 @Composable
 fun CarouselItemScope.ArtCarouselItem(
 	coverArtId: String?,
+	title: String, // Added this parameter
 	contentDescription: String?,
 	onClick: () -> Unit = {}
 ) {
 	val ctx = LocalCtx.current
 	val focusManager = LocalFocusManager.current
-	CoverArt(
-		coverArtId = coverArtId,
-		contentDescription = contentDescription,
+
+	Column(
 		modifier = Modifier
 			.fillMaxWidth()
-			.maskClip(MaterialTheme.shapes.large),
-		shape = RectangleShape,
-		onClick = {
-			ctx.clickSound()
-			focusManager.clearFocus(true)
-			onClick()
-		},
-		enabled = true
-	)
+	) {
+		CoverArt(
+			coverArtId = coverArtId,
+			contentDescription = contentDescription,
+			modifier = Modifier
+				.fillMaxWidth()
+				// Apply the carousel mask to the image only
+				.maskClip(MaterialTheme.shapes.large),
+			shape = RectangleShape,
+			onClick = {
+				ctx.clickSound()
+				focusManager.clearFocus(true)
+				onClick()
+			},
+			enabled = true
+		)
+
+		Text(
+			text = title,
+			style = MaterialTheme.typography.bodyMedium,
+			fontWeight = FontWeight.Medium,
+			maxLines = 1,
+			overflow = TextOverflow.Ellipsis,
+			modifier = Modifier
+				.padding(top = 8.dp, start = 4.dp, end = 4.dp)
+		)
+	}
 }
