@@ -30,7 +30,7 @@ A modern Navidrome client for Android and iOS.
 ## Translating
 You can help translate Navic by contributing on [Weblate](https://hosted.weblate.org/engage/navic/).
 
-[![Translation status](https://hosted.weblate.org/widget/navic/translations/svg-badge.svg)](https://hosted.weblate.org/engage/navic/)
+[![Translation status](https://hosted.weblate.org/widget/navic/navic/svg-badge.svg?threshold=0)](https://hosted.weblate.org/engage/navic/)
 
 ## Star History
 <a href="https://star-history.com/#paigely/Navic&Date">
