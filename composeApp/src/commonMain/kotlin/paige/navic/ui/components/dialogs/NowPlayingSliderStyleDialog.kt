@@ -29,15 +29,15 @@ import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
-import navic.composeapp.generated.resources.option_player_slider_style
+import navic.composeapp.generated.resources.option_now_playing_slider_style
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.PlayerSliderStyle
+import paige.navic.data.models.settings.enums.NowPlayingSliderStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlayerSliderStyleDialog(
+fun NowPlayingSliderStyleDialog(
 	presented: Boolean,
 	onDismissRequest: () -> Unit
 ) {
@@ -47,7 +47,7 @@ fun PlayerSliderStyleDialog(
 
 	AlertDialog(
 		title = {
-			Text(stringResource(Res.string.option_player_slider_style))
+			Text(stringResource(Res.string.option_now_playing_slider_style))
 		},
 		text = {
 			LazyVerticalGrid(
@@ -58,23 +58,23 @@ fun PlayerSliderStyleDialog(
 				horizontalArrangement = Arrangement.spacedBy(8.dp),
 				verticalArrangement = Arrangement.spacedBy(8.dp)
 			) {
-				PlayerSliderStyle.entries.forEach { style ->
+				NowPlayingSliderStyle.entries.forEach { style ->
 					item(key = style.ordinal) {
 						Option(
 							onClick = {
-								Settings.shared.playerSliderStyle = style
+								Settings.shared.nowPlayingSliderStyle = style
 							},
-							selected = Settings.shared.playerSliderStyle == style,
+							selected = Settings.shared.nowPlayingSliderStyle == style,
 							label = stringResource(style.displayName)
 						) {
 							when (style) {
-								PlayerSliderStyle.Flat -> {
+								NowPlayingSliderStyle.Flat -> {
 									Slider(
 										rememberSliderState(0.6767f),
 										modifier = Modifier.requiredWidth(200.dp).scale(.5f)
 									)
 								}
-								PlayerSliderStyle.Squiggly -> {
+								NowPlayingSliderStyle.Squiggly -> {
 									WavySlider(
 										rememberSliderState(0.6767f),
 										modifier = Modifier.requiredWidth(200.dp).scale(.5f),

@@ -12,7 +12,7 @@ class Settings(
 ) : BasePreferenceManager(settings) {
 	var font by preference(FontOption.GoogleSans)
 	var fontPath by preference("")
-	var playerBackgroundStyle by preference(PlayerBackgroundStyle.Dynamic)
+	var nowPlayingBackgroundStyle by preference(NowPlayingBackgroundStyle.Dynamic)
 	var swipeToSkip by preference(true)
 	var artGridRounding by preference(16f)
 	var gridSize by preference(GridSize.TwoByTwo)
@@ -35,14 +35,14 @@ class Settings(
 	var replayGain by preference(false)
 	var gaplessPlayback by preference(true)
 	var audioOffload by preference(false)
-	var playerSliderStyle by preference(PlayerSliderStyle.Squiggly)
+	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)
 
 	// navigation bar settings
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)
 	var bottomBarVisibilityMode by preference(BottomBarVisibilityMode.Default)
 	var navigationBarStyle by preference(NavigationBarStyle.Normal)
-	var playerBarStyle by preference(PlayerBarStyle.Detached)
-	var playerBarProgressStyle by preference(PlayerBarProgressStyle.Seekable)
+	var miniPlayerStyle by preference(MiniPlayerStyle.Detached)
+	var miniPlayerProgressStyle by preference(MiniPlayerProgressStyle.Seekable)
 
 	/**
 	 * If we have informed the user (on Android) about

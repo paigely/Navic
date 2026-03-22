@@ -8,10 +8,9 @@
 	<string name="title_appearance">Appearance</string>
 	<string name="title_behaviour">Behaviour</string>
 	<string name="title_now_playing">Now Playing</string>
-	<string name="title_player">Player</string>
-	<string name="title_bottom_app_bar">Bottom bar</string>
+	<string name="title_bottom_app_bar">Bottom Bar</string>
 	<string name="title_playback">Playback</string>
-	<string name="title_developer">Developer options</string>
+	<string name="title_developer">Developer Options</string>
 	<string name="title_about">About</string>
 	<string name="title_acknowledgements">Acknowledgements</string>
 	<string name="title_delete_playlist">Delete playlist?</string>
@@ -33,12 +32,12 @@
 	<string name="title_more_by_artist">More by %1$s</string>
 	<string name="title_genres">Genres</string>
 	<string name="title_navigation_bar">Navigation Bar</string>
-	<string name="title_player_bar">Mini Player</string>
+	<string name="title_mini_player">Mini Player</string>
 	<string name="title_miscellaneous">Miscellaneous</string>
 	<string name="title_layout">Layout</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
-	<string name="subtitle_now_playing">Customise the main fullscreen player</string>
+	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
 	<string name="subtitle_bottom_app_bar">Customise the bottom bar &amp; mini player</string>
 	<string name="subtitle_playback">Audio behaviour, scrobbling, lyrics</string>
 	<string name="subtitle_developer">Debugging, testing</string>
@@ -48,15 +47,15 @@
 	<string	name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
 	<string name="subtitle_gapless_playback">Requires application restart. Experimental. If audio offload is enabled, this might not work on some hardware</string>
 	<string name="subtitle_audio_offload">Requires application restart. Experimental. If gapless playback is enabled, this might not work on some hardware</string>
+	<string name="subtitle_now_playing_background_style">Choose static if you have performance issues</string>
 
-	<string name="option_player_background_style">Background style</string>
-	<string name="option_player_background_style_description">Choose static if you have performance issues</string>
-	<string name="option_player_background_style_static">Static</string>
-	<string name="option_player_background_style_dynamic">Dynamic</string>
+	<string name="option_now_playing_background_style">Background style</string>
+	<string name="option_now_playing_background_style_static">Static</string>
+	<string name="option_now_playing_background_style_dynamic">Dynamic</string>
 	<string name="option_accent_colour">Accent colour</string>
-	<string name="option_player_slider_style">Slider style</string>
-	<string name="option_player_slider_style_flat">Flat</string>
-	<string name="option_player_slider_style_squiggly">Squiggly</string>
+	<string name="option_now_playing_slider_style">Slider style</string>
+	<string name="option_now_playing_slider_style_flat">Flat</string>
+	<string name="option_now_playing_slider_style_squiggly">Squiggly</string>
 	<string name="option_swipe_to_skip">Swipe to change songs</string>
 	<string name="option_artwork_shape">Artwork shape</string>
 	<string name="option_cover_art_size">Cover artwork size</string>
@@ -112,13 +111,13 @@
 	<string name="option_navigation_bar_style_short">Short</string>
 	<string name="option_navigation_bar_tabs">Reorder navigation bar tabs</string>
 
-	<string name="option_player_bar_style">Mini player style</string>
-	<string name="option_player_bar_style_unified">Unified</string>
-	<string name="option_player_bar_style_detached">Detached</string>
-	<string name="option_player_bar_progress_style">Mini player progress style</string>
-	<string name="option_player_bar_progress_style_hidden">Hidden</string>
-	<string name="option_player_bar_progress_style_visible">Visible</string>
-	<string name="option_player_bar_progress_style_seekable">Seekable</string>
+	<string name="option_mini_player_style">Mini player style</string>
+	<string name="option_mini_player_style_unified">Unified</string>
+	<string name="option_mini_player_style_detached">Detached</string>
+	<string name="option_mini_player_progress_style">Mini player progress style</string>
+	<string name="option_mini_player_progress_style_hidden">Hidden</string>
+	<string name="option_mini_player_progress_style_visible">Visible</string>
+	<string name="option_mini_player_progress_style_seekable">Seekable</string>
 
 	<string name="theme_dynamic">Dynamic</string>
 	<string name="theme_subtitle_dynamic">Available on Android 12 and above</string>

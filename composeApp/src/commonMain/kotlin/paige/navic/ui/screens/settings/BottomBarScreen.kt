@@ -38,20 +38,20 @@ import navic.composeapp.generated.resources.option_bottom_bar_collapse_mode
 import navic.composeapp.generated.resources.option_bottom_bar_visibility_mode
 import navic.composeapp.generated.resources.option_navigation_bar_style
 import navic.composeapp.generated.resources.option_navigation_bar_tabs
-import navic.composeapp.generated.resources.option_player_bar_progress_style
-import navic.composeapp.generated.resources.option_player_bar_style
+import navic.composeapp.generated.resources.option_mini_player_progress_style
+import navic.composeapp.generated.resources.option_mini_player_style
 import navic.composeapp.generated.resources.option_swipe_to_skip
 import navic.composeapp.generated.resources.title_bottom_app_bar
 import navic.composeapp.generated.resources.title_navigation_bar
-import navic.composeapp.generated.resources.title_player_bar
+import navic.composeapp.generated.resources.title_mini_player
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarCollapseMode
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.data.models.settings.enums.NavigationBarStyle
-import paige.navic.data.models.settings.enums.PlayerBarProgressStyle
-import paige.navic.data.models.settings.enums.PlayerBarStyle
+import paige.navic.data.models.settings.enums.MiniPlayerProgressStyle
+import paige.navic.data.models.settings.enums.MiniPlayerStyle
 import paige.navic.data.models.settings.enums.ThemeMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
@@ -129,22 +129,22 @@ fun BottomBarScreen() {
 					}
 				}
 
-				FormTitle(stringResource(Res.string.title_player_bar))
+				FormTitle(stringResource(Res.string.title_mini_player))
 				Form {
 					SettingSelectionRow(
-						items = PlayerBarStyle.entries,
+						items = MiniPlayerStyle.entries,
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.playerBarStyle,
-						onSelect = { Settings.shared.playerBarStyle = it },
-						title = { Text(stringResource(Res.string.option_player_bar_style)) },
+						selection = Settings.shared.miniPlayerStyle,
+						onSelect = { Settings.shared.miniPlayerStyle = it },
+						title = { Text(stringResource(Res.string.option_mini_player_style)) },
 					)
 
 					SettingSelectionRow(
-						items = PlayerBarProgressStyle.entries,
+						items = MiniPlayerProgressStyle.entries,
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.playerBarProgressStyle,
-						onSelect = { Settings.shared.playerBarProgressStyle = it },
-						title = { Text(stringResource(Res.string.option_player_bar_progress_style)) },
+						selection = Settings.shared.miniPlayerProgressStyle,
+						onSelect = { Settings.shared.miniPlayerProgressStyle = it },
+						title = { Text(stringResource(Res.string.option_mini_player_progress_style)) },
 					)
 				}
 			}
@@ -169,10 +169,10 @@ private fun BottomBarPreview() {
 	}
 	val spec = MaterialTheme.motionScheme.defaultSpatialSpec<Dp>()
 	val padding by animateDpAsState(
-		if (Settings.shared.playerBarStyle == PlayerBarStyle.Detached) 12.dp else 32.dp, spec
+		if (Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached) 12.dp else 32.dp, spec
 	)
 	val rounding by animateDpAsState(
-		if (Settings.shared.playerBarStyle == PlayerBarStyle.Detached) 28.dp else 12.dp, spec
+		if (Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached) 28.dp else 12.dp, spec
 	)
 	Column(Modifier.padding(16.dp).navigationBarsPadding()) {
 		Text(

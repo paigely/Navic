@@ -33,8 +33,8 @@ import navic.composeapp.generated.resources.title_about
 import navic.composeapp.generated.resources.title_appearance
 import navic.composeapp.generated.resources.title_bottom_app_bar
 import navic.composeapp.generated.resources.title_developer
+import navic.composeapp.generated.resources.title_now_playing
 import navic.composeapp.generated.resources.title_playback
-import navic.composeapp.generated.resources.title_player
 import navic.composeapp.generated.resources.title_settings
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -79,7 +79,7 @@ fun SettingsScreen() {
 					destination = Screen.Settings.NowPlaying,
 					icon = Icons.Filled.Play,
 					iconSize = 24.dp,
-					title = Res.string.title_player,
+					title = Res.string.title_now_playing,
 					subtitle = Res.string.subtitle_now_playing
 				)
 				PageRow(

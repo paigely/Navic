@@ -110,7 +110,7 @@ internal class BottomSheetScene<T : Any>(
 			val backStack = LocalNavStack.current
 
 			val currentScreen = backStack.lastOrNull()
-			val isPlayerCurrent = currentScreen is Screen.Player
+			val isPlayerCurrent = currentScreen is Screen.NowPlaying
 			val isPlayerMode = screenType == "player" && isPlayerCurrent
 			val isStandardMode = screenType != "player" && !isPlayerCurrent
 
