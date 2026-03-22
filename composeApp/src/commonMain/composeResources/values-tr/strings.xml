@@ -1,6 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Navic</string>
-
     <string name="title_library">Kütüphane</string>
     <string name="title_playlists">Çalma Listeleri</string>
     <string name="title_settings">Ayarlar</string>
@@ -30,7 +30,6 @@
     <string name="title_fonts_external">Harici</string>
     <string name="title_more_by_artist">%1$s - Diğer Parçalar</string>
     <string name="title_genres">Türler</string>
-
     <string name="subtitle_appearance">Uygulamanın temasını ve renklerini değiştirin</string>
     <string name="subtitle_behaviour">İşleyiş biçimini değiştirin</string>
     <string name="subtitle_now_playing">Ana oynatıcıyı özelleştirin</string>
@@ -48,7 +47,6 @@
     <string name="subtitle_choose_theme">Bir tema seçin</string>
     <string name="subtitle_choose_font">Uygulama genelinde kullanılacak bir yazı tipi seçin</string>
     <string name="suibtitle_progress_in_bar_is_seekable">Oynatıcı çubuğunda ilerleme sürüklemesini etkinleştirir</string>
-
     <string name="option_system_font">Sistem yazı tipini kullan</string>
     <string name="option_player_animate_background">Oynatıcı arka planını hareketlendir</string>
     <string name="option_accent_colour">Vurgu rengi</string>
@@ -96,7 +94,6 @@
     <string name="option_now_playing_toolbar_position">Araç çubuğu konumu</string>
     <string name="option_position_top">Üst</string>
     <string name="option_position_bottom">Alt</string>
-
     <string name="theme_dynamic">Dinamik</string>
     <string name="theme_subtitle_dynamic">Android 12 ve üzeri sürümlerde mevcuttur</string>
     <string name="theme_seeded">Renklendirilmiş</string>
@@ -107,31 +104,25 @@
     <string name="theme_subtitle_apple_music">Kırmızı/pembe vurgulu bir tema</string>
     <string name="theme_spotify">Spotlight</string>
     <string name="theme_subtitle_spotify">Yeşil vurgulu bir tema</string>
-
     <string name="theme_mode_system">Sistem</string>
     <string name="theme_mode_dark">Karanlık</string>
     <string name="theme_mode_light">Aydınlık</string>
-
     <plurals name="count_songs">
         <item quantity="one">%1$d şarkı</item>
         <item quantity="other">%1$d şarkı</item>
     </plurals>
-
     <plurals name="count_albums">
         <item quantity="one">%1$d albüm</item>
         <item quantity="other">%1$d albüm</item>
     </plurals>
-
     <plurals name="count_playlists">
         <item quantity="one">%1$d çalma listesi</item>
         <item quantity="other">%1$d çalma listesi</item>
     </plurals>
-
     <plurals name="count_artists">
         <item quantity="one">%1$d sanatçı</item>
         <item quantity="other">%1$d sanatçı</item>
     </plurals>
-
     <string name="action_ok">Tamam</string>
     <string name="action_play">Oynat</string>
     <string name="action_new">Yeni</string>
@@ -171,13 +162,11 @@
     <string name="action_remove_from_queue">Sıradan Çıkar</string>
     <string name="action_search_history">Son Aramalar</string>
     <string name="action_remove_from_history">Geçmişten sil</string>
-
     <string name="notice_deleted_playlist">Çalma listesi silindi.</string>
     <string name="notice_deleted_share">Paylaşım silindi.</string>
     <string name="notice_copied">Panoya kopyalandı.</string>
     <string name="notice_expiry">%1$s içinde süresi dolacak.</string>
     <string name="notice_loading_lyrics">Şarkı sözleri yükleniyor...\nBu biraz zaman alabilir.</string>
-
     <string name="info_app_version">Navic %1$s</string>
     <string name="info_action_is_permanent">Bu işlem geri alınamaz</string>
     <string name="info_error">Bir şeyler ters gitti.</string>
@@ -215,7 +204,6 @@
     <string name="info_no_shares">Paylaşım yok</string>
     <string name="info_no_lyrics">Şarkı sözü yok</string>
     <string name="info_lyrics_provider">Şarkı sözleri %1$s tarafından sağlanmıştır</string>
-
     <string name="sideloading_warning_title">DUR, OKU!</string>
     <string name="sideloading_warning_subtitle">Google, Google Play Hizmetleri yüklü olan TÜM cihazlar için dışarıdan uygulama yüklemeyi (sideloading) sonlandırmayı planlıyor!\n</string>
     <string name="sideloading_warning_description">Bu değişikliğin kesin ayrıntıları henüz tam olarak bilinmese de, uygulama imzalayıcısı kendini Google\'a ve/veya herkese açık bir şekilde ifşa etmediği sürece TÜM dışarıdan yüklemelerin engellenmesiyle sonuçlanabilir.\n\nCihazınıza özel bir ROM (custom ROM) yükleyecek kadar bilgi sahibiyseniz, ŞİMDİ TAM ZAMANI.\n\nNeler yapabileceğiniz ve sesinizi nasıl duyurabileceğiniz hakkında daha fazla bilgi almak için tıklayın:</string>
