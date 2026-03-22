@@ -53,7 +53,7 @@ fun RootBottomBar(
 					if (Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
 				)
 			},
-			clicksEnabled = !scrolled
+			enabled = !scrolled
 		)
 		BottomBar(
 			containerColor = if (Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached)

@@ -311,7 +311,7 @@ fun MiniPlayer(
 						MarqueeText(stringResource(Res.string.info_not_playing))
 					}
 				},
-				enabled = clicksEnabled
+				enabled = enabled
 			)
 			if (Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Visible
 				|| Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable) {
@@ -349,7 +349,7 @@ fun MiniPlayer(
 							.then(
 								if (track != null
 									&& Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
-									&& clicksEnabled)
+									&& isInteractive)
 									Modifier.pointerInput(Unit) {
 										detectDragGestures(
 											onDragStart = {

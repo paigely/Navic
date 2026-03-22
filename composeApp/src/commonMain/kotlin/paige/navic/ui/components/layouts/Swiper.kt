@@ -45,7 +45,6 @@ fun Swiper(
 	onSwipeLeft: () -> Unit,
 	onSwipeRight: () -> Unit,
 	modifier: Modifier = Modifier,
-	enabled: Boolean = true,
 	swipeThreshold: Float = 200f,
 	enabled: Boolean = true,
 	enableHaptics: Boolean = true,
