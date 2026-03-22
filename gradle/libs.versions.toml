@@ -1,6 +1,6 @@
 [versions]
 #noinspection AndroidGradlePluginVersion
-agp = "8.13.2"
+agp = "9.1.0"
 #noinspection UnusedVersionCatalogEntry
 android-compileSdk = "36"
 #noinspection UnusedVersionCatalogEntry
@@ -10,7 +10,7 @@ android-targetSdk = "36"
 kotlin = "2.3.20"
 
 androidx-activity = "1.13.0"
-androidx-lifecycle = "2.9.6"
+androidx-lifecycle = "2.10.0"
 datastore = "1.2.1"
 
 compose = "1.11.0-alpha04"

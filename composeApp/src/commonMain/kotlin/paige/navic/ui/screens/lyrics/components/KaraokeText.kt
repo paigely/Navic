@@ -14,7 +14,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -52,6 +51,8 @@ fun LyricsScreenKaraokeText(
 		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
 	)
 
+	val contentColor = MaterialTheme.colorScheme.onSurface
+
 	Box(
 		modifier = modifier.clickable {
 			onClick()
@@ -62,7 +63,7 @@ fun LyricsScreenKaraokeText(
 			fontSize = 32.sp,
 			fontWeight = FontWeight(600),
 			style = MaterialTheme.typography.headlineLargeEmphasized,
-			modifier = Modifier.alpha(inactiveAlpha * 0.35f),
+			color = contentColor.copy(alpha = inactiveAlpha + 0.2f),
 			onTextLayout = { textLayoutResult = it }
 		)
 
@@ -72,6 +73,7 @@ fun LyricsScreenKaraokeText(
 				fontSize = 32.sp,
 				fontWeight = FontWeight(600),
 				style = MaterialTheme.typography.headlineLargeEmphasized,
+				color = contentColor,
 				modifier = if (lyricsBeatByBeat) Modifier.graphicsLayer(
 					compositingStrategy = CompositingStrategy.Offscreen
 				).drawWithCache {
@@ -110,8 +112,8 @@ fun LyricsScreenKaraokeText(
 							val endX = if (isRtl) lineLeft else lineRight
 
 							val brush = Brush.linearGradient(
-								0.0f to Color.White,
-								(startOffFadeIn / lineWidth).coerceIn(0f, 1f) to Color.White,
+								0.0f to contentColor,
+								(startOffFadeIn / lineWidth).coerceIn(0f, 1f) to contentColor,
 								(endOfFadeIn / lineWidth).coerceIn(0f, 1f) to Color.Transparent,
 								1.0f to Color.Transparent,
 								start = Offset(startX, 0f),
