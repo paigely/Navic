@@ -1,6 +1,7 @@
 package paige.navic.ui.screens.track
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -43,13 +44,15 @@ import paige.navic.utils.toHoursMinutesSeconds
 @Composable
 fun TrackDetailScreen(track: Song) {
 	Scaffold(
-		topBar = { NestedTopBar({ Text(track.title) }) }
+		topBar = { NestedTopBar({ Text(track.title) }) },
+		contentWindowInsets = WindowInsets(0, 0 , 0 ,0)
+
 	) { contentPadding ->
 		Column(
 			Modifier
-				.padding(contentPadding)
 				.verticalScroll(rememberScrollState())
-				.padding(top = 12.dp, end = 12.dp, start = 12.dp)
+				.padding(top = contentPadding.calculateTopPadding() + 12.dp)
+				.padding(horizontal = 12.dp)
 				.fadeFromTop()
 		) {
 			Form {
