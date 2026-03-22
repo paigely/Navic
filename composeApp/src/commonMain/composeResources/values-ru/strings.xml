@@ -17,7 +17,7 @@
     <string name="title_songs">Песни</string>
     <string name="title_artists">Исполнители</string>
     <string name="title_similar_artists">Похожие исполнители</string>
-    <string name="title_login_dialog">Логин в Navidrome</string>
+    <string name="title_login_dialog">Вход в Navidrome</string>
     <string name="title_source">Исходный код</string>
     <string name="title_chat">Чат</string>
     <string name="subtitle_appearance">Настройте как вещи выглядят</string>
