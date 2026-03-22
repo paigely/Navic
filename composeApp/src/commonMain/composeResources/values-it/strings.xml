@@ -36,7 +36,7 @@
     <string name="action_view_playlist">Vedi playlist</string>
     <string name="action_view_shares">Condivisioni</string>
     <string name="app_name">Navic</string>
-    <string name="info_action_is_permanent">Questa azione non può essere annullata!</string>
+    <string name="info_action_is_permanent">Questa azione non può essere annullata</string>
     <string name="info_app_version">Navic %1$s</string>
     <string name="info_error">Qualcosa è andato storto.</string>
     <string name="info_error_hide">Nascondi dettagli</string>
@@ -116,7 +116,7 @@
     <string name="option_use_detached_bar">Barra inferiore separata</string>
     <string name="option_use_marquee_text">Usa testo marquee</string>
     <string name="option_use_wavy_slider">Barra di avanzamento animata</string>
-    <string name="sideloading_warning_description">Sebbene i dettagli esatti di questo cambiamento non siano ancora completamente noti, potrebbe comportare il blocco DI QUALSIASI forma di sideloading, a meno che lo sviluppatore dell’app non riveli la propria identità a Google e/o pubblicamente.\n\nSe sei abbastanza esperto da installare una ROM personalizzata sul tuo dispositivo, ORA È IL MOMENTO DI FARLO.\nLeggi di più su cosa puoi fare e su come far sentire la tua voce.</string>
+    <string name="sideloading_warning_description">Sebbene i dettagli esatti di questo cambiamento non siano ancora completamente noti, potrebbe comportare il blocco DI QUALSIASI forma di sideloading, a meno che lo sviluppatore dell’app non riveli la propria identità a Google e/o pubblicamente.\n\nSe sei abbastanza esperto da installare una ROM personalizzata sul tuo dispositivo, ORA È IL MOMENTO DI FARLO.\n\nLeggi di più su cosa puoi fare e su come far sentire la tua voce</string>
     <string name="sideloading_warning_link_mask">qui.</string>
     <string name="sideloading_warning_subtitle">Google sta pianificando di eliminare il sideloading su TUTTI i dispositivi con Google Play Services installato!\n</string>
     <string name="sideloading_warning_title">LEGGI !!!!</string>
