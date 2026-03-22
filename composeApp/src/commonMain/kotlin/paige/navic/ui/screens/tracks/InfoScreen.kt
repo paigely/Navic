@@ -54,18 +54,15 @@ fun TrackInfoScreen(track: Song) {
 		) {
 			Form {
 				mapOf (
-					// --- 1. Primary Information ---
 					Res.string.info_track_name to track.title,
 					Res.string.info_track_artist to track.artistName,
 					Res.string.info_track_album to track.albumTitle,
 
-					// --- 2. Album & Classification ---
 					Res.string.info_track_number to track.trackNumber,
 					Res.string.info_track_disc_number to track.discNumber,
 					Res.string.info_track_year to track.year,
 					Res.string.info_track_genre to track.genre,
 
-					// --- 3. Audio Quality & Format ---
 					Res.string.info_track_duration to track.duration.toHoursMinutesSeconds(),
 					Res.string.info_track_format to track.mimeType,
 					Res.string.info_track_bitrate to "${track.bitRate} kbps",
@@ -73,24 +70,20 @@ fun TrackInfoScreen(track: Song) {
 					Res.string.info_track_sampling_rate to "${track.sampleRate} Hz",
 					Res.string.info_track_channel_count to track.audioChannelCount,
 
-					// --- 4. File Information ---
 					Res.string.info_track_file_size to track.fileSize.toFileSize(),
 					Res.string.info_track_path to track.filePath,
 
-					// --- 5. Audio Analysis (ReplayGain) ---
 					Res.string.info_track_replay_gain to track.replayGain?.trackGain?.let { "$it dB" },
 					Res.string.info_album_replay_gain to track.replayGain?.albumGain?.let { "$it dB" },
 					Res.string.info_track_replay_gain_effective to track.replayGain?.effectiveGain()
 				).forEach { (key, value) ->
 					FormRow {
 						Column(Modifier.padding(vertical = 4.dp)) {
-							// The Label (e.g., "File Path")
 							Text(
 								text = stringResource(key),
 								style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
 								color = androidx.compose.material3.MaterialTheme.colorScheme.primary
 							)
-							// The Value (Wraps to 2 or 3 lines if needed)
 							SelectionContainer {
 								Text(
 									text = "${value ?: stringResource(Res.string.info_unknown)}",

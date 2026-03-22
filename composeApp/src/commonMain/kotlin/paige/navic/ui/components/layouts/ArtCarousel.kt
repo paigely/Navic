@@ -61,7 +61,7 @@ fun <T> ArtCarousel(
 @Composable
 fun CarouselItemScope.ArtCarouselItem(
 	coverArtId: String?,
-	title: String, // Added this parameter
+	title: String,
 	contentDescription: String?,
 	onClick: () -> Unit = {}
 ) {
@@ -77,7 +77,6 @@ fun CarouselItemScope.ArtCarouselItem(
 			contentDescription = contentDescription,
 			modifier = Modifier
 				.fillMaxWidth()
-				// Apply the carousel mask to the image only
 				.maskClip(MaterialTheme.shapes.large),
 			shape = RectangleShape,
 			onClick = {
