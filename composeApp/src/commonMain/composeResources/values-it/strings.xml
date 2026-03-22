@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_add_all_to_playlist">Aggiungi tutte alla Playlist</string>
     <string name="action_add_to_another_playlist">Aggiungi ad un'altra Playlist</string>
@@ -170,4 +171,6 @@
     <string name="title_similar_artists">Artisti simili</string>
     <string name="title_songs">Brani</string>
     <string name="title_source">Codice Sorgente</string>
+    <string name="title_playback">Playback</string>
+    <string name="title_developer">Opzioni sviluppatore</string>
 </resources>
