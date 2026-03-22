@@ -97,10 +97,14 @@ fun LyricsScreen(
 	var wasPlayingBeforeSelection by remember { mutableStateOf(false) }
 	var showShareSheet by remember { mutableStateOf(false) }
 
+	val contentColor = MaterialTheme.colorScheme.onSurface
+
+
 	val placeholder = @Composable {
 		ContentUnavailable(
 			modifier = Modifier.fillMaxSize(),
 			icon = Icons.Outlined.Lyrics,
+			color = contentColor,
 			label = stringResource(Res.string.info_no_lyrics)
 		)
 	}

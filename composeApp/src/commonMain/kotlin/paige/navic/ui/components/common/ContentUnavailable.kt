@@ -19,7 +19,8 @@ import androidx.compose.ui.unit.dp
 fun ContentUnavailable(
 	modifier: Modifier = Modifier,
 	icon: ImageVector,
-	label: String
+	label: String,
+	color: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface
 ) {
 	Column(
 		modifier = modifier.fillMaxWidth().alpha(.6f),
@@ -29,11 +30,13 @@ fun ContentUnavailable(
 		Icon(
 			imageVector = icon,
 			contentDescription = null,
-			modifier = Modifier.size(48.dp)
+			modifier = Modifier.size(48.dp),
+			tint = color
 		)
 		Text(
 			label,
 			style = MaterialTheme.typography.headlineMedium,
+			color = color,
 			modifier = Modifier.widthIn(max = 400.dp)
 		)
 	}
