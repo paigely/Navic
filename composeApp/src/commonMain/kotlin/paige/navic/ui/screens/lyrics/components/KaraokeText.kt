@@ -63,7 +63,7 @@ fun LyricsScreenKaraokeText(
 			fontSize = 32.sp,
 			fontWeight = FontWeight(600),
 			style = MaterialTheme.typography.headlineLargeEmphasized,
-			color = contentColor.copy(alpha = inactiveAlpha + 0.2f),
+			color = contentColor.copy(alpha = (inactiveAlpha + 0.2f).coerceIn(0f, 1f)),
 			onTextLayout = { textLayoutResult = it }
 		)
 

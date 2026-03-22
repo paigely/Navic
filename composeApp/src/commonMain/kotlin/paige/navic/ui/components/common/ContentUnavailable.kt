@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
@@ -20,7 +21,7 @@ fun ContentUnavailable(
 	modifier: Modifier = Modifier,
 	icon: ImageVector,
 	label: String,
-	color: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface
+	color: Color = MaterialTheme.colorScheme.onSurface
 ) {
 	Column(
 		modifier = modifier.fillMaxWidth().alpha(.6f),
