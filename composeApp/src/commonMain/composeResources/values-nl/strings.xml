@@ -32,7 +32,7 @@
     <string name="title_layout">Layout</string>
     <string name="subtitle_appearance">Thema's, kleuren en layout</string>
     <string name="subtitle_now_playing">Pas het fullscreen "nu aan het spelen" view aan</string>
-    <string name="subtitle_bottom_app_bar">Pas de onderste balk en minispeler aan</string>
+    <string name="subtitle_bottom_app_bar">Pas de onderstaande balk en minispeler aan</string>
     <string name="subtitle_playback">Geluidsgedrag, scrobbling en lyrics</string>
     <string name="subtitle_developer">Debuggen en testen</string>
     <string name="subtitle_about">App informatie, versie en licensies</string>
@@ -48,7 +48,7 @@
     <string name="option_accent_colour">Accentkleur</string>
     <string name="option_now_playing_slider_style">Sliderstijl</string>
     <string name="option_now_playing_slider_style_flat">Vlak</string>
-    <string name="option_now_playing_slider_style_squiggly">Onderlijnd met golven</string>
+    <string name="option_now_playing_slider_style_squiggly">Kronkelig</string>
     <string name="option_swipe_to_skip">Swipe om van liedje te wisselen</string>
     <string name="option_artwork_shape">Albumcovervorm</string>
     <string name="option_cover_art_size">Albumcovergrootte</string>
@@ -88,7 +88,7 @@
     <string name="option_gapless_playback">Gapless playback</string>
     <string name="option_now_playing_toolbar_position">Werkbalkpositie</string>
     <string name="option_position_top">Top</string>
-    <string name="option_position_bottom">Bodem</string>
+    <string name="option_position_bottom">Onderaan</string>
     <string name="option_bottom_bar_collapse_mode">Klap modus in / Ingeklapte modus</string>
     <string name="option_bottom_bar_collapse_mode_never">Nooit</string>
     <string name="option_bottom_bar_visibility_mode">Zichtbaarheidsmodus</string>
@@ -213,4 +213,26 @@
     <string name="sideloading_warning_subtitle">Google is van plan om sideloaden voor ALLE apparaten met Google Play Services de kop in te slaan!\n</string>
     <string name="sideloading_warning_description">De exacte details zijn nog niet volledig geweten, maar dit kan ertoe leiden dat ALLE vormen van sideloaden worden geblokkeerd tenzij de appondertekenaar persoonsgegevens deelt met Google of zelfs publiekelijk toegankelijk maakt.\n\nAls je er genoeg kennis over hebt, IS HET NU DE TIJD OM EEN CUSTOM ROM OP JE APPARAAT TE ZETTEN\n\nLees alstublieft meer over wat je kan doen en je stem kunt laten horen</string>
     <string name="sideloading_warning_link_mask">hier.</string>
+    <string name="title_more_by_artist">Meer van %1$s</string>
+    <string name="option_lyrics_autoscroll">Lyrics automatisch scrollen</string>
+    <string name="option_sort_starred">Ster toegekend</string>
+    <string name="option_audio_offload">Audio offload</string>
+    <string name="option_bottom_bar_collapse_mode_on_scroll">Op scroll</string>
+    <plurals name="count_songs">
+        <item quantity="one">%1$d liedje</item>
+        <item quantity="other">%1$d liedjes</item>
+    </plurals>
+    <plurals name="count_albums">
+        <item quantity="one">%1$d album</item>
+        <item quantity="other">%1$d albums</item>
+    </plurals>
+    <plurals name="count_playlists">
+        <item quantity="one">%1$d playlist</item>
+        <item quantity="other">%1$d playlists</item>
+    </plurals>
+    <plurals name="count_artists">
+        <item quantity="one">%1$d artiest</item>
+        <item quantity="other">%1$d artiesten</item>
+    </plurals>
+    <string name="info_app_version">Navic %1$s</string>
 </resources>
