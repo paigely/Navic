@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_add_all_to_playlist">Alle zu einer Playlist hinzufügen</string>
     <string name="action_add_to_another_playlist">Zu einer anderen Playlist hinzufügen</string>
@@ -127,7 +128,7 @@
     <string name="title_delete_share">Freigabe löschen?</string>
     <string name="title_library">Bibliothek</string>
     <string name="title_login_dialog">Bei Navidrome anmelden</string>
-	<string name="title_now_playing">Wird gerade abgespielt</string>
+    <string name="title_now_playing">Wird gerade abgespielt</string>
     <string name="title_playlists">Playlists</string>
     <string name="title_scrobbling">Scrobbling</string>
     <string name="title_search">Suche</string>
@@ -135,4 +136,10 @@
     <string name="title_similar_artists">Ähnliche Künstler</string>
     <string name="title_songs">Lieder</string>
     <string name="title_source">Quellcode</string>
+    <string name="title_playback">Wiedergabe</string>
+    <string name="title_developer">Entwickleroptionen</string>
+    <string name="title_all">Alle</string>
+    <string name="title_choose_font">Schriftart</string>
+    <string name="title_fonts_inbuilt">Intern</string>
+    <string name="title_fonts_external">Extern</string>
 </resources>
