@@ -31,6 +31,7 @@ class ScrobbleManager(
 		accumulatedPlayTime = 0
 
 		progressJob?.cancel()
+		startProgressTracker()
 
 		scrobbleNowPlaying(mediaId)
 	}
