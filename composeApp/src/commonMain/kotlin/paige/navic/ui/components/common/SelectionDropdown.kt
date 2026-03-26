@@ -28,20 +28,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
@@ -89,15 +83,14 @@ fun <Item> SelectionDropdown(
 				Column(
 					modifier = Modifier.verticalScroll(rememberScrollState())
 				) {
-					items.forEachIndexed { index, item ->
+					items.forEach { item ->
 						SelectionDropdownItem(
 							label = label(item),
 							selected = selection == item,
 							onClick = {
 								onDismissRequest()
 								onSelect(item)
-							},
-							index = index
+							}
 						)
 						if (items.last() != item && !Settings.shared.theme.isMaterialLike()) {
 							HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest)
@@ -118,7 +111,6 @@ fun <Item> SelectionDropdown(
 fun SelectionDropdownItem(
 	label: String,
 	selected: Boolean,
-	index: Int,
 	onClick: () -> Unit
 ) {
 	val ctx = LocalCtx.current
@@ -149,13 +141,6 @@ fun SelectionDropdownItem(
 			).size(20.dp).alpha(alpha)
 		)
 	}
-	var visible by remember { mutableStateOf(false) }
-	val verticalPadding by animateDpAsState(if (visible) 13.dp else 5.dp)
-	val scaleY by animateFloatAsState(if (visible) 1f else 0.5f)
-	LaunchedEffect(Unit) {
-		delay(10L * index)
-		visible = true
-	}
 	Surface(
 		modifier = Modifier
 			.fillMaxWidth()
@@ -169,10 +154,7 @@ fun SelectionDropdownItem(
 		}
 	) {
 		Row(
-			modifier = Modifier.padding(
-				horizontal = 13.dp,
-				vertical = verticalPadding
-			).scale(1f, scaleY),
+			modifier = Modifier.padding(13.dp),
 			verticalAlignment = Alignment.CenterVertically,
 			horizontalArrangement = Arrangement.SpaceBetween
 		) {
