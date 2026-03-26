@@ -64,7 +64,6 @@ fun PlaylistListScreenSortButton(
 				SelectionDropdownItem(
 					label = stringResource(Res.string.option_sort_ascending),
 					selected = !Settings.shared.playlistsReversed,
-					index = 5,
 					onClick = {
 						Settings.shared.playlistsReversed = false
 						expanded = false
@@ -74,7 +73,6 @@ fun PlaylistListScreenSortButton(
 				SelectionDropdownItem(
 					label = stringResource(Res.string.option_sort_descending),
 					selected = Settings.shared.playlistsReversed,
-					index = 4,
 					onClick = {
 						Settings.shared.playlistsReversed = true
 						expanded = false
