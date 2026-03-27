@@ -142,4 +142,8 @@
     <string name="title_choose_font">Schriftart</string>
     <string name="title_fonts_inbuilt">Intern</string>
     <string name="title_fonts_external">Extern</string>
+    <string name="title_shares">Geteilte Inhalte</string>
+    <string name="title_more_by_artist">Mehr von %1$s</string>
+    <string name="title_genres">Genres</string>
+    <string name="title_navigation_bar">Navigationsleiste</string>
 </resources>
