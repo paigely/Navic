@@ -181,6 +181,13 @@ android {
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
 		versionCode = 19
 		versionName = "v1.0.0-alpha29"
+		ndk {
+			abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))
+			val isRelease = System.getenv("RELEASE")?.toBoolean() ?: false
+			if (!isRelease) {
+				abiFilters.add("x86_64")
+			}
+		}
 	}
 
 	signingConfigs {
