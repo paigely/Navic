@@ -28,8 +28,8 @@
     <string name="subtitle_now_playing">Personalice la vista de reproducción a pantalla completa</string>
     <string name="subtitle_bottom_app_bar">Personalice la barra inferior y el minirreproductor</string>
     <string name="subtitle_scrobbling">Registra automáticamente la música que escuchas</string>
-    <string name="subtitle_about">Versión, licencias</string>
-    <string name="subtitle_system_font">Por defecto, usa Google Sans.</string>
+    <string name="subtitle_about">Información, versión, licencias</string>
+    <string name="subtitle_system_font">Usa Google Sans de forma predeterminada.</string>
     <string name="subtitle_lyrics_beat_by_beat">Use a fake beat by beat gradient effect.</string>
     <string name="subtitle_grid_items_per_row">El tamaño de los elementos por cada fila</string>
     <string name="subtitle_use_marquee_text">Alternar el desplazamiento en textos grandes</string>
@@ -244,4 +244,20 @@
     <string name="sideloading_warning_link_mask">aquí.</string>
     <string name="info_track_replay_gain">ReplayGain por pista</string>
     <string name="info_album_replay_gain">ReplayGain por álbum</string>
+    <string name="info_no_shares">Ninguna compartición</string>
+    <string name="info_no_lyrics">Ninguna letra</string>
+    <string name="info_no_albums">Ningún álbum</string>
+    <string name="info_no_artists">Ningún artista</string>
+    <string name="info_no_tracks">Ninguna pista</string>
+    <string name="info_no_genres">Ningún género</string>
+    <string name="info_no_playlists_short">Ninguna lista de reproducción</string>
+    <string name="sideloading_warning_description">Aunque aún no se conocen todos los detalles de este cambio, esto podría dar lugar a que se bloquee TODA la instalación de aplicaciones desde fuentes externas, a menos que el firmante de la aplicación revele su identidad a Google o públicamente.\n\nSi tiene los conocimientos necesarios para instalar una ROM personalizada en su dispositivo, AHORA ES EL MOMENTO DE HACERLO.\n\nLea más sobre lo que puede hacer y cómo hacer oír su voz</string>
+    <string name="subtitle_audio_offload">Debe reiniciar la aplicación. Experimental. Si la reproducción sin pausas está activada, puede que no funcione en algunos dispositivos</string>
+    <string name="info_track_replay_gain_effective">Valor efectivo de ReplayGain</string>
+    <string name="option_audio_offload">Relegación de audio</string>
+    <string name="subtitle_gapless_playback">Debe reiniciar la aplicación. Experimental. Si la relegación de audio está activada, puede que no funcione en algunos dispositivos</string>
+    <string name="subtitle_now_playing_background_style">Elija Estático si tiene problemas de rendimiento</string>
+    <string name="option_mini_player_style_detached">Separado</string>
+    <string name="option_mini_player_progress_style_seekable">Desplazable</string>
+    <string name="info_unknown_share">Compartición %1$s</string>
 </resources>
