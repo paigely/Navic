@@ -1,8 +1,10 @@
 package paige.navic.domain.models
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 
+@Immutable
 @Serializable
 sealed interface DomainSongCollection {
 	val id: String

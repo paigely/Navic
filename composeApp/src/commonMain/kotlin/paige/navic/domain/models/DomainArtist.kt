@@ -1,8 +1,10 @@
 package paige.navic.domain.models
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant
 
+@Immutable
 @Serializable
 data class DomainArtist(
 	val id: String,

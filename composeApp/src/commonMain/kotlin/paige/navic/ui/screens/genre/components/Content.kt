@@ -7,18 +7,18 @@ import androidx.compose.ui.Modifier
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_genres
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.database.relations.GenreWithAlbums
+import paige.navic.domain.models.DomainGenre
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Genre
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.utils.UiState
 
 fun LazyGridScope.genreListScreenContent(
-	state: UiState<List<GenreWithAlbums>>
+	state: UiState<List<DomainGenre>>
 ) {
 	val data = state.data.orEmpty()
 	if (data.isNotEmpty()) {
-		items(data, { it.genre.genreName }) { genre ->
+		items(data, { it.name }) { genre ->
 			GenreListScreenCard(
 				modifier = Modifier.animateItem(),
 				genre = genre

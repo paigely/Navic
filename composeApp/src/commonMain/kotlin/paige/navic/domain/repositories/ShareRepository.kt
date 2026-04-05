@@ -1,8 +1,8 @@
 package paige.navic.domain.repositories
 
-import dev.zt64.subsonic.api.model.Share
+import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.session.SessionManager
 
 class ShareRepository {
-	suspend fun getShares(): List<Share> = SessionManager.api.getShares()
+	suspend fun getShares() = SessionManager.api.getShares().map { it.toDomainModel() }
 }

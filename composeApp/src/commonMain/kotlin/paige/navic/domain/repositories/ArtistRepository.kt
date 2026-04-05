@@ -1,5 +1,7 @@
 package paige.navic.domain.repositories
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -25,17 +27,17 @@ class ArtistRepository(
 ) {
 	private suspend fun getLocalData(
 		listType: ArtistListType
-	): List<DomainArtist> {
+	): ImmutableList<DomainArtist> {
 		return when (listType) {
 			ArtistListType.AlphabeticalByName -> artistDao.getArtistsAlphabeticalByName()
 			ArtistListType.Random -> artistDao.getArtistsRandom()
 			ArtistListType.Starred -> artistDao.getArtistsStarred()
-		}.map { it.toDomainModel() }
+		}.map { it.toDomainModel() }.toImmutableList()
 	}
 
 	private suspend fun refreshLocalData(
 		listType: ArtistListType
-	): List<DomainArtist> {
+	): ImmutableList<DomainArtist> {
 		dbRepository.syncArtists().getOrThrow()
 		return getLocalData(listType)
 	}
@@ -43,7 +45,7 @@ class ArtistRepository(
 	fun getArtistsFlow(
 		fullRefresh: Boolean,
 		listType: ArtistListType
-	): Flow<UiState<List<DomainArtist>>> = flow {
+	): Flow<UiState<ImmutableList<DomainArtist>>> = flow {
 		val localData = getLocalData(listType)
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))

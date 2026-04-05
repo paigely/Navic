@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
@@ -45,7 +46,7 @@ import paige.navic.ui.theme.defaultFont
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <Item> SelectionDropdown(
-	items: List<Item>,
+	items: ImmutableList<Item>,
 	label: @Composable (item: Item) -> String,
 	selection: Item,
 	onSelect: (item: Item) -> Unit,

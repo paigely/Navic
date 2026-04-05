@@ -24,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.option_sort_frequent
@@ -41,6 +40,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.Screen
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.History
 import paige.navic.icons.outlined.LibraryAdd
@@ -74,7 +74,7 @@ import kotlin.time.Duration
 fun LibraryScreen() {
 	val albumListViewModel = koinViewModel<AlbumListViewModel>(
 		key = "libraryAlbums",
-		parameters = { parametersOf(AlbumListType.Frequent) }
+		parameters = { parametersOf(DomainAlbumListType.Frequent) }
 	)
 	val albumListSelection by albumListViewModel.selectedAlbum.collectAsState()
 	val albumListStarredState by albumListViewModel.starredState.collectAsState()
@@ -145,25 +145,25 @@ fun LibraryScreen() {
 				libraryScreenOverviewButton(
 					icon = Icons.Outlined.LibraryAdd,
 					label = Res.string.option_sort_newest,
-					destination = Screen.AlbumList(true, AlbumListType.Newest),
+					destination = Screen.AlbumList(true, DomainAlbumListType.Newest),
 					start = true
 				)
 				libraryScreenOverviewButton(
 					icon = Icons.Outlined.Shuffle,
 					label = Res.string.option_sort_random,
-					destination = Screen.AlbumList(true, AlbumListType.Random),
+					destination = Screen.AlbumList(true, DomainAlbumListType.Random),
 					start = false
 				)
 				libraryScreenOverviewButton(
 					icon = Icons.Outlined.Star,
 					label = Res.string.option_sort_starred,
-					destination = Screen.AlbumList(true, AlbumListType.Starred),
+					destination = Screen.AlbumList(true, DomainAlbumListType.Starred),
 					start = true
 				)
 				libraryScreenOverviewButton(
 					icon = Icons.Outlined.History,
 					label = Res.string.option_sort_frequent,
-					destination = Screen.AlbumList(true, AlbumListType.Frequent),
+					destination = Screen.AlbumList(true, DomainAlbumListType.Frequent),
 					start = false
 				)
 				if (!isLoggedIn) {
@@ -177,7 +177,7 @@ fun LibraryScreen() {
 				} else {
 					horizontalSection(
 						title = Res.string.option_sort_recent,
-						destination = Screen.AlbumList(true, AlbumListType.Recent),
+						destination = Screen.AlbumList(true, DomainAlbumListType.Recent),
 						state = recentsState,
 						key = { it.id },
 						seeAll = true
@@ -236,7 +236,7 @@ fun LibraryScreen() {
 						title = Res.string.title_genres,
 						destination = Screen.GenreList(true),
 						state = genresState,
-						key = { it.genre.genreName },
+						key = { it.name },
 						seeAll = true
 					) { genreWithAlbums ->
 						GenreListScreenCard(genre = genreWithAlbums)

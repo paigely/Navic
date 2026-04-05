@@ -20,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.title_albums
@@ -30,6 +29,7 @@ import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.components.layouts.ArtGrid
@@ -48,7 +48,7 @@ import kotlin.time.Duration
 @Composable
 fun AlbumListScreen(
 	nested: Boolean = false,
-	listType: AlbumListType
+	listType: DomainAlbumListType
 ) {
 	val viewModel = koinViewModel<AlbumListViewModel>(
 		key = listType.toString(),

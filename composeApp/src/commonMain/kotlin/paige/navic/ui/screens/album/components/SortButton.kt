@@ -8,7 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import dev.zt64.subsonic.api.model.AlbumListType
+import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_sort_alphabetical_by_artist
 import navic.composeapp.generated.resources.option_sort_alphabetical_by_name
@@ -18,6 +18,7 @@ import navic.composeapp.generated.resources.option_sort_random
 import navic.composeapp.generated.resources.option_sort_recent
 import navic.composeapp.generated.resources.option_sort_starred
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
 import paige.navic.ui.components.common.SelectionDropdown
@@ -26,17 +27,17 @@ import paige.navic.ui.components.layouts.TopBarButton
 @Composable
 fun AlbumListScreenSortButton(
 	nested: Boolean,
-	currentListType: AlbumListType,
-	onSetListType: (listType: AlbumListType) -> Unit
+	currentListType: DomainAlbumListType,
+	onSetListType: (listType: DomainAlbumListType) -> Unit
 ) {
 	val items = remember {
-		listOf(
-			AlbumListType.Random,
-			AlbumListType.Newest,
-			AlbumListType.Frequent,
-			AlbumListType.Recent,
-			AlbumListType.Starred,
-			AlbumListType.AlphabeticalByArtist,
+		persistentListOf(
+			DomainAlbumListType.Random,
+			DomainAlbumListType.Newest,
+			DomainAlbumListType.Frequent,
+			DomainAlbumListType.Recent,
+			DomainAlbumListType.Starred,
+			DomainAlbumListType.AlphabeticalByArtist,
 		)
 	}
 	Box {
@@ -74,14 +75,14 @@ fun AlbumListScreenSortButton(
 }
 
 @Composable
-private fun AlbumListType.label() =
+private fun DomainAlbumListType.label() =
 	when (this) {
-		AlbumListType.Random -> stringResource(Res.string.option_sort_random)
-		AlbumListType.Newest -> stringResource(Res.string.option_sort_newest)
-		AlbumListType.Frequent -> stringResource(Res.string.option_sort_frequent)
-		AlbumListType.Recent -> stringResource(Res.string.option_sort_recent)
-		AlbumListType.AlphabeticalByName -> stringResource(Res.string.option_sort_alphabetical_by_name)
-		AlbumListType.AlphabeticalByArtist -> stringResource(Res.string.option_sort_alphabetical_by_artist)
-		AlbumListType.Starred -> stringResource(Res.string.option_sort_starred)
+		DomainAlbumListType.Random -> stringResource(Res.string.option_sort_random)
+		DomainAlbumListType.Newest -> stringResource(Res.string.option_sort_newest)
+		DomainAlbumListType.Frequent -> stringResource(Res.string.option_sort_frequent)
+		DomainAlbumListType.Recent -> stringResource(Res.string.option_sort_recent)
+		DomainAlbumListType.AlphabeticalByName -> stringResource(Res.string.option_sort_alphabetical_by_name)
+		DomainAlbumListType.AlphabeticalByArtist -> stringResource(Res.string.option_sort_alphabetical_by_artist)
+		DomainAlbumListType.Starred -> stringResource(Res.string.option_sort_starred)
 		else -> "$this"
 	}

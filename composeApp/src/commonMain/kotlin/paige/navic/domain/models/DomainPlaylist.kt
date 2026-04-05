@@ -1,9 +1,11 @@
 package paige.navic.domain.models
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 import kotlin.time.Instant
 
+@Immutable
 @Serializable
 data class DomainPlaylist(
 	override val id: String,

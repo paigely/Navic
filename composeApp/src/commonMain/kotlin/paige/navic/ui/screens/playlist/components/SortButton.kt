@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_sort_ascending
 import navic.composeapp.generated.resources.option_sort_descending
@@ -27,7 +28,7 @@ fun PlaylistListScreenSortButton(
 	nested: Boolean,
 	onSortPlaylists: () -> Unit
 ) {
-	val items = remember { PlaylistSortMode.entries }
+	val items = remember { PlaylistSortMode.entries.toImmutableList() }
 	Box {
 		var expanded by remember { mutableStateOf(false) }
 		if (!nested) {

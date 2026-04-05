@@ -1,6 +1,7 @@
 package paige.navic.ui.screens.track.components
 
 import androidx.compose.foundation.lazy.LazyListScope
+import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_more_by_artist
 import org.jetbrains.compose.resources.stringResource
@@ -19,7 +20,7 @@ fun LazyListScope.tracksScreenMoreByArtistRow(
 		val backStack = LocalNavStack.current
 		ArtCarousel(
 			title = stringResource(Res.string.title_more_by_artist, artistName),
-			items = artistAlbums.sortedByDescending { it.playCount }
+			items = artistAlbums.sortedByDescending { it.playCount }.toImmutableList()
 		) { album ->
 			ArtCarouselItem(
 				coverArtId = album.coverArtId,

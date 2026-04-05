@@ -20,7 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import dev.zt64.subsonic.api.model.AlbumInfo
+import kotlinx.collections.immutable.toPersistentList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_all_to_playlist
 import navic.composeapp.generated.resources.action_cancel_download
@@ -31,6 +31,7 @@ import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.database.entities.DownloadStatus
+import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
@@ -49,10 +50,10 @@ import kotlin.collections.orEmpty
 
 @Composable
 fun TracksScreenTopBar(
-    tracks: UiState<DomainSongCollection>,
-    albumInfoState: UiState<AlbumInfo>,
-    scrolled: Boolean,
-    onSetShareId: (shareId: String?) -> Unit,
+	tracks: UiState<DomainSongCollection>,
+	albumInfoState: UiState<DomainAlbumInfo>,
+	scrolled: Boolean,
+	onSetShareId: (shareId: String?) -> Unit,
 	isOnline: Boolean,
 	onDownloadAll: () -> Unit,
 	onCancelDownloadAll: () -> Unit,
@@ -171,7 +172,7 @@ fun TracksScreenTopBar(
 	if (playlistDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
-			tracks = (tracks as? UiState.Success)?.data?.songs.orEmpty(),
+			tracks = (tracks as? UiState.Success)?.data?.songs.orEmpty().toPersistentList(),
 			onDismissRequest = { playlistDialogShown = false }
 		)
 	}

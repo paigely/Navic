@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_now_playing_toolbar_position
 import navic.composeapp.generated.resources.option_now_playing_background_style
@@ -65,7 +66,7 @@ fun SettingsNowPlayingScreen() {
 					)
 
 					SettingSelectionRow(
-						items = NowPlayingBackgroundStyle.entries,
+						items = NowPlayingBackgroundStyle.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
 						selection = Settings.shared.nowPlayingBackgroundStyle,
 						onSelect = { Settings.shared.nowPlayingBackgroundStyle = it },
@@ -95,7 +96,7 @@ fun SettingsNowPlayingScreen() {
 					)
 
 					SettingSelectionRow(
-						items = ToolbarPosition.entries,
+						items = ToolbarPosition.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
 						selection = Settings.shared.nowPlayingToolbarPosition,
 						onSelect = { Settings.shared.nowPlayingToolbarPosition = it },

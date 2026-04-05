@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_albums
 import navic.composeapp.generated.resources.option_sort_frequent
@@ -198,7 +199,7 @@ fun ArtistDetailScreen(
 								}
 							ArtCarousel(
 								stringResource(Res.string.title_albums),
-								state.albums.sortedByDescending { album -> album.playCount }
+								state.albums.sortedByDescending { album -> album.playCount }.toImmutableList()
 							) { album ->
 								ArtCarouselItem(album.coverArtId, album.name, null) {
 									backStack.add(Screen.TrackList(album, "artist"))

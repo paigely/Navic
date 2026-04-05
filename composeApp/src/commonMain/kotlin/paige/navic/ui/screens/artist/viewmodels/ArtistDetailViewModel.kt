@@ -1,6 +1,7 @@
 package paige.navic.ui.screens.artist.viewmodels
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,7 @@ import paige.navic.shared.Logger
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.utils.UiState
 
+@Immutable
 data class ArtistState(
 	val artist: DomainArtist,
 	val albums: List<DomainAlbum>,

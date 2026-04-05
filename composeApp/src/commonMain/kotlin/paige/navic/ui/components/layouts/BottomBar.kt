@@ -54,7 +54,7 @@ import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.utils.UiState
 
 private enum class NavItem(
-	val destination: NavKey,
+	val destination: Screen,
 	val icon: ImageVector,
 	val iconUnselected: ImageVector = icon,
 	val label: StringResource

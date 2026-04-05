@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_bottom_bar_collapse_mode
 import navic.composeapp.generated.resources.option_bottom_bar_visibility_mode
@@ -76,7 +77,7 @@ fun BottomBarScreen() {
 					)
 
 					SettingSelectionRow(
-						items = BottomBarCollapseMode.entries,
+						items = BottomBarCollapseMode.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
 						selection = Settings.shared.bottomBarCollapseMode,
 						onSelect = { Settings.shared.bottomBarCollapseMode = it },
@@ -84,7 +85,7 @@ fun BottomBarScreen() {
 					)
 
 					SettingSelectionRow(
-						items = BottomBarVisibilityMode.entries,
+						items = BottomBarVisibilityMode.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
 						selection = Settings.shared.bottomBarVisibilityMode,
 						onSelect = { Settings.shared.bottomBarVisibilityMode = it },
@@ -95,7 +96,7 @@ fun BottomBarScreen() {
 				FormTitle(stringResource(Res.string.title_navigation_bar))
 				Form {
 					SettingSelectionRow(
-						items = NavigationBarStyle.entries,
+						items = NavigationBarStyle.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
 						selection = Settings.shared.navigationBarStyle,
 						onSelect = { Settings.shared.navigationBarStyle = it },
@@ -113,7 +114,7 @@ fun BottomBarScreen() {
 				FormTitle(stringResource(Res.string.title_mini_player))
 				Form {
 					SettingSelectionRow(
-						items = MiniPlayerStyle.entries,
+						items = MiniPlayerStyle.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
 						selection = Settings.shared.miniPlayerStyle,
 						onSelect = { Settings.shared.miniPlayerStyle = it },
@@ -121,7 +122,7 @@ fun BottomBarScreen() {
 					)
 
 					SettingSelectionRow(
-						items = MiniPlayerProgressStyle.entries,
+						items = MiniPlayerProgressStyle.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
 						selection = Settings.shared.miniPlayerProgressStyle,
 						onSelect = { Settings.shared.miniPlayerProgressStyle = it },

@@ -3,7 +3,6 @@ package paige.navic.ui.screens.track.viewmodels
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.zt64.subsonic.api.model.AlbumInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,12 +11,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import paige.navic.data.database.entities.DownloadStatus
+import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.TrackRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.managers.DownloadManager
 import paige.navic.managers.ConnectivityManager
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainSong
 import paige.navic.shared.Logger
 import paige.navic.utils.UiState
@@ -54,7 +55,7 @@ class TrackListViewModel(
 	private val _selectedIndex = MutableStateFlow<Int?>(null)
 	val selectedIndex: StateFlow<Int?> = _selectedIndex.asStateFlow()
 
-	private val _albumInfoState = MutableStateFlow<UiState<AlbumInfo>>(UiState.Loading())
+	private val _albumInfoState = MutableStateFlow<UiState<DomainAlbumInfo>>(UiState.Loading())
 	val albumInfoState = _albumInfoState.asStateFlow()
 
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
@@ -80,7 +81,7 @@ class TrackListViewModel(
 				if (localCollection is DomainAlbum) {
 					try {
 						val albumInfo = repository.getAlbumInfo(localCollection.id)
-						_albumInfoState.value = UiState.Success(albumInfo)
+						_albumInfoState.value = UiState.Success(albumInfo.toDomainModel())
 					} catch (e: Exception) {
 						_albumInfoState.value = UiState.Error(e)
 					}

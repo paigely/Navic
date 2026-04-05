@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_more
@@ -124,7 +125,7 @@ fun NowPlayingMoreButton() {
 	if (playlistDialogShown && track != null) {
 		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
-			tracks = listOf(track),
+			tracks = persistentListOf(track),
 			onDismissRequest = { playlistDialogShown = false }
 		)
 	}

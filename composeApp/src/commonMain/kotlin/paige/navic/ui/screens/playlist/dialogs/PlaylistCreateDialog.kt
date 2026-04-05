@@ -14,6 +14,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_ok
@@ -37,7 +39,7 @@ import paige.navic.utils.UiState
 fun PlaylistCreateDialog(
 	onDismissRequest: () -> Unit,
 	onRefresh: () -> Unit,
-	tracks: List<DomainSong> = emptyList(),
+	tracks: ImmutableList<DomainSong> = persistentListOf(),
 	navigateAfterwards: Boolean = true
 ) {
 	val viewModel = koinViewModel<PlaylistCreateDialogViewModel>(

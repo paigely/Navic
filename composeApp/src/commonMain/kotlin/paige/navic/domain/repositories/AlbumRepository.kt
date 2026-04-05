@@ -1,6 +1,5 @@
 package paige.navic.domain.repositories
 
-import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +11,7 @@ import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.utils.UiState
 import paige.navic.utils.sortedByListType
 import kotlin.time.Clock
@@ -22,7 +22,7 @@ class AlbumRepository(
 	private val dbRepository: DbRepository
 ) {
 	private suspend fun getLocalData(
-		listType: AlbumListType
+		listType: DomainAlbumListType
 	): List<DomainAlbum> {
 		return albumDao
 			.getAllAlbumsList()
@@ -31,7 +31,7 @@ class AlbumRepository(
 	}
 
 	private suspend fun refreshLocalData(
-		listType: AlbumListType
+		listType: DomainAlbumListType
 	): List<DomainAlbum> {
 		dbRepository.syncLibrarySongs().getOrThrow()
 		return getLocalData(listType)
@@ -39,7 +39,7 @@ class AlbumRepository(
 
 	fun getAlbumsFlow(
 		fullRefresh: Boolean,
-		listType: AlbumListType
+		listType: DomainAlbumListType
 	): Flow<UiState<List<DomainAlbum>>> = flow {
 		val localData = getLocalData(listType)
 		if (fullRefresh) {

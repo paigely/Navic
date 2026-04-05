@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation3.runtime.NavKey
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.subtitle_about
 import navic.composeapp.generated.resources.subtitle_appearance
@@ -129,7 +128,7 @@ fun SettingsScreen() {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PageRow(
-	destination: NavKey? = null,
+	destination: Screen? = null,
 	icon: ImageVector,
 	iconSize: Dp = 22.dp,
 	title: StringResource,

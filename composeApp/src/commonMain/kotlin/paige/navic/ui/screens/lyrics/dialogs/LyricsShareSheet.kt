@@ -59,6 +59,7 @@ import coil3.request.ImageRequest
 import com.materialkolor.utils.ColorUtils.calculateLuminance
 import dev.zt64.compose.pipette.CircularColorPicker
 import dev.zt64.compose.pipette.HsvColor
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_share_lyrics
@@ -81,7 +82,7 @@ import paige.navic.ui.components.common.FormRow
 @Composable
 fun LyricsShareSheet(
 	track: DomainSong,
-	selectedLyrics: List<String>,
+	selectedLyrics: ImmutableList<String>,
 	onDismiss: () -> Unit,
 	onShare: () -> Unit
 ) {

@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
@@ -395,7 +396,7 @@ fun LyricsScreen(
 				val sortedIndices = selectedIndices.sorted()
 				val stringsToShare = sortedIndices.mapNotNull { index ->
 					lyricsList.getOrNull(index)?.second
-				}
+				}.toImmutableList()
 
 				LyricsShareSheet(
 					track = track,

@@ -20,16 +20,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.materialkolor.rememberDynamicColorScheme
 import dev.zt64.compose.pipette.HsvColor
-import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_albums
 import org.jetbrains.compose.resources.pluralStringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.data.database.relations.GenreWithAlbums
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.ThemeMode
+import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.domain.models.DomainGenre
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.theme.defaultFont
 import kotlin.math.abs
@@ -37,7 +37,7 @@ import kotlin.math.abs
 @Composable
 fun GenreListScreenCard(
 	modifier: Modifier = Modifier,
-	genre: GenreWithAlbums
+	genre: DomainGenre
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
@@ -49,9 +49,9 @@ fun GenreListScreenCard(
 			ThemeMode.Light -> false
 		}
 	}
-	val seedColor = remember(genre.genre.genreName) {
+	val seedColor = remember(genre.name) {
 		HsvColor(
-			hue = abs(genre.genre.genreName.hashCode() % 360).toFloat(),
+			hue = abs(genre.name.hashCode() % 360).toFloat(),
 			saturation = 0.6f,
 			value = 0.5f
 		).toColor()
@@ -72,7 +72,7 @@ fun GenreListScreenCard(
 			ctx.clickSound()
 			backStack.add(Screen.AlbumList(
 				nested = true,
-				listType = AlbumListType.ByGenre(genre.genre.genreName)
+				listType = DomainAlbumListType.ByGenre(genre.name)
 			))
 		}
 	) {
@@ -112,7 +112,7 @@ fun GenreListScreenCard(
 				).align(Alignment.TopStart)
 			) {
 				Text(
-					genre.genre.genreName,
+					genre.name,
 					style = MaterialTheme.typography.titleMedium,
 					fontWeight = FontWeight(600),
 					fontFamily = defaultFont(round = 100f),
@@ -122,8 +122,8 @@ fun GenreListScreenCard(
 				Text(
 					pluralStringResource(
 						Res.plurals.count_albums,
-						genre.genre.albumCount,
-						genre.genre.albumCount
+						genre.albums.count(),
+						genre.albums.count()
 					),
 					style = MaterialTheme.typography.titleSmall,
 				)

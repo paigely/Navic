@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import dev.zt64.subsonic.api.model.Playlist
+import kotlinx.collections.immutable.ImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_cancel
@@ -55,7 +56,7 @@ import paige.navic.utils.UiState
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlaylistUpdateDialog(
-	tracks: List<DomainSong>,
+	tracks: ImmutableList<DomainSong>,
 	playlistToExclude: String? = null,
 	onDismissRequest: () -> Unit
 ) {

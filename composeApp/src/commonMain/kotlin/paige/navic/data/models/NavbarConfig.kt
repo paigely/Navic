@@ -1,7 +1,9 @@
 package paige.navic.data.models
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
+@Immutable
 @Serializable
 data class NavbarConfig(
 	val tabs: List<NavbarTab>,

@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import paige.navic.LocalCtx
 import paige.navic.ui.components.common.CoverArt
 
@@ -27,7 +28,7 @@ import paige.navic.ui.components.common.CoverArt
 @Composable
 fun <T> ArtCarousel(
 	title: String,
-	items: List<T>,
+	items: ImmutableList<T>,
 	content: @Composable CarouselItemScope.(item: T) -> Unit
 ) {
 	if (items.isNotEmpty()) {

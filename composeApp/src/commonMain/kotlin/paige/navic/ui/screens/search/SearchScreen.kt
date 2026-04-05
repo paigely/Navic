@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.zt64.subsonic.api.model.AlbumListType
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_from_history
 import navic.composeapp.generated.resources.action_search_history
@@ -52,6 +51,7 @@ import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
@@ -95,7 +95,7 @@ fun SearchScreen(
 	val artistListStarredState by artistListViewModel.starredState.collectAsState()
 
 	val albumListViewModel = koinViewModel<AlbumListViewModel> {
-		parametersOf(AlbumListType.AlphabeticalByName)
+		parametersOf(DomainAlbumListType.AlphabeticalByName)
 	}
 	val albumListSelection by albumListViewModel.selectedAlbum.collectAsState()
 	val albumListStarredState by albumListViewModel.starredState.collectAsState()

@@ -20,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_artists
 import navic.composeapp.generated.resources.info_no_artists
@@ -38,7 +40,7 @@ import paige.navic.utils.withoutTop
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ArtistListScreenContent(
-	state: UiState<List<DomainArtist>>,
+	state: UiState<ImmutableList<DomainArtist>>,
 	starredState: UiState<Boolean>,
 	gridState: LazyGridState,
 	scrollBehavior: TopAppBarScrollBehavior,
@@ -64,7 +66,7 @@ fun ArtistListScreenContent(
 			val pos = currentIndex
 			currentIndex += artists.size + 1
 			letter.toString() to pos
-		}
+		}.toImmutableList()
 	}
 
 	Box {

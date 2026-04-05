@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_another_playlist
 import navic.composeapp.generated.resources.action_add_to_playlist
@@ -191,7 +192,7 @@ fun TrackRowDropdown(
 	if (playlistDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
-			tracks = listOf(track),
+			tracks = persistentListOf(track),
 			playlistToExclude = if (tracks is DomainPlaylist)
 				tracks.id
 			else null,

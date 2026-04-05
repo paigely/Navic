@@ -3,7 +3,6 @@ package paige.navic.ui.screens.album.viewmodels
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,11 +10,12 @@ import kotlinx.coroutines.launch
 import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.utils.UiState
 
 @OptIn(ExperimentalCoroutinesApi::class)
 open class AlbumListViewModel(
-	initialListType: AlbumListType = AlbumListType.AlphabeticalByArtist,
+	initialListType: DomainAlbumListType = DomainAlbumListType.AlphabeticalByArtist,
 	private val repository: AlbumRepository,
 ) : ViewModel() {
 	private val _albumsState = MutableStateFlow<UiState<List<DomainAlbum>>>(UiState.Loading())
@@ -73,7 +73,7 @@ open class AlbumListViewModel(
 		}
 	}
 
-	fun setListType(listType: AlbumListType) {
+	fun setListType(listType: DomainAlbumListType) {
 		_listType.value = listType
 	}
 

@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.zt64.subsonic.api.model.Share
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
@@ -41,6 +40,7 @@ import org.koin.compose.koinInject
 import paige.navic.LocalCtx
 import paige.navic.LocalSnackbarState
 import paige.navic.data.models.settings.Settings
+import paige.navic.domain.models.DomainShare
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Share
@@ -56,7 +56,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun ShareListScreenItem(
 	modifier: Modifier = Modifier,
-	share: Share,
+	share: DomainShare,
 	onSetDeletionId: (newDeletionId: String) -> Unit
 ) {
 	val ctx = LocalCtx.current
