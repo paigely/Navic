@@ -96,7 +96,7 @@
     </plurals>
     <plurals name="count_playlists">
         <item quantity="one">%1$d playlist</item>
-        <item quantity="many"/>
+        <item quantity="many">%1$d playlists</item>
         <item quantity="other">%1$d playlists</item>
     </plurals>
     <plurals name="count_artists">
@@ -206,4 +206,18 @@
     <string name="option_bottom_bar_visibility_mode_default">Padrão</string>
     <string name="option_bottom_bar_visibility_mode_all_screens">Em todas as telas</string>
     <string name="option_navigation_bar_style">Estilo da barra de navegação</string>
+    <string name="theme_mode_system">Sistema</string>
+    <string name="theme_mode_dark">Escuro</string>
+    <string name="theme_mode_light">Claro</string>
+    <string name="action_view_shares">Compartilhanentos</string>
+    <string name="action_cast">Transmitir</string>
+    <string name="action_open_in_browser">Abrir no navegador</string>
+    <string name="action_copy_link">Copiar link</string>
+    <string name="action_queue">Fila</string>
+    <string name="action_reorder">Reordenar</string>
+    <string name="action_remove_from_queue">Retirar da fila</string>
+    <string name="action_search_history">Pesquisas recentes</string>
+    <string name="action_remove_from_history">Remover do histórico</string>
+    <string name="info_track_year">Ano</string>
+    <string name="info_track_number">Numero da faixa</string>
 </resources>
