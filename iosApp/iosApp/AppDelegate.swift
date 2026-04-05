@@ -21,7 +21,7 @@ struct ComposeView: UIViewControllerRepresentable {
 @main
 struct ComposeApp: App {
 	init() {
-		KoinInitIosKt.initKoinIos()
+		KoinInitKt.doInitKoin()
 	}
 
 	var body: some Scene {
