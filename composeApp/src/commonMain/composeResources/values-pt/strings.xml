@@ -96,7 +96,7 @@
     </plurals>
     <plurals name="count_playlists">
         <item quantity="one">%1$d playlist</item>
-        <item quantity="many"></item>
+        <item quantity="many"/>
         <item quantity="other">%1$d playlists</item>
     </plurals>
     <plurals name="count_artists">
@@ -165,4 +165,45 @@
     <string name="info_track_duration">Duração</string>
     <string name="info_track_id">ID</string>
     <string name="info_track_path">Caminho</string>
+    <string name="title_playback">Reprodução</string>
+    <string name="title_developer">Opções de desenvolvedor</string>
+    <string name="title_shares">Compartilhamentos</string>
+    <string name="title_choose_font">Fonte do aplicativo</string>
+    <string name="title_fonts_inbuilt">Embutidas</string>
+    <string name="title_fonts_external">Externas</string>
+    <string name="title_more_by_artist">Mais de %1$s</string>
+    <string name="title_genres">Generos</string>
+    <string name="title_navigation_bar">Barra de navegação</string>
+    <string name="title_mini_player">Minitocador</string>
+    <string name="title_miscellaneous">Variados</string>
+    <string name="title_layout">Layout</string>
+    <string name="subtitle_playback">Comportamento do audio, scrobbling, letras</string>
+    <string name="subtitle_developer">Depuração e testes</string>
+    <string name="subtitle_gapless_playback">Requer reinicialização do aplicativo. \nExperimental. Pode não funcionar em alguns dispositivos se offload de audio estiver ativo.</string>
+    <string name="subtitle_audio_offload">Requer reinicialização do aplicativo.\nExperimental.Pode não funcionar em alguns dispositivos se a reprodução sem interrupções estiver ativa.</string>
+    <string name="subtitle_now_playing_background_style">Escolha estático se tiver problemas de desempenho.</string>
+    <string name="option_now_playing_background_style">Estilo do plano de fundo</string>
+    <string name="option_now_playing_background_style_static">Estático</string>
+    <string name="option_now_playing_background_style_dynamic">Dinâmico</string>
+    <string name="option_now_playing_slider_style">Estilo do slider</string>
+    <string name="option_now_playing_slider_style_flat">Achatado</string>
+    <string name="option_now_playing_slider_style_squiggly">Ondulado</string>
+    <string name="option_lyrics_priority">Configurar provedores de letras</string>
+    <string name="option_sort_playlist_by_name">Por nome</string>
+    <string name="option_sort_playlist_date_added">Data de criação</string>
+    <string name="option_sort_playlist_duration">Duração</string>
+    <string name="option_sort_ascending">Crescente</string>
+    <string name="option_sort_descending">Decrescente</string>
+    <string name="option_gapless_playback">Reprodução sem interrupções</string>
+    <string name="option_audio_offload">Offload de audio</string>
+    <string name="option_now_playing_toolbar_position">Posição da barra de ferramentas</string>
+    <string name="option_position_top">Cima</string>
+    <string name="option_position_bottom">Baixo</string>
+    <string name="option_bottom_bar_collapse_mode">Quando colapsar</string>
+    <string name="option_bottom_bar_collapse_mode_never">Nunca</string>
+    <string name="option_bottom_bar_collapse_mode_on_scroll">Na rolagem</string>
+    <string name="option_bottom_bar_visibility_mode">Visibilidade</string>
+    <string name="option_bottom_bar_visibility_mode_default">Padrão</string>
+    <string name="option_bottom_bar_visibility_mode_all_screens">Em todas as telas</string>
+    <string name="option_navigation_bar_style">Estilo da barra de navegação</string>
 </resources>
