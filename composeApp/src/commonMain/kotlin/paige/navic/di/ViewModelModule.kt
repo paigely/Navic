@@ -52,12 +52,17 @@ val viewModelModule = module {
 	viewModelOf(::ShareListViewModel)
 	viewModelOf(::DeletionViewModel)
 	viewModelOf(::ShareDialogViewModel)
-	viewModelOf(::LyricsPriorityViewModel)
 	viewModelOf(::PlaylistCreateDialogViewModel)
 	viewModelOf(::TrackListViewModel)
 	viewModelOf(::SettingsDataStorageViewModel)
 	viewModel {
 		NavtabsViewModel(
+			settings = Settings(),
+			json = Json
+		)
+	}
+	viewModel {
+		LyricsPriorityViewModel(
 			settings = Settings(),
 			json = Json
 		)
