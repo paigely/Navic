@@ -89,7 +89,7 @@
     <string name="option_now_playing_toolbar_position">Werkbalkpositie</string>
     <string name="option_position_top">Top</string>
     <string name="option_position_bottom">Onderaan</string>
-    <string name="option_bottom_bar_collapse_mode">Klap modus in / Ingeklapte modus</string>
+    <string name="option_bottom_bar_collapse_mode">Ingeklapte modus</string>
     <string name="option_bottom_bar_collapse_mode_never">Nooit</string>
     <string name="option_bottom_bar_visibility_mode">Zichtbaarheidsmodus</string>
     <string name="option_bottom_bar_visibility_mode_default">Standaard</string>
