@@ -37,6 +37,7 @@ class Settings(
 	var gaplessPlayback by preference(true)
 	var audioOffload by preference(false)
 	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)
+	var customHeaders by preference("")
 
 	// navigation bar settings
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)

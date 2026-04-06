@@ -105,6 +105,7 @@
 	<string name="option_last_sync">Last full sync</string>
 	<string name="option_pending_actions">Pending sync actions</string>
 	<string name="option_downloaded_songs">Downloaded songs</string>
+	<string name="option_custom_headers">Custom server headers</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_sync_never">Never</string>
