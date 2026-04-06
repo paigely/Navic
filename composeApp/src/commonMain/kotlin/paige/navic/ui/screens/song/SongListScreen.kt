@@ -28,6 +28,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.data.session.SessionManager
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
@@ -44,6 +45,7 @@ import kotlin.time.Duration
 @Composable
 fun SongListScreen(nested: Boolean) {
 	val viewModel = koinViewModel<SongListViewModel>()
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val songsState by viewModel.songsState.collectAsStateWithLifecycle()
 	val selectedSong by viewModel.selectedSong.collectAsStateWithLifecycle()
 	val currentListType by viewModel.listType.collectAsStateWithLifecycle()
@@ -118,7 +120,20 @@ fun SongListScreen(nested: Boolean) {
 					onSetShareId = { newShareId ->
 						shareId = newShareId
 					},
-					onSetStarred = { viewModel.starSong(it) }
+					onSetStarred = { viewModel.starSong(it) },
+					onAddToQueue = { song ->
+						player.addToQueueSingle(song)
+					},
+					onPlaySong = { index ->
+						val list = songsState.data
+						if (!list.isNullOrEmpty()) {
+							player.clearQueue()
+							list.forEach { song ->
+								player.addToQueueSingle(song)
+							}
+							player.playAt(index)
+						}
+					}
 				)
 			}
 		}

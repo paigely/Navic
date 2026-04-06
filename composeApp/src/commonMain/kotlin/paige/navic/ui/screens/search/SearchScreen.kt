@@ -1,9 +1,11 @@
 package paige.navic.ui.screens.search
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,19 +24,26 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_remove_from_history
 import navic.composeapp.generated.resources.action_search_history
 import navic.composeapp.generated.resources.info_not_available_offline
@@ -58,8 +67,11 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.History
 import paige.navic.icons.outlined.Offline
+import paige.navic.icons.outlined.Queue
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.components.common.Dropdown
+import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.layouts.ArtGrid
@@ -110,6 +122,7 @@ fun SearchScreen(
 	val player = koinViewModel<MediaPlayerViewModel>()
 
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
+	var selectedTrack by remember { mutableStateOf<DomainSong?>(null) }
 
 	Scaffold(
 		topBar = {
@@ -182,36 +195,99 @@ fun SearchScreen(
 									val track = tracks[index]
 									val isDownloaded = downloadedSongs.containsKey(track.id)
 									val canPlay = isOnline || isDownloaded
-									ListItem(
-										modifier = Modifier.clickable(canPlay) {
-											ctx.clickSound()
-											player.clearQueue()
+
+									val dismissState = rememberSwipeToDismissBoxState()
+
+									LaunchedEffect(dismissState.currentValue) {
+										if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
 											player.addToQueueSingle(track)
-											player.playAt(0)
-										}.alpha(if (canPlay) 1f else 0.75f),
-										headlineContent = { Text(track.title) },
-										supportingContent = {
-											MarqueeText(
-												"${track.albumTitle ?: ""} • ${track.artistName} • ${track.year ?: ""}"
+											dismissState.snapTo(SwipeToDismissBoxValue.Settled)
+										}
+									}
+
+									SwipeToDismissBox(
+										state = dismissState,
+										enableDismissFromStartToEnd = false,
+										backgroundContent = {
+											val backgroundColor by animateColorAsState(
+												targetValue = when (dismissState.targetValue) {
+													SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.primaryContainer
+													else -> Color.Transparent
+												}
 											)
-										},
-										leadingContent = {
-											CoverArt(
-												coverArtId = track.coverArtId,
-												modifier = Modifier.size(50.dp),
-												shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
+											val iconColor by animateColorAsState(
+												targetValue = when (dismissState.targetValue) {
+													SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.onPrimaryContainer
+													else -> MaterialTheme.colorScheme.onSurfaceVariant
+												}
 											)
-										},
-										trailingContent = {
-											if (!canPlay) {
+
+											Box(
+												modifier = Modifier
+													.fillMaxSize()
+													.background(color = backgroundColor)
+													.padding(horizontal = 20.dp),
+												contentAlignment = Alignment.CenterEnd
+											) {
 												Icon(
-													Icons.Outlined.Offline,
-													stringResource(Res.string.info_not_available_offline),
-													modifier = Modifier.size(20.dp)
+													imageVector = Icons.Outlined.Queue,
+													contentDescription = stringResource(Res.string.action_add_to_queue),
+													tint = iconColor
 												)
 											}
 										}
-									)
+									) {
+										Box {
+											ListItem(
+												modifier = Modifier.alpha(if (canPlay) 1f else 0.75f),
+												enabled = canPlay,
+												onClick = {
+													ctx.clickSound()
+													player.clearQueue()
+													player.addToQueueSingle(track)
+													player.playAt(0)
+												},
+												onLongClick = {
+													selectedTrack = track
+												},
+												content = { Text(track.title) },
+												supportingContent = {
+													MarqueeText(
+														"${track.albumTitle ?: ""} • ${track.artistName} • ${track.year ?: ""}"
+													)
+												},
+												leadingContent = {
+													CoverArt(
+														coverArtId = track.coverArtId,
+														modifier = Modifier.size(50.dp),
+														shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
+													)
+												},
+												trailingContent = {
+													if (!canPlay) {
+														Icon(
+															Icons.Outlined.Offline,
+															stringResource(Res.string.info_not_available_offline),
+															modifier = Modifier.size(20.dp)
+														)
+													}
+												}
+											)
+											Dropdown(
+												expanded = selectedTrack == track,
+												onDismissRequest = { selectedTrack = null }
+											) {
+												DropdownItem(
+													text = { Text(stringResource(Res.string.action_add_to_queue)) },
+													leadingIcon = { Icon(Icons.Outlined.Queue, null) },
+													onClick = {
+														player.addToQueueSingle(track)
+														selectedTrack = null
+													},
+												)
+											}
+										}
+									}
 								}
 							}
 

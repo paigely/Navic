@@ -12,6 +12,7 @@ import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_another_playlist
 import navic.composeapp.generated.resources.action_add_to_playlist
+import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_cancel_download
 import navic.composeapp.generated.resources.action_delete_download
 import navic.composeapp.generated.resources.action_download
@@ -36,6 +37,7 @@ import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.Info
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.PlaylistRemove
+import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.Dropdown
@@ -58,6 +60,7 @@ fun TrackRowDropdown(
     onDownload: () -> Unit,
     onCancelDownload: () -> Unit,
     onDeleteDownload: () -> Unit,
+    onAddToQueue: () -> Unit,
 ) {
 	val backStack = LocalNavStack.current
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
@@ -66,6 +69,15 @@ fun TrackRowDropdown(
 		expanded = expanded,
 		onDismissRequest = onDismissRequest
 	) {
+		DropdownItem(
+			containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+			text = { Text(stringResource(Res.string.action_add_to_queue)) },
+			leadingIcon = { Icon(Icons.Outlined.Queue, null) },
+			onClick = {
+				onAddToQueue()
+				onDismissRequest()
+			},
+		)
 		DropdownItem(
 			containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
 			text = { Text(stringResource(Res.string.action_share)) },

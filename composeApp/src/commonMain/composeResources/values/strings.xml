@@ -212,6 +212,7 @@
 	<string name="action_update_app">Update</string>
 	<string name="action_open_in_browser">Open in Browser</string>
 	<string name="action_copy_link">Copy Link</string>
+	<string name="action_add_to_queue">Add to Queue</string>
 	<string name="action_queue">Queue</string>
 	<string name="action_reorder">Reorder</string>
 	<string name="action_remove_from_queue">Remove from queue</string>

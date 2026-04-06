@@ -17,8 +17,10 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.screens.library.components.LibraryFilterChips
 import paige.navic.ui.screens.song.components.songListScreenContent
 import paige.navic.utils.UiState
@@ -40,6 +42,7 @@ fun LibraryScreenSongsTab(
 	onSetShareId: (String) -> Unit
 ) {
 	val filters = remember { DomainSongListType.entries.toPersistentList() }
+	val player = koinViewModel<MediaPlayerViewModel>()
 
 	Column(
 		modifier = Modifier
@@ -71,7 +74,20 @@ fun LibraryScreenSongsTab(
 				onUpdateSelection = onSelectSong,
 				onClearSelection = onClearSongSelection,
 				onSetShareId = onSetShareId,
-				onSetStarred = onStarSelectedSong
+				onSetStarred = onStarSelectedSong,
+				onAddToQueue = { song ->
+					player.addToQueueSingle(song)
+				},
+				onPlaySong = { index ->
+					val list = songsState.data
+					if (!list.isNullOrEmpty()) {
+						player.clearQueue()
+						list.forEach { song ->
+							player.addToQueueSingle(song)
+						}
+						player.playAt(index)
+					}
+				}
 			)
 		}
 	}

@@ -162,6 +162,9 @@ fun TrackListScreen(
 							onLongClick = {
 								viewModel.selectTrack(track, index)
 							},
+							onAddToQueue = {
+								player.addToQueueSingle(track)
+							},
 							download = download,
 							isOffline = !isOnline
 						)
@@ -178,7 +181,8 @@ fun TrackListScreen(
 							downloadStatus = download?.status,
 							onDownload = { viewModel.downloadTrack(track) },
 							onCancelDownload = { viewModel.cancelDownload(track.id) },
-							onDeleteDownload = { viewModel.deleteDownload(track.id) }
+							onDeleteDownload = { viewModel.deleteDownload(track.id) },
+							onAddToQueue = { player.addToQueueSingle(track) }
 						)
 					}
 				}
