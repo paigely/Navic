@@ -17,9 +17,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -144,13 +144,13 @@ internal class BottomSheetScene<T : Any>(
 							.then(if (Settings.shared.nowPlayingToolbarPosition
 								== ToolbarPosition.Top || screenType !== "player") {
 								Modifier.padding(
-									top = WindowInsets.statusBars
+									top = WindowInsets.navigationBars
 										.asPaddingValues().calculateTopPadding() + 18.dp,
 									start = 20.dp, end = 24.dp
 								)
 							} else {
 								Modifier.padding(
-									bottom = WindowInsets.statusBars
+									bottom = WindowInsets.navigationBars
 										.asPaddingValues().calculateBottomPadding() + 26.dp,
 									start = 20.dp,
 									end = 24.dp,
