@@ -16,9 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
@@ -32,7 +33,11 @@ import navic.composeapp.generated.resources.title_delete_share
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalSnackbarState
+import paige.navic.data.database.SyncManager
+import paige.navic.data.database.dao.PlaylistDao
+import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
@@ -47,47 +52,65 @@ enum class DeletionEndpoint(
 	SHARE(Res.string.title_delete_share, Res.string.notice_deleted_share)
 }
 
-class DeletionViewModel : ViewModel() {
+class DeletionViewModel(
+	private val syncManager: SyncManager,
+	private val playlistDao: PlaylistDao
+) : ViewModel() {
 	private val _state = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
 	val state = _state.asStateFlow()
+
+	private val _events = Channel<Event>()
+	val events = _events.receiveAsFlow()
 
 	fun delete(
 		endpoint: DeletionEndpoint,
 		id: String
 	) {
 		viewModelScope.launch {
-			_state.value = UiState.Loading
+			_state.value = UiState.Loading()
 			try {
-				when (endpoint) {
-					DeletionEndpoint.PLAYLIST -> SessionManager.api.deletePlaylist(id)
-					DeletionEndpoint.SHARE -> SessionManager.api.deleteShare(id)
+				if (endpoint == DeletionEndpoint.SHARE) {
+					SessionManager.api.deleteShare(id)
+				} else {
+					syncManager.enqueueAction(
+						actionType = SyncActionType.DELETE_PLAYLIST,
+						itemId = id
+					)
+					playlistDao.deletePlaylist(id)
 				}
 				_state.value = UiState.Success(null)
-			} catch (e: Exception) {
-				_state.value = UiState.Error(e)
+				_events.send(Event.Dismiss)
+			} catch (error: Exception) {
+				_state.value = UiState.Error(error = error)
 			}
 		}
+	}
+
+	sealed class Event {
+		object Dismiss : Event()
 	}
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DeletionDialog(
-	viewModel: DeletionViewModel = viewModel { DeletionViewModel() },
 	endpoint: DeletionEndpoint,
 	id: String?,
-	onIdClear: () -> Unit
+	onIdClear: () -> Unit,
+	onRefresh: () -> Unit
 ) {
+	val viewModel = koinViewModel<DeletionViewModel>()
 	val snackbarState = LocalSnackbarState.current
 	val state by viewModel.state.collectAsState()
 
-	LaunchedEffect(state) {
-		if (state is UiState.Success && id != null) {
-			viewModel.viewModelScope.launch {
-				onIdClear()
-				snackbarState.showSnackbar(
-					getString(endpoint.deletedText)
-				)
+	LaunchedEffect(Unit) {
+		viewModel.events.collect { event ->
+			when (event) {
+				is DeletionViewModel.Event.Dismiss -> {
+					onIdClear()
+					onRefresh()
+					snackbarState.showSnackbar(getString(endpoint.deletedText))
+				}
 			}
 		}
 	}

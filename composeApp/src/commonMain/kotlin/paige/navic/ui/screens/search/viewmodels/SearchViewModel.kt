@@ -11,18 +11,27 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import paige.navic.data.repositories.SearchRepository
+import paige.navic.domain.repositories.SearchRepository
+import paige.navic.managers.ConnectivityManager
+import paige.navic.managers.DownloadManager
 import paige.navic.utils.UiState
 
 @OptIn(FlowPreview::class)
 class SearchViewModel(
-	private val repository: SearchRepository = SearchRepository()
+	private val repository: SearchRepository,
+	connectivityManager: ConnectivityManager,
+	downloadManager: DownloadManager
 ) : ViewModel() {
 	private val _searchState = MutableStateFlow<UiState<List<Any>>>(UiState.Success(emptyList()))
 	val searchState = _searchState.asStateFlow()
+
 	private val _searchHistory = MutableStateFlow<List<String>>(emptyList())
 	val searchHistory = _searchHistory.asStateFlow()
+
 	val searchQuery = TextFieldState()
+
+	val isOnline = connectivityManager.isOnline
+	val downloadedSongs = downloadManager.downloadedSongs
 
 	val gridState = LazyGridState()
 
@@ -30,43 +39,40 @@ class SearchViewModel(
 		viewModelScope.launch {
 			snapshotFlow { searchQuery.text }
 				.debounce(300)
-				.collectLatest { text ->
-					if (text.isBlank()) {
-						_searchState.value = UiState.Success(emptyList())
-					} else {
-						refreshResults()
-					}
+				.collectLatest {
+					refreshResults()
 				}
 		}
 	}
 
-	fun refreshResults() {
-		val currentQuery = searchQuery.text.toString()
-		if (currentQuery.isBlank()) return
-
+	private fun refreshResults() {
+		if (searchQuery.text.isBlank()) {
+			_searchState.value = UiState.Success(emptyList())
+			return
+		}
+		_searchState.value = UiState.Loading()
 		viewModelScope.launch {
-			_searchState.value = UiState.Loading
-			try {
-				val results = repository.search(currentQuery)
-				_searchState.value = UiState.Success(results)
+			_searchState.value = try {
+				UiState.Success(repository.search(searchQuery.text.toString()))
 			} catch (e: Exception) {
-				_searchState.value = UiState.Error(e)
+				UiState.Error(e)
 			}
 		}
 	}
 
 	fun addToSearchHistory(query: String) {
 		if (query.isBlank()) return
-
-		val currentList = _searchHistory.value.toMutableList()
-
-		currentList.remove(query)
-		currentList.add(0, query)
-
-		_searchHistory.value = currentList.take(10)
+		val current = _searchHistory.value.toMutableList()
+		if (current.contains(query)) {
+			current.remove(query)
+		}
+		current.add(0, query)
+		_searchHistory.value = current.take(10)
 	}
 
 	fun removeFromSearchHistory(query: String) {
-		_searchHistory.value = _searchHistory.value.filter { it != query }
+		val current = _searchHistory.value.toMutableList()
+		current.remove(query)
+		_searchHistory.value = current
 	}
 }

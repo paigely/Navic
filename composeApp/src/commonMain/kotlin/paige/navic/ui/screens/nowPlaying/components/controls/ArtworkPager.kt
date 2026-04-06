@@ -13,8 +13,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import paige.navic.LocalMediaPlayer
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.models.settings.Settings
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.screens.nowPlaying.components.NowPlayingArtwork
 
 @Composable
@@ -22,7 +23,7 @@ fun NowPlayingArtworkPager(
 	modifier: Modifier = Modifier,
 	isLandscape: Boolean
 ) {
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 
 	val pagerState = rememberPagerState(

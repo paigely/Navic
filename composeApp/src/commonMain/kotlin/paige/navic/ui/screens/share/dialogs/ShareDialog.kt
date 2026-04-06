@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
@@ -30,6 +29,7 @@ import navic.composeapp.generated.resources.option_share_expires
 import navic.composeapp.generated.resources.title_create_share
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalSnackbarState
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Share
@@ -47,12 +47,13 @@ import kotlin.time.Duration.Companion.hours
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ShareDialog(
-	viewModel: ShareDialogViewModel = viewModel { ShareDialogViewModel() },
 	id: String?,
 	onIdClear: () -> Unit,
 	expiry: Duration?,
 	onExpiryChange: (expiry: Duration?) -> Unit
 ) {
+
+	val viewModel = koinViewModel<ShareDialogViewModel>()
 
 	// There is not an elegant cross platform way of making a ClipEntry yet this is deprecated lmao
 	@Suppress("DEPRECATION")

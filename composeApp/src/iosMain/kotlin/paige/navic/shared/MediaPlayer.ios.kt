@@ -2,14 +2,17 @@
 
 package paige.navic.shared
 
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.zt64.subsonic.api.model.Song
-import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
+import paige.navic.domain.repositories.TrackRepository
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainSong
+import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.ConnectivityManager
+import paige.navic.managers.DownloadManager
+import paige.navic.managers.IOSScrobbleManager
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
@@ -30,12 +33,9 @@ import platform.CoreMedia.CMTimeGetSeconds
 import platform.CoreMedia.CMTimeMake
 import platform.CoreMedia.CMTimeMakeWithSeconds
 import platform.Foundation.NSData
-import platform.Foundation.NSDocumentDirectory
-import platform.Foundation.NSFileManager
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
 import platform.Foundation.NSURL
-import platform.Foundation.NSUserDomainMask
 import platform.Foundation.dataWithContentsOfURL
 import platform.MediaPlayer.MPChangePlaybackPositionCommandEvent
 import platform.MediaPlayer.MPMediaItemArtwork
@@ -53,8 +53,16 @@ import platform.MediaPlayer.MPRemoteCommandHandlerStatusSuccess
 import platform.UIKit.UIImage
 
 class IOSMediaPlayerViewModel(
-	storage: PlayerStateStorage
-) : MediaPlayerViewModel(storage) {
+	stateRepository: PlayerStateRepository,
+	trackRepository: TrackRepository,
+	downloadManager: DownloadManager,
+	connectivityManager: ConnectivityManager
+) : MediaPlayerViewModel(
+	stateRepository = stateRepository,
+	trackRepository = trackRepository,
+	downloadManager = downloadManager,
+	connectivityManager = connectivityManager
+) {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
 	private val scrobbleManager = IOSScrobbleManager(player, viewModelScope)
@@ -71,7 +79,10 @@ class IOSMediaPlayerViewModel(
 			queue = NSOperationQueue.mainQueue
 		) { _ ->
 			when (_uiState.value.repeatMode) {
-				1 -> { seek(0f); resume() }
+				1 -> {
+					seek(0f); resume()
+				}
+
 				else -> next()
 			}
 		}
@@ -88,7 +99,7 @@ class IOSMediaPlayerViewModel(
 			audioSession.setCategory(AVAudioSessionCategoryPlayback, error = null)
 			audioSession.setActive(true, error = null)
 		} catch (e: Exception) {
-			println("failed to setup audio session ${e.message}")
+			Logger.e("IOSMediaPlayerViewModel", "Failed to setup audio session!", e)
 		}
 	}
 
@@ -129,10 +140,20 @@ class IOSMediaPlayerViewModel(
 	override fun playAt(index: Int) {
 		val trackToPlay = _uiState.value.queue.getOrNull(index) ?: return
 
+		if (!isAvailable(trackToPlay.id)) {
+			next()
+			return
+		}
+
+		val localPath = downloadManager.getDownloadedFilePath(trackToPlay.id)
+		val url = if (localPath != null) {
+			NSURL.fileURLWithPath(localPath)
+		} else {
+			NSURL.URLWithString(SessionManager.api.getStreamUrl(trackToPlay.id))!!
+		}
+
 		player.replaceCurrentItemWithPlayerItem(
-			AVPlayerItem(
-				NSURL.URLWithString(SessionManager.api.getStreamUrl(trackToPlay.id))!!
-			)
+			AVPlayerItem(url)
 		)
 		player.play()
 
@@ -150,7 +171,7 @@ class IOSMediaPlayerViewModel(
 		updateNowPlayingInfo(trackToPlay)
 	}
 
-	override fun addToQueueSingle(track: Song) {
+	override fun addToQueueSingle(track: DomainSong) {
 		_uiState.update { state ->
 			val newQueue = state.queue + track
 			val newIndex = newQueue.indexOf(state.currentTrack)
@@ -162,7 +183,7 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueue(tracks: SongCollection) {
+	override fun addToQueue(tracks: DomainSongCollection) {
 		_uiState.update { state ->
 			val newQueue = state.queue + tracks.songs
 			val newIndex = newQueue.indexOf(state.currentTrack)
@@ -250,7 +271,7 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	override fun shufflePlay(tracks: SongCollection) {
+	override fun shufflePlay(tracks: DomainSongCollection) {
 		val shuffledTracks = tracks.songs.shuffled()
 		_uiState.update { state ->
 			val newIndex = shuffledTracks.indexOf(state.currentTrack)
@@ -291,7 +312,7 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	private fun updateNowPlayingInfo(track: Song?) {
+	private fun updateNowPlayingInfo(track: DomainSong?) {
 		if (track == null) {
 			MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = null
 			return
@@ -338,27 +359,5 @@ class IOSMediaPlayerViewModel(
 		val url = NSURL.URLWithString(SessionManager.api.getStreamUrl(track.id)) ?: return
 		player.replaceCurrentItemWithPlayerItem(AVPlayerItem(url))
 		updateNowPlayingInfo(track)
-	}
-}
-
-
-@Composable
-actual fun rememberMediaPlayer(): MediaPlayerViewModel {
-	return viewModel {
-		val producePath = {
-			val directory = NSFileManager.defaultManager.URLForDirectory(
-				directory = NSDocumentDirectory,
-				inDomain = NSUserDomainMask,
-				appropriateForURL = null,
-				create = true,
-				error = null
-			)
-			directory?.path + "/$DATASTORE_FILE_NAME"
-		}
-
-		val dataStore = DataStoreSingleton.getInstance(producePath)
-		val storage = DataStorePlayerStorage(dataStore)
-
-		IOSMediaPlayerViewModel(storage)
 	}
 }

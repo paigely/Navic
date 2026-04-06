@@ -2,11 +2,11 @@
 #noinspection AndroidGradlePluginVersion
 agp = "9.1.0"
 #noinspection UnusedVersionCatalogEntry
-android-compileSdk = "36"
+android-compileSdk = "37"
 #noinspection UnusedVersionCatalogEntry
 android-minSdk = "24"
 #noinspection UnusedVersionCatalogEntry
-android-targetSdk = "36"
+android-targetSdk = "37"
 kotlin = "2.3.20"
 
 androidx-activity = "1.13.0"
@@ -26,6 +26,12 @@ kmpalette = "3.1.0"
 
 aboutLibraries = "13.2.1"
 glance = "1.2.0-rc01"
+
+room = "2.8.4"
+sqlite = "2.6.2"
+ksp = "2.2.21-2.0.4"
+
+koin = "4.2.0"
 
 [libraries]
 cmp-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
@@ -76,6 +82,14 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 
 subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.0-beta01" }
 
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+
 [bundles]
 cmp = ["cmp-foundation", "cmp-material3", "cmp-material3-adaptive-nav", "cmp-material3-windowSize", "cmp-resources", "cmp-runtime", "cmp-ui"]
 coil = ["coil-compose", "coil-network-ktor3"]
@@ -88,6 +102,8 @@ ktor-desktop = ["ktor-client-okhttp"]
 cmpThirdParty = ["capsule", "wavySlider", "kmpalette-core", "kmpalette-network", "materialKolor", "composePipette", "multiplatformSettings", "aboutLibraries-compose", "aboutLibraries-core"]
 androidx-android = ["androidx-activity-compose", "androidx-datastore-preferences", "androidx-animation-graphics"]
 androidx-lifecycle = ["androidx-lifecycle-viewmodel", "androidx-lifecycle-runtime"]
+room = ["androidx-room-runtime", "androidx-sqlite-bundled"]
+koin = ["koin-core", "koin-compose", "koin-compose-viewmodel"]
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -98,3 +114,5 @@ composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
 valkyrie = { id = "io.github.composegears.valkyrie", version = "0.4.0" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+androidx-room = { id = "androidx.room", version.ref = "room" }

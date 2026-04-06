@@ -31,6 +31,7 @@ import navic.composeapp.generated.resources.option_enable_scrobbling
 import navic.composeapp.generated.resources.option_gapless_playback
 import navic.composeapp.generated.resources.option_lyrics_autoscroll
 import navic.composeapp.generated.resources.option_lyrics_beat_by_beat
+import navic.composeapp.generated.resources.option_lyrics_keep_alive
 import navic.composeapp.generated.resources.option_lyrics_priority
 import navic.composeapp.generated.resources.option_min_duration_to_scrobble
 import navic.composeapp.generated.resources.option_replay_gain
@@ -109,6 +110,12 @@ fun SettingsPlaybackScreen() {
 						title = { Text(stringResource(Res.string.option_lyrics_beat_by_beat)) },
 						value = Settings.shared.lyricsBeatByBeat,
 						onSetValue = { Settings.shared.lyricsBeatByBeat = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_lyrics_keep_alive)) },
+						value = Settings.shared.lyricsKeepAlive,
+						onSetValue = { Settings.shared.lyricsKeepAlive = it }
 					)
 
 					FormRow(

@@ -1,7 +1,11 @@
 package paige.navic.utils
 
 sealed class UiState<out T> {
-	object Loading : UiState<Nothing>()
-	data class Success<T>(val data: T) : UiState<T>()
-	data class Error(val error: Exception) : UiState<Nothing>()
+	abstract val data: T?
+	data class Loading<T>(override val data: T? = null) : UiState<T>()
+	data class Success<T>(override val data: T) : UiState<T>()
+	data class Error<T>(
+		val error: Exception,
+		override val data: T? = null,
+	) : UiState<T>()
 }

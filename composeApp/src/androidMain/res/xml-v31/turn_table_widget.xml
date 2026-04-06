@@ -1,0 +1,9 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+	android:minWidth="140dp"
+	android:minHeight="140dp"
+	android:targetCellWidth="2"
+	android:targetCellHeight="2"
+	android:previewLayout="@layout/widget_preview_turn_table"
+	android:updatePeriodMillis="86400000"
+	android:initialLayout="@layout/glance_default_loading_layout">
+</appwidget-provider>

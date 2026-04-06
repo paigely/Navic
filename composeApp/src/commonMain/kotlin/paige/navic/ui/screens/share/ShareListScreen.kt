@@ -23,11 +23,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_shares
 import navic.composeapp.generated.resources.title_shares
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.icons.Icons
@@ -46,9 +46,8 @@ import paige.navic.utils.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShareListScreen(
-	viewModel: ShareListViewModel = viewModel { ShareListViewModel() }
-) {
+fun ShareListScreen() {
+	val viewModel = koinViewModel<ShareListViewModel>()
 	val sharesState by viewModel.sharesState.collectAsState()
 	val isRefreshing by viewModel.isRefreshing.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -114,6 +113,7 @@ fun ShareListScreen(
 	DeletionDialog(
 		endpoint = DeletionEndpoint.SHARE,
 		id = deletionId,
-		onIdClear = { deletionId = null }
+		onIdClear = { deletionId = null },
+		onRefresh = { viewModel.refreshShares() }
 	)
 }

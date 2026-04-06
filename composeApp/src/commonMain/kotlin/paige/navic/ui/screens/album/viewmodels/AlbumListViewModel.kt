@@ -3,102 +3,54 @@ package paige.navic.ui.screens.album.viewmodels
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.zt64.subsonic.api.model.Album
-import dev.zt64.subsonic.api.model.AlbumListType
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.repositories.AlbumsRepository
+import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.utils.UiState
 
+@OptIn(ExperimentalCoroutinesApi::class)
 open class AlbumListViewModel(
-    initialListType: AlbumListType?,
-    private val repository: AlbumsRepository = AlbumsRepository()
+	initialListType: DomainAlbumListType = DomainAlbumListType.AlphabeticalByArtist,
+	private val repository: AlbumRepository,
 ) : ViewModel() {
-	private val _albumsState = MutableStateFlow<UiState<List<Album>>>(UiState.Loading)
+	private val _albumsState = MutableStateFlow<UiState<List<DomainAlbum>>>(UiState.Loading())
 	val albumsState = _albumsState.asStateFlow()
 
-	private val _isRefreshing = MutableStateFlow(false)
-	val isRefreshing = _isRefreshing.asStateFlow()
-
-	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
-	val starredState = _starredState.asStateFlow()
-
-	private val _selectedAlbum = MutableStateFlow<Album?>(null)
+	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
 	val selectedAlbum = _selectedAlbum.asStateFlow()
 
-	private val _offset = MutableStateFlow(0)
-	private val _isPaginating = MutableStateFlow(false)
-	val isPaginating: StateFlow<Boolean> = _isPaginating
+	private val _starred = MutableStateFlow(false)
+	val starred = _starred.asStateFlow()
 
-	private val _listType = MutableStateFlow(initialListType ?: AlbumListType.AlphabeticalByArtist)
+	private val _listType = MutableStateFlow(initialListType)
 	val listType = _listType.asStateFlow()
 
 	val gridState = LazyGridState()
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect {
-				refreshAlbums()
-			}
+			SessionManager.isLoggedIn.collect { if (it) refreshAlbums(false) }
 		}
 	}
 
-	fun refreshAlbums() {
+	fun refreshAlbums(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			_offset.value = 0
-
-			val currentState = _albumsState.value
-			val hasExistingData = currentState is UiState.Success && currentState.data.isNotEmpty()
-
-			if (hasExistingData) {
-				_isRefreshing.value = true
-			} else {
-				_albumsState.value = UiState.Loading
-			}
-
-			try {
-				val albums = repository.getAlbums(listType = _listType.value, offset = _offset.value)
-				_albumsState.value = UiState.Success(albums)
-			} catch (e: Exception) {
-				_albumsState.value = UiState.Error(e)
-			} finally {
-				_isRefreshing.value = false
+			repository.getAlbumsFlow(fullRefresh, _listType.value).collect {
+				_albumsState.value = it
 			}
 		}
 	}
 
-	fun paginate() {
-		if (_albumsState.value !is UiState.Success || _isPaginating.value) return
-
-		viewModelScope.launch {
-			val newOffset = _offset.value + 30
-			_isPaginating.value = true
-			try {
-				val newAlbums = repository.getAlbums(listType = _listType.value, offset = newOffset)
-				_albumsState.value = (_albumsState.value as UiState.Success).let {
-					it.copy(data = it.data + newAlbums)
-				}
-				_offset.value = newOffset
-			} finally {
-				_isPaginating.value = false
-			}
-		}
-	}
-
-	fun selectAlbum(album: Album?) {
+	fun selectAlbum(album: DomainAlbum?) {
 		viewModelScope.launch {
 			_selectedAlbum.value = album
 			if (album == null) return@launch
-			_starredState.value = UiState.Loading
-			try {
-				val isStarred = repository.isAlbumStarred(album)
-				_starredState.value = UiState.Success(isStarred)
-			} catch(e: Exception) {
-				_starredState.value = UiState.Error(e)
-			}
+			_starred.value = repository.isAlbumStarred(album)
 		}
 	}
 
@@ -111,11 +63,16 @@ open class AlbumListViewModel(
 				} else {
 					repository.unstarAlbum(selection)
 				}
+				_starred.value = starred
 			}
 		}
 	}
 
-	fun setListType(listType: AlbumListType) {
+	fun setListType(listType: DomainAlbumListType) {
 		_listType.value = listType
+	}
+
+	fun clearError() {
+		_albumsState.value = UiState.Success(_albumsState.value.data.orEmpty())
 	}
 }

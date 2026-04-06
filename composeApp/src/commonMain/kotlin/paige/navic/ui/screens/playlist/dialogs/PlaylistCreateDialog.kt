@@ -14,17 +14,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.zt64.subsonic.api.model.Song
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_playlist_name
 import navic.composeapp.generated.resources.title_create_playlist
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.ui.components.common.FormButton
@@ -35,12 +38,14 @@ import paige.navic.utils.UiState
 @Composable
 fun PlaylistCreateDialog(
 	onDismissRequest: () -> Unit,
-	tracks: List<Song> = emptyList(),
-	navigateAfterwards: Boolean = true,
-	viewModel: PlaylistCreateDialogViewModel = viewModel(key = tracks.joinToString()) {
-		PlaylistCreateDialogViewModel(tracks)
-	}
+	onRefresh: () -> Unit,
+	tracks: ImmutableList<DomainSong> = persistentListOf(),
+	navigateAfterwards: Boolean = true
 ) {
+	val viewModel = koinViewModel<PlaylistCreateDialogViewModel>(
+		key = tracks.joinToString { it.id },
+		parameters = { parametersOf(tracks) }
+	)
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val state by viewModel.creationState.collectAsState()
@@ -50,6 +55,7 @@ fun PlaylistCreateDialog(
 			when (event) {
 				is PlaylistCreateDialogViewModel.Event.Dismiss -> {
 					onDismissRequest()
+					onRefresh()
 					if (navigateAfterwards) {
 						if (backStack.contains(Screen.NowPlaying)) {
 							backStack.remove(Screen.NowPlaying)

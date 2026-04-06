@@ -21,9 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
-import kotlinx.serialization.json.Json
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_artists
@@ -33,6 +31,7 @@ import navic.composeapp.generated.resources.title_playlists
 import navic.composeapp.generated.resources.title_search
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.NavbarConfig
@@ -55,7 +54,7 @@ import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.utils.UiState
 
 private enum class NavItem(
-	val destination: NavKey,
+	val destination: Screen,
 	val icon: ImageVector,
 	val iconUnselected: ImageVector = icon,
 	val label: StringResource
@@ -102,14 +101,9 @@ fun BottomBar(
 	modifier: Modifier = Modifier,
 	containerColor: Color = NavigationBarDefaults.containerColor,
 	windowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
-	enabled: Boolean = true,
-	viewModel: NavtabsViewModel = viewModel {
-		NavtabsViewModel(
-			com.russhwolf.settings.Settings(),
-			Json
-		)
-	}
+	enabled: Boolean = true
 ) {
+	val viewModel = koinViewModel<NavtabsViewModel>()
 	val backStack = LocalNavStack.current
 	val ctx = LocalCtx.current
 	val state by viewModel.state.collectAsState()

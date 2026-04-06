@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -48,25 +47,30 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_not_playing
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.MiniPlayerProgressStyle
 import paige.navic.data.models.settings.enums.MiniPlayerStyle
+import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
 import paige.navic.icons.filled.Play
 import paige.navic.icons.filled.SkipNext
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
-import paige.navic.utils.rememberTrackPainter
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -75,16 +79,23 @@ fun MiniPlayer(
 	enabled: Boolean = true
 ) {
 	val ctx = LocalCtx.current
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val backStack = LocalNavStack.current
 	val haptics = LocalHapticFeedback.current
 
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
-	val coverUri = remember(track?.coverArtId) {
-		track?.coverArtId
+
+	val platformContext = LocalPlatformContext.current
+	val model = remember(track?.coverArtId) {
+		ImageRequest.Builder(platformContext)
+			.data(track?.coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
+			.memoryCacheKey(track?.coverArtId)
+			.diskCacheKey(track?.coverArtId)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.build()
 	}
-	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArtId)
 
 	val detached = Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached
 
@@ -215,8 +226,8 @@ fun MiniPlayer(
 				},
 				leadingContent = {
 					Box(contentAlignment = Alignment.Center) {
-						Image(
-							painter = sharedPainter,
+						AsyncImage(
+							model = model,
 							contentDescription = null,
 							contentScale = ContentScale.Crop,
 							modifier = Modifier
@@ -227,7 +238,7 @@ fun MiniPlayer(
 								)
 								.background(MaterialTheme.colorScheme.surfaceVariant)
 						)
-						if (coverUri.isNullOrEmpty()) {
+						if (track?.coverArtId.isNullOrEmpty()) {
 							Icon(
 								imageVector = Icons.Filled.Note,
 								contentDescription = null,

@@ -2,10 +2,8 @@ package paige.navic.ui.screens.track
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,18 +19,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.zt64.subsonic.api.model.Album
-import dev.zt64.subsonic.api.model.SongCollection
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_tracks
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalMediaPlayer
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+import paige.navic.data.database.entities.DownloadStatus
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.domain.models.DomainAlbum
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Note
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.screens.share.dialogs.ShareDialog
@@ -55,24 +54,29 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackListScreen(
-	partialTracks: SongCollection,
-	tab: String,
-	viewModel: TrackListViewModel = viewModel(key = partialTracks.toString()) {
-		TrackListViewModel(partialTracks)
-	}
+    partialTracks: DomainSongCollection,
+    tab: String
 ) {
-	val player = LocalMediaPlayer.current
+	val viewModel = koinViewModel<TrackListViewModel>(
+		key = partialTracks.toString(),
+		parameters = { parametersOf(partialTracks) }
+	)
 
-	val tracks by viewModel.tracksState.collectAsState()
+	val player = koinViewModel<MediaPlayerViewModel>()
+
+	val tracksState by viewModel.tracksState.collectAsState()
 	val selection by viewModel.selectedTrack.collectAsState()
 	val selectedIndex by viewModel.selectedIndex.collectAsState()
+	val isOnline by viewModel.isOnline.collectAsState()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 
 	val albumInfoState by viewModel.albumInfoState.collectAsState()
 	val starredState by viewModel.starredState.collectAsState()
-	val artistState by viewModel.artistState.collectAsState()
+	val otherAlbums by viewModel.otherAlbums.collectAsState()
+	val allDownloads by viewModel.allDownloads.collectAsState()
+	val downloadStatus by viewModel.collectionDownloadStatus().collectAsState(DownloadStatus.NOT_DOWNLOADED)
 
 	val scrolled by remember {
 		derivedStateOf {
@@ -84,9 +88,13 @@ fun TrackListScreen(
 		topBar = {
 			TracksScreenTopBar(
 				albumInfoState = albumInfoState,
-				tracks = tracks,
+				tracks = tracksState,
 				scrolled = scrolled,
-				onSetShareId = { shareId = it }
+				onSetShareId = { shareId = it },
+				isOnline = isOnline,
+				onDownloadAll = { viewModel.downloadAll() },
+				onCancelDownloadAll = { viewModel.cancelDownloadAll() },
+				downloadStatus = downloadStatus
 			)
 		},
 		bottomBar = {
@@ -100,11 +108,9 @@ fun TrackListScreen(
 			modifier = Modifier
 				.padding(top = contentPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = tracks is UiState.Loading
-				|| (artistState is UiState.Loading && partialTracks is Album),
+			isRefreshing = tracksState is UiState.Loading,
 			onRefresh = {
 				viewModel.refreshTracks()
-				viewModel.refreshArtist()
 			}
 		) {
 			LazyColumn(
@@ -113,10 +119,7 @@ fun TrackListScreen(
 					.fillMaxSize()
 					.fadeFromTop(),
 				horizontalAlignment = Alignment.CenterHorizontally,
-
-				contentPadding = contentPadding.withoutTop() + PaddingValues(
-					top = 16.dp
-				),
+				contentPadding = contentPadding.withoutTop(),
 				state = viewModel.listState
 			) {
 				item {
@@ -127,8 +130,8 @@ fun TrackListScreen(
 					)
 				}
 
-				val error = (tracks as? UiState.Error)
-				val tracks = (tracks as? UiState.Success)?.data
+				val error = (tracksState as? UiState.Error)
+				val tracks = (tracksState as? UiState.Success)?.data
 				if (error != null) {
 					item { ErrorBox(error) }
 					return@LazyColumn
@@ -138,9 +141,14 @@ fun TrackListScreen(
 					return@LazyColumn
 				}
 
-				item { TracksScreenHeadingRowButtons(tracks) }
+				item {
+					TracksScreenHeadingRowButtons(
+						tracks = tracks
+					)
+				}
 
 				itemsIndexed(tracks.songs) { index, track ->
+					val download = allDownloads.find { it.songId == track.id }
 					Box {
 						TracksScreenTrackRow(
 							track = track,
@@ -153,7 +161,9 @@ fun TrackListScreen(
 							},
 							onLongClick = {
 								viewModel.selectTrack(track, index)
-							}
+							},
+							download = download,
+							isOffline = !isOnline
 						)
 						TrackRowDropdown(
 							expanded = selection == track && selectedIndex == index,
@@ -164,7 +174,11 @@ fun TrackListScreen(
 							tracks = tracks,
 							track = track,
 							onRemoveFromPlaylist = { viewModel.removeFromPlaylist() },
-							starredState = starredState
+							starredState = starredState,
+							downloadStatus = download?.status,
+							onDownload = { viewModel.downloadTrack(track) },
+							onCancelDownload = { viewModel.cancelDownload(track.id) },
+							onDeleteDownload = { viewModel.deleteDownload(track.id) }
 						)
 					}
 				}
@@ -180,11 +194,13 @@ fun TrackListScreen(
 
 				item { TracksScreenFooterRow(tracks) }
 
-				tracksScreenMoreByArtistRow(
-					tracks = tracks,
-					artistState = artistState,
-					tab = tab
-				)
+				(tracks as? DomainAlbum)?.artistName?.let { artistName ->
+					tracksScreenMoreByArtistRow(
+						artistName = artistName,
+						artistAlbums = otherAlbums,
+						tab = tab
+					)
+				}
 			}
 		}
 	}

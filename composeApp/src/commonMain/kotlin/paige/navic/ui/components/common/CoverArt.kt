@@ -38,6 +38,7 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Error
+import paige.navic.shared.Logger
 import paige.navic.ui.theme.defaultFont
 
 @Composable
@@ -95,7 +96,7 @@ fun CoverArt(
 		contentScale = ContentScale.Crop,
 		error = {
 			LaunchedEffect(it.result.throwable) {
-				it.result.throwable.printStackTrace()
+				Logger.w("CoverArt", "Failed to load cover art, falling back to placeholder", it.result.throwable)
 			}
 			LazyColumn(
 				horizontalAlignment = Alignment.CenterHorizontally,

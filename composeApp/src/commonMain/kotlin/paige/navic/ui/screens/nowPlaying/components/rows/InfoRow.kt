@@ -15,9 +15,10 @@ import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_not_playing
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalMediaPlayer
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingMoreButton
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingStarButton
@@ -25,7 +26,7 @@ import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingStarButto
 @Composable
 fun NowPlayingInfoRow() {
 	val backStack = LocalNavStack.current
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
 	Row(

@@ -20,6 +20,10 @@ struct ComposeView: UIViewControllerRepresentable {
 
 @main
 struct ComposeApp: App {
+	init() {
+		KoinInitKt.doInitKoin()
+	}
+
 	var body: some Scene {
 		WindowGroup {
 			ComposeView().ignoresSafeArea()

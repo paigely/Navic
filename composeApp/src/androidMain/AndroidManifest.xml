@@ -5,6 +5,7 @@
 		android:name="${applicationId}.permission.PLAYBACK_SERVICE"
 		android:protectionLevel="signature" />
 
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE"
 		tools:ignore="ForegroundServicesPolicy" />
@@ -13,6 +14,7 @@
 		android:name="${applicationId}.permission.PLAYBACK_SERVICE" />
 
 	<application
+		android:name=".Application"
 		tools:targetApi="33"
 		android:allowBackup="true"
 		android:dataExtractionRules="@xml/data_extraction_rules"

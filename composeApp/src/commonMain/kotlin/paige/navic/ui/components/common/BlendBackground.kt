@@ -1,6 +1,5 @@
 package paige.navic.ui.components.common
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -23,14 +22,18 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import paige.navic.data.session.SessionManager
 import kotlin.time.TimeSource
 
 @Composable
 fun BlendBackground(
-	painter: Painter,
+	coverArtId: String?,
 	modifier: Modifier = Modifier,
 	isPaused: Boolean = false
 ) {
@@ -40,6 +43,17 @@ fun BlendBackground(
 
 	val colorMatrix = remember {
 		ColorMatrix().apply { setToSaturation(1f) }
+	}
+
+	val platformContext = LocalPlatformContext.current
+	val model = remember(coverArtId) {
+		ImageRequest.Builder(platformContext)
+			.data(coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
+			.memoryCacheKey(coverArtId)
+			.diskCacheKey(coverArtId)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.build()
 	}
 
 	LaunchedEffect(isPaused) {
@@ -68,8 +82,8 @@ fun BlendBackground(
 			.background(MaterialTheme.colorScheme.background)
 			.blur(80.dp)
 	) {
-		Image(
-			painter = painter,
+		AsyncImage(
+			model = model,
 			contentDescription = null,
 			contentScale = ContentScale.Crop,
 			colorFilter = ColorFilter.colorMatrix(colorMatrix),
@@ -86,8 +100,8 @@ fun BlendBackground(
 					.fillMaxHeight(0.5f)
 					.align(Alignment.TopStart)
 			) {
-				Image(
-					painter = painter,
+				AsyncImage(
+					model = model,
 					contentDescription = null,
 					contentScale = ContentScale.Crop,
 					alignment = Alignment.TopStart,
@@ -103,8 +117,8 @@ fun BlendBackground(
 					.fillMaxHeight(0.5f)
 					.align(Alignment.BottomEnd)
 			) {
-				Image(
-					painter = painter,
+				AsyncImage(
+					model = model,
 					contentDescription = null,
 					contentScale = ContentScale.Crop,
 					alignment = Alignment.BottomEnd,

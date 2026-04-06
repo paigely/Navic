@@ -44,7 +44,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_albums
 import navic.composeapp.generated.resources.option_sort_frequent
@@ -52,12 +52,14 @@ import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_similar_artists
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.TrackRow
 import paige.navic.ui.components.layouts.ArtCarousel
@@ -74,11 +76,14 @@ import paige.navic.utils.fadeFromTop
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ArtistDetailScreen(
-	artistId: String,
-	viewModel: ArtistDetailViewModel = viewModel(key = artistId) { ArtistDetailViewModel(artistId) }
+	artistId: String
 ) {
+	val viewModel = koinViewModel<ArtistDetailViewModel>(
+		key = artistId,
+		parameters = { parametersOf(artistId) }
+	)
 	val ctx = LocalCtx.current
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val density = LocalDensity.current
 	val backStack = LocalNavStack.current
 	val layoutDirection = LocalLayoutDirection.current
@@ -144,8 +149,8 @@ fun ArtistDetailScreen(
 						ArtistDetailScreenHeading(
 							artistName = state.artist.name,
 							coverArtId = state.artist.coverArtId,
-							subtitle = (artistState as? UiState.Success)?.data?.info?.biography,
-							lastfm = (artistState as? UiState.Success)?.data?.info?.lastFmUrl,
+							subtitle = state.artist.biography,
+							lastfm = state.artist.lastFmUrl,
 							innerPadding = contentPadding,
 							onPlay = { viewModel.playArtistAlbums(player) },
 							playEnabled = state.albums.isNotEmpty(),
@@ -192,14 +197,12 @@ fun ArtistDetailScreen(
 										}
 									}
 								}
-							state.artist.album.let { albums ->
-								ArtCarousel(
-									stringResource(Res.string.title_albums),
-									albums.sortedByDescending { it.playCount }
-								) { album ->
-									ArtCarouselItem(album.coverArtId, album.name, album.name) {
-										backStack.add(Screen.TrackList(album, "artist"))
-									}
+							ArtCarousel(
+								stringResource(Res.string.title_albums),
+								state.albums.sortedByDescending { album -> album.playCount }.toImmutableList()
+							) { album ->
+								ArtCarouselItem(album.coverArtId, album.name, null) {
+									backStack.add(Screen.TrackList(album, "artist"))
 								}
 							}
 							Text(

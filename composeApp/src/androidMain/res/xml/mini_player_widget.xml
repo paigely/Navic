@@ -1,10 +1,7 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
 	android:minWidth="250dp"
 	android:minHeight="40dp"
-	android:targetCellWidth="4"
-	android:targetCellHeight="1"
 	android:resizeMode="horizontal"
-	android:previewLayout="@layout/widget_preview_mini_player"
 	android:updatePeriodMillis="86400000"
 	android:initialLayout="@layout/glance_default_loading_layout">
 </appwidget-provider>

@@ -17,14 +17,15 @@ import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_star
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalMediaPlayer
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Star
+import paige.navic.shared.MediaPlayerViewModel
 
 @Composable
 fun NowPlayingStarButton() {
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	var isStarred by remember(playerState.currentTrack) {
 		mutableStateOf(playerState.currentTrack?.starredAt != null)
@@ -34,7 +35,7 @@ fun NowPlayingStarButton() {
 		onClick = {
 			isStarred = !isStarred
 			scope.launch {
-				if (isStarred) player.starTrack() else player.unstarTrack()
+				 if (isStarred) player.starTrack() else player.unstarTrack()
 			}
 		},
 		colors = IconButtonDefaults.filledTonalIconButtonColors(),

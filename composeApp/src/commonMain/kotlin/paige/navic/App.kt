@@ -58,14 +58,12 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_update_app
 import navic.composeapp.generated.resources.info_update_app
 import org.jetbrains.compose.resources.getString
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.shared.ShareManager
 import paige.navic.shared.rememberCtx
-import paige.navic.shared.rememberMediaPlayer
-import paige.navic.shared.rememberShareManager
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.navigation.Material3Transitions
 import paige.navic.ui.scenes.BottomSheetSceneStrategy
@@ -85,6 +83,7 @@ import paige.navic.ui.screens.settings.FontsScreen
 import paige.navic.ui.screens.settings.SettingsAboutScreen
 import paige.navic.ui.screens.settings.SettingsAcknowledgementsScreen
 import paige.navic.ui.screens.settings.SettingsAppearanceScreen
+import paige.navic.ui.screens.settings.SettingsDataStorageScreen
 import paige.navic.ui.screens.settings.SettingsDeveloperScreen
 import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
@@ -106,22 +105,18 @@ private val config = SavedStateConfiguration {
 }
 
 val LocalCtx = staticCompositionLocalOf<Ctx> { error("no ctx") }
-val LocalMediaPlayer = staticCompositionLocalOf<MediaPlayerViewModel> { error("no media player") }
 val LocalNavStack = staticCompositionLocalOf<NavBackStack<NavKey>> { error("no backstack") }
 val LocalImageBuilder = staticCompositionLocalOf<ImageRequest.Builder> { error("no image builder") }
 val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> { error("no snackbar state") }
-val LocalShareManager = staticCompositionLocalOf<ShareManager> { error("no share manager") }
 val LocalSharedTransitionScope =
 	staticCompositionLocalOf<SharedTransitionScope> { error("no shared transition scope") }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun App() {
-	val shareManager = rememberShareManager()
 	val platformContext = LocalPlatformContext.current
 	val uriHandler = LocalUriHandler.current
 	val ctx = rememberCtx()
-	val mediaPlayer = rememberMediaPlayer()
 	val backStack = rememberNavBackStack(config, Screen.Library())
 	val imageBuilder = remember { ImageRequest.Builder(platformContext).crossfade(true) }
 	val snackbarState = remember { SnackbarHostState() }
@@ -148,11 +143,9 @@ fun App() {
 	SharedTransitionLayout {
 		CompositionLocalProvider(
 			LocalCtx provides ctx,
-			LocalMediaPlayer provides mediaPlayer,
 			LocalNavStack provides backStack,
 			LocalImageBuilder provides imageBuilder,
 			LocalSnackbarState provides snackbarState,
-			LocalShareManager provides shareManager,
 			LocalSharedTransitionScope provides this@SharedTransitionLayout,
 			LocalBottomBarScrollManager provides scrollManager
 		) {
@@ -254,7 +247,7 @@ private fun entryProvider(
 			NowPlayingScreen()
 		}
 		entry<Screen.Lyrics>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
-			val player = LocalMediaPlayer.current
+			val player = koinViewModel<MediaPlayerViewModel>()
 			val playerState by player.uiState.collectAsState()
 			val track = playerState.currentTrack
 			LyricsScreen(track)
@@ -302,6 +295,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Settings.Acknowledgements>(metadata = detailPane("settings")) {
 			SettingsAcknowledgementsScreen()
+		}
+		entry<Screen.Settings.DataStorage>(metadata = detailPane("settings")) {
+			SettingsDataStorageScreen()
 		}
 		entry<Screen.Settings.Fonts> {
 			FontsScreen()

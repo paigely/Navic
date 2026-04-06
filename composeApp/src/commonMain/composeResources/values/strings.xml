@@ -10,6 +10,10 @@
 	<string name="title_now_playing">Now Playing</string>
 	<string name="title_bottom_app_bar">Bottom Bar</string>
 	<string name="title_playback">Playback</string>
+	<string name="title_data_storage">Data &amp; Storage</string>
+	<string name="title_sync_control">Synchronization Control</string>
+	<string name="title_cache_management">Cache &amp; Storage Management</string>
+	<string name="title_danger_zone">Danger Zone</string>
 	<string name="title_developer">Developer Options</string>
 	<string name="title_about">About</string>
 	<string name="title_acknowledgements">Acknowledgements</string>
@@ -40,13 +44,15 @@
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
 	<string name="subtitle_bottom_app_bar">Customise the bottom bar &amp; mini player</string>
 	<string name="subtitle_playback">Audio behaviour, scrobbling, lyrics</string>
+	<string name="subtitle_data_storage">Manage sync, network usage, and cache</string>
+	<string name="subtitle_trigger_sync">Forces a full library pull immediately</string>
+	<string name="subtitle_pending_actions">%1$d items waiting for network</string>
 	<string name="subtitle_developer">Debugging, testing</string>
 	<string name="subtitle_about">App info, version, licenses</string>
-	<string name="subtitle_system_font">If not, uses Google Sans.</string>
 	<string name="subtitle_playlist">Playlist</string>
 	<string	name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
-	<string name="subtitle_gapless_playback">Requires application restart. Experimental. If audio offload is enabled, this might not work on some hardware</string>
-	<string name="subtitle_audio_offload">Requires application restart. Experimental. If gapless playback is enabled, this might not work on some hardware</string>
+	<string name="subtitle_gapless_playback">Experimental. Requires application restart. May conflict with audio offload on some devices</string>
+	<string name="subtitle_audio_offload">Experimental. Requires application restart. May conflict with gapless playback on some devices</string>
 	<string name="subtitle_now_playing_background_style">Choose static if you have performance issues</string>
 
 	<string name="option_now_playing_background_style">Background style</string>
@@ -63,6 +69,7 @@
 	<string name="option_alphabetical_scroll">Alphabetical scrolling</string>
 	<string name="option_grid_items_per_row">Grid size</string>
 	<string name="option_lyrics_priority">Configure lyrics providers</string>
+	<string name="option_lyrics_keep_alive">Keep screen on in lyrics view</string>
 	<string name="option_share_expires">Expires</string>
 	<string name="option_account_navidrome_instance">Instance URL</string>
 	<string name="option_account_username">Username</string>
@@ -88,11 +95,23 @@
 	<string name="option_min_duration_to_scrobble">Min. duration to scrobble</string>
 	<string name="option_playlist_name">Name</string>
 	<string name="option_playlist_songs">Songs</string>
-	<string	name="option_enable_scrobbling">Enable Scrobbling</string>
+	<string	name="option_enable_scrobbling">Enable scrobbling</string>
 	<string name="option_choose_theme">Application theme</string>
 	<string name="option_replay_gain">ReplayGain</string>
 	<string name="option_gapless_playback">Gapless playback</string>
 	<string name="option_audio_offload">Audio offload</string>
+	<string name="option_live_status">Live status</string>
+	<string name="option_image_cache_size">Image cache size</string>
+	<string name="option_last_sync">Last full sync</string>
+	<string name="option_pending_actions">Pending sync actions</string>
+	<string name="option_downloaded_songs">Downloaded songs</string>
+
+	<string name="info_status_idle">Idle</string>
+	<string name="info_sync_never">Never</string>
+	<string name="info_sync_just_now">Just now</string>
+	<string name="info_sync_mins_ago">%1$d m ago</string>
+	<string name="info_sync_hours_ago">%1$d h ago</string>
+	<string name="info_sync_date_format">%1$d %2$s</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>
@@ -169,6 +188,9 @@
 	<string name="action_view_artist">View artist</string>
 	<string name="action_star">Star</string>
 	<string name="action_remove_star">Unstar</string>
+	<string name="action_download">Download</string>
+	<string name="action_delete_download">Delete download</string>
+	<string name="action_cancel_download">Cancel download</string>
 	<string name="action_navigate_back">Back</string>
 	<string name="action_log_out">Logout</string>
 	<string name="action_log_in">Login</string>
@@ -193,6 +215,12 @@
 	<string name="action_remove_from_queue">Remove from queue</string>
 	<string name="action_search_history">Recent Searches</string>
 	<string name="action_remove_from_history">Remove from history</string>
+	<string name="action_clear_image_cache">Clear image cache</string>
+	<string name="action_clear_pending_actions">Clear pending sync actions</string>
+	<string name="action_clear_downloads">Clear downloads</string>
+	<string name="action_rebuild_database">Rebuild database</string>
+	<string name="action_trigger_sync">Trigger manual sync</string>
+	<string name="subtitle_rebuild_database">Wipes all local metadata and forces a fresh sync</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
 	<string name="notice_deleted_share">Deleted share.</string>
@@ -243,6 +271,7 @@
 	<string name="info_no_albums">No albums</string>
 	<string name="info_no_artists">No artists</string>
 	<string name="info_no_tracks">No tracks</string>
+	<string name="info_not_available_offline">Not available offline</string>
 	<string name="info_no_queue">Nothing queued</string>
 	<string name="info_no_genres">No genres</string>
 	<string name="info_no_playlists_short">No playlists</string>

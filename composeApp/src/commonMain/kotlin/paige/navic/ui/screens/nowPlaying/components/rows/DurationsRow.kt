@@ -12,13 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.unit.dp
-import paige.navic.LocalMediaPlayer
+import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.utils.toHoursMinutesSeconds
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun NowPlayingDurationsRow() {
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val duration = playerState.currentTrack?.duration
 	val style = MaterialTheme.typography.bodyMedium

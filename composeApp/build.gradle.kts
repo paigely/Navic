@@ -1,8 +1,6 @@
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.w3c.dom.Element
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
@@ -18,6 +16,8 @@ plugins {
 	alias(libs.plugins.composeCompiler)
 	alias(libs.plugins.aboutLibraries)
 	alias(libs.plugins.valkyrie)
+	alias(libs.plugins.ksp)
+	alias(libs.plugins.androidx.room)
 }
 
 configurations.all {
@@ -101,19 +101,6 @@ public fun interface TextFieldDecorator {
 	}
 }
 
-private fun KotlinMultiplatformExtension.apple(
-	configure: KotlinNativeTarget.() -> Unit = {}
-) {
-	val isMacOs = System.getProperty("os.name").lowercase().contains("mac")
-
-	if (!isMacOs) return
-
-	listOf(
-		iosArm64(),
-		iosSimulatorArm64()
-	).forEach(configure)
-}
-
 kotlin {
 	@Suppress("DEPRECATION")
 	androidTarget {
@@ -122,8 +109,11 @@ kotlin {
 		}
 	}
 
-	apple {
-		binaries.framework {
+	listOf(
+		iosArm64(),
+		iosSimulatorArm64()
+	).forEach {
+		it.binaries.framework {
 			baseName = "ComposeApp"
 			isStatic = true
 		}
@@ -142,6 +132,8 @@ kotlin {
 			implementation(libs.bundles.coil)
 			implementation(libs.bundles.cmpThirdParty)
 			implementation(libs.bundles.androidx.lifecycle)
+			implementation(libs.bundles.room)
+			implementation(libs.bundles.koin)
 
 			implementation(libs.navigation3.ui)
 			implementation(libs.kotlinx.datetime)
@@ -170,6 +162,16 @@ kotlin {
 		}
 	}
 
+}
+
+dependencies {
+	add("kspAndroid", libs.androidx.room.compiler)
+
+	val isMacOs = System.getProperty("os.name").lowercase().contains("mac")
+	if (isMacOs) {
+		add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+		add("kspIosArm64", libs.androidx.room.compiler)
+	}
 }
 
 android {
@@ -273,6 +275,10 @@ compose.desktop {
 	}
 }
 
+room {
+	schemaDirectory("$projectDir/schemas")
+}
+
 abstract class SyncComposeStringsTask : DefaultTask() {
 	@get:InputDirectory
 	abstract var baseDir: File
@@ -340,4 +346,8 @@ tasks.register<SyncComposeStringsTask>("syncComposeStrings") {
 	group = "localization"
 	description = "Add missing strings to locale strings.xml"
 	baseDir = project.projectDir
+}
+
+tasks.withType<com.google.devtools.ksp.gradle.KspAATask>().configureEach {
+	dependsOn("generateValkyrieImageVectorCommonMain")
 }

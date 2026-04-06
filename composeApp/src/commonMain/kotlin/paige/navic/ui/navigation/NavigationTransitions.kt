@@ -10,7 +10,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.TransformOrigin
@@ -24,16 +23,16 @@ private val pathForAnimation =
 		cubicTo(0.208333f, 0.82f, 0.25f, 1f, 1f, 1f)
 	}
 
-val DurationMedium1 = 250
-val DurationMedium2 = 300
-val DurationLong1 = 450
-val DurationLong2 = 500
+const val DurationMedium1 = 250
+const val DurationMedium2 = 300
+const val DurationLong1 = 450
+const val DurationLong2 = 500
 val EmphasizedEasing = PathEasing(pathForAnimation)
 val EmphasizedAccelerateEasing = CubicBezierEasing(0.3f, 0f, 0.8f, 0.15f)
 val EmphasizedDecelerateEasing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)
 
 object Material3Transitions {
-	val SharedXAxisEnterTransition: (Density) -> EnterTransition = { density ->
+	val SharedXAxisEnterTransition: (Density) -> EnterTransition = { _ ->
 		fadeIn(
 			animationSpec = tween(durationMillis = DurationLong1, easing = EmphasizedEasing)
 		) +
@@ -44,7 +43,7 @@ object Material3Transitions {
 			}
 	}
 
-	val SharedXAxisPopEnterTransition: (Density) -> EnterTransition = { density ->
+	val SharedXAxisPopEnterTransition: (Density) -> EnterTransition = { _ ->
 		fadeIn(
 			animationSpec = tween(durationMillis = DurationLong1, easing = EmphasizedEasing)
 		) +
@@ -76,14 +75,6 @@ object Material3Transitions {
 				with(density) { 30.dp.roundToPx() }
 			}
 	}
-
-	val SharedYAxisEnterTransition: EnterTransition =
-		fadeIn(
-			animationSpec = tween(durationMillis = DurationLong1, easing = EmphasizedDecelerateEasing)
-		) +
-			slideInVertically(animationSpec = tween(durationMillis = DurationLong2, easing = EmphasizedDecelerateEasing)) {
-				it / 2
-			}
 
 	val SharedZAxisEnterTransition =
 		fadeIn(animationSpec = tween(durationMillis = DurationLong1, easing = EmphasizedEasing)) +

@@ -4,12 +4,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import dev.zt64.subsonic.api.model.AlbumListType
+import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_sort_alphabetical_by_artist
 import navic.composeapp.generated.resources.option_sort_alphabetical_by_name
@@ -19,31 +18,31 @@ import navic.composeapp.generated.resources.option_sort_random
 import navic.composeapp.generated.resources.option_sort_recent
 import navic.composeapp.generated.resources.option_sort_starred
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
 import paige.navic.ui.components.common.SelectionDropdown
 import paige.navic.ui.components.layouts.TopBarButton
-import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 
 @Composable
 fun AlbumListScreenSortButton(
-	root: Boolean,
-	viewModel: AlbumListViewModel
+	nested: Boolean,
+	currentListType: DomainAlbumListType,
+	onSetListType: (listType: DomainAlbumListType) -> Unit
 ) {
-	val currentListType by viewModel.listType.collectAsState()
 	val items = remember {
-		listOf(
-			AlbumListType.Random,
-			AlbumListType.Newest,
-			AlbumListType.Frequent,
-			AlbumListType.Recent,
-			AlbumListType.Starred,
-			AlbumListType.AlphabeticalByArtist,
+		persistentListOf(
+			DomainAlbumListType.Random,
+			DomainAlbumListType.Newest,
+			DomainAlbumListType.Frequent,
+			DomainAlbumListType.Recent,
+			DomainAlbumListType.Starred,
+			DomainAlbumListType.AlphabeticalByArtist,
 		)
 	}
 	Box {
 		var expanded by remember { mutableStateOf(false) }
-		if (root) {
+		if (!nested) {
 			IconButton(onClick = {
 				expanded = true
 			}) {
@@ -70,23 +69,20 @@ fun AlbumListScreenSortButton(
 			expanded = expanded,
 			onDismissRequest = { expanded = false },
 			selection = currentListType,
-			onSelect = {
-				viewModel.setListType(it)
-				viewModel.refreshAlbums()
-			}
+			onSelect = onSetListType
 		)
 	}
 }
 
 @Composable
-private fun AlbumListType.label() =
+private fun DomainAlbumListType.label() =
 	when (this) {
-		AlbumListType.Random -> stringResource(Res.string.option_sort_random)
-		AlbumListType.Newest -> stringResource(Res.string.option_sort_newest)
-		AlbumListType.Frequent -> stringResource(Res.string.option_sort_frequent)
-		AlbumListType.Recent -> stringResource(Res.string.option_sort_recent)
-		AlbumListType.AlphabeticalByName -> stringResource(Res.string.option_sort_alphabetical_by_name)
-		AlbumListType.AlphabeticalByArtist -> stringResource(Res.string.option_sort_alphabetical_by_artist)
-		AlbumListType.Starred -> stringResource(Res.string.option_sort_starred)
+		DomainAlbumListType.Random -> stringResource(Res.string.option_sort_random)
+		DomainAlbumListType.Newest -> stringResource(Res.string.option_sort_newest)
+		DomainAlbumListType.Frequent -> stringResource(Res.string.option_sort_frequent)
+		DomainAlbumListType.Recent -> stringResource(Res.string.option_sort_recent)
+		DomainAlbumListType.AlphabeticalByName -> stringResource(Res.string.option_sort_alphabetical_by_name)
+		DomainAlbumListType.AlphabeticalByArtist -> stringResource(Res.string.option_sort_alphabetical_by_artist)
+		DomainAlbumListType.Starred -> stringResource(Res.string.option_sort_starred)
 		else -> "$this"
 	}

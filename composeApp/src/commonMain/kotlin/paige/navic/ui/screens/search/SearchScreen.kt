@@ -31,30 +31,34 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.zt64.subsonic.api.model.Album
-import dev.zt64.subsonic.api.model.AlbumListType
-import dev.zt64.subsonic.api.model.Artist
-import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_from_history
 import navic.composeapp.generated.resources.action_search_history
+import navic.composeapp.generated.resources.info_not_available_offline
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_all
 import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.domain.models.DomainArtist
+import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.History
+import paige.navic.icons.outlined.Offline
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.MarqueeText
@@ -82,18 +86,28 @@ enum class SearchCategory(val res: StringResource) {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-	nested: Boolean,
-	viewModel: SearchViewModel = viewModel { SearchViewModel() }
+	nested: Boolean
 ) {
+	val viewModel = koinViewModel<SearchViewModel>()
+
+	val artistListViewModel = koinViewModel<ArtistListViewModel>()
+	val artistListSelection by artistListViewModel.selectedArtist.collectAsState()
+	val artistListStarred by artistListViewModel.starred.collectAsState()
+
+	val albumListViewModel = koinViewModel<AlbumListViewModel> {
+		parametersOf(DomainAlbumListType.AlphabeticalByName)
+	}
+	val albumListSelection by albumListViewModel.selectedAlbum.collectAsState()
+	val albumListStarred by albumListViewModel.starred.collectAsState()
+
 	val query = viewModel.searchQuery
 	val state by viewModel.searchState.collectAsState()
 	val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
+	val isOnline by viewModel.isOnline.collectAsState()
+	val downloadedSongs by viewModel.downloadedSongs.collectAsState()
 
 	val ctx = LocalCtx.current
-	val player = LocalMediaPlayer.current
-
-	val artistListViewModel = viewModel { ArtistListViewModel() }
-	val albumListViewModel = viewModel { AlbumListViewModel(AlbumListType.AlphabeticalByName) }
+	val player = koinViewModel<MediaPlayerViewModel>()
 
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
 
@@ -137,11 +151,11 @@ fun SearchScreen(
 					val results = uiState.data
 					val showAll = selectedCategory == SearchCategory.ALL
 					val albums =
-						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<Album>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<DomainAlbum>() else emptyList()
 					val artists =
-						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<Artist>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<DomainArtist>() else emptyList()
 					val tracks =
-						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<Song>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<DomainSong>() else emptyList()
 
 					LazyVerticalGrid(
 						modifier = Modifier.fillMaxSize(),
@@ -166,13 +180,15 @@ fun SearchScreen(
 									tracks.take(10).size,
 									span = { GridItemSpan(maxLineSpan) }) { index ->
 									val track = tracks[index]
+									val isDownloaded = downloadedSongs.containsKey(track.id)
+									val canPlay = isOnline || isDownloaded
 									ListItem(
-										modifier = Modifier.clickable {
+										modifier = Modifier.clickable(canPlay) {
 											ctx.clickSound()
 											player.clearQueue()
 											player.addToQueueSingle(track)
 											player.playAt(0)
-										},
+										}.alpha(if (canPlay) 1f else 0.75f),
 										headlineContent = { Text(track.title) },
 										supportingContent = {
 											MarqueeText(
@@ -185,6 +201,15 @@ fun SearchScreen(
 												modifier = Modifier.size(50.dp),
 												shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 											)
+										},
+										trailingContent = {
+											if (!canPlay) {
+												Icon(
+													Icons.Outlined.Offline,
+													stringResource(Res.string.info_not_available_offline),
+													modifier = Modifier.size(20.dp)
+												)
+											}
 										}
 									)
 								}
@@ -200,10 +225,14 @@ fun SearchScreen(
 								AlbumListScreenItem(
 									modifier = Modifier.animateItem(fadeInSpec = null)
 										.width(150.dp),
+									tab = "search",
 									album = album,
-									viewModel = albumListViewModel,
+									selected = album == albumListSelection,
+									starred = albumListStarred,
+									onSelect = { albumListViewModel.selectAlbum(album) },
+									onDeselect = { albumListViewModel.selectAlbum(null) },
+									onSetStarred = { albumListViewModel.starAlbum(it) },
 									onSetShareId = { },
-									tab = "search"
 								)
 							}
 
@@ -217,9 +246,13 @@ fun SearchScreen(
 								ArtistsScreenItem(
 									modifier = Modifier.animateItem(fadeInSpec = null)
 										.width(150.dp),
+									tab = "search",
 									artist = artist,
-									viewModel = artistListViewModel,
-									tab = "search"
+									selected = artist == artistListSelection,
+									starred = artistListStarred,
+									onSelect = { artistListViewModel.selectArtist(artist) },
+									onDeselect = { artistListViewModel.clearSelection() },
+									onSetStarred = { artistListViewModel.starArtist(it) }
 								)
 							}
 						} else {

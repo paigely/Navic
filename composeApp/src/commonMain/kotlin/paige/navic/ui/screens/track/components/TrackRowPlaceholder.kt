@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
@@ -29,6 +30,7 @@ fun LazyListScope.tracksScreenTrackRowPlaceholder(
 		) {
 			Box(Modifier.weight(1f).height(40.dp).clip(MaterialTheme.shapes.medium).shimmerLoading())
 			Box(Modifier.weight(1f).height(40.dp).clip(MaterialTheme.shapes.medium).shimmerLoading())
+			Box(Modifier.size(40.dp).clip(MaterialTheme.shapes.medium).shimmerLoading())
 		}
 	}
 	items(rowCount) { idx ->

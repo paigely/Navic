@@ -14,7 +14,7 @@ class NavtabsViewModel(
 	private val settings: Settings,
 	private val json: Json
 ) : ViewModel() {
-	private val _state = MutableStateFlow<UiState<NavbarConfig>>(UiState.Loading)
+	private val _state = MutableStateFlow<UiState<NavbarConfig>>(UiState.Loading())
 	val state = _state.asStateFlow()
 
 	init {

@@ -40,28 +40,27 @@ fun <T> LazyGridScope.horizontalSection(
 	key: (T) -> Any,
 	itemContent: @Composable LazyItemScope.(T) -> Unit,
 ) {
-	if (state !is UiState.Success || state.data.isNotEmpty()) {
-		header(title, destination = destination, active = seeAll)
-	}
+	val data = state.data.orEmpty()
 
-	when (state) {
-		is UiState.Error -> artGridError(state)
-		else -> item(span = { GridItemSpan(maxLineSpan) }) {
-			LazyRow(
-				modifier = Modifier
-					.animateContentSize(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec())
-					.systemGesturesExclusion(),
-				horizontalArrangement = Arrangement.spacedBy(12.dp),
-				contentPadding = PaddingValues(horizontal = 16.dp)
-			) {
-				if (state is UiState.Loading) {
-					items(8) {
-						ArtGridPlaceholder(Modifier.width(150.dp))
-					}
-				} else if (state is UiState.Success) {
-					items(state.data, key = key) { item ->
-						itemContent(item)
-					}
+	if (data.isEmpty() && state !is UiState.Loading) return
+
+	header(title, destination = destination, active = seeAll)
+
+	item(span = { GridItemSpan(maxLineSpan) }) {
+		LazyRow(
+			modifier = Modifier
+				.animateContentSize(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec())
+				.systemGesturesExclusion(),
+			horizontalArrangement = Arrangement.spacedBy(12.dp),
+			contentPadding = PaddingValues(horizontal = 16.dp)
+		) {
+			if (state is UiState.Loading && data.isEmpty()) {
+				items(8) {
+					ArtGridPlaceholder(Modifier.width(150.dp))
+				}
+			} else {
+				items(data, key = key) { item ->
+					itemContent(item)
 				}
 			}
 		}

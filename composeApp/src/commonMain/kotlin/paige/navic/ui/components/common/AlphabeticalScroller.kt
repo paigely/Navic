@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import paige.navic.data.models.settings.Settings
 import kotlin.math.abs
@@ -32,7 +33,7 @@ import kotlin.math.abs
 fun AlphabeticalScroller(
 	modifier: Modifier = Modifier,
 	state: LazyGridState,
-	headers: List<Pair<String, Int>>
+	headers: ImmutableList<Pair<String, Int>>
 ) {
 	if (!Settings.shared.alphabeticalScroll) return
 	val haptic = LocalHapticFeedback.current

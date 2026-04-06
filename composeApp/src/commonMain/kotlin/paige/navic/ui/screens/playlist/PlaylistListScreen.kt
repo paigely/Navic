@@ -1,7 +1,6 @@
 package paige.navic.ui.screens.playlist
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -12,10 +11,10 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -37,13 +36,12 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
-import navic.composeapp.generated.resources.info_no_playlists_short
 import navic.composeapp.generated.resources.title_create_playlist
 import navic.composeapp.generated.resources.title_playlists
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarCollapseMode
@@ -51,8 +49,7 @@ import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
-import paige.navic.icons.outlined.PlaylistRemove
-import paige.navic.ui.components.common.ContentUnavailable
+import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
@@ -61,10 +58,8 @@ import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
-import paige.navic.ui.components.layouts.artGridError
-import paige.navic.ui.components.layouts.artGridPlaceholder
-import paige.navic.ui.screens.playlist.components.PlaylistListScreenItem
 import paige.navic.ui.screens.playlist.components.PlaylistListScreenSortButton
+import paige.navic.ui.screens.playlist.components.playlistListScreenContent
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
@@ -74,13 +69,13 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlaylistListScreen(
-	nested: Boolean = false,
-	viewModel: PlaylistListViewModel = viewModel { PlaylistListViewModel() }
+	nested: Boolean = false
 ) {
-	val ctx = LocalCtx.current
-
+	val viewModel = koinViewModel<PlaylistListViewModel>()
 	val playlistsState by viewModel.playlistsState.collectAsState()
-	val isRefreshing by viewModel.isRefreshing.collectAsState()
+	val selectedPlaylist by viewModel.selectedPlaylist.collectAsState()
+
+	val ctx = LocalCtx.current
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -93,25 +88,34 @@ fun PlaylistListScreen(
 
 	var createDialogShown by rememberSaveable { mutableStateOf(false) }
 
+	val gridState = rememberLazyGridState()
+
+	val actions: @Composable RowScope.() -> Unit = {
+		PlaylistListScreenSortButton(
+			nested = nested,
+			onSortPlaylists = { viewModel.sortPlaylists() }
+		)
+	}
+
 	Scaffold(
 		topBar = {
 			if (!nested) {
 				RootTopBar(
 					title = { Text(stringResource(Res.string.title_playlists)) },
 					scrollBehavior = scrollBehavior,
-					actions = { PlaylistListScreenSortButton(!nested, viewModel) }
+					actions = actions
 				)
 			} else {
 				NestedTopBar(
 					title = { Text(stringResource(Res.string.title_playlists)) },
-					actions = { PlaylistListScreenSortButton(!nested, viewModel) }
+					actions = actions
 				)
 			}
 		},
 		floatingActionButton = {
 			if (!isLoggedIn) return@Scaffold
 			AnimatedContent(
-				!viewModel.gridState.lastScrolledForward
+				!gridState.lastScrolledForward
 					|| Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.Never,
 				transitionSpec = {
 					val transformOrigin = TransformOrigin(0f, 1f)
@@ -153,8 +157,8 @@ fun PlaylistListScreen(
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = isRefreshing || playlistsState is UiState.Loading,
-			onRefresh = { viewModel.refreshPlaylists() }
+			isRefreshing = playlistsState is UiState.Loading,
+			onRefresh = { viewModel.refreshPlaylists(true) }
 		) {
 			if (!isLoggedIn) {
 				Text(
@@ -164,47 +168,34 @@ fun PlaylistListScreen(
 				)
 				return@PullToRefreshBox
 			}
-			Crossfade(playlistsState) { state ->
-				ArtGrid(
-					modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-					state = viewModel.gridState,
-					contentPadding = innerPadding.withoutTop(),
-					verticalArrangement = if ((state as? UiState.Success)?.data?.isEmpty() == true)
-						Arrangement.Center
-					else Arrangement.spacedBy(12.dp)
-				) {
-					when (state) {
-						is UiState.Loading -> artGridPlaceholder()
-						is UiState.Error -> artGridError(state)
-						is UiState.Success -> {
-							items(state.data, { it.id }) { playlist ->
-								PlaylistListScreenItem(
-									modifier = Modifier.animateItem(fadeInSpec = null),
-									playlist = playlist,
-									tab = "playlists",
-									viewModel = viewModel,
-									onSetShareId = { newShareId ->
-										shareId = newShareId
-									},
-									onSetDeletionId = { newDeletionId ->
-										deletionId = newDeletionId
-									}
-								)
-							}
-							if (state.data.isEmpty()) {
-								item(span = { GridItemSpan(maxLineSpan) }) {
-									ContentUnavailable(
-										icon = Icons.Outlined.PlaylistRemove,
-										label = stringResource(Res.string.info_no_playlists_short)
-									)
-								}
-							}
-						}
+			ArtGrid(
+				modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+				state = gridState,
+				contentPadding = innerPadding.withoutTop(),
+				verticalArrangement = if ((playlistsState as? UiState.Success)?.data?.isEmpty() == true)
+					Arrangement.Center
+				else Arrangement.spacedBy(12.dp)
+			) {
+				playlistListScreenContent(
+					state = playlistsState,
+					selectedPlaylist = selectedPlaylist,
+					onUpdateSelection = { viewModel.selectPlaylist(it) },
+					onClearSelection = { viewModel.clearSelection() },
+					onSetShareId = { newShareId ->
+						shareId = newShareId
+					},
+					onSetDeletionId = { newDeletionId ->
+						deletionId = newDeletionId
 					}
-				}
+				)
 			}
 		}
 	}
+
+	ErrorSnackbar(
+		error = (playlistsState as? UiState.Error)?.error,
+		onClearError = { viewModel.clearError() }
+	)
 
 	@Suppress("AssignedValueIsNeverRead")
 	ShareDialog(
@@ -218,11 +209,15 @@ fun PlaylistListScreen(
 	DeletionDialog(
 		endpoint = DeletionEndpoint.PLAYLIST,
 		id = deletionId,
-		onIdClear = { deletionId = null }
+		onIdClear = { deletionId = null },
+		onRefresh = { viewModel.refreshPlaylists(true) }
 	)
 
 	if (createDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
-		PlaylistCreateDialog(onDismissRequest = { createDialogShown = false })
+		PlaylistCreateDialog(
+			onDismissRequest = { createDialogShown = false },
+			onRefresh = { viewModel.refreshPlaylists(true) }
+		)
 	}
 }

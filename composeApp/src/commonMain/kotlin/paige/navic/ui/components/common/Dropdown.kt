@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import paige.navic.LocalCtx
@@ -52,13 +51,11 @@ fun Dropdown(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DropdownItem(
-	modifier: Modifier = Modifier,
 	containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
 	onClick: () -> Unit = {},
 	text: @Composable () -> Unit = {},
 	leadingIcon: @Composable () -> Unit = {},
-	enabled: Boolean = true,
-	rounding: Dp = 4.dp
+	enabled: Boolean = true
 ) {
 	val ctx = LocalCtx.current
 	val color by animateColorAsState(
@@ -71,7 +68,7 @@ fun DropdownItem(
 	)
 	FormRow(
 		color = containerColor,
-		rounding = rounding,
+		rounding = 4.dp,
 		contentPadding = PaddingValues(0.dp)
 	) {
 		DropdownMenuItem(

@@ -112,6 +112,7 @@ private fun FontRow(
 	fontFamily: FontFamily?,
 	selected: Boolean,
 	index: Int,
+	@Suppress("SameParameterValue")
 	count: Int,
 	onClick: () -> Unit
 ) {

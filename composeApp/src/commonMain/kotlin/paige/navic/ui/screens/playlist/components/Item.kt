@@ -4,10 +4,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import dev.zt64.subsonic.api.model.Playlist
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_share
@@ -17,33 +16,37 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.domain.models.DomainPlaylist
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.layouts.ArtGridItem
-import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 
 @Composable
 fun PlaylistListScreenItem(
 	modifier: Modifier = Modifier,
-	playlist: Playlist,
 	tab: String,
-	viewModel: PlaylistListViewModel,
+	playlist: DomainPlaylist,
+	selected: Boolean,
+	onSelect: () -> Unit,
+	onDeselect: () -> Unit,
 	onSetShareId: (String) -> Unit,
 	onSetDeletionId: (String) -> Unit
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
-	val selection by viewModel.selectedPlaylist.collectAsState()
+	val scope = rememberCoroutineScope()
 	Box(modifier) {
 		ArtGridItem(
 			onClick = {
 				ctx.clickSound()
-				backStack.add(Screen.TrackList(playlist, "playlists"))
+				scope.launch {
+					backStack.add(Screen.TrackList(playlist, tab))
+				}
 			},
-			onLongClick = { viewModel.selectPlaylist(playlist) },
+			onLongClick = onSelect,
 			coverArtId = playlist.coverArtId,
 			title = playlist.name,
 			subtitle = buildString {
@@ -62,17 +65,15 @@ fun PlaylistListScreenItem(
 			tab = tab
 		)
 		Dropdown(
-			expanded = selection == playlist,
-			onDismissRequest = {
-				viewModel.clearSelection()
-			}
+			expanded = selected,
+			onDismissRequest = onDeselect
 		) {
 			DropdownItem(
 				text = { Text(stringResource(Res.string.action_share)) },
 				leadingIcon = { Icon(Icons.Outlined.Share, null) },
 				onClick = {
 					onSetShareId(playlist.id)
-					viewModel.clearSelection()
+					onDeselect()
 				},
 			)
 			DropdownItem(
@@ -80,7 +81,7 @@ fun PlaylistListScreenItem(
 				leadingIcon = { Icon(Icons.Outlined.PlaylistRemove, null) },
 				onClick = {
 					onSetDeletionId(playlist.id)
-					viewModel.clearSelection()
+					onDeselect()
 				}
 			)
 		}

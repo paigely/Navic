@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_sort_ascending
 import navic.composeapp.generated.resources.option_sort_descending
@@ -20,18 +21,17 @@ import paige.navic.icons.outlined.Sort
 import paige.navic.ui.components.common.SelectionDropdown
 import paige.navic.ui.components.common.SelectionDropdownItem
 import paige.navic.ui.components.layouts.TopBarButton
-import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlaylistListScreenSortButton(
-	root: Boolean,
-	viewModel: PlaylistListViewModel
+	nested: Boolean,
+	onSortPlaylists: () -> Unit
 ) {
-	val items = remember { PlaylistSortMode.entries }
+	val items = remember { PlaylistSortMode.entries.toImmutableList() }
 	Box {
 		var expanded by remember { mutableStateOf(false) }
-		if (root) {
+		if (!nested) {
 			IconButton(onClick = {
 				expanded = true
 			}) {
@@ -58,7 +58,7 @@ fun PlaylistListScreenSortButton(
 			selection = Settings.shared.playlistSortMode,
 			onSelect = {
 				Settings.shared.playlistSortMode = it
-				viewModel.sortPlaylists()
+				onSortPlaylists()
 			},
 			footer = {
 				SelectionDropdownItem(
@@ -67,7 +67,7 @@ fun PlaylistListScreenSortButton(
 					onClick = {
 						Settings.shared.playlistsReversed = false
 						expanded = false
-						viewModel.sortPlaylists()
+						onSortPlaylists()
 					}
 				)
 				SelectionDropdownItem(
@@ -76,7 +76,7 @@ fun PlaylistListScreenSortButton(
 					onClick = {
 						Settings.shared.playlistsReversed = true
 						expanded = false
-						viewModel.sortPlaylists()
+						onSortPlaylists()
 					}
 				)
 			}

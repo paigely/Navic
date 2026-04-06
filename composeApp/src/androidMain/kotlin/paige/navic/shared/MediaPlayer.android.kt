@@ -6,11 +6,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.OptIn
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -27,8 +24,6 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
-import dev.zt64.subsonic.api.model.Song
-import dev.zt64.subsonic.api.model.SongCollection
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -36,9 +31,19 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import paige.navic.MainActivity
 import paige.navic.R
+import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.mappers.toDomainModel
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
+import paige.navic.domain.repositories.TrackRepository
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainSong
+import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.ConnectivityManager
+import paige.navic.managers.AndroidScrobbleManager
+import paige.navic.managers.DownloadManager
 import paige.navic.utils.effectiveGain
+import java.io.File
 
 class PlaybackService : MediaSessionService() {
 	private var mediaSession: MediaSession? = null
@@ -136,8 +141,18 @@ class PlaybackService : MediaSessionService() {
 }
 
 class AndroidMediaPlayerViewModel(
-	private val application: Application, storage: PlayerStateStorage
-) : MediaPlayerViewModel(storage) {
+	private val application: Application,
+	stateRepository: PlayerStateRepository,
+	trackRepository: TrackRepository,
+	private val albumDao: AlbumDao,
+	downloadManager: DownloadManager,
+	connectivityManager: ConnectivityManager
+) : MediaPlayerViewModel(
+	stateRepository = stateRepository,
+	trackRepository = trackRepository,
+	downloadManager = downloadManager,
+	connectivityManager = connectivityManager
+) {
 	private var controller: MediaController? = null
 	private var controllerFuture: ListenableFuture<MediaController>? = null
 
@@ -163,6 +178,11 @@ class AndroidMediaPlayerViewModel(
 			addListener(object : Player.Listener {
 				override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 					updatePlaybackState()
+					mediaItem?.mediaId?.let { id ->
+						if (!isAvailable(id)) {
+							controller?.seekToNextMediaItem()
+						}
+					}
 				}
 
 				override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -209,9 +229,9 @@ class AndroidMediaPlayerViewModel(
 
 		viewModelScope.launch {
 			runCatching {
-				val album = SessionManager.api.getAlbum(albumId)
+				val album = albumDao.getAlbumById(albumId)
 
-				_uiState.update { it.copy(currentCollection = album) }
+				_uiState.update { it.copy(currentCollection = album?.toDomainModel()) }
 			}.onFailure {
 				loadingCollectionId = null
 			}
@@ -311,7 +331,7 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueueSingle(track: Song) {
+	override fun addToQueueSingle(track: DomainSong) {
 		controller?.addMediaItem(track.toMediaItem())
 		_uiState.update { state ->
 			val newQueue = state.queue + track
@@ -324,7 +344,7 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueue(tracks: SongCollection) {
+	override fun addToQueue(tracks: DomainSongCollection) {
 		val items = tracks.songs.map { it.toMediaItem() }
 		controller?.addMediaItems(items)
 		_uiState.update { state ->
@@ -373,13 +393,18 @@ class AndroidMediaPlayerViewModel(
 	override fun playAt(index: Int) {
 		controller?.let { player ->
 			if (index in 0 until player.mediaItemCount) {
-				player.seekTo(index, 0L)
-				player.play()
+				val track = player.getMediaItemAt(index)
+				if (!isAvailable(track.mediaId)) {
+					player.seekToNextMediaItem()
+				} else {
+					player.seekTo(index, 0L)
+					player.play()
+				}
 			}
 		}
 	}
 
-	override fun shufflePlay(tracks: SongCollection) {
+	override fun shufflePlay(tracks: DomainSongCollection) {
 		val shuffledTracks = tracks.songs.shuffled()
 		val mediaItems = shuffledTracks.map { it.toMediaItem() }
 
@@ -440,7 +465,7 @@ class AndroidMediaPlayerViewModel(
 		controllerFuture?.let { MediaController.releaseFuture(it) }
 	}
 
-	private fun Song.toMediaItem(): MediaItem {
+	private fun DomainSong.toMediaItem(): MediaItem {
 		val metadata = MediaMetadata.Builder()
 			.setTitle(title)
 			.setArtist(artistName)
@@ -450,25 +475,17 @@ class AndroidMediaPlayerViewModel(
 			)
 			.build()
 
+		val localPath = downloadManager.getDownloadedFilePath(id)
+		val uri = if (localPath != null) {
+			File(localPath).toUri()
+		} else {
+			SessionManager.api.getStreamUrl(id).toUri()
+		}
+
 		return MediaItem.Builder()
-			.setUri(SessionManager.api.getStreamUrl(id))
+			.setUri(uri)
 			.setMediaId(id)
 			.setMediaMetadata(metadata)
 			.build()
-	}
-}
-
-@Composable
-actual fun rememberMediaPlayer(): MediaPlayerViewModel {
-	val context = LocalContext.current.applicationContext as Application
-
-	return viewModel {
-		val producePath = {
-			context.filesDir.resolve(DATASTORE_FILE_NAME).absolutePath
-		}
-		val dataStore = DataStoreSingleton.getInstance(producePath)
-		val storage = DataStorePlayerStorage(dataStore)
-
-		AndroidMediaPlayerViewModel(context, storage)
 	}
 }

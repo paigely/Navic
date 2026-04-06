@@ -14,13 +14,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.SelectionDropdown
 
 @Composable
 fun <Item> SettingSelectionRow(
 	title: @Composable () -> Unit,
-	items: List<Item>,
+	items: ImmutableList<Item>,
 	label: @Composable (item: Item) -> String,
 	description: String? = null,
 	selection: Item,

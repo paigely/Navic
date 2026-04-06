@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_album_replay_gain
 import navic.composeapp.generated.resources.info_track_album
@@ -33,6 +32,7 @@ import navic.composeapp.generated.resources.info_track_sampling_rate
 import navic.composeapp.generated.resources.info_track_year
 import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.domain.models.DomainSong
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -42,7 +42,7 @@ import paige.navic.utils.toFileSize
 import paige.navic.utils.toHoursMinutesSeconds
 
 @Composable
-fun TrackDetailScreen(track: Song) {
+fun TrackDetailScreen(track: DomainSong) {
 	Scaffold(
 		topBar = { NestedTopBar({ Text(track.title) }) },
 		contentWindowInsets = WindowInsets(0, 0 , 0 ,0)
@@ -55,7 +55,7 @@ fun TrackDetailScreen(track: Song) {
 				.fadeFromTop()
 		) {
 			Form {
-				mapOf (
+				mapOf(
 					Res.string.info_track_name to track.title,
 					Res.string.info_track_artist to track.artistName,
 					Res.string.info_track_album to track.albumTitle,

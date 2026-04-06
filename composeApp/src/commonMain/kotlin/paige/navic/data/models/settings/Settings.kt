@@ -4,11 +4,11 @@
 
 package paige.navic.data.models.settings
 
-import com.russhwolf.settings.Settings
+import com.russhwolf.settings.Settings as KmpSettings
 import paige.navic.data.models.settings.enums.*
 
 class Settings(
-	settings: com.russhwolf.settings.Settings
+	settings: KmpSettings
 ) : BasePreferenceManager(settings) {
 	var font by preference(FontOption.GoogleSans)
 	var fontPath by preference("")
@@ -21,6 +21,7 @@ class Settings(
 	var alphabeticalScroll by preference(false)
 	var lyricsAutoscroll by preference(true)
 	var lyricsBeatByBeat by preference(true)
+	var lyricsKeepAlive by preference(true)
 	var enableScrobbling by preference(true)
 	var scrobblePercentage by preference(.5f)
 	var minDurationToScrobble by preference(30f)
@@ -57,9 +58,10 @@ class Settings(
 	var accentColourS by preference(0f)
 	var accentColourV by preference(1f)
 
+	// sync related settings
+	var lastFullSyncTime by preference(0L)
+
 	companion object {
-		val shared = Settings(
-			Settings()
-		)
+		val shared = Settings(KmpSettings())
 	}
 }

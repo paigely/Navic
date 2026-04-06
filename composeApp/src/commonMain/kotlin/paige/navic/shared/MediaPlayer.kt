@@ -1,9 +1,6 @@
 package paige.navic.shared
 
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
-import dev.zt64.subsonic.api.model.Song
-import dev.zt64.subsonic.api.model.SongCollection
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,30 +10,44 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
+import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongCollection
 import kotlinx.serialization.json.decodeFromJsonElement
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.domain.repositories.TrackRepository
+import paige.navic.managers.ConnectivityManager
+import paige.navic.managers.DownloadManager
+import kotlin.time.Clock
 
 @Serializable
 data class PlayerUiState(
-	val queue: List<Song> = emptyList(),
-	val currentTrack: Song? = null,
-	val currentCollection: SongCollection? = null,
-	val currentIndex: Int = -1,
-	val isPaused: Boolean = false,
-	val isShuffleEnabled: Boolean = false,
-	val repeatMode: Int = 0,
-	val progress: Float = 0f,
-	val isLoading: Boolean = false
+    val queue: List<DomainSong> = emptyList(),
+    val currentTrack: DomainSong? = null,
+    val currentCollection: DomainSongCollection? = null,
+    val currentIndex: Int = -1,
+    val isPaused: Boolean = false,
+    val isShuffleEnabled: Boolean = false,
+    val repeatMode: Int = 0,
+    val progress: Float = 0f,
+    val isLoading: Boolean = false
 )
 
 abstract class MediaPlayerViewModel(
-	private val storage: PlayerStateStorage
+	private val stateRepository: PlayerStateRepository,
+	private val trackRepository: TrackRepository,
+	protected val connectivityManager: ConnectivityManager,
+	protected val downloadManager: DownloadManager
 ) : ViewModel() {
+
+	@Suppress("PropertyName")
 	protected val _uiState = MutableStateFlow(PlayerUiState())
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
+
+	protected fun isAvailable(trackId: String): Boolean {
+		val isOnline = connectivityManager.isOnline.value
+		val isDownloaded = downloadManager.downloadedSongs.value.containsKey(trackId)
+		return isOnline || isDownloaded
+	}
 
 	init {
 		viewModelScope.launch {
@@ -45,8 +56,8 @@ abstract class MediaPlayerViewModel(
 		}
 	}
 
-	abstract  fun addToQueueSingle(track: Song)
-	abstract  fun addToQueue(tracks: SongCollection)
+	abstract  fun addToQueueSingle(track: DomainSong)
+	abstract  fun addToQueue(tracks: DomainSongCollection)
 	abstract fun removeFromQueue(index: Int)
 	abstract fun moveQueueItem(fromIndex: Int, toIndex: Int)
 	abstract fun clearQueue()
@@ -58,7 +69,7 @@ abstract class MediaPlayerViewModel(
 	abstract fun previous()
 	abstract fun toggleShuffle()
 	abstract fun toggleRepeat()
-	abstract fun shufflePlay(tracks: SongCollection)
+	abstract fun shufflePlay(tracks: DomainSongCollection)
 
 	fun togglePlay() {
 		if (!_uiState.value.isPaused) {
@@ -68,28 +79,38 @@ abstract class MediaPlayerViewModel(
 		}
 	}
 
-	suspend fun starTrack() {
-		_uiState.value.currentTrack?.let {
-			SessionManager.api.star(it)
+	fun starTrack() {
+		val track = _uiState.value.currentTrack ?: return
+
+		viewModelScope.launch {
+			_uiState.value = _uiState.value.copy(
+				currentTrack = track.copy(starredAt = Clock.System.now())
+			)
+
+			trackRepository.starTrack(track)
 		}
 	}
 
-	suspend fun unstarTrack() {
-		_uiState.value.currentTrack?.let {
-			SessionManager.api.unstar(it)
+	fun unstarTrack() {
+		val track = _uiState.value.currentTrack ?: return
+
+		viewModelScope.launch {
+			_uiState.value = _uiState.value.copy(
+				currentTrack = track.copy(starredAt = null)
+			)
+
+			trackRepository.unstarTrack(track)
 		}
 	}
 
 	abstract fun syncPlayerWithState(state: PlayerUiState)
 
 	private suspend fun restoreState() {
-		val savedJson = storage.loadState()
+		val savedJson = stateRepository.loadState()
 		if (!savedJson.isNullOrBlank()) {
 			try {
 				val restoredState = Json.decodeFromJsonElement<PlayerUiState>(
-					Json
-						.parseToJsonElement(savedJson)
-						.filterKeys("genres")
+					Json.parseToJsonElement(savedJson)
 				)
 				val stateToApply = restoredState.copy(isPaused = true, isLoading = false)
 
@@ -98,26 +119,9 @@ abstract class MediaPlayerViewModel(
 				syncPlayerWithState(stateToApply)
 
 			} catch (e: Exception) {
-				e.printStackTrace()
-				println("Failed to restore state: ${e.message}")
+				Logger.e("MediaPlayerViewModel", "Failed to restore state!", e)
 				_uiState.value = PlayerUiState()
 			}
-		}
-	}
-
-	// TODO: shitty temporary workaround for bug in subsonic-kotlin, remove when fixed upstream
-	// see https://canary.discord.com/channels/1468073950016835709/1468074620631519232/1486078368494522621
-	private fun JsonElement.filterKeys(targetKey: String): JsonElement {
-		return when (this) {
-			is JsonObject -> {
-				val filteredMap = this.filter { it.key != targetKey }
-					.mapValues { it.value.filterKeys(targetKey) }
-				JsonObject(filteredMap)
-			}
-			is JsonArray -> {
-				JsonArray(this.map { it.filterKeys(targetKey) })
-			}
-			else -> this
 		}
 	}
 
@@ -129,15 +133,11 @@ abstract class MediaPlayerViewModel(
 				.collect { state ->
 					try {
 						val jsonString = Json.encodeToString(state)
-						storage.saveState(jsonString)
+						stateRepository.saveState(jsonString)
 					} catch (e: Exception) {
-						e.printStackTrace()
-						println("Failed to save state: ${e.message}")
+						Logger.e("MediaPlayerViewModel", "Failed to save state!", e)
 					}
 				}
 		}
 	}
 }
-
-@Composable
-expect fun rememberMediaPlayer(): MediaPlayerViewModel

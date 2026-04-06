@@ -3,20 +3,20 @@ package paige.navic.ui.screens.playlist.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.zt64.subsonic.api.model.Playlist
-import dev.zt64.subsonic.api.model.Song
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainSong
 import paige.navic.utils.UiState
 
 class PlaylistUpdateDialogViewModel(
-    private val tracks: List<Song>,
-    private val playlistToExclude: String?
+	private val tracks: List<DomainSong>,
+	private val playlistToExclude: String?
 ) : ViewModel() {
-	private val _playlistsState = MutableStateFlow<UiState<List<Playlist>>>(UiState.Loading)
+	private val _playlistsState = MutableStateFlow<UiState<List<Playlist>>>(UiState.Loading())
 	val playlistsState = _playlistsState.asStateFlow()
 
 	private val _confirmState = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
@@ -35,7 +35,7 @@ class PlaylistUpdateDialogViewModel(
 	fun refreshResults() {
 		viewModelScope.launch {
 			_selectedPlaylist.value = null
-			_playlistsState.value = UiState.Loading
+			_playlistsState.value = UiState.Loading()
 			try {
 				val results =
 					SessionManager.api.getPlaylists()
@@ -52,7 +52,7 @@ class PlaylistUpdateDialogViewModel(
 
 	fun confirm() {
 		viewModelScope.launch {
-			_confirmState.value = UiState.Loading
+			_confirmState.value = UiState.Loading()
 			try {
 				SessionManager.api.updatePlaylist(
 					_selectedPlaylist.value!!.id,

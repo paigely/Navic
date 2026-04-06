@@ -19,9 +19,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import dev.zt64.subsonic.api.model.Album
-import dev.zt64.subsonic.api.model.Playlist
-import dev.zt64.subsonic.api.model.SongCollection
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown_genre
 import navic.composeapp.generated.resources.info_unknown_year
@@ -30,14 +27,17 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.Screen
+import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainPlaylist
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.theme.defaultFont
 
 @Composable
 fun TracksScreenHeadingRow(
-	partialTracks: SongCollection,
-	tab: String,
-	scrolled: Boolean
+    partialTracks: DomainSongCollection,
+    tab: String,
+    scrolled: Boolean
 ) {
 	val backStack = LocalNavStack.current
 	val progress by animateFloatAsState(if (scrolled) 0f else 1f)
@@ -47,11 +47,7 @@ fun TracksScreenHeadingRow(
 			contentDescription = partialTracks.name,
 			modifier = Modifier
 				.widthIn(0.dp, 420.dp)
-				.padding(
-					top = 10.dp,
-					start = 64.dp,
-					end = 64.dp
-				)
+				.padding(horizontal = 64.dp)
 				.aspectRatio(1f)
 				.sharedElement(
 					sharedContentState = this@with.rememberSharedContentState("${tab}-${partialTracks.id}-cover"),
@@ -69,15 +65,15 @@ fun TracksScreenHeadingRow(
 				modifier = Modifier.alpha(progress).scale(progress)
 			)
 			val subtitle = when (partialTracks) {
-				is Album -> partialTracks.artistName
-				is Playlist -> partialTracks.comment
+				is DomainAlbum -> partialTracks.artistName
+				is DomainPlaylist -> partialTracks.comment
 			}
 			subtitle?.let { subtitle ->
 				Text(
 					subtitle,
 					color = MaterialTheme.colorScheme.primary,
-					modifier = Modifier.clickable(partialTracks is Album) {
-						(partialTracks as? Album)?.artistId?.let { id ->
+					modifier = Modifier.clickable(partialTracks is DomainAlbum) {
+						(partialTracks as? DomainAlbum)?.artistId?.let { id ->
 							backStack.add(Screen.ArtistDetail(id))
 						}
 					},
@@ -86,7 +82,7 @@ fun TracksScreenHeadingRow(
 				)
 			}
 			Text(
-				if (partialTracks is Album)
+				if (partialTracks is DomainAlbum)
 					"${partialTracks.genre ?: stringResource(Res.string.info_unknown_genre)} • ${
 						partialTracks.year ?: stringResource(
 							Res.string.info_unknown_year

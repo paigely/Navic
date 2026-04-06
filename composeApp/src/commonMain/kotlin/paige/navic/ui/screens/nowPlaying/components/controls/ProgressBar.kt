@@ -15,13 +15,14 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
-import paige.navic.LocalMediaPlayer
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.NowPlayingSliderStyle
+import paige.navic.shared.MediaPlayerViewModel
 
 @Composable
 fun NowPlayingProgressBar() {
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val waveHeight by animateDpAsState(
 		if (!playerState.isPaused

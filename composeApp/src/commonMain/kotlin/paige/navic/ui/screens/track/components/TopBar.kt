@@ -6,6 +6,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,19 +17,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import dev.zt64.subsonic.api.model.AlbumInfo
-import dev.zt64.subsonic.api.model.SongCollection
+import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.toPersistentList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_all_to_playlist
+import navic.composeapp.generated.resources.action_cancel_download
+import navic.composeapp.generated.resources.action_download
 import navic.composeapp.generated.resources.action_more
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.data.database.entities.DownloadStatus
+import paige.navic.domain.models.DomainAlbumInfo
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
+import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.MoreVert
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.Share
@@ -41,10 +50,14 @@ import kotlin.collections.orEmpty
 
 @Composable
 fun TracksScreenTopBar(
-	tracks: UiState<SongCollection>,
-	albumInfoState: UiState<AlbumInfo>,
+	tracks: UiState<DomainSongCollection>,
+	albumInfoState: UiState<DomainAlbumInfo>,
 	scrolled: Boolean,
-	onSetShareId: (shareId: String?) -> Unit
+	onSetShareId: (shareId: String?) -> Unit,
+	isOnline: Boolean,
+	onDownloadAll: () -> Unit,
+	onCancelDownloadAll: () -> Unit,
+	downloadStatus: DownloadStatus
 ) {
 	val uriHandler = LocalUriHandler.current
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
@@ -121,6 +134,36 @@ fun TracksScreenTopBar(
 							playlistDialogShown = true
 						},
 					)
+					val downloading = downloadStatus === DownloadStatus.DOWNLOADING
+					DropdownItem(
+						text = {
+							if (!downloading) {
+								Text(stringResource(Res.string.action_download))
+							} else {
+								Text(stringResource(Res.string.action_cancel_download))
+							}
+						},
+						leadingIcon = {
+							if (!downloading) {
+								Icon(Icons.Outlined.Download, null)
+							} else {
+								CircularProgressIndicator(
+									modifier = Modifier.size(20.dp),
+									strokeWidth = 2.dp
+								)
+							}
+						},
+						containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+						enabled = tracks is UiState.Success
+							&& isOnline,
+						onClick = {
+							if (!downloading) {
+								onDownloadAll()
+							} else {
+								onCancelDownloadAll()
+							}
+						},
+					)
 				}
 			}
 		}
@@ -129,7 +172,7 @@ fun TracksScreenTopBar(
 	if (playlistDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
-			tracks = (tracks as? UiState.Success)?.data?.songs.orEmpty(),
+			tracks = (tracks as? UiState.Success)?.data?.songs.orEmpty().toPersistentList(),
 			onDismissRequest = { playlistDialogShown = false }
 		)
 	}

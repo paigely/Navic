@@ -165,8 +165,8 @@ fun LazyGridScope.artGridPlaceholder(
 	}
 }
 
-fun LazyGridScope.artGridError(
-	state: UiState.Error
+fun <T>LazyGridScope.artGridError(
+	state: UiState.Error<T>
 ) {
 	item(span = { GridItemSpan(maxLineSpan) }) {
 		ErrorBox(

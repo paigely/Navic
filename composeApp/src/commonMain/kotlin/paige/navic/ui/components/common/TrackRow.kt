@@ -8,22 +8,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
-import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_year
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
 import paige.navic.data.models.settings.Settings
+import paige.navic.domain.models.DomainSong
+import paige.navic.shared.MediaPlayerViewModel
 
 @Composable
 fun TrackRow(
 	modifier: Modifier = Modifier,
-	track: Song
+	track: DomainSong
 ) {
 	val ctx = LocalCtx.current
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	ListItem(
 		modifier = modifier.clickable {
 			ctx.clickSound()

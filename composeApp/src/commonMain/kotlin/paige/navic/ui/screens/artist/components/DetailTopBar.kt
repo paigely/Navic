@@ -75,10 +75,10 @@ fun ArtistDetailScreenTopBar(
 						DropdownItem(
 							text = { Text(stringResource(Res.string.action_view_on_lastfm)) },
 							leadingIcon = { Icon(Icons.Brand.Lastfm, null) },
-							enabled = state.info.lastFmUrl != null,
+							enabled = state.artist.lastFmUrl != null,
 							onClick = {
 								expanded = false
-								state.info.lastFmUrl?.let { url ->
+								state.artist.lastFmUrl?.let { url ->
 									uriHandler.openUri(url)
 								}
 							}
@@ -86,10 +86,10 @@ fun ArtistDetailScreenTopBar(
 						DropdownItem(
 							text = { Text(stringResource(Res.string.action_view_on_musicbrainz)) },
 							leadingIcon = { Icon(Icons.Brand.Musicbrainz, null) },
-							enabled = state.info.musicBrainzId != null,
+							enabled = state.artist.musicBrainzId != null,
 							onClick = {
 								expanded = false
-								state.info.musicBrainzId?.let { id ->
+								state.artist.musicBrainzId?.let { id ->
 									uriHandler.openUri(
 										"https://musicbrainz.org/artist/$id"
 									)

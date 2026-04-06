@@ -21,17 +21,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation3.runtime.NavKey
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.subtitle_about
 import navic.composeapp.generated.resources.subtitle_appearance
 import navic.composeapp.generated.resources.subtitle_bottom_app_bar
+import navic.composeapp.generated.resources.subtitle_data_storage
 import navic.composeapp.generated.resources.subtitle_developer
 import navic.composeapp.generated.resources.subtitle_now_playing
 import navic.composeapp.generated.resources.subtitle_playback
 import navic.composeapp.generated.resources.title_about
 import navic.composeapp.generated.resources.title_appearance
 import navic.composeapp.generated.resources.title_bottom_app_bar
+import navic.composeapp.generated.resources.title_data_storage
 import navic.composeapp.generated.resources.title_developer
 import navic.composeapp.generated.resources.title_now_playing
 import navic.composeapp.generated.resources.title_playback
@@ -49,6 +50,7 @@ import paige.navic.icons.filled.Palette
 import paige.navic.icons.outlined.ChevronForward
 import paige.navic.icons.filled.Info
 import paige.navic.icons.filled.Play
+import paige.navic.icons.outlined.DataTable
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -97,6 +99,13 @@ fun SettingsScreen() {
 					subtitle = Res.string.subtitle_playback
 				)
 				PageRow(
+					destination = Screen.Settings.DataStorage,
+					icon = Icons.Outlined.DataTable,
+					iconSize = 24.dp,
+					title = Res.string.title_data_storage,
+					subtitle = Res.string.subtitle_data_storage
+				)
+				PageRow(
 					destination = Screen.Settings.Developer,
 					icon = Icons.Outlined.Code,
 					iconSize = 24.dp,
@@ -119,7 +128,7 @@ fun SettingsScreen() {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PageRow(
-	destination: NavKey? = null,
+	destination: Screen? = null,
 	icon: ImageVector,
 	iconSize: Dp = 22.dp,
 	title: StringResource,

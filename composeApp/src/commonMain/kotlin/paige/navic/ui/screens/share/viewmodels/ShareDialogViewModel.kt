@@ -19,7 +19,7 @@ class ShareDialogViewModel : ViewModel() {
 		expiry: Duration?
 	) {
 		viewModelScope.launch {
-			_state.value = UiState.Loading
+			_state.value = UiState.Loading()
 			try {
 				val expiration = expiry?.let { Clock.System.now() + it  }
 				val url = SessionManager.api

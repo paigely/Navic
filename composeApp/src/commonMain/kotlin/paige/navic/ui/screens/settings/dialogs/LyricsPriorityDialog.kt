@@ -23,14 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.option_lyrics_priority
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
-import paige.navic.data.repositories.LyricsProvider
+import paige.navic.domain.repositories.LyricsProvider
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle
 import paige.navic.ui.components.common.ErrorBox
@@ -45,10 +45,11 @@ import paige.navic.utils.rememberDraggableListState
 @Composable
 fun LyricsPriorityDialog(
 	presented: Boolean,
-	onDismissRequest: () -> Unit,
-	viewModel: LyricsPriorityViewModel = viewModel { LyricsPriorityViewModel() }
+	onDismissRequest: () -> Unit
 ) {
 	if (!presented) return
+
+	val viewModel = koinViewModel<LyricsPriorityViewModel>()
 
 	val ctx = LocalCtx.current
 	val haptic = LocalHapticFeedback.current

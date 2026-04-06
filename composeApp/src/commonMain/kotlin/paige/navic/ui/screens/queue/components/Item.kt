@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -33,14 +34,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_from_queue
 import navic.composeapp.generated.resources.action_reorder
+import navic.composeapp.generated.resources.info_not_available_offline
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.DragHandle
+import paige.navic.icons.outlined.Offline
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.utils.DraggableListState
 import paige.navic.utils.dragHandle
@@ -50,14 +53,18 @@ import paige.navic.utils.dragHandle
 fun QueueScreenItem(
 	index: Int,
 	count: Int,
-	track: Song,
+	track: DomainSong,
 	isPlaying: Boolean,
 	isSelected: Boolean,
 	isDragging: Boolean,
 	draggableState: DraggableListState,
 	onClick: () -> Unit,
-	onRemove: () -> Unit
+	onRemove: () -> Unit,
+	isOffline: Boolean = false,
+	isDownloaded: Boolean = false
 ) {
+	val canPlay = !isOffline || isDownloaded
+
 	val elevation by animateDpAsState(
 		targetValue = if (isDragging) 8.dp else 0.dp,
 		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
@@ -125,6 +132,7 @@ fun QueueScreenItem(
 			) {
 				SegmentedListItem(
 					onClick = onClick,
+					enabled = canPlay,
 					colors = ListItemDefaults.colors(
 						containerColor = color,
 						selectedContainerColor = color,
@@ -154,6 +162,13 @@ fun QueueScreenItem(
 							horizontalArrangement = Arrangement.spacedBy(8.dp),
 							verticalAlignment = Alignment.CenterVertically
 						) {
+							if (!canPlay) {
+								Icon(
+									Icons.Outlined.Offline,
+									stringResource(Res.string.info_not_available_offline),
+									modifier = Modifier.size(20.dp)
+								)
+							}
 							if (isSelected) {
 								Waveform(isPlaying)
 							}

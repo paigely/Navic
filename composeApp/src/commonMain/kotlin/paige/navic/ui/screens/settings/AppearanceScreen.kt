@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.compose.pipette.HsvColor
 import dev.zt64.compose.pipette.RingColorPicker
+import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_accent_colour
 import navic.composeapp.generated.resources.option_alphabetical_scroll
@@ -263,7 +264,7 @@ fun SettingsAppearanceScreen() {
 				Form {
 					SettingSelectionRow(
 						title = { Text(stringResource(Res.string.option_use_marquee_text)) },
-						items = MarqueeSpeed.entries,
+						items = MarqueeSpeed.entries.toImmutableList(),
 						label = { it.name },
 						selection = Settings.shared.marqueeSpeed,
 						onSelect = { Settings.shared.marqueeSpeed = it }

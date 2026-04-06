@@ -29,9 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.zt64.subsonic.api.model.Playlist
-import dev.zt64.subsonic.api.model.Song
+import kotlinx.collections.immutable.ImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_cancel
@@ -41,7 +40,10 @@ import navic.composeapp.generated.resources.action_refresh
 import navic.composeapp.generated.resources.info_no_other_playlists
 import navic.composeapp.generated.resources.info_no_playlists
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
+import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.Refresh
@@ -54,13 +56,14 @@ import paige.navic.utils.UiState
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlaylistUpdateDialog(
-	tracks: List<Song>,
+	tracks: ImmutableList<DomainSong>,
 	playlistToExclude: String? = null,
-	onDismissRequest: () -> Unit,
-	viewModel: PlaylistUpdateDialogViewModel = viewModel(
-		key = tracks.joinToString() + playlistToExclude
-	) { PlaylistUpdateDialogViewModel(tracks, playlistToExclude) }
+	onDismissRequest: () -> Unit
 ) {
+	val viewModel = koinViewModel<PlaylistUpdateDialogViewModel>(
+		key = tracks.joinToString() + playlistToExclude,
+		parameters = { parametersOf(tracks, playlistToExclude) }
+	)
 	val ctx = LocalCtx.current
 	val state by viewModel.playlistsState.collectAsState()
 	val confirmState by viewModel.confirmState.collectAsState()
@@ -203,12 +206,10 @@ fun PlaylistUpdateDialog(
 
 	if (createDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
-		(PlaylistCreateDialog(
+		PlaylistCreateDialog(
 			navigateAfterwards = false,
-			onDismissRequest = {
-				createDialogShown = false
-				viewModel.refreshResults()
-			}
-		))
+			onDismissRequest = { createDialogShown = false },
+			onRefresh = { viewModel.refreshResults() }
+		)
 	}
 }

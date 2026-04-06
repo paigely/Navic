@@ -41,7 +41,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,8 +51,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.zt64.subsonic.api.model.Song
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
@@ -61,15 +59,19 @@ import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.info_lyrics_provider
 import navic.composeapp.generated.resources.info_no_lyrics
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalMediaPlayer
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
+import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.Lyrics
 import paige.navic.icons.outlined.Share
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.ErrorBox
+import paige.navic.ui.components.common.KeepScreenOn
 import paige.navic.ui.screens.lyrics.components.LyricsScreenKaraokeText
 import paige.navic.ui.screens.lyrics.components.LyricsScreenLoadingView
 import paige.navic.ui.screens.lyrics.dialogs.LyricsShareSheet
@@ -77,21 +79,25 @@ import paige.navic.ui.screens.lyrics.viewmodels.LyricsScreenViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.calculateWordProgress
 import paige.navic.utils.fadeFromTop
-import paige.navic.utils.rememberTrackPainter
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LyricsScreen(
-	track: Song?,
-	viewModel: LyricsScreenViewModel = viewModel(key = track?.id) {
-		LyricsScreenViewModel(track)
-	}
+	track: DomainSong?
 ) {
-	val player = LocalMediaPlayer.current
+	val viewModel = koinViewModel<LyricsScreenViewModel>(
+		key = track?.id,
+		parameters = { parametersOf(track) }
+	)
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val state by viewModel.lyricsState.collectAsState()
+
+	if (Settings.shared.lyricsKeepAlive) {
+		KeepScreenOn()
+	}
 
 	var isSelectionMode by rememberSaveable { mutableStateOf(false) }
 	val selectedIndices = rememberSaveable { mutableStateListOf<Int>() }
@@ -123,8 +129,6 @@ fun LyricsScreen(
 
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
-
-	val sharedPainter = rememberTrackPainter(track.id, track.coverArtId)
 
 	Box(modifier = Modifier.fillMaxSize()) {
 		AnimatedContent(
@@ -392,12 +396,11 @@ fun LyricsScreen(
 				val sortedIndices = selectedIndices.sorted()
 				val stringsToShare = sortedIndices.mapNotNull { index ->
 					lyricsList.getOrNull(index)?.second
-				}
+				}.toImmutableList()
 
 				LyricsShareSheet(
 					track = track,
 					selectedLyrics = stringsToShare,
-					sharedPainter = sharedPainter,
 					onDismiss = { showShareSheet = false },
 					onShare = {
 						showShareSheet = false

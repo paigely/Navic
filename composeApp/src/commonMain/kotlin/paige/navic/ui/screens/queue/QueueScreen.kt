@@ -18,14 +18,14 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_queue
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
-import paige.navic.LocalMediaPlayer
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistRemove
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.screens.queue.components.QueueScreenItem
 import paige.navic.ui.screens.queue.viewmodels.QueueViewModel
@@ -35,12 +35,13 @@ import paige.navic.utils.rememberDraggableListState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun QueueScreen(
-	viewModel: QueueViewModel = viewModel { QueueViewModel() }
-) {
+fun QueueScreen() {
+	val viewModel = koinViewModel<QueueViewModel>()
 	val ctx = LocalCtx.current
-	val player = LocalMediaPlayer.current
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
+	val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
+	val downloadedSongs by viewModel.downloadedSongs.collectAsStateWithLifecycle()
 	val currentTrack = playerState.currentTrack
 	val queue = playerState.queue
 
@@ -84,7 +85,9 @@ fun QueueScreen(
 				onRemove = {
 					haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 					player.removeFromQueue(index)
-				}
+				},
+				isOffline = !isOnline,
+				isDownloaded = downloadedSongs.containsKey(track.id)
 			)
 		}
 		if (queue.isEmpty()) {

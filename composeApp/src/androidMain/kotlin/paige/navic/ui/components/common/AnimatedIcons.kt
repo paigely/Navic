@@ -8,12 +8,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.navigation3.runtime.NavKey
 import paige.navic.R
 import paige.navic.data.models.Screen
 
 @Composable
-actual fun animatedTabIconPainter(destination: NavKey): Painter? {
+actual fun animatedTabIconPainter(destination: Screen): Painter? {
 	val res = when (destination) {
 		is Screen.Library -> R.drawable.anim_library
 		is Screen.PlaylistList -> R.drawable.anim_playlist

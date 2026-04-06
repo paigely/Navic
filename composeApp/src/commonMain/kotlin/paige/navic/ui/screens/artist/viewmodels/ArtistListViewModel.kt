@@ -3,59 +3,52 @@ package paige.navic.ui.screens.artist.viewmodels
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.zt64.subsonic.api.model.Artist
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.repositories.ArtistsRepository
+import paige.navic.domain.repositories.ArtistListType
+import paige.navic.domain.repositories.ArtistRepository
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainArtist
 import paige.navic.utils.UiState
 
 class ArtistListViewModel(
-	private val repository: ArtistsRepository = ArtistsRepository()
+	private val repository: ArtistRepository
 ) : ViewModel() {
-	private val _artistsState = MutableStateFlow<UiState<List<Artist>>>(UiState.Loading)
+	private val _artistsState = MutableStateFlow<UiState<ImmutableList<DomainArtist>>>(UiState.Loading())
 	val artistsState = _artistsState.asStateFlow()
 
-	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
-	val starredState = _starredState.asStateFlow()
+	private val _starred = MutableStateFlow(false)
+	val starred = _starred.asStateFlow()
 
-	private val _selectedArtist = MutableStateFlow<Artist?>(null)
-	val selectedArtist: StateFlow<Artist?> = _selectedArtist.asStateFlow()
+	private val _selectedArtist = MutableStateFlow<DomainArtist?>(null)
+	val selectedArtist = _selectedArtist.asStateFlow()
+
+	private val _listType = MutableStateFlow(ArtistListType.AlphabeticalByName)
+	val listType = _listType.asStateFlow()
 
 	val gridState = LazyGridState()
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect {
-				refreshArtists()
-			}
+			SessionManager.isLoggedIn.collect { if (it) refreshArtists(false) }
 		}
 	}
 
-	fun refreshArtists() {
+	fun refreshArtists(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			_artistsState.value = UiState.Loading
-			try {
-				val artists = repository.getArtists()
-				_artistsState.value = UiState.Success(artists)
-			} catch (e: Exception) {
-				_artistsState.value = UiState.Error(e)
+			repository.getArtistsFlow(fullRefresh, _listType.value).collect {
+				_artistsState.value = it
 			}
 		}
 	}
 
-	fun selectArtist(artist: Artist) {
+	fun selectArtist(artist: DomainArtist) {
 		viewModelScope.launch {
 			_selectedArtist.value = artist
-			_starredState.value = UiState.Loading
-			try {
-				val isStarred = repository.isArtistStarred(artist)
-				_starredState.value = UiState.Success(isStarred)
-			} catch(e: Exception) {
-				_starredState.value = UiState.Error(e)
-			}
+			_starred.value = repository.isArtistStarred(artist)
 		}
 	}
 
@@ -63,19 +56,21 @@ class ArtistListViewModel(
 		_selectedArtist.value = null
 	}
 
-	fun starSelectedArtist() {
+	fun starArtist(starred: Boolean) {
+		val artist = _selectedArtist.value ?: return
 		viewModelScope.launch {
-			try {
-				repository.starArtist(_selectedArtist.value!!)
-			} catch(_: Exception) { }
+			runCatching {
+				if (starred) {
+					repository.starArtist(artist)
+				} else {
+					repository.unstarArtist(artist)
+				}
+				_starred.value = starred
+			}
 		}
 	}
 
-	fun unstarSelectedArtist() {
-		viewModelScope.launch {
-			try {
-				repository.unstarArtist(_selectedArtist.value!!)
-			} catch(_: Exception) { }
-		}
+	fun clearError() {
+		_artistsState.value = UiState.Success(_artistsState.value.data ?: persistentListOf())
 	}
 }

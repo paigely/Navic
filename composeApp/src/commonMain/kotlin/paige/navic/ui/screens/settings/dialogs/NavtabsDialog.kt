@@ -24,14 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.russhwolf.settings.Settings
-import kotlinx.serialization.json.Json
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.option_navigation_bar_tabs
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.data.models.NavbarTab
 import paige.navic.icons.Icons
@@ -48,12 +46,12 @@ import paige.navic.utils.rememberDraggableListState
 @Composable
 fun NavtabsDialog(
 	presented: Boolean,
-	onDismissRequest: () -> Unit,
-	viewModel: NavtabsViewModel = viewModel { NavtabsViewModel(Settings(), Json) }
+	onDismissRequest: () -> Unit
 ) {
 	if (!presented) return
 
 	val haptic = LocalHapticFeedback.current
+	val viewModel = koinViewModel<NavtabsViewModel>()
 	val state by viewModel.state.collectAsState()
 
 	val draggableState = rememberDraggableListState { from, to ->
