@@ -1,8 +1,11 @@
 package paige.navic.shared
 
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +16,7 @@ import kotlinx.serialization.json.Json
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import kotlinx.serialization.json.decodeFromJsonElement
+import paige.navic.data.models.settings.Settings
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.domain.repositories.TrackRepository
 import paige.navic.managers.ConnectivityManager
@@ -49,10 +53,28 @@ abstract class MediaPlayerViewModel(
 		return isOnline || isDownloaded
 	}
 
+	private var sleepTimerJob: Job? = null
+
 	init {
 		viewModelScope.launch {
 			restoreState()
 			observeAndSaveState()
+		}
+
+		viewModelScope.launch {
+			snapshotFlow { Settings.shared.sleepTimerDuration }
+				.collect { resetSleepTimer() }
+		}
+	}
+
+	fun resetSleepTimer() {
+		sleepTimerJob?.cancel()
+		val duration = Settings.shared.sleepTimerDuration
+		if (duration > 0f) {
+			sleepTimerJob = viewModelScope.launch {
+				delay(duration.toLong() * 60_000L)
+				pause()
+			}
 		}
 	}
 
