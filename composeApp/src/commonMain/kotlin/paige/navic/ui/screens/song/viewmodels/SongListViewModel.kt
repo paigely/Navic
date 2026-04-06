@@ -14,6 +14,7 @@ import paige.navic.domain.repositories.SongRepository
 import paige.navic.utils.UiState
 
 class SongListViewModel(
+	private val artistId: String? = null,
 	private val repository: SongRepository
 ) : ViewModel() {
 	private val _songsState = MutableStateFlow<UiState<ImmutableList<DomainSong>>>(UiState.Loading())
@@ -47,7 +48,7 @@ class SongListViewModel(
 
 	fun refreshSongs(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			repository.getSongsFlow(fullRefresh, _listType.value).collect {
+			repository.getSongsFlow(fullRefresh, _listType.value, artistId).collect {
 				_songsState.value = it
 			}
 		}

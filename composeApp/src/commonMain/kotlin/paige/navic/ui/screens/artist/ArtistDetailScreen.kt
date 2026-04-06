@@ -7,10 +7,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -46,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_see_all
 import navic.composeapp.generated.resources.count_albums
 import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.title_albums
@@ -175,16 +178,36 @@ fun ArtistDetailScreen(
 						) {
 							state.topSongs.takeIf { state.topSongs.isNotEmpty() }
 								?.let { songs ->
-									Text(
-										stringResource(Res.string.option_sort_frequent),
-										style = MaterialTheme.typography.titleMediumEmphasized,
-										fontWeight = FontWeight(600),
+									Row(
 										modifier = Modifier
 											.heightIn(min = 32.dp)
 											.padding(top = 8.dp)
 											.padding(horizontal = 16.dp)
-											.fillMaxWidth()
-									)
+											.fillMaxWidth(),
+										verticalAlignment = Alignment.CenterVertically,
+										horizontalArrangement = Arrangement.SpaceBetween
+									) {
+										Text(
+											stringResource(Res.string.option_sort_frequent),
+											style = MaterialTheme.typography.titleMediumEmphasized,
+											fontWeight = FontWeight(600)
+										)
+										Text(
+											stringResource(Res.string.action_see_all),
+											style = MaterialTheme.typography.labelLarge,
+											color = MaterialTheme.colorScheme.primary,
+											modifier = Modifier.clickable {
+												ctx.clickSound()
+												backStack.add(
+													Screen.SongList(
+														nested = true,
+														artistId = state.artist.id,
+														artistName = state.artist.name
+													)
+												)
+											}
+										)
+									}
 									LazyHorizontalGrid(
 										rows = GridCells.Fixed(3),
 										modifier = Modifier.fillMaxWidth().height(250.dp)

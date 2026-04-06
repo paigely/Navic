@@ -24,31 +24,39 @@ class SongRepository(
 	private val syncManager: SyncManager
 ) {
 	private suspend fun getLocalData(
-		listType: DomainSongListType
+		listType: DomainSongListType,
+		artistId: String? = null
 	): ImmutableList<DomainSong> {
-		return songDao
+		val songs = songDao
 			.getAllSongs()
 			.map { it.toDomainModel() }
-			.toImmutableList()
+		
+		return if (artistId != null) {
+			songs.filter { it.artistId == artistId }
+		} else {
+			songs
+		}.toImmutableList()
 			.sortedByListType(listType)
 	}
 
 	private suspend fun refreshLocalData(
-		listType: DomainSongListType
+		listType: DomainSongListType,
+		artistId: String? = null
 	): ImmutableList<DomainSong> {
 		dbRepository.syncLibrarySongs().getOrThrow()
-		return getLocalData(listType)
+		return getLocalData(listType, artistId)
 	}
 
 	fun getSongsFlow(
 		fullRefresh: Boolean,
-		listType: DomainSongListType
+		listType: DomainSongListType,
+		artistId: String? = null
 	): Flow<UiState<ImmutableList<DomainSong>>> = flow {
-		val localData = getLocalData(listType)
+		val localData = getLocalData(listType, artistId)
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))
 			try {
-				emit(UiState.Success(data = refreshLocalData(listType)))
+				emit(UiState.Success(data = refreshLocalData(listType, artistId)))
 			} catch (error: Exception) {
 				emit(UiState.Error(error = error, data = localData))
 			}

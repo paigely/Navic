@@ -25,6 +25,7 @@ import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.data.session.SessionManager
@@ -43,8 +44,15 @@ import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SongListScreen(nested: Boolean) {
-	val viewModel = koinViewModel<SongListViewModel>()
+fun SongListScreen(
+	nested: Boolean,
+	artistId: String? = null,
+	artistName: String? = null
+) {
+	val viewModel = koinViewModel<SongListViewModel>(
+		key = artistId,
+		parameters = { parametersOf(artistId) }
+	)
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val songsState by viewModel.songsState.collectAsStateWithLifecycle()
 	val selectedSong by viewModel.selectedSong.collectAsStateWithLifecycle()
@@ -71,13 +79,13 @@ fun SongListScreen(nested: Boolean) {
 		topBar = {
 			if (!nested) {
 				RootTopBar(
-					title = { Text(stringResource(Res.string.title_songs)) },
+					title = { Text(artistName ?: stringResource(Res.string.title_songs)) },
 					scrollBehavior = scrollBehavior,
 					actions = actions
 				)
 			} else {
 				NestedTopBar(
-					title = { Text(stringResource(Res.string.title_songs)) },
+					title = { Text(artistName ?: stringResource(Res.string.title_songs)) },
 					actions = actions
 				)
 			}
@@ -105,7 +113,9 @@ fun SongListScreen(nested: Boolean) {
 				return@PullToRefreshBox
 			}
 			LazyColumn(
-				modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+				modifier = if (!nested)
+					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+				else Modifier,
 				contentPadding = innerPadding.withoutTop(),
 				verticalArrangement = if ((songsState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center
