@@ -175,7 +175,7 @@ fun QueueScreenItem(
 							IconButton(
 								modifier = Modifier.dragHandle(
 									state = draggableState,
-									key = track.id
+									index = index
 								),
 								onClick = {}
 							) {

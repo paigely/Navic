@@ -174,11 +174,10 @@ class IOSMediaPlayerViewModel(
 	override fun addToQueueSingle(track: DomainSong) {
 		_uiState.update { state ->
 			val newQueue = state.queue + track
-			val newIndex = newQueue.indexOf(state.currentTrack)
 			state.copy(
 				queue = newQueue,
-				currentIndex = newIndex,
-				currentTrack = if (newIndex == -1) null else state.currentTrack
+				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+				currentTrack = if (state.currentIndex == -1) track else state.currentTrack
 			)
 		}
 	}
@@ -186,11 +185,10 @@ class IOSMediaPlayerViewModel(
 	override fun addToQueue(tracks: DomainSongCollection) {
 		_uiState.update { state ->
 			val newQueue = state.queue + tracks.songs
-			val newIndex = newQueue.indexOf(state.currentTrack)
 			state.copy(
 				queue = newQueue,
-				currentIndex = newIndex,
-				currentTrack = if (newIndex == -1) null else state.currentTrack
+				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+				currentTrack = if (state.currentIndex == -1) tracks.songs.firstOrNull() else state.currentTrack
 			)
 		}
 	}
@@ -200,10 +198,15 @@ class IOSMediaPlayerViewModel(
 			val newQueue = state.queue.toMutableList().apply {
 				if (index in indices) removeAt(index)
 			}
+			val newIndex = when {
+				index < state.currentIndex -> state.currentIndex - 1
+				index == state.currentIndex -> if (newQueue.isEmpty()) -1 else state.currentIndex.coerceAtMost(newQueue.size - 1)
+				else -> state.currentIndex
+			}
 			state.copy(
 				queue = newQueue,
-				currentIndex = newQueue.indexOf(state.currentTrack),
-				currentTrack = if (newQueue.indexOf(state.currentTrack) == -1) null else state.currentTrack
+				currentIndex = newIndex,
+				currentTrack = if (newIndex == -1) null else newQueue[newIndex]
 			)
 		}
 	}
@@ -216,10 +219,16 @@ class IOSMediaPlayerViewModel(
 					add(toIndex, item)
 				}
 			}
+			val newIndex = when (state.currentIndex) {
+				fromIndex -> toIndex
+				in (fromIndex + 1)..toIndex -> state.currentIndex - 1
+				in toIndex until fromIndex -> state.currentIndex + 1
+				else -> state.currentIndex
+			}
 			state.copy(
 				queue = newQueue,
-				currentIndex = newQueue.indexOf(state.currentTrack),
-				currentTrack = if (newQueue.indexOf(state.currentTrack) == -1) null else state.currentTrack
+				currentIndex = newIndex,
+				currentTrack = if (newIndex == -1) null else newQueue[newIndex]
 			)
 		}
 	}
@@ -274,11 +283,10 @@ class IOSMediaPlayerViewModel(
 	override fun shufflePlay(tracks: DomainSongCollection) {
 		val shuffledTracks = tracks.songs.shuffled()
 		_uiState.update { state ->
-			val newIndex = shuffledTracks.indexOf(state.currentTrack)
 			state.copy(
 				queue = shuffledTracks,
-				currentIndex = newIndex,
-				currentTrack = if (newIndex == -1) null else state.currentTrack
+				currentIndex = 0,
+				currentTrack = shuffledTracks.firstOrNull()
 			)
 		}
 		playAt(0)
@@ -322,6 +330,7 @@ class IOSMediaPlayerViewModel(
 		info[MPMediaItemPropertyTitle] = track.title
 		info[MPMediaItemPropertyArtist] = track.artistName
 		info[MPMediaItemPropertyAlbumTitle] = track.albumTitle
+		info[MPNowPlayingInfoPropertyPlaybackRate] = if (_uiState.value.isPaused) 0.0 else 1.0
 
 		val duration = player.currentItem?.duration
 		if (duration != null) {
@@ -332,7 +341,6 @@ class IOSMediaPlayerViewModel(
 		}
 
 		info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = CMTimeGetSeconds(player.currentTime())
-		info[MPNowPlayingInfoPropertyPlaybackRate] = if (_uiState.value.isPaused) 0.0 else 1.0
 
 		info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
 			boundsSize = CGSizeMake(512.0, 512.0),

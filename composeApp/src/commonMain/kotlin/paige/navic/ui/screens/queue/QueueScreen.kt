@@ -29,7 +29,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.screens.queue.components.QueueScreenItem
 import paige.navic.ui.screens.queue.viewmodels.QueueViewModel
-import paige.navic.utils.draggableItems
+import paige.navic.utils.draggableItemsIndexed
 import paige.navic.utils.fadeFromTop
 import paige.navic.utils.rememberDraggableListState
 
@@ -42,7 +42,6 @@ fun QueueScreen() {
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
 	val downloadedSongs by viewModel.downloadedSongs.collectAsStateWithLifecycle()
-	val currentTrack = playerState.currentTrack
 	val queue = playerState.queue
 
 	val haptic = LocalHapticFeedback.current
@@ -61,24 +60,23 @@ fun QueueScreen() {
 			Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
 		else Arrangement.Center
 	) {
-		draggableItems(
+		draggableItemsIndexed(
 			state = draggableState,
 			items = queue,
-			key = { track -> track.id }
-		) { track, isDragging ->
-			val index = queue.indexOf(track)
+			key = { index, _ -> index }
+		) { index, track, isDragging ->
 			QueueScreenItem(
 				index = index,
 				count = queue.count(),
 				track = track,
-				isPlaying = currentTrack?.id == track.id
+				isPlaying = playerState.currentIndex == index
 					&& !playerState.isPaused,
-				isSelected = currentTrack?.id == track.id,
+				isSelected = playerState.currentIndex == index,
 				isDragging = isDragging,
 				draggableState = draggableState,
 				onClick = {
 					ctx.clickSound()
-					if (currentTrack?.id != track.id) {
+					if (playerState.currentIndex != index) {
 						player.playAt(index)
 					}
 				},

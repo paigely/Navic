@@ -335,11 +335,10 @@ class AndroidMediaPlayerViewModel(
 		controller?.addMediaItem(track.toMediaItem())
 		_uiState.update { state ->
 			val newQueue = state.queue + track
-			val newIndex = newQueue.indexOf(state.currentTrack)
 			state.copy(
 				queue = newQueue,
-				currentIndex = newIndex,
-				currentTrack = if (newIndex == -1) null else state.currentTrack
+				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+				currentTrack = if (state.currentIndex == -1) track else state.currentTrack
 			)
 		}
 	}
@@ -349,11 +348,10 @@ class AndroidMediaPlayerViewModel(
 		controller?.addMediaItems(items)
 		_uiState.update { state ->
 			val newQueue = state.queue + tracks.songs
-			val newIndex = newQueue.indexOf(state.currentTrack)
 			state.copy(
 				queue = newQueue,
-				currentIndex = newIndex,
-				currentTrack = if (newIndex == -1) null else state.currentTrack
+				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+				currentTrack = if (state.currentIndex == -1) tracks.songs.firstOrNull() else state.currentTrack
 			)
 		}
 	}
@@ -362,10 +360,15 @@ class AndroidMediaPlayerViewModel(
 		controller?.removeMediaItem(index)
 		_uiState.update { state ->
 			val newQueue = state.queue.toMutableList().apply { removeAt(index) }
+			val newIndex = when {
+				index < state.currentIndex -> state.currentIndex - 1
+				index == state.currentIndex -> if (newQueue.isEmpty()) -1 else state.currentIndex.coerceAtMost(newQueue.size - 1)
+				else -> state.currentIndex
+			}
 			state.copy(
 				queue = newQueue,
-				currentIndex = newQueue.indexOf(state.currentTrack),
-				currentTrack = if (newQueue.indexOf(state.currentTrack) == -1) null else state.currentTrack
+				currentIndex = newIndex,
+				currentTrack = if (newIndex == -1) null else newQueue[newIndex]
 			)
 		}
 	}
@@ -377,10 +380,16 @@ class AndroidMediaPlayerViewModel(
 				val item = removeAt(fromIndex)
 				add(toIndex, item)
 			}
+			val newIndex = when (state.currentIndex) {
+				fromIndex -> toIndex
+				in (fromIndex + 1)..toIndex -> state.currentIndex - 1
+				in toIndex until fromIndex -> state.currentIndex + 1
+				else -> state.currentIndex
+			}
 			state.copy(
 				queue = newQueue,
-				currentIndex = newQueue.indexOf(state.currentTrack),
-				currentTrack = if (newQueue.indexOf(state.currentTrack) == -1) null else state.currentTrack
+				currentIndex = newIndex,
+				currentTrack = if (newIndex == -1) null else newQueue[newIndex]
 			)
 		}
 	}
@@ -416,11 +425,10 @@ class AndroidMediaPlayerViewModel(
 		}
 
 		_uiState.update { state ->
-			val newIndex = shuffledTracks.indexOf(state.currentTrack)
 			state.copy(
 				queue = shuffledTracks,
-				currentIndex = newIndex,
-				currentTrack = if (newIndex == -1) null else state.currentTrack
+				currentIndex = 0,
+				currentTrack = shuffledTracks.firstOrNull()
 			)
 		}
 	}
