@@ -22,8 +22,8 @@ class PlaylistUpdateDialogViewModel(
 	private val _confirmState = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
 	val confirmState = _confirmState.asStateFlow()
 
-	private val _selectedPlaylist = MutableStateFlow<Playlist?>(null)
-	val selectedPlaylist = _selectedPlaylist.asStateFlow()
+	private val _selectedPlaylists = MutableStateFlow<Set<Playlist>>(emptySet())
+	val selectedPlaylists = _selectedPlaylists.asStateFlow()
 
 	private val _events = Channel<Event>()
 	val events = _events.receiveAsFlow()
@@ -34,7 +34,7 @@ class PlaylistUpdateDialogViewModel(
 
 	fun refreshResults() {
 		viewModelScope.launch {
-			_selectedPlaylist.value = null
+			_selectedPlaylists.value = emptySet()
 			_playlistsState.value = UiState.Loading()
 			try {
 				val results =
@@ -46,18 +46,24 @@ class PlaylistUpdateDialogViewModel(
 		}
 	}
 
-	fun selectPlaylist(playlist: Playlist) {
-		_selectedPlaylist.value = playlist
+	fun togglePlaylistSelection(playlist: Playlist) {
+		_selectedPlaylists.value = if (playlist in _selectedPlaylists.value) {
+			_selectedPlaylists.value - playlist
+		} else {
+			_selectedPlaylists.value + playlist
+		}
 	}
 
 	fun confirm() {
 		viewModelScope.launch {
 			_confirmState.value = UiState.Loading()
 			try {
-				SessionManager.api.updatePlaylist(
-					_selectedPlaylist.value!!.id,
-					songIdsToAdd = tracks.map { it.id }
-				)
+				_selectedPlaylists.value.forEach { playlist ->
+					SessionManager.api.updatePlaylist(
+						playlist.id,
+						songIdsToAdd = tracks.map { it.id }
+					)
+				}
 				_confirmState.value = UiState.Success(null)
 				_events.send(Event.Dismiss)
 			} catch (e: Exception) {

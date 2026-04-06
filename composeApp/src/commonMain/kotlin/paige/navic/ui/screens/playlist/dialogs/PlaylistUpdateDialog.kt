@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,35 +66,35 @@ fun PlaylistUpdateDialog(
 	val ctx = LocalCtx.current
 	val state by viewModel.playlistsState.collectAsState()
 	val confirmState by viewModel.confirmState.collectAsState()
-	val selectedPlaylist by viewModel.selectedPlaylist.collectAsState()
+	val selectedPlaylists by viewModel.selectedPlaylists.collectAsState()
 
 	var createDialogShown by rememberSaveable { mutableStateOf(false) }
 
 	val list: @Composable (playlists: List<Playlist>) -> Unit = { playlists ->
 		LazyColumn(
 			modifier = Modifier
-				.selectableGroup()
 				.clip(MaterialTheme.shapes.largeIncreased)
 				.heightIn(max = 300.dp)
 		) {
 			items(playlists) { playlist ->
+				val isSelected = playlist in selectedPlaylists
 				ListItem(
 					modifier = Modifier
-						.selectable(
-							selected = (playlist == selectedPlaylist),
-							onClick = {
+						.toggleable(
+							value = isSelected,
+							onValueChange = {
 								ctx.clickSound()
-								viewModel.selectPlaylist(playlist)
+								viewModel.togglePlaylistSelection(playlist)
 							},
-							role = Role.RadioButton
+							role = Role.Checkbox
 						),
 					headlineContent = {
 						Text(playlist.name)
 					},
 					leadingContent = {
-						RadioButton(
-							selected = (playlist == selectedPlaylist),
-							onClick = null
+						Checkbox(
+							checked = isSelected,
+							onCheckedChange = null
 						)
 					}
 				)
@@ -141,7 +140,7 @@ fun PlaylistUpdateDialog(
 						ctx.clickSound()
 						viewModel.confirm()
 					},
-					enabled = confirmState !is UiState.Loading && selectedPlaylist != null,
+					enabled = confirmState !is UiState.Loading && selectedPlaylists.isNotEmpty(),
 					color = MaterialTheme.colorScheme.primary
 				) {
 					if (confirmState !is UiState.Loading) {
