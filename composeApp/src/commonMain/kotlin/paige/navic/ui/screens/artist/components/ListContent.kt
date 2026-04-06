@@ -41,7 +41,7 @@ import paige.navic.utils.withoutTop
 @OptIn(ExperimentalMaterial3Api::class)
 fun ArtistListScreenContent(
 	state: UiState<ImmutableList<DomainArtist>>,
-	starredState: UiState<Boolean>,
+	starred: Boolean,
 	gridState: LazyGridState,
 	scrollBehavior: TopAppBarScrollBehavior,
 	innerPadding: PaddingValues,
@@ -118,7 +118,7 @@ fun ArtistListScreenContent(
 						tab = "artists",
 						artist = artist,
 						selected = artist == selectedArtist,
-						starredState = starredState,
+						starred = starred,
 						onSelect = { onUpdateSelection(artist) },
 						onDeselect = { onClearSelection() },
 						onSetStarred = { onSetStarred(it) }

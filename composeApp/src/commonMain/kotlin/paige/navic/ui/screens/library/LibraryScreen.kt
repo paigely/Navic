@@ -77,14 +77,14 @@ fun LibraryScreen() {
 		parameters = { parametersOf(DomainAlbumListType.Frequent) }
 	)
 	val albumListSelection by albumListViewModel.selectedAlbum.collectAsState()
-	val albumListStarredState by albumListViewModel.starredState.collectAsState()
+	val albumListStarred by albumListViewModel.starred.collectAsState()
 
 	val playlistListViewModel = koinViewModel<PlaylistListViewModel>()
 	val playlistListSelection by playlistListViewModel.selectedPlaylist.collectAsState()
 
 	val artistListViewModel = koinViewModel<ArtistListViewModel>()
 	val artistListSelection by artistListViewModel.selectedArtist.collectAsState()
-	val artistListStarredState by artistListViewModel.starredState.collectAsState()
+	val artistListStarred by artistListViewModel.starred.collectAsState()
 
 	val genreListViewModel = koinViewModel<GenreListViewModel>()
 
@@ -187,7 +187,7 @@ fun LibraryScreen() {
 							tab = "library",
 							album = album,
 							selected = album == albumListSelection,
-							starredState = albumListStarredState,
+							starred = albumListStarred,
 							onSelect = { albumListViewModel.selectAlbum(album) },
 							onDeselect = { albumListViewModel.selectAlbum(null) },
 							onSetStarred = { albumListViewModel.starAlbum(it) },
@@ -225,7 +225,7 @@ fun LibraryScreen() {
 							tab = "library",
 							artist = artist,
 							selected = artist == artistListSelection,
-							starredState = artistListStarredState,
+							starred = artistListStarred,
 							onSelect = { artistListViewModel.selectArtist(artist) },
 							onDeselect = { artistListViewModel.clearSelection() },
 							onSetStarred = { artistListViewModel.starArtist(it) }

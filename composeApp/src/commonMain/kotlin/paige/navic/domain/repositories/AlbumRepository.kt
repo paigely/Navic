@@ -54,9 +54,7 @@ class AlbumRepository(
 		}
 	}.flowOn(Dispatchers.IO)
 
-	suspend fun isAlbumStarred(album: DomainAlbum): Boolean {
-		return albumDao.isAlbumStarred(album.id)
-	}
+	suspend fun isAlbumStarred(album: DomainAlbum) = albumDao.isAlbumStarred(album.id)
 	suspend fun starAlbum(album: DomainAlbum) {
 		val starredEntity = album.toEntity().copy(
 			starredAt = Clock.System.now()

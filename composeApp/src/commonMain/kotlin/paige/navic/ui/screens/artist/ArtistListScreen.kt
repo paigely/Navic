@@ -51,7 +51,7 @@ fun ArtistListScreen(
 	val viewModel = koinViewModel<ArtistListViewModel>()
 	val artistsState by viewModel.artistsState.collectAsState()
 	val selectedArtist by viewModel.selectedArtist.collectAsState()
-	val starredState by viewModel.starredState.collectAsState()
+	val starred by viewModel.starred.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
 	Scaffold(
@@ -78,7 +78,7 @@ fun ArtistListScreen(
 		) {
 			ArtistListScreenContent(
 				state = artistsState,
-				starredState = starredState,
+				starred = starred,
 				selectedArtist = selectedArtist,
 				gridState = viewModel.gridState,
 				scrollBehavior = scrollBehavior,
@@ -103,7 +103,7 @@ fun ArtistsScreenItem(
 	tab: String,
 	artist: DomainArtist,
 	selected: Boolean,
-	starredState: UiState<Boolean>,
+	starred: Boolean,
 	onSelect: () -> Unit,
 	onDeselect: () -> Unit,
 	onSetStarred: (starred: Boolean) -> Unit
@@ -131,24 +131,22 @@ fun ArtistsScreenItem(
 			expanded = selected,
 			onDismissRequest = onDeselect
 		) {
-			val starred = (starredState as? UiState.Success)?.data
 			DropdownItem(
 				text = {
 					Text(
 						stringResource(
-							if (starred == true)
+							if (starred)
 								Res.string.action_remove_star
 							else Res.string.action_star
 						)
 					)
 				},
 				leadingIcon = {
-					Icon(if (starred == true) Icons.Filled.Star else Icons.Outlined.Star, null)
+					Icon(if (starred) Icons.Filled.Star else Icons.Outlined.Star, null)
 				},
 				onClick = {
-					onSetStarred(starred != true)
-				},
-				enabled = starred != null
+					onSetStarred(!starred)
+				}
 			)
 		}
 	}

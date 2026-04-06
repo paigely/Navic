@@ -12,7 +12,6 @@ import paige.navic.domain.repositories.ArtistListType
 import paige.navic.domain.repositories.ArtistRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainArtist
-import paige.navic.shared.Logger
 import paige.navic.utils.UiState
 
 class ArtistListViewModel(
@@ -21,8 +20,8 @@ class ArtistListViewModel(
 	private val _artistsState = MutableStateFlow<UiState<ImmutableList<DomainArtist>>>(UiState.Loading())
 	val artistsState = _artistsState.asStateFlow()
 
-	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
-	val starredState = _starredState.asStateFlow()
+	private val _starred = MutableStateFlow(false)
+	val starred = _starred.asStateFlow()
 
 	private val _selectedArtist = MutableStateFlow<DomainArtist?>(null)
 	val selectedArtist = _selectedArtist.asStateFlow()
@@ -49,14 +48,7 @@ class ArtistListViewModel(
 	fun selectArtist(artist: DomainArtist) {
 		viewModelScope.launch {
 			_selectedArtist.value = artist
-			_starredState.value = UiState.Loading()
-			try {
-				val isStarred = repository.isArtistStarred(artist)
-				_starredState.value = UiState.Success(isStarred)
-			} catch(e: Exception) {
-				Logger.e("ArtistListViewModel", "Failed to get star state of artist", e)
-				_starredState.value = UiState.Error(e)
-			}
+			_starred.value = repository.isArtistStarred(artist)
 		}
 	}
 
@@ -67,16 +59,13 @@ class ArtistListViewModel(
 	fun starArtist(starred: Boolean) {
 		val artist = _selectedArtist.value ?: return
 		viewModelScope.launch {
-			try {
+			runCatching {
 				if (starred) {
-					repository.unstarArtist(artist)
-				} else {
 					repository.starArtist(artist)
+				} else {
+					repository.unstarArtist(artist)
 				}
-				_starredState.value = UiState.Success(true)
-			} catch(e: Exception) {
-				Logger.e("ArtistListViewModel", "Failed to star artist", e)
-				_starredState.value = UiState.Error(e)
+				_starred.value = starred
 			}
 		}
 	}

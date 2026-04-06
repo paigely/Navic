@@ -23,7 +23,6 @@ import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.layouts.ArtGridItem
-import paige.navic.utils.UiState
 
 @Composable
 fun AlbumListScreenItem(
@@ -31,7 +30,7 @@ fun AlbumListScreenItem(
 	tab: String,
 	album: DomainAlbum,
 	selected: Boolean,
-	starredState: UiState<Boolean>,
+	starred: Boolean,
 	onSelect: () -> Unit,
 	onDeselect: () -> Unit,
 	onSetStarred: (starred: Boolean) -> Unit,
@@ -67,26 +66,23 @@ fun AlbumListScreenItem(
 					onSetShareId(album.id)
 				},
 			)
-			val starred =
-				(starredState as? UiState.Success)?.data
 			DropdownItem(
 				text = {
 					Text(
 						stringResource(
-							if (starred == true)
+							if (starred)
 								Res.string.action_remove_star
 							else Res.string.action_star
 						)
 					)
 				},
 				leadingIcon = {
-					Icon(if (starred == true) Icons.Filled.Star else Icons.Outlined.Star, null)
+					Icon(if (starred) Icons.Filled.Star else Icons.Outlined.Star, null)
 				},
 				onClick = {
+					onSetStarred(!starred)
 					onDeselect()
-					onSetStarred(starred != true)
-				},
-				enabled = starred != null
+				}
 			)
 		}
 	}

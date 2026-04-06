@@ -21,11 +21,11 @@ open class AlbumListViewModel(
 	private val _albumsState = MutableStateFlow<UiState<List<DomainAlbum>>>(UiState.Loading())
 	val albumsState = _albumsState.asStateFlow()
 
-	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
-	val starredState = _starredState.asStateFlow()
-
 	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
 	val selectedAlbum = _selectedAlbum.asStateFlow()
+
+	private val _starred = MutableStateFlow(false)
+	val starred = _starred.asStateFlow()
 
 	private val _listType = MutableStateFlow(initialListType)
 	val listType = _listType.asStateFlow()
@@ -50,13 +50,7 @@ open class AlbumListViewModel(
 		viewModelScope.launch {
 			_selectedAlbum.value = album
 			if (album == null) return@launch
-			_starredState.value = UiState.Loading()
-			try {
-				val isStarred = repository.isAlbumStarred(album)
-				_starredState.value = UiState.Success(isStarred)
-			} catch(e: Exception) {
-				_starredState.value = UiState.Error(e)
-			}
+			_starred.value = repository.isAlbumStarred(album)
 		}
 	}
 
@@ -69,6 +63,7 @@ open class AlbumListViewModel(
 				} else {
 					repository.unstarAlbum(selection)
 				}
+				_starred.value = starred
 			}
 		}
 	}

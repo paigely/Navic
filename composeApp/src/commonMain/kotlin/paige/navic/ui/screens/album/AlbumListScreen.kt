@@ -57,7 +57,7 @@ fun AlbumListScreen(
 	val currentListType by viewModel.listType.collectAsState()
 	val albumsState by viewModel.albumsState.collectAsState()
 	val selectedAlbum by viewModel.selectedAlbum.collectAsState()
-	val starredState by viewModel.starredState.collectAsState()
+	val starred by viewModel.starred.collectAsState()
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -119,7 +119,7 @@ fun AlbumListScreen(
 			) {
 				albumListScreenContent(
 					state = albumsState,
-					starredState = starredState,
+					starred = starred,
 					selectedAlbum = selectedAlbum,
 					onUpdateSelection = { viewModel.selectAlbum(it) },
 					onClearSelection = { viewModel.selectAlbum(null) },

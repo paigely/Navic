@@ -16,7 +16,7 @@ import paige.navic.utils.UiState
 
 fun LazyGridScope.albumListScreenContent(
 	state: UiState<List<DomainAlbum>>,
-	starredState: UiState<Boolean>,
+	starred: Boolean,
 	selectedAlbum: DomainAlbum?,
 	onUpdateSelection: (DomainAlbum) -> Unit,
 	onClearSelection: () -> Unit,
@@ -31,7 +31,7 @@ fun LazyGridScope.albumListScreenContent(
 				tab = "albums",
 				album = album,
 				selected = album == selectedAlbum,
-				starredState = starredState,
+				starred = starred,
 				onSelect = { onUpdateSelection(album) },
 				onDeselect = { onClearSelection() },
 				onSetStarred = { onSetStarred(it) },

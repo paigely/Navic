@@ -59,9 +59,7 @@ class ArtistRepository(
 		}
 	}.flowOn(Dispatchers.IO)
 
-	suspend fun isArtistStarred(artist: DomainArtist): Boolean {
-		return artistDao.isArtistStarred(artist.id)
-	}
+	suspend fun isArtistStarred(artist: DomainArtist) = artistDao.isArtistStarred(artist.id)
 
 	suspend fun starArtist(artist: DomainArtist) {
 		val starredEntity = artist.toEntity().copy(
