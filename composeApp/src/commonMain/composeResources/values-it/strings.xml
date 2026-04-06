@@ -288,4 +288,8 @@
     <string name="action_delete_download">Cancella download</string>
     <string name="action_cancel_download">Annulla download</string>
     <string name="action_clear_image_cache">Cancella cache immagini</string>
+    <string name="action_clear_pending_actions">Elimina azioni di sync in sospeso</string>
+    <string name="action_clear_downloads">Cancella download</string>
+    <string name="action_rebuild_database">Ricostruisci il database</string>
+    <string name="action_trigger_sync">Esegui sincronizzazione manuale</string>
 </resources>
