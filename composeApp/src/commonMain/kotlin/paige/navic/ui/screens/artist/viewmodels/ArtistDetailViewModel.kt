@@ -4,17 +4,23 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainSong
+import paige.navic.managers.DownloadManager
 import paige.navic.shared.Logger
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.utils.UiState
@@ -31,7 +37,8 @@ class ArtistDetailViewModel(
 	private val artistId: String,
 	private val repository: DbRepository,
 	private val artistDao: ArtistDao,
-	private val albumDao: AlbumDao
+	private val albumDao: AlbumDao,
+	private val downloadManager: DownloadManager
 ) : ViewModel() {
 	private val _artistState = MutableStateFlow<UiState<ArtistState>>(UiState.Loading())
 	val artistState = _artistState.asStateFlow()
@@ -103,6 +110,25 @@ class ArtistDetailViewModel(
 				player.addToQueue(album)
 			}
 			player.togglePlay()
+		}
+	}
+
+	@OptIn(ExperimentalCoroutinesApi::class)
+	fun collectionDownloadStatus(): Flow<DownloadStatus> {
+		return artistState.flatMapLatest { state ->
+			if (state is UiState.Success) {
+				val allArtistSongIds = state.data.albums.flatMap { album ->
+					album.songs.map { it.id }
+				}
+
+				if (allArtistSongIds.isEmpty()) {
+					flowOf(DownloadStatus.NOT_DOWNLOADED)
+				} else {
+					downloadManager.getCollectionDownloadStatus(allArtistSongIds)
+				}
+			} else {
+				flowOf(DownloadStatus.NOT_DOWNLOADED)
+			}
 		}
 	}
 }

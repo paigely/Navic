@@ -39,7 +39,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -47,6 +50,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_see_all
 import navic.composeapp.generated.resources.count_albums
@@ -55,20 +59,25 @@ import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_similar_artists
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.managers.DownloadManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.TrackRow
+import paige.navic.ui.components.dialogs.BulkDownloadDialog
 import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.layouts.RootBottomBar
+import paige.navic.ui.screens.artist.components.ArtistActionButtons
 import paige.navic.ui.screens.artist.components.ArtistDetailScreenHeading
 import paige.navic.ui.screens.artist.components.ArtistDetailScreenTopBar
 import paige.navic.ui.screens.artist.viewmodels.ArtistDetailViewModel
@@ -87,10 +96,13 @@ fun ArtistDetailScreen(
 	)
 	val ctx = LocalCtx.current
 	val player = koinViewModel<MediaPlayerViewModel>()
+	val downloadManager = koinInject<DownloadManager>()
 	val density = LocalDensity.current
 	val backStack = LocalNavStack.current
 	val layoutDirection = LocalLayoutDirection.current
 	val artistState by viewModel.artistState.collectAsState()
+	val downloadStatus by viewModel.collectionDownloadStatus().collectAsState(DownloadStatus.NOT_DOWNLOADED)
+	val scope = rememberCoroutineScope()
 
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
@@ -100,6 +112,8 @@ fun ArtistDetailScreen(
 			with(density) { viewModel.scrollState.value.toDp() } >= 200.dp
 		}
 	}
+
+	var showDownloadDialog by remember { mutableStateOf(false) }
 
 	Scaffold(
 		topBar = {
@@ -142,6 +156,18 @@ fun ArtistDetailScreen(
 
 				is UiState.Success -> {
 					val state = it.data
+					BulkDownloadDialog(
+						artistName = state.artist.name,
+						showDialog = showDownloadDialog,
+						onDismissRequest = { showDownloadDialog = false },
+						onConfirm = {
+							scope.launch {
+								state.albums.forEach { album ->
+									downloadManager.downloadCollection(album)
+								}
+							}
+						}
+					)
 					Column(
 						modifier = Modifier
 							.fillMaxSize()
@@ -155,9 +181,14 @@ fun ArtistDetailScreen(
 							subtitle = state.artist.biography,
 							lastfm = state.artist.lastFmUrl,
 							innerPadding = contentPadding,
-							onPlay = { viewModel.playArtistAlbums(player) },
-							playEnabled = state.albums.isNotEmpty(),
 							scrolled = scrolled
+						)
+						ArtistActionButtons(
+							onPlay = { viewModel.playArtistAlbums(player) },
+							onDownload = { showDownloadDialog = true },
+							downloadStatus = downloadStatus,
+							playEnabled = state.albums.isNotEmpty(),
+							modifier = Modifier.padding(top = 8.dp)
 						)
 						Column(
 							modifier = Modifier
