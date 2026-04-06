@@ -13,12 +13,9 @@ import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.domain.models.DomainArtist
+import paige.navic.domain.models.DomainArtistListType
 import paige.navic.utils.UiState
 import kotlin.time.Clock
-
-enum class ArtistListType {
-	AlphabeticalByName, Random, Starred
-}
 
 class ArtistRepository(
 	private val artistDao: ArtistDao,
@@ -26,17 +23,17 @@ class ArtistRepository(
 	private val dbRepository: DbRepository
 ) {
 	private suspend fun getLocalData(
-		listType: ArtistListType
+		listType: DomainArtistListType
 	): ImmutableList<DomainArtist> {
 		return when (listType) {
-			ArtistListType.AlphabeticalByName -> artistDao.getArtistsAlphabeticalByName()
-			ArtistListType.Random -> artistDao.getArtistsRandom()
-			ArtistListType.Starred -> artistDao.getArtistsStarred()
+			DomainArtistListType.AlphabeticalByName -> artistDao.getArtistsAlphabeticalByName()
+			DomainArtistListType.Random -> artistDao.getArtistsRandom()
+			DomainArtistListType.Starred -> artistDao.getArtistsStarred()
 		}.map { it.toDomainModel() }.toImmutableList()
 	}
 
 	private suspend fun refreshLocalData(
-		listType: ArtistListType
+		listType: DomainArtistListType
 	): ImmutableList<DomainArtist> {
 		dbRepository.syncArtists().getOrThrow()
 		return getLocalData(listType)
@@ -44,7 +41,7 @@ class ArtistRepository(
 
 	fun getArtistsFlow(
 		fullRefresh: Boolean,
-		listType: ArtistListType
+		listType: DomainArtistListType
 	): Flow<UiState<ImmutableList<DomainArtist>>> = flow {
 		val localData = getLocalData(listType)
 		if (fullRefresh) {

@@ -1,118 +1,196 @@
 package paige.navic.ui.screens.library
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
-import navic.composeapp.generated.resources.option_sort_frequent
-import navic.composeapp.generated.resources.option_sort_newest
-import navic.composeapp.generated.resources.option_sort_random
-import navic.composeapp.generated.resources.option_sort_recent
-import navic.composeapp.generated.resources.option_sort_starred
+import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_artists
+import navic.composeapp.generated.resources.title_create_playlist
 import navic.composeapp.generated.resources.title_genres
+import navic.composeapp.generated.resources.title_home
 import navic.composeapp.generated.resources.title_library
 import navic.composeapp.generated.resources.title_playlists
+import navic.composeapp.generated.resources.title_songs
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.data.models.Screen
+import paige.navic.LocalCtx
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.BottomBarCollapseMode
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.icons.Icons
-import paige.navic.icons.outlined.History
-import paige.navic.icons.outlined.LibraryAdd
-import paige.navic.icons.outlined.Shuffle
-import paige.navic.icons.outlined.Star
+import paige.navic.icons.outlined.Add
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
-import paige.navic.ui.components.layouts.horizontalSection
-import paige.navic.ui.screens.album.components.AlbumListScreenItem
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
-import paige.navic.ui.screens.artist.ArtistsScreenItem
 import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
-import paige.navic.ui.screens.genre.components.GenreListScreenCard
 import paige.navic.ui.screens.genre.viewmodels.GenreListViewModel
-import paige.navic.ui.screens.library.components.libraryScreenOverviewButton
-import paige.navic.ui.screens.playlist.components.PlaylistListScreenItem
+import paige.navic.ui.screens.library.components.LibraryScreenTabRow
+import paige.navic.ui.screens.library.tabs.LibraryScreenAlbumsTab
+import paige.navic.ui.screens.library.tabs.LibraryScreenArtistsTab
+import paige.navic.ui.screens.library.tabs.LibraryScreenGenresTab
+import paige.navic.ui.screens.library.tabs.LibraryScreenHomeTab
+import paige.navic.ui.screens.library.tabs.LibraryScreenPlaylistsTab
+import paige.navic.ui.screens.library.tabs.LibraryScreenSongsTab
+import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
+import paige.navic.ui.screens.song.viewmodels.SongListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.viewmodels.LoginViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.LoginState
 import paige.navic.utils.UiState
-import paige.navic.utils.withoutTop
 import kotlin.time.Duration
+
+enum class LibraryScreenTab(val title: StringResource) {
+	Home(Res.string.title_home),
+	Albums(Res.string.title_albums),
+	Artists(Res.string.title_artists),
+	Playlists(Res.string.title_playlists),
+	Songs(Res.string.title_songs),
+	Genres(Res.string.title_genres)
+}
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen() {
-	val albumListViewModel = koinViewModel<AlbumListViewModel>(
+	val albumsViewModel = koinViewModel<AlbumListViewModel>(
 		key = "libraryAlbums",
-		parameters = { parametersOf(DomainAlbumListType.Frequent) }
+		parameters = { parametersOf(DomainAlbumListType.Recent) }
 	)
-	val albumListSelection by albumListViewModel.selectedAlbum.collectAsState()
-	val albumListStarred by albumListViewModel.starred.collectAsState()
+	val albumsState by albumsViewModel.albumsState.collectAsStateWithLifecycle()
+	val selectedAlbum by albumsViewModel.selectedAlbum.collectAsStateWithLifecycle()
+	val selectedAlbumIsStarred by albumsViewModel.starred.collectAsStateWithLifecycle()
+	val albumsListType by albumsViewModel.listType.collectAsStateWithLifecycle()
 
-	val playlistListViewModel = koinViewModel<PlaylistListViewModel>()
-	val playlistListSelection by playlistListViewModel.selectedPlaylist.collectAsState()
+	val playlistsViewModel = koinViewModel<PlaylistListViewModel>()
+	val playlistsState by playlistsViewModel.playlistsState.collectAsStateWithLifecycle()
+	val selectedPlaylist by playlistsViewModel.selectedPlaylist.collectAsStateWithLifecycle()
+	val playlistsListType by playlistsViewModel.sortMode.collectAsStateWithLifecycle()
 
-	val artistListViewModel = koinViewModel<ArtistListViewModel>()
-	val artistListSelection by artistListViewModel.selectedArtist.collectAsState()
-	val artistListStarred by artistListViewModel.starred.collectAsState()
+	val artistsViewModel = koinViewModel<ArtistListViewModel>()
+	val artistsState by artistsViewModel.artistsState.collectAsStateWithLifecycle()
+	val selectedArtist by artistsViewModel.selectedArtist.collectAsStateWithLifecycle()
+	val selectedArtistIsStarred by artistsViewModel.starred.collectAsStateWithLifecycle()
+	val artistsListType by artistsViewModel.listType.collectAsStateWithLifecycle()
 
-	val genreListViewModel = koinViewModel<GenreListViewModel>()
+	val genresViewModel = koinViewModel<GenreListViewModel>()
+	val genresState by genresViewModel.genresState.collectAsStateWithLifecycle()
 
-	val recentsState by albumListViewModel.albumsState.collectAsState()
-	val playlistsState by playlistListViewModel.playlistsState.collectAsState()
-	val artistsState by artistListViewModel.artistsState.collectAsState()
-	val genresState by genreListViewModel.genresState.collectAsState()
+	val songsViewModel = koinViewModel<SongListViewModel>()
+	val songsState by songsViewModel.songsState.collectAsStateWithLifecycle()
+	val selectedSong by songsViewModel.selectedSong.collectAsStateWithLifecycle()
+	val selectedSongIsStarred by songsViewModel.starred.collectAsStateWithLifecycle()
+	val songsListType by songsViewModel.listType.collectAsStateWithLifecycle()
 
 	val loginViewModel = koinViewModel<LoginViewModel>()
-	val loginState by loginViewModel.loginState.collectAsState()
+	val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
 
-	val gridState = albumListViewModel.gridState
-
-	var shareId by remember { mutableStateOf<String?>(null) }
+	val ctx = LocalCtx.current
+	var shareId by rememberSaveable { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
-	var deletionId by remember { mutableStateOf<String?>(null) }
-	val isLoggedIn by SessionManager.isLoggedIn.collectAsState()
+	var playlistDeletionId by rememberSaveable { mutableStateOf<String?>(null) }
+	var playlistCreateDialogShown by rememberSaveable { mutableStateOf(false) }
+
+	val isLoggedIn by SessionManager.isLoggedIn.collectAsStateWithLifecycle()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
+	var selectedTab by rememberSaveable { mutableStateOf(LibraryScreenTab.Home) }
+
+	val slideSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
+	val scaleInSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+
 	LaunchedEffect(loginState is LoginState.Success) {
-		albumListViewModel.refreshAlbums(false)
-		playlistListViewModel.refreshPlaylists(false)
-		artistListViewModel.refreshArtists(false)
-		genreListViewModel.refreshGenres(false)
+		albumsViewModel.refreshAlbums(false)
+		playlistsViewModel.refreshPlaylists(false)
+		artistsViewModel.refreshArtists(false)
+		genresViewModel.refreshGenres(false)
+		songsViewModel.refreshSongs(false)
 	}
 
 	Scaffold(
-		topBar = { RootTopBar({ Text(stringResource(Res.string.title_library)) }, scrollBehavior) },
+		topBar = {
+			Column {
+				RootTopBar({ Text(stringResource(Res.string.title_library)) }, scrollBehavior)
+				LibraryScreenTabRow(
+					selectedTab = selectedTab,
+					onSelectTab = { selectedTab = it }
+				)
+			}
+		},
+		floatingActionButton = {
+			if (selectedTab == LibraryScreenTab.Playlists && isLoggedIn) {
+				AnimatedContent(
+					!playlistsViewModel.gridState.lastScrolledForward
+						|| Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.Never,
+					transitionSpec = {
+						val transformOrigin = TransformOrigin(0f, 1f)
+						(slideInHorizontally(slideSpec) { it / 2 }
+							+ scaleIn(scaleInSpec, transformOrigin = transformOrigin)
+							+ slideInVertically(slideSpec) { it / 2 })
+							.togetherWith(slideOutHorizontally(slideSpec) { it / 2 }
+								+ scaleOut(transformOrigin = transformOrigin)
+								+ slideOutVertically(slideSpec) { it / 2 })
+							.using(SizeTransform(clip = false))
+					}
+				) { notScrolled ->
+					if (notScrolled) {
+						MediumFloatingActionButton(
+							shape = MaterialTheme.shapes.large,
+							containerColor = MaterialTheme.colorScheme.primary,
+							onClick = {
+								ctx.clickSound()
+								playlistCreateDialogShown = true
+							}
+						) {
+							Icon(
+								imageVector = Icons.Outlined.Add,
+								contentDescription = stringResource(Res.string.title_create_playlist),
+								modifier = Modifier.size(26.dp)
+							)
+						}
+					}
+				}
+			}
+		},
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
 			RootBottomBar(scrolled = scrollManager.isTriggered)
@@ -122,144 +200,143 @@ fun LibraryScreen() {
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = recentsState is UiState.Loading
+			isRefreshing = albumsState is UiState.Loading
 				|| playlistsState is UiState.Loading
 				|| artistsState is UiState.Loading
-				|| genresState is UiState.Loading,
+				|| genresState is UiState.Loading
+				|| songsState is UiState.Loading,
 			onRefresh = {
 				if (!isLoggedIn) return@PullToRefreshBox
-				albumListViewModel.refreshAlbums(true)
-				playlistListViewModel.refreshPlaylists(true)
-				artistListViewModel.refreshArtists(true)
-				genreListViewModel.refreshGenres(true)
+				albumsViewModel.refreshAlbums(true)
+				playlistsViewModel.refreshPlaylists(true)
+				artistsViewModel.refreshArtists(true)
+				genresViewModel.refreshGenres(true)
+				songsViewModel.refreshSongs(true)
 			}
 		) {
-			LazyVerticalGrid(
-				modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-				state = gridState,
-				columns = GridCells.Fixed(2),
-				contentPadding = innerPadding.withoutTop(),
-				verticalArrangement = Arrangement.spacedBy(5.dp),
-				horizontalArrangement = Arrangement.spacedBy(5.dp),
-			) {
-				libraryScreenOverviewButton(
-					icon = Icons.Outlined.LibraryAdd,
-					label = Res.string.option_sort_newest,
-					destination = Screen.AlbumList(true, DomainAlbumListType.Newest),
-					start = true
+			if (!isLoggedIn) {
+				Text(
+					stringResource(Res.string.info_needs_log_in),
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+					modifier = Modifier.padding(horizontal = 16.dp)
 				)
-				libraryScreenOverviewButton(
-					icon = Icons.Outlined.Shuffle,
-					label = Res.string.option_sort_random,
-					destination = Screen.AlbumList(true, DomainAlbumListType.Random),
-					start = false
-				)
-				libraryScreenOverviewButton(
-					icon = Icons.Outlined.Star,
-					label = Res.string.option_sort_starred,
-					destination = Screen.AlbumList(true, DomainAlbumListType.Starred),
-					start = true
-				)
-				libraryScreenOverviewButton(
-					icon = Icons.Outlined.History,
-					label = Res.string.option_sort_frequent,
-					destination = Screen.AlbumList(true, DomainAlbumListType.Frequent),
-					start = false
-				)
-				if (!isLoggedIn) {
-					item(span = { GridItemSpan(maxLineSpan) }) {
-						Text(
-							stringResource(Res.string.info_needs_log_in),
-							color = MaterialTheme.colorScheme.onSurfaceVariant,
-							modifier = Modifier.padding(horizontal = 16.dp)
-						)
-					}
-				} else {
-					horizontalSection(
-						title = Res.string.option_sort_recent,
-						destination = Screen.AlbumList(true, DomainAlbumListType.Recent),
-						state = recentsState,
-						key = { it.id },
-						seeAll = true
-					) { album ->
-						AlbumListScreenItem(
-							modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
-							tab = "library",
-							album = album,
-							selected = album == albumListSelection,
-							starred = albumListStarred,
-							onSelect = { albumListViewModel.selectAlbum(album) },
-							onDeselect = { albumListViewModel.selectAlbum(null) },
-							onSetStarred = { albumListViewModel.starAlbum(it) },
-							onSetShareId = { shareId = it }
-						)
-					}
-					horizontalSection(
-						title = Res.string.title_playlists,
-						destination = Screen.PlaylistList(true),
-						state = playlistsState,
-						key = { it.id },
-						seeAll = true
-					) { playlist ->
-						PlaylistListScreenItem(
-							modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
-							playlist = playlist,
-							selected = playlist == playlistListSelection,
-							onSelect = { playlistListViewModel.selectPlaylist(playlist) },
-							onDeselect = { playlistListViewModel.clearSelection() },
-							onSetShareId = { shareId = it },
-							onSetDeletionId = { deletionId = it },
-							tab = "library"
-						)
-					}
+				return@PullToRefreshBox
+			}
+			when (selectedTab) {
+				LibraryScreenTab.Home -> LibraryScreenHomeTab(
+					scrollBehavior = scrollBehavior,
+					innerPadding = innerPadding,
+					onSetShareId = { shareId = it },
 
-					horizontalSection(
-						title = Res.string.title_artists,
-						destination = Screen.ArtistList(true),
-						state = artistsState,
-						key = { it.id },
-						seeAll = true
-					) { artist ->
-						ArtistsScreenItem(
-							modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
-							tab = "library",
-							artist = artist,
-							selected = artist == artistListSelection,
-							starred = artistListStarred,
-							onSelect = { artistListViewModel.selectArtist(artist) },
-							onDeselect = { artistListViewModel.clearSelection() },
-							onSetStarred = { artistListViewModel.starArtist(it) }
-						)
-					}
+					albumsState = albumsState,
+					selectedAlbum = selectedAlbum,
+					selectedAlbumIsStarred = selectedAlbumIsStarred,
+					onSelectAlbum = { albumsViewModel.selectAlbum(it) },
+					onClearAlbumSelection = { albumsViewModel.clearSelection() },
+					onStarSelectedAlbum = { albumsViewModel.starAlbum(it) },
 
-					horizontalSection(
-						title = Res.string.title_genres,
-						destination = Screen.GenreList(true),
-						state = genresState,
-						key = { it.name },
-						seeAll = true
-					) { genreWithAlbums ->
-						GenreListScreenCard(genre = genreWithAlbums)
+					artistsState = artistsState,
+					selectedArtist = selectedArtist,
+					selectedArtistIsStarred = selectedArtistIsStarred,
+					onSelectArtist = { artistsViewModel.selectArtist(it) },
+					onClearArtistSelection = { artistsViewModel.clearSelection() },
+					onStarSelectedArtist = { artistsViewModel.starArtist(it) },
+
+					playlistsState = playlistsState,
+
+					genresState = genresState
+				)
+
+				LibraryScreenTab.Albums -> LibraryScreenAlbumsTab(
+					scrollBehavior = scrollBehavior,
+					innerPadding = innerPadding,
+					albumsState = albumsState,
+					selectedAlbum = selectedAlbum,
+					selectedAlbumIsStarred = selectedAlbumIsStarred,
+					albumsListType = albumsListType,
+					onSelectAlbum = { albumsViewModel.selectAlbum(it) },
+					onClearAlbumSelection = { albumsViewModel.clearSelection() },
+					onStarSelectedAlbum = { albumsViewModel.starAlbum(it) },
+					onSetListType = {
+						albumsViewModel.setListType(it)
+						albumsViewModel.refreshAlbums(false)
+					},
+					onSetShareId = { shareId = it }
+				)
+
+				LibraryScreenTab.Artists -> LibraryScreenArtistsTab(
+					scrollBehavior = scrollBehavior,
+					innerPadding = innerPadding,
+					artistsState = artistsState,
+					selectedArtist = selectedArtist,
+					selectedArtistIsStarred = selectedArtistIsStarred,
+					artistsListType = artistsListType,
+					gridState = artistsViewModel.gridState,
+					onSelectArtist = { artistsViewModel.selectArtist(it) },
+					onClearArtistSelection = { artistsViewModel.clearSelection() },
+					onStarSelectedArtist = { artistsViewModel.starArtist(it) },
+					onSetListType = {
+						artistsViewModel.setListType(it)
+						artistsViewModel.refreshArtists(false)
 					}
-				}
+				)
+
+				LibraryScreenTab.Playlists -> LibraryScreenPlaylistsTab(
+					scrollBehavior = scrollBehavior,
+					innerPadding = innerPadding,
+					playlistsState = playlistsState,
+					selectedPlaylist = selectedPlaylist,
+					playlistsListType = playlistsListType,
+					gridState = playlistsViewModel.gridState,
+					onSelectPlaylist = { playlistsViewModel.selectPlaylist(it) },
+					onClearPlaylistSelection = { playlistsViewModel.clearSelection() },
+					onSetListType = { playlistsViewModel.setSortMode(it) },
+					onSetShareId = { shareId = it },
+					onSetPlaylistDeletionId = { playlistDeletionId = it }
+				)
+
+				LibraryScreenTab.Songs -> LibraryScreenSongsTab(
+					scrollBehavior = scrollBehavior,
+					innerPadding = innerPadding,
+					songsState = songsState,
+					selectedSong = selectedSong,
+					selectedSongIsStarred = selectedSongIsStarred,
+					songsListType = songsListType,
+					onSelectSong = { songsViewModel.selectSong(it) },
+					onClearSongSelection = { songsViewModel.clearSelection() },
+					onStarSelectedSong = { songsViewModel.starSong(it) },
+					onSetListType = {
+						songsViewModel.setListType(it)
+						songsViewModel.refreshSongs(false)
+					},
+					onSetShareId = { shareId = it }
+				)
+
+				LibraryScreenTab.Genres -> LibraryScreenGenresTab(
+					scrollBehavior = scrollBehavior,
+					innerPadding = innerPadding,
+					genresState = genresState
+				)
 			}
 		}
 	}
 
 	val flattenedErrors = listOf(
-		(recentsState as? UiState.Error)?.error,
+		(albumsState as? UiState.Error)?.error,
 		(playlistsState as? UiState.Error)?.error,
 		(artistsState as? UiState.Error)?.error,
-		(genresState as? UiState.Error)?.error
+		(genresState as? UiState.Error)?.error,
+		(songsState as? UiState.Error)?.error
 	).mapNotNull { it?.stackTraceToString() }.takeIf { it.isNotEmpty() }?.joinToString("\n\n")
 
 	ErrorSnackbar(
 		error = flattenedErrors?.let { Error(it) },
 		onClearError = {
-			albumListViewModel.clearError()
-			playlistListViewModel.clearError()
-			artistListViewModel.clearError()
-			genreListViewModel.clearError()
+			albumsViewModel.clearError()
+			playlistsViewModel.clearError()
+			artistsViewModel.clearError()
+			genresViewModel.clearError()
+			songsViewModel.clearError()
 		}
 	)
 
@@ -274,8 +351,16 @@ fun LibraryScreen() {
 	@Suppress("AssignedValueIsNeverRead")
 	DeletionDialog(
 		endpoint = DeletionEndpoint.PLAYLIST,
-		id = deletionId,
-		onIdClear = { deletionId = null },
-		onRefresh = { playlistListViewModel.refreshPlaylists(true) }
+		id = playlistDeletionId,
+		onIdClear = { playlistDeletionId = null },
+		onRefresh = { playlistsViewModel.refreshPlaylists(false) }
 	)
+
+	if (playlistCreateDialogShown) {
+		@Suppress("AssignedValueIsNeverRead")
+		PlaylistCreateDialog(
+			onDismissRequest = { playlistCreateDialogShown = false },
+			onRefresh = { playlistsViewModel.refreshPlaylists(true) }
+		)
+	}
 }

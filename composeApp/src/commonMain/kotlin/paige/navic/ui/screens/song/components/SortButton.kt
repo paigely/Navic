@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.album.components
+package paige.navic.ui.screens.song.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Icon
@@ -8,30 +8,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import kotlinx.collections.immutable.persistentListOf
-import paige.navic.ui.screens.library.components.label
-import paige.navic.domain.models.DomainAlbumListType
+import kotlinx.collections.immutable.toImmutableList
+import org.jetbrains.compose.resources.stringResource
+import paige.navic.domain.models.DomainSongListType
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
 import paige.navic.ui.components.common.SelectionDropdown
 import paige.navic.ui.components.layouts.TopBarButton
 
 @Composable
-fun AlbumListScreenSortButton(
+fun SongListScreenSortButton(
 	nested: Boolean,
-	currentListType: DomainAlbumListType,
-	onSetListType: (listType: DomainAlbumListType) -> Unit
+	currentListType: DomainSongListType,
+	onSetListType: (listType: DomainSongListType) -> Unit
 ) {
-	val items = remember {
-		persistentListOf(
-			DomainAlbumListType.Random,
-			DomainAlbumListType.Newest,
-			DomainAlbumListType.Frequent,
-			DomainAlbumListType.Recent,
-			DomainAlbumListType.Starred,
-			DomainAlbumListType.AlphabeticalByArtist,
-		)
-	}
+	val items = remember { DomainSongListType.entries.toImmutableList() }
 	Box {
 		var expanded by remember { mutableStateOf(false) }
 		if (!nested) {
@@ -55,9 +46,7 @@ fun AlbumListScreenSortButton(
 		}
 		SelectionDropdown(
 			items = items,
-			label = {
-				it.label()
-			},
+			label = { stringResource(it.displayName) },
 			expanded = expanded,
 			onDismissRequest = { expanded = false },
 			selection = currentListType,

@@ -3,6 +3,8 @@ package paige.navic.ui.screens.genre.viewmodels
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -14,7 +16,7 @@ import paige.navic.utils.UiState
 class GenreListViewModel(
 	private val repository: GenreRepository
 ) : ViewModel() {
-	private val _genresState = MutableStateFlow<UiState<List<DomainGenre>>>(UiState.Loading())
+	private val _genresState = MutableStateFlow<UiState<ImmutableList<DomainGenre>>>(UiState.Loading())
 	val genresState = _genresState.asStateFlow()
 
 	val gridState = LazyGridState()
@@ -34,6 +36,6 @@ class GenreListViewModel(
 	}
 
 	fun clearError() {
-		_genresState.value = UiState.Success(_genresState.value.data.orEmpty())
+		_genresState.value = UiState.Success(_genresState.value.data ?: persistentListOf())
 	}
 }

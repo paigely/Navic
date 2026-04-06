@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.sp
-import androidx.navigation3.runtime.NavKey
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_artists
@@ -29,6 +28,7 @@ import navic.composeapp.generated.resources.title_genres
 import navic.composeapp.generated.resources.title_library
 import navic.composeapp.generated.resources.title_playlists
 import navic.composeapp.generated.resources.title_search
+import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -47,6 +47,7 @@ import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Artist
 import paige.navic.icons.outlined.Genre
 import paige.navic.icons.outlined.LibraryMusic
+import paige.navic.icons.outlined.Note
 import paige.navic.icons.outlined.PlaylistPlay
 import paige.navic.icons.outlined.Search
 import paige.navic.ui.components.common.animatedTabIconPainter
@@ -93,6 +94,12 @@ private enum class NavItem(
 		icon = Icons.Outlined.Genre,
 		iconUnselected = Icons.Outlined.Genre,
 		label = Res.string.title_genres
+	),
+	SONGS(
+		destination = Screen.SongList(),
+		icon = Icons.Outlined.Note,
+		iconUnselected = Icons.Outlined.Note,
+		label = Res.string.title_songs
 	)
 }
 
@@ -108,13 +115,15 @@ fun BottomBar(
 	val ctx = LocalCtx.current
 	val state by viewModel.state.collectAsState()
 	val containerColor by animateColorAsState(containerColor)
+	val tabs = ((state as? UiState.Success)?.data ?: NavbarConfig.default)
+		.tabs.filter { tab -> tab.visible }
 
 	AnimatedContent(
 		Settings.shared.navigationBarStyle != NavigationBarStyle.Short
 			&& ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
+			&& tabs.size > 1
 	) {
-		val tabs = ((state as? UiState.Success)?.data ?: NavbarConfig.default)
-			.tabs.filter { tab -> tab.visible }
+		if (tabs.size < 2) return@AnimatedContent
 		if (it) {
 			NavigationBar(
 				modifier = modifier,
@@ -129,6 +138,7 @@ fun BottomBar(
 						NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
 						NavbarTab.Id.SEARCH -> NavItem.SEARCH
 						NavbarTab.Id.GENRES -> NavItem.GENRES
+						NavbarTab.Id.SONGS -> NavItem.SONGS
 					}
 					val selected = backStack.lastOrNull() == item.destination
 
@@ -180,6 +190,7 @@ fun BottomBar(
 						NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
 						NavbarTab.Id.SEARCH -> NavItem.SEARCH
 						NavbarTab.Id.GENRES -> NavItem.GENRES
+						NavbarTab.Id.SONGS -> NavItem.SONGS
 					}
 					val selected = backStack.last() == item.destination
 

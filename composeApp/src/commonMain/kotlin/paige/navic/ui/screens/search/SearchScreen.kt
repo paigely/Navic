@@ -230,7 +230,7 @@ fun SearchScreen(
 									selected = album == albumListSelection,
 									starred = albumListStarred,
 									onSelect = { albumListViewModel.selectAlbum(album) },
-									onDeselect = { albumListViewModel.selectAlbum(null) },
+									onDeselect = { albumListViewModel.clearSelection() },
 									onSetStarred = { albumListViewModel.starAlbum(it) },
 									onSetShareId = { },
 								)

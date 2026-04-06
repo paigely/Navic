@@ -3,6 +3,8 @@ package paige.navic.ui.screens.album.viewmodels
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +20,7 @@ open class AlbumListViewModel(
 	initialListType: DomainAlbumListType = DomainAlbumListType.AlphabeticalByArtist,
 	private val repository: AlbumRepository,
 ) : ViewModel() {
-	private val _albumsState = MutableStateFlow<UiState<List<DomainAlbum>>>(UiState.Loading())
+	private val _albumsState = MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())
 	val albumsState = _albumsState.asStateFlow()
 
 	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
@@ -46,12 +48,15 @@ open class AlbumListViewModel(
 		}
 	}
 
-	fun selectAlbum(album: DomainAlbum?) {
+	fun selectAlbum(album: DomainAlbum) {
 		viewModelScope.launch {
 			_selectedAlbum.value = album
-			if (album == null) return@launch
 			_starred.value = repository.isAlbumStarred(album)
 		}
+	}
+
+	fun clearSelection() {
+		_selectedAlbum.value = null
 	}
 
 	fun starAlbum(starred: Boolean) {
@@ -73,6 +78,6 @@ open class AlbumListViewModel(
 	}
 
 	fun clearError() {
-		_albumsState.value = UiState.Success(_albumsState.value.data.orEmpty())
+		_albumsState.value = UiState.Success(_albumsState.value.data ?: persistentListOf())
 	}
 }

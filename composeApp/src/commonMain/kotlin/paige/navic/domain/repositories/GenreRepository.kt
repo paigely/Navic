@@ -1,5 +1,7 @@
 package paige.navic.domain.repositories
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -14,22 +16,23 @@ class GenreRepository(
 	private val genreDao: GenreDao,
 	private val dbRepository: DbRepository
 ) {
-	private suspend fun getLocalData(): List<DomainGenre> {
+	private suspend fun getLocalData(): ImmutableList<DomainGenre> {
 		return genreDao
 			.getGenresWithAlbums()
 			.map { it.toDomainModel() }
 			.sortedByDescending { it.albums.count() }
 			.filter { it.albums.isNotEmpty() }
+			.toImmutableList()
 	}
 
-	private suspend fun refreshLocalData(): List<DomainGenre> {
+	private suspend fun refreshLocalData(): ImmutableList<DomainGenre> {
 		dbRepository.syncGenres().getOrThrow()
 		return getLocalData()
 	}
 
 	fun getGenresFlow(
 		fullRefresh: Boolean
-	): Flow<UiState<List<DomainGenre>>> = flow {
+	): Flow<UiState<ImmutableList<DomainGenre>>> = flow {
 		val localData = getLocalData()
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))

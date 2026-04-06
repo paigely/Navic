@@ -1,5 +1,7 @@
 package paige.navic.domain.repositories
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -14,20 +16,21 @@ class PlaylistRepository(
 	private val playlistDao: PlaylistDao,
 	private val dbRepository: DbRepository
 ) {
-	private suspend fun getLocalData(): List<DomainPlaylist> {
+	private suspend fun getLocalData(): ImmutableList<DomainPlaylist> {
 		return playlistDao
 			.getAllPlaylists()
 			.map { it.toDomainModel() }
+			.toImmutableList()
 	}
 
-	private suspend fun refreshLocalData(): List<DomainPlaylist> {
+	private suspend fun refreshLocalData(): ImmutableList<DomainPlaylist> {
 		dbRepository.syncPlaylists().getOrThrow().forEach { playlist ->
 			dbRepository.syncPlaylistSongs(playlist.playlistId).getOrThrow()
 		}
 		return getLocalData()
 	}
 
-	fun getPlaylistsFlow(fullRefresh: Boolean): Flow<UiState<List<DomainPlaylist>>> = flow {
+	fun getPlaylistsFlow(fullRefresh: Boolean): Flow<UiState<ImmutableList<DomainPlaylist>>> = flow {
 		val localData = getLocalData()
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))

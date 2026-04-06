@@ -23,6 +23,10 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.shared.Logger
 import paige.navic.utils.UiState
 
+/**
+ * Viewmodel for the screen that shows an album/playlist and its songs.
+ * Not to be confused with SongListViewModel, this just has a dumb name
+ */
 class TrackListViewModel(
 	private val partialCollection: DomainSongCollection,
 	private val repository: TrackRepository,

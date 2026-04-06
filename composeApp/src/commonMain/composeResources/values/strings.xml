@@ -39,6 +39,7 @@
 	<string name="title_mini_player">Mini Player</string>
 	<string name="title_miscellaneous">Miscellaneous</string>
 	<string name="title_layout">Layout</string>
+	<string name="title_home">Home</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
@@ -272,6 +273,7 @@
 	<string name="info_no_albums">No albums</string>
 	<string name="info_no_artists">No artists</string>
 	<string name="info_no_tracks">No tracks</string>
+	<string name="info_no_songs">No songs</string>
 	<string name="info_not_available_offline">Not available offline</string>
 	<string name="info_no_queue">Nothing queued</string>
 	<string name="info_no_genres">No genres</string>

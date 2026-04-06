@@ -68,7 +68,7 @@ fun <T> LazyGridScope.horizontalSection(
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyGridScope.header(
+fun LazyGridScope.header(
 	title: StringResource,
 	vararg formatArgs: Any,
 	destination: NavKey,

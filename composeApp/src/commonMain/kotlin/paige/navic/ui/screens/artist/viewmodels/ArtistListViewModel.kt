@@ -8,10 +8,10 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.domain.repositories.ArtistListType
 import paige.navic.domain.repositories.ArtistRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainArtist
+import paige.navic.domain.models.DomainArtistListType
 import paige.navic.utils.UiState
 
 class ArtistListViewModel(
@@ -26,7 +26,7 @@ class ArtistListViewModel(
 	private val _selectedArtist = MutableStateFlow<DomainArtist?>(null)
 	val selectedArtist = _selectedArtist.asStateFlow()
 
-	private val _listType = MutableStateFlow(ArtistListType.AlphabeticalByName)
+	private val _listType = MutableStateFlow(DomainArtistListType.AlphabeticalByName)
 	val listType = _listType.asStateFlow()
 
 	val gridState = LazyGridState()
@@ -68,6 +68,10 @@ class ArtistListViewModel(
 				_starred.value = starred
 			}
 		}
+	}
+
+	fun setListType(listType: DomainArtistListType) {
+		_listType.value = listType
 	}
 
 	fun clearError() {

@@ -8,42 +8,42 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.SyncManager
-import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
-import paige.navic.domain.models.DomainAlbum
-import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongListType
 import paige.navic.utils.UiState
 import paige.navic.utils.sortedByListType
 import kotlin.time.Clock
 
-class AlbumRepository(
-	private val albumDao: AlbumDao,
-	private val syncManager: SyncManager,
-	private val dbRepository: DbRepository
+class SongRepository(
+	private val songDao: SongDao,
+	private val dbRepository: DbRepository,
+	private val syncManager: SyncManager
 ) {
 	private suspend fun getLocalData(
-		listType: DomainAlbumListType
-	): ImmutableList<DomainAlbum> {
-		return albumDao
-			.getAllAlbumsList()
+		listType: DomainSongListType
+	): ImmutableList<DomainSong> {
+		return songDao
+			.getAllSongs()
 			.map { it.toDomainModel() }
-			.sortedByListType(listType)
 			.toImmutableList()
+			.sortedByListType(listType)
 	}
 
 	private suspend fun refreshLocalData(
-		listType: DomainAlbumListType
-	): ImmutableList<DomainAlbum> {
+		listType: DomainSongListType
+	): ImmutableList<DomainSong> {
 		dbRepository.syncLibrarySongs().getOrThrow()
 		return getLocalData(listType)
 	}
 
-	fun getAlbumsFlow(
+	fun getSongsFlow(
 		fullRefresh: Boolean,
-		listType: DomainAlbumListType
-	): Flow<UiState<ImmutableList<DomainAlbum>>> = flow {
+		listType: DomainSongListType
+	): Flow<UiState<ImmutableList<DomainSong>>> = flow {
 		val localData = getLocalData(listType)
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))
@@ -57,20 +57,20 @@ class AlbumRepository(
 		}
 	}.flowOn(Dispatchers.IO)
 
-	suspend fun isAlbumStarred(album: DomainAlbum) = albumDao.isAlbumStarred(album.id)
-	suspend fun starAlbum(album: DomainAlbum) {
-		val starredEntity = album.toEntity().copy(
+	suspend fun isSongStarred(song: DomainSong) = songDao.isSongStarred(song.id)
+	suspend fun starSong(song: DomainSong) {
+		val starredEntity = song.toEntity().copy(
 			starredAt = Clock.System.now()
 		)
-		albumDao.insertAlbum(starredEntity)
-		syncManager.enqueueAction(SyncActionType.STAR, album.id)
+		songDao.insertSong(starredEntity)
+		syncManager.enqueueAction(SyncActionType.STAR, song.id)
 	}
 
-	suspend fun unstarAlbum(album: DomainAlbum) {
-		val unstarredEntity = album.toEntity().copy(
+	suspend fun unstarSong(song: DomainSong) {
+		val unstarredEntity = song.toEntity().copy(
 			starredAt = null
 		)
-		albumDao.insertAlbum(unstarredEntity)
-		syncManager.enqueueAction(SyncActionType.UNSTAR, album.id)
+		songDao.insertSong(unstarredEntity)
+		syncManager.enqueueAction(SyncActionType.UNSTAR, song.id)
 	}
 }

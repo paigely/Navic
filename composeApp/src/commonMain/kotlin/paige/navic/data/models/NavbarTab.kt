@@ -14,6 +14,7 @@ data class NavbarTab(
 		PLAYLISTS,
 		ARTISTS,
 		SEARCH,
-		GENRES
+		GENRES,
+		SONGS
 	}
 }

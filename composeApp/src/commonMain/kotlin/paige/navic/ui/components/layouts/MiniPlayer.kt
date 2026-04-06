@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -44,6 +46,7 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -58,6 +61,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
+import paige.navic.data.models.NavbarConfig
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.MiniPlayerProgressStyle
@@ -71,6 +75,8 @@ import paige.navic.icons.filled.SkipNext
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
+import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
+import paige.navic.utils.UiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -80,8 +86,15 @@ fun MiniPlayer(
 ) {
 	val ctx = LocalCtx.current
 	val player = koinViewModel<MediaPlayerViewModel>()
+	val navtabsViewModel = koinViewModel<NavtabsViewModel>()
+	val navtabsState by navtabsViewModel.state.collectAsState()
+	val tabs = ((navtabsState as? UiState.Success)?.data ?: NavbarConfig.default)
+		.tabs.filter { tab -> tab.visible }
 	val backStack = LocalNavStack.current
 	val haptics = LocalHapticFeedback.current
+	val navBarPadding = if (tabs.size < 2)
+		with(LocalDensity.current) { WindowInsets.navigationBars.getBottom(this).toDp() }
+	else 0.dp
 
 	val playerState by player.uiState.collectAsState()
 	val track = playerState.currentTrack
@@ -174,7 +187,11 @@ fun MiniPlayer(
 		Box(
 			modifier = Modifier
 				.widthIn(max = if (detached) 600.dp else Dp.Unspecified)
-				.padding(bottom = outerPadding, start = outerPadding, end = outerPadding)
+				.padding(
+					bottom = if (detached) outerPadding + navBarPadding else 0.dp,
+					start = outerPadding,
+					end = outerPadding
+				)
 				.align(Alignment.Center)
 		) {
 			ListItem(
@@ -205,7 +222,7 @@ fun MiniPlayer(
 					start = contentPaddingHorizontal,
 					end = contentPaddingHorizontal,
 					top = contentPaddingTop,
-					bottom = contentPaddingBottom
+					bottom = contentPaddingBottom + if (detached) 0.dp else navBarPadding
 				),
 				verticalAlignment = Alignment.CenterVertically,
 				colors = ListItemDefaults.colors(

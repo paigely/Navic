@@ -15,7 +15,7 @@ import navic.composeapp.generated.resources.option_sort_ascending
 import navic.composeapp.generated.resources.option_sort_descending
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.PlaylistSortMode
+import paige.navic.domain.models.DomainPlaylistListType
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
 import paige.navic.ui.components.common.SelectionDropdown
@@ -28,7 +28,7 @@ fun PlaylistListScreenSortButton(
 	nested: Boolean,
 	onSortPlaylists: () -> Unit
 ) {
-	val items = remember { PlaylistSortMode.entries.toImmutableList() }
+	val items = remember { DomainPlaylistListType.entries.toImmutableList() }
 	Box {
 		var expanded by remember { mutableStateOf(false) }
 		if (!nested) {
