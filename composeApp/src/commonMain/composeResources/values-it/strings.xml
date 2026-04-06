@@ -295,4 +295,7 @@
     <string name="subtitle_rebuild_database">Cancella tutti i metadati locali e forza una nuova sincronizzazione</string>
     <string name="info_no_songs">Nessun brano</string>
     <string name="info_not_available_offline">Non disponibile offline</string>
+    <string name="option_sleep_timer">Timer di spegnimento</string>
+    <string name="action_add_to_queue">Aggiungi alla Coda</string>
+    <string name="notice_login_suggestion">Volevi dire...</string>
 </resources>
