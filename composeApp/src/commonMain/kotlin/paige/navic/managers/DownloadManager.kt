@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.entities.DownloadEntity
@@ -189,7 +190,7 @@ class DownloadManager(
 
 				(collectionDownloads.size == songIds.size &&
 					collectionDownloads.all { it.status == DownloadStatus.DOWNLOADED })
-						-> DownloadStatus.DOWNLOADED
+					-> DownloadStatus.DOWNLOADED
 
 				else -> DownloadStatus.NOT_DOWNLOADED
 			}
@@ -197,15 +198,18 @@ class DownloadManager(
 	}
 
 	fun clearAllDownloads() {
-		scope.launch {
+		scope.launch(Dispatchers.IO) {
 			activeDownloads.values.forEach { it.cancel() }
 			activeDownloads.clear()
-			downloadDao.clearAllDownloads()
-			allDownloads.collect { downloads ->
-				downloads.forEach { download ->
-					deleteDownload(download.songId)
-				}
+
+			val snapshots = allDownloads.first()
+			snapshots.forEach { download ->
+				download.filePath?.let { storageManager.deleteFile(it) }
 			}
+
+			downloadDao.clearAllDownloads()
+
+			Logger.i("DownloadManager", "Cleared ${snapshots.size} downloads successfully.")
 		}
 	}
 }
