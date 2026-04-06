@@ -39,6 +39,7 @@ class Settings(
 	var audioOffload by preference(false)
 	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)
 	var customHeaders by preference("")
+	var sleepTimerDuration by preference(0f)
 
 	// navigation bar settings
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)

@@ -35,21 +35,26 @@ class JvmMediaPlayerViewModel(
 	}
 
 	override fun playAt(index: Int) {
+		resetSleepTimer()
 	}
 
 	override fun pause() {
 	}
 
 	override fun resume() {
+		resetSleepTimer()
 	}
 
 	override fun seek(normalized: Float) {
+		resetSleepTimer()
 	}
 
 	override fun next() {
+		resetSleepTimer()
 	}
 
 	override fun previous() {
+		resetSleepTimer()
 	}
 
 	override fun toggleShuffle() {
@@ -59,6 +64,7 @@ class JvmMediaPlayerViewModel(
 	}
 
 	override fun shufflePlay(tracks: DomainSongCollection) {
+		resetSleepTimer()
 	}
 
 	override fun syncPlayerWithState(state: PlayerUiState) {
