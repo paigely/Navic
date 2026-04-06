@@ -278,4 +278,14 @@
     <string name="option_pending_actions">Sincronizzazioni in sospeso</string>
     <string name="option_downloaded_songs">Brani scaricati</string>
     <string name="option_custom_headers">Header server custom</string>
+    <string name="info_status_idle">Idle</string>
+    <string name="info_sync_never">Mai</string>
+    <string name="info_sync_just_now">Adesso</string>
+    <string name="info_sync_mins_ago">%1$d m fa</string>
+    <string name="info_sync_hours_ago">%1$d h fa</string>
+    <string name="info_sync_date_format">%1$d %2$s</string>
+    <string name="action_download">Download</string>
+    <string name="action_delete_download">Cancella download</string>
+    <string name="action_cancel_download">Annulla download</string>
+    <string name="action_clear_image_cache">Cancella cache immagini</string>
 </resources>
