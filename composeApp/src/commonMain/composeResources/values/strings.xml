@@ -230,6 +230,7 @@
 	<string name="notice_copied">Copied to clipboard.</string>
 	<string name="notice_expiry">Expires in %1$s.</string>
 	<string name="notice_loading_lyrics">Loading lyrics...\nThis might take a while.</string>
+	<string name="notice_login_suggestion">Did you mean...</string>
 
 	<string name="info_app_version">Navic %1$s</string>
 	<string name="info_action_is_permanent">This action cannot be undone</string>

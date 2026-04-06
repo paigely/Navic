@@ -9,12 +9,16 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
@@ -25,6 +29,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedSecureTextField
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -42,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_log_in
+import navic.composeapp.generated.resources.notice_login_suggestion
 import navic.composeapp.generated.resources.option_account_navidrome_instance
 import navic.composeapp.generated.resources.option_account_password
 import navic.composeapp.generated.resources.option_account_username
@@ -178,6 +184,62 @@ fun LoginDialog(
 					keyboardType = KeyboardType.Uri
 				)
 			)
+
+			val showSuggestions = instanceState.text.isNotEmpty() &&
+					!instanceState.text.startsWith("http://") &&
+					!instanceState.text.startsWith("https://") &&
+					instanceState.text.contains(".")
+
+			AnimatedVisibility(
+				visible = showSuggestions,
+				enter = expandVertically() + fadeIn(),
+				exit = shrinkVertically() + fadeOut()
+			) {
+				Column {
+					Spacer(Modifier.height(4.dp))
+					Text(
+						text = stringResource(Res.string.notice_login_suggestion),
+						style = MaterialTheme.typography.labelMedium,
+						color = MaterialTheme.colorScheme.onSurfaceVariant
+					)
+					Spacer(Modifier.height(4.dp))
+					Row(
+						modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+						horizontalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						val url = instanceState.text.toString()
+						SuggestionChip(
+							onClick = {
+								instanceState.edit {
+									replace(0, length, "https://$url")
+								}
+							},
+							label = {
+								Text(
+									text = "https://$url",
+									style = MaterialTheme.typography.labelSmall,
+									maxLines = 1
+								)
+							}
+						)
+						SuggestionChip(
+							onClick = {
+								instanceState.edit {
+									replace(0, length, "http://$url")
+								}
+							},
+							label = {
+								Text(
+									text = "http://$url",
+									style = MaterialTheme.typography.labelSmall,
+									maxLines = 1
+								)
+							}
+						)
+					}
+				}
+			}
+
 			Spacer(Modifier.height(8.dp))
 			OutlinedTextField(
 				state = usernameState,
