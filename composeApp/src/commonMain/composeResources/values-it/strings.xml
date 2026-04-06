@@ -292,4 +292,7 @@
     <string name="action_clear_downloads">Cancella download</string>
     <string name="action_rebuild_database">Ricostruisci il database</string>
     <string name="action_trigger_sync">Esegui sincronizzazione manuale</string>
+    <string name="subtitle_rebuild_database">Cancella tutti i metadati locali e forza una nuova sincronizzazione</string>
+    <string name="info_no_songs">Nessun brano</string>
+    <string name="info_not_available_offline">Non disponibile offline</string>
 </resources>
