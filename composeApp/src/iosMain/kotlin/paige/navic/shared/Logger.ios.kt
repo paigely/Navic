@@ -1,10 +1,8 @@
 package paige.navic.shared
 
-import platform.Foundation.NSLog
-
 actual object Logger {
 	private fun log(tag: String, msg: String, tr: Throwable?) {
-		NSLog("%@: %@", tag, msg)
+		println("[$tag] $msg")
 		tr?.printStackTrace()
 	}
 

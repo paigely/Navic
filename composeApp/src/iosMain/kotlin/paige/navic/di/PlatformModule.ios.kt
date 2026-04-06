@@ -2,6 +2,7 @@ package paige.navic.di
 
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import coil3.PlatformContext
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
@@ -51,6 +52,7 @@ actual val platformModule = module {
 	}
 
 	singleOf(::ShareManager)
+	single<PlatformContext> { PlatformContext.INSTANCE }
 	single<StorageManager> { StorageManager() }
 	single<ConnectivityManager> { ConnectivityManager(get()) }
 }
