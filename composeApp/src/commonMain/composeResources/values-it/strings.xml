@@ -85,7 +85,7 @@
     <string name="option_auto_hide_bar">Nascondi automaticamente la barra inferiore</string>
     <string name="option_choose_theme">Scegli un tema</string>
     <string name="option_cover_art_size">Dimensione copertina</string>
-    <string name="option_enable_scrobbling">Attiva Scrobbling</string>
+    <string name="option_enable_scrobbling">Attiva lo scrobbling</string>
     <string name="option_grid_items_per_row">Elementi per riga</string>
     <string name="option_lyrics_autoscroll">Scorrimento automatico testo</string>
     <string name="option_lyrics_beat_by_beat">Testo parola per parola</string>
@@ -184,8 +184,8 @@
     <string name="title_layout">Layout</string>
     <string name="subtitle_playback">Comportamento audio, scrobbling, testi</string>
     <string name="subtitle_developer">Debugging, testing</string>
-    <string name="subtitle_gapless_playback">Richiede il riavvio dell’applicazione. Sperimentale. Se l’offload audio è abilitato, potrebbe non funzionare su alcuni dispositivi</string>
-    <string name="subtitle_audio_offload">Richiede il riavvio dell’applicazione. Sperimentale. Se la riproduzione senza pause è abilitata, potrebbe non funzionare su alcuni dispositivi</string>
+    <string name="subtitle_gapless_playback">Sperimentale. Richiede il riavvio dell’applicazione. Sperimentale. Potrebbe conflittuale con l'audio offload su alcuni dispositivi</string>
+    <string name="subtitle_audio_offload">Sperimentale. Richiede il riavvio dell’applicazione. Potrebbe conflittuale con il gapless playback su alcuni dispositivi</string>
     <string name="subtitle_now_playing_background_style">Scegli statico se hai problemi con le performance</string>
     <string name="option_now_playing_background_style">Stile sfondo</string>
     <string name="option_now_playing_background_style_static">Statico</string>
@@ -263,4 +263,19 @@
     <string name="info_no_playlists_short">Niente playlist</string>
     <string name="info_lyrics_provider">Testo fornito da %1$s</string>
     <string name="info_image_failed_to_load">Errore nel caricamento</string>
+    <string name="title_data_storage">Dati &amp; Archiviazione</string>
+    <string name="title_sync_control">Controllo Sincronizzazione</string>
+    <string name="title_cache_management">Gestione Cache &amp; Archiviazione</string>
+    <string name="title_danger_zone">Area di Pericolo</string>
+    <string name="title_home">Home</string>
+    <string name="subtitle_data_storage">Gestione sincronizzazione, rete e cache</string>
+    <string name="subtitle_trigger_sync">Forza il download completo della libreria</string>
+    <string name="subtitle_pending_actions">%1$d elementi in attesa di rete</string>
+    <string name="option_lyrics_keep_alive">Mantieni lo schermo acceso nella visualizzazione del testo</string>
+    <string name="option_live_status">Stato in tempo reale</string>
+    <string name="option_image_cache_size">Dimensione cache delle immagini</string>
+    <string name="option_last_sync">Ultima sincronizzazione completa</string>
+    <string name="option_pending_actions">Sincronizzazioni in sospeso</string>
+    <string name="option_downloaded_songs">Brani scaricati</string>
+    <string name="option_custom_headers">Header server custom</string>
 </resources>
