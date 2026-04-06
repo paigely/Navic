@@ -20,18 +20,23 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import paige.navic.data.database.dao.DownloadDao
+import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
+import paige.navic.data.database.entities.LyricEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.repositories.LyricRepository
 import paige.navic.shared.Logger
 
 class DownloadManager(
 	private val platformContext: coil3.PlatformContext,
-    private val downloadDao: DownloadDao,
-    private val storageManager: StorageManager,
-    private val scope: CoroutineScope,
+	private val downloadDao: DownloadDao,
+	private val storageManager: StorageManager,
+	private val lyricRepository: LyricRepository,
+	private val lyricDao: LyricDao,
+	private val scope: CoroutineScope,
 	private val client: HttpClient = HttpClient()
 ) {
 	private val activeDownloads = mutableMapOf<String, Job>()
@@ -85,6 +90,17 @@ class DownloadManager(
 
 					SingletonImageLoader.get(platformContext).execute(imageRequest)
 					Logger.i("DownloadManager", "cached cover art for $coverId")
+				}
+
+				Logger.i("DownloadManager", "caching lyrics for ${song.id}")
+				try {
+					val lyricsResult = lyricRepository.fetchLyrics(song)
+					if (lyricsResult != null && lyricsResult.rawContent != null) {
+						lyricDao.insertLyrics(LyricEntity(song.id, lyricsResult.rawContent, lyricsResult.provider))
+						Logger.i("DownloadManager", "cached lyrics for ${song.id}")
+					}
+				} catch (e: Exception) {
+					Logger.e("DownloadManager", "Failed to cache lyrics for ${song.id}", e)
 				}
 
 				var lastProgress = 0f

@@ -14,7 +14,6 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import paige.navic.data.database.dao.LyricDao
-import paige.navic.data.database.entities.LyricEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.shared.Logger
@@ -33,7 +32,8 @@ data class LyricLine(
 
 data class LyricsResult(
 	val lines: List<LyricLine>,
-	val provider: LyricsProvider
+	val provider: LyricsProvider,
+	val rawContent: String? = null
 )
 
 @Serializable
@@ -201,7 +201,7 @@ class LyricRepository(
 			val cached = lyricDao.getLyrics(track.id)
 			if (cached != null) {
 				val parsed = LyricsContentParser.parse(cached.rawContent)
-				if (!parsed.isNullOrEmpty()) return LyricsResult(parsed, cached.provider)
+				if (!parsed.isNullOrEmpty()) return LyricsResult(parsed, cached.provider, cached.rawContent)
 			}
 		} catch (_: Exception) {}
 
@@ -243,10 +243,7 @@ class LyricRepository(
 				}
 
 				if (!parsedLyrics.isNullOrEmpty()) {
-					if (rawContentToCache != null) {
-						lyricDao.insertLyrics(LyricEntity(track.id, rawContentToCache, provider))
-					}
-					return LyricsResult(parsedLyrics, provider)
+					return LyricsResult(parsedLyrics, provider, rawContentToCache)
 				}
 			} catch (e: Exception) {
 				Logger.e("LyricRepository", "Provider ${provider.name} failed!", e)
