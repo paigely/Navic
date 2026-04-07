@@ -1,30 +1,41 @@
 package paige.navic.ui.screens.track.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kyant.capsule.ContinuousCapsule
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_shuffle
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Play
+import paige.navic.icons.outlined.Check
+import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.Shuffle
+import paige.navic.managers.DownloadManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.theme.defaultFont
 
@@ -33,6 +44,13 @@ fun TracksScreenHeadingRowButtons(
 	tracks: DomainSongCollection
 ) {
 	val player = koinViewModel<MediaPlayerViewModel>()
+	val downloadManager = koinInject<DownloadManager>()
+	val scope = rememberCoroutineScope()
+
+	val downloadStatus by downloadManager
+		.getCollectionDownloadStatus(tracks.songs.map { it.id })
+		.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
+
 	Row(
 		modifier = Modifier.padding(horizontal = 31.dp, vertical = 10.dp),
 		verticalAlignment = Alignment.CenterVertically,
@@ -87,6 +105,44 @@ fun TracksScreenHeadingRowButtons(
 				),
 				fontFamily = defaultFont(grade = 100)
 			)
+		}
+		OutlinedButton(
+			modifier = Modifier.size(width = 52.dp, height = 40.dp),
+			onClick = {
+				if (downloadStatus == DownloadStatus.NOT_DOWNLOADED) {
+					scope.launch {
+						downloadManager.downloadCollection(tracks)
+					}
+				}
+			},
+			shape = shape,
+			enabled = downloadStatus == DownloadStatus.NOT_DOWNLOADED,
+			contentPadding = PaddingValues(0.dp)
+		) {
+			when (downloadStatus) {
+				DownloadStatus.DOWNLOADING -> {
+					CircularProgressIndicator(
+						modifier = Modifier.size(24.dp),
+						strokeWidth = 2.5.dp,
+						color = MaterialTheme.colorScheme.primary
+					)
+				}
+				DownloadStatus.DOWNLOADED -> {
+					Icon(
+						imageVector = Icons.Outlined.Check,
+						contentDescription = null,
+						modifier = Modifier.size(24.dp),
+						tint = MaterialTheme.colorScheme.primary
+					)
+				}
+				else -> {
+					Icon(
+						imageVector = Icons.Outlined.Download,
+						contentDescription = null,
+						modifier = Modifier.size(24.dp)
+					)
+				}
+			}
 		}
 	}
 }

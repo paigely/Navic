@@ -2,23 +2,18 @@ package paige.navic.ui.screens.artist.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,9 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -41,11 +34,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
-import navic.composeapp.generated.resources.action_play
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
-import paige.navic.icons.Icons
-import paige.navic.icons.filled.Play
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.screens.artist.truncateText
@@ -57,11 +46,8 @@ fun ArtistDetailScreenHeading(
 	subtitle: String?,
 	lastfm: String?,
 	innerPadding: PaddingValues,
-	onPlay: () -> Unit,
-	playEnabled: Boolean,
 	scrolled: Boolean
 ) {
-	val ctx = LocalCtx.current
 	val layoutDirection = LocalLayoutDirection.current
 	val progress by animateFloatAsState(if (scrolled) 0f else 1f)
 	BoxWithConstraints(
@@ -90,13 +76,6 @@ fun ArtistDetailScreenHeading(
 						)
 					)
 			)
-			Box(
-				modifier = Modifier
-					.align(Alignment.BottomCenter)
-					.fillMaxWidth()
-					.height(2.dp)
-					.background(Color.White.copy(alpha = .1f))
-			)
 
 			Column(
 				modifier = Modifier
@@ -122,42 +101,17 @@ fun ArtistDetailScreenHeading(
 						modifier = Modifier.widthIn(max = 500.dp)
 					)
 				}
-				Row(
-					modifier = Modifier.fillMaxWidth(),
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.spacedBy(8.dp)
-				) {
-					MarqueeText(
-						text = artistName,
-						style = MaterialTheme.typography.displaySmall.copy(
-							fontWeight = FontWeight.Bold,
-							color = Color.White
-						),
-						modifier = Modifier.weight(1f).alpha(progress).scale(progress)
-					)
-					Box(
-						modifier = Modifier
-							.shadow(8.dp, CircleShape)
-							.clip(CircleShape)
-							.background(
-								if (playEnabled)
-									MaterialTheme.colorScheme.primary
-								else MaterialTheme.colorScheme.primary.copy(alpha = .5f)
-							)
-							.size(60.dp)
-							.clickable(enabled = playEnabled) {
-								ctx.clickSound()
-								onPlay()
-							},
-						contentAlignment = Alignment.Center
-					) {
-						Icon(
-							Icons.Filled.Play,
-							contentDescription = stringResource(Res.string.action_play),
-							tint = MaterialTheme.colorScheme.onPrimary
-						)
-					}
-				}
+				MarqueeText(
+					text = artistName,
+					style = MaterialTheme.typography.displaySmall.copy(
+						fontWeight = FontWeight.Bold,
+						color = Color.White
+					),
+					modifier = Modifier
+						.fillMaxWidth()
+						.alpha(progress)
+						.scale(progress)
+				)
 			}
 		}
 	}

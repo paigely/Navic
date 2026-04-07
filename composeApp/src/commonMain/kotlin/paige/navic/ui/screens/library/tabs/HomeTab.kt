@@ -69,19 +69,22 @@ fun LibraryScreenHomeTab(
 		verticalArrangement = Arrangement.spacedBy(5.dp),
 		horizontalArrangement = Arrangement.spacedBy(5.dp),
 	) {
-		header(
-			title = Res.string.title_playlists,
-			destination = Screen.PlaylistList(true),
-			active = true
-		)
-
 		val playlists = playlistsState.data?.take(4).orEmpty()
-		playlists.forEachIndexed { index, playlist ->
-			libraryScreenHomePlaylistButton(
-				playlist = playlist,
-				start = index % 2 == 0,
-				fullWidth = index == playlists.lastIndex && index % 2 == 0
+		
+		if (playlists.isNotEmpty()) {
+			header(
+				title = Res.string.title_playlists,
+				destination = Screen.PlaylistList(true),
+				active = true
 			)
+
+			playlists.forEachIndexed { index, playlist ->
+				libraryScreenHomePlaylistButton(
+					playlist = playlist,
+					start = index % 2 == 0,
+					fullWidth = index == playlists.lastIndex && index % 2 == 0
+				)
+			}
 		}
 
 		horizontalSection(
