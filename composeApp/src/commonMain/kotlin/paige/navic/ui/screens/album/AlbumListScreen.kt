@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.title_albums
@@ -54,24 +54,24 @@ fun AlbumListScreen(
 		key = listType.toString(),
 		parameters = { parametersOf(listType) }
 	)
-	val currentListType by viewModel.listType.collectAsState()
-	val albumsState by viewModel.albumsState.collectAsState()
-	val selectedAlbum by viewModel.selectedAlbum.collectAsState()
-	val starred by viewModel.starred.collectAsState()
+	val selectedSorting by viewModel.listType.collectAsStateWithLifecycle()
+	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
+	val albumsState by viewModel.albumsState.collectAsStateWithLifecycle()
+	val selectedAlbum by viewModel.selectedAlbum.collectAsStateWithLifecycle()
+	val starred by viewModel.starred.collectAsStateWithLifecycle()
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 	val actions: @Composable RowScope.() -> Unit = {
 		AlbumListScreenSortButton(
 			nested = nested,
-			currentListType = currentListType,
-			onSetListType = {
-				viewModel.setListType(it)
-				viewModel.refreshAlbums(false)
-			}
+			selectedSorting = selectedSorting,
+			onSetSorting = { viewModel.setListType(it) },
+			selectedReversed = selectedReversed,
+			onSetReversed = { viewModel.setReversed(it) }
 		)
 	}
-	val isLoggedIn by SessionManager.isLoggedIn.collectAsState()
+	val isLoggedIn by SessionManager.isLoggedIn.collectAsStateWithLifecycle()
 
 	Scaffold(
 		topBar = {

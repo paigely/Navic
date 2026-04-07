@@ -56,7 +56,8 @@ fun SongListScreen(
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val songsState by viewModel.songsState.collectAsStateWithLifecycle()
 	val selectedSong by viewModel.selectedSong.collectAsStateWithLifecycle()
-	val currentListType by viewModel.listType.collectAsStateWithLifecycle()
+	val selectedSorting by viewModel.selectedSorting.collectAsStateWithLifecycle()
+	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
 	val starred by viewModel.starred.collectAsStateWithLifecycle()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
@@ -67,11 +68,10 @@ fun SongListScreen(
 	val actions: @Composable RowScope.() -> Unit = {
 		SongListScreenSortButton(
 			nested = nested,
-			currentListType = currentListType,
-			onSetListType = {
-				viewModel.setListType(it)
-				viewModel.refreshSongs(false)
-			}
+			selectedSorting = selectedSorting,
+			onSetSorting = { viewModel.setSorting(it) },
+			selectedReversed = selectedReversed,
+			onSetReversed = { viewModel.setReversed(it) }
 		)
 	}
 

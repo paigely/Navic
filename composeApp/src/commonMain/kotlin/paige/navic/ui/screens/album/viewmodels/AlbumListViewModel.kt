@@ -32,6 +32,9 @@ open class AlbumListViewModel(
 	private val _listType = MutableStateFlow(initialListType)
 	val listType = _listType.asStateFlow()
 
+	private val _selectedReversed = MutableStateFlow(false)
+	val selectedReversed = _selectedReversed.asStateFlow()
+
 	val gridState = LazyGridState()
 
 	init {
@@ -42,7 +45,7 @@ open class AlbumListViewModel(
 
 	fun refreshAlbums(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			repository.getAlbumsFlow(fullRefresh, _listType.value).collect {
+			repository.getAlbumsFlow(fullRefresh, _listType.value, _selectedReversed.value).collect {
 				_albumsState.value = it
 			}
 		}
@@ -75,6 +78,12 @@ open class AlbumListViewModel(
 
 	fun setListType(listType: DomainAlbumListType) {
 		_listType.value = listType
+		refreshAlbums(false)
+	}
+
+	fun setReversed(reversed: Boolean) {
+		_selectedReversed.value = reversed
+		refreshAlbums(false)
 	}
 
 	fun clearError() {
