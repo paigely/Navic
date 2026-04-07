@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.library.tabs
+package paige.navic.ui.screens.library.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,7 +14,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.title_albums
+import navic.composeapp.generated.resources.option_sort_frequent
+import navic.composeapp.generated.resources.option_sort_random
+import navic.composeapp.generated.resources.option_sort_recent
+import navic.composeapp.generated.resources.option_sort_starred
 import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_genres
 import navic.composeapp.generated.resources.title_playlists
@@ -24,18 +27,22 @@ import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainGenre
 import paige.navic.domain.models.DomainPlaylist
-import paige.navic.ui.components.layouts.header
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.History
+import paige.navic.icons.outlined.LibraryAdd
+import paige.navic.icons.outlined.Shuffle
+import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.layouts.horizontalSection
 import paige.navic.ui.screens.album.components.AlbumListScreenItem
 import paige.navic.ui.screens.artist.ArtistsScreenItem
 import paige.navic.ui.screens.genre.components.GenreListScreenCard
-import paige.navic.ui.screens.library.components.libraryScreenHomePlaylistButton
+import paige.navic.ui.screens.playlist.components.PlaylistListScreenItem
 import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibraryScreenHomeTab(
+fun LibraryScreenContent(
 	scrollBehavior: TopAppBarScrollBehavior,
 	innerPadding: PaddingValues,
 	onSetShareId: (String) -> Unit,
@@ -58,6 +65,10 @@ fun LibraryScreenHomeTab(
 
 	// playlists
 	playlistsState: UiState<ImmutableList<DomainPlaylist>>,
+	selectedPlaylist: DomainPlaylist?,
+	onSelectPlaylist: (DomainPlaylist) -> Unit,
+	onClearPlaylistSelection: () -> Unit,
+	onDeletePlaylist: (String) -> Unit,
 
 	// genres
 	genresState: UiState<ImmutableList<DomainGenre>>
@@ -69,33 +80,40 @@ fun LibraryScreenHomeTab(
 		verticalArrangement = Arrangement.spacedBy(5.dp),
 		horizontalArrangement = Arrangement.spacedBy(5.dp),
 	) {
-		val playlists = playlistsState.data?.take(4).orEmpty()
-		
-		if (playlists.isNotEmpty()) {
-			header(
-				title = Res.string.title_playlists,
-				destination = Screen.PlaylistList(true),
-				active = true
-			)
-
-			playlists.forEachIndexed { index, playlist ->
-				libraryScreenHomePlaylistButton(
-					playlist = playlist,
-					start = index % 2 == 0,
-					fullWidth = index == playlists.lastIndex && index % 2 == 0
-				)
-			}
-		}
+		libraryScreenOverviewButton(
+			icon = Icons.Outlined.LibraryAdd,
+			label = Res.string.option_sort_recent,
+			destination = Screen.AlbumList(true, DomainAlbumListType.Recent),
+			start = true
+		)
+		libraryScreenOverviewButton(
+			icon = Icons.Outlined.Shuffle,
+			label = Res.string.option_sort_random,
+			destination = Screen.AlbumList(true, DomainAlbumListType.Random),
+			start = false
+		)
+		libraryScreenOverviewButton(
+			icon = Icons.Outlined.Star,
+			label = Res.string.option_sort_starred,
+			destination = Screen.AlbumList(true, DomainAlbumListType.Starred),
+			start = true
+		)
+		libraryScreenOverviewButton(
+			icon = Icons.Outlined.History,
+			label = Res.string.option_sort_frequent,
+			destination = Screen.AlbumList(true, DomainAlbumListType.Frequent),
+			start = false
+		)
 
 		horizontalSection(
-			title = Res.string.title_albums,
+			title = Res.string.option_sort_recent,
 			destination = Screen.AlbumList(true, DomainAlbumListType.Recent),
 			state = albumsState,
 			key = { it.id },
 			seeAll = true
 		) { album ->
 			AlbumListScreenItem(
-				modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
+				modifier = Modifier.animateItem().width(150.dp),
 				tab = "library",
 				album = album,
 				selected = album == selectedAlbum,
@@ -108,6 +126,25 @@ fun LibraryScreenHomeTab(
 		}
 
 		horizontalSection(
+			title = Res.string.title_playlists,
+			destination = Screen.PlaylistList(true),
+			state = playlistsState,
+			key = { it.id },
+			seeAll = true
+		) { playlist ->
+			PlaylistListScreenItem(
+				modifier = Modifier.animateItem().width(150.dp),
+				tab = "library",
+				playlist = playlist,
+				selected = playlist == selectedPlaylist,
+				onSelect = { onSelectPlaylist(playlist) },
+				onDeselect = { onClearPlaylistSelection() },
+				onSetDeletionId = { onDeletePlaylist(it) },
+				onSetShareId = { onSetShareId(it) }
+			)
+		}
+
+		horizontalSection(
 			title = Res.string.title_artists,
 			destination = Screen.ArtistList(true),
 			state = artistsState,
@@ -115,7 +152,7 @@ fun LibraryScreenHomeTab(
 			seeAll = true
 		) { artist ->
 			ArtistsScreenItem(
-				modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
+				modifier = Modifier.animateItem().width(150.dp),
 				tab = "library",
 				artist = artist,
 				selected = artist == selectedArtist,
