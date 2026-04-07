@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.track.components
+package paige.navic.ui.screens.collection.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
@@ -34,7 +34,7 @@ import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.theme.defaultFont
 
 @Composable
-fun TracksScreenHeadingRow(
+fun CollectionDetailScreenHeadingRow(
 	collection: DomainSongCollection,
     tab: String,
     scrolled: Boolean

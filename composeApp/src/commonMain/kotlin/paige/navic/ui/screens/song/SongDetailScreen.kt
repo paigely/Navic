@@ -1,10 +1,11 @@
-package paige.navic.ui.screens.track
+package paige.navic.ui.screens.song
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,15 +41,15 @@ import org.koin.core.parameter.parametersOf
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
-import paige.navic.ui.screens.track.viewmodels.TrackDetailViewModel
+import paige.navic.ui.screens.song.viewmodels.SongDetailViewModel
 import paige.navic.utils.effectiveGain
 import paige.navic.utils.fadeFromTop
 import paige.navic.utils.toFileSize
 import paige.navic.utils.toHoursMinutesSeconds
 
 @Composable
-fun TrackDetailScreen(songId: String) {
-	val viewModel = koinViewModel<TrackDetailViewModel>(
+fun SongDetailScreen(songId: String) {
+	val viewModel = koinViewModel<SongDetailViewModel>(
 		key = songId,
 		parameters = { parametersOf(songId) }
 	)
@@ -100,13 +101,13 @@ fun TrackDetailScreen(songId: String) {
 						Column(Modifier.padding(vertical = 4.dp)) {
 							Text(
 								text = stringResource(key),
-								style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
-								color = androidx.compose.material3.MaterialTheme.colorScheme.primary
+								style = MaterialTheme.typography.labelMedium,
+								color = MaterialTheme.colorScheme.primary
 							)
 							SelectionContainer {
 								Text(
 									text = "${value ?: stringResource(Res.string.info_unknown)}",
-									style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
+									style = MaterialTheme.typography.bodyLarge
 								)
 							}
 						}

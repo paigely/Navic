@@ -42,14 +42,14 @@ fun NowPlayingScreen() {
 	val isPlayerCurrent = currentScreen is Screen.NowPlaying
 
 	val playerState by player.uiState.collectAsState()
-	val track = playerState.currentTrack
+	val song = playerState.currentSong
 
 	Box(Modifier.fillMaxSize()) {
 		when (Settings.shared.nowPlayingBackgroundStyle) {
 			NowPlayingBackgroundStyle.Static -> Unit
 			NowPlayingBackgroundStyle.Dynamic -> {
 				BlendBackground(
-					coverArtId = track?.coverArtId,
+					coverArtId = song?.coverArtId,
 					isPaused = playerState.isPaused
 				)
 			}

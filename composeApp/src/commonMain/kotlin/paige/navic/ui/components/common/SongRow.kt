@@ -19,9 +19,9 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.shared.MediaPlayerViewModel
 
 @Composable
-fun TrackRow(
+fun SongRow(
 	modifier: Modifier = Modifier,
-	track: DomainSong
+	song: DomainSong
 ) {
 	val ctx = LocalCtx.current
 	val player = koinViewModel<MediaPlayerViewModel>()
@@ -29,27 +29,27 @@ fun TrackRow(
 		modifier = modifier.clickable {
 			ctx.clickSound()
 			player.clearQueue()
-			player.addToQueueSingle(track)
+			player.addToQueueSingle(song)
 			player.playAt(0)
 		},
 		headlineContent = {
-			Text(track.title)
+			Text(song.title)
 		},
 		supportingContent = {
 			Text(
 				buildString {
-					append(track.albumTitle ?: stringResource(Res.string.info_unknown_album))
+					append(song.albumTitle ?: stringResource(Res.string.info_unknown_album))
 					append(" • ")
-					append(track.artistName)
+					append(song.artistName)
 					append(" • ")
-					append(track.year ?: stringResource(Res.string.info_unknown_year))
+					append(song.year ?: stringResource(Res.string.info_unknown_year))
 				},
 				maxLines = 1
 			)
 		},
 		leadingContent = {
 			CoverArt(
-				coverArtId = track.coverArtId,
+				coverArtId = song.coverArtId,
 				modifier = Modifier.size(50.dp),
 				shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 			)

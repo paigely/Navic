@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.track.components
+package paige.navic.ui.screens.collection.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -49,7 +49,7 @@ import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.utils.UiState
 
 @Composable
-fun TracksScreenTopBar(
+fun CollectionDetailScreenTopBar(
 	collection: DomainSongCollection?,
 	albumInfoState: UiState<DomainAlbumInfo>,
 	scrolled: Boolean,
@@ -173,7 +173,7 @@ fun TracksScreenTopBar(
 	if (playlistDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
-			tracks = collection?.songs.orEmpty().toPersistentList(),
+			songs = collection?.songs.orEmpty().toPersistentList(),
 			onDismissRequest = { playlistDialogShown = false }
 		)
 	}

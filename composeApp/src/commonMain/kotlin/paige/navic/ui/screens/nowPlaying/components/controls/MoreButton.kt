@@ -46,7 +46,7 @@ fun NowPlayingMoreButton() {
 	val ctx = LocalCtx.current
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
-	val track = playerState.currentTrack
+	val song = playerState.currentSong
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
 
 	Box {
@@ -58,7 +58,7 @@ fun NowPlayingMoreButton() {
 			},
 			colors = IconButtonDefaults.filledTonalIconButtonColors(),
 			modifier = Modifier.size(32.dp),
-			enabled = playerState.currentTrack != null
+			enabled = playerState.currentSong != null
 		) {
 			Icon(
 				imageVector = Icons.Outlined.MoreHoriz,
@@ -71,10 +71,10 @@ fun NowPlayingMoreButton() {
 		) {
 			DropdownItem(
 				onClick = {
-					playerState.currentCollection?.let { tracks ->
+					playerState.currentCollection?.let { collection ->
 						expanded = false
 						backStack.remove(Screen.NowPlaying)
-						backStack.add(Screen.TrackList(tracks.id, ""))
+						backStack.add(Screen.CollectionDetail(collection.id, ""))
 					}
 				},
 				text = {
@@ -91,7 +91,7 @@ fun NowPlayingMoreButton() {
 			)
 			DropdownItem(
 				onClick = {
-					track?.artistId?.let { artistId ->
+					song?.artistId?.let { artistId ->
 						expanded = false
 						backStack.remove(Screen.NowPlaying)
 						backStack.add(Screen.ArtistDetail(artistId))
@@ -110,10 +110,10 @@ fun NowPlayingMoreButton() {
 			)
 			DropdownItem(
 				onClick = {
-					track?.id?.let { songId ->
+					song?.id?.let { songId ->
 						expanded = false
 						backStack.remove(Screen.NowPlaying)
-						backStack.add(Screen.TrackDetail(songId))
+						backStack.add(Screen.SongDetail(songId))
 					}
 				},
 				text = { Text(stringResource(Res.string.action_track_info)) },
@@ -122,10 +122,10 @@ fun NowPlayingMoreButton() {
 		}
 	}
 
-	if (playlistDialogShown && track != null) {
+	if (playlistDialogShown && song != null) {
 		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
-			tracks = persistentListOf(track),
+			songs = persistentListOf(song),
 			onDismissRequest = { playlistDialogShown = false }
 		)
 	}

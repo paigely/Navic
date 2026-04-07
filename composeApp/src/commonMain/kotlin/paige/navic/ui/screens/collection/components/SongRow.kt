@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.track.components
+package paige.navic.ui.screens.collection.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -54,8 +54,8 @@ import paige.navic.utils.toHoursMinutesSeconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun TracksScreenTrackRow(
-	track: DomainSong,
+fun CollectionDetailScreenSongRow(
+	song: DomainSong,
 	index: Int,
 	count: Int,
 	onClick: (() -> Unit),
@@ -139,9 +139,9 @@ fun TracksScreenTrackRow(
 			},
 			content = {
 				Column {
-					MarqueeText(track.title)
+					MarqueeText(song.title)
 					Text(
-						track.artistName,
+						song.artistName,
 						style = MaterialTheme.typography.bodySmall,
 						maxLines = 1
 					)
@@ -181,7 +181,7 @@ fun TracksScreenTrackRow(
 							else -> {}
 						}
 					}
-					track.duration.toHoursMinutesSeconds().let {
+					song.duration.toHoursMinutesSeconds().let {
 						Text(
 							text = it,
 							style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),

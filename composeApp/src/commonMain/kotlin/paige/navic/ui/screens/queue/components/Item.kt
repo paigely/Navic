@@ -53,7 +53,7 @@ import paige.navic.utils.dragHandle
 fun QueueScreenItem(
 	index: Int,
 	count: Int,
-	track: DomainSong,
+	song: DomainSong,
 	isPlaying: Boolean,
 	isSelected: Boolean,
 	isDragging: Boolean,
@@ -143,8 +143,8 @@ fun QueueScreenItem(
 					),
 					shapes = itemShape,
 					verticalAlignment = Alignment.CenterVertically,
-					content = { MarqueeText(track.title) },
-					supportingContent = { MarqueeText(track.artistName) },
+					content = { MarqueeText(song.title) },
+					supportingContent = { MarqueeText(song.artistName) },
 					leadingContent = {
 						Text(
 							text = "${index + 1}",

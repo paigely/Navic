@@ -36,7 +36,7 @@ actual val platformModule = module {
 		AndroidMediaPlayerViewModel(
 			application = androidApplication(),
 			stateRepository = get(),
-			trackRepository = get(),
+			collectionRepository = get(),
 			albumDao = get(),
 			downloadManager = get(),
 			connectivityManager = get()

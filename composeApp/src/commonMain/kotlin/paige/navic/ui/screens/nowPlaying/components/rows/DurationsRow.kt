@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.seconds
 fun NowPlayingDurationsRow() {
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
-	val duration = playerState.currentTrack?.duration
+	val duration = playerState.currentSong?.duration
 	val style = MaterialTheme.typography.bodyMedium
 		.copy(
 			shadow = Shadow(

@@ -122,7 +122,7 @@ fun SearchScreen(
 	val player = koinViewModel<MediaPlayerViewModel>()
 
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
-	var selectedTrack by remember { mutableStateOf<DomainSong?>(null) }
+	var selectedSong by remember { mutableStateOf<DomainSong?>(null) }
 
 	Scaffold(
 		topBar = {
@@ -167,7 +167,7 @@ fun SearchScreen(
 						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<DomainAlbum>() else emptyList()
 					val artists =
 						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<DomainArtist>() else emptyList()
-					val tracks =
+					val songs =
 						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<DomainSong>() else emptyList()
 
 					LazyVerticalGrid(
@@ -178,7 +178,7 @@ fun SearchScreen(
 						verticalArrangement = Arrangement.spacedBy(8.dp)
 					) {
 						if (query.text.isNotBlank()) {
-							if (tracks.isNotEmpty()) {
+							if (songs.isNotEmpty()) {
 								item(span = { GridItemSpan(maxLineSpan) }) {
 									Text(
 										stringResource(Res.string.title_songs),
@@ -190,17 +190,17 @@ fun SearchScreen(
 									)
 								}
 								items(
-									tracks.take(10).size,
+									songs.take(10).size,
 									span = { GridItemSpan(maxLineSpan) }) { index ->
-									val track = tracks[index]
-									val isDownloaded = downloadedSongs.containsKey(track.id)
+									val song = songs[index]
+									val isDownloaded = downloadedSongs.containsKey(song.id)
 									val canPlay = isOnline || isDownloaded
 
 									val dismissState = rememberSwipeToDismissBoxState()
 
 									LaunchedEffect(dismissState.currentValue) {
 										if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-											player.addToQueueSingle(track)
+											player.addToQueueSingle(song)
 											dismissState.snapTo(SwipeToDismissBoxValue.Settled)
 										}
 									}
@@ -244,21 +244,21 @@ fun SearchScreen(
 												onClick = {
 													ctx.clickSound()
 													player.clearQueue()
-													player.addToQueueSingle(track)
+													player.addToQueueSingle(song)
 													player.playAt(0)
 												},
 												onLongClick = {
-													selectedTrack = track
+													selectedSong = song
 												},
-												content = { Text(track.title) },
+												content = { Text(song.title) },
 												supportingContent = {
 													MarqueeText(
-														"${track.albumTitle ?: ""} • ${track.artistName} • ${track.year ?: ""}"
+														"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
 													)
 												},
 												leadingContent = {
 													CoverArt(
-														coverArtId = track.coverArtId,
+														coverArtId = song.coverArtId,
 														modifier = Modifier.size(50.dp),
 														shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 													)
@@ -274,15 +274,15 @@ fun SearchScreen(
 												}
 											)
 											Dropdown(
-												expanded = selectedTrack == track,
-												onDismissRequest = { selectedTrack = null }
+												expanded = selectedSong == song,
+												onDismissRequest = { selectedSong = null }
 											) {
 												DropdownItem(
 													text = { Text(stringResource(Res.string.action_add_to_queue)) },
 													leadingIcon = { Icon(Icons.Outlined.Queue, null) },
 													onClick = {
-														player.addToQueueSingle(track)
-														selectedTrack = null
+														player.addToQueueSingle(song)
+														selectedSong = null
 													},
 												)
 											}

@@ -17,7 +17,7 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.utils.UiState
 
 class PlaylistCreateDialogViewModel(
-	private val tracks: List<DomainSong>,
+	private val songs: List<DomainSong>,
 	private val playlistDao: PlaylistDao
 ) : ViewModel() {
 	private val _creationState = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
@@ -34,7 +34,7 @@ class PlaylistCreateDialogViewModel(
 			try {
 				val playlist = SessionManager.api.createPlaylist(
 					name = name.text.toString(),
-					songIds = tracks.map { it.id }
+					songIds = songs.map { it.id }
 				)
 				playlistDao.insertPlaylist(playlist.toEntity())
 				_events.send(Event.Dismiss(playlistDao.getPlaylistById(playlist.id)!!.toDomainModel()))

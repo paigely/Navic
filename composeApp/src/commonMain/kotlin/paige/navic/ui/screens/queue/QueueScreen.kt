@@ -64,11 +64,11 @@ fun QueueScreen() {
 			state = draggableState,
 			items = queue,
 			key = { index, _ -> index }
-		) { index, track, isDragging ->
+		) { index, song, isDragging ->
 			QueueScreenItem(
 				index = index,
 				count = queue.count(),
-				track = track,
+				song = song,
 				isPlaying = playerState.currentIndex == index
 					&& !playerState.isPaused,
 				isSelected = playerState.currentIndex == index,
@@ -85,7 +85,7 @@ fun QueueScreen() {
 					player.removeFromQueue(index)
 				},
 				isOffline = !isOnline,
-				isDownloaded = downloadedSongs.containsKey(track.id)
+				isDownloaded = downloadedSongs.containsKey(song.id)
 			)
 		}
 		if (queue.isEmpty()) {

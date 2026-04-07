@@ -89,8 +89,8 @@ import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
 import paige.navic.ui.screens.settings.SettingsScreen
 import paige.navic.ui.screens.song.SongListScreen
-import paige.navic.ui.screens.track.TrackDetailScreen
-import paige.navic.ui.screens.track.TrackListScreen
+import paige.navic.ui.screens.song.SongDetailScreen
+import paige.navic.ui.screens.collection.CollectionDetailScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.utils.BottomBarScrollManager
 import paige.navic.utils.LocalBottomBarScrollManager
@@ -253,17 +253,17 @@ private fun entryProvider(
 		entry<Screen.Lyrics>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
 			val player = koinViewModel<MediaPlayerViewModel>()
 			val playerState by player.uiState.collectAsState()
-			val track = playerState.currentTrack
-			LyricsScreen(track)
+			val song = playerState.currentSong
+			LyricsScreen(song)
 		}
 		entry<Screen.Queue>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
 			QueueScreen()
 		}
-		entry<Screen.TrackList>(metadata = detailPane("root")) { key ->
-			TrackListScreen(key.collectionId, key.tab)
+		entry<Screen.CollectionDetail>(metadata = detailPane("root")) { key ->
+			CollectionDetailScreen(key.collectionId, key.tab)
 		}
-		entry<Screen.TrackDetail>(metadata = detailPane("root")) { key ->
-			TrackDetailScreen(key.songId)
+		entry<Screen.SongDetail>(metadata = detailPane("root")) { key ->
+			SongDetailScreen(key.songId)
 		}
 		entry<Screen.Search>(metadata = navtabMetadata) { key ->
 			SearchScreen(key.nested)

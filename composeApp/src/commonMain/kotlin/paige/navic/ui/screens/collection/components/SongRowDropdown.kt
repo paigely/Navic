@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.track.components
+package paige.navic.ui.screens.collection.components
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,14 +46,14 @@ import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.utils.UiState
 
 @Composable
-fun TrackRowDropdown(
+fun CollectionDetailScreenSongRowDropdown(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     onRemoveStar: () -> Unit,
     onAddStar: () -> Unit,
     onShare: () -> Unit,
-    tracks: DomainSongCollection,
-    track: DomainSong,
+    collection: DomainSongCollection,
+	song: DomainSong,
     onRemoveFromPlaylist: () -> Unit,
     starredState: UiState<Boolean>,
     downloadStatus: DownloadStatus?,
@@ -158,7 +158,7 @@ fun TrackRowDropdown(
 			text = { Text(stringResource(Res.string.action_track_info)) },
 			leadingIcon = { Icon(Icons.Outlined.Info, null) },
 			onClick = {
-				backStack.add(Screen.TrackDetail(track.id))
+				backStack.add(Screen.SongDetail(song.id))
 				onDismissRequest()
 			},
 		)
@@ -167,7 +167,7 @@ fun TrackRowDropdown(
 			text = {
 				Text(
 					stringResource(
-						if (tracks !is DomainAlbum)
+						if (collection !is DomainAlbum)
 							Res.string.action_add_to_another_playlist
 						else Res.string.action_add_to_playlist
 					)
@@ -184,7 +184,7 @@ fun TrackRowDropdown(
 				playlistDialogShown = true
 			},
 		)
-		if (tracks !is DomainAlbum) {
+		if (collection !is DomainAlbum) {
 			DropdownItem(
 				containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
 				text = { Text(stringResource(Res.string.action_remove_from_playlist)) },
@@ -204,9 +204,9 @@ fun TrackRowDropdown(
 	if (playlistDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
-			tracks = persistentListOf(track),
-			playlistToExclude = if (tracks is DomainPlaylist)
-				tracks.id
+			songs = persistentListOf(song),
+			playlistToExclude = if (collection is DomainPlaylist)
+				collection.id
 			else null,
 			onDismissRequest = { playlistDialogShown = false }
 		)

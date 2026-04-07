@@ -28,7 +28,7 @@ fun NowPlayingInfoRow() {
 	val backStack = LocalNavStack.current
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
-	val track = playerState.currentTrack
+	val song = playerState.currentSong
 	Row(
 		modifier = Modifier
 			.padding(horizontal = 16.dp)
@@ -37,24 +37,24 @@ fun NowPlayingInfoRow() {
 		horizontalArrangement = Arrangement.spacedBy(8.dp)
 	) {
 		Column(Modifier.weight(1f)) {
-			track?.title?.let { title ->
+			song?.title?.let { title ->
 				MarqueeText(
 					title,
 					modifier = Modifier.clickable {
-						track.albumId?.let {
+						song.albumId?.let {
 							backStack.removeLastOrNull()
 
 							val lastScreen = backStack.lastOrNull()
 
-							val isSameAlbum = if (lastScreen is Screen.TrackList) {
-								lastScreen.collectionId == track.albumId
+							val isSameAlbum = if (lastScreen is Screen.CollectionDetail) {
+								lastScreen.collectionId == song.albumId
 							} else {
 								false
 							}
 
 							if (!isSameAlbum)
 								backStack.add(
-									Screen.TrackList(
+									Screen.CollectionDetail(
 										playerState.currentCollection?.id ?: return@clickable,
 										""
 									)
@@ -68,8 +68,8 @@ fun NowPlayingInfoRow() {
 				)
 			}
 			MarqueeText(
-				modifier = Modifier.clickable(track != null) {
-					track?.artistId?.let { id ->
+				modifier = Modifier.clickable(song != null) {
+					song?.artistId?.let { id ->
 						backStack.remove(Screen.NowPlaying)
 						backStack.add(Screen.ArtistDetail(id))
 					}
@@ -79,7 +79,7 @@ fun NowPlayingInfoRow() {
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
 						fontSize = MaterialTheme.typography.bodyMedium.fontSize * 1.1
 					),
-				text = track?.artistName ?: stringResource(Res.string.info_not_playing)
+				text = song?.artistName ?: stringResource(Res.string.info_not_playing)
 			)
 		}
 		Row(

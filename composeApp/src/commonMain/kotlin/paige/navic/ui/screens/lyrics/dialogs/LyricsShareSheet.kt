@@ -81,7 +81,7 @@ import paige.navic.ui.components.common.FormRow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LyricsShareSheet(
-	track: DomainSong,
+	song: DomainSong,
 	selectedLyrics: ImmutableList<String>,
 	onDismiss: () -> Unit,
 	onShare: () -> Unit
@@ -91,11 +91,11 @@ fun LyricsShareSheet(
 	val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
 	val platformContext = LocalPlatformContext.current
-	val model = remember(track.coverArtId) {
+	val model = remember(song.coverArtId) {
 		ImageRequest.Builder(platformContext)
-			.data(track.coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
-			.memoryCacheKey(track.coverArtId)
-			.diskCacheKey(track.coverArtId)
+			.data(song.coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
+			.memoryCacheKey(song.coverArtId)
+			.diskCacheKey(song.coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)
 			.memoryCachePolicy(CachePolicy.ENABLED)
 			.build()
@@ -182,14 +182,14 @@ fun LyricsShareSheet(
 
 						Column {
 							Text(
-								text = track.title,
+								text = song.title,
 								style = MaterialTheme.typography.titleMedium,
 								color = contentColor,
 								fontWeight = FontWeight.Bold
 							)
 
 							Text(
-								text = track.artistName,
+								text = song.artistName,
 								style = MaterialTheme.typography.bodyMedium,
 								color = contentColor.copy(alpha = 0.8f)
 							)

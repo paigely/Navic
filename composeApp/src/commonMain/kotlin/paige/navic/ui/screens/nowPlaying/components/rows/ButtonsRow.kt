@@ -54,7 +54,7 @@ fun NowPlayingButtonsRow() {
 	val interactionSource = remember { MutableInteractionSource() }
 	val isPressed by interactionSource.collectIsPressedAsState()
 	val scale = remember { Animatable(1f) }
-	val enabled = playerState.currentTrack != null
+	val enabled = playerState.currentSong != null
 
 	LaunchedEffect(isPressed) {
 		if (!isPressed) {

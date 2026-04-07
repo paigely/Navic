@@ -51,7 +51,7 @@ actual val platformModule = module {
 	viewModel<MediaPlayerViewModel> {
 		JvmMediaPlayerViewModel(
 			stateRepository = get(),
-			trackRepository = get(),
+			collectionRepository = get(),
 			downloadManager = get(),
 			connectivityManager = get()
 		)

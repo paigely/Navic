@@ -39,12 +39,12 @@ fun NowPlayingProgressBar() {
 		modifier = Modifier.padding(start = 16.dp, end = 13.5.dp),
 		thumb = {
 			SliderDefaults.Thumb(
-				enabled = playerState.currentTrack != null,
+				enabled = playerState.currentSong != null,
 				thumbSize = DpSize(4.dp, 32.dp),
 				interactionSource = remember { MutableInteractionSource() }
 			)
 		},
-		enabled = playerState.currentTrack != null,
+		enabled = playerState.currentSong != null,
 		animationSpecs = SliderDefaults.WaveAnimationSpecs.copy(
 			waveAppearanceAnimationSpec = snap()
 		)

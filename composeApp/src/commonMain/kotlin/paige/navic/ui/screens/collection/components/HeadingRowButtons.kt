@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.track.components
+package paige.navic.ui.screens.collection.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,7 +40,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.theme.defaultFont
 
 @Composable
-fun TracksScreenHeadingRowButtons(
+fun CollectionDetailScreenHeadingRowButtons(
 	collection: DomainSongCollection
 ) {
 	val player = koinViewModel<MediaPlayerViewModel>()

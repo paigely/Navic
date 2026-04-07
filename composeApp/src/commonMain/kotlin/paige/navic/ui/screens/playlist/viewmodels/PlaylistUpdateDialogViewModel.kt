@@ -13,7 +13,7 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.utils.UiState
 
 class PlaylistUpdateDialogViewModel(
-	private val tracks: List<DomainSong>,
+	private val songs: List<DomainSong>,
 	private val playlistToExclude: String?
 ) : ViewModel() {
 	private val _playlistsState = MutableStateFlow<UiState<List<Playlist>>>(UiState.Loading())
@@ -61,7 +61,7 @@ class PlaylistUpdateDialogViewModel(
 				_selectedPlaylists.value.forEach { playlist ->
 					SessionManager.api.updatePlaylist(
 						playlist.id,
-						songIdsToAdd = tracks.map { it.id }
+						songIdsToAdd = songs.map { it.id }
 					)
 				}
 				_confirmState.value = UiState.Success(null)

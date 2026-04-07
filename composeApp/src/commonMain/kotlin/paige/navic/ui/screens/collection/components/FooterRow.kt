@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.track.components
+package paige.navic.ui.screens.collection.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,18 +16,18 @@ import paige.navic.ui.theme.defaultFont
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun TracksScreenFooterRow(
-	tracks: DomainSongCollection
+fun CollectionDetailScreenFooterRow(
+	collection: DomainSongCollection
 ) {
 	Text(
 		buildString {
 			append(pluralStringResource(
 				Res.plurals.count_songs,
-				tracks.songCount,
-				tracks.songCount
+				collection.songCount,
+				collection.songCount
 			))
 			append(" • ")
-			append(tracks.duration.toString())
+			append(collection.duration.toString())
 		},
 		style = MaterialTheme.typography.titleSmall,
 		fontFamily = defaultFont(round = 100f),

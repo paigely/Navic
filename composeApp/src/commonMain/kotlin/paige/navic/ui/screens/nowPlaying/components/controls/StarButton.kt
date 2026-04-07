@@ -27,20 +27,20 @@ import paige.navic.shared.MediaPlayerViewModel
 fun NowPlayingStarButton() {
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
-	var isStarred by remember(playerState.currentTrack) {
-		mutableStateOf(playerState.currentTrack?.starredAt != null)
+	var isStarred by remember(playerState.currentSong) {
+		mutableStateOf(playerState.currentSong?.starredAt != null)
 	}
 	val scope = rememberCoroutineScope()
 	IconButton(
 		onClick = {
 			isStarred = !isStarred
 			scope.launch {
-				 if (isStarred) player.starTrack() else player.unstarTrack()
+				 if (isStarred) player.starSong() else player.unstarSong()
 			}
 		},
 		colors = IconButtonDefaults.filledTonalIconButtonColors(),
 		modifier = Modifier.size(32.dp),
-		enabled = playerState.currentTrack != null
+		enabled = playerState.currentSong != null
 	) {
 		Icon(
 			if (isStarred) Icons.Filled.Star else Icons.Outlined.Star,

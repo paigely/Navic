@@ -1,6 +1,6 @@
 package paige.navic.shared
 
-import paige.navic.domain.repositories.TrackRepository
+import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
@@ -9,20 +9,20 @@ import paige.navic.managers.DownloadManager
 
 // TODO: implement this class
 class JvmMediaPlayerViewModel(
-	stateRepository: PlayerStateRepository,
-	trackRepository: TrackRepository,
-	downloadManager: DownloadManager,
-	connectivityManager: ConnectivityManager
+    stateRepository: PlayerStateRepository,
+	collectionRepository: CollectionRepository,
+    downloadManager: DownloadManager,
+    connectivityManager: ConnectivityManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
-	trackRepository = trackRepository,
+	collectionRepository = collectionRepository,
 	downloadManager = downloadManager,
 	connectivityManager = connectivityManager
 ) {
-	override fun addToQueueSingle(track: DomainSong) {
+	override fun addToQueueSingle(song: DomainSong) {
 	}
 
-	override fun addToQueue(tracks: DomainSongCollection) {
+	override fun addToQueue(collection: DomainSongCollection) {
 	}
 
 	override fun removeFromQueue(index: Int) {
@@ -63,7 +63,7 @@ class JvmMediaPlayerViewModel(
 	override fun toggleRepeat() {
 	}
 
-	override fun shufflePlay(tracks: DomainSongCollection) {
+	override fun shufflePlay(collection: DomainSongCollection) {
 		resetSleepTimer()
 	}
 

@@ -23,23 +23,23 @@ import paige.navic.ui.screens.settings.viewmodels.SettingsDataStorageViewModel
 import paige.navic.ui.screens.share.viewmodels.ShareDialogViewModel
 import paige.navic.ui.screens.share.viewmodels.ShareListViewModel
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
-import paige.navic.ui.screens.track.viewmodels.TrackDetailViewModel
-import paige.navic.ui.screens.track.viewmodels.TrackListViewModel
+import paige.navic.ui.screens.song.viewmodels.SongDetailViewModel
+import paige.navic.ui.screens.collection.viewmodels.CollectionDetailViewModel
 import paige.navic.ui.viewmodels.LoginViewModel
 
 val viewModelModule = module {
 	viewModelOf(::ArtistDetailViewModel)
 
-	viewModel { (track: DomainSong?) ->
+	viewModel { (song: DomainSong?) ->
 		LyricsScreenViewModel(
-			track = track,
+			song = song,
 			repository = get()
 		)
 	}
 
-	viewModel { (tracks: List<DomainSong>, playlistToExclude: String?) ->
+	viewModel { (songs: List<DomainSong>, playlistToExclude: String?) ->
 		PlaylistUpdateDialogViewModel(
-			tracks = tracks,
+			songs = songs,
 			playlistToExclude = playlistToExclude
 		)
 	}
@@ -61,8 +61,8 @@ val viewModelModule = module {
 	viewModelOf(::DeletionViewModel)
 	viewModelOf(::ShareDialogViewModel)
 	viewModelOf(::PlaylistCreateDialogViewModel)
-	viewModelOf(::TrackListViewModel)
-	viewModelOf(::TrackDetailViewModel)
+	viewModelOf(::CollectionDetailViewModel)
+	viewModelOf(::SongDetailViewModel)
 	viewModelOf(::SettingsDataStorageViewModel)
 	viewModel {
 		NavtabsViewModel(

@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.track
+package paige.navic.ui.screens.collection
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -35,14 +35,14 @@ import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.components.layouts.RootBottomBar
-import paige.navic.ui.screens.track.components.TrackRowDropdown
-import paige.navic.ui.screens.track.components.TracksScreenFooterRow
-import paige.navic.ui.screens.track.components.TracksScreenHeadingRow
-import paige.navic.ui.screens.track.components.TracksScreenHeadingRowButtons
-import paige.navic.ui.screens.track.components.TracksScreenTopBar
-import paige.navic.ui.screens.track.components.TracksScreenTrackRow
-import paige.navic.ui.screens.track.components.tracksScreenMoreByArtistRow
-import paige.navic.ui.screens.track.viewmodels.TrackListViewModel
+import paige.navic.ui.screens.collection.components.CollectionDetailScreenSongRowDropdown
+import paige.navic.ui.screens.collection.components.CollectionDetailScreenFooterRow
+import paige.navic.ui.screens.collection.components.CollectionDetailScreenHeadingRow
+import paige.navic.ui.screens.collection.components.CollectionDetailScreenHeadingRowButtons
+import paige.navic.ui.screens.collection.components.CollectionDetailScreenTopBar
+import paige.navic.ui.screens.collection.components.CollectionDetailScreenSongRow
+import paige.navic.ui.screens.collection.components.collectionDetailScreenMoreByArtistRow
+import paige.navic.ui.screens.collection.viewmodels.CollectionDetailViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 import paige.navic.utils.fadeFromTop
@@ -51,11 +51,11 @@ import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrackListScreen(
+fun CollectionDetailScreen(
 	collectionId: String,
 	tab: String
 ) {
-	val viewModel = koinViewModel<TrackListViewModel>(
+	val viewModel = koinViewModel<CollectionDetailViewModel>(
 		key = collectionId,
 		parameters = { parametersOf(collectionId) }
 	)
@@ -64,7 +64,7 @@ fun TrackListScreen(
 
 	val collectionState by viewModel.collectionState.collectAsState()
 	val collection = collectionState.data
-	val selection by viewModel.selectedTrack.collectAsState()
+	val selection by viewModel.selectedSong.collectAsState()
 	val isOnline by viewModel.isOnline.collectAsState()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
@@ -85,7 +85,7 @@ fun TrackListScreen(
 
 	Scaffold(
 		topBar = {
-			TracksScreenTopBar(
+			CollectionDetailScreenTopBar(
 				albumInfoState = albumInfoState,
 				collection = collection,
 				scrolled = scrolled,
@@ -122,7 +122,7 @@ fun TrackListScreen(
 				if (collection == null) return@LazyColumn
 
 				item {
-					TracksScreenHeadingRow(
+					CollectionDetailScreenHeadingRow(
 						collection = collection,
 						tab = tab,
 						scrolled = scrolled
@@ -130,14 +130,14 @@ fun TrackListScreen(
 				}
 
 				item {
-					TracksScreenHeadingRowButtons(collection = collection)
+					CollectionDetailScreenHeadingRowButtons(collection = collection)
 				}
 
-				itemsIndexed(collection.songs) { index, track ->
-					val download = allDownloads.find { it.songId == track.id }
+				itemsIndexed(collection.songs) { index, song ->
+					val download = allDownloads.find { it.songId == song.id }
 					Box {
-						TracksScreenTrackRow(
-							track = track,
+						CollectionDetailScreenSongRow(
+							song = song,
 							index = index,
 							count = collection.songs.count(),
 							onClick = {
@@ -146,29 +146,29 @@ fun TrackListScreen(
 								player.playAt(index)
 							},
 							onLongClick = {
-								viewModel.selectTrack(track)
+								viewModel.selectSong(song)
 							},
 							onAddToQueue = {
-								player.addToQueueSingle(track)
+								player.addToQueueSingle(song)
 							},
 							download = download,
 							isOffline = !isOnline
 						)
-						TrackRowDropdown(
-							expanded = selection == track,
+						CollectionDetailScreenSongRowDropdown(
+							expanded = selection == song,
 							onDismissRequest = { viewModel.clearSelection() },
-							onRemoveStar = { viewModel.unstarSelectedTrack() },
-							onAddStar = { viewModel.starSelectedTrack() },
-							onShare = { shareId = track.id },
-							tracks = collection,
-							track = track,
+							onRemoveStar = { viewModel.unstarSelectedSong() },
+							onAddStar = { viewModel.starSelectedSong() },
+							onShare = { shareId = song.id },
+							collection = collection,
+							song = song,
 							onRemoveFromPlaylist = { viewModel.removeFromPlaylist() },
 							starredState = starredState,
 							downloadStatus = download?.status,
-							onDownload = { viewModel.downloadTrack(track) },
-							onCancelDownload = { viewModel.cancelDownload(track.id) },
-							onDeleteDownload = { viewModel.deleteDownload(track.id) },
-							onAddToQueue = { player.addToQueueSingle(track) }
+							onDownload = { viewModel.downloadSong(song) },
+							onCancelDownload = { viewModel.cancelDownload(song.id) },
+							onDeleteDownload = { viewModel.deleteDownload(song.id) },
+							onAddToQueue = { player.addToQueueSingle(song) }
 						)
 					}
 				}
@@ -182,10 +182,10 @@ fun TrackListScreen(
 					}
 				}
 
-				item { TracksScreenFooterRow(collection) }
+				item { CollectionDetailScreenFooterRow(collection) }
 
 				(collection as? DomainAlbum)?.artistName?.let { artistName ->
-					tracksScreenMoreByArtistRow(
+					collectionDetailScreenMoreByArtistRow(
 						artistName = artistName,
 						artistAlbums = otherAlbums,
 						tab = tab

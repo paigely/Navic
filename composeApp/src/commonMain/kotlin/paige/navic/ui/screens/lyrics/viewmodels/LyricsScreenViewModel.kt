@@ -12,8 +12,8 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.utils.UiState
 
 class LyricsScreenViewModel(
-    private val track: DomainSong?,
-    private val repository: LyricRepository
+	private val song: DomainSong?,
+	private val repository: LyricRepository
 ) : ViewModel() {
 	private val _lyricsState = MutableStateFlow<UiState<LyricsResult?>>(UiState.Loading())
 	val lyricsState = _lyricsState.asStateFlow()
@@ -26,14 +26,14 @@ class LyricsScreenViewModel(
 
 	fun refreshResults() {
 		viewModelScope.launch {
-			if (track == null) {
+			if (song == null) {
 				_lyricsState.value = UiState.Success(null)
 				return@launch
 			}
 			_lyricsState.value = UiState.Loading()
 			try {
 				_lyricsState.value = UiState.Success(
-					repository.fetchLyrics(track)
+					repository.fetchLyrics(song)
 				)
 			} catch (e: Exception) {
 				_lyricsState.value = UiState.Error(e)

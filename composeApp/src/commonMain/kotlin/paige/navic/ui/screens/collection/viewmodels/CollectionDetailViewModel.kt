@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.track.viewmodels
+package paige.navic.ui.screens.collection.viewmodels
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
@@ -14,7 +14,7 @@ import kotlinx.coroutines.runBlocking
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.models.DomainSongCollection
-import paige.navic.domain.repositories.TrackRepository
+import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.managers.DownloadManager
 import paige.navic.managers.ConnectivityManager
@@ -24,13 +24,9 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.shared.Logger
 import paige.navic.utils.UiState
 
-/**
- * Viewmodel for the screen that shows an album/playlist and its songs.
- * Not to be confused with SongListViewModel, this just has a dumb name
- */
-class TrackListViewModel(
+class CollectionDetailViewModel(
 	private val collectionId: String,
-	private val repository: TrackRepository,
+	private val repository: CollectionRepository,
 	private val downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
@@ -62,8 +58,8 @@ class TrackListViewModel(
 		initialValue = emptyList()
 	) ?: MutableStateFlow(emptyList())
 
-	private val _selectedTrack = MutableStateFlow<DomainSong?>(null)
-	val selectedTrack: StateFlow<DomainSong?> = _selectedTrack.asStateFlow()
+	private val _selectedSong = MutableStateFlow<DomainSong?>(null)
+	val selectedSong: StateFlow<DomainSong?> = _selectedSong.asStateFlow()
 
 	private val _albumInfoState = MutableStateFlow<UiState<DomainAlbumInfo>>(UiState.Loading())
 	val albumInfoState = _albumInfoState.asStateFlow()
@@ -95,13 +91,13 @@ class TrackListViewModel(
 		}
 	}
 
-	fun selectTrack(track: DomainSong) {
+	fun selectSong(song: DomainSong) {
 		viewModelScope.launch {
-			_selectedTrack.value = track
+			_selectedSong.value = song
 			_starredState.value = UiState.Loading()
 			_albumInfoState.value = UiState.Loading()
 			try {
-				val isStarred = repository.isTrackStarred(track.id)
+				val isStarred = repository.isSongStarred(song.id)
 				_starredState.value = UiState.Success(isStarred)
 			} catch(e: Exception) {
 				_starredState.value = UiState.Error(e)
@@ -110,7 +106,7 @@ class TrackListViewModel(
 	}
 
 	fun clearSelection() {
-		_selectedTrack.value = null
+		_selectedSong.value = null
 	}
 
 	fun clearError() {
@@ -120,52 +116,52 @@ class TrackListViewModel(
 	}
 
 	fun removeFromPlaylist() {
-		val track = _selectedTrack.value ?: return
+		val song = _selectedSong.value ?: return
 		val songs = _collectionState.value.data?.songs ?: return
 		viewModelScope.launch {
 			try {
 				SessionManager.api.updatePlaylist(
 					id = collectionId,
-					songIndicesToRemove = listOf(songs.indexOf(track))
+					songIndicesToRemove = listOf(songs.indexOf(song))
 				)
 				refreshCollection(true)
 			} catch(e: Exception) {
-				Logger.e("TrackListViewModel", "Failed to remove song from playlist", e)
+				Logger.e("CollectionDetailViewModel", "Failed to remove song from playlist", e)
 			}
 		}
 		clearSelection()
 	}
 
-	fun starSelectedTrack() {
+	fun starSelectedSong() {
 		viewModelScope.launch {
 			try {
-				repository.starTrack(_selectedTrack.value!!)
+				repository.starSong(_selectedSong.value!!)
 			} catch(e: Exception) {
-				Logger.e("TrackListViewModel", "Failed to star song", e)
+				Logger.e("CollectionDetailViewModel", "Failed to star song", e)
 			}
 		}
 	}
 
-	fun unstarSelectedTrack() {
+	fun unstarSelectedSong() {
 		viewModelScope.launch {
 			try {
-				repository.unstarTrack(_selectedTrack.value!!)
+				repository.unstarSong(_selectedSong.value!!)
 			} catch(e: Exception) {
-				Logger.e("TrackListViewModel", "Failed to unstar song", e)
+				Logger.e("CollectionDetailViewModel", "Failed to unstar song", e)
 			}
 		}
 	}
 
-	fun downloadTrack(track: DomainSong) {
-		downloadManager.downloadSong(track)
+	fun downloadSong(song: DomainSong) {
+		downloadManager.downloadSong(song)
 	}
 
-	fun cancelDownload(trackId: String) {
-		downloadManager.cancelDownload(trackId)
+	fun cancelDownload(songId: String) {
+		downloadManager.cancelDownload(songId)
 	}
 
-	fun deleteDownload(trackId: String) {
-		downloadManager.deleteDownload(trackId)
+	fun deleteDownload(songId: String) {
+		downloadManager.deleteDownload(songId)
 	}
 
 	fun downloadAll() {

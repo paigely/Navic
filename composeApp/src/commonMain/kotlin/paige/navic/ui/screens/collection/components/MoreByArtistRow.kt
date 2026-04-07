@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.track.components
+package paige.navic.ui.screens.collection.components
 
 import androidx.compose.foundation.lazy.LazyListScope
 import kotlinx.collections.immutable.toImmutableList
@@ -11,7 +11,7 @@ import paige.navic.domain.models.DomainAlbum
 import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
 
-fun LazyListScope.tracksScreenMoreByArtistRow(
+fun LazyListScope.collectionDetailScreenMoreByArtistRow(
 	artistName: String,
 	artistAlbums: List<DomainAlbum>,
 	tab: String
@@ -27,7 +27,7 @@ fun LazyListScope.tracksScreenMoreByArtistRow(
 				title = album.name,
 				contentDescription = album.name,
 				onClick = {
-					backStack.add(Screen.TrackList(album.id, tab))
+					backStack.add(Screen.CollectionDetail(album.id, tab))
 				}
 			)
 		}

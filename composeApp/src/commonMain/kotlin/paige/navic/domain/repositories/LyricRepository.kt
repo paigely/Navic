@@ -196,9 +196,9 @@ class LyricRepository(
 		}
 	}
 
-	suspend fun fetchLyrics(track: DomainSong): LyricsResult? {
+	suspend fun fetchLyrics(song: DomainSong): LyricsResult? {
 		try {
-			val cached = lyricDao.getLyrics(track.id)
+			val cached = lyricDao.getLyrics(song.id)
 			if (cached != null) {
 				val parsed = LyricsContentParser.parse(cached.rawContent)
 				if (!parsed.isNullOrEmpty()) return LyricsResult(parsed, cached.provider, cached.rawContent)
@@ -212,17 +212,17 @@ class LyricRepository(
 
 				val parsedLyrics = when (provider) {
 					LyricsProvider.LYRICS_PLUS -> {
-						val raw = fetchRawLyricsPlus(track, currentConfig)
+						val raw = fetchRawLyricsPlus(song, currentConfig)
 						rawContentToCache = raw
 						raw?.let { LyricsContentParser.parse(it) }
 					}
 					LyricsProvider.LRCLIB -> {
-						val raw = fetchRawLrcLib(track, currentConfig)
+						val raw = fetchRawLrcLib(song, currentConfig)
 						rawContentToCache = raw
 						raw?.let { LyricsContentParser.parse(it) }
 					}
 					LyricsProvider.SUBSONIC -> {
-						val subsonicLyrics = SessionManager.api.getLyrics(track.id).firstOrNull()
+						val subsonicLyrics = SessionManager.api.getLyrics(song.id).firstOrNull()
 						val lines = subsonicLyrics?.lines?.map { line ->
 							LyricLine(time = line.start.milliseconds, text = line.value)
 						}
@@ -253,13 +253,13 @@ class LyricRepository(
 		return null
 	}
 
-	private suspend fun fetchRawLrcLib(track: DomainSong, config: LyricsConfig): String? {
+	private suspend fun fetchRawLrcLib(song: DomainSong, config: LyricsConfig): String? {
 		return try {
 			val response = client.get(config.lrcLibBaseUrl) {
-				parameter("track_name", track.title)
-				parameter("artist_name", track.artistName)
-				parameter("album_name", track.albumTitle)
-				parameter("duration", track.duration)
+				parameter("track_name", song.title)
+				parameter("artist_name", song.artistName)
+				parameter("album_name", song.albumTitle)
+				parameter("duration", song.duration)
 				accept(ContentType.Application.Json)
 			}
 			if (response.status.isSuccess()) response.bodyAsText() else null
@@ -268,14 +268,14 @@ class LyricRepository(
 		}
 	}
 
-	private suspend fun fetchRawLyricsPlus(track: DomainSong, config: LyricsConfig): String? {
+	private suspend fun fetchRawLyricsPlus(song: DomainSong, config: LyricsConfig): String? {
 		for (baseUrl in config.lyricsPlusMirrors) {
 			try {
 				val response = client.get("$baseUrl/v2/lyrics/get") {
-					parameter("title", track.title)
-					parameter("artist", track.artistName)
-					parameter("album", track.albumTitle)
-					parameter("duration", track.duration)
+					parameter("title", song.title)
+					parameter("artist", song.artistName)
+					parameter("album", song.albumTitle)
+					parameter("duration", song.duration)
 					accept(ContentType.Application.Json)
 				}
 				if (response.status.isSuccess()) {

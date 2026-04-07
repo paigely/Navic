@@ -97,14 +97,14 @@ fun MiniPlayer(
 	else 0.dp
 
 	val playerState by player.uiState.collectAsState()
-	val track = playerState.currentTrack
+	val song = playerState.currentSong
 
 	val platformContext = LocalPlatformContext.current
-	val model = remember(track?.coverArtId) {
+	val model = remember(song?.coverArtId) {
 		ImageRequest.Builder(platformContext)
-			.data(track?.coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
-			.memoryCacheKey(track?.coverArtId)
-			.diskCacheKey(track?.coverArtId)
+			.data(song?.coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
+			.memoryCacheKey(song?.coverArtId)
+			.diskCacheKey(song?.coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)
 			.memoryCachePolicy(CachePolicy.ENABLED)
 			.build()
@@ -171,8 +171,8 @@ fun MiniPlayer(
 		}
 	}
 
-	val hasTrack = track != null
-	val isInteractive = enabled && hasTrack
+	val hasSong = song != null
+	val isInteractive = enabled && hasSong
 
 	Swiper(
 		onSwipeLeft = {
@@ -255,7 +255,7 @@ fun MiniPlayer(
 								)
 								.background(MaterialTheme.colorScheme.surfaceVariant)
 						)
-						if (track?.coverArtId.isNullOrEmpty()) {
+						if (song?.coverArtId.isNullOrEmpty()) {
 							Icon(
 								imageVector = Icons.Filled.Note,
 								contentDescription = null,
@@ -328,13 +328,13 @@ fun MiniPlayer(
 					}
 				},
 				content = {
-					track?.title?.let { title ->
+					song?.title?.let { title ->
 						MarqueeText(title)
 					}
 				},
 				supportingContent = {
-					if (track != null) {
-						MarqueeText(track.artistName)
+					if (song != null) {
+						MarqueeText(song.artistName)
 					} else {
 						MarqueeText(stringResource(Res.string.info_not_playing))
 					}
@@ -367,7 +367,7 @@ fun MiniPlayer(
 					Box(
 						Modifier
 							.background(MaterialTheme.colorScheme.primary.copy(alpha = alpha))
-							.fillMaxWidth(if (track != null) progress else 0f)
+							.fillMaxWidth(if (song != null) progress else 0f)
 							.height(3.dp)
 					)
 					Box(
@@ -375,7 +375,7 @@ fun MiniPlayer(
 							.fillMaxWidth()
 							.height(14.dp)
 							.then(
-								if (track != null
+								if (song != null
 									&& Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
 									&& isInteractive)
 									Modifier.pointerInput(Unit) {

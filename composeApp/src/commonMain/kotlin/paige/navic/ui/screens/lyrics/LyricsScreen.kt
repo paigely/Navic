@@ -85,11 +85,11 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LyricsScreen(
-	track: DomainSong?
+	song: DomainSong?
 ) {
 	val viewModel = koinViewModel<LyricsScreenViewModel>(
-		key = track?.id,
-		parameters = { parametersOf(track) }
+		key = song?.id,
+		parameters = { parametersOf(song) }
 	)
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
@@ -116,8 +116,8 @@ fun LyricsScreen(
 		)
 	}
 
-	val track = track ?: return placeholder()
-	val duration = track.duration
+	val song = song ?: return placeholder()
+	val duration = song.duration
 
 	val progressState = playerState.progress
 	val currentDuration = duration * progressState.toDouble()
@@ -399,7 +399,7 @@ fun LyricsScreen(
 				}.toImmutableList()
 
 				LyricsShareSheet(
-					track = track,
+					song = song,
 					selectedLyrics = stringsToShare,
 					onDismiss = { showShareSheet = false },
 					onShare = {

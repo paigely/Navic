@@ -56,13 +56,13 @@ fun NowPlayingArtworkPager(
 		userScrollEnabled = Settings.shared.swipeToSkip,
 		overscrollEffect = null
 	) { page ->
-		val track = playerState.queue[page]
+		val song = playerState.queue[page]
 		Box(
 			modifier = Modifier.fillMaxSize(),
 			contentAlignment = Alignment.Center
 		) {
 			NowPlayingArtwork(
-				track = track,
+				song = song,
 				isLandscape = isLandscape
 			)
 		}

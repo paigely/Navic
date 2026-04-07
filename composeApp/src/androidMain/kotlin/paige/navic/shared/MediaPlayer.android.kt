@@ -35,7 +35,7 @@ import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
-import paige.navic.domain.repositories.TrackRepository
+import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.repositories.PlayerStateRepository
@@ -143,13 +143,13 @@ class PlaybackService : MediaSessionService() {
 class AndroidMediaPlayerViewModel(
 	private val application: Application,
 	stateRepository: PlayerStateRepository,
-	trackRepository: TrackRepository,
+	collectionRepository: CollectionRepository,
 	private val albumDao: AlbumDao,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
-	trackRepository = trackRepository,
+	collectionRepository = collectionRepository,
 	downloadManager = downloadManager,
 	connectivityManager = connectivityManager
 ) {
@@ -191,9 +191,9 @@ class AndroidMediaPlayerViewModel(
 					val intent = Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
 						setPackage(application.packageName)
 						putExtra("isPlaying", isPlaying)
-						putExtra("title", _uiState.value.currentTrack?.title ?: "Unknown track")
-						putExtra("artist", _uiState.value.currentTrack?.artistName ?: "Unknown artist")
-						putExtra("artUrl", _uiState.value.currentTrack?.coverArtId?.let { id ->
+						putExtra("title", _uiState.value.currentSong?.title ?: "Unknown song")
+						putExtra("artist", _uiState.value.currentSong?.artistName ?: "Unknown artist")
+						putExtra("artUrl", _uiState.value.currentSong?.coverArtId?.let { id ->
 							SessionManager.api.getCoverArtUrl(id, auth = true)
 						})
 					}
@@ -241,15 +241,15 @@ class AndroidMediaPlayerViewModel(
 	private fun updatePlaybackState() {
 		controller?.let { player ->
 			val index = player.currentMediaItemIndex
-			val currentTrack = _uiState.value.queue.getOrNull(index)
+			val currentSong = _uiState.value.queue.getOrNull(index)
 
-			val derivedCollection = currentTrack?.let { track ->
+			val derivedCollection = currentSong?.let { song ->
 				val stateCollection = _uiState.value.currentCollection
 
-				if (stateCollection?.id == track.albumId.toString()) {
+				if (stateCollection?.id == song.albumId.toString()) {
 					stateCollection
 				} else {
-					refreshCurrentCollection(track.albumId.toString())
+					refreshCurrentCollection(song.albumId.toString())
 					null
 				}
 			}
@@ -257,7 +257,7 @@ class AndroidMediaPlayerViewModel(
 			_uiState.update { state ->
 				state.copy(
 					currentIndex = index,
-					currentTrack = currentTrack,
+					currentSong = currentSong,
 					currentCollection = derivedCollection ?: state.currentCollection,
 					isPaused = !player.isPlaying,
 					isShuffleEnabled = player.shuffleModeEnabled,
@@ -271,7 +271,7 @@ class AndroidMediaPlayerViewModel(
 
 	private fun applyReplayGain() {
 		if (Settings.shared.replayGain) {
-			(_uiState.value.currentTrack)?.replayGain?.let { replayGain ->
+			(_uiState.value.currentSong)?.replayGain?.let { replayGain ->
 				controller?.volume = replayGain.effectiveGain()
 			}
 		} else {
@@ -298,10 +298,10 @@ class AndroidMediaPlayerViewModel(
 
 		val index = if (state.currentIndex in 0 until mediaItems.size) state.currentIndex else 0
 
-		val trackDurationMs = state.queue.getOrNull(index)?.duration?.inWholeMilliseconds ?: 0L
+		val songDurationMs = state.queue.getOrNull(index)?.duration?.inWholeMilliseconds ?: 0L
 
-		val position = if (trackDurationMs > 0) {
-			(state.progress * trackDurationMs).toLong()
+		val position = if (songDurationMs > 0) {
+			(state.progress * songDurationMs).toLong()
 		} else {
 			0L
 		}
@@ -331,27 +331,27 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueueSingle(track: DomainSong) {
-		controller?.addMediaItem(track.toMediaItem())
+	override fun addToQueueSingle(song: DomainSong) {
+		controller?.addMediaItem(song.toMediaItem())
 		_uiState.update { state ->
-			val newQueue = state.queue + track
+			val newQueue = state.queue + song
 			state.copy(
 				queue = newQueue,
 				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-				currentTrack = if (state.currentIndex == -1) track else state.currentTrack
+				currentSong = if (state.currentIndex == -1) song else state.currentSong
 			)
 		}
 	}
 
-	override fun addToQueue(tracks: DomainSongCollection) {
-		val items = tracks.songs.map { it.toMediaItem() }
+	override fun addToQueue(collection: DomainSongCollection) {
+		val items = collection.songs.map { it.toMediaItem() }
 		controller?.addMediaItems(items)
 		_uiState.update { state ->
-			val newQueue = state.queue + tracks.songs
+			val newQueue = state.queue + collection.songs
 			state.copy(
 				queue = newQueue,
 				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-				currentTrack = if (state.currentIndex == -1) tracks.songs.firstOrNull() else state.currentTrack
+				currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
 			)
 		}
 	}
@@ -368,7 +368,7 @@ class AndroidMediaPlayerViewModel(
 			state.copy(
 				queue = newQueue,
 				currentIndex = newIndex,
-				currentTrack = if (newIndex == -1) null else newQueue[newIndex]
+				currentSong = if (newIndex == -1) null else newQueue[newIndex]
 			)
 		}
 	}
@@ -389,22 +389,22 @@ class AndroidMediaPlayerViewModel(
 			state.copy(
 				queue = newQueue,
 				currentIndex = newIndex,
-				currentTrack = if (newIndex == -1) null else newQueue[newIndex]
+				currentSong = if (newIndex == -1) null else newQueue[newIndex]
 			)
 		}
 	}
 
 	override fun clearQueue() {
 		controller?.clearMediaItems()
-		_uiState.update { it.copy(queue = emptyList(), currentTrack = null, currentIndex = -1, progress = 0f) }
+		_uiState.update { it.copy(queue = emptyList(), currentSong = null, currentIndex = -1, progress = 0f) }
 	}
 
 	override fun playAt(index: Int) {
 		resetSleepTimer()
 		controller?.let { player ->
 			if (index in 0 until player.mediaItemCount) {
-				val track = player.getMediaItemAt(index)
-				if (!isAvailable(track.mediaId)) {
+				val song = player.getMediaItemAt(index)
+				if (!isAvailable(song.mediaId)) {
 					player.seekToNextMediaItem()
 				} else {
 					player.seekTo(index, 0L)
@@ -414,10 +414,10 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun shufflePlay(tracks: DomainSongCollection) {
+	override fun shufflePlay(collection: DomainSongCollection) {
 		resetSleepTimer()
-		val shuffledTracks = tracks.songs.shuffled()
-		val mediaItems = shuffledTracks.map { it.toMediaItem() }
+		val shuffledSongs = collection.songs.shuffled()
+		val mediaItems = shuffledSongs.map { it.toMediaItem() }
 
 		controller?.let { player ->
 			player.shuffleModeEnabled = false
@@ -428,9 +428,9 @@ class AndroidMediaPlayerViewModel(
 
 		_uiState.update { state ->
 			state.copy(
-				queue = shuffledTracks,
+				queue = shuffledSongs,
 				currentIndex = 0,
-				currentTrack = shuffledTracks.firstOrNull()
+				currentSong = shuffledSongs.firstOrNull()
 			)
 		}
 	}

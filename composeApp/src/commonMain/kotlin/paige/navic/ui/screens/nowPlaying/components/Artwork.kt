@@ -26,12 +26,12 @@ import paige.navic.ui.components.common.CoverArt
 fun NowPlayingArtwork(
 	modifier: Modifier = Modifier,
 	isLandscape: Boolean,
-	track: DomainSong
+	song: DomainSong
 ) {
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val padding by animateDpAsState(
-		targetValue = if (playerState.isPaused || playerState.currentTrack?.id !== track.id)
+		targetValue = if (playerState.isPaused || playerState.currentSong?.id !== song.id)
 			48.dp
 		else 16.dp
 	)
@@ -40,14 +40,14 @@ fun NowPlayingArtwork(
 		modifier = modifier
 	) {
 		CoverArt(
-			coverArtId = track.coverArtId,
+			coverArtId = song.coverArtId,
 			modifier = Modifier
 				.aspectRatio(1f)
 				.then(if (isLandscape) Modifier.fillMaxHeight() else Modifier.fillMaxSize())
 				.padding(padding),
 			shadowElevation = 8.dp
 		)
-		if (track.coverArtId.isNullOrEmpty()) {
+		if (song.coverArtId.isNullOrEmpty()) {
 			Icon(
 				imageVector = Icons.Filled.Note,
 				contentDescription = null,

@@ -55,13 +55,13 @@ import paige.navic.utils.UiState
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlaylistUpdateDialog(
-	tracks: ImmutableList<DomainSong>,
+	songs: ImmutableList<DomainSong>,
 	playlistToExclude: String? = null,
 	onDismissRequest: () -> Unit
 ) {
 	val viewModel = koinViewModel<PlaylistUpdateDialogViewModel>(
-		key = tracks.joinToString() + playlistToExclude,
-		parameters = { parametersOf(tracks, playlistToExclude) }
+		key = songs.joinToString() + playlistToExclude,
+		parameters = { parametersOf(songs, playlistToExclude) }
 	)
 	val ctx = LocalCtx.current
 	val state by viewModel.playlistsState.collectAsState()

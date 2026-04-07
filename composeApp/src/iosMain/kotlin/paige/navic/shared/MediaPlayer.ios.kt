@@ -5,7 +5,7 @@ package paige.navic.shared
 import androidx.lifecycle.viewModelScope
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
-import paige.navic.domain.repositories.TrackRepository
+import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
@@ -53,13 +53,13 @@ import platform.MediaPlayer.MPRemoteCommandHandlerStatusSuccess
 import platform.UIKit.UIImage
 
 class IOSMediaPlayerViewModel(
-	stateRepository: PlayerStateRepository,
-	trackRepository: TrackRepository,
-	downloadManager: DownloadManager,
-	connectivityManager: ConnectivityManager
+    stateRepository: PlayerStateRepository,
+	collectionRepository: CollectionRepository,
+    downloadManager: DownloadManager,
+    connectivityManager: ConnectivityManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
-	trackRepository = trackRepository,
+	collectionRepository = collectionRepository,
 	downloadManager = downloadManager,
 	connectivityManager = connectivityManager
 ) {
@@ -139,18 +139,18 @@ class IOSMediaPlayerViewModel(
 
 	override fun playAt(index: Int) {
 		resetSleepTimer()
-		val trackToPlay = _uiState.value.queue.getOrNull(index) ?: return
+		val songToPlay = _uiState.value.queue.getOrNull(index) ?: return
 
-		if (!isAvailable(trackToPlay.id)) {
+		if (!isAvailable(songToPlay.id)) {
 			next()
 			return
 		}
 
-		val localPath = downloadManager.getDownloadedFilePath(trackToPlay.id)
+		val localPath = downloadManager.getDownloadedFilePath(songToPlay.id)
 		val url = if (localPath != null) {
 			NSURL.fileURLWithPath(localPath)
 		} else {
-			NSURL.URLWithString(SessionManager.api.getStreamUrl(trackToPlay.id))!!
+			NSURL.URLWithString(SessionManager.api.getStreamUrl(songToPlay.id))!!
 		}
 
 		player.replaceCurrentItemWithPlayerItem(
@@ -161,35 +161,35 @@ class IOSMediaPlayerViewModel(
 		_uiState.update {
 			it.copy(
 				currentIndex = index,
-				currentTrack = trackToPlay,
+				currentSong = songToPlay,
 				isPaused = false,
 				isLoading = false
 			)
 		}
 
-		scrobbleManager.onMediaChanged(trackToPlay.id)
+		scrobbleManager.onMediaChanged(songToPlay.id)
 		scrobbleManager.onIsPlayingChanged(true)
-		updateNowPlayingInfo(trackToPlay)
+		updateNowPlayingInfo(songToPlay)
 	}
 
-	override fun addToQueueSingle(track: DomainSong) {
+	override fun addToQueueSingle(song: DomainSong) {
 		_uiState.update { state ->
-			val newQueue = state.queue + track
+			val newQueue = state.queue + song
 			state.copy(
 				queue = newQueue,
 				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-				currentTrack = if (state.currentIndex == -1) track else state.currentTrack
+				currentSong = if (state.currentIndex == -1) song else state.currentSong
 			)
 		}
 	}
 
-	override fun addToQueue(tracks: DomainSongCollection) {
+	override fun addToQueue(collection: DomainSongCollection) {
 		_uiState.update { state ->
-			val newQueue = state.queue + tracks.songs
+			val newQueue = state.queue + collection.songs
 			state.copy(
 				queue = newQueue,
 				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-				currentTrack = if (state.currentIndex == -1) tracks.songs.firstOrNull() else state.currentTrack
+				currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
 			)
 		}
 	}
@@ -207,7 +207,7 @@ class IOSMediaPlayerViewModel(
 			state.copy(
 				queue = newQueue,
 				currentIndex = newIndex,
-				currentTrack = if (newIndex == -1) null else newQueue[newIndex]
+				currentSong = if (newIndex == -1) null else newQueue[newIndex]
 			)
 		}
 	}
@@ -229,7 +229,7 @@ class IOSMediaPlayerViewModel(
 			state.copy(
 				queue = newQueue,
 				currentIndex = newIndex,
-				currentTrack = if (newIndex == -1) null else newQueue[newIndex]
+				currentSong = if (newIndex == -1) null else newQueue[newIndex]
 			)
 		}
 	}
@@ -237,7 +237,7 @@ class IOSMediaPlayerViewModel(
 	override fun clearQueue() {
 		player.replaceCurrentItemWithPlayerItem(null)
 		_uiState.update {
-			it.copy(queue = emptyList(), currentTrack = null, currentIndex = -1, progress = 0f)
+			it.copy(queue = emptyList(), currentSong = null, currentIndex = -1, progress = 0f)
 		}
 		scrobbleManager.onIsPlayingChanged(false)
 		updateNowPlayingInfo(null)
@@ -248,14 +248,14 @@ class IOSMediaPlayerViewModel(
 		player.play()
 		_uiState.update { it.copy(isPaused = false) }
 		scrobbleManager.onIsPlayingChanged(true)
-		updateNowPlayingInfo(_uiState.value.currentTrack)
+		updateNowPlayingInfo(_uiState.value.currentSong)
 	}
 
 	override fun pause() {
 		player.pause()
 		_uiState.update { it.copy(isPaused = true) }
 		scrobbleManager.onIsPlayingChanged(false)
-		updateNowPlayingInfo(_uiState.value.currentTrack)
+		updateNowPlayingInfo(_uiState.value.currentSong)
 	}
 
 	override fun next() {
@@ -284,14 +284,14 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	override fun shufflePlay(tracks: DomainSongCollection) {
+	override fun shufflePlay(collection: DomainSongCollection) {
 		resetSleepTimer()
-		val shuffledTracks = tracks.songs.shuffled()
+		val shuffledSongs = collection.songs.shuffled()
 		_uiState.update { state ->
 			state.copy(
-				queue = shuffledTracks,
+				queue = shuffledSongs,
 				currentIndex = 0,
-				currentTrack = shuffledTracks.firstOrNull()
+				currentSong = shuffledSongs.firstOrNull()
 			)
 		}
 		playAt(0)
@@ -326,16 +326,16 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
-	private fun updateNowPlayingInfo(track: DomainSong?) {
-		if (track == null) {
+	private fun updateNowPlayingInfo(song: DomainSong?) {
+		if (song == null) {
 			MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = null
 			return
 		}
 
 		val info = mutableMapOf<Any?, Any?>()
-		info[MPMediaItemPropertyTitle] = track.title
-		info[MPMediaItemPropertyArtist] = track.artistName
-		info[MPMediaItemPropertyAlbumTitle] = track.albumTitle
+		info[MPMediaItemPropertyTitle] = song.title
+		info[MPMediaItemPropertyArtist] = song.artistName
+		info[MPMediaItemPropertyAlbumTitle] = song.albumTitle
 		info[MPNowPlayingInfoPropertyPlaybackRate] = if (_uiState.value.isPaused) 0.0 else 1.0
 
 		val duration = player.currentItem?.duration
@@ -351,7 +351,7 @@ class IOSMediaPlayerViewModel(
 		info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
 			boundsSize = CGSizeMake(512.0, 512.0),
 			requestHandler = {
-				return@MPMediaItemArtwork track.coverArtId
+				return@MPMediaItemArtwork song.coverArtId
 					?.let { SessionManager.api.getCoverArtUrl(it, auth = true) }
 					?.let { NSURL.URLWithString(it) }
 					?.let { NSData.dataWithContentsOfURL(it) }
@@ -369,9 +369,9 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun syncPlayerWithState(state: PlayerUiState) {
-		val track = state.queue.getOrNull(state.currentIndex) ?: return
-		val url = NSURL.URLWithString(SessionManager.api.getStreamUrl(track.id)) ?: return
+		val song = state.queue.getOrNull(state.currentIndex) ?: return
+		val url = NSURL.URLWithString(SessionManager.api.getStreamUrl(song.id)) ?: return
 		player.replaceCurrentItemWithPlayerItem(AVPlayerItem(url))
-		updateNowPlayingInfo(track)
+		updateNowPlayingInfo(song)
 	}
 }

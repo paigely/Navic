@@ -18,27 +18,27 @@ import paige.navic.domain.models.DomainSongCollection
 import kotlinx.serialization.json.decodeFromJsonElement
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.domain.repositories.TrackRepository
+import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
 import kotlin.time.Clock
 
 @Serializable
 data class PlayerUiState(
-    val queue: List<DomainSong> = emptyList(),
-    val currentTrack: DomainSong? = null,
-    val currentCollection: DomainSongCollection? = null,
-    val currentIndex: Int = -1,
-    val isPaused: Boolean = false,
-    val isShuffleEnabled: Boolean = false,
-    val repeatMode: Int = 0,
-    val progress: Float = 0f,
-    val isLoading: Boolean = false
+	val queue: List<DomainSong> = emptyList(),
+	val currentSong: DomainSong? = null,
+	val currentCollection: DomainSongCollection? = null,
+	val currentIndex: Int = -1,
+	val isPaused: Boolean = false,
+	val isShuffleEnabled: Boolean = false,
+	val repeatMode: Int = 0,
+	val progress: Float = 0f,
+	val isLoading: Boolean = false
 )
 
 abstract class MediaPlayerViewModel(
 	private val stateRepository: PlayerStateRepository,
-	private val trackRepository: TrackRepository,
+	private val collectionRepository: CollectionRepository,
 	protected val connectivityManager: ConnectivityManager,
 	protected val downloadManager: DownloadManager
 ) : ViewModel() {
@@ -47,9 +47,9 @@ abstract class MediaPlayerViewModel(
 	protected val _uiState = MutableStateFlow(PlayerUiState())
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
-	protected fun isAvailable(trackId: String): Boolean {
+	protected fun isAvailable(songId: String): Boolean {
 		val isOnline = connectivityManager.isOnline.value
-		val isDownloaded = downloadManager.downloadedSongs.value.containsKey(trackId)
+		val isDownloaded = downloadManager.downloadedSongs.value.containsKey(songId)
 		return isOnline || isDownloaded
 	}
 
@@ -78,8 +78,8 @@ abstract class MediaPlayerViewModel(
 		}
 	}
 
-	abstract  fun addToQueueSingle(track: DomainSong)
-	abstract  fun addToQueue(tracks: DomainSongCollection)
+	abstract  fun addToQueueSingle(song: DomainSong)
+	abstract  fun addToQueue(collection: DomainSongCollection)
 	abstract fun removeFromQueue(index: Int)
 	abstract fun moveQueueItem(fromIndex: Int, toIndex: Int)
 	abstract fun clearQueue()
@@ -91,7 +91,7 @@ abstract class MediaPlayerViewModel(
 	abstract fun previous()
 	abstract fun toggleShuffle()
 	abstract fun toggleRepeat()
-	abstract fun shufflePlay(tracks: DomainSongCollection)
+	abstract fun shufflePlay(collection: DomainSongCollection)
 
 	fun togglePlay() {
 		if (!_uiState.value.isPaused) {
@@ -101,27 +101,27 @@ abstract class MediaPlayerViewModel(
 		}
 	}
 
-	fun starTrack() {
-		val track = _uiState.value.currentTrack ?: return
+	fun starSong() {
+		val song = _uiState.value.currentSong ?: return
 
 		viewModelScope.launch {
 			_uiState.value = _uiState.value.copy(
-				currentTrack = track.copy(starredAt = Clock.System.now())
+				currentSong = song.copy(starredAt = Clock.System.now())
 			)
 
-			trackRepository.starTrack(track)
+			collectionRepository.starSong(song)
 		}
 	}
 
-	fun unstarTrack() {
-		val track = _uiState.value.currentTrack ?: return
+	fun unstarSong() {
+		val song = _uiState.value.currentSong ?: return
 
 		viewModelScope.launch {
 			_uiState.value = _uiState.value.copy(
-				currentTrack = track.copy(starredAt = null)
+				currentSong = song.copy(starredAt = null)
 			)
 
-			trackRepository.unstarTrack(track)
+			collectionRepository.unstarSong(song)
 		}
 	}
 

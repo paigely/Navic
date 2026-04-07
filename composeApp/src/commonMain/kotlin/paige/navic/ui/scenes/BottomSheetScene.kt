@@ -104,7 +104,7 @@ internal class BottomSheetScene<T : Any>(
 	override val entries: List<NavEntry<T>> = listOf(entry)
 
 	override val content: @Composable (() -> Unit) = {
-		NavicTheme(colorSchemeForTrack()) {
+		NavicTheme(colorSchemeForCurrentSong()) {
 			val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 			val scope = rememberCoroutineScope()
 			val ctx = LocalCtx.current
@@ -335,12 +335,12 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 }
 
 @Composable
-private fun colorSchemeForTrack(): ColorScheme {
+private fun colorSchemeForCurrentSong(): ColorScheme {
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
-	val track = playerState.currentTrack
-	val coverUri = remember(track?.coverArtId) {
-		track?.coverArtId?.let { SessionManager.api.getCoverArtUrl(it) }
+	val song = playerState.currentSong
+	val coverUri = remember(song?.coverArtId) {
+		song?.coverArtId?.let { SessionManager.api.getCoverArtUrl(it) }
 	}
 	val networkLoader = rememberNetworkLoader(HttpClient().config {
 		install(HttpTimeout) {
