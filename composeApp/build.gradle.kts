@@ -139,6 +139,7 @@ kotlin {
 			implementation(libs.kotlinx.datetime)
 			implementation(libs.kotlinx.serialization.json)
 			implementation(libs.androidx.datastore.preferences)
+			implementation(libs.coil.gif)
 
 			implementation(libs.subsonicKotlin)
 		}
@@ -263,6 +264,7 @@ android {
 		sourceCompatibility = JavaVersion.VERSION_21
 		targetCompatibility = JavaVersion.VERSION_21
 	}
+	buildToolsVersion = "37.0.0"
 }
 
 compose.desktop {

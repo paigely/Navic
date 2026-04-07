@@ -42,6 +42,7 @@
 	<string name="title_home">Home</string>
 	<string name="title_sort_by">Sort by</string>
 	<string name="title_direction">Direction</string>
+	<string name="title_bulk_download">Download All Albums</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
@@ -117,6 +118,7 @@
 	<string name="info_sync_mins_ago">%1$d m ago</string>
 	<string name="info_sync_hours_ago">%1$d h ago</string>
 	<string name="info_sync_date_format">%1$d %2$s</string>
+	<string name="info_bulk_download_warning">Are you sure you want to download every album by %1$s?\nThis may require a significant amount of storage and data.</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>

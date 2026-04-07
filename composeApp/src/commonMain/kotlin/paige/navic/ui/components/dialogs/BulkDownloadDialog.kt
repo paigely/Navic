@@ -7,6 +7,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
+import navic.composeapp.generated.resources.action_download
+import navic.composeapp.generated.resources.info_bulk_download_warning
+import navic.composeapp.generated.resources.title_bulk_download
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Download
@@ -24,7 +27,7 @@ fun BulkDownloadDialog(
 		FormDialog(
 			onDismissRequest = onDismissRequest,
 			icon = { Icon(Icons.Outlined.Download, contentDescription = null) },
-			title = { Text("Download All Albums") },
+			title = { Text(stringResource(Res.string.title_bulk_download)) },
 			buttons = {
 				FormButton(
 					onClick = {
@@ -33,7 +36,7 @@ fun BulkDownloadDialog(
 					},
 					color = MaterialTheme.colorScheme.primary
 				) {
-					Text("Download")
+					Text(stringResource(Res.string.action_download))
 				}
 				FormButton(onClick = onDismissRequest) {
 					Text(stringResource(Res.string.action_cancel))
@@ -41,12 +44,11 @@ fun BulkDownloadDialog(
 			},
 			content = {
 				Text(
-					text = buildString {
-						append("Are you sure you want to download every album by $artistName? \n")
-						append("This may require a significant amount of storage and data.")
-					}
+					text = stringResource(
+						Res.string.info_bulk_download_warning,
+						artistName
+					)
 				)
-
 			}
 		)
 	}
