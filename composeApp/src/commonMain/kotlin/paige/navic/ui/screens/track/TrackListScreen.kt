@@ -25,7 +25,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbum
@@ -33,7 +32,7 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Note
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
-import paige.navic.ui.components.common.ErrorBox
+import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.screens.track.components.TrackRowDropdown
@@ -43,7 +42,6 @@ import paige.navic.ui.screens.track.components.TracksScreenHeadingRowButtons
 import paige.navic.ui.screens.track.components.TracksScreenTopBar
 import paige.navic.ui.screens.track.components.TracksScreenTrackRow
 import paige.navic.ui.screens.track.components.tracksScreenMoreByArtistRow
-import paige.navic.ui.screens.track.components.tracksScreenTrackRowPlaceholder
 import paige.navic.ui.screens.track.viewmodels.TrackListViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
@@ -54,19 +52,19 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackListScreen(
-    partialTracks: DomainSongCollection,
-    tab: String
+	collectionId: String,
+	tab: String
 ) {
 	val viewModel = koinViewModel<TrackListViewModel>(
-		key = partialTracks.toString(),
-		parameters = { parametersOf(partialTracks) }
+		key = collectionId,
+		parameters = { parametersOf(collectionId) }
 	)
 
 	val player = koinViewModel<MediaPlayerViewModel>()
 
-	val tracksState by viewModel.tracksState.collectAsState()
+	val collectionState by viewModel.collectionState.collectAsState()
+	val collection = collectionState.data
 	val selection by viewModel.selectedTrack.collectAsState()
-	val selectedIndex by viewModel.selectedIndex.collectAsState()
 	val isOnline by viewModel.isOnline.collectAsState()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
@@ -76,7 +74,8 @@ fun TrackListScreen(
 	val starredState by viewModel.starredState.collectAsState()
 	val otherAlbums by viewModel.otherAlbums.collectAsState()
 	val allDownloads by viewModel.allDownloads.collectAsState()
-	val downloadStatus by viewModel.collectionDownloadStatus().collectAsState(DownloadStatus.NOT_DOWNLOADED)
+	val downloadStatus by viewModel.collectionDownloadStatus()
+		.collectAsState(DownloadStatus.NOT_DOWNLOADED)
 
 	val scrolled by remember {
 		derivedStateOf {
@@ -88,7 +87,7 @@ fun TrackListScreen(
 		topBar = {
 			TracksScreenTopBar(
 				albumInfoState = albumInfoState,
-				tracks = tracksState,
+				collection = collection,
 				scrolled = scrolled,
 				onSetShareId = { shareId = it },
 				isOnline = isOnline,
@@ -108,10 +107,8 @@ fun TrackListScreen(
 			modifier = Modifier
 				.padding(top = contentPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = tracksState is UiState.Loading,
-			onRefresh = {
-				viewModel.refreshTracks()
-			}
+			isRefreshing = collectionState is UiState.Loading,
+			onRefresh = { viewModel.refreshCollection(true) }
 		) {
 			LazyColumn(
 				modifier = Modifier
@@ -122,45 +119,34 @@ fun TrackListScreen(
 				contentPadding = contentPadding.withoutTop(),
 				state = viewModel.listState
 			) {
+				if (collection == null) return@LazyColumn
+
 				item {
 					TracksScreenHeadingRow(
-						partialTracks = partialTracks,
+						collection = collection,
 						tab = tab,
 						scrolled = scrolled
 					)
 				}
 
-				val error = (tracksState as? UiState.Error)
-				val tracks = (tracksState as? UiState.Success)?.data
-				if (error != null) {
-					item { ErrorBox(error) }
-					return@LazyColumn
-				}
-				if (tracks == null) {
-					tracksScreenTrackRowPlaceholder(partialTracks.songCount)
-					return@LazyColumn
-				}
-
 				item {
-					TracksScreenHeadingRowButtons(
-						tracks = tracks
-					)
+					TracksScreenHeadingRowButtons(collection = collection)
 				}
 
-				itemsIndexed(tracks.songs) { index, track ->
+				itemsIndexed(collection.songs) { index, track ->
 					val download = allDownloads.find { it.songId == track.id }
 					Box {
 						TracksScreenTrackRow(
 							track = track,
 							index = index,
-							count = tracks.songs.count(),
+							count = collection.songs.count(),
 							onClick = {
 								player.clearQueue()
-								player.addToQueue(tracks)
+								player.addToQueue(collection)
 								player.playAt(index)
 							},
 							onLongClick = {
-								viewModel.selectTrack(track, index)
+								viewModel.selectTrack(track)
 							},
 							onAddToQueue = {
 								player.addToQueueSingle(track)
@@ -169,12 +155,12 @@ fun TrackListScreen(
 							isOffline = !isOnline
 						)
 						TrackRowDropdown(
-							expanded = selection == track && selectedIndex == index,
+							expanded = selection == track,
 							onDismissRequest = { viewModel.clearSelection() },
 							onRemoveStar = { viewModel.unstarSelectedTrack() },
 							onAddStar = { viewModel.starSelectedTrack() },
 							onShare = { shareId = track.id },
-							tracks = tracks,
+							tracks = collection,
 							track = track,
 							onRemoveFromPlaylist = { viewModel.removeFromPlaylist() },
 							starredState = starredState,
@@ -187,7 +173,7 @@ fun TrackListScreen(
 					}
 				}
 
-				if (tracks.songs.isEmpty()) {
+				if (collection.songs.isEmpty()) {
 					item {
 						ContentUnavailable(
 							icon = Icons.Outlined.Note,
@@ -196,9 +182,9 @@ fun TrackListScreen(
 					}
 				}
 
-				item { TracksScreenFooterRow(tracks) }
+				item { TracksScreenFooterRow(collection) }
 
-				(tracks as? DomainAlbum)?.artistName?.let { artistName ->
+				(collection as? DomainAlbum)?.artistName?.let { artistName ->
 					tracksScreenMoreByArtistRow(
 						artistName = artistName,
 						artistAlbums = otherAlbums,
@@ -208,6 +194,11 @@ fun TrackListScreen(
 			}
 		}
 	}
+
+	ErrorSnackbar(
+		error = (collectionState as? UiState.Error)?.error,
+		onClearError = { viewModel.clearError() }
+	)
 
 	@Suppress("AssignedValueIsNeverRead")
 	ShareDialog(

@@ -74,7 +74,7 @@ fun NowPlayingMoreButton() {
 					playerState.currentCollection?.let { tracks ->
 						expanded = false
 						backStack.remove(Screen.NowPlaying)
-						backStack.add(Screen.TrackList(tracks, ""))
+						backStack.add(Screen.TrackList(tracks.id, ""))
 					}
 				},
 				text = {
@@ -110,10 +110,10 @@ fun NowPlayingMoreButton() {
 			)
 			DropdownItem(
 				onClick = {
-					track?.let { track ->
+					track?.id?.let { songId ->
 						expanded = false
 						backStack.remove(Screen.NowPlaying)
-						backStack.add(Screen.TrackDetail(track))
+						backStack.add(Screen.TrackDetail(songId))
 					}
 				},
 				text = { Text(stringResource(Res.string.action_track_info)) },

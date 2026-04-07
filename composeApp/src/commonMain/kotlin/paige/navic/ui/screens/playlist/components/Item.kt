@@ -43,7 +43,7 @@ fun PlaylistListScreenItem(
 			onClick = {
 				ctx.clickSound()
 				scope.launch {
-					backStack.add(Screen.TrackList(playlist, tab))
+					backStack.add(Screen.TrackList(playlist.id, tab))
 				}
 			},
 			onLongClick = onSelect,

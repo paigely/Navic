@@ -44,7 +44,7 @@ fun AlbumListScreenItem(
 			onClick = {
 				ctx.clickSound()
 				scope.launch {
-					backStack.add(Screen.TrackList(album, tab))
+					backStack.add(Screen.TrackList(album.id, tab))
 				}
 			},
 			onLongClick = onSelect,

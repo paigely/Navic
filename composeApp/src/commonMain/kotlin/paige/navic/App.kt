@@ -180,7 +180,7 @@ fun App() {
 							remember { DialogSceneStrategy() },
 							rememberListDetailSceneStrategy()
 						),
-						onBack = { backStack.removeLastOrNull() },
+						onBack = backStack::removeLastOrNull,
 						entryProvider = entryProvider(backStack),
 						transitionSpec = {
 							Material3Transitions.SharedXAxisEnterTransition(density) togetherWith Material3Transitions.SharedXAxisExitTransition(
@@ -260,10 +260,10 @@ private fun entryProvider(
 			QueueScreen()
 		}
 		entry<Screen.TrackList>(metadata = detailPane("root")) { key ->
-			TrackListScreen(key.partialCollection, key.tab)
+			TrackListScreen(key.collectionId, key.tab)
 		}
 		entry<Screen.TrackDetail>(metadata = detailPane("root")) { key ->
-			TrackDetailScreen(key.track)
+			TrackDetailScreen(key.songId)
 		}
 		entry<Screen.Search>(metadata = navtabMetadata) { key ->
 			SearchScreen(key.nested)

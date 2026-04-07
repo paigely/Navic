@@ -172,12 +172,12 @@ class DbRepository(
 
 		if (songEntities.isNotEmpty()) {
 			songDao.insertSongs(songEntities)
-			
-			val crossRefs = songEntities.map {
-				PlaylistSongCrossRef(playlistId = playlistId, songId = it.songId)
-			}
-			playlistDao.insertPlaylistSongCrossRefs(crossRefs)
 		}
+
+		val crossRefs = songEntities.map {
+			PlaylistSongCrossRef(playlistId = playlistId, songId = it.songId)
+		}
+		playlistDao.replacePlaylistSongs(playlistId, crossRefs)
 
 		Logger.i("DbRepository", "- Playlist [$playlistId] synced: ${songEntities.size} songs")
 		songEntities.size

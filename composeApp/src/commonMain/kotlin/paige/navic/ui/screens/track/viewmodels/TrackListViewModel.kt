@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.models.DomainSongCollection
@@ -28,13 +29,21 @@ import paige.navic.utils.UiState
  * Not to be confused with SongListViewModel, this just has a dumb name
  */
 class TrackListViewModel(
-	private val partialCollection: DomainSongCollection,
+	private val collectionId: String,
 	private val repository: TrackRepository,
 	private val downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
-	private val _tracksState = MutableStateFlow<UiState<DomainSongCollection>>(UiState.Loading())
-	val tracksState: StateFlow<UiState<DomainSongCollection>> = _tracksState.asStateFlow()
+	private val _collectionState = MutableStateFlow<UiState<DomainSongCollection>>(
+		runBlocking {
+			try {
+				UiState.Loading(repository.getLocalData(collectionId))
+			} catch (_: Exception) {
+				UiState.Loading()
+			}
+		}
+	)
+	val collectionState: StateFlow<UiState<DomainSongCollection>> = _collectionState.asStateFlow()
 
 	val isOnline = connectivityManager.isOnline
 
@@ -45,19 +54,16 @@ class TrackListViewModel(
 			initialValue = emptyList()
 		)
 
-	val otherAlbums = repository
-		.getOtherAlbums((partialCollection as? DomainAlbum)?.artistId.orEmpty(), partialCollection.id)
-		.stateIn(
-			scope = viewModelScope,
-			started = SharingStarted.Lazily,
-			initialValue = emptyList()
-		)
+	val otherAlbums = (_collectionState.value.data as? DomainAlbum)?.let { album ->
+		repository.getOtherAlbums(album.artistId, album.id)
+	}?.stateIn(
+		scope = viewModelScope,
+		started = SharingStarted.Lazily,
+		initialValue = emptyList()
+	) ?: MutableStateFlow(emptyList())
 
 	private val _selectedTrack = MutableStateFlow<DomainSong?>(null)
 	val selectedTrack: StateFlow<DomainSong?> = _selectedTrack.asStateFlow()
-
-	private val _selectedIndex = MutableStateFlow<Int?>(null)
-	val selectedIndex: StateFlow<Int?> = _selectedIndex.asStateFlow()
 
 	private val _albumInfoState = MutableStateFlow<UiState<DomainAlbumInfo>>(UiState.Loading())
 	val albumInfoState = _albumInfoState.asStateFlow()
@@ -69,39 +75,29 @@ class TrackListViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect {
-				refreshTracks()
-			}
+			SessionManager.isLoggedIn.collect { if (it) refreshCollection(false) }
 		}
 	}
 
-	fun refreshTracks() {
+	fun refreshCollection(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			_tracksState.value = UiState.Loading()
-			try {
-				val localCollection = repository.fetchWithAllTracks(partialCollection)
-				_tracksState.value = UiState.Success(localCollection)
-
-				if (localCollection is DomainAlbum) {
+			repository.getCollectionFlow(fullRefresh, collectionId).collect {
+				_collectionState.value = it
+				if (it.data is DomainAlbum) {
 					try {
-						val albumInfo = repository.getAlbumInfo(localCollection.id)
+						val albumInfo = repository.getAlbumInfo(collectionId)
 						_albumInfoState.value = UiState.Success(albumInfo.toDomainModel())
 					} catch (e: Exception) {
 						_albumInfoState.value = UiState.Error(e)
 					}
-				} else {
-					_albumInfoState.value = UiState.Error(Exception("No album info for playlists"))
 				}
-			} catch (e: Exception) {
-				_tracksState.value = UiState.Error(e)
 			}
 		}
 	}
 
-	fun selectTrack(track: DomainSong, index: Int) {
+	fun selectTrack(track: DomainSong) {
 		viewModelScope.launch {
 			_selectedTrack.value = track
-			_selectedIndex.value = index
 			_starredState.value = UiState.Loading()
 			_albumInfoState.value = UiState.Loading()
 			try {
@@ -115,23 +111,29 @@ class TrackListViewModel(
 
 	fun clearSelection() {
 		_selectedTrack.value = null
-		_selectedIndex.value = null
+	}
+
+	fun clearError() {
+		_collectionState.value.data?.let {
+			_collectionState.value = UiState.Success(it)
+		}
 	}
 
 	fun removeFromPlaylist() {
-		val selection = _selectedIndex.value ?: return
-		clearSelection()
+		val track = _selectedTrack.value ?: return
+		val songs = _collectionState.value.data?.songs ?: return
 		viewModelScope.launch {
 			try {
 				SessionManager.api.updatePlaylist(
-					id = partialCollection.id,
-					songIndicesToRemove = listOf(selection)
+					id = collectionId,
+					songIndicesToRemove = listOf(songs.indexOf(track))
 				)
-				refreshTracks()
+				refreshCollection(true)
 			} catch(e: Exception) {
 				Logger.e("TrackListViewModel", "Failed to remove song from playlist", e)
 			}
 		}
+		clearSelection()
 	}
 
 	fun starSelectedTrack() {
@@ -167,21 +169,20 @@ class TrackListViewModel(
 	}
 
 	fun downloadAll() {
-		val tracks = (tracksState.value as? UiState.Success)?.data ?: return
+		val collection = _collectionState.value.data ?: return
 		viewModelScope.launch {
-			downloadManager.downloadCollection(tracks)
+			downloadManager.downloadCollection(collection)
 		}
 	}
 
 	fun cancelDownloadAll() {
-		val tracks = (tracksState.value as? UiState.Success)?.data ?: return
-		tracks.songs.forEach {
+		_collectionState.value.data?.songs?.forEach {
 			downloadManager.cancelDownload(it.id)
 		}
 	}
 
 	fun collectionDownloadStatus(): Flow<DownloadStatus> {
-		val songs = (tracksState.value as? UiState.Success)?.data?.songs.orEmpty()
+		val songs = _collectionState.value.data?.songs.orEmpty()
 		return downloadManager.getCollectionDownloadStatus(songs.map { it.id })
 	}
 }

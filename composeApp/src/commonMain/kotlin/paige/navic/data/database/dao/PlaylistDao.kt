@@ -49,6 +49,15 @@ interface PlaylistDao {
 	@Query("DELETE FROM PlaylistEntity WHERE playlistId = :playlistId")
 	suspend fun deletePlaylist(playlistId: String)
 
+	@Query("DELETE FROM PlaylistSongCrossRef WHERE playlistId = :playlistId")
+	suspend fun deletePlaylistSongCrossRefs(playlistId: String)
+
+	@Transaction
+	suspend fun replacePlaylistSongs(playlistId: String, crossRefs: List<PlaylistSongCrossRef>) {
+		deletePlaylistSongCrossRefs(playlistId)
+		insertPlaylistSongCrossRefs(crossRefs)
+	}
+
 	@Query("SELECT COUNT(*) FROM PlaylistEntity")
 	suspend fun getPlaylistCount(): Int
 

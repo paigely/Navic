@@ -41,14 +41,14 @@ import paige.navic.ui.theme.defaultFont
 
 @Composable
 fun TracksScreenHeadingRowButtons(
-	tracks: DomainSongCollection
+	collection: DomainSongCollection
 ) {
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val downloadManager = koinInject<DownloadManager>()
 	val scope = rememberCoroutineScope()
 
 	val downloadStatus by downloadManager
-		.getCollectionDownloadStatus(tracks.songs.map { it.id })
+		.getCollectionDownloadStatus(collection.songs.map { it.id })
 		.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
 
 	Row(
@@ -64,7 +64,7 @@ fun TracksScreenHeadingRowButtons(
 			modifier = Modifier.weight(1f),
 			onClick = {
 				player.clearQueue()
-				player.addToQueue(tracks)
+				player.addToQueue(collection)
 				player.playAt(0)
 			},
 			shape = shape
@@ -87,7 +87,7 @@ fun TracksScreenHeadingRowButtons(
 		OutlinedButton(
 			modifier = Modifier.weight(1f),
 			onClick = {
-				player.shufflePlay(tracks)
+				player.shufflePlay(collection)
 			},
 			shape = shape
 		) {
@@ -111,7 +111,7 @@ fun TracksScreenHeadingRowButtons(
 			onClick = {
 				if (downloadStatus == DownloadStatus.NOT_DOWNLOADED) {
 					scope.launch {
-						downloadManager.downloadCollection(tracks)
+						downloadManager.downloadCollection(collection)
 					}
 				}
 			},

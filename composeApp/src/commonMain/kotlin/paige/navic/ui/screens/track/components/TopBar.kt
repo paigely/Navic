@@ -19,6 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.toPersistentList
 import navic.composeapp.generated.resources.Res
@@ -46,11 +47,10 @@ import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.utils.UiState
-import kotlin.collections.orEmpty
 
 @Composable
 fun TracksScreenTopBar(
-	tracks: UiState<DomainSongCollection>,
+	collection: DomainSongCollection?,
 	albumInfoState: UiState<DomainAlbumInfo>,
 	scrolled: Boolean,
 	onSetShareId: (shareId: String?) -> Unit,
@@ -69,7 +69,11 @@ fun TracksScreenTopBar(
 				enter = scaleIn() + fadeIn(),
 				exit = scaleOut() + fadeOut()
 			) {
-				Text((tracks as? UiState.Success)?.data?.name ?: "")
+				Text(
+					text = collection?.name.orEmpty(),
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis
+				)
 			}
 		},
 		actions = {
@@ -118,17 +122,15 @@ fun TracksScreenTopBar(
 						text = { Text(stringResource(Res.string.action_share)) },
 						leadingIcon = { Icon(Icons.Outlined.Share, null) },
 						containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-						enabled = tracks is UiState.Success,
 						onClick = {
 							expanded = false
-							onSetShareId((tracks as? UiState.Success)?.data?.id)
+							onSetShareId(collection?.id)
 						},
 					)
 					DropdownItem(
 						text = { Text(stringResource(Res.string.action_add_all_to_playlist)) },
 						leadingIcon = { Icon(Icons.Outlined.PlaylistAdd, null) },
 						containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-						enabled = tracks is UiState.Success,
 						onClick = {
 							expanded = false
 							playlistDialogShown = true
@@ -154,8 +156,7 @@ fun TracksScreenTopBar(
 							}
 						},
 						containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-						enabled = tracks is UiState.Success
-							&& isOnline,
+						enabled = isOnline,
 						onClick = {
 							if (!downloading) {
 								onDownloadAll()
@@ -172,7 +173,7 @@ fun TracksScreenTopBar(
 	if (playlistDialogShown) {
 		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
-			tracks = (tracks as? UiState.Success)?.data?.songs.orEmpty().toPersistentList(),
+			tracks = collection?.songs.orEmpty().toPersistentList(),
 			onDismissRequest = { playlistDialogShown = false }
 		)
 	}

@@ -23,6 +23,7 @@ import paige.navic.ui.screens.settings.viewmodels.SettingsDataStorageViewModel
 import paige.navic.ui.screens.share.viewmodels.ShareDialogViewModel
 import paige.navic.ui.screens.share.viewmodels.ShareListViewModel
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
+import paige.navic.ui.screens.track.viewmodels.TrackDetailViewModel
 import paige.navic.ui.screens.track.viewmodels.TrackListViewModel
 import paige.navic.ui.viewmodels.LoginViewModel
 
@@ -61,6 +62,7 @@ val viewModelModule = module {
 	viewModelOf(::ShareDialogViewModel)
 	viewModelOf(::PlaylistCreateDialogViewModel)
 	viewModelOf(::TrackListViewModel)
+	viewModelOf(::TrackDetailViewModel)
 	viewModelOf(::SettingsDataStorageViewModel)
 	viewModel {
 		NavtabsViewModel(

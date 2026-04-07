@@ -256,7 +256,7 @@ fun ArtistDetailScreen(
 								state.albums.sortedByDescending { album -> album.playCount }.toImmutableList()
 							) { album ->
 								ArtCarouselItem(album.coverArtId, album.name, null) {
-									backStack.add(Screen.TrackList(album, "artist"))
+									backStack.add(Screen.TrackList(album.id, "artist"))
 								}
 							}
 							Text(

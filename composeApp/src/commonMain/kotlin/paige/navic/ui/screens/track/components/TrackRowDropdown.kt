@@ -158,7 +158,7 @@ fun TrackRowDropdown(
 			text = { Text(stringResource(Res.string.action_track_info)) },
 			leadingIcon = { Icon(Icons.Outlined.Info, null) },
 			onClick = {
-				backStack.add(Screen.TrackDetail(track))
+				backStack.add(Screen.TrackDetail(track.id))
 				onDismissRequest()
 			},
 		)

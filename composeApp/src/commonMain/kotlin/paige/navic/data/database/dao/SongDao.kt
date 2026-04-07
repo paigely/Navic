@@ -22,6 +22,9 @@ interface SongDao {
 	@Query("SELECT * FROM SongEntity")
 	suspend fun getAllSongs(): List<SongEntity>
 
+	@Query("SELECT * FROM SongEntity WHERE belongsToAlbumId = :albumId")
+	suspend fun getSongsByAlbumId(albumId: String): List<SongEntity>
+
 	@Query("DELETE FROM SongEntity WHERE songId = :songId")
 	suspend fun deleteSong(songId: String)
 
@@ -34,6 +37,18 @@ interface SongDao {
 
 	@Query("SELECT songId FROM SongEntity")
 	suspend fun getAllSongIds(): List<String>
+
+	@Transaction
+	suspend fun updateSongsByAlbumId(albumId: String, remoteSongs: List<SongEntity>) {
+		val remoteIds = remoteSongs.map { it.songId }.toSet()
+		getSongsByAlbumId(albumId).forEach { localSong ->
+			if (localSong.songId !in remoteIds) {
+				Logger.w("SongDao", "song ${localSong.songId} no longer belongs to album $albumId")
+				deleteSong(localSong.songId)
+			}
+		}
+		insertSongs(remoteSongs)
+	}
 
 	@Transaction
 	suspend fun updateAllSongs(remoteSongs: List<SongEntity>) {
