@@ -24,10 +24,13 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
+import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import coil3.serviceLoaderEnabled
 import paige.navic.data.session.SessionManager
 import kotlin.time.TimeSource
 
@@ -53,6 +56,12 @@ fun BlendBackground(
 			.diskCacheKey(coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)
 			.memoryCachePolicy(CachePolicy.ENABLED)
+			.build()
+	}
+	val imageLoader = remember {
+		ImageLoader.Builder(platformContext)
+			.serviceLoaderEnabled(false)
+			.components { add(KtorNetworkFetcherFactory()) }
 			.build()
 	}
 
@@ -87,7 +96,8 @@ fun BlendBackground(
 			contentDescription = null,
 			contentScale = ContentScale.Crop,
 			colorFilter = ColorFilter.colorMatrix(colorMatrix),
-			modifier = Modifier.fillMaxSize()
+			modifier = Modifier.fillMaxSize(),
+			imageLoader = imageLoader
 		)
 		Box(
 			modifier = Modifier
@@ -108,7 +118,8 @@ fun BlendBackground(
 					colorFilter = ColorFilter.colorMatrix(colorMatrix),
 					modifier = Modifier
 						.fillMaxSize()
-						.rotate(topLeftRotation)
+						.rotate(topLeftRotation),
+					imageLoader = imageLoader
 				)
 			}
 			Box(
@@ -125,7 +136,8 @@ fun BlendBackground(
 					colorFilter = ColorFilter.colorMatrix(colorMatrix),
 					modifier = Modifier
 						.fillMaxSize()
-						.rotate(botRightRotation)
+						.rotate(botRightRotation),
+					imageLoader = imageLoader
 				)
 			}
 		}
