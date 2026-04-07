@@ -298,4 +298,6 @@
     <string name="option_sleep_timer">Timer di spegnimento</string>
     <string name="action_add_to_queue">Aggiungi alla Coda</string>
     <string name="notice_login_suggestion">Volevi dire...</string>
+    <string name="title_sort_by">Ordina per</string>
+    <string name="title_direction">Direzione</string>
 </resources>
