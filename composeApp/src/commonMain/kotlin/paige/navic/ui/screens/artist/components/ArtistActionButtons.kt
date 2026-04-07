@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,8 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.kyant.capsule.ContinuousCapsule
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_play
+import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.database.entities.DownloadStatus
@@ -30,6 +31,7 @@ import paige.navic.icons.Icons
 import paige.navic.icons.filled.Play
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Download
+import paige.navic.icons.outlined.DownloadOff
 
 @Composable
 fun ArtistActionButtons(
@@ -37,6 +39,7 @@ fun ArtistActionButtons(
 	onDownload: () -> Unit,
 	downloadStatus: DownloadStatus,
 	playEnabled: Boolean,
+	isOnline: Boolean,
 	modifier: Modifier = Modifier
 ) {
 	val ctx = LocalCtx.current
@@ -52,7 +55,7 @@ fun ArtistActionButtons(
 			modifier = Modifier
 				.weight(1f)
 				.height(52.dp)
-				.clip(CircleShape)
+				.clip(ContinuousCapsule)
 				.background(
 					if (playEnabled) MaterialTheme.colorScheme.primary
 					else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
@@ -77,13 +80,18 @@ fun ArtistActionButtons(
 		OutlinedButton(
 			modifier = Modifier.size(width = 52.dp, height = 40.dp),
 			onClick = {
+				ctx.clickSound()
 				if (downloadStatus == DownloadStatus.NOT_DOWNLOADED) {
-					ctx.clickSound()
+					onDownload()
+				} else if (downloadStatus == DownloadStatus.FAILED) {
 					onDownload()
 				}
 			},
-			shape = com.kyant.capsule.ContinuousCapsule,
-			enabled = downloadStatus == DownloadStatus.NOT_DOWNLOADED,
+			shape = ContinuousCapsule,
+			enabled = downloadStatus == DownloadStatus.NOT_DOWNLOADED
+				&& playEnabled
+				&& isOnline
+				|| downloadStatus == DownloadStatus.FAILED,
 			contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
 		) {
 			when (downloadStatus) {
@@ -100,6 +108,14 @@ fun ArtistActionButtons(
 						contentDescription = null,
 						modifier = Modifier.size(24.dp),
 						tint = MaterialTheme.colorScheme.primary
+					)
+				}
+				DownloadStatus.FAILED -> {
+					Icon(
+						imageVector = Icons.Outlined.DownloadOff,
+						contentDescription = stringResource(Res.string.info_download_failed),
+						modifier = Modifier.size(24.dp),
+						tint = MaterialTheme.colorScheme.error
 					)
 				}
 				else -> {

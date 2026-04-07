@@ -1,5 +1,6 @@
 package paige.navic.ui.screens.collection.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,6 +22,8 @@ import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
+import navic.composeapp.generated.resources.info_click_to_retry
+import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
@@ -34,6 +37,7 @@ import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Download
+import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Info
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.PlaylistRemove
@@ -57,6 +61,7 @@ fun CollectionDetailScreenSongRowDropdown(
     onRemoveFromPlaylist: () -> Unit,
     starredState: UiState<Boolean>,
     downloadStatus: DownloadStatus?,
+	isOnline: Boolean,
     onDownload: () -> Unit,
     onCancelDownload: () -> Unit,
     onDeleteDownload: () -> Unit,
@@ -140,6 +145,29 @@ fun CollectionDetailScreenSongRowDropdown(
 					}
 				)
 			}
+			DownloadStatus.FAILED -> {
+				DropdownItem(
+					containerColor = MaterialTheme.colorScheme.errorContainer,
+					text = {
+						Column {
+							Text(
+								text = stringResource(Res.string.info_download_failed),
+								color = MaterialTheme.colorScheme.error
+							)
+							Text(
+								text = stringResource(Res.string.info_click_to_retry),
+								color = MaterialTheme.colorScheme.error,
+								style = MaterialTheme.typography.labelSmall
+							)
+						}
+					},
+					leadingIcon = { Icon(Icons.Outlined.DownloadOff, null, tint = MaterialTheme.colorScheme.error) },
+					onClick = {
+						onDownload()
+						onDismissRequest()
+					}
+				)
+			}
 			else -> {
 				DropdownItem(
 					containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -148,7 +176,8 @@ fun CollectionDetailScreenSongRowDropdown(
 					onClick = {
 						onDownload()
 						onDismissRequest()
-					}
+					},
+					enabled = isOnline
 				)
 			}
 		}

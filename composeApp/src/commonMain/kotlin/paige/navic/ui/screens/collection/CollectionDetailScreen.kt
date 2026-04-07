@@ -130,7 +130,10 @@ fun CollectionDetailScreen(
 				}
 
 				item {
-					CollectionDetailScreenHeadingRowButtons(collection = collection)
+					CollectionDetailScreenHeadingRowButtons(
+						collection = collection,
+						isOnline = isOnline
+					)
 				}
 
 				itemsIndexed(collection.songs) { index, song ->
@@ -168,7 +171,8 @@ fun CollectionDetailScreen(
 							onDownload = { viewModel.downloadSong(song) },
 							onCancelDownload = { viewModel.cancelDownload(song.id) },
 							onDeleteDownload = { viewModel.deleteDownload(song.id) },
-							onAddToQueue = { player.addToQueueSingle(song) }
+							onAddToQueue = { player.addToQueueSingle(song) },
+							isOnline = isOnline
 						)
 					}
 				}

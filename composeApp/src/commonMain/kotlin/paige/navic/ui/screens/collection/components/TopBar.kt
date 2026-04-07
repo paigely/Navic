@@ -156,7 +156,8 @@ fun CollectionDetailScreenTopBar(
 							}
 						},
 						containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-						enabled = isOnline,
+						enabled = isOnline
+							&& collection?.songs.orEmpty().isNotEmpty(),
 						onClick = {
 							if (!downloading) {
 								onDownloadAll()

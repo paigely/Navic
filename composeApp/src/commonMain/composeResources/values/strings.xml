@@ -287,6 +287,9 @@
 	<string name="info_no_playlists_short">No playlists</string>
 	<string name="info_lyrics_provider">Lyrics provided by %1$s</string>
 	<string name="info_image_failed_to_load">Failed to load</string>
+	<string name="info_download_failed">Download failed</string>
+	<string name="info_click_to_retry">Click to retry</string>
+	<string name="info_downloaded">Downloaded</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>

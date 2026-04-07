@@ -8,6 +8,7 @@ import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.prepareRequest
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.HttpMethod
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -92,7 +93,8 @@ class DownloadManager(
 		activeDownloads.remove(songId)
 		scope.launch {
 			val existing = downloadDao.getDownloadById(songId)
-			if (existing?.status == DownloadStatus.DOWNLOADING) {
+			if (existing?.status == DownloadStatus.DOWNLOADING
+				|| existing?.status == DownloadStatus.FAILED) {
 				downloadDao.deleteDownload(songId)
 			}
 		}
@@ -117,6 +119,7 @@ class DownloadManager(
 			when {
 				collectionDownloads.isEmpty() -> DownloadStatus.NOT_DOWNLOADED
 				collectionDownloads.any { it.status == DownloadStatus.DOWNLOADING } -> DownloadStatus.DOWNLOADING
+				collectionDownloads.any { it.status == DownloadStatus.FAILED } -> DownloadStatus.FAILED
 				(collectionDownloads.size == songIds.size &&
 					collectionDownloads.all { it.status == DownloadStatus.DOWNLOADED })
 					-> DownloadStatus.DOWNLOADED
@@ -150,6 +153,7 @@ class DownloadManager(
 			downloadAudioFile(song)
 
 		} catch (e: Exception) {
+			if (e is CancellationException) throw e
 			Logger.e("DownloadManager", "Failed to download song ${song.id}", e)
 			downloadDao.insertDownload(DownloadEntity(song.id, DownloadStatus.FAILED, 0f))
 		} finally {
@@ -183,6 +187,7 @@ class DownloadManager(
 				Logger.i("DownloadManager", "cached lyrics for ${song.id}")
 			}
 		} catch (e: Exception) {
+			if (e is CancellationException) throw e
 			Logger.e("DownloadManager", "Failed to cache lyrics for ${song.id}", e)
 		}
 	}

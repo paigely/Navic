@@ -101,6 +101,7 @@ fun ArtistDetailScreen(
 	val backStack = LocalNavStack.current
 	val layoutDirection = LocalLayoutDirection.current
 	val artistState by viewModel.artistState.collectAsState()
+	val isOnline by viewModel.isOnline.collectAsState()
 	val downloadStatus by viewModel.collectionDownloadStatus().collectAsState(DownloadStatus.NOT_DOWNLOADED)
 	val scope = rememberCoroutineScope()
 
@@ -188,7 +189,8 @@ fun ArtistDetailScreen(
 							onDownload = { showDownloadDialog = true },
 							downloadStatus = downloadStatus,
 							playEnabled = state.albums.isNotEmpty(),
-							modifier = Modifier.padding(top = 8.dp)
+							modifier = Modifier.padding(top = 8.dp),
+							isOnline = isOnline
 						)
 						Column(
 							modifier = Modifier

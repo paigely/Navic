@@ -25,15 +25,19 @@ import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_shuffle
+import navic.composeapp.generated.resources.info_download_failed
+import navic.composeapp.generated.resources.info_downloaded
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.LocalCtx
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Play
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Download
+import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Shuffle
 import paige.navic.managers.DownloadManager
 import paige.navic.shared.MediaPlayerViewModel
@@ -41,8 +45,10 @@ import paige.navic.ui.theme.defaultFont
 
 @Composable
 fun CollectionDetailScreenHeadingRowButtons(
-	collection: DomainSongCollection
+	collection: DomainSongCollection,
+	isOnline: Boolean
 ) {
+	val ctx = LocalCtx.current
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val downloadManager = koinInject<DownloadManager>()
 	val scope = rememberCoroutineScope()
@@ -63,6 +69,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 		Button(
 			modifier = Modifier.weight(1f),
 			onClick = {
+				ctx.clickSound()
 				player.clearQueue()
 				player.addToQueue(collection)
 				player.playAt(0)
@@ -87,6 +94,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 		OutlinedButton(
 			modifier = Modifier.weight(1f),
 			onClick = {
+				ctx.clickSound()
 				player.shufflePlay(collection)
 			},
 			shape = shape
@@ -109,14 +117,19 @@ fun CollectionDetailScreenHeadingRowButtons(
 		OutlinedButton(
 			modifier = Modifier.size(width = 52.dp, height = 40.dp),
 			onClick = {
-				if (downloadStatus == DownloadStatus.NOT_DOWNLOADED) {
+				ctx.clickSound()
+				if (downloadStatus == DownloadStatus.NOT_DOWNLOADED
+					|| downloadStatus == DownloadStatus.FAILED) {
 					scope.launch {
 						downloadManager.downloadCollection(collection)
 					}
 				}
 			},
 			shape = shape,
-			enabled = downloadStatus == DownloadStatus.NOT_DOWNLOADED,
+			enabled = downloadStatus == DownloadStatus.NOT_DOWNLOADED
+				&& collection.songs.isNotEmpty()
+				&& isOnline
+				|| downloadStatus == DownloadStatus.FAILED,
 			contentPadding = PaddingValues(0.dp)
 		) {
 			when (downloadStatus) {
@@ -130,9 +143,17 @@ fun CollectionDetailScreenHeadingRowButtons(
 				DownloadStatus.DOWNLOADED -> {
 					Icon(
 						imageVector = Icons.Outlined.Check,
-						contentDescription = null,
+						contentDescription = stringResource(Res.string.info_downloaded),
 						modifier = Modifier.size(24.dp),
 						tint = MaterialTheme.colorScheme.primary
+					)
+				}
+				DownloadStatus.FAILED -> {
+					Icon(
+						imageVector = Icons.Outlined.DownloadOff,
+						contentDescription = stringResource(Res.string.info_download_failed),
+						modifier = Modifier.size(24.dp),
+						tint = MaterialTheme.colorScheme.error
 					)
 				}
 				else -> {

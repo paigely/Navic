@@ -20,6 +20,7 @@ import paige.navic.domain.repositories.DbRepository
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainSong
+import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
 import paige.navic.shared.Logger
 import paige.navic.shared.MediaPlayerViewModel
@@ -38,10 +39,13 @@ class ArtistDetailViewModel(
 	private val repository: DbRepository,
 	private val artistDao: ArtistDao,
 	private val albumDao: AlbumDao,
-	private val downloadManager: DownloadManager
+	private val downloadManager: DownloadManager,
+	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _artistState = MutableStateFlow<UiState<ArtistState>>(UiState.Loading())
 	val artistState = _artistState.asStateFlow()
+
+	val isOnline = connectivityManager.isOnline
 
 	val scrollState = ScrollState(initial = 0)
 

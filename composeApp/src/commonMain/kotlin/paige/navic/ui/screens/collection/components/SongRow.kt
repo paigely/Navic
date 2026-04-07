@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.sp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
+import navic.composeapp.generated.resources.info_download_failed
+import navic.composeapp.generated.resources.info_downloaded
 import navic.composeapp.generated.resources.info_not_available_offline
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.database.entities.DownloadEntity
@@ -47,6 +49,7 @@ import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
+import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Offline
 import paige.navic.icons.outlined.Queue
 import paige.navic.ui.components.common.MarqueeText
@@ -171,9 +174,19 @@ fun CollectionDetailScreenSongRow(
 							DownloadStatus.DOWNLOADED -> {
 								Icon(
 									Icons.Outlined.Check,
-									contentDescription = null,
+									contentDescription = stringResource(Res.string.info_downloaded),
 									modifier = Modifier.size(16.dp),
 									tint = MaterialTheme.colorScheme.primary
+								)
+								Spacer(Modifier.width(8.dp))
+							}
+
+							DownloadStatus.FAILED -> {
+								Icon(
+									Icons.Outlined.DownloadOff,
+									contentDescription = stringResource(Res.string.info_download_failed),
+									modifier = Modifier.size(16.dp),
+									tint = MaterialTheme.colorScheme.error
 								)
 								Spacer(Modifier.width(8.dp))
 							}
