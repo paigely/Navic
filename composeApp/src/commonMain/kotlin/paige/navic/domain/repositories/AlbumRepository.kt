@@ -24,31 +24,35 @@ class AlbumRepository(
 	private val dbRepository: DbRepository
 ) {
 	private suspend fun getLocalData(
-		listType: DomainAlbumListType
+		listType: DomainAlbumListType,
+		reversed: Boolean
 	): ImmutableList<DomainAlbum> {
-		return albumDao
+		val albums = albumDao
 			.getAllAlbumsList()
 			.map { it.toDomainModel() }
 			.sortedByListType(listType)
 			.toImmutableList()
+		return if (reversed) albums.reversed().toImmutableList() else albums
 	}
 
 	private suspend fun refreshLocalData(
-		listType: DomainAlbumListType
+		listType: DomainAlbumListType,
+		reversed: Boolean
 	): ImmutableList<DomainAlbum> {
 		dbRepository.syncLibrarySongs().getOrThrow()
-		return getLocalData(listType)
+		return getLocalData(listType, reversed)
 	}
 
 	fun getAlbumsFlow(
 		fullRefresh: Boolean,
-		listType: DomainAlbumListType
+		listType: DomainAlbumListType,
+		reversed: Boolean
 	): Flow<UiState<ImmutableList<DomainAlbum>>> = flow {
-		val localData = getLocalData(listType)
+		val localData = getLocalData(listType, reversed)
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))
 			try {
-				emit(UiState.Success(data = refreshLocalData(listType)))
+				emit(UiState.Success(data = refreshLocalData(listType, reversed)))
 			} catch (error: Exception) {
 				emit(UiState.Error(error = error, data = localData))
 			}

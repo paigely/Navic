@@ -25,38 +25,45 @@ class SongRepository(
 ) {
 	private suspend fun getLocalData(
 		listType: DomainSongListType,
+		reversed: Boolean,
 		artistId: String? = null
 	): ImmutableList<DomainSong> {
 		val songs = songDao
 			.getAllSongs()
 			.map { it.toDomainModel() }
-		
-		return if (artistId != null) {
+		val filtered = if (artistId != null) {
 			songs.filter { it.artistId == artistId }
 		} else {
 			songs
-		}.toImmutableList()
-			.sortedByListType(listType)
+		}.toImmutableList().sortedByListType(listType)
+		
+		return if (reversed) {
+			filtered.reversed().toImmutableList()
+		} else {
+			filtered
+		}
 	}
 
 	private suspend fun refreshLocalData(
 		listType: DomainSongListType,
+		reversed: Boolean,
 		artistId: String? = null
 	): ImmutableList<DomainSong> {
 		dbRepository.syncLibrarySongs().getOrThrow()
-		return getLocalData(listType, artistId)
+		return getLocalData(listType, reversed, artistId)
 	}
 
 	fun getSongsFlow(
 		fullRefresh: Boolean,
 		listType: DomainSongListType,
+		reversed: Boolean,
 		artistId: String? = null
 	): Flow<UiState<ImmutableList<DomainSong>>> = flow {
-		val localData = getLocalData(listType, artistId)
+		val localData = getLocalData(listType, reversed, artistId)
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))
 			try {
-				emit(UiState.Success(data = refreshLocalData(listType, artistId)))
+				emit(UiState.Success(data = refreshLocalData(listType, reversed, artistId)))
 			} catch (error: Exception) {
 				emit(UiState.Error(error = error, data = localData))
 			}

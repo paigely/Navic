@@ -40,6 +40,8 @@
 	<string name="title_miscellaneous">Miscellaneous</string>
 	<string name="title_layout">Layout</string>
 	<string name="title_home">Home</string>
+	<string name="title_sort_by">Sort by</string>
+	<string name="title_direction">Direction</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>

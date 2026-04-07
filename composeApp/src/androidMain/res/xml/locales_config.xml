@@ -4,6 +4,7 @@ but it doesn't seem to see locales inside commonMain/composeResources
 -->
 <locale-config xmlns:android="http://schemas.android.com/apk/res/android">
 	<locale android:name="en" />
+	<locale android:name="ar" />
 	<locale android:name="de" />
 	<locale android:name="de_ch" />
 	<locale android:name="it" />

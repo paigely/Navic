@@ -65,6 +65,7 @@ fun SongListScreenItem(
 	}
 
 	SwipeToDismissBox(
+		modifier = modifier,
 		state = dismissState,
 		enableDismissFromStartToEnd = false,
 		backgroundContent = {
@@ -98,7 +99,6 @@ fun SongListScreenItem(
 	) {
 		Box {
 			ListItem(
-				modifier = modifier,
 				onClick = onClick,
 				onLongClick = onSelect,
 				content = {

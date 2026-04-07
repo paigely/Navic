@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.title_create_playlist
@@ -74,6 +75,8 @@ fun PlaylistListScreen(
 	val viewModel = koinViewModel<PlaylistListViewModel>()
 	val playlistsState by viewModel.playlistsState.collectAsState()
 	val selectedPlaylist by viewModel.selectedPlaylist.collectAsState()
+	val selectedSorting by viewModel.selectedSorting.collectAsStateWithLifecycle()
+	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
 
 	val ctx = LocalCtx.current
 
@@ -93,7 +96,10 @@ fun PlaylistListScreen(
 	val actions: @Composable RowScope.() -> Unit = {
 		PlaylistListScreenSortButton(
 			nested = nested,
-			onSortPlaylists = { viewModel.sortPlaylists() }
+			selectedSorting = selectedSorting,
+			onSetSorting = { viewModel.setSorting(it) },
+			selectedReversed = selectedReversed,
+			onSetReversed = { viewModel.setReversed(it) }
 		)
 	}
 

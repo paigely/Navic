@@ -26,8 +26,11 @@ class SongListViewModel(
 	private val _starred = MutableStateFlow(false)
 	val starred = _starred.asStateFlow()
 
-	private val _listType = MutableStateFlow(DomainSongListType.FrequentlyPlayed)
-	val listType = _listType.asStateFlow()
+	private val _selectedSorting = MutableStateFlow(DomainSongListType.FrequentlyPlayed)
+	val selectedSorting = _selectedSorting.asStateFlow()
+
+	private val _selectedReversed = MutableStateFlow(false)
+	val selectedReversed = _selectedReversed.asStateFlow()
 
 	init {
 		viewModelScope.launch {
@@ -48,7 +51,7 @@ class SongListViewModel(
 
 	fun refreshSongs(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			repository.getSongsFlow(fullRefresh, _listType.value, artistId).collect {
+			repository.getSongsFlow(fullRefresh, _selectedSorting.value, _selectedReversed.value, artistId).collect {
 				_songsState.value = it
 			}
 		}
@@ -68,8 +71,14 @@ class SongListViewModel(
 		}
 	}
 
-	fun setListType(listType: DomainSongListType) {
-		_listType.value = listType
+	fun setSorting(sorting: DomainSongListType) {
+		_selectedSorting.value = sorting
+		refreshSongs(false)
+	}
+
+	fun setReversed(reversed: Boolean) {
+		_selectedReversed.value = reversed
+		refreshSongs(false)
 	}
 
 	fun clearError() {

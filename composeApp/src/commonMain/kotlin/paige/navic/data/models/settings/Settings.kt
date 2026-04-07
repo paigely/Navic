@@ -6,7 +6,6 @@ package paige.navic.data.models.settings
 
 import com.russhwolf.settings.Settings as KmpSettings
 import paige.navic.data.models.settings.enums.*
-import paige.navic.domain.models.DomainPlaylistListType
 
 class Settings(
 	settings: KmpSettings
@@ -32,8 +31,6 @@ class Settings(
 	var windowSizeX by preference(800f)
 	var windowSizeY by preference(600f)
 	var nowPlayingToolbarPosition by preference(ToolbarPosition.Bottom)
-	var playlistSortMode by preference(DomainPlaylistListType.DateAdded)
-	var playlistsReversed by preference(false)
 	var replayGain by preference(false)
 	var gaplessPlayback by preference(true)
 	var audioOffload by preference(false)
