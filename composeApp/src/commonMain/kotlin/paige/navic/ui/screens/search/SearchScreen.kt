@@ -74,6 +74,7 @@ import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.MarqueeText
+import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.artGridPlaceholder
@@ -123,6 +124,7 @@ fun SearchScreen(
 
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
 	var selectedSong by remember { mutableStateOf<DomainSong?>(null) }
+	var songToQueue by remember { mutableStateOf<DomainSong?>(null) }
 
 	Scaffold(
 		topBar = {
@@ -200,7 +202,11 @@ fun SearchScreen(
 
 									LaunchedEffect(dismissState.currentValue) {
 										if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-											player.addToQueueSingle(song)
+											if (player.uiState.value.queue.any { it.id == song.id }) {
+												songToQueue = song
+											} else {
+												player.addToQueueSingle(song)
+											}
 											dismissState.snapTo(SwipeToDismissBoxValue.Settled)
 										}
 									}
@@ -281,7 +287,11 @@ fun SearchScreen(
 													text = { Text(stringResource(Res.string.action_add_to_queue)) },
 													leadingIcon = { Icon(Icons.Outlined.Queue, null) },
 													onClick = {
-														player.addToQueueSingle(song)
+														if (player.uiState.value.queue.any { it.id == song.id }) {
+															songToQueue = song
+														} else {
+															player.addToQueueSingle(song)
+														}
 														selectedSong = null
 													},
 												)
@@ -377,5 +387,14 @@ fun SearchScreen(
 				}
 			}
 		}
+	}
+
+	if (songToQueue != null) {
+		QueueDuplicateDialog(
+			onDismissRequest = { songToQueue = null },
+			onConfirm = {
+				songToQueue?.let { player.addToQueueSingle(it) }
+			}
+		)
 	}
 }

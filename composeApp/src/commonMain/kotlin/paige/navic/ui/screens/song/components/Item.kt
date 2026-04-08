@@ -17,29 +17,40 @@ import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
+import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_star
+import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_year
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalNavStack
+import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
+import paige.navic.icons.outlined.Info
+import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
+import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -55,7 +66,9 @@ fun SongListScreenItem(
 	onAddToQueue: () -> Unit,
 	onClick: () -> Unit
 ) {
+	val backStack = LocalNavStack.current
 	val dismissState = rememberSwipeToDismissBoxState()
+	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
 
 	LaunchedEffect(dismissState.currentValue) {
 		if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
@@ -162,7 +175,35 @@ fun SongListScreenItem(
 						onDeselect()
 					}
 				)
+				DropdownItem(
+					text = { Text(stringResource(Res.string.action_track_info)) },
+					leadingIcon = { Icon(Icons.Outlined.Info, null) },
+					onClick = {
+						backStack.add(Screen.SongDetail(song.id))
+						onDeselect()
+					},
+				)
+				DropdownItem(
+					text = {
+						Text(stringResource(Res.string.action_add_to_playlist))
+					},
+					leadingIcon = {
+						Icon(Icons.Outlined.PlaylistAdd, null)
+					},
+					onClick = {
+						onDeselect()
+						playlistDialogShown = true
+					},
+				)
 			}
 		}
+	}
+
+	if (playlistDialogShown) {
+		@Suppress("AssignedValueIsNeverRead")
+		PlaylistUpdateDialog(
+			songs = persistentListOf(song),
+			onDismissRequest = { playlistDialogShown = false }
+		)
 	}
 }

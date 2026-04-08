@@ -43,6 +43,7 @@
 	<string name="title_sort_by">Sort by</string>
 	<string name="title_direction">Direction</string>
 	<string name="title_bulk_download">Download All Albums</string>
+	<string name="title_confirm">Confirm</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
@@ -236,6 +237,7 @@
 	<string name="notice_expiry">Expires in %1$s.</string>
 	<string name="notice_loading_lyrics">Loading lyrics...\nThis might take a while.</string>
 	<string name="notice_login_suggestion">Did you mean...</string>
+	<string name="notice_queue_duplicate">This song is already in the queue. Do you really want to add it again?</string>
 
 	<string name="info_app_version">Navic %1$s</string>
 	<string name="info_action_is_permanent">This action cannot be undone</string>

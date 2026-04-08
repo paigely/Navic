@@ -3,6 +3,7 @@ package paige.navic.ui.screens.song
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,7 +30,9 @@ import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainSong
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
@@ -62,6 +65,7 @@ fun SongListScreen(
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
+	var songToQueue by remember { mutableStateOf<DomainSong?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 	val isLoggedIn by SessionManager.isLoggedIn.collectAsStateWithLifecycle()
 
@@ -114,8 +118,8 @@ fun SongListScreen(
 			}
 			LazyColumn(
 				modifier = if (!nested)
-					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-				else Modifier,
+					Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)
+				else Modifier.fillMaxSize(),
 				contentPadding = innerPadding.withoutTop(),
 				verticalArrangement = if ((songsState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center
@@ -132,17 +136,16 @@ fun SongListScreen(
 					},
 					onSetStarred = { viewModel.starSong(it) },
 					onAddToQueue = { song ->
-						player.addToQueueSingle(song)
-					},
-					onPlaySong = { index ->
-						val list = songsState.data
-						if (!list.isNullOrEmpty()) {
-							player.clearQueue()
-							list.forEach { song ->
-								player.addToQueueSingle(song)
-							}
-							player.playAt(index)
+						if (player.uiState.value.queue.any { it.id == song.id }) {
+							songToQueue = song
+						} else {
+							player.addToQueueSingle(song)
 						}
+					},
+					onPlaySong = { song ->
+						player.clearQueue()
+						player.addToQueueSingle(song)
+						player.playAt(0)
 					}
 				)
 			}
@@ -156,4 +159,13 @@ fun SongListScreen(
 		expiry = shareExpiry,
 		onExpiryChange = { shareExpiry = it }
 	)
+
+	if (songToQueue != null) {
+		QueueDuplicateDialog(
+			onDismissRequest = { songToQueue = null },
+			onConfirm = {
+				songToQueue?.let { player.addToQueueSingle(it) }
+			}
+		)
+	}
 }

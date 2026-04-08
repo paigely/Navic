@@ -51,7 +51,7 @@ fun Dropdown(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DropdownItem(
-	containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
+	containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest,
 	onClick: () -> Unit = {},
 	text: @Composable () -> Unit = {},
 	leadingIcon: @Composable () -> Unit = {},

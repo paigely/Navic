@@ -121,7 +121,6 @@ fun CollectionDetailScreenTopBar(
 					DropdownItem(
 						text = { Text(stringResource(Res.string.action_share)) },
 						leadingIcon = { Icon(Icons.Outlined.Share, null) },
-						containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
 						onClick = {
 							expanded = false
 							onSetShareId(collection?.id)
@@ -130,7 +129,6 @@ fun CollectionDetailScreenTopBar(
 					DropdownItem(
 						text = { Text(stringResource(Res.string.action_add_all_to_playlist)) },
 						leadingIcon = { Icon(Icons.Outlined.PlaylistAdd, null) },
-						containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
 						onClick = {
 							expanded = false
 							playlistDialogShown = true
@@ -155,7 +153,6 @@ fun CollectionDetailScreenTopBar(
 								)
 							}
 						},
-						containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
 						enabled = isOnline
 							&& collection?.songs.orEmpty().isNotEmpty(),
 						onClick = {
