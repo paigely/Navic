@@ -1,8 +1,8 @@
 package paige.navic.data.database.mappers
 
-import dev.zt64.subsonic.api.model.Artist as ApiArtist
 import paige.navic.data.database.entities.ArtistEntity
 import paige.navic.domain.models.DomainArtist
+import dev.zt64.subsonic.api.model.Artist as ApiArtist
 
 fun ApiArtist.toEntity() = ArtistEntity(
 	artistId = this.id,

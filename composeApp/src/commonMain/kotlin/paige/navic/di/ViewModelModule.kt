@@ -10,8 +10,10 @@ import paige.navic.ui.components.dialogs.DeletionViewModel
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.ui.screens.artist.viewmodels.ArtistDetailViewModel
 import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
+import paige.navic.ui.screens.collection.viewmodels.CollectionDetailViewModel
 import paige.navic.ui.screens.genre.viewmodels.GenreListViewModel
 import paige.navic.ui.screens.lyrics.viewmodels.LyricsScreenViewModel
+import paige.navic.ui.screens.onboarding.viewmodels.LoginViewModel
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistCreateDialogViewModel
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistUpdateDialogViewModel
@@ -22,10 +24,8 @@ import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.ui.screens.settings.viewmodels.SettingsDataStorageViewModel
 import paige.navic.ui.screens.share.viewmodels.ShareDialogViewModel
 import paige.navic.ui.screens.share.viewmodels.ShareListViewModel
-import paige.navic.ui.screens.song.viewmodels.SongListViewModel
 import paige.navic.ui.screens.song.viewmodels.SongDetailViewModel
-import paige.navic.ui.screens.collection.viewmodels.CollectionDetailViewModel
-import paige.navic.ui.screens.onboarding.viewmodels.LoginViewModel
+import paige.navic.ui.screens.song.viewmodels.SongListViewModel
 
 val viewModelModule = module {
 	viewModelOf(::ArtistDetailViewModel)

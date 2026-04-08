@@ -1,9 +1,9 @@
 package paige.navic.data.database.mappers
 
-import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.relations.PlaylistWithSongs
 import paige.navic.domain.models.DomainPlaylist
+import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 
 fun ApiPlaylist.toEntity() = PlaylistEntity(
 	playlistId = id,

@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -71,14 +71,15 @@ import paige.navic.ui.scenes.BottomSheetSceneStrategy
 import paige.navic.ui.screens.album.AlbumListScreen
 import paige.navic.ui.screens.artist.ArtistDetailScreen
 import paige.navic.ui.screens.artist.ArtistListScreen
+import paige.navic.ui.screens.collection.CollectionDetailScreen
+import paige.navic.ui.screens.genre.GenreListScreen
 import paige.navic.ui.screens.library.LibraryScreen
 import paige.navic.ui.screens.lyrics.LyricsScreen
 import paige.navic.ui.screens.nowPlaying.NowPlayingScreen
+import paige.navic.ui.screens.onboarding.OnboardingScreen
 import paige.navic.ui.screens.playlist.PlaylistListScreen
 import paige.navic.ui.screens.queue.QueueScreen
 import paige.navic.ui.screens.search.SearchScreen
-import paige.navic.ui.screens.share.ShareListScreen
-import paige.navic.ui.screens.genre.GenreListScreen
 import paige.navic.ui.screens.settings.BottomBarScreen
 import paige.navic.ui.screens.settings.FontsScreen
 import paige.navic.ui.screens.settings.SettingsAboutScreen
@@ -89,10 +90,9 @@ import paige.navic.ui.screens.settings.SettingsDeveloperScreen
 import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
 import paige.navic.ui.screens.settings.SettingsScreen
-import paige.navic.ui.screens.song.SongListScreen
+import paige.navic.ui.screens.share.ShareListScreen
 import paige.navic.ui.screens.song.SongDetailScreen
-import paige.navic.ui.screens.collection.CollectionDetailScreen
-import paige.navic.ui.screens.onboarding.OnboardingScreen
+import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.utils.BottomBarScrollManager
 import paige.navic.utils.LocalBottomBarScrollManager
@@ -120,11 +120,13 @@ fun App() {
 	val platformContext = LocalPlatformContext.current
 	val uriHandler = LocalUriHandler.current
 	val ctx = rememberCtx()
-	val backStack = rememberNavBackStack(config, if (SessionManager.currentUser != null) {
-		Screen.Library()
-	} else {
-		Screen.Onboarding
-	})
+	val backStack = rememberNavBackStack(
+		config, if (SessionManager.currentUser != null) {
+			Screen.Library()
+		} else {
+			Screen.Onboarding
+		}
+	)
 	val imageBuilder = remember { ImageRequest.Builder(platformContext).crossfade(true) }
 	val snackbarState = remember { SnackbarHostState() }
 	val density = LocalDensity.current

@@ -19,11 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.option_now_playing_toolbar_position
 import navic.composeapp.generated.resources.option_now_playing_background_style
-import navic.composeapp.generated.resources.subtitle_now_playing_background_style
 import navic.composeapp.generated.resources.option_now_playing_slider_style
+import navic.composeapp.generated.resources.option_now_playing_toolbar_position
 import navic.composeapp.generated.resources.option_swipe_to_skip
+import navic.composeapp.generated.resources.subtitle_now_playing_background_style
 import navic.composeapp.generated.resources.title_now_playing
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
@@ -32,10 +32,10 @@ import paige.navic.data.models.settings.enums.NowPlayingBackgroundStyle
 import paige.navic.data.models.settings.enums.ToolbarPosition
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
-import paige.navic.ui.screens.settings.dialogs.NowPlayingSliderStyleDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
+import paige.navic.ui.screens.settings.dialogs.NowPlayingSliderStyleDialog
 import paige.navic.utils.fadeFromTop
 
 @Composable
@@ -43,10 +43,12 @@ fun SettingsNowPlayingScreen() {
 	val ctx = LocalCtx.current
 
 	Scaffold(
-		topBar = { NestedTopBar(
-			{ Text(stringResource(Res.string.title_now_playing)) },
-			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
-		) }
+		topBar = {
+			NestedTopBar(
+				{ Text(stringResource(Res.string.title_now_playing)) },
+				hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+			)
+		}
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp

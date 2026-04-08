@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.option_sort_random
-import navic.composeapp.generated.resources.option_sort_recent
 import navic.composeapp.generated.resources.option_sort_starred
 import org.jetbrains.compose.resources.StringResource
 

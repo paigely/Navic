@@ -3,7 +3,6 @@ package paige.navic.shared
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 
 interface Ctx {
 	val name: String
@@ -15,8 +14,5 @@ interface Ctx {
 
 @Composable
 expect fun rememberCtx(): Ctx
-
-@Composable
-expect fun Modifier.systemGesturesExclusion(): Modifier
 
 expect fun <T> synchronized(lock: Any, block: () -> T): T

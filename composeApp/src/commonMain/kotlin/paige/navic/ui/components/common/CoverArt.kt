@@ -88,15 +88,23 @@ fun CoverArt(
 							}
 						}
 					}
-				} else { Modifier }
+				} else {
+					Modifier
+				}
 			)
-			.then(if (interactionSource != null)
-				Modifier.indication(interactionSource, ripple())
-			else Modifier),
+			.then(
+				if (interactionSource != null)
+					Modifier.indication(interactionSource, ripple())
+				else Modifier
+			),
 		contentScale = ContentScale.Crop,
 		error = {
 			LaunchedEffect(it.result.throwable) {
-				Logger.w("CoverArt", "Failed to load cover art, falling back to placeholder", it.result.throwable)
+				Logger.w(
+					"CoverArt",
+					"Failed to load cover art, falling back to placeholder",
+					it.result.throwable
+				)
 			}
 			LazyColumn(
 				horizontalAlignment = Alignment.CenterHorizontally,

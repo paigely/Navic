@@ -24,6 +24,7 @@ actual class ShareManager {
 			null
 		)
 	}
+
 	actual suspend fun shareString(string: String) {
 		Toolkit.getDefaultToolkit().systemClipboard.setContents(
 			object : Transferable {

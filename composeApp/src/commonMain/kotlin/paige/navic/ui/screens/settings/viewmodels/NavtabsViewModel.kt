@@ -40,7 +40,8 @@ class NavtabsViewModel(
 
 	fun move(from: Int, to: Int) {
 		val config = (_state.value as UiState.Success).data
-		setConfig(config.copy(
+		setConfig(
+			config.copy(
 			tabs = config.tabs.toMutableList().apply {
 				add(to, removeAt(from))
 			}

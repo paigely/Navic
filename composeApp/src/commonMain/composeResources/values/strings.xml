@@ -26,7 +26,6 @@
 	<string name="title_artists">Artists</string>
 	<string name="title_all">All</string>
 	<string name="title_similar_artists">Similar artists</string>
-	<string name="title_login_dialog">Login to Navidrome</string>
 	<string name="title_source">Source code</string>
 	<string name="title_chat">Chat</string>
 	<string name="title_shares">Shares</string>
@@ -39,7 +38,6 @@
 	<string name="title_mini_player">Mini Player</string>
 	<string name="title_miscellaneous">Miscellaneous</string>
 	<string name="title_layout">Layout</string>
-	<string name="title_home">Home</string>
 	<string name="title_sort_by">Sort by</string>
 	<string name="title_direction">Direction</string>
 	<string name="title_bulk_download">Download All Albums</string>
@@ -55,7 +53,7 @@
 	<string name="subtitle_developer">Debugging, testing</string>
 	<string name="subtitle_about">App info, version, licenses</string>
 	<string name="subtitle_playlist">Playlist</string>
-	<string	name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
+	<string name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
 	<string name="subtitle_gapless_playback">Experimental. Requires application restart. May conflict with audio offload on some devices</string>
 	<string name="subtitle_audio_offload">Experimental. Requires application restart. May conflict with gapless playback on some devices</string>
 	<string name="subtitle_now_playing_background_style">Choose static if you have performance issues</string>
@@ -100,7 +98,7 @@
 	<string name="option_min_duration_to_scrobble">Min. duration to scrobble</string>
 	<string name="option_playlist_name">Name</string>
 	<string name="option_playlist_songs">Songs</string>
-	<string	name="option_enable_scrobbling">Enable scrobbling</string>
+	<string name="option_enable_scrobbling">Enable scrobbling</string>
 	<string name="option_choose_theme">Application theme</string>
 	<string name="option_replay_gain">ReplayGain</string>
 	<string name="option_gapless_playback">Gapless playback</string>
@@ -213,11 +211,8 @@
 	<string name="action_view_on_lastfm">View on last.fm</string>
 	<string name="action_view_on_musicbrainz">View on MusicBrainz</string>
 	<string name="action_lyrics">Lyrics</string>
-	<string name="action_cast">Cast</string>
 	<string name="action_share_lyrics">Share Lyrics</string>
 	<string name="action_update_app">Update</string>
-	<string name="action_open_in_browser">Open in Browser</string>
-	<string name="action_copy_link">Copy Link</string>
 	<string name="action_add_to_queue">Add to Queue</string>
 	<string name="action_queue">Queue</string>
 	<string name="action_reorder">Reorder</string>
@@ -246,7 +241,6 @@
 	<string name="info_error_hide">Hide details</string>
 	<string name="info_unknown">Unknown</string>
 	<string name="info_unknown_album">Unknown Album</string>
-	<string name="info_unknown_artist">Unknown Artist</string>
 	<string name="info_unknown_year">Unknown Year</string>
 	<string name="info_unknown_genre">Unknown Genre</string>
 	<string name="info_not_playing">Not Playing</string>
@@ -271,7 +265,6 @@
 	<string name="info_album_replay_gain">Album ReplayGain</string>
 	<string name="info_track_replay_gain_effective">ReplayGain effective value</string>
 	<string name="info_update_app">A new version of Navic is available.</string>
-	<string name="info_unknown_share">Share %1$s</string>
 	<string name="info_shared_by">Shared by %1$s</string>
 	<string name="info_share_expires_in">Expires in %1$s</string>
 	<string name="info_share_expires_never">Never expires</string>
@@ -280,7 +273,6 @@
 	<string name="info_no_lyrics">No lyrics</string>
 	<string name="info_no_albums">No albums</string>
 	<string name="info_no_artists">No artists</string>
-	<string name="info_no_tracks">No tracks</string>
 	<string name="info_no_songs">No songs</string>
 	<string name="info_not_available_offline">Not available offline</string>
 	<string name="info_no_queue">Nothing queued</string>

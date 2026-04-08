@@ -74,7 +74,8 @@ fun BlendBackground(
 				withFrameNanos { _ ->
 					val now = timeSource.markNow()
 					val elapsed = now - lastFrameMark
-					val elapsedMillis = elapsed.toDouble(kotlin.time.DurationUnit.MILLISECONDS).toFloat()
+					val elapsedMillis =
+						elapsed.toDouble(kotlin.time.DurationUnit.MILLISECONDS).toFloat()
 					lastFrameMark = now
 
 					frameRotation -= (360f / 24000f) * elapsedMillis

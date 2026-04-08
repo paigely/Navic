@@ -102,7 +102,8 @@ fun ArtistDetailScreen(
 	val layoutDirection = LocalLayoutDirection.current
 	val artistState by viewModel.artistState.collectAsState()
 	val isOnline by viewModel.isOnline.collectAsState()
-	val downloadStatus by viewModel.collectionDownloadStatus().collectAsState(DownloadStatus.NOT_DOWNLOADED)
+	val downloadStatus by viewModel.collectionDownloadStatus()
+		.collectAsState(DownloadStatus.NOT_DOWNLOADED)
 	val scope = rememberCoroutineScope()
 
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
@@ -255,7 +256,8 @@ fun ArtistDetailScreen(
 								}
 							ArtCarousel(
 								stringResource(Res.string.title_albums),
-								state.albums.sortedByDescending { album -> album.playCount }.toImmutableList()
+								state.albums.sortedByDescending { album -> album.playCount }
+									.toImmutableList()
 							) { album ->
 								ArtCarouselItem(album.coverArtId, album.name, null) {
 									backStack.add(Screen.CollectionDetail(album.id, "artist"))

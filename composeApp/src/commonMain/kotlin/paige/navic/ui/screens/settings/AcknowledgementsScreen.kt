@@ -28,10 +28,12 @@ fun SettingsAcknowledgementsScreen() {
 	val ctx = LocalCtx.current
 	val hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 	Scaffold(
-		topBar = { NestedTopBar(
-			{ Text(stringResource(Res.string.title_acknowledgements)) },
-			hideBack = hideBack
-		) }
+		topBar = {
+			NestedTopBar(
+				{ Text(stringResource(Res.string.title_acknowledgements)) },
+				hideBack = hideBack
+			)
+		}
 	) { innerPadding ->
 		LibrariesContainer(
 			libraries,

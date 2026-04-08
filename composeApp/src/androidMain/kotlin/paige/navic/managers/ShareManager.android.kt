@@ -49,6 +49,7 @@ actual class ShareManager(
 		chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 		context.startActivity(chooser)
 	}
+
 	actual suspend fun shareString(string: String) {
 		val intent = Intent(Intent.ACTION_SEND).apply {
 			type = "text/plain"

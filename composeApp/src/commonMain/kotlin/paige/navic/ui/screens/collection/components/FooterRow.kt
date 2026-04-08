@@ -21,11 +21,13 @@ fun CollectionDetailScreenFooterRow(
 ) {
 	Text(
 		buildString {
-			append(pluralStringResource(
-				Res.plurals.count_songs,
-				collection.songCount,
-				collection.songCount
-			))
+			append(
+				pluralStringResource(
+					Res.plurals.count_songs,
+					collection.songCount,
+					collection.songCount
+				)
+			)
 			append(" • ")
 			append(collection.duration.toString())
 		},

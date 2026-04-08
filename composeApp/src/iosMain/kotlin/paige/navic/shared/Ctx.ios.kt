@@ -5,7 +5,6 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import platform.Foundation.NSBundle
 import platform.UIKit.UIDevice
 
@@ -33,8 +32,5 @@ actual fun rememberCtx(): Ctx {
 		}
 	}
 }
-
-@Composable
-actual fun Modifier.systemGesturesExclusion(): Modifier = this
 
 actual fun <T> synchronized(lock: Any, block: () -> T): T = block()

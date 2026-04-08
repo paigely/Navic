@@ -78,14 +78,18 @@ class MiniPlayerWidget : NowPlayingWidget() {
 				Column(modifier = GlanceModifier.defaultWeight().padding(horizontal = 12.dp)) {
 					Text(
 						text = title,
-						style = TextStyle(color = GlanceTheme.colors.onPrimaryContainer, fontSize = 16.sp),
+						style = TextStyle(
+							color = GlanceTheme.colors.onPrimaryContainer,
+							fontSize = 16.sp
+						),
 						maxLines = 1
 					)
 					Text(
 						text = artist,
 						style = TextStyle(
 							color = ColorProvider(
-								GlanceTheme.colors.onPrimaryContainer.getColor(context).copy(alpha = .8f)
+								GlanceTheme.colors.onPrimaryContainer.getColor(context)
+									.copy(alpha = .8f)
 							),
 							fontSize = 14.sp
 						),
@@ -97,21 +101,36 @@ class MiniPlayerWidget : NowPlayingWidget() {
 					imageProvider = ImageProvider(R.drawable.ic_previous),
 					contentDescription = "Previous",
 					contentColor = GlanceTheme.colors.onPrimaryContainer,
-					onClick = actionSendBroadcast(createMediaIntent(context, KeyEvent.KEYCODE_MEDIA_PREVIOUS)),
+					onClick = actionSendBroadcast(
+						createMediaIntent(
+							context,
+							KeyEvent.KEYCODE_MEDIA_PREVIOUS
+						)
+					),
 					backgroundColor = null
 				)
 				CircleIconButton(
 					imageProvider = ImageProvider(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play),
 					contentDescription = if (isPlaying) "Pause" else "Play",
 					contentColor = GlanceTheme.colors.onPrimaryContainer,
-					onClick = actionSendBroadcast(createMediaIntent(context, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)),
+					onClick = actionSendBroadcast(
+						createMediaIntent(
+							context,
+							KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
+						)
+					),
 					backgroundColor = null
 				)
 				CircleIconButton(
 					imageProvider = ImageProvider(R.drawable.ic_next),
 					contentDescription = "Next",
 					contentColor = GlanceTheme.colors.onPrimaryContainer,
-					onClick = actionSendBroadcast(createMediaIntent(context, KeyEvent.KEYCODE_MEDIA_NEXT)),
+					onClick = actionSendBroadcast(
+						createMediaIntent(
+							context,
+							KeyEvent.KEYCODE_MEDIA_NEXT
+						)
+					),
 					backgroundColor = null
 				)
 			}

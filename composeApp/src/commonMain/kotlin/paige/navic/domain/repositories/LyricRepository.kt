@@ -114,14 +114,17 @@ object LyricsContentParser {
 				val syncedStr = jsonObject["syncedLyrics"]?.jsonPrimitive?.contentOrNull
 				if (!syncedStr.isNullOrEmpty()) parseLrc(syncedStr) else null
 			}
+
 			jsonObject.containsKey("plainLyrics") -> {
 				val plainStr = jsonObject["plainLyrics"]?.jsonPrimitive?.contentOrNull
 				plainStr?.lineSequence()?.map { LyricLine(text = it) }?.toList()
 			}
+
 			jsonObject.containsKey("lyrics") -> {
 				val youlyResponse = jsonParser.decodeFromString<YoulyResponse>(jsonString)
 				parseYoulyResponse(youlyResponse)
 			}
+
 			else -> null
 		}
 	}
@@ -163,7 +166,8 @@ object LyricsContentParser {
 						val minutes = parts[0].toLong()
 						val seconds = parts[1].toLong()
 						val hundredths = parts.getOrNull(2)?.toLong() ?: 0L
-						val duration = minutes.minutes + seconds.seconds + (hundredths * 10).milliseconds
+						val duration =
+							minutes.minutes + seconds.seconds + (hundredths * 10).milliseconds
 
 						LyricLine(time = duration, text = text)
 					} else {
@@ -201,9 +205,14 @@ class LyricRepository(
 			val cached = lyricDao.getLyrics(song.id)
 			if (cached != null) {
 				val parsed = LyricsContentParser.parse(cached.rawContent)
-				if (!parsed.isNullOrEmpty()) return LyricsResult(parsed, cached.provider, cached.rawContent)
+				if (!parsed.isNullOrEmpty()) return LyricsResult(
+					parsed,
+					cached.provider,
+					cached.rawContent
+				)
 			}
-		} catch (_: Exception) {}
+		} catch (_: Exception) {
+		}
 
 		val currentConfig = getConfig()
 		for (provider in currentConfig.priority) {
@@ -216,11 +225,13 @@ class LyricRepository(
 						rawContentToCache = raw
 						raw?.let { LyricsContentParser.parse(it) }
 					}
+
 					LyricsProvider.LRCLIB -> {
 						val raw = fetchRawLrcLib(song, currentConfig)
 						rawContentToCache = raw
 						raw?.let { LyricsContentParser.parse(it) }
 					}
+
 					LyricsProvider.SUBSONIC -> {
 						val subsonicLyrics = SessionManager.api.getLyrics(song.id).firstOrNull()
 						val lines = subsonicLyrics?.lines?.map { line ->
@@ -233,7 +244,8 @@ class LyricRepository(
 								if (t != null && t.inWholeMilliseconds > 0) {
 									val m = t.inWholeMinutes.toString().padStart(2, '0')
 									val s = (t.inWholeSeconds % 60).toString().padStart(2, '0')
-									val ms = ((t.inWholeMilliseconds % 1000) / 10).toString().padStart(2, '0')
+									val ms = ((t.inWholeMilliseconds % 1000) / 10).toString()
+										.padStart(2, '0')
 									"[$m:$s.$ms]${l.text}"
 								} else l.text
 							}

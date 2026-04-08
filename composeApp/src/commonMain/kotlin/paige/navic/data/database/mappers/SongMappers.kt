@@ -1,10 +1,10 @@
 package paige.navic.data.database.mappers
 
-import dev.zt64.subsonic.api.model.Song as ApiSong
 import paige.navic.data.database.entities.SongEntity
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainReplayGain
 import paige.navic.domain.models.DomainSong
+import dev.zt64.subsonic.api.model.Song as ApiSong
 
 fun ApiSong.toEntity() = SongEntity(
 	songId = this.id,

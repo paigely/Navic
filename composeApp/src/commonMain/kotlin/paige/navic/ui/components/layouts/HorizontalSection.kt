@@ -28,7 +28,6 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
-import paige.navic.shared.systemGesturesExclusion
 import paige.navic.utils.UiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -49,8 +48,7 @@ fun <T> LazyGridScope.horizontalSection(
 	item(span = { GridItemSpan(maxLineSpan) }) {
 		LazyRow(
 			modifier = Modifier
-				.animateContentSize(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec())
-				.systemGesturesExclusion(),
+				.animateContentSize(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()),
 			horizontalArrangement = Arrangement.spacedBy(12.dp),
 			contentPadding = PaddingValues(horizontal = 16.dp)
 		) {

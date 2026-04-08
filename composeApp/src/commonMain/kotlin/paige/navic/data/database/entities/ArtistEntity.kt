@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import kotlin.time.Instant
 
 @Entity
-data class ArtistEntity (
+data class ArtistEntity(
 	@PrimaryKey val artistId: String,
 	val name: String,
 	val albumCount: Int = 0,

@@ -6,8 +6,8 @@ import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.entities.SongEntity
 
 data class AlbumWithSongs(
-    @Embedded val album: AlbumEntity,
-    @Relation(
+	@Embedded val album: AlbumEntity,
+	@Relation(
 		parentColumn = "albumId",
 		entityColumn = "belongsToAlbumId"
 	)

@@ -19,8 +19,10 @@ class SearchRepository(
 		val existingArtistIds = artistDao.getAllArtistIds().toSet()
 		val existingSongIds = songDao.getAllSongIds().toSet()
 
-		albumDao.insertAlbums(data.albums.filter { it.id !in existingAlbumIds }.map { it.toEntity() })
-		artistDao.insertArtists(data.artists.filter { it.id !in existingArtistIds }.map { it.toEntity() })
+		albumDao.insertAlbums(data.albums.filter { it.id !in existingAlbumIds }
+			.map { it.toEntity() })
+		artistDao.insertArtists(data.artists.filter { it.id !in existingArtistIds }
+			.map { it.toEntity() })
 		songDao.insertSongs(data.songs.filter { it.id !in existingSongIds }.map { it.toEntity() })
 
 		return listOf(

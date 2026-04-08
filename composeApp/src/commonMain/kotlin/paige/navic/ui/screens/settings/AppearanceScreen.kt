@@ -61,14 +61,14 @@ import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
+import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.screens.settings.components.SettingSelectionRow
+import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.settings.dialogs.ArtworkShapeDialog
 import paige.navic.ui.screens.settings.dialogs.GridSizeDialog
 import paige.navic.ui.screens.settings.dialogs.GridSizePreview
 import paige.navic.ui.screens.settings.dialogs.Shapes
 import paige.navic.ui.screens.settings.dialogs.ThemeDialog
-import paige.navic.ui.components.layouts.NestedTopBar
-import paige.navic.ui.screens.settings.components.SettingSelectionRow
-import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.utils.fadeFromTop
 
 @Composable
@@ -78,10 +78,12 @@ fun SettingsAppearanceScreen() {
 	var showArtworkShapeDialog by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
-		topBar = { NestedTopBar(
-			{ Text(stringResource(Res.string.title_appearance)) },
-			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
-		) },
+		topBar = {
+			NestedTopBar(
+				{ Text(stringResource(Res.string.title_appearance)) },
+				hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+			)
+		},
 		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
 		CompositionLocalProvider(
@@ -141,7 +143,9 @@ fun SettingsAppearanceScreen() {
 										.clip(CircleShape)
 										.background(
 											HsvColor(
-												Settings.shared.accentColourH, Settings.shared.accentColourS, Settings.shared.accentColourV
+												Settings.shared.accentColourH,
+												Settings.shared.accentColourS,
+												Settings.shared.accentColourV
 											).toColor()
 										)
 										.size(40.dp)

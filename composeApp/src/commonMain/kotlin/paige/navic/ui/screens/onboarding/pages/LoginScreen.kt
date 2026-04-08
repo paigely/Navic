@@ -67,8 +67,8 @@ import paige.navic.icons.outlined.Badge
 import paige.navic.icons.outlined.Link
 import paige.navic.icons.outlined.Password
 import paige.navic.ui.components.common.ErrorBox
-import paige.navic.ui.theme.defaultFont
 import paige.navic.ui.screens.onboarding.viewmodels.LoginViewModel
+import paige.navic.ui.theme.defaultFont
 import paige.navic.utils.LoginState
 import paige.navic.utils.UiState
 

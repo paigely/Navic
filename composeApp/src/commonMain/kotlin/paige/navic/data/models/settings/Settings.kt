@@ -4,8 +4,20 @@
 
 package paige.navic.data.models.settings
 
+import paige.navic.data.models.settings.enums.BottomBarCollapseMode
+import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.data.models.settings.enums.FontOption
+import paige.navic.data.models.settings.enums.GridSize
+import paige.navic.data.models.settings.enums.MarqueeSpeed
+import paige.navic.data.models.settings.enums.MiniPlayerProgressStyle
+import paige.navic.data.models.settings.enums.MiniPlayerStyle
+import paige.navic.data.models.settings.enums.NavigationBarStyle
+import paige.navic.data.models.settings.enums.NowPlayingBackgroundStyle
+import paige.navic.data.models.settings.enums.NowPlayingSliderStyle
+import paige.navic.data.models.settings.enums.Theme
+import paige.navic.data.models.settings.enums.ThemeMode
+import paige.navic.data.models.settings.enums.ToolbarPosition
 import com.russhwolf.settings.Settings as KmpSettings
-import paige.navic.data.models.settings.enums.*
 
 class Settings(
 	settings: KmpSettings

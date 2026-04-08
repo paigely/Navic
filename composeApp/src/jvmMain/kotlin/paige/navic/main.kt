@@ -24,9 +24,5 @@ fun main() {
 			window = window,
 			onSetWindow = { window = it }
 		)
-
-		MainTray(
-			window = window
-		)
 	}
 }

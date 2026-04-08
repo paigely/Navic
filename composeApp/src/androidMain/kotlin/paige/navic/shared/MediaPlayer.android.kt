@@ -33,14 +33,14 @@ import paige.navic.MainActivity
 import paige.navic.R
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.models.settings.Settings
-import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.AndroidScrobbleManager
+import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
 import paige.navic.utils.effectiveGain
 import java.io.File
@@ -79,19 +79,20 @@ class PlaybackService : MediaSessionService() {
 					true
 				)
 				setMediaNotificationProvider(notificationProvider)
-				trackSelectionParameters = trackSelectionParameters.buildUpon().setAudioOffloadPreferences(
-					TrackSelectionParameters.AudioOffloadPreferences
-						.Builder()
-						.setIsGaplessSupportRequired(Settings.shared.gaplessPlayback)
-						.setAudioOffloadMode(
-							if (Settings.shared.audioOffload) {
-								TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED
-							} else {
-								TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_DISABLED
-							}
-						)
-						.build()
-				).build()
+				trackSelectionParameters =
+					trackSelectionParameters.buildUpon().setAudioOffloadPreferences(
+						TrackSelectionParameters.AudioOffloadPreferences
+							.Builder()
+							.setIsGaplessSupportRequired(Settings.shared.gaplessPlayback)
+							.setAudioOffloadMode(
+								if (Settings.shared.audioOffload) {
+									TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED
+								} else {
+									TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_DISABLED
+								}
+							)
+							.build()
+					).build()
 			}
 
 		scrobbleManager = AndroidScrobbleManager(player, serviceScope)
@@ -192,7 +193,10 @@ class AndroidMediaPlayerViewModel(
 						setPackage(application.packageName)
 						putExtra("isPlaying", isPlaying)
 						putExtra("title", _uiState.value.currentSong?.title ?: "Unknown song")
-						putExtra("artist", _uiState.value.currentSong?.artistName ?: "Unknown artist")
+						putExtra(
+							"artist",
+							_uiState.value.currentSong?.artistName ?: "Unknown artist"
+						)
 						putExtra("artUrl", _uiState.value.currentSong?.coverArtId?.let { id ->
 							SessionManager.api.getCoverArtUrl(id, auth = true)
 						})
@@ -225,7 +229,7 @@ class AndroidMediaPlayerViewModel(
 
 	private fun refreshCurrentCollection(albumId: String) {
 		if (loadingCollectionId == albumId) return
-			loadingCollectionId = albumId
+		loadingCollectionId = albumId
 
 		viewModelScope.launch {
 			runCatching {
@@ -315,7 +319,8 @@ class AndroidMediaPlayerViewModel(
 			while (controller?.isPlaying == true) {
 				val player = controller ?: break
 				val duration = player.duration.coerceAtLeast(1)
-				val progress = (player.currentPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+				val progress =
+					(player.currentPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
 				_uiState.update { it.copy(progress = progress) }
 				delay(200)
 			}
@@ -362,7 +367,10 @@ class AndroidMediaPlayerViewModel(
 			val newQueue = state.queue.toMutableList().apply { removeAt(index) }
 			val newIndex = when {
 				index < state.currentIndex -> state.currentIndex - 1
-				index == state.currentIndex -> if (newQueue.isEmpty()) -1 else state.currentIndex.coerceAtMost(newQueue.size - 1)
+				index == state.currentIndex -> if (newQueue.isEmpty()) -1 else state.currentIndex.coerceAtMost(
+					newQueue.size - 1
+				)
+
 				else -> state.currentIndex
 			}
 			state.copy(
@@ -396,7 +404,14 @@ class AndroidMediaPlayerViewModel(
 
 	override fun clearQueue() {
 		controller?.clearMediaItems()
-		_uiState.update { it.copy(queue = emptyList(), currentSong = null, currentIndex = -1, progress = 0f) }
+		_uiState.update {
+			it.copy(
+				queue = emptyList(),
+				currentSong = null,
+				currentIndex = -1,
+				progress = 0f
+			)
+		}
 	}
 
 	override fun playAt(index: Int) {
@@ -435,15 +450,20 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun pause() { controller?.pause() }
+	override fun pause() {
+		controller?.pause()
+	}
+
 	override fun resume() {
 		resetSleepTimer()
 		controller?.play()
 	}
+
 	override fun next() {
 		resetSleepTimer()
 		if (controller?.hasNextMediaItem() == true) controller?.seekToNextMediaItem()
 	}
+
 	override fun previous() {
 		resetSleepTimer()
 		val controller = controller ?: return
@@ -453,11 +473,13 @@ class AndroidMediaPlayerViewModel(
 			controller.seekTo(0)
 		}
 	}
+
 	override fun toggleShuffle() {
 		controller?.let { player ->
 			player.shuffleModeEnabled = !player.shuffleModeEnabled
 		}
 	}
+
 	override fun toggleRepeat() {
 		controller?.let { player ->
 			player.repeatMode = when (player.repeatMode) {

@@ -44,13 +44,13 @@ import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.BottomNavigation
-import paige.navic.icons.outlined.Note
-import paige.navic.icons.outlined.Code
-import paige.navic.icons.filled.Palette
-import paige.navic.icons.outlined.ChevronForward
 import paige.navic.icons.filled.Info
+import paige.navic.icons.filled.Palette
 import paige.navic.icons.filled.Play
+import paige.navic.icons.outlined.ChevronForward
+import paige.navic.icons.outlined.Code
 import paige.navic.icons.outlined.DataTable
+import paige.navic.icons.outlined.Note
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar

@@ -1,7 +1,6 @@
 package paige.navic.managers
 
 import android.content.Context
-import android.net.ConnectivityManager as AndroidConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
@@ -15,6 +14,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import android.net.ConnectivityManager as AndroidConnectivityManager
 
 actual class ConnectivityManager(
 	context: Context,

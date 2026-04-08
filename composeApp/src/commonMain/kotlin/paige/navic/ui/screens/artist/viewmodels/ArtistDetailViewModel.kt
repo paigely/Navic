@@ -16,10 +16,10 @@ import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.domain.repositories.DbRepository
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.repositories.DbRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
 import paige.navic.shared.Logger
@@ -60,7 +60,8 @@ class ArtistDetailViewModel(
 					?: throw Exception("Artist not found in database")
 				val domainArtist = artistEntity.toDomainModel()
 
-				val albumsWithSongs = albumDao.getAlbumsByArtist(artistId).firstOrNull() ?: emptyList()
+				val albumsWithSongs =
+					albumDao.getAlbumsByArtist(artistId).firstOrNull() ?: emptyList()
 				val domainAlbums = albumsWithSongs.map { it.toDomainModel() }
 
 				val domainSongs = albumsWithSongs.flatMap { it.songs }
@@ -86,9 +87,10 @@ class ArtistDetailViewModel(
 						val currentState = (_artistState.value as? UiState.Success)?.data
 						if (currentState != null) {
 
-							val updatedSimilarArtists = updatedArtist.similarArtistIds.mapNotNull { id ->
-								artistDao.getArtistById(id)?.toDomainModel()
-							}
+							val updatedSimilarArtists =
+								updatedArtist.similarArtistIds.mapNotNull { id ->
+									artistDao.getArtistById(id)?.toDomainModel()
+								}
 
 							_artistState.value = UiState.Success(
 								currentState.copy(

@@ -92,7 +92,11 @@ fun SongDetailScreen(songId: String) {
 		Column(
 			Modifier
 				.verticalScroll(rememberScrollState())
-				.padding(top = contentPadding.calculateTopPadding() + 12.dp, start = 12.dp, end = 12.dp)
+				.padding(
+					top = contentPadding.calculateTopPadding() + 12.dp,
+					start = 12.dp,
+					end = 12.dp
+				)
 				.fadeFromTop()
 		) {
 			Form {

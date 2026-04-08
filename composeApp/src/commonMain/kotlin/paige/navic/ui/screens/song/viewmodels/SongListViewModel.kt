@@ -17,7 +17,8 @@ class SongListViewModel(
 	private val artistId: String? = null,
 	private val repository: SongRepository
 ) : ViewModel() {
-	private val _songsState = MutableStateFlow<UiState<ImmutableList<DomainSong>>>(UiState.Loading())
+	private val _songsState =
+		MutableStateFlow<UiState<ImmutableList<DomainSong>>>(UiState.Loading())
 	val songsState = _songsState.asStateFlow()
 
 	private val _selectedSong = MutableStateFlow<DomainSong?>(null)
@@ -51,7 +52,12 @@ class SongListViewModel(
 
 	fun refreshSongs(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			repository.getSongsFlow(fullRefresh, _selectedSorting.value, _selectedReversed.value, artistId).collect {
+			repository.getSongsFlow(
+				fullRefresh,
+				_selectedSorting.value,
+				_selectedReversed.value,
+				artistId
+			).collect {
 				_songsState.value = it
 			}
 		}

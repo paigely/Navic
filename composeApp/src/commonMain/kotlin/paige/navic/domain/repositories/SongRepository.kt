@@ -36,7 +36,7 @@ class SongRepository(
 		} else {
 			songs
 		}.toImmutableList().sortedByListType(listType)
-		
+
 		return if (reversed) {
 			filtered.reversed().toImmutableList()
 		} else {

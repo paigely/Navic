@@ -2,22 +2,10 @@ package paige.navic.utils
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import paige.navic.domain.models.DomainPlaylistListType
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
-import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
-
-fun List<DomainPlaylist>.sortedByMode(mode: DomainPlaylistListType, reversed: Boolean): List<DomainPlaylist> {
-	val playlists = when (mode) {
-		DomainPlaylistListType.Name -> sortedBy { it.name.lowercase() }
-		DomainPlaylistListType.DateAdded -> sortedBy { it.createdAt }
-		DomainPlaylistListType.Duration -> sortedBy { it.duration }
-		DomainPlaylistListType.Random -> shuffled()
-	}
-	return if (reversed) playlists.reversed() else playlists
-}
 
 fun ImmutableList<DomainSong>.sortedByListType(listType: DomainSongListType): ImmutableList<DomainSong> {
 	return when (listType) {
@@ -31,12 +19,16 @@ fun List<DomainAlbum>.sortedByListType(listType: DomainAlbumListType): List<Doma
 	return when (listType) {
 		DomainAlbumListType.AlphabeticalByArtist -> this.sortedBy { it.artistName.lowercase() }
 		DomainAlbumListType.AlphabeticalByName -> this.sortedBy { it.name.lowercase() }
-		DomainAlbumListType.Frequent -> this.filter { it.playCount != 0 }.sortedByDescending { it.playCount }
+		DomainAlbumListType.Frequent -> this.filter { it.playCount != 0 }
+			.sortedByDescending { it.playCount }
+
 		DomainAlbumListType.Highest -> this.sortedByDescending { it.userRating }
 		DomainAlbumListType.Newest -> this.sortedByDescending { it.createdAt }
 		DomainAlbumListType.Random -> this.shuffled()
 		DomainAlbumListType.Recent -> this.sortedByDescending { it.lastPlayedAt }
-		DomainAlbumListType.Starred -> this.filter { it.starredAt != null }.sortedBy { it.starredAt }
+		DomainAlbumListType.Starred -> this.filter { it.starredAt != null }
+			.sortedBy { it.starredAt }
+
 		is DomainAlbumListType.ByGenre -> this.filter { it.genre == listType.genre }
 		is DomainAlbumListType.ByYear -> this.filter {
 			(it.year ?: 0) >= listType.fromYear

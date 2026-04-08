@@ -82,7 +82,10 @@ fun ShareListScreen() {
 					else Arrangement.Top
 				) {
 					when (state) {
-						is UiState.Loading -> { return@LazyVerticalGrid }
+						is UiState.Loading -> {
+							return@LazyVerticalGrid
+						}
+
 						is UiState.Error -> artGridError(state)
 						is UiState.Success -> {
 							items(state.data, { it.id }) { share ->

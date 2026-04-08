@@ -9,10 +9,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.utils.UiState
 
@@ -22,7 +22,8 @@ open class AlbumListViewModel(
 	private val repository: AlbumRepository,
 	private val connectivityManager: ConnectivityManager
 ) : ViewModel() {
-	private val _albumsState = MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())
+	private val _albumsState =
+		MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())
 	val albumsState = _albumsState.asStateFlow()
 
 	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
@@ -49,9 +50,10 @@ open class AlbumListViewModel(
 
 	fun refreshAlbums(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			repository.getAlbumsFlow(fullRefresh, _listType.value, _selectedReversed.value).collect {
-				_albumsState.value = it
-			}
+			repository.getAlbumsFlow(fullRefresh, _listType.value, _selectedReversed.value)
+				.collect {
+					_albumsState.value = it
+				}
 		}
 	}
 

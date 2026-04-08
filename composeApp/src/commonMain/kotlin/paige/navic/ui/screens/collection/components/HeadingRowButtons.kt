@@ -119,7 +119,8 @@ fun CollectionDetailScreenHeadingRowButtons(
 			onClick = {
 				ctx.clickSound()
 				if (downloadStatus == DownloadStatus.NOT_DOWNLOADED
-					|| downloadStatus == DownloadStatus.FAILED) {
+					|| downloadStatus == DownloadStatus.FAILED
+				) {
 					scope.launch {
 						downloadManager.downloadCollection(collection)
 					}
@@ -140,6 +141,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 						color = MaterialTheme.colorScheme.primary
 					)
 				}
+
 				DownloadStatus.DOWNLOADED -> {
 					Icon(
 						imageVector = Icons.Outlined.Check,
@@ -148,6 +150,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 						tint = MaterialTheme.colorScheme.primary
 					)
 				}
+
 				DownloadStatus.FAILED -> {
 					Icon(
 						imageVector = Icons.Outlined.DownloadOff,
@@ -156,6 +159,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 						tint = MaterialTheme.colorScheme.error
 					)
 				}
+
 				else -> {
 					Icon(
 						imageVector = Icons.Outlined.Download,

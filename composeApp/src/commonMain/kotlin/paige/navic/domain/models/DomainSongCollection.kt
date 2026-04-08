@@ -14,4 +14,3 @@ sealed interface DomainSongCollection {
 	val songCount: Int
 	val songs: List<DomainSong>
 }
-

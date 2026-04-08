@@ -8,16 +8,17 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.domain.repositories.ArtistRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
+import paige.navic.domain.repositories.ArtistRepository
 import paige.navic.utils.UiState
 
 class ArtistListViewModel(
 	private val repository: ArtistRepository
 ) : ViewModel() {
-	private val _artistsState = MutableStateFlow<UiState<ImmutableList<DomainArtist>>>(UiState.Loading())
+	private val _artistsState =
+		MutableStateFlow<UiState<ImmutableList<DomainArtist>>>(UiState.Loading())
 	val artistsState = _artistsState.asStateFlow()
 
 	private val _starred = MutableStateFlow(false)

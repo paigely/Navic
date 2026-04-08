@@ -16,11 +16,15 @@ private val client = HttpClient {
 }
 
 @Serializable
-data class GitHubRelease(@SerialName("tag_name") val tag: String, @SerialName("html_url") val url: String)
+data class GitHubRelease(
+	@SerialName("tag_name") val tag: String,
+	@SerialName("html_url") val url: String
+)
 
 suspend fun checkForUpdate(currentVersion: String): GitHubRelease? {
 	return try {
-		val release: GitHubRelease = client.get("https://api.github.com/repos/paigely/Navic/releases/latest").body()
+		val release: GitHubRelease =
+			client.get("https://api.github.com/repos/paigely/Navic/releases/latest").body()
 		if (release.tag != currentVersion) release else null
 	} catch (_: Exception) {
 		null

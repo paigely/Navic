@@ -14,8 +14,8 @@ import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.SyncActionEntity
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.models.settings.Settings
-import paige.navic.domain.repositories.DbRepository
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.repositories.DbRepository
 import paige.navic.shared.Logger
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -124,7 +124,10 @@ class SyncManager(
 				}
 
 				syncDao.removeAction(action.id)
-				Logger.i("SyncManager", "Successfully synced ${action.actionType} for ${action.itemId}")
+				Logger.i(
+					"SyncManager",
+					"Successfully synced ${action.actionType} for ${action.itemId}"
+				)
 
 			} catch (e: Exception) {
 				Logger.e("SyncManager", "Network failed. Action left in queue.", e)

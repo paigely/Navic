@@ -8,12 +8,27 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -191,7 +206,10 @@ fun SettingsDataStorageScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_pending_actions))
 							Text(
-								stringResource(Res.string.subtitle_pending_actions, pendingActionCount),
+								stringResource(
+									Res.string.subtitle_pending_actions,
+									pendingActionCount
+								),
 								style = MaterialTheme.typography.bodyMedium,
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
@@ -202,7 +220,11 @@ fun SettingsDataStorageScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_downloaded_songs))
 							Text(
-								pluralStringResource(Res.plurals.count_songs, downloadCount, downloadCount)
+								pluralStringResource(
+									Res.plurals.count_songs,
+									downloadCount,
+									downloadCount
+								)
 									+ downloadsSizeMb,
 								style = MaterialTheme.typography.bodyMedium,
 								color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -273,7 +295,7 @@ fun SettingsDataStorageScreen() {
 	}
 }
 
-fun Instant.toRelativeString(
+private fun Instant.toRelativeString(
 	justNow: String,
 	minsAgo: String,
 	hoursAgo: String,

@@ -44,7 +44,8 @@ class DownloadManager(
 	private val client: HttpClient = HttpClient()
 ) {
 	private val activeDownloads = mutableMapOf<String, Job>()
-	private val downloadSemaphore = Semaphore(10)// idk a good number, maybe u should be able to choose
+	private val downloadSemaphore =
+		Semaphore(10)// idk a good number, maybe u should be able to choose
 
 	val allDownloads = downloadDao.getAllDownloads()
 	val downloadCount = downloadDao.getDownloadsCount()
@@ -94,7 +95,8 @@ class DownloadManager(
 		scope.launch {
 			val existing = downloadDao.getDownloadById(songId)
 			if (existing?.status == DownloadStatus.DOWNLOADING
-				|| existing?.status == DownloadStatus.FAILED) {
+				|| existing?.status == DownloadStatus.FAILED
+			) {
 				downloadDao.deleteDownload(songId)
 			}
 		}
@@ -123,6 +125,7 @@ class DownloadManager(
 				(collectionDownloads.size == songIds.size &&
 					collectionDownloads.all { it.status == DownloadStatus.DOWNLOADED })
 					-> DownloadStatus.DOWNLOADED
+
 				else -> DownloadStatus.NOT_DOWNLOADED
 			}
 		}
@@ -183,7 +186,13 @@ class DownloadManager(
 		try {
 			val lyricsResult = lyricRepository.fetchLyrics(song)
 			if (lyricsResult != null && lyricsResult.rawContent != null) {
-				lyricDao.insertLyrics(LyricEntity(song.id, lyricsResult.rawContent, lyricsResult.provider))
+				lyricDao.insertLyrics(
+					LyricEntity(
+						song.id,
+						lyricsResult.rawContent,
+						lyricsResult.provider
+					)
+				)
 				Logger.i("DownloadManager", "cached lyrics for ${song.id}")
 			}
 		} catch (e: Exception) {
@@ -203,7 +212,11 @@ class DownloadManager(
 						lastProgress = progress
 						Logger.i("DownloadManager", "downloading ${song.id} $progress")
 						scope.launch {
-							downloadDao.updateProgress(song.id, DownloadStatus.DOWNLOADING, progress)
+							downloadDao.updateProgress(
+								song.id,
+								DownloadStatus.DOWNLOADING,
+								progress
+							)
 						}
 					}
 				} else {

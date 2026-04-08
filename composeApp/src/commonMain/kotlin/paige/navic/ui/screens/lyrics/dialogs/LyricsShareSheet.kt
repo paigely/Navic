@@ -293,7 +293,7 @@ fun LyricsShareSheet(
 								bitmap = bmp,
 								fileName = "lyrics.png"
 							)
-						} catch(e: Exception) {
+						} catch (e: Exception) {
 							snackbarState.showSnackbar(e.message ?: "Something went wrong.")
 						} finally {
 							onShare()
@@ -312,7 +312,10 @@ fun LyricsShareSheet(
 			) {
 				Icon(Icons.Outlined.Share, null)
 				Spacer(modifier = Modifier.size(8.dp))
-				Text(stringResource(Res.string.action_share_lyrics), style = MaterialTheme.typography.titleMedium)
+				Text(
+					stringResource(Res.string.action_share_lyrics),
+					style = MaterialTheme.typography.titleMedium
+				)
 			}
 		}
 	}
@@ -332,7 +335,11 @@ fun ColorCircle(
 			.background(color)
 			.clickable { onClick() }
 			.then(
-				if (isSelected) Modifier.border(3.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+				if (isSelected) Modifier.border(
+					3.dp,
+					MaterialTheme.colorScheme.onSurface,
+					CircleShape
+				)
 				else Modifier.border(1.dp, Color.White.copy(alpha = 0.1f), CircleShape)
 			),
 		contentAlignment = Alignment.Center
@@ -343,7 +350,7 @@ fun ColorCircle(
 				contentDescription = null,
 				tint = if (calculateLuminance(color.toArgb()) > 0.5) Color.Black else Color.White
 			)
-		} else if (isPicker){
+		} else if (isPicker) {
 			Icon(
 				imageVector = Icons.Outlined.Picker,
 				contentDescription = null,

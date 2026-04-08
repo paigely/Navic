@@ -40,14 +40,15 @@ class DbRepository(
 	private val api: SubsonicClient get() = SessionManager.api
 	private val concurrentRequestLimit = Semaphore(20)
 
-	private suspend fun <T> runDbOp(block: suspend () -> T): Result<T> = withContext(Dispatchers.IO) {
-		try {
-			Result.success(block())
-		} catch (e: Exception) {
-			if (e is CancellationException) throw e
-			Result.failure(e)
+	private suspend fun <T> runDbOp(block: suspend () -> T): Result<T> =
+		withContext(Dispatchers.IO) {
+			try {
+				Result.success(block())
+			} catch (e: Exception) {
+				if (e is CancellationException) throw e
+				Result.failure(e)
+			}
 		}
-	}
 
 	suspend fun removeEverything(): Result<Unit> = runDbOp {
 		albumDao.clearAllAlbums()
@@ -147,7 +148,10 @@ class DbRepository(
 		songDao.updateAllSongs(songEntities)
 
 		if (songEntities.isNotEmpty() || albumEntities.isNotEmpty()) {
-			Logger.i("DbRepository", "- Songs Synced: ${albumEntities.size} albums, ${songEntities.size} songs")
+			Logger.i(
+				"DbRepository",
+				"- Songs Synced: ${albumEntities.size} albums, ${songEntities.size} songs"
+			)
 		}
 
 		onProgress(1.0f, "Library saved.")

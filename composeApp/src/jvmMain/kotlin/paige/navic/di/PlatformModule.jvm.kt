@@ -38,6 +38,7 @@ actual val platformModule = module {
 						File(home, ".config/navic")
 					}
 				}
+
 				os.contains("mac") -> File(home, "Library/Application Support/Navic")
 				os.contains("win") -> File(System.getenv("AppData"), "Navic")
 				else -> File(home, ".navic")

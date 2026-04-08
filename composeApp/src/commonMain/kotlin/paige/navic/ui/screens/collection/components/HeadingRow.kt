@@ -36,8 +36,8 @@ import paige.navic.ui.theme.defaultFont
 @Composable
 fun CollectionDetailScreenHeadingRow(
 	collection: DomainSongCollection,
-    tab: String,
-    scrolled: Boolean
+	tab: String,
+	scrolled: Boolean
 ) {
 	val backStack = LocalNavStack.current
 	val progress by animateFloatAsState(if (scrolled) 0f else 1f)

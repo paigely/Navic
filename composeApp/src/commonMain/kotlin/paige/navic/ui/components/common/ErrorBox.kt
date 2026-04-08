@@ -33,7 +33,7 @@ import paige.navic.utils.UiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun <T>ErrorBox(
+fun <T> ErrorBox(
 	error: UiState.Error<T>,
 	padding: PaddingValues = PaddingValues(12.dp),
 	onRetry: (() -> Unit)? = null,

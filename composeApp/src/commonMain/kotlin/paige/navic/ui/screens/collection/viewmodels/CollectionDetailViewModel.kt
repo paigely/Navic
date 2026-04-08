@@ -13,14 +13,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.domain.models.DomainSongCollection
-import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.data.session.SessionManager
-import paige.navic.managers.DownloadManager
-import paige.navic.managers.ConnectivityManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.repositories.CollectionRepository
+import paige.navic.managers.ConnectivityManager
+import paige.navic.managers.DownloadManager
 import paige.navic.shared.Logger
 import paige.navic.utils.UiState
 
@@ -99,7 +99,7 @@ class CollectionDetailViewModel(
 			try {
 				val isStarred = repository.isSongStarred(song.id)
 				_starredState.value = UiState.Success(isStarred)
-			} catch(e: Exception) {
+			} catch (e: Exception) {
 				_starredState.value = UiState.Error(e)
 			}
 		}
@@ -125,7 +125,7 @@ class CollectionDetailViewModel(
 					songIndicesToRemove = listOf(songs.indexOf(song))
 				)
 				refreshCollection(true)
-			} catch(e: Exception) {
+			} catch (e: Exception) {
 				Logger.e("CollectionDetailViewModel", "Failed to remove song from playlist", e)
 			}
 		}
@@ -136,7 +136,7 @@ class CollectionDetailViewModel(
 		viewModelScope.launch {
 			try {
 				repository.starSong(_selectedSong.value!!)
-			} catch(e: Exception) {
+			} catch (e: Exception) {
 				Logger.e("CollectionDetailViewModel", "Failed to star song", e)
 			}
 		}
@@ -146,7 +146,7 @@ class CollectionDetailViewModel(
 		viewModelScope.launch {
 			try {
 				repository.unstarSong(_selectedSong.value!!)
-			} catch(e: Exception) {
+			} catch (e: Exception) {
 				Logger.e("CollectionDetailViewModel", "Failed to unstar song", e)
 			}
 		}

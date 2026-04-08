@@ -29,7 +29,6 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.ui.components.common.ErrorSnackbar
-import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.RootBottomBar
@@ -37,6 +36,7 @@ import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.screens.album.components.AlbumListScreenSortButton
 import paige.navic.ui.screens.album.components.albumListScreenContent
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
+import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop

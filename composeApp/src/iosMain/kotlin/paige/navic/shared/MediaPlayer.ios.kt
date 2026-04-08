@@ -5,10 +5,10 @@ package paige.navic.shared
 import androidx.lifecycle.viewModelScope
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
-import paige.navic.domain.repositories.CollectionRepository
-import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
@@ -53,10 +53,10 @@ import platform.MediaPlayer.MPRemoteCommandHandlerStatusSuccess
 import platform.UIKit.UIImage
 
 class IOSMediaPlayerViewModel(
-    stateRepository: PlayerStateRepository,
+	stateRepository: PlayerStateRepository,
 	collectionRepository: CollectionRepository,
-    downloadManager: DownloadManager,
-    connectivityManager: ConnectivityManager
+	downloadManager: DownloadManager,
+	connectivityManager: ConnectivityManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
 	collectionRepository = collectionRepository,
@@ -201,7 +201,10 @@ class IOSMediaPlayerViewModel(
 			}
 			val newIndex = when {
 				index < state.currentIndex -> state.currentIndex - 1
-				index == state.currentIndex -> if (newQueue.isEmpty()) -1 else state.currentIndex.coerceAtMost(newQueue.size - 1)
+				index == state.currentIndex -> if (newQueue.isEmpty()) -1 else state.currentIndex.coerceAtMost(
+					newQueue.size - 1
+				)
+
 				else -> state.currentIndex
 			}
 			state.copy(

@@ -41,10 +41,12 @@ fun SettingsAboutScreen() {
 	val ctx = LocalCtx.current
 	val hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 	Scaffold(
-		topBar = { NestedTopBar(
-			{ Text(stringResource(Res.string.title_about)) },
-			hideBack = hideBack
-		) }
+		topBar = {
+			NestedTopBar(
+				{ Text(stringResource(Res.string.title_about)) },
+				hideBack = hideBack
+			)
+		}
 	) { innerPadding ->
 		Column(
 			Modifier

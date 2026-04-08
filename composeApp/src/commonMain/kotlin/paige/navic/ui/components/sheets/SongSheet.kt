@@ -39,6 +39,7 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
+import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Download
@@ -47,7 +48,6 @@ import paige.navic.icons.outlined.Info
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Queue
-import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.CoverArt
@@ -156,6 +156,7 @@ fun SongSheet(
 							)
 						}
 					}
+
 					DownloadStatus.DOWNLOADED -> {
 						FormRow(
 							onClick = {
@@ -170,6 +171,7 @@ fun SongSheet(
 							)
 						}
 					}
+
 					DownloadStatus.FAILED -> {
 						FormRow(
 							onClick = {
@@ -177,7 +179,11 @@ fun SongSheet(
 								onDismissRequest()
 							}
 						) {
-							Icon(Icons.Outlined.DownloadOff, null, tint = MaterialTheme.colorScheme.error)
+							Icon(
+								Icons.Outlined.DownloadOff,
+								null,
+								tint = MaterialTheme.colorScheme.error
+							)
 							Column(modifier = Modifier.padding(start = 12.dp).weight(1f)) {
 								Text(
 									text = stringResource(Res.string.info_download_failed),
@@ -191,6 +197,7 @@ fun SongSheet(
 							}
 						}
 					}
+
 					else -> {
 						FormRow(
 							onClick = {

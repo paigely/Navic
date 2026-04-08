@@ -1,11 +1,11 @@
 package paige.navic.data.database.mappers
 
-import dev.zt64.subsonic.api.model.AlbumInfo as ApiAlbumInfo
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.relations.AlbumWithSongs
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
 import dev.zt64.subsonic.api.model.Album as ApiAlbum
+import dev.zt64.subsonic.api.model.AlbumInfo as ApiAlbumInfo
 
 fun ApiAlbum.toEntity() = AlbumEntity(
 	albumId = this.id,

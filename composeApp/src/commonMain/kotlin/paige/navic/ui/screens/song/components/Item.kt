@@ -27,12 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_add_to_queue
-import navic.composeapp.generated.resources.action_remove_star
-import navic.composeapp.generated.resources.action_share
-import navic.composeapp.generated.resources.action_star
-import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_year
 import org.jetbrains.compose.resources.stringResource
@@ -41,12 +36,7 @@ import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
-import paige.navic.icons.filled.Star
-import paige.navic.icons.outlined.Info
-import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.Queue
-import paige.navic.icons.outlined.Share
-import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog

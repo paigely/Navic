@@ -159,7 +159,8 @@ fun LyricsScreen(
 					val lyrics = uiState.data?.lines
 					val provider = uiState.data?.provider
 					val maxSelectionChars = 150
-					fun totalSelectedChars(): Int = selectedIndices.sumOf { lyrics?.getOrNull(it)?.text?.length ?: 0 }
+					fun totalSelectedChars(): Int =
+						selectedIndices.sumOf { lyrics?.getOrNull(it)?.text?.length ?: 0 }
 
 					if (!lyrics.isNullOrEmpty()) {
 						val activeIndex = lyrics.indexOfLast { line ->
@@ -218,14 +219,16 @@ fun LyricsScreen(
 								val lineTime = line.time ?: 0.milliseconds
 								val preEmphasis = 200.milliseconds
 								val nextTime = lyrics.getOrNull(index + 1)?.time ?: duration
-								val lineDuration = (nextTime - lineTime).coerceAtLeast(1.milliseconds)
+								val lineDuration =
+									(nextTime - lineTime).coerceAtLeast(1.milliseconds)
 								val effectiveStart = lineTime - preEmphasis
 								val effectiveDuration = lineDuration + preEmphasis
 
 								val lineProgress = when {
 									currentDuration < effectiveStart -> 0f
 									currentDuration >= effectiveStart + effectiveDuration -> 1f
-									else -> ((currentDuration - effectiveStart) / effectiveDuration).toFloat().coerceIn(0f, 1f)
+									else -> ((currentDuration - effectiveStart) / effectiveDuration).toFloat()
+										.coerceIn(0f, 1f)
 								}
 
 								val padding by animateDpAsState(
@@ -235,7 +238,7 @@ fun LyricsScreen(
 
 								val targetColor = if (isSelected)
 									MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-									else Color.Transparent
+								else Color.Transparent
 								val animatedColor by animateColorAsState(
 									targetColor
 								)
@@ -266,7 +269,9 @@ fun LyricsScreen(
 										if (isSelectionMode) {
 											if (selectedIndices.isEmpty()) {
 												val chars = line.text.length
-												if (chars <= maxSelectionChars) selectedIndices.add(index)
+												if (chars <= maxSelectionChars) selectedIndices.add(
+													index
+												)
 											} else {
 												if (selectedIndices.contains(index)) {
 													if (index == selectedIndices.first() || index == selectedIndices.last()) {
@@ -276,9 +281,12 @@ fun LyricsScreen(
 														selectedIndices.add(index)
 													}
 												} else {
-													val minIndex = selectedIndices.minOrNull() ?: index
-													val maxIndex = selectedIndices.maxOrNull() ?: index
-													val newChars = totalSelectedChars() + line.text.length
+													val minIndex =
+														selectedIndices.minOrNull() ?: index
+													val maxIndex =
+														selectedIndices.maxOrNull() ?: index
+													val newChars =
+														totalSelectedChars() + line.text.length
 													if (newChars <= maxSelectionChars) {
 														if (index == minIndex - 1 || index == maxIndex + 1) {
 															selectedIndices.add(index)

@@ -1,36 +1,36 @@
 {
-  "name": "Navic Repository",
-  "identifier": "paige.navic.repo",
-  "website": "https://github.com/paigely/Navic",
-  "iconURL": "https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/icons/ios.png",
-  "apps": [
-    {
-      "name": "Navic",
-      "bundleIdentifier": "paige.Navic",
-      "developerName": "Paige",
-      "localizedDescription": "Navidrome client for Android and iOS with Material 3 Expressive design ",
-      "subtitle": "Material 3 expressive Navidrome client",
-      "tintColor": "ffffff",
-      "iconURL": "https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/icons/ios.png",
-      "versions": [
-        {
-          "version": "v1.0.0-alpha29",
-          "date": "2026-03-24T19:35:49Z",
-          "size": 18818413,
-          "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha29/Navic.ipa"
-        }
-      ],
-      "appPermissions": {},
-      "screenshotURLs": [
-        "https://github.com/NavicApp/Branding/blob/main/screenshots/albums.png?raw=true",
-        "https://github.com/NavicApp/Branding/blob/main/screenshots/library.png?raw=true",
-        "https://github.com/NavicApp/Branding/blob/main/screenshots/lyrics.png?raw=true",
-        "https://github.com/NavicApp/Branding/blob/main/screenshots/player.png?raw=true"
-      ],
-      "version": "v1.0.0-alpha29",
-      "versionDate": "2026-03-24T19:35:49Z",
-      "size": 18818413,
-      "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha29/Navic.ipa"
-    }
-  ]
+	"name": "Navic Repository",
+	"identifier": "paige.navic.repo",
+	"website": "https://github.com/paigely/Navic",
+	"iconURL": "https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/icons/ios.png",
+	"apps": [
+		{
+			"name": "Navic",
+			"bundleIdentifier": "paige.Navic",
+			"developerName": "Paige",
+			"localizedDescription": "Navidrome client for Android and iOS with Material 3 Expressive design ",
+			"subtitle": "Material 3 expressive Navidrome client",
+			"tintColor": "ffffff",
+			"iconURL": "https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/icons/ios.png",
+			"versions": [
+				{
+					"version": "v1.0.0-alpha29",
+					"date": "2026-03-24T19:35:49Z",
+					"size": 18818413,
+					"downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha29/Navic.ipa"
+				}
+			],
+			"appPermissions": {},
+			"screenshotURLs": [
+				"https://github.com/NavicApp/Branding/blob/main/screenshots/albums.png?raw=true",
+				"https://github.com/NavicApp/Branding/blob/main/screenshots/library.png?raw=true",
+				"https://github.com/NavicApp/Branding/blob/main/screenshots/lyrics.png?raw=true",
+				"https://github.com/NavicApp/Branding/blob/main/screenshots/player.png?raw=true"
+			],
+			"version": "v1.0.0-alpha29",
+			"versionDate": "2026-03-24T19:35:49Z",
+			"size": 18818413,
+			"downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha29/Navic.ipa"
+		}
+	]
 }

@@ -24,7 +24,7 @@ import paige.navic.data.models.settings.Settings
 fun SideloadingDialog() {
 	val ctx = LocalCtx.current
 	AlertDialog(
-		title = { Text(stringResource(Res.string.sideloading_warning_title))  },
+		title = { Text(stringResource(Res.string.sideloading_warning_title)) },
 		text = {
 			Column {
 				Text(

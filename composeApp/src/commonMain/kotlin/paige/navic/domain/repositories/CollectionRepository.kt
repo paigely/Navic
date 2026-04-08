@@ -14,11 +14,11 @@ import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
-import paige.navic.domain.models.DomainSongCollection
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.utils.UiState
 import kotlin.time.Clock
 
@@ -43,6 +43,7 @@ class CollectionRepository(
 				albumDao.insertAlbum(album.toEntity())
 				albumDao.getAlbumById(album.id)!!.toDomainModel()
 			}
+
 			is DomainPlaylist -> {
 				val playlist = SessionManager.api.getPlaylist(collection.id)
 				playlistDao.insertPlaylist(playlist.toEntity())

@@ -82,7 +82,8 @@ private fun Marquee(
 				drawContent()
 
 				val startFadeAlpha = (scrollState.value / edgeWidthPx).coerceIn(0f, 1f)
-				val endFadeAlpha = ((scrollState.maxValue - scrollState.value) / edgeWidthPx).coerceIn(0f, 1f)
+				val endFadeAlpha =
+					((scrollState.maxValue - scrollState.value) / edgeWidthPx).coerceIn(0f, 1f)
 
 				if (startFadeAlpha > 0f) {
 					drawFadingEdge(

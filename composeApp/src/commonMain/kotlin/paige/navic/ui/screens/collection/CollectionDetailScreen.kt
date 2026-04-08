@@ -20,7 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.info_no_tracks
+import navic.composeapp.generated.resources.info_no_songs
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -33,16 +33,16 @@ import paige.navic.icons.outlined.Note
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.ErrorSnackbar
-import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.components.layouts.RootBottomBar
-import paige.navic.ui.screens.collection.components.CollectionDetailScreenSongRowDropdown
 import paige.navic.ui.screens.collection.components.CollectionDetailScreenFooterRow
 import paige.navic.ui.screens.collection.components.CollectionDetailScreenHeadingRow
 import paige.navic.ui.screens.collection.components.CollectionDetailScreenHeadingRowButtons
-import paige.navic.ui.screens.collection.components.CollectionDetailScreenTopBar
 import paige.navic.ui.screens.collection.components.CollectionDetailScreenSongRow
+import paige.navic.ui.screens.collection.components.CollectionDetailScreenSongRowDropdown
+import paige.navic.ui.screens.collection.components.CollectionDetailScreenTopBar
 import paige.navic.ui.screens.collection.components.collectionDetailScreenMoreByArtistRow
 import paige.navic.ui.screens.collection.viewmodels.CollectionDetailViewModel
+import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 import paige.navic.utils.fadeFromTop
@@ -181,7 +181,7 @@ fun CollectionDetailScreen(
 					item {
 						ContentUnavailable(
 							icon = Icons.Outlined.Note,
-							label = stringResource(Res.string.info_no_tracks)
+							label = stringResource(Res.string.info_no_songs)
 						)
 					}
 				}

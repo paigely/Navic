@@ -39,7 +39,8 @@ class PlaylistUpdateDialogViewModel(
 			try {
 				val results =
 					SessionManager.api.getPlaylists()
-				_playlistsState.value = UiState.Success(results.filter { it.id != playlistToExclude })
+				_playlistsState.value =
+					UiState.Success(results.filter { it.id != playlistToExclude })
 			} catch (e: Exception) {
 				_playlistsState.value = UiState.Error(e)
 			}

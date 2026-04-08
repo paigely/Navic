@@ -20,9 +20,7 @@ class BottomBarScrollManager(val thresholdPx: Float) {
 			if (accumulator < -thresholdPx && !isTriggered) {
 				isTriggered = true
 				accumulator = 0f
-			}
-
-			else if (accumulator > thresholdPx && isTriggered) {
+			} else if (accumulator > thresholdPx && isTriggered) {
 				isTriggered = false
 				accumulator = 0f
 			}
@@ -34,6 +32,7 @@ class BottomBarScrollManager(val thresholdPx: Float) {
 		}
 	}
 }
+
 val LocalBottomBarScrollManager = staticCompositionLocalOf<BottomBarScrollManager> {
 	error("No BottomBarScrollManager provided")
 }

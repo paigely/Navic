@@ -27,7 +27,8 @@ fun RootBottomBar(
 	hideMiniPlayer: Boolean = false,
 	bottomBarWindowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
 ) {
-	val scrolled = scrolled && Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.OnScroll
+	val scrolled =
+		scrolled && Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.OnScroll
 	val progress by animateFloatAsState(
 		targetValue = if (scrolled) 0f else 1f,
 		animationSpec = spring(
@@ -40,11 +41,13 @@ fun RootBottomBar(
 		animationSpec = tween(durationMillis = 600)
 	)
 	Column(
-		modifier = modifier.then(if (Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached)
-			Modifier.background(
-				Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress))
-			)
-		else Modifier)
+		modifier = modifier.then(
+			if (Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached)
+				Modifier.background(
+					Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress))
+				)
+			else Modifier
+		)
 	) {
 		if (!hideMiniPlayer) MiniPlayer(
 			modifier = Modifier.graphicsLayer {
@@ -62,7 +65,7 @@ fun RootBottomBar(
 			windowInsets = bottomBarWindowInsets,
 			modifier = Modifier.graphicsLayer {
 				alpha = progress.coerceIn(0f..1f)
-				translationY =((1f - progress) * size.height).coerceAtLeast(
+				translationY = ((1f - progress) * size.height).coerceAtLeast(
 					if (Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
 				)
 			},

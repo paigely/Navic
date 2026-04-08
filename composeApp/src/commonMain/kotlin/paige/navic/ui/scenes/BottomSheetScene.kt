@@ -84,6 +84,7 @@ import paige.navic.icons.outlined.Lyrics
 import paige.navic.icons.outlined.Queue
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.TopBarButton
+import paige.navic.ui.scenes.BottomSheetSceneStrategy.Companion.bottomSheet
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.ui.theme.defaultFont
 
@@ -142,22 +143,25 @@ internal class BottomSheetScene<T : Any>(
 					Row(
 						modifier = Modifier
 							.fillMaxWidth()
-							.then(if (Settings.shared.nowPlayingToolbarPosition
-								== ToolbarPosition.Top || screenType !== "player") {
-								Modifier.padding(
-									top = WindowInsets.statusBars
-										.asPaddingValues().calculateTopPadding() + 18.dp,
-									start = 20.dp, end = 24.dp
-								)
-							} else {
-								Modifier.padding(
-									bottom = WindowInsets.navigationBars
-										.asPaddingValues().calculateBottomPadding() + 26.dp,
-									start = 20.dp,
-									end = 24.dp,
-									top = 20.dp
-								).align(Alignment.BottomCenter)
-							}),
+							.then(
+								if (Settings.shared.nowPlayingToolbarPosition
+									== ToolbarPosition.Top || screenType !== "player"
+								) {
+									Modifier.padding(
+										top = WindowInsets.statusBars
+											.asPaddingValues().calculateTopPadding() + 18.dp,
+										start = 20.dp, end = 24.dp
+									)
+								} else {
+									Modifier.padding(
+										bottom = WindowInsets.navigationBars
+											.asPaddingValues().calculateBottomPadding() + 26.dp,
+										start = 20.dp,
+										end = 24.dp,
+										top = 20.dp
+									).align(Alignment.BottomCenter)
+								}
+							),
 						horizontalArrangement = Arrangement.spacedBy(12.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {

@@ -10,8 +10,8 @@ import paige.navic.domain.repositories.LyricsConfig
 import paige.navic.utils.UiState
 
 class LyricsPriorityViewModel(
-    private val settings: Settings = Settings(),
-    private val json: Json = Json.Default
+	private val settings: Settings = Settings(),
+	private val json: Json = Json.Default
 ) : ViewModel() {
 	private val _state = MutableStateFlow<UiState<LyricsConfig>>(UiState.Loading())
 	val state = _state.asStateFlow()
@@ -30,7 +30,7 @@ class LyricsPriorityViewModel(
 			val config: LyricsConfig = if (raw != null) {
 				json.decodeFromString(raw)
 			} else {
-                LyricsConfig()
+				LyricsConfig()
 			}
 			_state.value = UiState.Success(config)
 		} catch (e: Exception) {

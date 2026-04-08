@@ -157,6 +157,7 @@ fun ArtGridPlaceholder(
 		)
 	}
 }
+
 fun LazyGridScope.artGridPlaceholder(
 	itemCount: Int = 8
 ) {
@@ -165,7 +166,7 @@ fun LazyGridScope.artGridPlaceholder(
 	}
 }
 
-fun <T>LazyGridScope.artGridError(
+fun <T> LazyGridScope.artGridError(
 	state: UiState.Error<T>
 ) {
 	item(span = { GridItemSpan(maxLineSpan) }) {

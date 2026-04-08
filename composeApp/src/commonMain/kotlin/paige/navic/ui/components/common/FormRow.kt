@@ -58,9 +58,11 @@ fun FormRow(
 						}
 				else Modifier
 			)
-			.clip(ContinuousRoundedRectangle(
-				if (Settings.shared.theme.isMaterialLike()) rounding else 0.dp
-			))
+			.clip(
+				ContinuousRoundedRectangle(
+					if (Settings.shared.theme.isMaterialLike()) rounding else 0.dp
+				)
+			)
 			.background(color ?: MaterialTheme.colorScheme.surfaceContainer)
 			.fillMaxWidth()
 			.indication(interactionSource, ripple())

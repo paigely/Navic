@@ -342,7 +342,8 @@ fun MiniPlayer(
 				enabled = enabled
 			)
 			if (Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Visible
-				|| Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable) {
+				|| Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
+			) {
 				var dragging by remember { mutableStateOf(false) }
 				val alpha by animateFloatAsState(
 					if (dragging) 1f else .7f
@@ -359,10 +360,12 @@ fun MiniPlayer(
 					contentAlignment = alignment
 				) {
 					if (!detached) {
-						Box(Modifier
-							.background(MaterialTheme.colorScheme.surfaceBright)
-							.fillMaxWidth()
-							.height(3.dp))
+						Box(
+							Modifier
+								.background(MaterialTheme.colorScheme.surfaceBright)
+								.fillMaxWidth()
+								.height(3.dp)
+						)
 					}
 					Box(
 						Modifier
@@ -377,7 +380,8 @@ fun MiniPlayer(
 							.then(
 								if (song != null
 									&& Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
-									&& isInteractive)
+									&& isInteractive
+								)
 									Modifier.pointerInput(Unit) {
 										detectDragGestures(
 											onDragStart = {

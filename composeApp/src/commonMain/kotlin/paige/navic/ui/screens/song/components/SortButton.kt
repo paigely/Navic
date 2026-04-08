@@ -47,7 +47,7 @@ fun SongListScreenSortButton(
 	if (expanded) {
 		SortSheet(
 			entries = entries,
-			onDismissRequest =  { expanded = false },
+			onDismissRequest = { expanded = false },
 			selectedSorting = selectedSorting,
 			onSetSorting = onSetSorting,
 			selectedReversed = selectedReversed,

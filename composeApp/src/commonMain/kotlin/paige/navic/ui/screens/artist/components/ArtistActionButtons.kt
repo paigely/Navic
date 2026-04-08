@@ -66,7 +66,10 @@ fun ArtistActionButtons(
 				},
 			contentAlignment = Alignment.Center
 		) {
-			Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+			Row(
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.spacedBy(8.dp)
+			) {
 				Icon(Icons.Filled.Play, null, tint = MaterialTheme.colorScheme.onPrimary)
 				Text(
 					stringResource(Res.string.action_play),
@@ -102,6 +105,7 @@ fun ArtistActionButtons(
 						color = MaterialTheme.colorScheme.primary
 					)
 				}
+
 				DownloadStatus.DOWNLOADED -> {
 					Icon(
 						imageVector = Icons.Outlined.Check,
@@ -110,6 +114,7 @@ fun ArtistActionButtons(
 						tint = MaterialTheme.colorScheme.primary
 					)
 				}
+
 				DownloadStatus.FAILED -> {
 					Icon(
 						imageVector = Icons.Outlined.DownloadOff,
@@ -118,6 +123,7 @@ fun ArtistActionButtons(
 						tint = MaterialTheme.colorScheme.error
 					)
 				}
+
 				else -> {
 					Icon(
 						imageVector = Icons.Outlined.Download,

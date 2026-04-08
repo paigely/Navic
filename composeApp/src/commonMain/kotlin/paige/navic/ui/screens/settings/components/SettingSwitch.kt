@@ -41,7 +41,10 @@ fun SettingSwitch(
 					modifier = Modifier.size(SwitchDefaults.IconSize)
 				)
 			} else {
-				Box(Modifier.size(24.dp).shadow(3.dp, CircleShape).background(Color.White, CircleShape))
+				Box(
+					Modifier.size(24.dp).shadow(3.dp, CircleShape)
+						.background(Color.White, CircleShape)
+				)
 			}
 		}
 	)

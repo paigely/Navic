@@ -33,7 +33,7 @@ import paige.navic.LocalCtx
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T>SortSheet(
+fun <T> SortSheet(
 	entries: ImmutableList<T>,
 	selectedSorting: T,
 	selectedReversed: Boolean,

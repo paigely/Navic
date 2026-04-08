@@ -75,18 +75,18 @@ import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
-import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.components.layouts.horizontalSection
+import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.screens.album.components.AlbumListScreenItem
+import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.ui.screens.artist.ArtistsScreenItem
+import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.ui.screens.search.components.SearchScreenChips
 import paige.navic.ui.screens.search.components.SearchScreenTopBar
 import paige.navic.ui.screens.search.viewmodels.SearchViewModel
-import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
-import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 
@@ -293,7 +293,10 @@ fun SearchScreen(
 														}
 													},
 													isOnline = isOnline,
-													downloadStatus = if (downloadedSongs.containsKey(song.id)) DownloadStatus.DOWNLOADED else null,
+													downloadStatus = if (downloadedSongs.containsKey(
+															song.id
+														)
+													) DownloadStatus.DOWNLOADED else null,
 													onTrackInfo = {
 														backStack.add(Screen.SongDetail(song.id))
 													},
@@ -362,10 +365,15 @@ fun SearchScreen(
 										text = stringResource(Res.string.action_search_history),
 										style = MaterialTheme.typography.titleMedium,
 										color = MaterialTheme.colorScheme.primary,
-										modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+										modifier = Modifier.padding(
+											horizontal = 20.dp,
+											vertical = 12.dp
+										)
 									)
 								}
-								items(searchHistory.size, span = { GridItemSpan(maxLineSpan) }) { index ->
+								items(
+									searchHistory.size,
+									span = { GridItemSpan(maxLineSpan) }) { index ->
 									val historyItem = searchHistory[index]
 									ListItem(
 										modifier = Modifier.clickable {

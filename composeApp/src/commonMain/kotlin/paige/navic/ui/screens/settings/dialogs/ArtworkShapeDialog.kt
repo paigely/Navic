@@ -75,10 +75,11 @@ fun ArtworkShapeDialog(
 							onClick = null
 						)
 						val shape = ContinuousRoundedRectangle(radius.dp / 2)
-						Box(modifier = Modifier
-							.size(48.dp)
-							.background(MaterialTheme.colorScheme.primaryContainer, shape)
-							.border(2.dp, MaterialTheme.colorScheme.primary, shape)
+						Box(
+							modifier = Modifier
+								.size(48.dp)
+								.background(MaterialTheme.colorScheme.primaryContainer, shape)
+								.border(2.dp, MaterialTheme.colorScheme.primary, shape)
 						)
 						Text(text = name)
 					}

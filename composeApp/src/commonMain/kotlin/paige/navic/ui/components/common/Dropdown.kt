@@ -39,12 +39,12 @@ fun Dropdown(
 		shadowElevation = 0.dp,
 		modifier = modifier.widthIn(200.dp)
 	) {
-        Form(
-            rounding = 20.dp,
-            spacing = 2.5.dp
-        ) {
-            content()
-        }
+		Form(
+			rounding = 20.dp,
+			spacing = 2.5.dp
+		) {
+			content()
+		}
 	}
 }
 

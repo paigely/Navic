@@ -37,7 +37,11 @@ class PlaylistCreateDialogViewModel(
 					songIds = songs.map { it.id }
 				)
 				playlistDao.insertPlaylist(playlist.toEntity())
-				_events.send(Event.Dismiss(playlistDao.getPlaylistById(playlist.id)!!.toDomainModel()))
+				_events.send(
+					Event.Dismiss(
+						playlistDao.getPlaylistById(playlist.id)!!.toDomainModel()
+					)
+				)
 				_creationState.value = UiState.Success(null)
 			} catch (e: Exception) {
 				_creationState.value = UiState.Error(e)

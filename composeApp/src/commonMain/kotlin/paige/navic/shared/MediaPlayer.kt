@@ -13,12 +13,12 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import paige.navic.domain.models.DomainSong
-import paige.navic.domain.models.DomainSongCollection
 import kotlinx.serialization.json.decodeFromJsonElement
 import paige.navic.data.models.settings.Settings
-import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.CollectionRepository
+import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
 import kotlin.time.Clock
@@ -78,8 +78,8 @@ abstract class MediaPlayerViewModel(
 		}
 	}
 
-	abstract  fun addToQueueSingle(song: DomainSong)
-	abstract  fun addToQueue(collection: DomainSongCollection)
+	abstract fun addToQueueSingle(song: DomainSong)
+	abstract fun addToQueue(collection: DomainSongCollection)
 	abstract fun removeFromQueue(index: Int)
 	abstract fun moveQueueItem(fromIndex: Int, toIndex: Int)
 	abstract fun clearQueue()

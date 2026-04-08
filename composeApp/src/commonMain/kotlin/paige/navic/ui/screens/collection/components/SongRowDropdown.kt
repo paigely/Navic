@@ -1,30 +1,11 @@
 package paige.navic.ui.screens.collection.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import kotlinx.collections.immutable.persistentListOf
-import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_add_to_another_playlist
-import navic.composeapp.generated.resources.action_add_to_playlist
-import navic.composeapp.generated.resources.action_add_to_queue
-import navic.composeapp.generated.resources.action_cancel_download
-import navic.composeapp.generated.resources.action_delete_download
-import navic.composeapp.generated.resources.action_download
-import navic.composeapp.generated.resources.action_remove_from_playlist
-import navic.composeapp.generated.resources.action_remove_star
-import navic.composeapp.generated.resources.action_share
-import navic.composeapp.generated.resources.action_star
-import navic.composeapp.generated.resources.action_track_info
-import navic.composeapp.generated.resources.info_click_to_retry
-import navic.composeapp.generated.resources.info_download_failed
-import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
@@ -33,18 +14,6 @@ import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
-import paige.navic.icons.Icons
-import paige.navic.icons.filled.Star
-import paige.navic.icons.outlined.Close
-import paige.navic.icons.outlined.Delete
-import paige.navic.icons.outlined.Download
-import paige.navic.icons.outlined.DownloadOff
-import paige.navic.icons.outlined.Info
-import paige.navic.icons.outlined.PlaylistAdd
-import paige.navic.icons.outlined.PlaylistRemove
-import paige.navic.icons.outlined.Queue
-import paige.navic.icons.outlined.Share
-import paige.navic.icons.outlined.Star
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.sheets.SongSheet
@@ -53,21 +22,21 @@ import paige.navic.utils.UiState
 
 @Composable
 fun CollectionDetailScreenSongRowDropdown(
-    expanded: Boolean,
-    onDismissRequest: () -> Unit,
-    onRemoveStar: () -> Unit,
-    onAddStar: () -> Unit,
-    onShare: () -> Unit,
-    collection: DomainSongCollection,
+	expanded: Boolean,
+	onDismissRequest: () -> Unit,
+	onRemoveStar: () -> Unit,
+	onAddStar: () -> Unit,
+	onShare: () -> Unit,
+	collection: DomainSongCollection,
 	song: DomainSong,
-    onRemoveFromPlaylist: () -> Unit,
-    starredState: UiState<Boolean>,
-    downloadStatus: DownloadStatus?,
+	onRemoveFromPlaylist: () -> Unit,
+	starredState: UiState<Boolean>,
+	downloadStatus: DownloadStatus?,
 	isOnline: Boolean,
-    onDownload: () -> Unit,
-    onCancelDownload: () -> Unit,
-    onDeleteDownload: () -> Unit,
-    onAddToQueue: () -> Unit,
+	onDownload: () -> Unit,
+	onCancelDownload: () -> Unit,
+	onDeleteDownload: () -> Unit,
+	onAddToQueue: () -> Unit,
 ) {
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val backStack = LocalNavStack.current

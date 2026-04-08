@@ -21,14 +21,18 @@ fun List<LyricWord>.calculateWordProgress(
 		val wordStartMs = word.time.inWholeMilliseconds
 		val wordEndMs = wordStartMs + word.duration.inWholeMilliseconds
 
-		val wordIndexInString = fullText.indexOf(word.text, startIndex = currentCharacterIndex, ignoreCase = true)
+		val wordIndexInString =
+			fullText.indexOf(word.text, startIndex = currentCharacterIndex, ignoreCase = true)
 
 		if (wordIndexInString == -1) {
 			continue
 		}
 
 		if (currentMs in wordStartMs until wordEndMs) {
-			val wordProgress = (currentMs - wordStartMs).toFloat() / word.duration.inWholeMilliseconds.coerceAtLeast(1)
+			val wordProgress =
+				(currentMs - wordStartMs).toFloat() / word.duration.inWholeMilliseconds.coerceAtLeast(
+					1
+				)
 			val charProgressWithinWord = word.text.length * wordProgress
 
 			return (wordIndexInString + charProgressWithinWord) / totalChars

@@ -2,24 +2,24 @@
 
 package paige.navic.managers
 
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.readAvailable
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.Pinned
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.pin
-import platform.Foundation.NSDocumentDirectory
-import platform.Foundation.NSFileManager
-import platform.Foundation.NSURL
-import platform.Foundation.NSUserDomainMask
-import platform.Foundation.NSFileSize
-import platform.Foundation.NSNumber
-import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.readAvailable
 import kotlinx.cinterop.reinterpret
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
+import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSFileManager
+import platform.Foundation.NSFileSize
+import platform.Foundation.NSNumber
 import platform.Foundation.NSOutputStream
+import platform.Foundation.NSURL
+import platform.Foundation.NSUserDomainMask
 import platform.Foundation.outputStreamToFileAtPath
 
 actual class StorageManager(

@@ -26,7 +26,8 @@ fun NowPlayingProgressBar() {
 	val playerState by player.uiState.collectAsState()
 	val waveHeight by animateDpAsState(
 		if (!playerState.isPaused
-			&& Settings.shared.nowPlayingSliderStyle == NowPlayingSliderStyle.Squiggly)
+			&& Settings.shared.nowPlayingSliderStyle == NowPlayingSliderStyle.Squiggly
+		)
 			6.dp
 		else 0.dp
 	)

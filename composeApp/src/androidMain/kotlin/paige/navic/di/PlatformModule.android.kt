@@ -6,11 +6,11 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
-import paige.navic.shared.AndroidMediaPlayerViewModel
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.ShareManager
 import paige.navic.managers.StorageManager
+import paige.navic.shared.AndroidMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
 
 actual val platformModule = module {

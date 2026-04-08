@@ -37,8 +37,8 @@ import paige.navic.icons.outlined.Search
 import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
-import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.ui.screens.onboarding.viewmodels.LoginViewModel
+import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.utils.UiState
 
 @OptIn(

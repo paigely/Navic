@@ -81,7 +81,12 @@ class TurnTableWidget : NowPlayingWidget() {
 				SquareIconButton(
 					imageProvider = ImageProvider(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play),
 					contentDescription = if (isPlaying) "Pause" else "Play",
-					onClick = actionSendBroadcast(createMediaIntent(context, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)),
+					onClick = actionSendBroadcast(
+						createMediaIntent(
+							context,
+							KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
+						)
+					),
 					modifier = GlanceModifier.size(55.dp)
 				)
 			}

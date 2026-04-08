@@ -84,6 +84,7 @@ enum class Theme(
 					darkColorScheme()
 				else expressiveLightColorScheme()
 			}
+
 			Seeded -> rememberDynamicColorScheme(
 				seedColor = HsvColor(
 					shared.accentColourH,
@@ -93,12 +94,15 @@ enum class Theme(
 				isDark = isDark,
 				specVersion = ColorSpec.SpecVersion.SPEC_2025,
 			)
+
 			iOS -> if (isDark)
 				darkIosColorScheme(Color(0, 145, 255))
 			else lightIosColorScheme(Color(0, 136, 255))
+
 			AppleMusic -> if (isDark)
 				darkIosColorScheme(Color(255, 55, 95))
 			else lightIosColorScheme(Color(255, 45, 85))
+
 			Spotify -> if (isDark)
 				darkIosColorScheme(Color(30, 215, 96))
 			else lightIosColorScheme(Color(30, 215, 96))
@@ -108,6 +112,7 @@ enum class Theme(
 	fun isMaterialLike(): Boolean = when (this) {
 		Dynamic,
 		Seeded -> true
+
 		else -> false
 	}
 }

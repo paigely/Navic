@@ -74,6 +74,7 @@ fun NowPlayingSliderStyleDialog(
 										modifier = Modifier.requiredWidth(200.dp).scale(.5f)
 									)
 								}
+
 								NowPlayingSliderStyle.Squiggly -> {
 									WavySlider(
 										rememberSliderState(0.6767f),

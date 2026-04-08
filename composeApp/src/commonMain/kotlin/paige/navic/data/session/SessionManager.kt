@@ -1,6 +1,5 @@
 package paige.navic.data.session
 
-import com.russhwolf.settings.Settings as KmpSettings
 import com.russhwolf.settings.set
 import dev.zt64.subsonic.client.SubsonicAuth
 import dev.zt64.subsonic.client.SubsonicClient
@@ -13,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import paige.navic.data.models.User
 import paige.navic.data.models.settings.Settings
+import com.russhwolf.settings.Settings as KmpSettings
 
 object SessionManager {
 	private val settings = KmpSettings()
