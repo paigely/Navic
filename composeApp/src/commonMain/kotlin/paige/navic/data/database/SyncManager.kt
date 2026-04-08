@@ -45,6 +45,13 @@ class SyncManager(
 		Logger.i("SyncManager", "Starting periodic sync cicle.")
 		if (syncJob?.isActive == true) return
 
+		if (Settings.shared.lastFullSyncTime <= 0L) {
+			Logger.i("SyncManager", "Syncing now because we haven't synced before")
+			scope.launch {
+				runSyncCycle()
+			}
+		}
+
 		syncJob = scope.launch {
 			while (isActive) {
 				runSyncCycle()
