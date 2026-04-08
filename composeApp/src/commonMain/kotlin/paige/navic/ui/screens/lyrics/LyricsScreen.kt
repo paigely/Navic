@@ -45,8 +45,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -215,6 +216,18 @@ fun LyricsScreen(
 							itemsIndexed(lyrics) { index, line ->
 								val isActive = index == activeIndex
 								val isSelected = selectedIndices.contains(index)
+								val distance = abs(index - activeIndex)
+
+								val blurRadius by animateDpAsState(
+									targetValue = when {
+										isSelectionMode -> 0.dp
+										isActive -> 0.dp
+										distance == 1 -> 1.5.dp
+										distance == 2 -> 3.dp
+										else -> 4.5.dp
+									},
+									animationSpec = spring(stiffness = Spring.StiffnessLow)
+								)
 
 								val lineTime = line.time ?: 0.milliseconds
 								val preEmphasis = 200.milliseconds
@@ -242,9 +255,15 @@ fun LyricsScreen(
 								val animatedColor by animateColorAsState(
 									targetColor
 								)
-								val targetScale = if (isActive && !isSelectionMode) 1.06f else 1f
+								val targetScale = if (isActive && !isSelectionMode) 1.05f else 0.98f
 								val animatedScale by animateFloatAsState(
 									targetValue = targetScale,
+									animationSpec = spring(stiffness = Spring.StiffnessLow)
+								)
+
+								val targetOffsetY = if (isActive || isSelectionMode) 0.dp else if (index > activeIndex) 8.dp else (-8).dp
+								val animatedOffsetY by animateDpAsState(
+									targetValue = targetOffsetY,
 									animationSpec = spring(stiffness = Spring.StiffnessLow)
 								)
 
@@ -306,7 +325,16 @@ fun LyricsScreen(
 									},
 									modifier = Modifier
 										.padding(horizontal = 32.dp, vertical = padding)
-										.scale(animatedScale)
+										.graphicsLayer {
+											scaleX = animatedScale
+											scaleY = animatedScale
+											translationY = animatedOffsetY.toPx()
+										}
+										.then(
+											if (blurRadius > 0.dp && !isSelectionMode) {
+												Modifier.blur(blurRadius)
+											} else Modifier
+										)
 										.background(animatedColor, MaterialTheme.shapes.medium)
 										.padding(if (isSelected) 8.dp else 0.dp)
 										.then(

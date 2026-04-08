@@ -27,6 +27,8 @@ import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import paige.navic.MainActivity
@@ -220,9 +222,38 @@ class AndroidMediaPlayerViewModel(
 			})
 			updatePlaybackState()
 
-			pendingSyncState?.let { state ->
-				syncPlayerWithState(state)
-				pendingSyncState = null
+			viewModelScope.launch {
+				downloadManager.allDownloads.first()
+				pendingSyncState?.let { state ->
+					syncPlayerWithState(state)
+					pendingSyncState = null
+				}
+			}
+
+			viewModelScope.launch {
+				downloadManager.downloadedSongs.collectLatest { downloadedMap ->
+					val player = controller ?: return@collectLatest
+
+					for (i in 0 until player.mediaItemCount) {
+						val item = player.getMediaItemAt(i)
+						val id = item.mediaId
+						val localPath = downloadedMap[id]
+
+						val isCurrentlyLocal = item.localConfiguration?.uri?.scheme == "file"
+
+						if (localPath != null && !isCurrentlyLocal) {
+							val newItem = item.buildUpon()
+								.setUri(File(localPath).toUri())
+								.build()
+							player.replaceMediaItem(i, newItem)
+						} else if (localPath == null && isCurrentlyLocal) {
+							val newItem = item.buildUpon()
+								.setUri(SessionManager.api.getStreamUrl(id).toUri())
+								.build()
+							player.replaceMediaItem(i, newItem)
+						}
+					}
+				}
 			}
 		}
 	}

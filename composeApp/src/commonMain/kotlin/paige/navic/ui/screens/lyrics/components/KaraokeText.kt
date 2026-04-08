@@ -47,23 +47,18 @@ fun LyricsScreenKaraokeText(
 
 	val lyricsBeatByBeat = Settings.shared.lyricsBeatByBeat
 
-	val inactiveAlpha by animateFloatAsState(
-		if (isActive) 1f else 0.35f,
-		animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
+	val alphaTransition by animateFloatAsState(
+		targetValue = if (isActive) 1f else 0.3f,
+		animationSpec = spring(stiffness = Spring.StiffnessLow)
 	)
 
-	Box(
-		modifier = modifier.clickable {
-			onClick()
-		}
-	) {
+	Box(modifier = modifier.clickable { onClick() }) {
 		Text(
 			text = text,
 			fontSize = 32.sp,
-			fontWeight = FontWeight(600),
+			fontWeight = FontWeight.Bold,
 			style = MaterialTheme.typography.headlineLargeEmphasized,
-			color = MaterialTheme.colorScheme.onSurface,
-			modifier = Modifier.alpha(inactiveAlpha * 0.35f),
+			color = MaterialTheme.colorScheme.onSurface.copy(alpha = alphaTransition * 0.35f),
 			onTextLayout = { textLayoutResult = it }
 		)
 
@@ -71,66 +66,67 @@ fun LyricsScreenKaraokeText(
 			Text(
 				text = text,
 				fontSize = 32.sp,
-				fontWeight = FontWeight(600),
+				fontWeight = FontWeight.Bold,
 				style = MaterialTheme.typography.headlineLargeEmphasized,
-				color = MaterialTheme.colorScheme.onSurface,
-				modifier = if (lyricsBeatByBeat) Modifier.graphicsLayer(
-					compositingStrategy = CompositingStrategy.Offscreen
-				).drawWithCache {
-					onDrawWithContent {
-						val layout = textLayoutResult ?: return@onDrawWithContent
-						drawContent()
+				color = Color.White,
+				modifier = Modifier
+					.alpha(alphaTransition)
+					.then(
+						if (lyricsBeatByBeat) {
+							Modifier
+								.graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+								.drawWithCache {
+									onDrawWithContent {
+										val layout = textLayoutResult ?: return@onDrawWithContent
+										drawContent()
 
-						val totalWidth = (0 until layout.lineCount).sumOf {
-							(layout.getLineRight(it) - layout.getLineLeft(it)).toDouble()
-						}.toFloat()
+										val totalWidth = (0 until layout.lineCount).sumOf {
+											(layout.getLineRight(it) - layout.getLineLeft(it)).toDouble()
+										}.toFloat()
 
-						val feather = 30f
-						val adjustedTotalWidth = totalWidth + (feather * 2)
-						val currentPixelTarget = (adjustedTotalWidth * smoothProgress) - feather
+										val feather = 50f
+										val adjustedTotalWidth = totalWidth + (feather * 2)
+										val currentPixelTarget = (adjustedTotalWidth * smoothProgress) - feather
 
-						var accumulatedWidth = 0f
+										var accumulatedWidth = 0f
 
-						for (i in 0 until layout.lineCount) {
-							val lineLeft = layout.getLineLeft(i)
-							val lineRight = layout.getLineRight(i)
-							val lineWidth = lineRight - lineLeft
+										for (i in 0 until layout.lineCount) {
+											val lineLeft = layout.getLineLeft(i)
+											val lineRight = layout.getLineRight(i)
+											val lineWidth = lineRight - lineLeft
+											if (lineWidth <= 0f) continue
 
-							if (lineWidth <= 0f) continue
+											val lineTop = layout.getLineTop(i)
+											val lineBottom = layout.getLineBottom(i)
+											val isRtl = layout.getBidiRunDirection(layout.getLineStart(i)) == ResolvedTextDirection.Rtl
 
-							val lineTop = layout.getLineTop(i)
-							val lineBottom = layout.getLineBottom(i)
+											val startOffFadeIn = currentPixelTarget - accumulatedWidth - feather
+											val endOfFadeIn = currentPixelTarget - accumulatedWidth + feather
 
-							val lineStartOffset = layout.getLineStart(i)
-							val direction = layout.getBidiRunDirection(lineStartOffset)
-							val isRtl = direction == ResolvedTextDirection.Rtl
+											val startX = if (isRtl) lineRight else lineLeft
+											val endX = if (isRtl) lineLeft else lineRight
 
-							val startOffFadeIn = currentPixelTarget - accumulatedWidth - feather
-							val endOfFadeIn = currentPixelTarget - accumulatedWidth + feather
+											val brush = Brush.linearGradient(
+												0.0f to Color.White,
+												(startOffFadeIn / lineWidth).coerceIn(0f, 1f) to Color.White,
+												(endOfFadeIn / lineWidth).coerceIn(0f, 1f) to Color.Transparent,
+												1.0f to Color.Transparent,
+												start = Offset(startX, 0f),
+												end = Offset(endX, 0f)
+											)
 
-							val startX = if (isRtl) lineRight else lineLeft
-							val endX = if (isRtl) lineLeft else lineRight
-
-							val brush = Brush.linearGradient(
-								0.0f to Color.White,
-								(startOffFadeIn / lineWidth).coerceIn(0f, 1f) to Color.White,
-								(endOfFadeIn / lineWidth).coerceIn(0f, 1f) to Color.Transparent,
-								1.0f to Color.Transparent,
-								start = Offset(startX, 0f),
-								end = Offset(endX, 0f)
-							)
-
-							drawRect(
-								brush = brush,
-								topLeft = Offset(lineLeft, lineTop),
-								size = Size(lineWidth, lineBottom - lineTop),
-								blendMode = BlendMode.Modulate
-							)
-
-							accumulatedWidth += lineWidth
-						}
-					}
-				} else Modifier
+											drawRect(
+												brush = brush,
+												topLeft = Offset(lineLeft, lineTop),
+												size = Size(lineWidth, lineBottom - lineTop),
+												blendMode = BlendMode.SrcIn
+											)
+											accumulatedWidth += lineWidth
+										}
+									}
+								}
+						} else Modifier
+					)
 			)
 		}
 	}
