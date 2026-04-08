@@ -77,7 +77,6 @@ aboutLibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref
 aboutLibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.7.1" }
-kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version = "1.10.2" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.10.0" }
 
 subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.0-beta02" }
@@ -98,7 +97,6 @@ glance = ["glance-appwidget", "glance-material3"]
 ktor = ["ktor-client-core", "ktor-client-contentNegotiation", "ktor-serialization-json"]
 ktor-ios = ["ktor-client-darwin"]
 ktor-android = ["ktor-client-okhttp"]
-ktor-desktop = ["ktor-client-okhttp"]
 cmpThirdParty = ["capsule", "wavySlider", "kmpalette-core", "kmpalette-network", "materialKolor", "composePipette", "multiplatformSettings", "aboutLibraries-compose", "aboutLibraries-core"]
 androidx-android = ["androidx-activity-compose", "androidx-datastore-preferences", "androidx-animation-graphics"]
 androidx-lifecycle = ["androidx-lifecycle-viewmodel", "androidx-lifecycle-runtime"]

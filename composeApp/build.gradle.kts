@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -30,11 +29,6 @@ valkyrie {
 		nested {
 			name = "Brand"
 			sourceFolder = "brand"
-		}
-
-		nested {
-			name = "Desktop"
-			sourceFolder = "desktop"
 		}
 
 		nested {
@@ -117,12 +111,6 @@ kotlin {
 		}
 	}
 
-	jvm {
-		compilerOptions {
-			jvmTarget.set(JvmTarget.JVM_21)
-		}
-	}
-
 	sourceSets {
 		commonMain.dependencies {
 			implementation(libs.bundles.cmp)
@@ -152,14 +140,7 @@ kotlin {
 		iosMain.dependencies {
 			implementation(libs.bundles.ktor.ios)
 		}
-
-		jvmMain.dependencies {
-			implementation(libs.bundles.ktor.desktop)
-			implementation(compose.desktop.currentOs)
-			implementation(libs.kotlinx.coroutines.swing)
-		}
 	}
-
 }
 
 dependencies {
@@ -262,16 +243,6 @@ android {
 		targetCompatibility = JavaVersion.VERSION_21
 	}
 	buildToolsVersion = "37.0.0"
-}
-
-compose.desktop {
-	application {
-		mainClass = "paige.navic.MainKt"
-		nativeDistributions {
-			targetFormats(TargetFormat.Msi, TargetFormat.Dmg)
-			packageName = "paige.Navic"
-		}
-	}
 }
 
 room {
