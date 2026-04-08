@@ -56,6 +56,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalCtx
+import paige.navic.LocalNavStack
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
@@ -70,11 +72,10 @@ import paige.navic.icons.outlined.Offline
 import paige.navic.icons.outlined.Queue
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.CoverArt
-import paige.navic.ui.components.common.Dropdown
-import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
+import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.artGridPlaceholder
@@ -121,6 +122,7 @@ fun SearchScreen(
 
 	val ctx = LocalCtx.current
 	val player = koinViewModel<MediaPlayerViewModel>()
+	val backStack = LocalNavStack.current
 
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
 	var selectedSong by remember { mutableStateOf<DomainSong?>(null) }
@@ -279,21 +281,32 @@ fun SearchScreen(
 													}
 												}
 											)
-											Dropdown(
-												expanded = selectedSong == song,
-												onDismissRequest = { selectedSong = null }
-											) {
-												DropdownItem(
-													text = { Text(stringResource(Res.string.action_add_to_queue)) },
-													leadingIcon = { Icon(Icons.Outlined.Queue, null) },
-													onClick = {
+											if (selectedSong == song) {
+												SongSheet(
+													onDismissRequest = { selectedSong = null },
+													song = song,
+													onAddToQueue = {
 														if (player.uiState.value.queue.any { it.id == song.id }) {
 															songToQueue = song
 														} else {
 															player.addToQueueSingle(song)
 														}
-														selectedSong = null
 													},
+													isOnline = isOnline,
+													downloadStatus = if (downloadedSongs.containsKey(song.id)) DownloadStatus.DOWNLOADED else null,
+													onTrackInfo = {
+														backStack.add(Screen.SongDetail(song.id))
+													},
+													onViewAlbum = song.albumId?.let { albumId ->
+														{
+															backStack.add(
+																Screen.CollectionDetail(
+																	collectionId = albumId,
+																	tab = "search"
+																)
+															)
+														}
+													}
 												)
 											}
 										}
@@ -319,6 +332,7 @@ fun SearchScreen(
 									onDeselect = { albumListViewModel.clearSelection() },
 									onSetStarred = { albumListViewModel.starAlbum(it) },
 									onSetShareId = { },
+									isOnline = isOnline
 								)
 							}
 

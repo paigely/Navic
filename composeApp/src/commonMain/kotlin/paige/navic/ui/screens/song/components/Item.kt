@@ -48,8 +48,7 @@ import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.CoverArt
-import paige.navic.ui.components.common.Dropdown
-import paige.navic.ui.components.common.DropdownItem
+import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -137,63 +136,30 @@ fun SongListScreenItem(
 					)
 				}
 			)
-			Dropdown(
-				expanded = selected,
-				onDismissRequest = onDeselect
-			) {
-				DropdownItem(
-					text = { Text(stringResource(Res.string.action_add_to_queue)) },
-					leadingIcon = { Icon(Icons.Outlined.Queue, null) },
-					onClick = {
-						onDeselect()
-						onAddToQueue()
-					},
-				)
-				DropdownItem(
-					text = { Text(stringResource(Res.string.action_share)) },
-					leadingIcon = { Icon(Icons.Outlined.Share, null) },
-					onClick = {
-						onDeselect()
-						onSetShareId(song.id)
-					},
-				)
-				DropdownItem(
-					text = {
-						Text(
-							stringResource(
-								if (starred)
-									Res.string.action_remove_star
-								else Res.string.action_star
-							)
-						)
-					},
-					leadingIcon = {
-						Icon(if (starred) Icons.Filled.Star else Icons.Outlined.Star, null)
-					},
-					onClick = {
-						onSetStarred(!starred)
-						onDeselect()
-					}
-				)
-				DropdownItem(
-					text = { Text(stringResource(Res.string.action_track_info)) },
-					leadingIcon = { Icon(Icons.Outlined.Info, null) },
-					onClick = {
+			if (selected) {
+				SongSheet(
+					onDismissRequest = onDeselect,
+					song = song,
+					starred = starred,
+					onSetStarred = onSetStarred,
+					onShare = { onSetShareId(song.id) },
+					onAddToQueue = onAddToQueue,
+					onTrackInfo = {
 						backStack.add(Screen.SongDetail(song.id))
-						onDeselect()
 					},
-				)
-				DropdownItem(
-					text = {
-						Text(stringResource(Res.string.action_add_to_playlist))
+					onViewAlbum = song.albumId?.let { albumId ->
+						{
+							backStack.add(
+								Screen.CollectionDetail(
+									collectionId = albumId,
+									tab = "library"
+								)
+							)
+						}
 					},
-					leadingIcon = {
-						Icon(Icons.Outlined.PlaylistAdd, null)
-					},
-					onClick = {
-						onDeselect()
+					onAddToPlaylist = {
 						playlistDialogShown = true
-					},
+					}
 				)
 			}
 		}

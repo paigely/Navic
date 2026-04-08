@@ -77,6 +77,7 @@ fun LibraryScreen() {
 	var playlistCreateDialogShown by rememberSaveable { mutableStateOf(false) }
 
 	val isLoggedIn by SessionManager.isLoggedIn.collectAsStateWithLifecycle()
+	val isOnline by albumsViewModel.isOnline.collectAsStateWithLifecycle()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
 	LaunchedEffect(loginState is LoginState.Success) {
@@ -121,6 +122,7 @@ fun LibraryScreen() {
 				scrollBehavior = scrollBehavior,
 				innerPadding = innerPadding,
 				onSetShareId = { shareId = it },
+				isOnline = isOnline,
 
 				albumsState = albumsState,
 				selectedAlbum = selectedAlbum,

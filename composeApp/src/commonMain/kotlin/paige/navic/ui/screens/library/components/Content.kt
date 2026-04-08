@@ -46,6 +46,7 @@ fun LibraryScreenContent(
 	scrollBehavior: TopAppBarScrollBehavior,
 	innerPadding: PaddingValues,
 	onSetShareId: (String) -> Unit,
+	isOnline: Boolean,
 
 	// albums
 	albumsState: UiState<ImmutableList<DomainAlbum>>,
@@ -121,7 +122,8 @@ fun LibraryScreenContent(
 				onSelect = { onSelectAlbum(album) },
 				onDeselect = { onClearAlbumSelection() },
 				onSetStarred = { onStarSelectedAlbum(it) },
-				onSetShareId = { onSetShareId(it) }
+				onSetShareId = { onSetShareId(it) },
+				isOnline = isOnline
 			)
 		}
 

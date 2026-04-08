@@ -59,6 +59,7 @@ fun AlbumListScreen(
 	val albumsState by viewModel.albumsState.collectAsStateWithLifecycle()
 	val selectedAlbum by viewModel.selectedAlbum.collectAsStateWithLifecycle()
 	val starred by viewModel.starred.collectAsStateWithLifecycle()
+	val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -126,7 +127,8 @@ fun AlbumListScreen(
 					onSetShareId = { newShareId ->
 						shareId = newShareId
 					},
-					onSetStarred = { viewModel.starAlbum(it) }
+					onSetStarred = { viewModel.starAlbum(it) },
+					isOnline = isOnline
 				)
 			}
 		}

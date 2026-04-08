@@ -1,7 +1,6 @@
 package paige.navic.ui.screens.playlist.components
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -18,10 +17,8 @@ import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.icons.Icons
-import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Share
-import paige.navic.ui.components.common.Dropdown
-import paige.navic.ui.components.common.DropdownItem
+import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.components.layouts.ArtGridItem
 
 @Composable
@@ -64,25 +61,13 @@ fun PlaylistListScreenItem(
 			id = playlist.id,
 			tab = tab
 		)
-		Dropdown(
-			expanded = selected,
-			onDismissRequest = onDeselect
-		) {
-			DropdownItem(
-				text = { Text(stringResource(Res.string.action_share)) },
-				leadingIcon = { Icon(Icons.Outlined.Share, null) },
-				onClick = {
-					onSetShareId(playlist.id)
-					onDeselect()
-				},
-			)
-			DropdownItem(
-				text = { Text(stringResource(Res.string.action_delete)) },
-				leadingIcon = { Icon(Icons.Outlined.PlaylistRemove, null) },
-				onClick = {
-					onSetDeletionId(playlist.id)
-					onDeselect()
-				}
+		if (selected) {
+			CollectionSheet(
+				onDismissRequest = onDeselect,
+				collection = playlist,
+				isOnline = true,
+				onShare = { onSetShareId(playlist.id) },
+				onDelete = { onSetDeletionId(playlist.id) }
 			)
 		}
 	}

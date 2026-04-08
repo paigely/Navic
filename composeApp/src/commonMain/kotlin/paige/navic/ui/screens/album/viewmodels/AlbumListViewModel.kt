@@ -13,12 +13,14 @@ import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.managers.ConnectivityManager
 import paige.navic.utils.UiState
 
 @OptIn(ExperimentalCoroutinesApi::class)
 open class AlbumListViewModel(
 	initialListType: DomainAlbumListType = DomainAlbumListType.AlphabeticalByArtist,
 	private val repository: AlbumRepository,
+	private val connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _albumsState = MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())
 	val albumsState = _albumsState.asStateFlow()
@@ -34,6 +36,8 @@ open class AlbumListViewModel(
 
 	private val _selectedReversed = MutableStateFlow(false)
 	val selectedReversed = _selectedReversed.asStateFlow()
+
+	val isOnline = connectivityManager.isOnline
 
 	val gridState = LazyGridState()
 

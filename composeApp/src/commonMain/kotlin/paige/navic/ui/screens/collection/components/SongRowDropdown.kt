@@ -46,9 +46,8 @@ import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.ui.components.common.Dropdown
-import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
+import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.utils.UiState
 
@@ -75,158 +74,46 @@ fun CollectionDetailScreenSongRowDropdown(
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
 	var duplicateQueueDialogShown by rememberSaveable { mutableStateOf(false) }
 
-	Dropdown(
-		expanded = expanded,
-		onDismissRequest = onDismissRequest
-	) {
-		DropdownItem(
-			text = { Text(stringResource(Res.string.action_add_to_queue)) },
-			leadingIcon = { Icon(Icons.Outlined.Queue, null) },
-			onClick = {
+	if (expanded) {
+		SongSheet(
+			onDismissRequest = onDismissRequest,
+			song = song,
+			collection = collection,
+			starred = (starredState as? UiState.Success)?.data,
+			onSetStarred = { starred ->
+				if (starred) onAddStar() else onRemoveStar()
+			},
+			onShare = onShare,
+			onAddToQueue = {
 				if (player.uiState.value.queue.any { it.id == song.id }) {
 					duplicateQueueDialogShown = true
 				} else {
 					onAddToQueue()
-					onDismissRequest()
 				}
 			},
-		)
-		DropdownItem(
-			text = { Text(stringResource(Res.string.action_share)) },
-			leadingIcon = { Icon(Icons.Outlined.Share, null) },
-			onClick = {
-				onShare()
-				onDismissRequest()
-			},
-		)
-		val starred =
-			(starredState as? UiState.Success)?.data
-		DropdownItem(
-			text = {
-				Text(
-					stringResource(
-						if (starred == true)
-							Res.string.action_remove_star
-						else Res.string.action_star
-					)
-				)
-			},
-			leadingIcon = {
-				Icon(
-					if (starred == true)
-						Icons.Filled.Star
-					else Icons.Outlined.Star,
-					null
-				)
-			},
-			onClick = {
-				if (starred == true)
-					onRemoveStar()
-				else onAddStar()
-				onDismissRequest()
-			},
-			enabled = starred != null
-		)
-
-		when (downloadStatus) {
-			DownloadStatus.DOWNLOADING -> {
-				DropdownItem(
-					text = { Text(stringResource(Res.string.action_cancel_download)) },
-					leadingIcon = { Icon(Icons.Outlined.Close, null) },
-					onClick = {
-						onCancelDownload()
-						onDismissRequest()
-					}
-				)
-			}
-			DownloadStatus.DOWNLOADED -> {
-				DropdownItem(
-					text = { Text(stringResource(Res.string.action_delete_download)) },
-					leadingIcon = { Icon(Icons.Outlined.Delete, null) },
-					onClick = {
-						onDeleteDownload()
-						onDismissRequest()
-					}
-				)
-			}
-			DownloadStatus.FAILED -> {
-				DropdownItem(
-					text = {
-						Column {
-							Text(
-								text = stringResource(Res.string.info_download_failed),
-								color = MaterialTheme.colorScheme.error
-							)
-							Text(
-								text = stringResource(Res.string.info_click_to_retry),
-								color = MaterialTheme.colorScheme.error,
-								style = MaterialTheme.typography.labelSmall
-							)
-						}
-					},
-					leadingIcon = { Icon(Icons.Outlined.DownloadOff, null, tint = MaterialTheme.colorScheme.error) },
-					onClick = {
-						onDownload()
-						onDismissRequest()
-					}
-				)
-			}
-			else -> {
-				DropdownItem(
-					text = { Text(stringResource(Res.string.action_download)) },
-					leadingIcon = { Icon(Icons.Outlined.Download, null) },
-					onClick = {
-						onDownload()
-						onDismissRequest()
-					},
-					enabled = isOnline
-				)
-			}
-		}
-
-		DropdownItem(
-			text = { Text(stringResource(Res.string.action_track_info)) },
-			leadingIcon = { Icon(Icons.Outlined.Info, null) },
-			onClick = {
+			onTrackInfo = {
 				backStack.add(Screen.SongDetail(song.id))
-				onDismissRequest()
 			},
-		)
-		DropdownItem(
-			text = {
-				Text(
-					stringResource(
-						if (collection !is DomainAlbum)
-							Res.string.action_add_to_another_playlist
-						else Res.string.action_add_to_playlist
+			onViewAlbum = if (collection !is DomainAlbum && song.albumId != null) {
+				{
+					backStack.add(
+						Screen.CollectionDetail(
+							collectionId = song.albumId,
+							tab = "library"
+						)
 					)
-				)
-			},
-			leadingIcon = {
-				Icon(
-					Icons.Outlined.PlaylistAdd,
-					null
-				)
-			},
-			onClick = {
-				onDismissRequest()
+				}
+			} else null,
+			onAddToPlaylist = {
 				playlistDialogShown = true
 			},
+			onRemoveFromPlaylist = onRemoveFromPlaylist,
+			downloadStatus = downloadStatus,
+			isOnline = isOnline,
+			onDownload = onDownload,
+			onCancelDownload = onCancelDownload,
+			onDeleteDownload = onDeleteDownload
 		)
-		if (collection !is DomainAlbum) {
-			DropdownItem(
-				text = { Text(stringResource(Res.string.action_remove_from_playlist)) },
-				leadingIcon = {
-					Icon(
-						Icons.Outlined.PlaylistRemove,
-						null
-					)
-				},
-				onClick = {
-					onRemoveFromPlaylist()
-				},
-			)
-		}
 	}
 
 	if (playlistDialogShown) {
