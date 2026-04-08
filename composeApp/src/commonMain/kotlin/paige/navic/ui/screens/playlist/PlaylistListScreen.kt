@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.title_create_playlist
 import navic.composeapp.generated.resources.title_playlists
 import org.jetbrains.compose.resources.stringResource
@@ -47,7 +46,6 @@ import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarCollapseMode
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
-import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
 import paige.navic.ui.components.common.ErrorSnackbar
@@ -84,7 +82,6 @@ fun PlaylistListScreen(
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	var deletionId by remember { mutableStateOf<String?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-	val isLoggedIn by SessionManager.isLoggedIn.collectAsState()
 
 	val slideSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
 	val scaleInSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
@@ -119,7 +116,6 @@ fun PlaylistListScreen(
 			}
 		},
 		floatingActionButton = {
-			if (!isLoggedIn) return@Scaffold
 			AnimatedContent(
 				!gridState.lastScrolledForward
 					|| Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.Never,
@@ -166,14 +162,6 @@ fun PlaylistListScreen(
 			isRefreshing = playlistsState is UiState.Loading,
 			onRefresh = { viewModel.refreshPlaylists(true) }
 		) {
-			if (!isLoggedIn) {
-				Text(
-					stringResource(Res.string.info_needs_log_in),
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-					modifier = Modifier.padding(horizontal = 16.dp)
-				)
-				return@PullToRefreshBox
-			}
 			ArtGrid(
 				modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
 				state = gridState,

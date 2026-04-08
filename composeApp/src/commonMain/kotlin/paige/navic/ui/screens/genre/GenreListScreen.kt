@@ -16,11 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.title_genres
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.data.session.SessionManager
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -40,7 +38,6 @@ fun GenreListScreen(
 	val viewModel = koinViewModel<GenreListViewModel>()
 	val state by viewModel.genresState.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-	val isLoggedIn by SessionManager.isLoggedIn.collectAsState()
 
 	Scaffold(
 		topBar = {
@@ -67,14 +64,6 @@ fun GenreListScreen(
 			isRefreshing = state is UiState.Loading,
 			onRefresh = { viewModel.refreshGenres(true) }
 		) {
-			if (!isLoggedIn) {
-				Text(
-					stringResource(Res.string.info_needs_log_in),
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-					modifier = Modifier.padding(horizontal = 16.dp)
-				)
-				return@PullToRefreshBox
-			}
 			ArtGrid(
 				modifier = if (!nested)
 					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)

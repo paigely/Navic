@@ -249,7 +249,6 @@
 	<string name="info_unknown_artist">Unknown Artist</string>
 	<string name="info_unknown_year">Unknown Year</string>
 	<string name="info_unknown_genre">Unknown Genre</string>
-	<string name="info_needs_log_in">You need to log in first. Tap the account button in the top right.</string>
 	<string name="info_not_playing">Not Playing</string>
 	<string name="info_no_playlists">You have no playlists.</string>
 	<string name="info_no_other_playlists">You have no playlists other than this one.</string>

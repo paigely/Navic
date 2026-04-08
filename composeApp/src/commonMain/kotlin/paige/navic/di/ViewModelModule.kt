@@ -25,7 +25,7 @@ import paige.navic.ui.screens.share.viewmodels.ShareListViewModel
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
 import paige.navic.ui.screens.song.viewmodels.SongDetailViewModel
 import paige.navic.ui.screens.collection.viewmodels.CollectionDetailViewModel
-import paige.navic.ui.viewmodels.LoginViewModel
+import paige.navic.ui.screens.onboarding.viewmodels.LoginViewModel
 
 val viewModelModule = module {
 	viewModelOf(::ArtistDetailViewModel)

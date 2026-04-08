@@ -22,14 +22,12 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
-import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
@@ -67,7 +65,6 @@ fun SongListScreen(
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	var songToQueue by remember { mutableStateOf<DomainSong?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-	val isLoggedIn by SessionManager.isLoggedIn.collectAsStateWithLifecycle()
 
 	val actions: @Composable RowScope.() -> Unit = {
 		SongListScreenSortButton(
@@ -108,14 +105,6 @@ fun SongListScreen(
 			isRefreshing = songsState is UiState.Loading,
 			onRefresh = { viewModel.refreshSongs(true) }
 		) {
-			if (!isLoggedIn) {
-				Text(
-					stringResource(Res.string.info_needs_log_in),
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-					modifier = Modifier.padding(horizontal = 16.dp)
-				)
-				return@PullToRefreshBox
-			}
 			LazyColumn(
 				modifier = if (!nested)
 					Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)

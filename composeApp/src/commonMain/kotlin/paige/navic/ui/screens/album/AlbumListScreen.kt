@@ -21,14 +21,12 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.title_albums
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
-import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.screens.share.dialogs.ShareDialog
@@ -72,7 +70,6 @@ fun AlbumListScreen(
 			onSetReversed = { viewModel.setReversed(it) }
 		)
 	}
-	val isLoggedIn by SessionManager.isLoggedIn.collectAsStateWithLifecycle()
 
 	Scaffold(
 		topBar = {
@@ -100,14 +97,6 @@ fun AlbumListScreen(
 			isRefreshing = albumsState is UiState.Loading,
 			onRefresh = { viewModel.refreshAlbums(true) }
 		) {
-			if (!isLoggedIn) {
-				Text(
-					stringResource(Res.string.info_needs_log_in),
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-					modifier = Modifier.padding(horizontal = 16.dp)
-				)
-				return@PullToRefreshBox
-			}
 			ArtGrid(
 				modifier = if (!nested)
 					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)

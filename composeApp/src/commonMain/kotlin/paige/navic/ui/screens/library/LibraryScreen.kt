@@ -17,15 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.title_library
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.dialogs.DeletionDialog
@@ -39,7 +36,7 @@ import paige.navic.ui.screens.library.components.LibraryScreenContent
 import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
-import paige.navic.ui.viewmodels.LoginViewModel
+import paige.navic.ui.screens.onboarding.viewmodels.LoginViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.LoginState
 import paige.navic.utils.UiState
@@ -76,7 +73,6 @@ fun LibraryScreen() {
 	var playlistDeletionId by rememberSaveable { mutableStateOf<String?>(null) }
 	var playlistCreateDialogShown by rememberSaveable { mutableStateOf(false) }
 
-	val isLoggedIn by SessionManager.isLoggedIn.collectAsStateWithLifecycle()
 	val isOnline by albumsViewModel.isOnline.collectAsStateWithLifecycle()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -103,21 +99,12 @@ fun LibraryScreen() {
 				|| artistsState is UiState.Loading
 				|| genresState is UiState.Loading,
 			onRefresh = {
-				if (!isLoggedIn) return@PullToRefreshBox
 				albumsViewModel.refreshAlbums(true)
 				playlistsViewModel.refreshPlaylists(true)
 				artistsViewModel.refreshArtists(true)
 				genresViewModel.refreshGenres(true)
 			}
 		) {
-			if (!isLoggedIn) {
-				Text(
-					stringResource(Res.string.info_needs_log_in),
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-					modifier = Modifier.padding(horizontal = 16.dp)
-				)
-				return@PullToRefreshBox
-			}
 			LibraryScreenContent(
 				scrollBehavior = scrollBehavior,
 				innerPadding = innerPadding,

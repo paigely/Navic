@@ -61,6 +61,7 @@ import org.jetbrains.compose.resources.getString
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.session.SessionManager
 import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.rememberCtx
@@ -91,6 +92,7 @@ import paige.navic.ui.screens.settings.SettingsScreen
 import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.song.SongDetailScreen
 import paige.navic.ui.screens.collection.CollectionDetailScreen
+import paige.navic.ui.screens.onboarding.OnboardingScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.utils.BottomBarScrollManager
 import paige.navic.utils.LocalBottomBarScrollManager
@@ -118,7 +120,11 @@ fun App() {
 	val platformContext = LocalPlatformContext.current
 	val uriHandler = LocalUriHandler.current
 	val ctx = rememberCtx()
-	val backStack = rememberNavBackStack(config, Screen.Library())
+	val backStack = rememberNavBackStack(config, if (SessionManager.currentUser != null) {
+		Screen.Library()
+	} else {
+		Screen.Onboarding
+	})
 	val imageBuilder = remember { ImageRequest.Builder(platformContext).crossfade(true) }
 	val snackbarState = remember { SnackbarHostState() }
 	val density = LocalDensity.current
@@ -242,6 +248,9 @@ private fun entryProvider(
 		}
 
 		// misc
+		entry<Screen.Onboarding> {
+			OnboardingScreen()
+		}
 		entry<Screen.NowPlaying>(
 			metadata = BottomSheetSceneStrategy.bottomSheet(
 				maxWidth = Dp.Unspecified,

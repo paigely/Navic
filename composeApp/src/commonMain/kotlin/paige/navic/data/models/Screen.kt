@@ -45,6 +45,7 @@ sealed interface Screen : NavKey {
 	) : Screen
 
 	// misc
+	@Immutable @Serializable data object Onboarding : Screen
 	@Immutable @Serializable data object NowPlaying : Screen
 	@Immutable @Serializable data object Lyrics : Screen
 	@Immutable @Serializable data object Queue : Screen

@@ -1,18 +1,7 @@
 package paige.navic.ui.components.layouts
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -30,11 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_log_in
 import navic.composeapp.generated.resources.action_log_out
 import navic.composeapp.generated.resources.action_view_shares
 import org.jetbrains.compose.resources.stringResource
@@ -44,7 +29,6 @@ import paige.navic.LocalNavStack
 import paige.navic.data.models.NavbarConfig
 import paige.navic.data.models.NavbarTab
 import paige.navic.data.models.Screen
-import paige.navic.data.models.User
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Settings
 import paige.navic.icons.outlined.AccountCircle
@@ -53,10 +37,8 @@ import paige.navic.icons.outlined.Search
 import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
-import paige.navic.ui.components.dialogs.LoginDialog
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
-import paige.navic.ui.viewmodels.LoginViewModel
-import paige.navic.utils.LoginState
+import paige.navic.ui.screens.onboarding.viewmodels.LoginViewModel
 import paige.navic.utils.UiState
 
 @OptIn(
@@ -69,10 +51,9 @@ fun RootTopBar(
 	scrollBehavior: TopAppBarScrollBehavior,
 	actions: @Composable RowScope.() -> Unit = {},
 ) {
+	val backStack = LocalNavStack.current
 	val navViewModel = koinViewModel<NavtabsViewModel>()
 	val viewModel = koinViewModel<LoginViewModel>()
-	val loginState by viewModel.loginState.collectAsState()
-	var showLogin by remember { mutableStateOf(false) }
 
 	val navState by navViewModel.state.collectAsState()
 	val config = (navState as? UiState.Success)?.data
@@ -91,9 +72,11 @@ fun RootTopBar(
 		actions = {
 			actions()
 			Actions(
-				loginState = loginState,
-				onLogOut = { viewModel.logout() },
-				onSetShowLogin = { showLogin = it },
+				onLogOut = {
+					viewModel.logout()
+					backStack.clear()
+					backStack.add(Screen.Onboarding)
+				},
 				config = config,
 			)
 		},
@@ -102,28 +85,15 @@ fun RootTopBar(
 			scrolledContainerColor = MaterialTheme.colorScheme.surface
 		),
 	)
-	if (showLogin && loginState !is LoginState.Success) {
-		LoginDialog(
-			loginState = loginState,
-			onDismissRequest = { showLogin = false },
-			instanceState = viewModel.instanceState,
-			usernameState = viewModel.usernameState,
-			passwordState = viewModel.passwordState,
-			onLogin = { viewModel.login() }
-		)
-	}
 }
 
 @Composable
 private fun Actions(
-	loginState: LoginState<User?>,
 	onLogOut: () -> Unit,
-	onSetShowLogin: (shown: Boolean) -> Unit,
 	config: NavbarConfig?,
 ) {
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
-	val user = (loginState as? LoginState.Success)?.data
 
 	val isSearchEnabled = config?.tabs?.any {
 		it.id == NavbarTab.Id.SEARCH && it.visible
@@ -134,8 +104,7 @@ private fun Actions(
 			onClick = {
 				ctx.clickSound()
 				backStack.add(Screen.Search(nested = true))
-			},
-			enabled = user != null
+			}
 		) {
 			Icon(
 				Icons.Outlined.Search,
@@ -154,94 +123,37 @@ private fun Actions(
 		)
 	}
 
-	if (loginState is LoginState.Loading) {
-		CircularProgressIndicator(
-			modifier = Modifier
-				.padding(13.9.dp)
-				.size(20.dp)
-		)
-	} else {
-		if (user != null) {
-			var expanded by remember { mutableStateOf(false) }
-			Box {
-				IconButton(onClick = {
-					ctx.clickSound()
-					expanded = true
-				}) {
-					Icon(
-						Icons.Outlined.AccountCircle,
-						contentDescription = null
-					)
-				}
-				Dropdown(
-					expanded = expanded,
-					onDismissRequest = { expanded = false }
-				) {
-					DropdownItem(
-						text = { Text(stringResource(Res.string.action_view_shares)) },
-						onClick = {
-							expanded = false
-							backStack.add(Screen.ShareList)
-						},
-						leadingIcon = { Icon(Icons.Outlined.Share, null) }
-					)
-					DropdownItem(
-						text = { Text(stringResource(Res.string.action_log_out)) },
-						onClick = {
-							expanded = false
-							onLogOut()
-							onSetShowLogin(false)
-						},
-						leadingIcon = { Icon(Icons.Outlined.Logout, null) }
-					)
-				}
-			}
-		} else {
-			val color = MaterialTheme.colorScheme.primary
-			val infiniteTransition = rememberInfiniteTransition()
-			val scale by infiniteTransition.animateFloat(
-				initialValue = 0.8f,
-				targetValue = 1.2f,
-				animationSpec = infiniteRepeatable(
-					animation = tween(1500, easing = LinearEasing),
-					repeatMode = RepeatMode.Restart
-				),
+	var expanded by remember { mutableStateOf(false) }
+	Box {
+		IconButton(onClick = {
+			ctx.clickSound()
+			expanded = true
+		}) {
+			Icon(
+				Icons.Outlined.AccountCircle,
+				contentDescription = null
 			)
-			val alpha by infiniteTransition.animateFloat(
-				initialValue = 0.7f,
-				targetValue = 0f,
-				animationSpec = infiniteRepeatable(
-					animation = tween(1500, easing = LinearEasing),
-					repeatMode = RepeatMode.Restart
-				),
+		}
+		Dropdown(
+			expanded = expanded,
+			onDismissRequest = { expanded = false }
+		) {
+			DropdownItem(
+				text = { Text(stringResource(Res.string.action_view_shares)) },
+				onClick = {
+					expanded = false
+					backStack.add(Screen.ShareList)
+				},
+				leadingIcon = { Icon(Icons.Outlined.Share, null) }
 			)
-			val strokeWidth by infiniteTransition.animateFloat(
-				initialValue = 4f,
-				targetValue = 2f,
-				animationSpec = infiniteRepeatable(
-					animation = tween(1500, easing = LinearOutSlowInEasing),
-					repeatMode = RepeatMode.Restart
-				),
+			DropdownItem(
+				text = { Text(stringResource(Res.string.action_log_out)) },
+				onClick = {
+					expanded = false
+					onLogOut()
+				},
+				leadingIcon = { Icon(Icons.Outlined.Logout, null) }
 			)
-			Box {
-				Canvas(modifier = Modifier.size(48.dp)) {
-					drawCircle(
-						color = color,
-						radius = (size.minDimension / 2) * scale,
-						alpha = alpha,
-						style = Stroke(strokeWidth.dp.toPx())
-					)
-				}
-				IconButton(onClick = {
-					ctx.clickSound()
-					onSetShowLogin(true)
-				}) {
-					Icon(
-						Icons.Outlined.AccountCircle,
-						contentDescription = stringResource(Res.string.action_log_in)
-					)
-				}
-			}
 		}
 	}
 }

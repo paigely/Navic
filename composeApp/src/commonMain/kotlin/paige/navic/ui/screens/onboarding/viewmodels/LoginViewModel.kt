@@ -1,4 +1,4 @@
-package paige.navic.ui.viewmodels
+package paige.navic.ui.screens.onboarding.viewmodels
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.lifecycle.ViewModel
@@ -8,10 +8,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.data.models.User
-import paige.navic.domain.repositories.DbRepository
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.repositories.DbRepository
 import paige.navic.utils.LoginState
-import kotlin.onFailure
 
 class LoginViewModel(
 	private val repository: DbRepository
