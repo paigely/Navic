@@ -70,7 +70,7 @@ import paige.navic.LocalSnackbarState
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
-import paige.navic.icons.desktop.Navic
+import paige.navic.icons.brand.Navic
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Picker
 import paige.navic.icons.outlined.Share
@@ -216,7 +216,7 @@ fun LyricsShareSheet(
 						modifier = Modifier.fillMaxWidth()
 					) {
 						Icon(
-							imageVector = Icons.Desktop.Navic,
+							imageVector = Icons.Brand.Navic,
 							contentDescription = null,
 							tint = contentColor,
 							modifier = Modifier.size(24.dp)
