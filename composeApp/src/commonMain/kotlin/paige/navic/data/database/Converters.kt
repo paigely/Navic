@@ -54,14 +54,15 @@ class Converters {
 
 	@TypeConverter
 	fun toContributorList(data: String?): List<DomainContributor>? {
-		if (data == null) return null
+		if (data.isNullOrEmpty()) return if (data == null) null else emptyList()
+
 		return data.split(";").filter { it.isNotEmpty() }.map { item ->
 			val parts = item.split("^")
 			DomainContributor(
-				role = parts[0],
-				subRole = parts[1].ifEmpty { null },
-				artistId = parts[2],
-				artistName = parts[3]
+				role = parts.getOrNull(0)?.ifEmpty { null } ?: "",
+				subRole = parts.getOrNull(1)?.ifEmpty { null },
+				artistId = parts.getOrNull(2)?.ifEmpty { null } ?: "",
+				artistName = parts.getOrNull(3)?.ifEmpty { null } ?: ""
 			)
 		}
 	}
