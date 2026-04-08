@@ -179,8 +179,8 @@ android {
 		applicationId = "paige.navic"
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
-		versionCode = 19
-		versionName = "v1.0.0-alpha29"
+		versionCode = 20
+		versionName = "v1.0.0-alpha30"
 		ndk {
 			abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))
 			val isRelease = System.getenv("RELEASE")?.toBoolean() ?: false

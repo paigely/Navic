@@ -23,6 +23,7 @@ A modern Navidrome client for Android and iOS.
 * Integrated: shows up on the lock screen + quick settings
 * Lightweight & fast: zero bloat
 * Feature rich: covers almost the entirety of the Subsonic API
+* Works offline: syncs your entire library locally, and allows you to download songs
 
 ## Screenshots
 

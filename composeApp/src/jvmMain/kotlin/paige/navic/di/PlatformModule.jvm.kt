@@ -9,6 +9,7 @@ import paige.navic.data.database.CacheDatabase
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.ShareManager
+import paige.navic.managers.StorageManager
 import paige.navic.shared.JvmMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
 import java.io.File
@@ -59,5 +60,6 @@ actual val platformModule = module {
 	}
 
 	singleOf(::ShareManager)
+	singleOf(::StorageManager)
 	single<ConnectivityManager> { ConnectivityManager(get()) }
 }
