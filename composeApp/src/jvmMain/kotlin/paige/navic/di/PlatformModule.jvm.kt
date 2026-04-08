@@ -23,6 +23,7 @@ actual val platformModule = module {
 		Room
 			.databaseBuilder<CacheDatabase>(dbPath)
 			.setDriver(BundledSQLiteDriver())
+			.fallbackToDestructiveMigration(true)
 			.build()
 	}
 

@@ -10,6 +10,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.SyncActionEntity
 import paige.navic.data.database.entities.SyncActionType
@@ -31,6 +32,7 @@ data class SyncState(
 class SyncManager(
 	private val repository: DbRepository,
 	private val syncDao: SyncActionDao,
+	private val albumDao: AlbumDao,
 	private val scope: CoroutineScope
 ) {
 	private var syncJob: Job? = null
@@ -45,9 +47,10 @@ class SyncManager(
 		Logger.i("SyncManager", "Starting periodic sync cicle.")
 		if (syncJob?.isActive == true) return
 
-		if (Settings.shared.lastFullSyncTime <= 0L) {
-			Logger.i("SyncManager", "Syncing now because we haven't synced before")
-			scope.launch {
+		scope.launch {
+			if (albumDao.getAllAlbumsList().isEmpty()
+				|| Settings.shared.lastFullSyncTime <= 0L) {
+				Logger.i("SyncManager", "Syncing now because we haven't synced before")
 				runSyncCycle()
 			}
 		}
