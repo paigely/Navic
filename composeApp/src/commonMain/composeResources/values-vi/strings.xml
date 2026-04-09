@@ -1,2 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="title_library">Thư viện</string>
+    <string name="title_playlists">Danh sách phát</string>
+    <string name="title_settings">Cài đặt</string>
+    <string name="title_search">Tìm kiếm</string>
+    <string name="title_appearance">Giao diện</string>
+    <string name="title_behaviour">Hành vi</string>
+    <string name="title_now_playing">Đang phát</string>
+    <string name="title_bottom_app_bar">Thanh điều hướng dưới</string>
+</resources>
