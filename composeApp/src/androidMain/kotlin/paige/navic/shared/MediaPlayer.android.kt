@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.models.settings.Settings
@@ -52,6 +53,10 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 	private val serviceScope = MainScope()
 	private var scrobbleManager: AndroidScrobbleManager? = null
 	private val resourceProvider: ResourceProvider by inject()
+
+	private val connectivityManager: ConnectivityManager by inject()
+
+	private val syncManager: SyncManager by inject()
 
 	@OptIn(UnstableApi::class)
 	override fun onCreate() {
@@ -100,7 +105,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 					).build()
 			}
 
-		scrobbleManager = AndroidScrobbleManager(player, serviceScope)
+		scrobbleManager = AndroidScrobbleManager(player, serviceScope, connectivityManager, syncManager)
 
 
 		val sessionIntent = applicationContext.packageManager

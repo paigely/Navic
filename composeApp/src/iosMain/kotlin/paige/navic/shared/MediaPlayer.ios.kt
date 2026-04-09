@@ -5,6 +5,7 @@ package paige.navic.shared
 import androidx.lifecycle.viewModelScope
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
+import paige.navic.data.database.SyncManager
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
@@ -56,7 +57,8 @@ class IOSMediaPlayerViewModel(
 	stateRepository: PlayerStateRepository,
 	collectionRepository: CollectionRepository,
 	downloadManager: DownloadManager,
-	connectivityManager: ConnectivityManager
+	connectivityManager: ConnectivityManager,
+	syncManager: SyncManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
 	collectionRepository = collectionRepository,
@@ -65,7 +67,7 @@ class IOSMediaPlayerViewModel(
 ) {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
-	private val scrobbleManager = IOSScrobbleManager(player, viewModelScope)
+	private val scrobbleManager = IOSScrobbleManager(player, viewModelScope, connectivityManager, syncManager)
 	private var pendingSyncState: PlayerUiState? = null
 
 	init {
