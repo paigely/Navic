@@ -39,6 +39,12 @@
 			</intent-filter>
 		</activity>
 
+		<activity
+			android:name=".CrashActivity"
+			android:exported="false"
+			android:process=":crash"
+			android:theme="@style/Theme.Navic" />
+
 		<service
 			android:name="paige.navic.shared.PlaybackService"
 			android:enabled="true"

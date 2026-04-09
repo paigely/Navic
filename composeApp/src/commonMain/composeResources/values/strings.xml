@@ -226,6 +226,7 @@
 	<string name="action_clear_downloads">Clear downloads</string>
 	<string name="action_rebuild_database">Rebuild database</string>
 	<string name="action_trigger_sync">Trigger manual sync</string>
+	<string name="action_test_exception_handler">Test exception handler</string>
 	<string name="subtitle_rebuild_database">Wipes all local metadata and forces a fresh sync</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
@@ -296,6 +297,7 @@
 	<string name="info_login_description_start">Log into your</string>
 	<string name="info_login_description_middle">Navidrome</string>
 	<string name="info_login_description_end">instance.</string>
+	<string name="info_exception_handler">This will immediately crash the application. Are you sure?</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>
