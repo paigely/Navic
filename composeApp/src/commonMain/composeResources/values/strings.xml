@@ -113,6 +113,7 @@
 	<string name="option_sleep_timer">Sleep timer</string>
 
 	<string name="info_status_idle">Idle</string>
+	<string name="info_status_calculating">Calculating...</string>
 	<string name="info_sync_never">Never</string>
 	<string name="info_sync_just_now">Just now</string>
 	<string name="info_sync_mins_ago">%1$d m ago</string>
@@ -200,7 +201,7 @@
 	<string name="action_cancel_download">Cancel download</string>
 	<string name="action_navigate_back">Back</string>
 	<string name="action_log_out">Logout</string>
-	<string name="action_log_in">Login</string>
+	<string name="action_log_in">Log in</string>
 	<string name="action_view_shares">Shares</string>
 	<string name="action_clear_search">Clear</string>
 	<string name="action_more">More</string>
@@ -284,6 +285,17 @@
 	<string name="info_download_failed">Download failed</string>
 	<string name="info_click_to_retry">Click to retry</string>
 	<string name="info_downloaded">Downloaded</string>
+	<string name="info_syncing">Syncing...</string>
+	<string name="info_syncing_saving">Saving...</string>
+	<string name="info_syncing_saved">Saved.</string>
+	<string name="info_syncing_finished">Finished.</string>
+	<string name="info_syncing_albums">Syncing albums...</string>
+	<string name="info_syncing_playlists">Syncing playlists...</string>
+	<string name="info_syncing_genres">Syncing genres...</string>
+	<string name="info_syncing_artists">Syncing artists...</string>
+	<string name="info_login_description_start">Log into your</string>
+	<string name="info_login_description_middle">Navidrome</string>
+	<string name="info_login_description_end">instance.</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>

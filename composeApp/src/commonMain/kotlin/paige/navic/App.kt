@@ -76,7 +76,7 @@ import paige.navic.ui.screens.genre.GenreListScreen
 import paige.navic.ui.screens.library.LibraryScreen
 import paige.navic.ui.screens.lyrics.LyricsScreen
 import paige.navic.ui.screens.nowPlaying.NowPlayingScreen
-import paige.navic.ui.screens.onboarding.OnboardingScreen
+import paige.navic.ui.screens.login.LoginScreen
 import paige.navic.ui.screens.playlist.PlaylistListScreen
 import paige.navic.ui.screens.queue.QueueScreen
 import paige.navic.ui.screens.search.SearchScreen
@@ -125,7 +125,7 @@ fun App() {
 		config, if (SessionManager.currentUser != null) {
 			Screen.Library()
 		} else {
-			Screen.Onboarding
+			Screen.Login
 		}
 	)
 	val imageBuilder = remember { ImageRequest.Builder(platformContext).crossfade(true) }
@@ -251,8 +251,8 @@ private fun entryProvider(
 		}
 
 		// misc
-		entry<Screen.Onboarding> {
-			OnboardingScreen()
+		entry<Screen.Login> {
+			LoginScreen()
 		}
 		entry<Screen.NowPlaying>(
 			metadata = BottomSheetSceneStrategy.bottomSheet(

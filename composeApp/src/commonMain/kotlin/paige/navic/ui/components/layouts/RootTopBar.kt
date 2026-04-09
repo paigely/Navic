@@ -37,7 +37,7 @@ import paige.navic.icons.outlined.Search
 import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
-import paige.navic.ui.screens.onboarding.viewmodels.LoginViewModel
+import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.utils.UiState
 
@@ -75,7 +75,7 @@ fun RootTopBar(
 				onLogOut = {
 					viewModel.logout()
 					backStack.clear()
-					backStack.add(Screen.Onboarding)
+					backStack.add(Screen.Login)
 				},
 				config = config,
 			)

@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.materialkolor.ktx.darken
 import navic.composeapp.generated.resources.Res
@@ -36,6 +37,7 @@ import paige.navic.utils.UiState
 fun <T> ErrorBox(
 	error: UiState.Error<T>,
 	padding: PaddingValues = PaddingValues(12.dp),
+	bottomPadding: Dp = 24.dp,
 	onRetry: (() -> Unit)? = null,
 	modifier: Modifier = Modifier
 ) {
@@ -52,7 +54,10 @@ fun <T> ErrorBox(
 		Logger.e("ErrorBox", "Printing stack trace for error", error.error)
 	}
 
-	Form(modifier = modifier.padding(padding)) {
+	Form(
+		modifier = modifier.padding(padding),
+		bottomPadding = bottomPadding
+	) {
 		FormRow(
 			color = MaterialTheme.colorScheme.errorContainer,
 			horizontalArrangement = Arrangement.Center

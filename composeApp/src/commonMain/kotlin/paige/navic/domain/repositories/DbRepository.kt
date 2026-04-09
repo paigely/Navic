@@ -12,6 +12,16 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.info_syncing
+import navic.composeapp.generated.resources.info_syncing_albums
+import navic.composeapp.generated.resources.info_syncing_artists
+import navic.composeapp.generated.resources.info_syncing_finished
+import navic.composeapp.generated.resources.info_syncing_genres
+import navic.composeapp.generated.resources.info_syncing_playlists
+import navic.composeapp.generated.resources.info_syncing_saved
+import navic.composeapp.generated.resources.info_syncing_saving
+import org.jetbrains.compose.resources.StringResource
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.dao.GenreDao
@@ -62,22 +72,22 @@ class DbRepository(
 	}
 
 	suspend fun syncEverything(
-		onProgress: (Float, String) -> Unit = { _, _ -> }
+		onProgress: (Float, StringResource) -> Unit = { _, _ -> }
 	): Result<Unit> = runDbOp {
-		val progressCallback = { progress: Float, message: String ->
+		val progressCallback = { progress: Float, message: StringResource ->
 			Logger.i("DbRepository", "$progress $message")
 			onProgress(progress, message)
 		}
 
-		progressCallback(0.0f, "Starting sync...")
+		progressCallback(0.0f, Res.string.info_syncing)
 
-		progressCallback(0.02f, "Fetching genres...")
+		progressCallback(0.02f, Res.string.info_syncing_genres)
 		syncGenres().getOrThrow()
 
-		progressCallback(0.04f, "Fetching artists...")
+		progressCallback(0.04f, Res.string.info_syncing_artists)
 		syncArtists().getOrThrow()
 
-		progressCallback(0.07f, "Fetching playlists...")
+		progressCallback(0.07f, Res.string.info_syncing_playlists)
 		val playlists = syncPlaylists().getOrThrow()
 
 		syncLibrarySongs { localProgress, message ->
@@ -89,22 +99,22 @@ class DbRepository(
 		if (totalPlaylists > 0) {
 			playlists.forEachIndexed { index, playlist ->
 				val globalProgress = 0.75f + (0.25f * ((index + 1).toFloat() / totalPlaylists))
-				progressCallback(globalProgress, "Syncing playlist: ${playlist.name}...")
+				progressCallback(globalProgress, Res.string.info_syncing_playlists)
 				syncPlaylistSongs(playlist.playlistId).getOrThrow()
 			}
 		}
 
-		progressCallback(1.0f, "Sync complete!")
+		progressCallback(1.0f, Res.string.info_syncing_finished)
 	}
 
 	suspend fun syncLibrarySongs(
-		onProgress: (Float, String) -> Unit = { _, _ -> }
+		onProgress: (Float, StringResource) -> Unit = { _, _ -> }
 	): Result<Int> = runDbOp {
 		val pageSize = 500
 		var offset = 0
 		val allAlbumSummaries = mutableListOf<Album>()
 
-		onProgress(0.0f, "Fetching album list...")
+		onProgress(0.0f, Res.string.info_syncing_albums)
 		while (true) {
 			val batch = api.getAlbums(AlbumListType.AlphabeticalByName, pageSize, offset)
 			if (batch.isEmpty()) break
@@ -118,7 +128,7 @@ class DbRepository(
 		val totalAlbums = allAlbumSummaries.size
 		val completedAlbums = AtomicInt(0)
 
-		onProgress(0.1f, "Fetching 0/$totalAlbums albums...")
+		onProgress(0.1f, Res.string.info_syncing_albums)
 
 		val fullAlbums = coroutineScope {
 			allAlbumSummaries.map { summary ->
@@ -129,7 +139,7 @@ class DbRepository(
 
 						if (done % 5 == 0 || done == totalAlbums) {
 							val fetchProgress = 0.1f + (0.8f * (done.toFloat() / totalAlbums))
-							onProgress(fetchProgress, "Fetching $done/$totalAlbums albums...")
+							onProgress(fetchProgress, Res.string.info_syncing_albums)
 						}
 						album
 					}
@@ -137,7 +147,7 @@ class DbRepository(
 			}.awaitAll()
 		}
 
-		onProgress(0.9f, "Saving library to database...")
+		onProgress(0.9f, Res.string.info_syncing_saving)
 
 		val albumEntities = fullAlbums.map { it.toEntity() }
 		val songEntities = fullAlbums.flatMap { album ->
@@ -154,7 +164,7 @@ class DbRepository(
 			)
 		}
 
-		onProgress(1.0f, "Library saved.")
+		onProgress(1.0f, Res.string.info_syncing_saved)
 		songEntities.size
 	}
 
