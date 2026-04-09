@@ -45,4 +45,8 @@ sealed class DomainAlbumListType(val value: String) {
 	@Serializable
 	@Immutable
 	data class ByGenre(val genre: String) : DomainAlbumListType("byGenre")
+
+	@Serializable
+	@Immutable
+	data object Downloaded : DomainAlbumListType("")
 }

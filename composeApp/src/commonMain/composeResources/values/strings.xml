@@ -84,6 +84,7 @@
 	<string name="option_sort_highest">Highest</string>
 	<string name="option_sort_frequent">Frequently played</string>
 	<string name="option_sort_recent">Recently played</string>
+	<string name="option_sort_downloaded">Downloaded</string>
 	<string name="option_sort_alphabetical_by_name">Alphabetical by name</string>
 	<string name="option_sort_alphabetical_by_artist">Alphabetical by artist</string>
 	<string name="option_sort_starred">Starred</string>

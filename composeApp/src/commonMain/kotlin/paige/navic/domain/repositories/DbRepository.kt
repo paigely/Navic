@@ -178,8 +178,8 @@ class DbRepository(
 			songDao.insertSongs(songEntities)
 		}
 
-		val crossRefs = songEntities.map {
-			PlaylistSongCrossRef(playlistId = playlistId, songId = it.songId)
+		val crossRefs = songEntities.mapIndexed { index, it ->
+			PlaylistSongCrossRef(playlistId = playlistId, songId = it.songId, position = index)
 		}
 		playlistDao.replacePlaylistSongs(playlistId, crossRefs)
 

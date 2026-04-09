@@ -7,7 +7,9 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.dao.PlaylistDao
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainPlaylistListType
@@ -15,7 +17,8 @@ import paige.navic.utils.UiState
 
 class PlaylistRepository(
 	private val playlistDao: PlaylistDao,
-	private val dbRepository: DbRepository
+	private val dbRepository: DbRepository,
+	private val downloadDao: DownloadDao
 ) {
 	private suspend fun getLocalData(
 		listType: DomainPlaylistListType,
@@ -26,6 +29,14 @@ class PlaylistRepository(
 			DomainPlaylistListType.DateAdded -> playlistDao.getAllPlaylistsByDateAdded()
 			DomainPlaylistListType.Duration -> playlistDao.getAllPlaylistsByDuration()
 			DomainPlaylistListType.Random -> playlistDao.getAllPlaylistsRandom()
+			DomainPlaylistListType.Downloaded -> {
+				playlistDao.getAllPlaylistsByDateAdded().filter { (_, songs) ->
+					downloadDao.getAllDownloadsList()
+						.filter { it.status == DownloadStatus.DOWNLOADED }
+						.map { it.songId }
+						.containsAll(songs.map { it.song.songId })
+				}
+			}
 		}.map { it.toDomainModel() }.toImmutableList()
 		return if (reversed) {
 			sorted.reversed().toImmutableList()

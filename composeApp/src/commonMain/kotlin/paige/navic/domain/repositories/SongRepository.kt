@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.SyncManager
+import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
@@ -20,6 +21,7 @@ import kotlin.time.Clock
 
 class SongRepository(
 	private val songDao: SongDao,
+	private val downloadDao: DownloadDao,
 	private val dbRepository: DbRepository,
 	private val syncManager: SyncManager
 ) {
@@ -35,7 +37,7 @@ class SongRepository(
 			songs.filter { it.artistId == artistId }
 		} else {
 			songs
-		}.toImmutableList().sortedByListType(listType)
+		}.toImmutableList().sortedByListType(listType, downloadDao)
 
 		return if (reversed) {
 			filtered.reversed().toImmutableList()

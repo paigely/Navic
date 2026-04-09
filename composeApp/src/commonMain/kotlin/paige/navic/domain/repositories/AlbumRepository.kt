@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
@@ -20,6 +21,7 @@ import kotlin.time.Clock
 
 class AlbumRepository(
 	private val albumDao: AlbumDao,
+	private val downloadDao: DownloadDao,
 	private val syncManager: SyncManager,
 	private val dbRepository: DbRepository
 ) {
@@ -30,8 +32,8 @@ class AlbumRepository(
 		val albums = albumDao
 			.getAllAlbumsList()
 			.map { it.toDomainModel() }
-			.sortedByListType(listType)
 			.toImmutableList()
+			.sortedByListType(listType, downloadDao)
 		return if (reversed) albums.reversed().toImmutableList() else albums
 	}
 

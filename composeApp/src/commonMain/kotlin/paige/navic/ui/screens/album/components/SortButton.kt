@@ -31,6 +31,7 @@ fun AlbumListScreenSortButton(
 			DomainAlbumListType.Newest,
 			DomainAlbumListType.Starred,
 			DomainAlbumListType.Random,
+			DomainAlbumListType.Downloaded
 		)
 	}
 	var expanded by remember { mutableStateOf(false) }

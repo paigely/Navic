@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 
 @Entity(
-	primaryKeys = ["playlistId", "songId"],
+	primaryKeys = ["playlistId", "songId", "position"],
 	foreignKeys = [
 		ForeignKey(
 			entity = PlaylistEntity::class,
@@ -22,5 +22,6 @@ import androidx.room.ForeignKey
 )
 data class PlaylistSongCrossRef(
 	val playlistId: String,
-	val songId: String
+	val songId: String,
+	val position: Int
 )
