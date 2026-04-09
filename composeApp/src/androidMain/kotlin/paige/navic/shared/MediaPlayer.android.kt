@@ -31,8 +31,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import paige.navic.MainActivity
-import paige.navic.R
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.models.settings.Settings
@@ -66,7 +64,13 @@ class PlaybackService : MediaSessionService() {
 			.build()
 
 		val notificationProvider = DefaultMediaNotificationProvider.Builder(this)
-			.build().apply { setSmallIcon(R.drawable.ic_navic) }
+			.build().apply {
+				setSmallIcon(applicationContext.resources.getIdentifier(
+					"ic_navic",
+					"drawable",
+					applicationContext.packageName
+				))
+			}
 
 		val player = ExoPlayer.Builder(this)
 			.setLoadControl(loadControl)
@@ -99,10 +103,13 @@ class PlaybackService : MediaSessionService() {
 
 		scrobbleManager = AndroidScrobbleManager(player, serviceScope)
 
-		val sessionIntent = Intent(this, MainActivity::class.java).apply {
-			flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or
-				Intent.FLAG_ACTIVITY_CLEAR_TOP
-		}
+
+		val sessionIntent = applicationContext.packageManager
+			.getLaunchIntentForPackage(applicationContext.packageName)
+			?.apply {
+				flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or
+					Intent.FLAG_ACTIVITY_CLEAR_TOP
+			}
 
 		val sessionPendingIntent = PendingIntent.getActivity(
 			this,

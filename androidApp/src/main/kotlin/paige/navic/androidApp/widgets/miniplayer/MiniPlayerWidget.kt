@@ -1,4 +1,4 @@
-package paige.navic.widgets.miniplayer
+package paige.navic.androidApp.widgets.miniplayer
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -31,9 +31,9 @@ import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import paige.navic.R
-import paige.navic.utils.appWidgetInnerCornerRadius
-import paige.navic.widgets.nowplaying.NowPlayingWidget
+import paige.navic.androidApp.R
+import paige.navic.androidApp.utils.appWidgetInnerCornerRadius
+import paige.navic.androidApp.widgets.nowplaying.NowPlayingWidget
 
 class MiniPlayerWidget : NowPlayingWidget() {
 

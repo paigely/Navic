@@ -2,11 +2,11 @@
 #noinspection AndroidGradlePluginVersion
 agp = "9.1.0"
 #noinspection UnusedVersionCatalogEntry
-android-compileSdk = "37"
+android-compileSdk = "36"
 #noinspection UnusedVersionCatalogEntry
 android-minSdk = "24"
 #noinspection UnusedVersionCatalogEntry
-android-targetSdk = "37"
+android-targetSdk = "36"
 kotlin = "2.3.20"
 
 androidx-activity = "1.13.0"
@@ -29,7 +29,7 @@ glance = "1.2.0-rc01"
 
 room = "2.8.4"
 sqlite = "2.6.2"
-ksp = "2.2.21-2.0.4"
+ksp = "2.3.6"
 
 koin = "4.2.0"
 
@@ -86,6 +86,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 
@@ -104,7 +105,7 @@ room = ["androidx-room-runtime", "androidx-sqlite-bundled"]
 koin = ["koin-core", "koin-compose", "koin-compose-viewmodel"]
 
 [plugins]
-androidApplication = { id = "com.android.application", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

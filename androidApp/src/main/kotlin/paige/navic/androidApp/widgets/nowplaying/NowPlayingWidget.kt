@@ -1,4 +1,4 @@
-package paige.navic.widgets.nowplaying
+package paige.navic.androidApp.widgets.nowplaying
 
 import android.content.ComponentName
 import android.content.Context
@@ -20,7 +20,7 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.allowHardware
 import coil3.toBitmap
-import paige.navic.MainActivity
+import paige.navic.androidApp.MainActivity
 
 /**
  * Base widgets class which widgets will inherit from. Used with `NowPlayingReceiver`

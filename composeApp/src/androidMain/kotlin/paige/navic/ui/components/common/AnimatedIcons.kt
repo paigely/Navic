@@ -8,17 +8,24 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.painter.Painter
-import paige.navic.R
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import paige.navic.data.models.Screen
 
 @Composable
 actual fun animatedTabIconPainter(destination: Screen): Painter? {
-	val res = when (destination) {
-		is Screen.Library -> R.drawable.anim_library
-		is Screen.PlaylistList -> R.drawable.anim_playlist
-		is Screen.ArtistList -> R.drawable.anim_artist
-		else -> return null
-	}
+	val context = LocalContext.current
+	val resources = LocalResources.current
+	val res = resources.getIdentifier(
+		when (destination) {
+			is Screen.Library -> "anim_library"
+			is Screen.PlaylistList -> "anim_playlist"
+			is Screen.ArtistList -> "anim_artist"
+			else -> return null
+		},
+		"drawable",
+		context.packageName
+	)
 
 	val image = AnimatedImageVector.animatedVectorResource(res)
 	val atEnd = remember { mutableStateOf(false) }
@@ -32,6 +39,12 @@ actual fun animatedTabIconPainter(destination: Screen): Painter? {
 
 @Composable
 actual fun playPauseIconPainter(reversed: Boolean): Painter? {
-	val image = AnimatedImageVector.animatedVectorResource(R.drawable.anim_pause)
+	val context = LocalContext.current
+	val resources = LocalResources.current
+	val image = AnimatedImageVector.animatedVectorResource(resources.getIdentifier(
+		"anim_pause",
+		"drawable",
+		context.packageName
+	))
 	return rememberAnimatedVectorPainter(image, reversed)
 }

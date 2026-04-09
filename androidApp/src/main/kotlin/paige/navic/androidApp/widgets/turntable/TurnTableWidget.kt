@@ -1,4 +1,4 @@
-package paige.navic.widgets.turntable
+package paige.navic.androidApp.widgets.turntable
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -25,8 +25,8 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.state.PreferencesGlanceStateDefinition
-import paige.navic.R
-import paige.navic.widgets.nowplaying.NowPlayingWidget
+import paige.navic.androidApp.R
+import paige.navic.androidApp.widgets.nowplaying.NowPlayingWidget
 
 class TurnTableWidget : NowPlayingWidget() {
 
@@ -44,7 +44,7 @@ class TurnTableWidget : NowPlayingWidget() {
 		val size = LocalSize.current
 		Box(
 			modifier = GlanceModifier
-				.size(minOf(size.width, size.height))
+				.size(kotlin.comparisons.minOf(size.width, size.height))
 				.padding(12.dp)
 				.clickable(actionStartActivity(launchIntent(context))),
 			contentAlignment = Alignment.Center

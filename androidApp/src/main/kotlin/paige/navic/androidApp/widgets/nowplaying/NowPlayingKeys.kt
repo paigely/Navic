@@ -1,4 +1,4 @@
-package paige.navic.widgets.nowplaying
+package paige.navic.androidApp.widgets.nowplaying
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey

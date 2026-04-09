@@ -1,9 +1,14 @@
+import androidx.room.gradle.RoomExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
+import com.mikepenz.aboutlibraries.plugin.AboutLibrariesExtension
+import io.github.composegears.valkyrie.gradle.ValkyrieExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
 	alias(libs.plugins.kotlinMultiplatform)
+	alias(libs.plugins.kotlinMultiplatformLibrary)
 	alias(libs.plugins.kotlin.serialization)
-	alias(libs.plugins.androidApplication)
 	alias(libs.plugins.composeMultiplatform)
 	alias(libs.plugins.composeCompiler)
 	alias(libs.plugins.aboutLibraries)
@@ -12,12 +17,13 @@ plugins {
 	alias(libs.plugins.androidx.room)
 }
 
+// remove material 2
 configurations.all {
 	exclude(group = "org.jetbrains.compose.material", module = "material")
 	exclude(group = "androidx.compose.material", module = "material")
 }
 
-valkyrie {
+extensions.configure<ValkyrieExtension> {
 	packageName = "paige.navic.icons"
 	generateAtSync = true
 	outputDirectory = layout.buildDirectory.dir("generated/sources/valkyrie")
@@ -43,7 +49,7 @@ valkyrie {
 	}
 }
 
-aboutLibraries {
+extensions.configure<AboutLibrariesExtension> {
 	collect {
 		configPath = file("acknowledgements")
 	}
@@ -63,7 +69,11 @@ tasks {
 		dependsOn(":composeApp:generateValkyrieImageVector")
 	}
 	withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-		compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
+		compilerOptions {
+			jvmTarget.set(JvmTarget.JVM_21)
+			freeCompilerArgs.add("-Xexpect-actual-classes")
+
+		}
 	}
 	matching { it.name.startsWith("compileKotlinIos") }.configureEach {
 		// “truly horrifying workaround” for a crash in SearchScreen.kt
@@ -93,22 +103,38 @@ public fun interface TextFieldDecorator {
 	}
 }
 
-kotlin {
-	@Suppress("DEPRECATION")
-	androidTarget {
-		compilerOptions {
-			jvmTarget.set(JvmTarget.JVM_21)
-		}
-	}
-
+extensions.configure<KotlinMultiplatformExtension> {
 	listOf(
 		iosArm64(),
 		iosSimulatorArm64()
-	).forEach {
-		it.binaries.framework {
+	).forEach { target ->
+		target.binaries.framework {
 			baseName = "ComposeApp"
 			isStatic = true
 		}
+	}
+
+	extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
+		namespace = "paige.navic"
+		compileSdk = libs.versions.android.compileSdk.get().toInt()
+		minSdk = libs.versions.android.minSdk.get().toInt()
+
+		androidResources.enable = true
+
+		packaging {
+			resources {
+				excludes += "/okhttp3/**"
+				excludes += "/*.properties"
+				excludes += "/org/antlr/**"
+				excludes += "/com/android/tools/smali/**"
+				excludes += "/org/eclipse/jgit/**"
+				excludes += "/META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+				excludes += "/org/bouncycastle/**"
+				excludes += "/META-INF/{AL2.0,LGPL2.1}"
+			}
+		}
+
+		buildToolsVersion = "37.0.0"
 	}
 
 	sourceSets {
@@ -134,117 +160,24 @@ kotlin {
 			implementation(libs.bundles.ktor.android)
 			implementation(libs.bundles.androidx.android)
 			implementation(libs.bundles.media3)
-			implementation(libs.bundles.glance)
 		}
 
 		iosMain.dependencies {
 			implementation(libs.bundles.ktor.ios)
 		}
 	}
+
+	compilerOptions {
+		freeCompilerArgs.add("-Xexpect-actual-classes")
+	}
+}
+
+extensions.configure<RoomExtension> {
+	schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
-	add("kspAndroid", libs.androidx.room.compiler)
-
-	val isMacOs = System.getProperty("os.name").lowercase().contains("mac")
-	if (isMacOs) {
-		add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-		add("kspIosArm64", libs.androidx.room.compiler)
-	}
-}
-
-android {
-	namespace = "paige.navic"
-	compileSdk = libs.versions.android.compileSdk.get().toInt()
-	defaultConfig {
-		applicationId = "paige.navic"
-		minSdk = libs.versions.android.minSdk.get().toInt()
-		targetSdk = libs.versions.android.targetSdk.get().toInt()
-		versionCode = 21
-		versionName = "v1.0.0-alpha31"
-		ndk {
-			abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))
-			val isRelease = System.getenv("RELEASE")?.toBoolean() ?: false
-			if (!isRelease) {
-				abiFilters.add("x86_64")
-			}
-		}
-	}
-
-	signingConfigs {
-		create("release") {
-			keyAlias = System.getenv("SIGNING_KEY_ALIAS")
-			keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
-			storeFile = System.getenv("SIGNING_STORE_FILE")?.let(::File)
-			storePassword = System.getenv("SIGNING_STORE_PASSWORD")
-		}
-	}
-
-	buildTypes {
-		val isRelease = System.getenv("RELEASE")?.toBoolean() ?: false
-		val hasReleaseSigning = System.getenv("SIGNING_STORE_PASSWORD")?.isNotEmpty() == true
-
-		if (isRelease && !hasReleaseSigning) {
-			throw GradleException("Missing keystore in a release workflow!")
-		}
-
-		getByName("release") {
-			isMinifyEnabled = true
-			isDebuggable = false
-			isProfileable = false
-			isJniDebuggable = false
-			isShrinkResources = true
-			signingConfig = signingConfigs.getByName(if (hasReleaseSigning) "release" else "debug")
-			proguardFiles(
-				getDefaultProguardFile("proguard-android-optimize.txt"),
-				"proguard-rules.pro"
-			)
-		}
-
-		getByName("debug") {
-			applicationIdSuffix = ".debug"
-			resValue("string", "app_name", "Navic (Dev)")
-		}
-	}
-
-	applicationVariants.all {
-		outputs.all {
-			val output = this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
-			output.outputFileName = "Navic.apk"
-		}
-	}
-
-	androidComponents {
-		onVariants(selector().withBuildType("release")) {
-			it.packaging.resources.excludes.apply {
-				add("/**/*.version")
-				add("/kotlin-tooling-metadata.json")
-				add("/DebugProbesKt.bin")
-				add("/**/*.kotlin_builtins")
-			}
-		}
-	}
-
-	packaging {
-		resources {
-			excludes += "/okhttp3/**"
-			excludes += "/*.properties"
-			excludes += "/org/antlr/**"
-			excludes += "/com/android/tools/smali/**"
-			excludes += "/org/eclipse/jgit/**"
-			excludes += "/META-INF/versions/9/OSGI-INF/MANIFEST.MF"
-			excludes += "/org/bouncycastle/**"
-			excludes += "/META-INF/{AL2.0,LGPL2.1}"
-		}
-	}
-
-	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_21
-		targetCompatibility = JavaVersion.VERSION_21
-	}
-	buildToolsVersion = "37.0.0"
-}
-
-room {
-	schemaDirectory("$projectDir/schemas")
+	"kspAndroid"(libs.androidx.room.compiler)
+	"kspIosSimulatorArm64"(libs.androidx.room.compiler)
+	"kspIosArm64"(libs.androidx.room.compiler)
 }
