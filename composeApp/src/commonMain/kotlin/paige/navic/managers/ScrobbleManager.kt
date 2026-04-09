@@ -7,6 +7,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import paige.navic.data.database.SyncManager
+import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import kotlin.time.Clock
@@ -18,6 +20,8 @@ interface ScrobblePlayerSource {
 
 class ScrobbleManager(
 	private val playerSource: ScrobblePlayerSource,
+	private val connectivityManager: ConnectivityManager,
+	private val syncManager: SyncManager,
 	private val scope: CoroutineScope
 ) {
 	private var currentMediaId: String? = null
@@ -79,32 +83,30 @@ class ScrobbleManager(
 	}
 
 	private fun scrobbleSubmission(songId: String?) {
-		if (!Settings.shared.enableScrobbling) return
+		if (!Settings.shared.enableScrobbling || songId == null) return
+
 		scope.launch(Dispatchers.IO) {
-			try {
-				songId?.let {
-					SessionManager.api.scrobble(
-						it,
-						submission = true
-					)
+			if (connectivityManager.isOnline.value) {
+				try {
+					SessionManager.api.scrobble(songId, submission = true)
+				} catch (_: Exception) {
+					syncManager.enqueueAction(SyncActionType.SCROBBLE, songId)
 				}
-			} catch (_: Exception) {
+			} else {
+				syncManager.enqueueAction(SyncActionType.SCROBBLE, songId)
 			}
 		}
 	}
 
 	private fun scrobbleNowPlaying(songId: String?) {
-		if (!Settings.shared.enableScrobbling) return
+		if (!Settings.shared.enableScrobbling || songId == null) return
+
+		if (!connectivityManager.isOnline.value) return
+
 		scope.launch(Dispatchers.IO) {
 			try {
-				songId?.let {
-					SessionManager.api.scrobble(
-						it,
-						submission = false
-					)
-				}
-			} catch (_: Exception) {
-			}
+				SessionManager.api.scrobble(songId, submission = false)
+			} catch (_: Exception) { }
 		}
 	}
 }
