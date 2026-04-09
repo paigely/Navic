@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 enum class SyncActionType {
-	STAR, UNSTAR, DELETE_PLAYLIST
+	STAR, UNSTAR, DELETE_PLAYLIST, SCROBBLE
 }
 
 @Entity

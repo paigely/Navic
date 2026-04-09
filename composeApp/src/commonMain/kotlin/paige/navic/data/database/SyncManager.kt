@@ -17,6 +17,7 @@ import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.repositories.DbRepository
+import paige.navic.managers.ConnectivityManager
 import paige.navic.shared.Logger
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -33,6 +34,7 @@ class SyncManager(
 	private val repository: DbRepository,
 	private val syncDao: SyncActionDao,
 	private val albumDao: AlbumDao,
+	private val connectivityManager: ConnectivityManager,
 	private val scope: CoroutineScope
 ) {
 	private var syncJob: Job? = null
@@ -42,6 +44,18 @@ class SyncManager(
 
 	private val _syncState = MutableStateFlow(SyncState())
 	val syncState = _syncState.asStateFlow()
+
+	init {
+		scope.launch {
+			connectivityManager.isOnline.collect { isOnline ->
+				if (isOnline) {
+					if (!syncMutex.isLocked) {
+						syncMutex.withLock { processQueue() }
+					}
+				}
+			}
+		}
+	}
 
 	fun startPeriodicSync() {
 		Logger.i("SyncManager", "Starting periodic sync cicle.")
@@ -124,6 +138,7 @@ class SyncManager(
 					SyncActionType.STAR -> SessionManager.api.star(action.itemId)
 					SyncActionType.UNSTAR -> SessionManager.api.unstar(action.itemId)
 					SyncActionType.DELETE_PLAYLIST -> SessionManager.api.deletePlaylist(action.itemId)
+					SyncActionType.SCROBBLE -> SessionManager.api.scrobble(action.itemId, submission = true)
 				}
 
 				syncDao.removeAction(action.id)
