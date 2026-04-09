@@ -307,4 +307,17 @@
     <string name="info_download_failed">Download fallito</string>
     <string name="info_click_to_retry">Premi pee riprovare</string>
     <string name="info_downloaded">Scaricato</string>
+    <string name="option_sort_downloaded">Scaricati</string>
+    <string name="info_status_calculating">Calcolando...</string>
+    <string name="info_syncing">Sincronizzazione...</string>
+    <string name="info_syncing_saving">Salvataggio...</string>
+    <string name="info_syncing_saved">Salvato.</string>
+    <string name="info_syncing_finished">Finito.</string>
+    <string name="info_syncing_albums">Sincronizzazione album...</string>
+    <string name="info_syncing_playlists">Sincronizzazione playlist...</string>
+    <string name="info_syncing_genres">Sincronizzazione generi...</string>
+    <string name="info_syncing_artists">Sincronizzazione artisti...</string>
+    <string name="info_login_description_start">Accedi al tuo</string>
+    <string name="info_login_description_middle">Navidrome</string>
+    <string name="info_login_description_end">Indirizzo.</string>
 </resources>
