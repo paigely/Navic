@@ -133,7 +133,7 @@
     <string name="info_unknown_year">Неизвестный Год</string>
     <string name="info_unknown_genre">Неизвестный Жанр</string>
     <string name="info_needs_log_in">Нужно сначала войти. Нажмите на кнопку аккаунт справа сверху.</string>
-    <string name="info_not_playing">Не играет</string>
+    <string name="info_not_playing">Ничего не воспроизводится</string>
     <string name="info_no_playlists">У вас нет плейлистов.</string>
     <string name="info_no_other_playlists">У вас нет плейлистов кроме этого.</string>
     <string name="info_track_name">Название</string>
@@ -305,4 +305,5 @@
     <string name="info_click_to_retry">Повторить попытку</string>
     <string name="info_downloaded">Загружено</string>
     <string name="info_sync_date_format">%1$d %2$s</string>
+    <string name="option_sort_downloaded">Загружено</string>
 </resources>
