@@ -45,7 +45,9 @@ fun AlbumWithSongs.toDomainModel() = DomainAlbum(
 	playCount = album.playCount,
 	genres = album.genres,
 	version = album.version,
-	songs = songs.map { it.toDomainModel() }
+	songs = songs
+		.map { it.toDomainModel() }
+		.sortedBy { it.trackNumber }
 )
 
 fun DomainAlbum.toEntity() = AlbumEntity(
