@@ -58,14 +58,14 @@ jobs:
           RELEASE: true
         run: |
           echo "${{ secrets.KEYSTORE }}" | base64 -d > release.keystore
-          ./gradlew :composeApp:packageRelease --stacktrace
+          ./gradlew :androidApp:packageRelease --stacktrace
           rm release.keystore
 
       - name: Build with Gradle (debug)
         id: build_debug
         if: github.event_name == 'pull_request'
         run: |
-          ./gradlew :composeApp:assembleDebug --stacktrace
+          ./gradlew :androidApp:assembleDebug --stacktrace
 
       - name: Upload APK artifact
         if: steps.build_release.outcome == 'success' || steps.build_debug.outcome == 'success'
