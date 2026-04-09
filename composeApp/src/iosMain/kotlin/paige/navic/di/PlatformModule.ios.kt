@@ -8,6 +8,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
+import paige.navic.data.database.DownloadDatabase
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.ShareManager
@@ -23,6 +24,15 @@ actual val platformModule = module {
 		val dbPath = documentDirectory() + "/cache.db"
 		Room
 			.databaseBuilder<CacheDatabase>(dbPath)
+			.setDriver(BundledSQLiteDriver())
+			.fallbackToDestructiveMigration(true)
+			.build()
+	}
+
+	single<DownloadDatabase> {
+		val dbPath = documentDirectory() + "/downloads.db"
+		Room
+			.databaseBuilder<DownloadDatabase>(dbPath)
 			.setDriver(BundledSQLiteDriver())
 			.fallbackToDestructiveMigration(true)
 			.build()

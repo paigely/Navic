@@ -72,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: navic-release-android
-          path: composeApp/build/outputs/apk/**/*.apk
+          path: androidApp/build/outputs/apk/**/*.apk
           compression-level: 0
 
   build-ipa:

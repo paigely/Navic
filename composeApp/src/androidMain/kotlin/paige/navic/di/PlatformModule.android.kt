@@ -6,6 +6,7 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
+import paige.navic.data.database.DownloadDatabase
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.ShareManager
@@ -20,6 +21,17 @@ actual val platformModule = module {
 			.absolutePath
 		Room
 			.databaseBuilder<CacheDatabase>(get(), dbPath)
+			.setDriver(BundledSQLiteDriver())
+			.fallbackToDestructiveMigration(true)
+			.build()
+	}
+
+	single<DownloadDatabase> {
+		val dbPath = androidApplication()
+			.getDatabasePath("downloads.db")
+			.absolutePath
+		Room
+			.databaseBuilder<DownloadDatabase>(get(), dbPath)
 			.setDriver(BundledSQLiteDriver())
 			.fallbackToDestructiveMigration(true)
 			.build()

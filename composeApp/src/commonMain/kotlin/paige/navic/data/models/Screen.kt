@@ -119,5 +119,8 @@ sealed interface Screen : NavKey {
 		@Immutable
 		@Serializable
 		data object Fonts : Settings
+		@Immutable
+		@Serializable
+		data object CustomHeaders : Settings
 	}
 }

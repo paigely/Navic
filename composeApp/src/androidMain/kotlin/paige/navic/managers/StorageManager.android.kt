@@ -38,4 +38,11 @@ actual class StorageManager(
 			}
 		}
 	}
+
+	actual fun clearDownloads() {
+		val dir = File(context.filesDir, "downloads")
+		if (dir.exists()) {
+			dir.listFiles()?.forEach { it.deleteRecursively() }
+		}
+	}
 }

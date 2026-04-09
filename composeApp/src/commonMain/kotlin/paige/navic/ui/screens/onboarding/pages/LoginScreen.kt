@@ -9,6 +9,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -58,8 +59,10 @@ import navic.composeapp.generated.resources.notice_login_suggestion
 import navic.composeapp.generated.resources.option_account_navidrome_instance
 import navic.composeapp.generated.resources.option_account_password
 import navic.composeapp.generated.resources.option_account_username
+import navic.composeapp.generated.resources.option_custom_headers
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
@@ -98,6 +101,7 @@ fun LoginScreen(innerPadding: PaddingValues) {
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
 
+	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 
 	LaunchedEffect(loginState) {
@@ -270,11 +274,29 @@ fun LoginScreen(innerPadding: PaddingValues) {
 			modifier = Modifier.fillMaxWidth()
 		)
 
+		Spacer(Modifier.height(8.dp))
+
+		Text(
+			text = stringResource(Res.string.option_custom_headers),
+			color = MaterialTheme.colorScheme.primary,
+			modifier = Modifier.clickable {
+				ctx.clickSound()
+				backStack.lastOrNull()?.let {
+					if (it is Screen.Onboarding) {
+						backStack.add(Screen.Settings.CustomHeaders)
+					}
+				}
+			}
+		)
+
 		Spacer(Modifier.weight(1.5f))
 
 		Button(
 			modifier = Modifier.fillMaxWidth(),
-			onClick = { viewModel.login() },
+			onClick = {
+				ctx.clickSound()
+				viewModel.login()
+			},
 			enabled = !isBusy,
 			shape = ContinuousCapsule
 		) {

@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
@@ -135,14 +134,9 @@ class DownloadManager(
 		scope.launch(Dispatchers.IO) {
 			activeDownloads.values.forEach { it.cancel() }
 			activeDownloads.clear()
-
-			val snapshots = allDownloads.first()
-			snapshots.forEach { download ->
-				download.filePath?.let { storageManager.deleteFile(it) }
-			}
-
+			storageManager.clearDownloads()
 			downloadDao.clearAllDownloads()
-			Logger.i("DownloadManager", "Cleared ${snapshots.size} downloads successfully.")
+			Logger.i("DownloadManager", "cleared all downloads")
 		}
 	}
 

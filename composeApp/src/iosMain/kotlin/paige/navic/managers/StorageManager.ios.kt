@@ -66,6 +66,15 @@ actual class StorageManager(
 		}
 	}
 
+	actual fun clearDownloads() {
+		val manager = NSFileManager.defaultManager
+		val url = manager.URLsForDirectory(NSDocumentDirectory, NSUserDomainMask).first() as NSURL
+		val dir = url.URLByAppendingPathComponent("downloads")!!
+		if (manager.fileExistsAtPath(dir.path!!)) {
+			manager.removeItemAtURL(dir, null)
+		}
+	}
+
 	private fun <T> ByteArray.usePinned(block: (Pinned<ByteArray>) -> T): T {
 		val pinned = this.pin()
 		try {

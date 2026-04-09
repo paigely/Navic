@@ -8,4 +8,5 @@ expect class StorageManager {
 	fun deleteFile(path: String): Boolean
 	fun getFileSize(path: String): Long
 	suspend fun saveFile(path: String, channel: ByteReadChannel)
+	fun clearDownloads()
 }

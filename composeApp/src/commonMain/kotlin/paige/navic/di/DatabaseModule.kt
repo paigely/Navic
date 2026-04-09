@@ -2,6 +2,7 @@ package paige.navic.di
 
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
+import paige.navic.data.database.DownloadDatabase
 
 val databaseModule = module {
 	// CacheDatabase is initialised inside PlatformModule since we need Context on android
@@ -13,5 +14,5 @@ val databaseModule = module {
 	single { get<CacheDatabase>().artistDao() }
 	single { get<CacheDatabase>().lyricDao() }
 	single { get<CacheDatabase>().syncActionDao() }
-	single { get<CacheDatabase>().downloadDao() }
+	single { get<DownloadDatabase>().downloadDao() }
 }
