@@ -2,6 +2,7 @@ package paige.navic.managers
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineScope
+import paige.navic.data.database.SyncManager
 import platform.AVFoundation.AVPlayer
 import platform.AVFoundation.currentItem
 import platform.AVFoundation.currentTime
@@ -10,7 +11,9 @@ import platform.CoreMedia.CMTimeGetSeconds
 
 class IOSScrobbleManager(
 	private val player: AVPlayer,
-	scope: CoroutineScope
+	scope: CoroutineScope,
+	connectivityManager: ConnectivityManager,
+	syncManager: SyncManager
 ) {
 	@OptIn(ExperimentalForeignApi::class)
 	private val playerSource = object : ScrobblePlayerSource {
@@ -26,7 +29,7 @@ class IOSScrobbleManager(
 	}
 
 
-	private val scrobbleManager = ScrobbleManager(playerSource, scope)
+	private val scrobbleManager = ScrobbleManager(playerSource, connectivityManager, syncManager, scope)
 
 	fun onMediaChanged(mediaId: String?) {
 		scrobbleManager.onMediaChanged(mediaId)
