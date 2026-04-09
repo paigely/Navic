@@ -8,24 +8,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalResources
+import org.koin.compose.koinInject
 import paige.navic.data.models.Screen
+import paige.navic.shared.ResourceProvider
 
 @Composable
 actual fun animatedTabIconPainter(destination: Screen): Painter? {
-	val context = LocalContext.current
-	val resources = LocalResources.current
-	val res = resources.getIdentifier(
-		when (destination) {
-			is Screen.Library -> "anim_library"
-			is Screen.PlaylistList -> "anim_playlist"
-			is Screen.ArtistList -> "anim_artist"
-			else -> return null
-		},
-		"drawable",
-		context.packageName
-	)
+	val resourceProvider = koinInject<ResourceProvider>()
+	val res = when (destination) {
+		is Screen.Library -> resourceProvider.animLibrary
+		is Screen.PlaylistList -> resourceProvider.animPlaylist
+		is Screen.ArtistList -> resourceProvider.animArtist
+		else -> return null
+	}
 
 	val image = AnimatedImageVector.animatedVectorResource(res)
 	val atEnd = remember { mutableStateOf(false) }
@@ -39,12 +34,7 @@ actual fun animatedTabIconPainter(destination: Screen): Painter? {
 
 @Composable
 actual fun playPauseIconPainter(reversed: Boolean): Painter? {
-	val context = LocalContext.current
-	val resources = LocalResources.current
-	val image = AnimatedImageVector.animatedVectorResource(resources.getIdentifier(
-		"anim_pause",
-		"drawable",
-		context.packageName
-	))
+	val resourceProvider = koinInject<ResourceProvider>()
+	val image = AnimatedImageVector.animatedVectorResource(resourceProvider.animPause)
 	return rememberAnimatedVectorPainter(image, reversed)
 }

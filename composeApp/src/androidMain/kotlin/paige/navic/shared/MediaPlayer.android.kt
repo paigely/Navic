@@ -31,6 +31,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.models.settings.Settings
@@ -45,10 +47,11 @@ import paige.navic.managers.DownloadManager
 import paige.navic.utils.effectiveGain
 import java.io.File
 
-class PlaybackService : MediaSessionService() {
+class PlaybackService : MediaSessionService(), KoinComponent {
 	private var mediaSession: MediaSession? = null
 	private val serviceScope = MainScope()
 	private var scrobbleManager: AndroidScrobbleManager? = null
+	private val resourceProvider: ResourceProvider by inject()
 
 	@OptIn(UnstableApi::class)
 	override fun onCreate() {
@@ -65,11 +68,7 @@ class PlaybackService : MediaSessionService() {
 
 		val notificationProvider = DefaultMediaNotificationProvider.Builder(this)
 			.build().apply {
-				setSmallIcon(applicationContext.resources.getIdentifier(
-					"ic_navic",
-					"drawable",
-					applicationContext.packageName
-				))
+				setSmallIcon(resourceProvider.icNavic)
 			}
 
 		val player = ExoPlayer.Builder(this)
