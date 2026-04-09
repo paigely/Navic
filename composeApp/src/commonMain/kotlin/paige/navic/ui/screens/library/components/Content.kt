@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_sort_frequent
+import navic.composeapp.generated.resources.option_sort_newest
 import navic.composeapp.generated.resources.option_sort_random
 import navic.composeapp.generated.resources.option_sort_recent
 import navic.composeapp.generated.resources.option_sort_starred
@@ -83,8 +84,8 @@ fun LibraryScreenContent(
 	) {
 		libraryScreenOverviewButton(
 			icon = Icons.Outlined.LibraryAdd,
-			label = Res.string.option_sort_recent,
-			destination = Screen.AlbumList(true, DomainAlbumListType.Recent),
+			label = Res.string.option_sort_newest,
+			destination = Screen.AlbumList(true, DomainAlbumListType.Newest),
 			start = true
 		)
 		libraryScreenOverviewButton(
