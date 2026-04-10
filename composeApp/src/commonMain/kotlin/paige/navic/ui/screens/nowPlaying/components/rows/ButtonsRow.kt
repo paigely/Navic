@@ -38,6 +38,7 @@ import paige.navic.icons.Icons
 import paige.navic.icons.filled.Pause
 import paige.navic.icons.filled.Play
 import paige.navic.icons.filled.RepeatOn
+import paige.navic.icons.filled.RepeatOneOn
 import paige.navic.icons.filled.ShuffleOn
 import paige.navic.icons.filled.SkipNext
 import paige.navic.icons.filled.SkipPrevious
@@ -171,7 +172,8 @@ fun NowPlayingButtonsRow() {
 		) {
 			Icon(
 				imageVector = when (playerState.repeatMode) {
-					1 -> Icons.Filled.RepeatOn
+					1 -> Icons.Filled.RepeatOneOn
+					2 -> Icons.Filled.RepeatOn
 					else -> Icons.Outlined.Repeat
 				},
 				contentDescription = null,
