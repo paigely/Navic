@@ -196,8 +196,8 @@
     <string name="option_sort_playlist_by_name">Per nome</string>
     <string name="option_sort_playlist_date_added">Data di aggiunta</string>
     <string name="option_sort_playlist_duration">Durata</string>
-    <string name="option_sort_ascending">Ascendente</string>
-    <string name="option_sort_descending">Discendente</string>
+    <string name="option_sort_ascending">Crescente</string>
+    <string name="option_sort_descending">Decrescente</string>
     <string name="option_replay_gain">ReplayGain</string>
     <string name="option_gapless_playback">Riproduzione continua</string>
     <string name="option_audio_offload">Offload audio</string>
@@ -299,7 +299,7 @@
     <string name="action_add_to_queue">Aggiungi alla Coda</string>
     <string name="notice_login_suggestion">Volevi dire...</string>
     <string name="title_sort_by">Ordina per</string>
-    <string name="title_direction">Direzione</string>
+    <string name="title_direction">Ordine</string>
     <string name="title_bulk_download">Scarica tutti gli Album</string>
     <string name="title_confirm">Conferma</string>
     <string name="info_bulk_download_warning">Sei sicuro di voler scaricare tutti gli album di %1$s?\nPotrebbe richiedere molto spazio e risorse.</string>
@@ -320,4 +320,12 @@
     <string name="info_login_description_start">Accedi al tuo</string>
     <string name="info_login_description_middle">Navidrome</string>
     <string name="info_login_description_end">Indirizzo.</string>
+    <string name="title_update">Aggiornamento disponibile</string>
+    <string name="title_changelog">Note di rilascio</string>
+    <string name="subtitle_check_for_updates">Si raccomanda di lasciare questo attivo, perché alcuni update forniscono importanti risoluzioni sui bug</string>
+    <string name="option_check_for_updates">Controlla aggiornamenti</string>
+    <string name="action_test_exception_handler">Test del gestore delle exception</string>
+    <string name="action_dont_show_again">Non mostrare di nuovo</string>
+    <string name="info_update">È stata rilasciata la versione %1$s</string>
+    <string name="info_exception_handler">Questo farà immediatamente crashare l'app. Sei sicuro?</string>
 </resources>
