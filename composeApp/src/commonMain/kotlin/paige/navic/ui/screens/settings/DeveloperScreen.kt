@@ -23,13 +23,16 @@ import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.action_test_exception_handler
 import navic.composeapp.generated.resources.info_exception_handler
+import navic.composeapp.generated.resources.option_check_for_updates
 import navic.composeapp.generated.resources.option_custom_headers
+import navic.composeapp.generated.resources.subtitle_check_for_updates
 import navic.composeapp.generated.resources.title_confirm
 import navic.composeapp.generated.resources.title_developer
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
 import paige.navic.ui.components.common.Form
@@ -37,6 +40,7 @@ import paige.navic.ui.components.common.FormButton
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.dialogs.FormDialog
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.utils.fadeFromTop
 
 @Composable
@@ -64,6 +68,12 @@ fun SettingsDeveloperScreen() {
 					.fadeFromTop()
 			) {
 				Form {
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_check_for_updates)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_check_for_updates)) },
+						value = Settings.shared.checkForUpdates,
+						onSetValue = { Settings.shared.checkForUpdates = it }
+					)
 					FormRow(
 						onClick = {
 							backStack.lastOrNull()?.let {

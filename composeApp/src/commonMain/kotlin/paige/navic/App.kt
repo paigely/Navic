@@ -16,17 +16,14 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.listPane
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -35,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavBackStack
@@ -54,10 +50,6 @@ import coil3.request.crossfade
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_update_app
-import navic.composeapp.generated.resources.info_update_app
-import org.jetbrains.compose.resources.getString
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
@@ -66,6 +58,7 @@ import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.rememberCtx
 import paige.navic.ui.components.dialogs.SideloadingDialog
+import paige.navic.ui.components.sheets.ChangelogSheet
 import paige.navic.ui.navigation.Material3Transitions
 import paige.navic.ui.scenes.BottomSheetSceneStrategy
 import paige.navic.ui.screens.album.AlbumListScreen
@@ -97,7 +90,6 @@ import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.utils.BottomBarScrollManager
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.checkForUpdate
 
 @OptIn(ExperimentalSerializationApi::class)
 private val config = SavedStateConfiguration {
@@ -119,7 +111,6 @@ val LocalSharedTransitionScope =
 @Composable
 fun App() {
 	val platformContext = LocalPlatformContext.current
-	val uriHandler = LocalUriHandler.current
 	val ctx = rememberCtx()
 	val backStack = rememberNavBackStack(
 		config, if (SessionManager.currentUser != null) {
@@ -133,21 +124,6 @@ fun App() {
 	val density = LocalDensity.current
 	val scrollManager = remember {
 		BottomBarScrollManager(with(density) { 50.dp.toPx() })
-	}
-
-	// todo: this should survive config changes but im lazy ykyk
-	LaunchedEffect(Unit) {
-		checkForUpdate(ctx.appVersion)?.let { newRelease ->
-			val result = snackbarState.showSnackbar(
-				message = getString(Res.string.info_update_app),
-				actionLabel = getString(Res.string.action_update_app),
-				withDismissAction = true,
-				duration = SnackbarDuration.Indefinite
-			)
-			if (result == SnackbarResult.ActionPerformed) {
-				uriHandler.openUri(newRelease.url)
-			}
-		}
 	}
 
 	SharedTransitionLayout {
@@ -206,11 +182,14 @@ fun App() {
 						}
 					)
 				}
-			}
-			if (!Settings.shared.showedSideloadingWarning
-				&& ctx.name.lowercase().contains("android")
-			) {
-				SideloadingDialog()
+				if (!Settings.shared.showedSideloadingWarning
+					&& ctx.name.lowercase().contains("android")
+				) {
+					SideloadingDialog()
+				}
+				if (Settings.shared.checkForUpdates) {
+					ChangelogSheet()
+				}
 			}
 		}
 	}
