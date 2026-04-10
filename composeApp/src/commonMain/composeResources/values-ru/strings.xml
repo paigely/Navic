@@ -246,7 +246,7 @@
     <string name="info_share_expires_in">Истекает в %1$s</string>
     <string name="info_share_expires_never">Никогда не истечёт</string>
     <string name="info_share_expired">Истекший</string>
-    <string name="info_no_shares">Без поделиться</string>
+    <string name="info_no_shares">Ссылки публикаций отсутствуют</string>
     <string name="info_no_lyrics">Без лирики</string>
     <string name="info_no_albums">Без альбомов</string>
     <string name="info_no_artists">Без артистов</string>
@@ -306,4 +306,24 @@
     <string name="info_downloaded">Загружено</string>
     <string name="info_sync_date_format">%1$d %2$s</string>
     <string name="option_sort_downloaded">Загружено</string>
+    <string name="title_update">Доступно обновление</string>
+    <string name="title_changelog">О релизе</string>
+    <string name="subtitle_check_for_updates">Рекомендуется оставить эту функцию включенной, так как некоторые обновления содержат важные исправления ошибок</string>
+    <string name="option_check_for_updates">Проверить наличие обновлений</string>
+    <string name="info_status_calculating">Расчет...</string>
+    <string name="action_test_exception_handler">Тест обработки исключений</string>
+    <string name="action_dont_show_again">Больше не показывать</string>
+    <string name="info_update">Выпущена версия %1$s</string>
+    <string name="info_syncing">Синхронизация...</string>
+    <string name="info_syncing_saving">Сохранение...</string>
+    <string name="info_syncing_saved">Сохранено.</string>
+    <string name="info_syncing_finished">Завершено.</string>
+    <string name="info_syncing_albums">Синхронизируем альбомы...</string>
+    <string name="info_syncing_playlists">Синхронизируем плейлисты...</string>
+    <string name="info_syncing_genres">Синхронизируем жанры...</string>
+    <string name="info_syncing_artists">Синхронизируем исполнителей...</string>
+    <string name="info_login_description_start">Войдите в ваш сервер</string>
+    <string name="info_login_description_middle">Navidrome</string>
+    <string name="info_login_description_end">.</string>
+    <string name="info_exception_handler">Это приведет к немедленному сбою приложения. Вы уверены в том, что хотите продолжить?</string>
 </resources>
