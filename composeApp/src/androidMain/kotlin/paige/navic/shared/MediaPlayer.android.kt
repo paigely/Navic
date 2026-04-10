@@ -197,7 +197,7 @@ class AndroidMediaPlayerViewModel(
 							controller?.seekToNextMediaItem()
 						}
 					}
-				}
+				}//TODO: figure out why this goes to second item
 
 				override fun onIsPlayingChanged(isPlaying: Boolean) {
 					_uiState.update { it.copy(isPaused = !isPlaying) }
@@ -525,7 +525,8 @@ class AndroidMediaPlayerViewModel(
 	override fun toggleRepeat() {
 		controller?.let { player ->
 			player.repeatMode = when (player.repeatMode) {
-				Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE
+				Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL
+				Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE
 				else -> Player.REPEAT_MODE_OFF
 			}
 		}
