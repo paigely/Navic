@@ -37,11 +37,6 @@ class Settings(
 	var enableScrobbling by preference(true)
 	var scrobblePercentage by preference(.5f)
 	var minDurationToScrobble by preference(30f)
-	var windowPlacement by preference(0)
-	var windowPositionX by preference(100f)
-	var windowPositionY by preference(100f)
-	var windowSizeX by preference(800f)
-	var windowSizeY by preference(600f)
 	var nowPlayingToolbarPosition by preference(ToolbarPosition.Bottom)
 	var replayGain by preference(false)
 	var gaplessPlayback by preference(true)
@@ -49,6 +44,7 @@ class Settings(
 	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)
 	var customHeaders by preference("")
 	var sleepTimerDuration by preference(0f)
+	var checkForUpdates by preference(true)
 
 	// navigation bar settings
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)

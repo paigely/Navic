@@ -47,7 +47,7 @@ import navic.composeapp.generated.resources.action_clear_pending_actions
 import navic.composeapp.generated.resources.action_rebuild_database
 import navic.composeapp.generated.resources.action_trigger_sync
 import navic.composeapp.generated.resources.count_songs
-import navic.composeapp.generated.resources.info_status_idle
+import navic.composeapp.generated.resources.info_status_calculating
 import navic.composeapp.generated.resources.info_sync_date_format
 import navic.composeapp.generated.resources.info_sync_hours_ago
 import navic.composeapp.generated.resources.info_sync_just_now
@@ -93,7 +93,8 @@ fun SettingsDataStorageScreen() {
 	val downloadCount by viewModel.downloadCount.collectAsStateWithLifecycle(0)
 	val downloadSize by viewModel.downloadSize.collectAsStateWithLifecycle(0L)
 
-	var imageCacheSizeMb by remember { mutableStateOf("Calculating...") }
+	val calculating = stringResource(Res.string.info_status_calculating)
+	var imageCacheSizeMb by remember { mutableStateOf(calculating) }
 
 	val downloadsSizeMb = remember(downloadSize) {
 		val mb = downloadSize.toDouble() / (1024 * 1024)
@@ -144,7 +145,7 @@ fun SettingsDataStorageScreen() {
 							Column {
 								Text(stringResource(Res.string.option_live_status))
 								Text(
-									text = syncState.message.ifEmpty { stringResource(Res.string.info_status_idle) },
+									text = stringResource(syncState.message),
 									style = MaterialTheme.typography.bodyMedium,
 									color = MaterialTheme.colorScheme.onSurfaceVariant
 								)
@@ -156,7 +157,7 @@ fun SettingsDataStorageScreen() {
 							) {
 								LinearProgressIndicator(
 									progress = {
-										if (syncState.isSyncing)
+										if (!syncState.isSyncing)
 											1f
 										else smoothSyncProgress.coerceIn(0f, 1f)
 									},

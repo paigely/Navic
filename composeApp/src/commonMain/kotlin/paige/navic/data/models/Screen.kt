@@ -52,7 +52,7 @@ sealed interface Screen : NavKey {
 	// misc
 	@Immutable
 	@Serializable
-	data object Onboarding : Screen
+	data object Login : Screen
 	@Immutable
 	@Serializable
 	data object NowPlaying : Screen

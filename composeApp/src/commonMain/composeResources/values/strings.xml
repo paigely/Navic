@@ -42,6 +42,8 @@
 	<string name="title_direction">Direction</string>
 	<string name="title_bulk_download">Download All Albums</string>
 	<string name="title_confirm">Confirm</string>
+	<string name="title_update">Update available</string>
+	<string name="title_changelog">Release notes</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
@@ -57,6 +59,7 @@
 	<string name="subtitle_gapless_playback">Experimental. Requires application restart. May conflict with audio offload on some devices</string>
 	<string name="subtitle_audio_offload">Experimental. Requires application restart. May conflict with gapless playback on some devices</string>
 	<string name="subtitle_now_playing_background_style">Choose static if you have performance issues</string>
+	<string name="subtitle_check_for_updates">It is recommended to leave this on, as some updates provide important bug fixes</string>
 
 	<string name="option_now_playing_background_style">Background style</string>
 	<string name="option_now_playing_background_style_static">Static</string>
@@ -111,8 +114,10 @@
 	<string name="option_downloaded_songs">Downloaded songs</string>
 	<string name="option_custom_headers">Custom server headers</string>
 	<string name="option_sleep_timer">Sleep timer</string>
+	<string name="option_check_for_updates">Check for updates</string>
 
 	<string name="info_status_idle">Idle</string>
+	<string name="info_status_calculating">Calculating...</string>
 	<string name="info_sync_never">Never</string>
 	<string name="info_sync_just_now">Just now</string>
 	<string name="info_sync_mins_ago">%1$d m ago</string>
@@ -200,7 +205,7 @@
 	<string name="action_cancel_download">Cancel download</string>
 	<string name="action_navigate_back">Back</string>
 	<string name="action_log_out">Logout</string>
-	<string name="action_log_in">Login</string>
+	<string name="action_log_in">Log in</string>
 	<string name="action_view_shares">Shares</string>
 	<string name="action_clear_search">Clear</string>
 	<string name="action_more">More</string>
@@ -225,6 +230,8 @@
 	<string name="action_clear_downloads">Clear downloads</string>
 	<string name="action_rebuild_database">Rebuild database</string>
 	<string name="action_trigger_sync">Trigger manual sync</string>
+	<string name="action_test_exception_handler">Test exception handler</string>
+	<string name="action_dont_show_again">Don't show again</string>
 	<string name="subtitle_rebuild_database">Wipes all local metadata and forces a fresh sync</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
@@ -265,7 +272,7 @@
 	<string name="info_track_replay_gain">Track ReplayGain</string>
 	<string name="info_album_replay_gain">Album ReplayGain</string>
 	<string name="info_track_replay_gain_effective">ReplayGain effective value</string>
-	<string name="info_update_app">A new version of Navic is available.</string>
+	<string name="info_update">Version "%1$s" has been released</string>
 	<string name="info_shared_by">Shared by %1$s</string>
 	<string name="info_share_expires_in">Expires in %1$s</string>
 	<string name="info_share_expires_never">Never expires</string>
@@ -284,6 +291,18 @@
 	<string name="info_download_failed">Download failed</string>
 	<string name="info_click_to_retry">Click to retry</string>
 	<string name="info_downloaded">Downloaded</string>
+	<string name="info_syncing">Syncing...</string>
+	<string name="info_syncing_saving">Saving...</string>
+	<string name="info_syncing_saved">Saved.</string>
+	<string name="info_syncing_finished">Finished.</string>
+	<string name="info_syncing_albums">Syncing albums...</string>
+	<string name="info_syncing_playlists">Syncing playlists...</string>
+	<string name="info_syncing_genres">Syncing genres...</string>
+	<string name="info_syncing_artists">Syncing artists...</string>
+	<string name="info_login_description_start">Log into your</string>
+	<string name="info_login_description_middle">Navidrome</string>
+	<string name="info_login_description_end">instance.</string>
+	<string name="info_exception_handler">This will immediately crash the application. Are you sure?</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>

@@ -10,6 +10,10 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.info_status_idle
+import navic.composeapp.generated.resources.info_syncing
+import org.jetbrains.compose.resources.StringResource
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.SyncActionEntity
@@ -27,7 +31,7 @@ import kotlin.time.Instant
 data class SyncState(
 	val isSyncing: Boolean = false,
 	val progress: Float = 0f,
-	val message: String = ""
+	val message: StringResource = Res.string.info_status_idle
 )
 
 class SyncManager(
@@ -48,10 +52,8 @@ class SyncManager(
 	init {
 		scope.launch {
 			connectivityManager.isOnline.collect { isOnline ->
-				if (isOnline) {
-					if (!syncMutex.isLocked) {
-						syncMutex.withLock { processQueue() }
-					}
+				if (!syncMutex.isLocked && isOnline) {
+					syncMutex.withLock { processQueue() }
 				}
 			}
 		}
@@ -107,7 +109,7 @@ class SyncManager(
 				Logger.i("SyncManager", "Starting full library pull...")
 
 				_syncState.update {
-					it.copy(isSyncing = true, message = "Starting sync...")
+					it.copy(isSyncing = true)
 				}
 
 				val result = repository.syncEverything { progress, message ->
@@ -122,7 +124,7 @@ class SyncManager(
 				}
 
 				_syncState.update {
-					it.copy(isSyncing = false)
+					it.copy(isSyncing = false, message = Res.string.info_status_idle)
 				}
 			}
 		}

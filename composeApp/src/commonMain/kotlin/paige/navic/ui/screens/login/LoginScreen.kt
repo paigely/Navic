@@ -1,13 +1,13 @@
-package paige.navic.ui.screens.onboarding
+package paige.navic.ui.screens.login
 
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import paige.navic.ui.screens.onboarding.pages.LoginScreen
+import paige.navic.ui.screens.login.pages.LoginScreenContent
 
 @Composable
-fun OnboardingScreen() {
+fun LoginScreen() {
 	Scaffold { innerPadding ->
-		LoginScreen(
+		LoginScreenContent(
 			innerPadding = innerPadding
 		)
 	}

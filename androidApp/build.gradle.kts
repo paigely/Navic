@@ -20,8 +20,8 @@ extensions.configure<ApplicationExtension> {
 		applicationId = "paige.navic"
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
-		versionCode = 21
-		versionName = "v1.0.0-alpha31"
+		versionCode = 22
+		versionName = "v1.0.0-alpha32"
 
 		ndk {
 			abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))
@@ -108,6 +108,7 @@ extensions.configure<ApplicationAndroidComponentsExtension> {
 dependencies {
 	implementation(projects.composeApp)
 	implementation(libs.androidx.activity.compose)
+	implementation(libs.cmp.material3)
 	implementation(libs.koin.android)
 	implementation(libs.koin.core)
 	implementation(libs.bundles.glance)
