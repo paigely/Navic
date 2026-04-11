@@ -7,7 +7,7 @@
     <string name="title_search">Buscar</string>
     <string name="title_appearance">Apariencia</string>
     <string name="title_behaviour">Comportamiento</string>
-    <string name="title_now_playing">Escuchando</string>
+    <string name="title_now_playing">Ahora suena</string>
     <string name="title_bottom_app_bar">Barra inferior</string>
     <string name="title_scrobbling">Scrobbling</string>
     <string name="title_about">Acerca de</string>
@@ -95,7 +95,7 @@
         <item quantity="many">%1$d de artistas</item>
         <item quantity="other">%1$d artistas</item>
     </plurals>
-    <string name="action_ok">OK</string>
+    <string name="action_ok">Aceptar</string>
     <string name="action_play">Reproducir</string>
     <string name="action_new">Nuevo</string>
     <string name="action_shuffle">Aleatorio</string>
@@ -104,7 +104,7 @@
     <string name="action_cancel">Cancelar</string>
     <string name="action_refresh">Actualizar</string>
     <string name="action_share">Compartir</string>
-    <string name="action_track_info">Ver canción</string>
+    <string name="action_track_info">Ver información de canción</string>
     <string name="action_view_album">Ver álbum</string>
     <string name="action_view_playlist">Ver lista</string>
     <string name="action_view_artist">Ver artista</string>
@@ -147,7 +147,7 @@
     <string name="info_track_artist_id">ID del Artista</string>
     <string name="info_track_bitrate">Tasa de bits</string>
     <string name="info_track_bit_depth">Profundidad de bits</string>
-    <string name="info_track_file_size">Tamaño del archivo</string>
+    <string name="info_track_file_size">Tamaño de archivo</string>
     <string name="info_track_format">Formato</string>
     <string name="info_track_sampling_rate">Frecuencia de muestreo</string>
     <string name="info_track_channel_count">Número de canales</string>
@@ -313,4 +313,8 @@
     <string name="subtitle_check_for_updates">Es recomendable mantenerlo activado ya que algunas actualizaciones corrigen defectos importantes</string>
     <string name="title_danger_zone">Área de riesgo</string>
     <string name="info_update">Se ha publicado la versión %1$s</string>
+    <string name="subtitle_data_storage">Gestione la sincronización, el uso de red y la antememoria</string>
+    <string name="notice_login_suggestion">Quizá quiso decir…</string>
+    <string name="subtitle_trigger_sync">Fuerza una actualización completa de la biblioteca inmediatamente</string>
+    <string name="subtitle_rebuild_database">Borra todos los metadatos locales y fuerza una sincronización nueva</string>
 </resources>
