@@ -19,6 +19,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_radios
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -36,6 +37,7 @@ fun RadioListScreen(
 	nested: Boolean
 ) {
 	val viewModel = koinViewModel<RadioListViewModel>()
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val state by viewModel.radiosState.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -74,7 +76,12 @@ fun RadioListScreen(
 					Arrangement.Center
 				else Arrangement.spacedBy(12.dp)
 			) {
-				radioListScreenContent(state = state)
+				radioListScreenContent(
+					state = state,
+					onRadioClick = { radio ->
+						player.playRadio(radio)
+					}
+				)
 			}
 		}
 	}

@@ -32,7 +32,8 @@ import kotlin.math.abs
 @Composable
 fun RadioListScreenCard(
 	modifier: Modifier = Modifier,
-	radio: DomainRadio
+	radio: DomainRadio,
+	onPlayClick: () -> Unit
 ) {
 	val ctx = LocalCtx.current
 	val inDarkTheme = isSystemInDarkTheme()
@@ -66,7 +67,7 @@ fun RadioListScreenCard(
 		shadowElevation = 2.dp,
 		onClick = {
 			ctx.clickSound()
-			//TODO: Add actual playing
+			onPlayClick()
 		}
 	) {
 		Box(modifier = Modifier.height(100.dp).fillMaxWidth()) {

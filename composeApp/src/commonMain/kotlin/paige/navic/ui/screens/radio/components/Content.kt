@@ -14,7 +14,8 @@ import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.utils.UiState
 
 fun LazyGridScope.radioListScreenContent(
-	state: UiState<List<DomainRadio>>
+	state: UiState<List<DomainRadio>>,
+	onRadioClick: (DomainRadio) -> Unit
 ) {
 	val data = state.data.orEmpty()
 
@@ -22,7 +23,8 @@ fun LazyGridScope.radioListScreenContent(
 		items(data, key = { it.id }) { radio ->
 			RadioListScreenCard(
 				modifier = Modifier.animateItem(),
-				radio = radio
+				radio = radio,
+				onPlayClick = { onRadioClick(radio) }
 			)
 		}
 	} else {

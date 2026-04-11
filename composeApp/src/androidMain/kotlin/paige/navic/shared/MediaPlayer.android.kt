@@ -38,6 +38,7 @@ import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.CollectionRepository
@@ -468,6 +469,43 @@ class AndroidMediaPlayerViewModel(
 					player.play()
 				}
 			}
+		}
+	}
+
+	override fun playRadio(radio: DomainRadio) {
+		resetSleepTimer()
+		//TODO: figure out how to play radio + ui
+
+		val streamUrl = radio.streamUrl
+
+		val metadata = MediaMetadata.Builder()
+			.setTitle(radio.name)
+			.setArtist("Live Radio")
+			.setIsPlayable(true)
+			.build()
+
+		val mediaItem = MediaItem.Builder()
+			.setUri(streamUrl)
+			.setMediaId("radio_${radio.name.hashCode()}")
+			.setMediaMetadata(metadata)
+			.setLiveConfiguration(MediaItem.LiveConfiguration.Builder().build())
+			.build()
+
+		controller?.let { player ->
+			player.stop()
+			player.clearMediaItems()
+			player.setMediaItem(mediaItem)
+			player.prepare()
+			player.play()
+		}
+
+		_uiState.update { state ->
+			state.copy(
+				queue = emptyList(),
+				currentIndex = 0,
+				currentSong = null,
+				isLoading = true
+			)
 		}
 	}
 
