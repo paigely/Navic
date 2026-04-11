@@ -1,6 +1,7 @@
 package paige.navic.ui.screens.collection.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -23,10 +24,10 @@ import androidx.compose.ui.unit.sp
 import com.kyant.capsule.ContinuousCapsule
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_delete_download
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.info_download_failed
-import navic.composeapp.generated.resources.info_downloaded
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -35,7 +36,8 @@ import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Play
-import paige.navic.icons.outlined.Check
+import paige.navic.icons.outlined.Close
+import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Shuffle
@@ -118,34 +120,46 @@ fun CollectionDetailScreenHeadingRowButtons(
 			modifier = Modifier.size(width = 52.dp, height = 40.dp),
 			onClick = {
 				ctx.clickSound()
-				if (downloadStatus == DownloadStatus.NOT_DOWNLOADED
-					|| downloadStatus == DownloadStatus.FAILED
-				) {
-					scope.launch {
-						downloadManager.downloadCollection(collection)
+				scope.launch {
+					when (downloadStatus) {
+						DownloadStatus.NOT_DOWNLOADED, DownloadStatus.FAILED -> {
+							if (isOnline) downloadManager.downloadCollection(collection)
+						}
+						DownloadStatus.DOWNLOADING -> {
+							downloadManager.cancelCollectionDownload(collection)
+						}
+						DownloadStatus.DOWNLOADED -> {
+							downloadManager.deleteDownloadedCollection(collection)
+						}
 					}
 				}
 			},
 			shape = shape,
-			enabled = downloadStatus == DownloadStatus.NOT_DOWNLOADED
-				&& collection.songs.isNotEmpty()
-				&& isOnline
-				|| downloadStatus == DownloadStatus.FAILED,
+			enabled = (isOnline && collection.songs.isNotEmpty()) ||
+				(downloadStatus == DownloadStatus.DOWNLOADED || downloadStatus == DownloadStatus.DOWNLOADING),
 			contentPadding = PaddingValues(0.dp)
 		) {
 			when (downloadStatus) {
 				DownloadStatus.DOWNLOADING -> {
-					CircularProgressIndicator(
-						modifier = Modifier.size(24.dp),
-						strokeWidth = 2.5.dp,
-						color = MaterialTheme.colorScheme.primary
-					)
+					Box(contentAlignment = Alignment.Center) {
+						CircularProgressIndicator(
+							modifier = Modifier.size(24.dp),
+							strokeWidth = 2.dp,
+							color = MaterialTheme.colorScheme.primary
+						)
+						Icon(
+							imageVector = Icons.Outlined.Close,
+							contentDescription = "Cancel",
+							modifier = Modifier.size(12.dp),
+							tint = MaterialTheme.colorScheme.primary
+						)
+					}
 				}
 
 				DownloadStatus.DOWNLOADED -> {
 					Icon(
-						imageVector = Icons.Outlined.Check,
-						contentDescription = stringResource(Res.string.info_downloaded),
+						imageVector = Icons.Outlined.Delete,
+						contentDescription = stringResource(Res.string.action_delete_download),
 						modifier = Modifier.size(24.dp),
 						tint = MaterialTheme.colorScheme.primary
 					)

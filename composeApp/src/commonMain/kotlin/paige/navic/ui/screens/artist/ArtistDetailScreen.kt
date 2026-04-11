@@ -187,7 +187,23 @@ fun ArtistDetailScreen(
 						)
 						ArtistActionButtons(
 							onPlay = { viewModel.playArtistAlbums(player) },
-							onDownload = { showDownloadDialog = true },
+							onDownload = {
+								scope.launch {
+									state.albums.forEach { album ->
+										downloadManager.downloadCollection(album)
+									}
+								}
+							},
+							onCancelDownload = {
+								state.albums.forEach { album ->
+									downloadManager.cancelCollectionDownload(album)
+								}
+							},
+							onDeleteDownload = {
+								state.albums.forEach { album ->
+									downloadManager.deleteDownloadedCollection(album)
+								}
+							},
 							downloadStatus = downloadStatus,
 							playEnabled = state.albums.isNotEmpty(),
 							modifier = Modifier.padding(top = 8.dp),

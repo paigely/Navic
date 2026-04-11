@@ -91,7 +91,7 @@ class DownloadManager(
 	fun cancelDownload(songId: String) {
 		activeDownloads[songId]?.cancel()
 		activeDownloads.remove(songId)
-		scope.launch {
+		scope.launch(Dispatchers.IO) {
 			val existing = downloadDao.getDownloadById(songId)
 			if (existing?.status == DownloadStatus.DOWNLOADING
 				|| existing?.status == DownloadStatus.FAILED
@@ -101,12 +101,24 @@ class DownloadManager(
 		}
 	}
 
+	fun cancelCollectionDownload(collection: DomainSongCollection) {
+		collection.songs.forEach { song ->
+			cancelDownload(song.id)
+		}
+	}
+
 	fun deleteDownload(songId: String) {
 		cancelDownload(songId)
 		scope.launch {
 			val download = downloadDao.getDownloadById(songId)
 			download?.filePath?.let { storageManager.deleteFile(it) }
 			downloadDao.deleteDownload(songId)
+		}
+	}
+
+	fun deleteDownloadedCollection(collection: DomainSongCollection) {
+		collection.songs.forEach { song ->
+			deleteDownload(song.id)
 		}
 	}
 

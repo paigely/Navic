@@ -22,6 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousCapsule
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_cancel_download
+import navic.composeapp.generated.resources.action_delete_download
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.stringResource
@@ -29,7 +31,8 @@ import paige.navic.LocalCtx
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Play
-import paige.navic.icons.outlined.Check
+import paige.navic.icons.outlined.Close
+import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.DownloadOff
 
@@ -37,6 +40,8 @@ import paige.navic.icons.outlined.DownloadOff
 fun ArtistActionButtons(
 	onPlay: () -> Unit,
 	onDownload: () -> Unit,
+	onCancelDownload: () -> Unit,
+	onDeleteDownload: () -> Unit,
 	downloadStatus: DownloadStatus,
 	playEnabled: Boolean,
 	isOnline: Boolean,
@@ -84,32 +89,43 @@ fun ArtistActionButtons(
 			modifier = Modifier.size(width = 52.dp, height = 40.dp),
 			onClick = {
 				ctx.clickSound()
-				if (downloadStatus == DownloadStatus.NOT_DOWNLOADED) {
-					onDownload()
-				} else if (downloadStatus == DownloadStatus.FAILED) {
-					onDownload()
+				when (downloadStatus) {
+					DownloadStatus.NOT_DOWNLOADED, DownloadStatus.FAILED -> onDownload()
+					DownloadStatus.DOWNLOADING -> onCancelDownload()
+					DownloadStatus.DOWNLOADED -> onDeleteDownload()
 				}
 			},
 			shape = ContinuousCapsule,
-			enabled = downloadStatus == DownloadStatus.NOT_DOWNLOADED
-				&& playEnabled
-				&& isOnline
-				|| downloadStatus == DownloadStatus.FAILED,
+			enabled = when (downloadStatus) {
+				DownloadStatus.DOWNLOADING,
+				DownloadStatus.DOWNLOADED,
+				DownloadStatus.FAILED -> true
+
+				DownloadStatus.NOT_DOWNLOADED -> isOnline && playEnabled
+			},
 			contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
 		) {
 			when (downloadStatus) {
 				DownloadStatus.DOWNLOADING -> {
-					CircularProgressIndicator(
-						modifier = Modifier.size(24.dp),
-						strokeWidth = 2.5.dp,
-						color = MaterialTheme.colorScheme.primary
-					)
+					Box(contentAlignment = Alignment.Center) {
+						CircularProgressIndicator(
+							modifier = Modifier.size(24.dp),
+							strokeWidth = 2.5.dp,
+							color = MaterialTheme.colorScheme.primary
+						)
+						Icon(
+							imageVector = Icons.Outlined.Close,
+							contentDescription = stringResource(Res.string.action_cancel_download),
+							modifier = Modifier.size(12.dp),
+							tint = MaterialTheme.colorScheme.primary
+						)
+					}
 				}
 
 				DownloadStatus.DOWNLOADED -> {
 					Icon(
-						imageVector = Icons.Outlined.Check,
-						contentDescription = null,
+						imageVector = Icons.Outlined.Delete,
+						contentDescription = stringResource(Res.string.action_delete_download),
 						modifier = Modifier.size(24.dp),
 						tint = MaterialTheme.colorScheme.primary
 					)
