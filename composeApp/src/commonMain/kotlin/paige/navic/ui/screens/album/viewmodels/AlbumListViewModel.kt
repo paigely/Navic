@@ -20,7 +20,7 @@ import paige.navic.utils.UiState
 open class AlbumListViewModel(
 	initialListType: DomainAlbumListType = DomainAlbumListType.AlphabeticalByArtist,
 	private val repository: AlbumRepository,
-	private val connectivityManager: ConnectivityManager
+	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _albumsState =
 		MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())

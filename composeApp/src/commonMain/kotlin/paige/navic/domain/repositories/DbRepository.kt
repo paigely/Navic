@@ -19,6 +19,7 @@ import navic.composeapp.generated.resources.info_syncing_artists
 import navic.composeapp.generated.resources.info_syncing_finished
 import navic.composeapp.generated.resources.info_syncing_genres
 import navic.composeapp.generated.resources.info_syncing_playlists
+import navic.composeapp.generated.resources.info_syncing_radios
 import navic.composeapp.generated.resources.info_syncing_saved
 import navic.composeapp.generated.resources.info_syncing_saving
 import org.jetbrains.compose.resources.StringResource
@@ -27,6 +28,7 @@ import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.dao.GenreDao
 import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.dao.PlaylistDao
+import paige.navic.data.database.dao.RadioDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.PlaylistEntity
@@ -44,6 +46,7 @@ class DbRepository(
 	private val songDao: SongDao,
 	private val genreDao: GenreDao,
 	private val artistDao: ArtistDao,
+	private val radioDao: RadioDao,
 	private val lyricDao: LyricDao,
 	private val syncDao: SyncActionDao
 ) {
@@ -66,6 +69,7 @@ class DbRepository(
 		songDao.clearAllSongs()
 		genreDao.clearAllGenres()
 		artistDao.clearAllArtists()
+		radioDao.clearAllRadios()
 		lyricDao.clearAllLyrics()
 		syncDao.clearAllActions()
 		Logger.i("DbRepository", "Database wiped completely.")
@@ -81,8 +85,11 @@ class DbRepository(
 
 		progressCallback(0.0f, Res.string.info_syncing)
 
-		progressCallback(0.02f, Res.string.info_syncing_genres)
+		progressCallback(0.01f, Res.string.info_syncing_genres)
 		syncGenres().getOrThrow()
+
+		progressCallback(0.02f, Res.string.info_syncing_radios)
+		syncRadios().getOrThrow()
 
 		progressCallback(0.04f, Res.string.info_syncing_artists)
 		syncArtists().getOrThrow()
@@ -212,6 +219,13 @@ class DbRepository(
 		val entities = flatArtists.map { it.toEntity() }
 		artistDao.updateAllArtists(entities)
 		Logger.i("DbRepository", "- Artists Synced: ${entities.size} artists found")
+	}
+
+	suspend fun syncRadios(): Result<Unit> = runDbOp {
+		val remoteRadios = api.getInternetRadioStations()
+		val entities = remoteRadios.map { it.toEntity() }
+		radioDao.updateAllRadios(entities)
+		Logger.i("DbRepository", "- Radios Synced: ${entities.size} stations found")
 	}
 
 	suspend fun fetchArtistMetadata(artistId: String): Result<DomainArtist> = runDbOp {

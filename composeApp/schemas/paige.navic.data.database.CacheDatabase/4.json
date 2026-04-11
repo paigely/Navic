@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "b655b2cf1cf7c2fee316a2744649db1f",
+    "identityHash": "dbe28c3da17bcd649ef1b31e83a4a588",
     "entities": [
       {
         "tableName": "AlbumEntity",
@@ -554,6 +554,41 @@
         }
       },
       {
+        "tableName": "RadioEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`radioId` TEXT NOT NULL, `name` TEXT NOT NULL, `streamUrl` TEXT NOT NULL, `homepageUrl` TEXT, PRIMARY KEY(`radioId`))",
+        "fields": [
+          {
+            "fieldPath": "radioId",
+            "columnName": "radioId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "streamUrl",
+            "columnName": "streamUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "homepageUrl",
+            "columnName": "homepageUrl",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "radioId"
+          ]
+        }
+      },
+      {
         "tableName": "LyricEntity",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` TEXT NOT NULL, `rawContent` TEXT NOT NULL, `provider` TEXT NOT NULL, PRIMARY KEY(`songId`))",
         "fields": [
@@ -616,7 +651,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b655b2cf1cf7c2fee316a2744649db1f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dbe28c3da17bcd649ef1b31e83a4a588')"
     ]
   }
 }

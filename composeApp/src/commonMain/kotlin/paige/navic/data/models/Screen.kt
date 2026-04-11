@@ -48,6 +48,11 @@ sealed interface Screen : NavKey {
 		val artistId: String? = null,
 		val artistName: String? = null
 	) : Screen
+	@Immutable
+	@Serializable
+	data class RadioList(
+		val nested: Boolean = false
+	) : Screen
 
 	// misc
 	@Immutable

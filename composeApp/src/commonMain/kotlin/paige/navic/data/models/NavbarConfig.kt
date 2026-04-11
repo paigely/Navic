@@ -20,7 +20,8 @@ data class NavbarConfig(
 				NavbarTab(NavbarTab.Id.ARTISTS, true),
 				NavbarTab(NavbarTab.Id.SEARCH, false),
 				NavbarTab(NavbarTab.Id.GENRES, false),
-				NavbarTab(NavbarTab.Id.SONGS, false)
+				NavbarTab(NavbarTab.Id.SONGS, false),
+				NavbarTab(NavbarTab.Id.RADIOS, false)
 			),
 			version = VERSION
 		)

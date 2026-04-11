@@ -10,6 +10,7 @@ import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.dao.GenreDao
 import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.dao.PlaylistDao
+import paige.navic.data.database.dao.RadioDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.AlbumEntity
@@ -18,6 +19,7 @@ import paige.navic.data.database.entities.GenreEntity
 import paige.navic.data.database.entities.LyricEntity
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.entities.PlaylistSongCrossRef
+import paige.navic.data.database.entities.RadioEntity
 import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.database.entities.SyncActionEntity
 
@@ -30,6 +32,7 @@ import paige.navic.data.database.entities.SyncActionEntity
 		PlaylistSongCrossRef::class,
 		SongEntity::class,
 		ArtistEntity::class,
+		RadioEntity::class,
 		LyricEntity::class,
 		SyncActionEntity::class
 	]
@@ -42,6 +45,7 @@ abstract class CacheDatabase : RoomDatabase() {
 	abstract fun playlistDao(): PlaylistDao
 	abstract fun songDao(): SongDao
 	abstract fun artistDao(): ArtistDao
+	abstract fun radioDao(): RadioDao
 	abstract fun lyricDao(): LyricDao
 	abstract fun syncActionDao(): SyncActionDao
 }

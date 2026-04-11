@@ -27,6 +27,7 @@ import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_genres
 import navic.composeapp.generated.resources.title_library
 import navic.composeapp.generated.resources.title_playlists
+import navic.composeapp.generated.resources.title_radios
 import navic.composeapp.generated.resources.title_search
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.StringResource
@@ -42,13 +43,16 @@ import paige.navic.data.models.settings.enums.NavigationBarStyle
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Album
 import paige.navic.icons.filled.Artist
+import paige.navic.icons.filled.Genre
 import paige.navic.icons.filled.LibraryMusic
+import paige.navic.icons.filled.Radio
 import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Artist
 import paige.navic.icons.outlined.Genre
 import paige.navic.icons.outlined.LibraryMusic
 import paige.navic.icons.outlined.Note
 import paige.navic.icons.outlined.PlaylistPlay
+import paige.navic.icons.outlined.Radio
 import paige.navic.icons.outlined.Search
 import paige.navic.ui.components.common.animatedTabIconPainter
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
@@ -91,7 +95,7 @@ private enum class NavItem(
 	),
 	GENRES(
 		destination = Screen.GenreList(),
-		icon = Icons.Outlined.Genre,
+		icon = Icons.Filled.Genre,
 		iconUnselected = Icons.Outlined.Genre,
 		label = Res.string.title_genres
 	),
@@ -100,6 +104,12 @@ private enum class NavItem(
 		icon = Icons.Outlined.Note,
 		iconUnselected = Icons.Outlined.Note,
 		label = Res.string.title_songs
+	),
+	RADIOS(
+		destination = Screen.RadioList(),
+		icon = Icons.Filled.Radio,
+		iconUnselected = Icons.Outlined.Radio,
+		label = Res.string.title_radios
 	)
 }
 
@@ -139,6 +149,7 @@ fun BottomBar(
 						NavbarTab.Id.SEARCH -> NavItem.SEARCH
 						NavbarTab.Id.GENRES -> NavItem.GENRES
 						NavbarTab.Id.SONGS -> NavItem.SONGS
+						NavbarTab.Id.RADIOS -> NavItem.RADIOS
 					}
 					val selected = backStack.lastOrNull() == item.destination
 
@@ -191,6 +202,7 @@ fun BottomBar(
 						NavbarTab.Id.SEARCH -> NavItem.SEARCH
 						NavbarTab.Id.GENRES -> NavItem.GENRES
 						NavbarTab.Id.SONGS -> NavItem.SONGS
+						NavbarTab.Id.RADIOS -> NavItem.RADIOS
 					}
 					val selected = backStack.last() == item.destination
 
