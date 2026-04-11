@@ -118,7 +118,8 @@ fun LoginScreenFields(
 		label = { Text(stringResource(Res.string.option_account_password)) },
 		enabled = !isBusy,
 		keyboardOptions = KeyboardOptions(
-			autoCorrectEnabled = false
+			autoCorrectEnabled = false,
+			keyboardType = KeyboardType.Password,
 		)
 	)
 }
