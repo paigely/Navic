@@ -1,6 +1,5 @@
 package paige.navic.domain.repositories
 
-import androidx.room.concurrent.AtomicInt
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.client.SubsonicClient
@@ -21,7 +20,6 @@ import navic.composeapp.generated.resources.info_syncing_genres
 import navic.composeapp.generated.resources.info_syncing_playlists
 import navic.composeapp.generated.resources.info_syncing_radios
 import navic.composeapp.generated.resources.info_syncing_saved
-import navic.composeapp.generated.resources.info_syncing_saving
 import org.jetbrains.compose.resources.StringResource
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
@@ -52,6 +50,8 @@ class DbRepository(
 ) {
 	private val api: SubsonicClient get() = SessionManager.api
 	private val concurrentRequestLimit = Semaphore(20)
+
+	private val dbChunkSize = 500 // should be enough
 
 	private suspend fun <T> runDbOp(block: suspend () -> T): Result<T> =
 		withContext(Dispatchers.IO) {
@@ -133,53 +133,55 @@ class DbRepository(
 		if (allAlbumSummaries.isEmpty()) return@runDbOp 0
 
 		val totalAlbums = allAlbumSummaries.size
-		val completedAlbums = AtomicInt(0)
+		var completedAlbums = 0
+		var totalSongsSynced = 0
 
 		onProgress(0.1f, Res.string.info_syncing_albums)
 
-		val fullAlbums = coroutineScope {
-			allAlbumSummaries.map { summary ->
-				async {
-					concurrentRequestLimit.withPermit {
-						val album = api.getAlbum(summary.id)
-						val done = completedAlbums.incrementAndGet()
+		val networkChunkSize = 50
+		allAlbumSummaries.chunked(networkChunkSize).forEach { chunk ->
 
-						if (done % 5 == 0 || done == totalAlbums) {
-							val fetchProgress = 0.1f + (0.8f * (done.toFloat() / totalAlbums))
-							onProgress(fetchProgress, Res.string.info_syncing_albums)
+			val fullAlbums = coroutineScope {
+				chunk.map { summary ->
+					async {
+						concurrentRequestLimit.withPermit {
+							api.getAlbum(summary.id)
 						}
-						album
 					}
-				}
-			}.awaitAll()
+				}.awaitAll()
+			}
+
+			val albumEntities = fullAlbums.map { it.toEntity() }
+			val songEntities = fullAlbums.flatMap { album ->
+				album.songs.map { it.toEntity() }
+			}
+
+			albumEntities.chunked(dbChunkSize).forEach { albumDao.updateAllAlbums(it) }
+			songEntities.chunked(dbChunkSize).forEach { songDao.updateAllSongs(it) }
+
+			totalSongsSynced += songEntities.size
+			completedAlbums += chunk.size
+
+			val fetchProgress = 0.1f + (0.8f * (completedAlbums.toFloat() / totalAlbums))
+			onProgress(fetchProgress, Res.string.info_syncing_albums)
 		}
 
-		onProgress(0.9f, Res.string.info_syncing_saving)
-
-		val albumEntities = fullAlbums.map { it.toEntity() }
-		val songEntities = fullAlbums.flatMap { album ->
-			album.songs.map { it.toEntity() }
-		}
-
-		albumDao.updateAllAlbums(albumEntities)
-		songDao.updateAllSongs(songEntities)
-
-		if (songEntities.isNotEmpty() || albumEntities.isNotEmpty()) {
-			Logger.i(
-				"DbRepository",
-				"- Songs Synced: ${albumEntities.size} albums, ${songEntities.size} songs"
-			)
-		}
+		Logger.i(
+			"DbRepository",
+			"- Songs Synced: $totalAlbums albums, $totalSongsSynced songs"
+		)
 
 		onProgress(1.0f, Res.string.info_syncing_saved)
-		songEntities.size
+		totalSongsSynced
 	}
 
 	suspend fun syncPlaylists(): Result<List<PlaylistEntity>> = runDbOp {
 		val remotePlaylists = api.getPlaylists()
 		val playlistEntities = remotePlaylists.map { it.toEntity() }
 
-		playlistDao.updateAllPlaylists(playlistEntities)
+		playlistEntities.chunked(dbChunkSize).forEach { chunk ->
+			playlistDao.updateAllPlaylists(chunk)
+		}
 
 		Logger.i("DbRepository", "- Playlists Synced: ${playlistEntities.size} playlists found")
 
@@ -188,17 +190,23 @@ class DbRepository(
 
 	suspend fun syncPlaylistSongs(playlistId: String): Result<Int> = runDbOp {
 		val playlist = api.getPlaylist(playlistId)
-		val songs = playlist.songs
-		val songEntities = songs.map { it.toEntity() }
+		val songEntities = playlist.songs.map { it.toEntity() }
+
+		playlistDao.deletePlaylistSongCrossRefs(playlistId)
 
 		if (songEntities.isNotEmpty()) {
-			songDao.insertSongs(songEntities)
-		}
+			songEntities.chunked(dbChunkSize).forEach { chunk ->
+				songDao.insertSongs(chunk)
+			}
 
-		val crossRefs = songEntities.mapIndexed { index, it ->
-			PlaylistSongCrossRef(playlistId = playlistId, songId = it.songId, position = index)
+			val crossRefs = songEntities.mapIndexed { index, it ->
+				PlaylistSongCrossRef(playlistId = playlistId, songId = it.songId, position = index)
+			}
+
+			crossRefs.chunked(dbChunkSize).forEach { chunk ->
+				playlistDao.insertPlaylistSongCrossRefs(chunk)
+			}
 		}
-		playlistDao.replacePlaylistSongs(playlistId, crossRefs)
 
 		Logger.i("DbRepository", "- Playlist [$playlistId] synced: ${songEntities.size} songs")
 		songEntities.size
@@ -207,7 +215,11 @@ class DbRepository(
 	suspend fun syncGenres(): Result<Unit> = runDbOp {
 		val remoteGenres = api.getGenres()
 		val entities = remoteGenres.map { it.toEntity() }
-		genreDao.updateAllGenres(entities)
+
+		entities.chunked(dbChunkSize).forEach { chunk ->
+			genreDao.updateAllGenres(chunk)
+		}
+
 		Logger.i("DbRepository", "- Genres Synced: ${entities.size} genres found")
 	}
 
@@ -217,14 +229,22 @@ class DbRepository(
 			indexGroup.artists
 		}
 		val entities = flatArtists.map { it.toEntity() }
-		artistDao.updateAllArtists(entities)
+
+		entities.chunked(dbChunkSize).forEach { chunk ->
+			artistDao.updateAllArtists(chunk)
+		}
+
 		Logger.i("DbRepository", "- Artists Synced: ${entities.size} artists found")
 	}
 
 	suspend fun syncRadios(): Result<Unit> = runDbOp {
 		val remoteRadios = api.getInternetRadioStations()
 		val entities = remoteRadios.map { it.toEntity() }
-		radioDao.updateAllRadios(entities)
+
+		entities.chunked(dbChunkSize).forEach { chunk ->
+			radioDao.updateAllRadios(chunk)
+		}
+
 		Logger.i("DbRepository", "- Radios Synced: ${entities.size} stations found")
 	}
 
