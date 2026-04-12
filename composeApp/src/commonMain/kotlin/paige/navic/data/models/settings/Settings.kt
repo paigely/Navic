@@ -34,6 +34,7 @@ class Settings(
 	var lyricsAutoscroll by preference(true)
 	var lyricsBeatByBeat by preference(true)
 	var lyricsKeepAlive by preference(true)
+	var lyricsBlur by preference(false)
 	var enableScrobbling by preference(true)
 	var scrobblePercentage by preference(.5f)
 	var minDurationToScrobble by preference(30f)

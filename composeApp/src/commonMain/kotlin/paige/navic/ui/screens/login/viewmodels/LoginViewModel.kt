@@ -74,7 +74,7 @@ class LoginViewModel(
 			try {
 				val url = instanceState.text.toString().let {
 					if (!it.startsWith("https://") && !it.startsWith("http://")) "https://$it" else it
-				}
+				}.trim()
 
 				SessionManager.login(
 					url,
@@ -101,10 +101,10 @@ class LoginViewModel(
 	}
 
 	fun logout() {
+		_loginState.value = LoginState.Idle
+		SessionManager.logout()
 		viewModelScope.launch {
 			repository.removeEverything()
-			SessionManager.logout()
-			_loginState.value = LoginState.Idle
 		}
 	}
 }

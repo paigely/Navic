@@ -133,18 +133,20 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 
 	override fun onTaskRemoved(rootIntent: Intent?) {
 		onDestroy()
-		stopSelf()
 	}
 
 	override fun onDestroy() {
 		scrobbleManager?.release()
 		serviceScope.cancel()
+		stopForeground(STOP_FOREGROUND_REMOVE)
 		mediaSession?.run {
+			player.stop()
 			player.release()
 			release()
-			mediaSession = null
 		}
 		super.onDestroy()
+		mediaSession = null
+		stopSelf()
 	}
 
 	companion object {

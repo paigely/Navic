@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.OutlinedSecureTextField
@@ -21,6 +22,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
@@ -43,7 +45,8 @@ fun LoginScreenFields(
 	passwordState: TextFieldState,
 	passwordError: Boolean,
 	passwordFocusRequester: FocusRequester,
-	onPasswordFocusChanged: () -> Unit
+	onPasswordFocusChanged: () -> Unit,
+	onLogin: () -> Unit
 ) {
 	var instanceWasFocused by remember { mutableStateOf(false) }
 	OutlinedTextField(
@@ -65,8 +68,13 @@ fun LoginScreenFields(
 		enabled = !isBusy,
 		keyboardOptions = KeyboardOptions(
 			autoCorrectEnabled = false,
-			keyboardType = KeyboardType.Uri
-		)
+			keyboardType = KeyboardType.Uri,
+			imeAction = ImeAction.Next,
+			showKeyboardOnFocus = true
+		),
+		onKeyboardAction = KeyboardActionHandler {
+			usernameFocusRequester.requestFocus()
+		}
 	)
 
 	LoginScreenSuggestionChips(instanceState = instanceState)
@@ -93,8 +101,13 @@ fun LoginScreenFields(
 		lineLimits = TextFieldLineLimits.SingleLine,
 		enabled = !isBusy,
 		keyboardOptions = KeyboardOptions(
-			autoCorrectEnabled = false
-		)
+			autoCorrectEnabled = false,
+			imeAction = ImeAction.Next,
+			showKeyboardOnFocus = true
+		),
+		onKeyboardAction = KeyboardActionHandler {
+			passwordFocusRequester.requestFocus()
+		}
 	)
 
 	var passwordWasFocused by remember { mutableStateOf(false) }
@@ -120,6 +133,11 @@ fun LoginScreenFields(
 		keyboardOptions = KeyboardOptions(
 			autoCorrectEnabled = false,
 			keyboardType = KeyboardType.Password,
-		)
+			imeAction = ImeAction.Go,
+			showKeyboardOnFocus = true
+		),
+		onKeyboardAction = KeyboardActionHandler {
+			onLogin()
+		}
 	)
 }
