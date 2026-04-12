@@ -1,10 +1,8 @@
 package paige.navic.ui.screens.share
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -17,19 +15,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_shares
@@ -43,6 +35,7 @@ import paige.navic.icons.filled.ShareOff
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
+import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.artGridError
@@ -61,20 +54,6 @@ fun ShareListScreen() {
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 	var deletionId by remember { mutableStateOf<String?>(null) }
 
-	var isRefreshing by remember { mutableStateOf(false) }
-	val state = rememberPullToRefreshState()
-
-	LaunchedEffect(sharesState, isRefreshingFlow) {
-		if (sharesState !is UiState.Loading && !isRefreshingFlow) {
-			isRefreshing = false
-		}
-	}
-
-	val onRefresh: () -> Unit = {
-		isRefreshing = true
-		viewModel.refreshShares()
-	}
-
 	Scaffold(
 		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_shares)) }) },
 		bottomBar = {
@@ -88,21 +67,9 @@ fun ShareListScreen() {
 			modifier = Modifier
 				.padding(top = contentPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			state = state,
-			isRefreshing = isRefreshing,
-			onRefresh = onRefresh,
-			indicator = {
-				Box(
-					Modifier.align(Alignment.TopCenter).graphicsLayer {
-						val scaleFraction = if (isRefreshing) 1f
-						else LinearOutSlowInEasing.transform(state.distanceFraction).coerceIn(0f, 1f)
-						scaleX = scaleFraction
-						scaleY = scaleFraction
-					}
-				) {
-					PullToRefreshDefaults.LoadingIndicator(state = state, isRefreshing = isRefreshing)
-				}
-			}
+			finished = sharesState !is UiState.Loading && !isRefreshingFlow,
+			onRefresh = { viewModel.refreshShares() },
+			key = listOf(sharesState, isRefreshingFlow)
 		) {
 			Crossfade(sharesState) { stateValue ->
 				LazyVerticalGrid(

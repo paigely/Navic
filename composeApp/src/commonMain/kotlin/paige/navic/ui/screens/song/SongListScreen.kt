@@ -1,9 +1,7 @@
 package paige.navic.ui.screens.song
 
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,18 +12,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +31,7 @@ import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainSong
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
+import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
@@ -73,20 +66,6 @@ fun SongListScreen(
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	var songToQueue by remember { mutableStateOf<DomainSong?>(null) }
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
-	var isRefreshing by remember { mutableStateOf(false) }
-	val state = rememberPullToRefreshState()
-
-	LaunchedEffect(songsState) {
-		if (songsState !is UiState.Loading) {
-			isRefreshing = false
-		}
-	}
-
-	val onRefresh: () -> Unit = {
-		isRefreshing = true
-		viewModel.refreshSongs(true)
-	}
 
 	val actions: @Composable RowScope.() -> Unit = {
 		SongListScreenSortButton(
@@ -124,21 +103,9 @@ fun SongListScreen(
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			state = state,
-			isRefreshing = isRefreshing,
-			onRefresh = onRefresh,
-			indicator = {
-				Box(
-					Modifier.align(Alignment.TopCenter).graphicsLayer {
-						val scaleFraction = if (isRefreshing) 1f
-						else LinearOutSlowInEasing.transform(state.distanceFraction).coerceIn(0f, 1f)
-						scaleX = scaleFraction
-						scaleY = scaleFraction
-					}
-				) {
-					PullToRefreshDefaults.LoadingIndicator(state = state, isRefreshing = isRefreshing)
-				}
-			}
+			finished = songsState !is UiState.Loading,
+			onRefresh = { viewModel.refreshSongs(true) },
+			key = songsState
 		) {
 			LazyColumn(
 				modifier = if (!nested)

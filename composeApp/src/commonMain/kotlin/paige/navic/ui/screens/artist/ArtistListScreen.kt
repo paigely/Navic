@@ -1,6 +1,5 @@
 package paige.navic.ui.screens.artist
 
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -11,19 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_star
@@ -45,6 +35,7 @@ import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.layouts.ArtGridItem
+import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
@@ -63,20 +54,6 @@ fun ArtistListScreen(
 	val selectedArtist by viewModel.selectedArtist.collectAsState()
 	val starred by viewModel.starred.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
-	var isRefreshing by remember { mutableStateOf(false) }
-	val state = rememberPullToRefreshState()
-
-	LaunchedEffect(artistsState) {
-		if (artistsState !is UiState.Loading) {
-			isRefreshing = false
-		}
-	}
-
-	val onRefresh: () -> Unit = {
-		isRefreshing = true
-		viewModel.refreshArtists(true)
-	}
 
 	Scaffold(
 		topBar = {
@@ -97,21 +74,9 @@ fun ArtistListScreen(
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			state = state,
-			isRefreshing = isRefreshing,
-			onRefresh = onRefresh,
-			indicator = {
-				Box(
-					Modifier.align(Alignment.TopCenter).graphicsLayer {
-						val scaleFraction = if (isRefreshing) 1f
-						else LinearOutSlowInEasing.transform(state.distanceFraction).coerceIn(0f, 1f)
-						scaleX = scaleFraction
-						scaleY = scaleFraction
-					}
-				) {
-					PullToRefreshDefaults.LoadingIndicator(state = state, isRefreshing = isRefreshing)
-				}
-			}
+			finished = artistsState !is UiState.Loading,
+			onRefresh = { viewModel.refreshArtists(true) },
+			key = artistsState
 		) {
 			ArtistListScreenContent(
 				state = artistsState,
