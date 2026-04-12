@@ -1,5 +1,6 @@
 package paige.navic.ui.screens.collection
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,10 +8,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -19,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_songs
@@ -50,7 +56,7 @@ import paige.navic.utils.fadeFromTop
 import paige.navic.utils.withoutTop
 import kotlin.time.Duration
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CollectionDetailScreen(
 	collectionId: String,
@@ -78,6 +84,20 @@ fun CollectionDetailScreen(
 	val allDownloads by viewModel.allDownloads.collectAsState()
 	val downloadStatus by viewModel.collectionDownloadStatus()
 		.collectAsState(DownloadStatus.NOT_DOWNLOADED)
+
+	var isRefreshing by remember { mutableStateOf(false) }
+	val state = rememberPullToRefreshState()
+
+	LaunchedEffect(collectionState) {
+		if (collectionState !is UiState.Loading) {
+			isRefreshing = false
+		}
+	}
+
+	val onRefresh: () -> Unit = {
+		isRefreshing = true
+		viewModel.refreshCollection(true)
+	}
 
 	val titleAlpha by remember {
 		derivedStateOf {
@@ -116,8 +136,21 @@ fun CollectionDetailScreen(
 			modifier = Modifier
 				.padding(top = contentPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = collectionState is UiState.Loading,
-			onRefresh = { viewModel.refreshCollection(true) }
+			state = state,
+			isRefreshing = isRefreshing,
+			onRefresh = onRefresh,
+			indicator = {
+				Box(
+					Modifier.align(Alignment.TopCenter).graphicsLayer {
+						val scaleFraction = if (isRefreshing) 1f
+						else LinearOutSlowInEasing.transform(state.distanceFraction).coerceIn(0f, 1f)
+						scaleX = scaleFraction
+						scaleY = scaleFraction
+					}
+				) {
+					PullToRefreshDefaults.LoadingIndicator(state = state, isRefreshing = isRefreshing)
+				}
+			}
 		) {
 			LazyColumn(
 				modifier = Modifier
