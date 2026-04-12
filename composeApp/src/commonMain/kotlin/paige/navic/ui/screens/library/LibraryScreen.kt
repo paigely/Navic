@@ -8,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +26,7 @@ import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
+import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
@@ -94,16 +94,17 @@ fun LibraryScreen() {
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = albumsState is UiState.Loading
-				|| playlistsState is UiState.Loading
-				|| artistsState is UiState.Loading
-				|| genresState is UiState.Loading,
+			finished = albumsState !is UiState.Loading &&
+					playlistsState !is UiState.Loading &&
+					artistsState !is UiState.Loading &&
+					genresState !is UiState.Loading,
 			onRefresh = {
 				albumsViewModel.refreshAlbums(true)
 				playlistsViewModel.refreshPlaylists(true)
 				artistsViewModel.refreshArtists(true)
 				genresViewModel.refreshGenres(true)
-			}
+			},
+			key = listOf(albumsState, playlistsState, artistsState, genresState)
 		) {
 			LibraryScreenContent(
 				scrollBehavior = scrollBehavior,

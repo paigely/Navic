@@ -10,11 +10,11 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,6 +35,7 @@ import paige.navic.icons.filled.ShareOff
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
+import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.artGridError
@@ -44,12 +45,12 @@ import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ShareListScreen() {
 	val viewModel = koinViewModel<ShareListViewModel>()
 	val sharesState by viewModel.sharesState.collectAsState()
-	val isRefreshing by viewModel.isRefreshing.collectAsState()
+	val isRefreshingFlow by viewModel.isRefreshing.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 	var deletionId by remember { mutableStateOf<String?>(null) }
 
@@ -66,10 +67,11 @@ fun ShareListScreen() {
 			modifier = Modifier
 				.padding(top = contentPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			isRefreshing = isRefreshing || sharesState is UiState.Loading,
-			onRefresh = { viewModel.refreshShares() }
+			finished = sharesState !is UiState.Loading && !isRefreshingFlow,
+			onRefresh = { viewModel.refreshShares() },
+			key = listOf(sharesState, isRefreshingFlow)
 		) {
-			Crossfade(sharesState) { state ->
+			Crossfade(sharesState) { stateValue ->
 				LazyVerticalGrid(
 					modifier = Modifier
 						.fillMaxSize()
@@ -77,18 +79,18 @@ fun ShareListScreen() {
 					columns = GridCells.Fixed(1),
 					contentPadding = contentPadding.withoutTop(),
 					state = viewModel.gridState,
-					verticalArrangement = if ((state as? UiState.Success)?.data?.isEmpty() == true)
+					verticalArrangement = if ((stateValue as? UiState.Success)?.data?.isEmpty() == true)
 						Arrangement.Center
 					else Arrangement.Top
 				) {
-					when (state) {
+					when (stateValue) {
 						is UiState.Loading -> {
 							return@LazyVerticalGrid
 						}
 
-						is UiState.Error -> artGridError(state)
+						is UiState.Error -> artGridError(stateValue)
 						is UiState.Success -> {
-							items(state.data, { it.id }) { share ->
+							items(stateValue.data, { it.id }) { share ->
 								ShareListScreenItem(
 									modifier = Modifier.animateItem(fadeInSpec = null),
 									share = share,
@@ -97,7 +99,7 @@ fun ShareListScreen() {
 									}
 								)
 							}
-							if (state.data.isEmpty()) {
+							if (stateValue.data.isEmpty()) {
 								item(span = { GridItemSpan(maxLineSpan) }) {
 									ContentUnavailable(
 										icon = Icons.Filled.ShareOff,
