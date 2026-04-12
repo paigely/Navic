@@ -69,6 +69,7 @@ fun PullToRefreshBox(
 	paige.navic.ui.components.layouts.PullToRefreshBox(
 		isRefreshing = isRefreshing,
 		onRefresh = {
+			isRefreshing = true
 			onRefresh()
 		},
 		modifier = modifier,

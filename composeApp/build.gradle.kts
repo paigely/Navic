@@ -149,6 +149,7 @@ extensions.configure<KotlinMultiplatformExtension> {
 
 			implementation(libs.navigation3.ui)
 			implementation(libs.kotlinx.datetime)
+			implementation(libs.kotlinx.collections.immutable)
 			implementation(libs.kotlinx.serialization.json)
 			implementation(libs.androidx.datastore.preferences)
 			implementation(libs.coil.gif)
