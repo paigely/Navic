@@ -328,4 +328,5 @@
     <string name="action_dont_show_again">Non mostrare di nuovo</string>
     <string name="info_update">È stata rilasciata la versione %1$s</string>
     <string name="info_exception_handler">Questo farà immediatamente crashare l'app. Sei sicuro?</string>
+    <string name="option_lyrics_blur">Blur del testo</string>
 </resources>
