@@ -48,6 +48,7 @@ import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
 import paige.navic.utils.effectiveGain
 import java.io.File
+import kotlin.time.Duration
 
 class PlaybackService : MediaSessionService(), KoinComponent {
 	private var mediaSession: MediaSession? = null
@@ -474,9 +475,44 @@ class AndroidMediaPlayerViewModel(
 
 	override fun playRadio(radio: DomainRadio) {
 		resetSleepTimer()
-		//TODO: figure out how to play radio + ui
 
-		val streamUrl = radio.streamUrl
+		val radioId = "radio_${radio.name.hashCode()}"
+
+		val dummyRadioSong = DomainSong(
+			id = radioId,
+			title = radio.name,
+			artistName = "Live Radio",
+			albumId = "radio_album",
+			albumTitle = "Live Stream",
+			duration = Duration.ZERO,
+			trackNumber = 1,
+			coverArtId = null,
+			artistId = "",
+			parentId = "",
+			comment = null,
+			discNumber = null,
+			isrc = emptyList(),
+			year = null,
+			genre = null,
+			genres = emptyList(),
+			moods = emptyList(),
+			bpm = null,
+			contributors = emptyList(),
+			playCount = 0,
+			userRating = 0,
+			averageRating = null,
+			bitRate = null,
+			bitDepth = null,
+			sampleRate = null,
+			audioChannelCount = null,
+			replayGain = null,
+			fileSize = 0,
+			fileExtension = "",
+			mimeType = "",
+			filePath = radio.streamUrl,
+			starredAt = null,
+			musicBrainzId = null
+		)
 
 		val metadata = MediaMetadata.Builder()
 			.setTitle(radio.name)
@@ -485,7 +521,7 @@ class AndroidMediaPlayerViewModel(
 			.build()
 
 		val mediaItem = MediaItem.Builder()
-			.setUri(streamUrl)
+			.setUri(radio.streamUrl)
 			.setMediaId("radio_${radio.name.hashCode()}")
 			.setMediaMetadata(metadata)
 			.setLiveConfiguration(MediaItem.LiveConfiguration.Builder().build())
@@ -501,9 +537,9 @@ class AndroidMediaPlayerViewModel(
 
 		_uiState.update { state ->
 			state.copy(
-				queue = emptyList(),
+				queue = listOf(dummyRadioSong),
 				currentIndex = 0,
-				currentSong = null,
+				currentSong = dummyRadioSong,
 				isLoading = true
 			)
 		}
@@ -596,17 +632,27 @@ class AndroidMediaPlayerViewModel(
 			)
 			.build()
 
-		val localPath = downloadManager.getDownloadedFilePath(id)
-		val uri = if (localPath != null) {
-			File(localPath).toUri()
-		} else {
-			SessionManager.api.getStreamUrl(id).toUri()
+		val uri = when {
+			id.startsWith("radio_") && !filePath.isNullOrEmpty() -> { filePath.toUri() }
+			else -> {
+				val localPath = downloadManager.getDownloadedFilePath(id)
+				if (localPath != null) {
+					File(localPath).toUri()
+				} else {
+					SessionManager.api.getStreamUrl(id).toUri()
+				}
+			}
 		}
 
-		return MediaItem.Builder()
+		val builder = MediaItem.Builder()
 			.setUri(uri)
 			.setMediaId(id)
 			.setMediaMetadata(metadata)
-			.build()
+
+		if (id.startsWith("radio_")) {
+			builder.setLiveConfiguration(MediaItem.LiveConfiguration.Builder().build())
+		}
+
+		return builder.build()
 	}
 }

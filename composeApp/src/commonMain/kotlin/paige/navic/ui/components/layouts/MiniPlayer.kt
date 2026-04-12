@@ -72,6 +72,7 @@ import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
 import paige.navic.icons.filled.Play
 import paige.navic.icons.filled.SkipNext
+import paige.navic.icons.outlined.Radio
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
@@ -172,6 +173,7 @@ fun MiniPlayer(
 	}
 
 	val hasSong = song != null
+	val isRadio = song?.id?.startsWith("radio_") == true
 	val isInteractive = enabled && hasSong
 
 	Swiper(
@@ -257,7 +259,7 @@ fun MiniPlayer(
 						)
 						if (song?.coverArtId.isNullOrEmpty()) {
 							Icon(
-								imageVector = Icons.Filled.Note,
+								imageVector = if (isRadio) Icons.Outlined.Radio else Icons.Filled.Note,
 								contentDescription = null,
 								tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f)
 							)
