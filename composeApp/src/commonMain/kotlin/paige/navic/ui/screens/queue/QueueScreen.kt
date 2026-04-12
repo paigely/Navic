@@ -2,12 +2,7 @@ package paige.navic.ui.screens.queue
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.plus
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
@@ -53,9 +48,7 @@ fun QueueScreen() {
 	LazyColumn(
 		modifier = Modifier.fillMaxSize().fadeFromTop(),
 		state = draggableState.listState,
-		contentPadding = WindowInsets.statusBars.asPaddingValues()
-			+ WindowInsets.systemBars.asPaddingValues()
-			+ PaddingValues(vertical = 70.dp, horizontal = 16.dp),
+		contentPadding = PaddingValues(horizontal = 12.dp),
 		verticalArrangement = if (queue.isNotEmpty())
 			Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
 		else Arrangement.Center

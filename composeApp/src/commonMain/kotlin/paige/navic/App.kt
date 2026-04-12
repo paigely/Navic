@@ -38,7 +38,6 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.NavDisplay.popTransitionSpec
 import androidx.navigation3.ui.NavDisplay.predictivePopTransitionSpec
@@ -61,6 +60,7 @@ import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
 import paige.navic.ui.navigation.Material3Transitions
 import paige.navic.ui.scenes.BottomSheetSceneStrategy
+import paige.navic.ui.scenes.NowPlayingSceneStrategy
 import paige.navic.ui.screens.album.AlbumListScreen
 import paige.navic.ui.screens.artist.ArtistDetailScreen
 import paige.navic.ui.screens.artist.ArtistListScreen
@@ -161,8 +161,8 @@ fun App() {
 							.background(MaterialTheme.colorScheme.surface),
 						backStack = backStack,
 						sceneStrategies = listOf(
+							remember { NowPlayingSceneStrategy() },
 							remember { BottomSheetSceneStrategy() },
-							remember { DialogSceneStrategy() },
 							rememberListDetailSceneStrategy()
 						),
 						onBack = backStack::removeLastOrNull,
@@ -234,20 +234,20 @@ private fun entryProvider(
 			LoginScreen()
 		}
 		entry<Screen.NowPlaying>(
-			metadata = BottomSheetSceneStrategy.bottomSheet(
+			metadata = NowPlayingSceneStrategy.bottomSheet(
 				maxWidth = Dp.Unspecified,
 				screenType = "player"
 			)
 		) {
 			NowPlayingScreen()
 		}
-		entry<Screen.Lyrics>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
+		entry<Screen.Lyrics>(metadata = NowPlayingSceneStrategy.bottomSheet(isTransparent = true)) {
 			val player = koinViewModel<MediaPlayerViewModel>()
 			val playerState by player.uiState.collectAsState()
 			val song = playerState.currentSong
 			LyricsScreen(song)
 		}
-		entry<Screen.Queue>(metadata = BottomSheetSceneStrategy.bottomSheet(isTransparent = true)) {
+		entry<Screen.Queue>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
 			QueueScreen()
 		}
 		entry<Screen.CollectionDetail>(metadata = detailPane("root")) { key ->

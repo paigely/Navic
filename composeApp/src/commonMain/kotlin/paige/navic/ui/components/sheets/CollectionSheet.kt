@@ -1,12 +1,21 @@
 package paige.navic.ui.components.sheets
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,10 +51,8 @@ import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.CoverArt
-import paige.navic.ui.components.common.Form
-import paige.navic.ui.components.common.FormRow
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CollectionSheet(
 	onDismissRequest: () -> Unit,
@@ -63,9 +70,22 @@ fun CollectionSheet(
 	onSetStarred: ((Boolean) -> Unit)? = null,
 	onDelete: (() -> Unit)? = null,
 ) {
+	val contentPadding = PaddingValues(horizontal = 16.dp)
+	val colors = ListItemDefaults.colors(
+		containerColor = Color.Transparent,
+		trailingIconColor = MaterialTheme.colorScheme.onSurface,
+		headlineColor = MaterialTheme.colorScheme.onSurface
+	)
 	ModalBottomSheet(
 		onDismissRequest = onDismissRequest,
+		dragHandle = null,
+		contentWindowInsets = { BottomSheetDefaults.modalWindowInsets.add(WindowInsets(
+			left = 8.dp,
+			right = 8.dp
+		)) }
 	) {
+		Spacer(Modifier.height(16.dp))
+
 		ListItem(
 			leadingContent = {
 				CoverArt(
@@ -86,135 +106,125 @@ fun CollectionSheet(
 					).joinToString(" • ")
 				)
 			},
-			colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+			colors = colors
 		)
 
-		Form(modifier = Modifier.padding(16.dp)) {
-			if (onViewOnLastFm != null && albumInfo?.lastFmUrl != null) {
-				FormRow(
-					onClick = {
-						onViewOnLastFm(albumInfo.lastFmUrl)
-						onDismissRequest()
-					}
-				) {
-					Icon(Icons.Brand.Lastfm, null)
-					Text(
-						stringResource(Res.string.action_view_on_lastfm),
-						modifier = Modifier.padding(start = 12.dp).weight(1f)
-					)
-				}
-			}
+		HorizontalDivider(Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
 
-			if (onViewOnMusicBrainz != null && albumInfo?.musicBrainzId != null) {
-				FormRow(
-					onClick = {
-						onViewOnMusicBrainz(albumInfo.musicBrainzId)
-						onDismissRequest()
-					}
-				) {
-					Icon(Icons.Brand.Musicbrainz, null)
-					Text(
-						stringResource(Res.string.action_view_on_musicbrainz),
-						modifier = Modifier.padding(start = 12.dp).weight(1f)
-					)
-				}
-			}
+		if (onViewOnLastFm != null && albumInfo?.lastFmUrl != null) {
+			ListItem(
+				content = { Text(stringResource(Res.string.action_view_on_lastfm)) },
+				leadingContent = { Icon(Icons.Brand.Lastfm, null) },
+				onClick = {
+					onViewOnLastFm(albumInfo.lastFmUrl)
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
 
-			if (onShare != null) {
-				FormRow(
-					onClick = {
-						onShare()
-						onDismissRequest()
-					}
-				) {
-					Icon(Icons.Outlined.Share, null)
-					Text(
-						stringResource(Res.string.action_share),
-						modifier = Modifier.padding(start = 12.dp).weight(1f)
-					)
-				}
-			}
+		if (onViewOnMusicBrainz != null && albumInfo?.musicBrainzId != null) {
+			ListItem(
+				content = { Text(stringResource(Res.string.action_view_on_musicbrainz)) },
+				leadingContent = { Icon(Icons.Brand.Musicbrainz, null) },
+				onClick = {
+					onViewOnMusicBrainz(albumInfo.musicBrainzId)
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
 
-			if (onAddAllToPlaylist != null) {
-				FormRow(
-					onClick = {
-						onAddAllToPlaylist()
-						onDismissRequest()
-					}
-				) {
-					Icon(Icons.Outlined.PlaylistAdd, null)
-					Text(
-						stringResource(Res.string.action_add_all_to_playlist),
-						modifier = Modifier.padding(start = 12.dp).weight(1f)
-					)
-				}
-			}
+		if (onShare != null) {
+			ListItem(
+				content = { Text(stringResource(Res.string.action_share)) },
+				leadingContent = { Icon(Icons.Outlined.Share, null) },
+				onClick = {
+					onShare()
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
 
-			if (starred != null && onSetStarred != null) {
-				FormRow(
-					onClick = {
-						onSetStarred(!starred)
-						onDismissRequest()
-					}
-				) {
+		if (onAddAllToPlaylist != null) {
+			ListItem(
+				content = { Text(stringResource(Res.string.action_add_all_to_playlist)) },
+				leadingContent = { Icon(Icons.Outlined.PlaylistAdd, null) },
+				onClick = {
+					onAddAllToPlaylist()
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
+
+		if (starred != null && onSetStarred != null) {
+			ListItem(
+				content = {
+					Text(stringResource(if (starred) Res.string.action_remove_star else Res.string.action_star))
+				},
+				leadingContent = {
 					Icon(if (starred) Icons.Filled.Star else Icons.Outlined.Star, null)
-					Text(
-						stringResource(if (starred) Res.string.action_remove_star else Res.string.action_star),
-						modifier = Modifier.padding(start = 12.dp).weight(1f)
-					)
-				}
-			}
+				},
+				onClick = {
+					onSetStarred(!starred)
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
 
-			if (onDownloadAll != null && onCancelDownloadAll != null && downloadStatus != null) {
-				val downloading = downloadStatus === DownloadStatus.DOWNLOADING
-				val enabled = isOnline && collection?.songs.orEmpty().isNotEmpty()
+		if (onDownloadAll != null && onCancelDownloadAll != null && downloadStatus != null) {
+			val downloading = downloadStatus === DownloadStatus.DOWNLOADING
+			val enabled = isOnline && collection?.songs.orEmpty().isNotEmpty()
 
-				FormRow(
-					onClick = {
-						if (enabled) {
-							if (!downloading) {
-								onDownloadAll()
-							} else {
-								onCancelDownloadAll()
-							}
-							onDismissRequest()
-						}
-					},
-					modifier = Modifier.alpha(if (enabled) 1f else 0.5f)
-				) {
+			ListItem(
+				content = {
+					Text(stringResource(if (!downloading) Res.string.action_download else Res.string.action_cancel_download))
+				},
+				leadingContent = {
 					if (!downloading) {
 						Icon(Icons.Outlined.Download, null)
-						Text(
-							stringResource(Res.string.action_download),
-							modifier = Modifier.padding(start = 12.dp).weight(1f)
-						)
 					} else {
 						CircularProgressIndicator(
 							modifier = Modifier.size(20.dp),
 							strokeWidth = 2.dp
 						)
-						Text(
-							stringResource(Res.string.action_cancel_download),
-							modifier = Modifier.padding(start = 12.dp).weight(1f)
-						)
 					}
-				}
-			}
+				},
+				modifier = Modifier
+					.alpha(if (enabled) 1f else 0.5f),
+				onClick = {
+					if (!downloading) {
+						onDownloadAll()
+					} else {
+						onCancelDownloadAll()
+					}
+					onDismissRequest()
+				},
+				enabled = enabled,
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
 
-			if (onDelete != null) {
-				FormRow(
-					onClick = {
-						onDelete()
-						onDismissRequest()
-					}
-				) {
-					Icon(Icons.Outlined.PlaylistRemove, null)
-					Text(
-						stringResource(Res.string.action_delete),
-						modifier = Modifier.padding(start = 12.dp).weight(1f)
-					)
-				}
-			}
+		if (onDelete != null) {
+			ListItem(
+				content = { Text(stringResource(Res.string.action_delete)) },
+				leadingContent = { Icon(Icons.Outlined.PlaylistRemove, null) },
+				onClick = {
+					onDelete()
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
 		}
 	}
 }

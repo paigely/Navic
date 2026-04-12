@@ -9,13 +9,16 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import paige.navic.data.models.User
 import paige.navic.utils.LoginState
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LoginScreenProgress(
 	modifier: Modifier = Modifier,
@@ -36,12 +39,12 @@ fun LoginScreenProgress(
 		exit = shrinkVertically() + fadeOut()
 	) {
 		if (loginState is LoginState.Syncing) {
-			LinearProgressIndicator(
+			LinearWavyProgressIndicator(
 				modifier = Modifier.fillMaxWidth(),
 				progress = { smoothedProgress }
 			)
 		} else {
-			LinearProgressIndicator(
+			LinearWavyProgressIndicator(
 				modifier = Modifier.fillMaxWidth()
 			)
 		}

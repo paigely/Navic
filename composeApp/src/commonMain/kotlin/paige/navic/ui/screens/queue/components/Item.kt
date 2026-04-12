@@ -79,9 +79,10 @@ fun QueueScreenItem(
 		}
 	}
 
-	val color = MaterialTheme.colorScheme.surface.copy(
-		alpha = if (isSelected) .7f else .5f
-	)
+	val color = if (isSelected)
+		MaterialTheme.colorScheme.surfaceContainerHighest
+	else MaterialTheme.colorScheme.surfaceContainerHigh
+
 	val contentColor = if (isSelected)
 		MaterialTheme.colorScheme.primary
 	else MaterialTheme.colorScheme.onSurface
