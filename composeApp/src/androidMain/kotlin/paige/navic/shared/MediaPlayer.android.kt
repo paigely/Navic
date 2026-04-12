@@ -46,6 +46,7 @@ import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.AndroidScrobbleManager
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
+import paige.navic.ui.components.common.CoilBitmapLoader
 import paige.navic.utils.effectiveGain
 import java.io.File
 import kotlin.time.Duration
@@ -126,6 +127,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 
 		mediaSession = MediaSession.Builder(this, player)
 			.setSessionActivity(sessionPendingIntent)
+			.setBitmapLoader(CoilBitmapLoader(this))
 			.build()
 	}
 
@@ -630,7 +632,12 @@ class AndroidMediaPlayerViewModel(
 			.setArtist(artistName)
 			.setAlbumTitle(albumTitle)
 			.setArtworkUri(
-				coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true).toUri() }
+				coverArtId?.let {
+					SessionManager.api.getCoverArtUrl(it, auth = true).toUri()
+						.buildUpon()
+						.appendQueryParameter("cacheKey", it)
+						.build()
+				}
 			)
 			.build()
 
