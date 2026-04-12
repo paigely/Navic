@@ -1,6 +1,5 @@
 package paige.navic.ui.screens.collection.components
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,11 +10,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
@@ -37,10 +34,9 @@ import paige.navic.ui.theme.defaultFont
 fun CollectionDetailScreenHeadingRow(
 	collection: DomainSongCollection,
 	tab: String,
-	scrolled: Boolean
+	titleAlpha: Float
 ) {
 	val backStack = LocalNavStack.current
-	val progress by animateFloatAsState(if (scrolled) 0f else 1f)
 	with(LocalSharedTransitionScope.current) {
 		CoverArt(
 			coverArtId = collection.coverArtId,
@@ -52,20 +48,23 @@ fun CollectionDetailScreenHeadingRow(
 				.sharedElement(
 					sharedContentState = this@with.rememberSharedContentState("${tab}-${collection.id}-cover"),
 					animatedVisibilityScope = LocalNavAnimatedContentScope.current
-				),
+				)
+				.alpha(titleAlpha),
 			crossfadeMs = 0,
 			enabled = true
 		)
 		Spacer(Modifier.height(10.dp))
 		Column(
-			modifier = Modifier.padding(horizontal = 31.dp),
+			modifier = Modifier
+				.padding(horizontal = 31.dp)
+				.alpha(titleAlpha),
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {
 			Text(
 				collection.name,
 				style = MaterialTheme.typography.headlineSmall,
 				textAlign = TextAlign.Center,
-				modifier = Modifier.alpha(progress).scale(progress)
+				modifier = Modifier
 			)
 			val subtitle = when (collection) {
 				is DomainAlbum -> collection.artistName

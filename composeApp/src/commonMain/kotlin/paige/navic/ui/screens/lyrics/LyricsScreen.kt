@@ -331,7 +331,7 @@ fun LyricsScreen(
 											translationY = animatedOffsetY.toPx()
 										}
 										.then(
-											if (blurRadius > 0.dp && !isSelectionMode) {
+											if (blurRadius > 0.dp && !isSelectionMode && Settings.shared.lyricsBlur) {
 												Modifier.blur(blurRadius)
 											} else Modifier
 										)

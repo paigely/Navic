@@ -4,6 +4,7 @@ import paige.navic.data.database.entities.SongEntity
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainReplayGain
 import paige.navic.domain.models.DomainSong
+import kotlin.time.Duration.Companion.seconds
 import dev.zt64.subsonic.api.model.Song as ApiSong
 
 fun ApiSong.toEntity() = SongEntity(
@@ -14,7 +15,7 @@ fun ApiSong.toEntity() = SongEntity(
 	albumTitle = this.albumTitle,
 	belongsToAlbumId = this.albumId,
 	coverArtId = this.coverArtId,
-	duration = this.duration,
+	duration = this.duration ?: 0.seconds,
 	trackNumber = this.trackNumber,
 	discNumber = this.discNumber,
 	year = this.year,

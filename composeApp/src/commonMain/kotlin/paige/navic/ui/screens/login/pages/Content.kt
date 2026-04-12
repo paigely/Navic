@@ -88,6 +88,17 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 	val usernameFocusRequester = remember { FocusRequester() }
 	val passwordFocusRequester = remember { FocusRequester() }
 
+	val login = {
+		if (!viewModel.login()) {
+			haptics.performHapticFeedback(HapticFeedbackType.Reject)
+			when {
+				viewModel.instanceError -> instanceFocusRequester.requestFocus()
+				viewModel.usernameError -> usernameFocusRequester.requestFocus()
+				viewModel.passwordError -> passwordFocusRequester.requestFocus()
+			}
+		}
+	}
+
 	LaunchedEffect(loginState) {
 		if (loginState is LoginState.Success) {
 			backStack.clear()
@@ -149,7 +160,8 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					passwordState = passwordState,
 					passwordError = viewModel.passwordError,
 					passwordFocusRequester = passwordFocusRequester,
-					onPasswordFocusChanged = { viewModel.validatePassword() }
+					onPasswordFocusChanged = { viewModel.validatePassword() },
+					onLogin = login
 				)
 
 				Spacer(Modifier.height(12.dp))
@@ -185,14 +197,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					modifier = Modifier.fillMaxWidth(),
 					onClick = {
 						ctx.clickSound()
-						if (!viewModel.login()) {
-							haptics.performHapticFeedback(HapticFeedbackType.Reject)
-							when {
-								viewModel.instanceError -> instanceFocusRequester.requestFocus()
-								viewModel.usernameError -> usernameFocusRequester.requestFocus()
-								viewModel.passwordError -> passwordFocusRequester.requestFocus()
-							}
-						}
+						login()
 					},
 					enabled = !isBusy,
 					shape = ContinuousCapsule

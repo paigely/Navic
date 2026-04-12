@@ -79,7 +79,7 @@ aboutLibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", ve
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.7.1" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.10.0" }
 
-subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.0-beta02" }
+subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.0-beta03" }
 
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }

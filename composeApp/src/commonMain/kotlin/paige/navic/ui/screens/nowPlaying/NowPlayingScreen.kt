@@ -40,6 +40,7 @@ fun NowPlayingScreen() {
 
 	val currentScreen = backStack.lastOrNull()
 	val isPlayerCurrent = currentScreen is Screen.NowPlaying
+		|| currentScreen is Screen.Queue
 
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong

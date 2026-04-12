@@ -1,8 +1,9 @@
-package paige.navic.ui.screens.queue.components
+package paige.navic.ui.components.common
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -23,11 +24,12 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Waveform(
+	modifier: Modifier = Modifier,
 	isPlaying: Boolean
 ) {
 	val transition = rememberInfiniteTransition()
 	Row(
-		modifier = Modifier.height(18.dp),
+		modifier = modifier.height(18.dp),
 		horizontalArrangement = Arrangement.spacedBy(2.dp),
 		verticalAlignment = Alignment.CenterVertically
 	) {
@@ -43,10 +45,13 @@ fun Waveform(
 					repeatMode = RepeatMode.Reverse
 				)
 			)
+			val limit by animateFloatAsState(
+				if (isPlaying) 1f else .2f
+			)
 			Box(
 				modifier = Modifier
 					.width(3.dp)
-					.fillMaxHeight(if (isPlaying) fraction else .2f)
+					.fillMaxHeight(fraction.coerceAtMost(limit))
 					.background(MaterialTheme.colorScheme.onSurface, shape = CircleShape)
 			)
 		}

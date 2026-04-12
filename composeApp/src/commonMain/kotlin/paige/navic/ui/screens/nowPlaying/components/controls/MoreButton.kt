@@ -1,11 +1,9 @@
 package paige.navic.ui.screens.nowPlaying.components.controls
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,30 +13,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlin.time.Duration
 import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_more
-import navic.composeapp.generated.resources.action_track_info
-import navic.composeapp.generated.resources.action_view_album
-import navic.composeapp.generated.resources.action_view_artist
-import navic.composeapp.generated.resources.action_view_playlist
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.domain.models.DomainPlaylist
 import paige.navic.icons.Icons
-import paige.navic.icons.outlined.Album
-import paige.navic.icons.outlined.Artist
-import paige.navic.icons.outlined.Info
 import paige.navic.icons.outlined.MoreHoriz
-import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.ui.components.common.Dropdown
-import paige.navic.ui.components.common.DropdownItem
+import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
+import paige.navic.ui.screens.share.dialogs.ShareDialog
 
 @Composable
 fun NowPlayingMoreButton() {
@@ -47,79 +36,52 @@ fun NowPlayingMoreButton() {
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong
+	var expanded by remember { mutableStateOf(false) }
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
+	var shareId by remember { mutableStateOf<String?>(null) }
+	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 
-	Box {
-		var expanded by remember { mutableStateOf(false) }
-		IconButton(
-			onClick = {
-				ctx.clickSound()
-				expanded = true
+	IconButton(
+		onClick = {
+			ctx.clickSound()
+			expanded = true
+		},
+		colors = IconButtonDefaults.filledTonalIconButtonColors(),
+		modifier = Modifier.size(32.dp),
+		enabled = song != null
+	) {
+		Icon(
+			imageVector = Icons.Outlined.MoreHoriz,
+			contentDescription = stringResource(Res.string.action_more)
+		)
+	}
+
+	if (expanded && song != null) {
+		SongSheet(
+			onDismissRequest = { expanded = false },
+			song = song,
+			collection = playerState.currentCollection,
+			onViewAlbum = {
+				playerState.currentCollection?.let { collection ->
+					backStack.remove(Screen.NowPlaying)
+					backStack.add(Screen.CollectionDetail(collection.id, ""))
+				}
 			},
-			colors = IconButtonDefaults.filledTonalIconButtonColors(),
-			modifier = Modifier.size(32.dp),
-			enabled = playerState.currentSong != null
-		) {
-			Icon(
-				imageVector = Icons.Outlined.MoreHoriz,
-				contentDescription = stringResource(Res.string.action_more)
-			)
-		}
-		Dropdown(
-			expanded = expanded,
-			onDismissRequest = { expanded = false }
-		) {
-			DropdownItem(
-				onClick = {
-					playerState.currentCollection?.let { collection ->
-						expanded = false
-						backStack.remove(Screen.NowPlaying)
-						backStack.add(Screen.CollectionDetail(collection.id, ""))
-					}
-				},
-				text = {
-					Text(
-						stringResource(
-							when (playerState.currentCollection) {
-								is DomainPlaylist -> Res.string.action_view_playlist
-								else -> Res.string.action_view_album
-							}
-						)
-					)
-				},
-				leadingIcon = { Icon(Icons.Outlined.Album, null) }
-			)
-			DropdownItem(
-				onClick = {
-					song?.artistId?.let { artistId ->
-						expanded = false
-						backStack.remove(Screen.NowPlaying)
-						backStack.add(Screen.ArtistDetail(artistId))
-					}
-				},
-				text = { Text(stringResource(Res.string.action_view_artist)) },
-				leadingIcon = { Icon(Icons.Outlined.Artist, null) }
-			)
-			DropdownItem(
-				onClick = {
-					expanded = false
-					playlistDialogShown = true
-				},
-				text = { Text(stringResource(Res.string.action_add_to_playlist)) },
-				leadingIcon = { Icon(Icons.Outlined.PlaylistAdd, null) }
-			)
-			DropdownItem(
-				onClick = {
-					song?.id?.let { songId ->
-						expanded = false
-						backStack.remove(Screen.NowPlaying)
-						backStack.add(Screen.SongDetail(songId))
-					}
-				},
-				text = { Text(stringResource(Res.string.action_track_info)) },
-				leadingIcon = { Icon(Icons.Outlined.Info, null) }
-			)
-		}
+			onViewArtist = {
+				backStack.remove(Screen.NowPlaying)
+				backStack.add(Screen.ArtistDetail(song.artistId))
+			},
+			onShare = {
+				shareId = song.id
+			},
+			onAddToPlaylist = {
+				playlistDialogShown = true
+			},
+			onTrackInfo = {
+				backStack.remove(Screen.NowPlaying)
+				backStack.add(Screen.SongDetail(song.id))
+			}
+		)
 	}
 
 	if (playlistDialogShown && song != null) {
@@ -129,4 +91,12 @@ fun NowPlayingMoreButton() {
 			onDismissRequest = { playlistDialogShown = false }
 		)
 	}
+
+	@Suppress("AssignedValueIsNeverRead")
+	ShareDialog(
+		id = shareId,
+		onIdClear = { shareId = null },
+		expiry = shareExpiry,
+		onExpiryChange = { shareExpiry = it }
+	)
 }

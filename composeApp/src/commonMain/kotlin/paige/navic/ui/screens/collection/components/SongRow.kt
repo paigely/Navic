@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
@@ -44,6 +45,7 @@ import navic.composeapp.generated.resources.info_download_failed
 import navic.composeapp.generated.resources.info_downloaded
 import navic.composeapp.generated.resources.info_not_available_offline
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainSong
@@ -52,7 +54,9 @@ import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Offline
 import paige.navic.icons.outlined.Queue
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.MarqueeText
+import paige.navic.ui.components.common.Waveform
 import paige.navic.utils.toHoursMinutesSeconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -67,7 +71,11 @@ fun CollectionDetailScreenSongRow(
 	download: DownloadEntity? = null,
 	isOffline: Boolean = false
 ) {
+	val player = koinViewModel<MediaPlayerViewModel>()
+	val playerState by player.uiState.collectAsStateWithLifecycle()
+
 	val isDownloaded = download?.status == DownloadStatus.DOWNLOADED
+	val isCurrentTrack = playerState.currentSong?.id == song.id
 	val canPlay = !isOffline || isDownloaded
 
 	val itemShape = segmentedShapes(
@@ -160,7 +168,7 @@ fun CollectionDetailScreenSongRow(
 						)
 						Spacer(Modifier.width(6.dp))
 					}
-					if (download != null) {
+					if (download != null && !isCurrentTrack) {
 						when (download.status) {
 							DownloadStatus.DOWNLOADING -> {
 								CircularProgressIndicator(
@@ -193,6 +201,12 @@ fun CollectionDetailScreenSongRow(
 
 							else -> {}
 						}
+					}
+					if (isCurrentTrack) {
+						Waveform(
+							modifier = Modifier.padding(end = 12.dp),
+							isPlaying = !playerState.isPaused
+						)
 					}
 					song.duration.toHoursMinutesSeconds().let {
 						Text(

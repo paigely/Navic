@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_songs
 import org.jetbrains.compose.resources.stringResource
@@ -61,6 +62,7 @@ fun CollectionDetailScreen(
 	)
 
 	val player = koinViewModel<MediaPlayerViewModel>()
+	val playerState by player.uiState.collectAsStateWithLifecycle()
 
 	val collectionState by viewModel.collectionState.collectAsState()
 	val collection = collectionState.data
@@ -77,9 +79,16 @@ fun CollectionDetailScreen(
 	val downloadStatus by viewModel.collectionDownloadStatus()
 		.collectAsState(DownloadStatus.NOT_DOWNLOADED)
 
-	val scrolled by remember {
+	val titleAlpha by remember {
 		derivedStateOf {
-			viewModel.listState.firstVisibleItemIndex >= 1
+			if (viewModel.listState.firstVisibleItemIndex >= 1) return@derivedStateOf 1f
+			val height = viewModel.listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == 0 }?.size?.toFloat() ?: 0f
+			if (height > 0f) {
+				val threshold = height * 0.4f
+				((viewModel.listState.firstVisibleItemScrollOffset.toFloat() - threshold) / (height - threshold)).coerceIn(0f, 1f)
+			} else {
+				0f
+			}
 		}
 	}
 
@@ -88,7 +97,7 @@ fun CollectionDetailScreen(
 			CollectionDetailScreenTopBar(
 				albumInfoState = albumInfoState,
 				collection = collection,
-				scrolled = scrolled,
+				titleAlpha = titleAlpha,
 				onSetShareId = { shareId = it },
 				isOnline = isOnline,
 				onDownloadAll = { viewModel.downloadAll() },
@@ -125,7 +134,7 @@ fun CollectionDetailScreen(
 					CollectionDetailScreenHeadingRow(
 						collection = collection,
 						tab = tab,
-						scrolled = scrolled
+						titleAlpha = 1f - titleAlpha
 					)
 				}
 
@@ -144,9 +153,13 @@ fun CollectionDetailScreen(
 							index = index,
 							count = collection.songs.count(),
 							onClick = {
-								player.clearQueue()
-								player.addToQueue(collection)
-								player.playAt(index)
+								if (playerState.currentSong?.id != song.id) {
+									player.clearQueue()
+									player.addToQueue(collection)
+									player.playAt(index)
+								} else {
+									player.togglePlay()
+								}
 							},
 							onLongClick = {
 								viewModel.selectSong(song)

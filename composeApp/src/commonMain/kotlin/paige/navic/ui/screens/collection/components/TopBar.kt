@@ -1,10 +1,5 @@
 package paige.navic.ui.screens.collection.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -14,6 +9,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.collections.immutable.toPersistentList
@@ -35,7 +32,7 @@ import paige.navic.utils.UiState
 fun CollectionDetailScreenTopBar(
 	collection: DomainSongCollection?,
 	albumInfoState: UiState<DomainAlbumInfo>,
-	scrolled: Boolean,
+	titleAlpha: Float,
 	onSetShareId: (shareId: String?) -> Unit,
 	isOnline: Boolean,
 	onDownloadAll: () -> Unit,
@@ -47,17 +44,12 @@ fun CollectionDetailScreenTopBar(
 
 	NestedTopBar(
 		title = {
-			AnimatedVisibility(
-				scrolled,
-				enter = scaleIn() + fadeIn(),
-				exit = scaleOut() + fadeOut()
-			) {
-				Text(
-					text = collection?.name.orEmpty(),
-					maxLines = 1,
-					overflow = TextOverflow.Ellipsis
-				)
-			}
+			Text(
+				text = collection?.name.orEmpty(),
+				maxLines = 1,
+				overflow = TextOverflow.Ellipsis,
+				modifier = Modifier.alpha(titleAlpha)
+			)
 		},
 		actions = {
 			Box {
