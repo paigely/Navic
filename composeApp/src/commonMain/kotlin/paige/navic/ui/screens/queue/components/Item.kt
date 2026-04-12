@@ -45,6 +45,7 @@ import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.DragHandle
 import paige.navic.icons.outlined.Offline
 import paige.navic.ui.components.common.MarqueeText
+import paige.navic.ui.components.common.Waveform
 import paige.navic.utils.DraggableListState
 import paige.navic.utils.dragHandle
 
@@ -171,7 +172,7 @@ fun QueueScreenItem(
 								)
 							}
 							if (isSelected) {
-								Waveform(isPlaying)
+								Waveform(isPlaying = isPlaying)
 							}
 							IconButton(
 								modifier = Modifier.dragHandle(

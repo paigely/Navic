@@ -38,8 +38,7 @@ fun NowPlayingArtworkPager(
 	}
 
 	LaunchedEffect(pagerState) {
-		snapshotFlow { pagerState.currentPage }.collect { page ->
-			if (!pagerState.isScrollInProgress) return@collect
+		snapshotFlow { pagerState.settledPage }.collect { page ->
 			if (page == playerState.currentIndex) return@collect
 			val wasPaused = playerState.isPaused
 			player.playAt(page)
