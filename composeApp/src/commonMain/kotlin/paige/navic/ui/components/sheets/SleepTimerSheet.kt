@@ -28,25 +28,11 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.managers.SleepTimerManager
+import paige.navic.utils.label
 import kotlin.math.max
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-
-@Composable
-fun Duration.label(): String {
-	val hours = inWholeHours.toInt()
-	val minutes = (this - hours.hours).inWholeMinutes.toInt()
-
-	return when {
-		hours > 0 && minutes > 0 ->
-			"${pluralStringResource(Res.plurals.count_hours, hours, hours)} ${pluralStringResource(Res.plurals.count_minutes, minutes, minutes)}"
-		hours > 0 ->
-			pluralStringResource(Res.plurals.count_hours, hours, hours)
-		else ->
-			pluralStringResource(Res.plurals.count_minutes, max(1, minutes), max(1, minutes))
-	}
-}
 
 val durations = listOf(
 	5.minutes,

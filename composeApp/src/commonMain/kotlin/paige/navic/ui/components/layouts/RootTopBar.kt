@@ -43,10 +43,10 @@ import paige.navic.managers.SleepTimerManager
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.sheets.SleepTimerSheet
-import paige.navic.ui.components.sheets.label
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.utils.UiState
+import paige.navic.utils.label
 
 @OptIn(
 	ExperimentalMaterial3Api::class,
