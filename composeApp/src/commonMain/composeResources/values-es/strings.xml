@@ -317,4 +317,6 @@
     <string name="notice_login_suggestion">Quizá quiso decir…</string>
     <string name="subtitle_trigger_sync">Fuerza una actualización completa de la biblioteca inmediatamente</string>
     <string name="subtitle_rebuild_database">Borra todos los metadatos locales y fuerza una sincronización nueva</string>
+    <string name="info_sync_date_format">%1$d %2$s</string>
+    <string name="info_exception_handler">Esto hará que la aplicación se cierre inmediatamente. ¿Estás seguro?</string>
 </resources>
