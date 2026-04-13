@@ -78,6 +78,7 @@
 	<string name="option_lyrics_priority">Configure lyrics providers</string>
 	<string name="option_lyrics_keep_alive">Keep screen on in lyrics view</string>
 	<string name="option_lyrics_blur">Lyrics blur</string>
+	<string name="option_lyrics_bright_inactive">Bright inactive lyrics</string>
 	<string name="option_share_expires">Expires</string>
 	<string name="option_account_navidrome_instance">Instance URL</string>
 	<string name="option_account_username">Username</string>
