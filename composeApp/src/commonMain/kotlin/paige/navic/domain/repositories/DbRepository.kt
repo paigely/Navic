@@ -1,5 +1,6 @@
 package paige.navic.domain.repositories
 
+import androidx.room3.concurrent.AtomicInt
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.client.SubsonicClient
@@ -133,8 +134,8 @@ class DbRepository(
 		if (allAlbumSummaries.isEmpty()) return@runDbOp 0
 
 		val totalAlbums = allAlbumSummaries.size
-		var completedAlbums = 0
-		var totalSongsSynced = 0
+		val completedAlbums = AtomicInt(0)
+		val totalSongsSynced = AtomicInt(0)
 
 		onProgress(0.1f, Res.string.info_syncing_albums)
 
@@ -145,7 +146,13 @@ class DbRepository(
 				chunk.map { summary ->
 					async {
 						concurrentRequestLimit.withPermit {
-							api.getAlbum(summary.id)
+							val album = api.getAlbum(summary.id)
+
+							val done = completedAlbums.incrementAndGet()
+							val fetchProgress = 0.1f + (0.8f * (done.toFloat() / totalAlbums))
+							onProgress(fetchProgress, Res.string.info_syncing_albums)
+
+							album
 						}
 					}
 				}.awaitAll()
@@ -159,20 +166,16 @@ class DbRepository(
 			albumEntities.chunked(dbChunkSize).forEach { albumDao.updateAllAlbums(it) }
 			songEntities.chunked(dbChunkSize).forEach { songDao.updateAllSongs(it) }
 
-			totalSongsSynced += songEntities.size
-			completedAlbums += chunk.size
-
-			val fetchProgress = 0.1f + (0.8f * (completedAlbums.toFloat() / totalAlbums))
-			onProgress(fetchProgress, Res.string.info_syncing_albums)
+			totalSongsSynced.set(totalSongsSynced.get() + songEntities.size)
 		}
 
 		Logger.i(
 			"DbRepository",
-			"- Songs Synced: $totalAlbums albums, $totalSongsSynced songs"
+			"- Songs Synced: $totalAlbums albums, ${totalSongsSynced.get()} songs"
 		)
 
 		onProgress(1.0f, Res.string.info_syncing_saved)
-		totalSongsSynced
+		totalSongsSynced.get()
 	}
 
 	suspend fun syncPlaylists(): Result<List<PlaylistEntity>> = runDbOp {
