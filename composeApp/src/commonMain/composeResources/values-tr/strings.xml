@@ -108,12 +108,12 @@
     <string name="theme_mode_dark">Karanlık</string>
     <string name="theme_mode_light">Aydınlık</string>
     <plurals name="count_songs">
-        <item quantity="one">%1$d şarkı</item>
-        <item quantity="other">%1$d şarkı</item>
+        <item quantity="one">%1$d şarkısı</item>
+        <item quantity="other">%1$d şarkıları</item>
     </plurals>
     <plurals name="count_albums">
         <item quantity="one">%1$d albüm</item>
-        <item quantity="other">%1$d albüm</item>
+        <item quantity="other">%1$d Albümleri</item>
     </plurals>
     <plurals name="count_playlists">
         <item quantity="one">%1$d çalma listesi</item>
@@ -233,4 +233,12 @@
     <string name="info_no_queue">Sıraya alınmış hiçbir şey yok</string>
     <string name="info_no_playlists_short">Oynatma listesi yok</string>
     <string name="info_image_failed_to_load">Yükleme başarısız oldu</string>
+    <string name="title_playback">Oynatma</string>
+    <string name="title_data_storage">Veri ve Depolama</string>
+    <string name="title_sync_control">Senkronizasyon Kontrolü</string>
+    <string name="title_cache_management">Önbellek ve Depolama Yönetimi</string>
+    <string name="title_danger_zone">Tehlikeli Bölge</string>
+    <string name="title_mini_player">Mini Oynatıcı</string>
+    <string name="title_miscellaneous">Diğer</string>
+    <string name="title_layout">Yerleşim</string>
 </resources>
