@@ -114,7 +114,6 @@
 	<string name="option_pending_actions">Pending sync actions</string>
 	<string name="option_downloaded_songs">Downloaded songs</string>
 	<string name="option_custom_headers">Custom server headers</string>
-	<string name="option_sleep_timer">Sleep timer</string>
 	<string name="option_check_for_updates">Check for updates</string>
 
 	<string name="info_status_idle">Idle</string>
@@ -186,6 +185,16 @@
 		<item quantity="other">%1$d artists</item>
 	</plurals>
 
+	<plurals name="count_minutes">
+		<item quantity="one">%1$d minute</item>
+		<item quantity="other">%1$d minutes</item>
+	</plurals>
+
+	<plurals name="count_hours">
+		<item quantity="one">%1$d hour</item>
+		<item quantity="other">%1$d hours</item>
+	</plurals>
+
 	<string name="action_ok">OK</string>
 	<string name="action_play">Play</string>
 	<string name="action_new">New</string>
@@ -204,6 +213,9 @@
 	<string name="action_download">Download</string>
 	<string name="action_delete_download">Delete download</string>
 	<string name="action_cancel_download">Cancel download</string>
+	<string name="action_sleep_timer">Sleep timer</string>
+	<string name="action_sleep_timer_enabled">Sleep timer - %1$s left </string>
+	<string name="action_disable_sleep_timer">Turn off timer</string>
 	<string name="action_navigate_back">Back</string>
 	<string name="action_log_out">Logout</string>
 	<string name="action_log_in">Log in</string>

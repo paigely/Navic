@@ -7,10 +7,12 @@ import kotlinx.coroutines.SupervisorJob
 import org.koin.dsl.module
 import paige.navic.data.database.SyncManager
 import paige.navic.managers.DownloadManager
+import paige.navic.managers.SleepTimerManager
 
 val managerModule = module {
 	single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.IO) }
 	single<DownloadManager> { DownloadManager(get(), get(), get(), get(), get(), get()) }
+	single<SleepTimerManager> { SleepTimerManager(get(), get()) }
 	single(createdAtStart = true) {
 		SyncManager(get(), get(), get(), get(), get()).apply {
 			startPeriodicSync()

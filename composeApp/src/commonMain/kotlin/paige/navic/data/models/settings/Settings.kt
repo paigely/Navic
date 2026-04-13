@@ -44,7 +44,6 @@ class Settings(
 	var audioOffload by preference(false)
 	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)
 	var customHeaders by preference("")
-	var sleepTimerDuration by preference(0f)
 	var checkForUpdates by preference(true)
 
 	// navigation bar settings

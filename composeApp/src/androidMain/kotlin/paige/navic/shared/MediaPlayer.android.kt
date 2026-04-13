@@ -105,8 +105,8 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 					).build()
 			}
 
-		scrobbleManager = AndroidScrobbleManager(player, serviceScope, connectivityManager, syncManager)
-
+		scrobbleManager =
+			AndroidScrobbleManager(player, serviceScope, connectivityManager, syncManager)
 
 		val sessionIntent = applicationContext.packageManager
 			.getLaunchIntentForPackage(applicationContext.packageName)
@@ -181,69 +181,75 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	private fun connectToService() {
-		val sessionToken = PlaybackService.newSessionToken(application)
-		controllerFuture = MediaController.Builder(application, sessionToken).buildAsync()
-		controllerFuture?.addListener({
-			controller = controllerFuture?.get()
-			setupController()
-		}, MoreExecutors.directExecutor())
+		viewModelScope.launch {
+			val sessionToken = PlaybackService.newSessionToken(application)
+			controllerFuture = MediaController.Builder(application, sessionToken).buildAsync()
+			controllerFuture?.addListener({
+				controller = controllerFuture?.get()
+				setupController()
+			}, MoreExecutors.directExecutor())
+		}
 	}
 
 	private fun setupController() {
-		controller?.apply {
-			addListener(object : Player.Listener {
-				override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-					updatePlaybackState()
-					mediaItem?.mediaId?.let { id ->
-						if (!isAvailable(id)) {
-							controller?.seekToNextMediaItem()
+		viewModelScope.launch {
+			controller?.apply {
+				addListener(object : Player.Listener {
+					override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+						updatePlaybackState()
+						mediaItem?.mediaId?.let { id ->
+							if (!isAvailable(id)) {
+								controller?.seekToNextMediaItem()
+							}
 						}
 					}
-				}
 
-				override fun onIsPlayingChanged(isPlaying: Boolean) {
-					_uiState.update { it.copy(isPaused = !isPlaying) }
-					if (isPlaying) startProgressLoop()
-					val intent = Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
-						setPackage(application.packageName)
-						putExtra("isPlaying", isPlaying)
-						putExtra("title", _uiState.value.currentSong?.title ?: "Unknown song")
-						putExtra(
-							"artist",
-							_uiState.value.currentSong?.artistName ?: "Unknown artist"
-						)
-						putExtra("artUrl", _uiState.value.currentSong?.coverArtId?.let { id ->
-							SessionManager.api.getCoverArtUrl(id, auth = true)
-						})
+					override fun onIsPlayingChanged(isPlaying: Boolean) {
+						_uiState.update { it.copy(isPaused = !isPlaying) }
+						if (isPlaying) startProgressLoop()
+						val intent =
+							Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
+								setPackage(application.packageName)
+								putExtra("isPlaying", isPlaying)
+								putExtra(
+									"title",
+									_uiState.value.currentSong?.title ?: "Unknown song"
+								)
+								putExtra(
+									"artist",
+									_uiState.value.currentSong?.artistName ?: "Unknown artist"
+								)
+								putExtra(
+									"artUrl",
+									_uiState.value.currentSong?.coverArtId?.let { id ->
+										SessionManager.api.getCoverArtUrl(id, auth = true)
+									})
+							}
+
+						application.sendBroadcast(intent)
 					}
 
-					application.sendBroadcast(intent)
-				}
+					override fun onPlaybackStateChanged(playbackState: Int) {
+						_uiState.update { it.copy(isLoading = playbackState == Player.STATE_BUFFERING) }
+						updatePlaybackState()
+					}
 
-				override fun onPlaybackStateChanged(playbackState: Int) {
-					_uiState.update { it.copy(isLoading = playbackState == Player.STATE_BUFFERING) }
-					updatePlaybackState()
-				}
+					override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+						_uiState.update { it.copy(isShuffleEnabled = shuffleModeEnabled) }
+					}
 
-				override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-					_uiState.update { it.copy(isShuffleEnabled = shuffleModeEnabled) }
-				}
+					override fun onRepeatModeChanged(repeatMode: Int) {
+						_uiState.update { it.copy(repeatMode = repeatMode) }
+					}
+				})
+				updatePlaybackState()
 
-				override fun onRepeatModeChanged(repeatMode: Int) {
-					_uiState.update { it.copy(repeatMode = repeatMode) }
-				}
-			})
-			updatePlaybackState()
-
-			viewModelScope.launch {
 				downloadManager.allDownloads.first()
 				pendingSyncState?.let { state ->
 					syncPlayerWithState(state)
 					pendingSyncState = null
 				}
-			}
 
-			viewModelScope.launch {
 				downloadManager.downloadedSongs.collectLatest { downloadedMap ->
 					val player = controller ?: return@collectLatest
 
@@ -287,75 +293,81 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	private fun updatePlaybackState() {
-		controller?.let { player ->
-			val index = player.currentMediaItemIndex
-			val currentSong = _uiState.value.queue.getOrNull(index)
+		viewModelScope.launch {
+			controller?.let { player ->
+				val index = player.currentMediaItemIndex
+				val currentSong = _uiState.value.queue.getOrNull(index)
 
-			val derivedCollection = currentSong?.let { song ->
-				val stateCollection = _uiState.value.currentCollection
+				val derivedCollection = currentSong?.let { song ->
+					val stateCollection = _uiState.value.currentCollection
 
-				if (stateCollection?.id == song.albumId.toString()) {
-					stateCollection
-				} else {
-					refreshCurrentCollection(song.albumId.toString())
-					null
+					if (stateCollection?.id == song.albumId.toString()) {
+						stateCollection
+					} else {
+						refreshCurrentCollection(song.albumId.toString())
+						null
+					}
 				}
-			}
 
-			_uiState.update { state ->
-				state.copy(
-					currentIndex = index,
-					currentSong = currentSong,
-					currentCollection = derivedCollection ?: state.currentCollection,
-					isPaused = !player.isPlaying,
-					isShuffleEnabled = player.shuffleModeEnabled,
-					repeatMode = player.repeatMode
-				)
+				_uiState.update { state ->
+					state.copy(
+						currentIndex = index,
+						currentSong = currentSong,
+						currentCollection = derivedCollection ?: state.currentCollection,
+						isPaused = !player.isPlaying,
+						isShuffleEnabled = player.shuffleModeEnabled,
+						repeatMode = player.repeatMode
+					)
+				}
+				applyReplayGain()
+				updateProgress()
 			}
-			applyReplayGain()
-			updateProgress()
 		}
 	}
 
 	private fun applyReplayGain() {
-		if (Settings.shared.replayGain) {
-			(_uiState.value.currentSong)?.replayGain?.let { replayGain ->
-				controller?.volume = replayGain.effectiveGain()
+		viewModelScope.launch {
+			if (Settings.shared.replayGain) {
+				(_uiState.value.currentSong)?.replayGain?.let { replayGain ->
+					controller?.volume = replayGain.effectiveGain()
+				}
+			} else {
+				controller?.volume = 1f
 			}
-		} else {
-			controller?.volume = 1f
 		}
 	}
 
 	override fun syncPlayerWithState(state: PlayerUiState) {
-		val player = controller
+		viewModelScope.launch {
+			val player = controller
 
-		if (player == null) {
-			pendingSyncState = state
-			return
+			if (player == null) {
+				pendingSyncState = state
+				return@launch
+			}
+
+			if (state.queue.isEmpty() || player.mediaItemCount > 0) return@launch
+
+			val mediaItems = state.queue.map { it.toMediaItem() }
+
+			player.setMediaItems(mediaItems)
+
+			player.shuffleModeEnabled = state.isShuffleEnabled
+			player.repeatMode = state.repeatMode
+
+			val index = if (state.currentIndex in 0 until mediaItems.size) state.currentIndex else 0
+
+			val songDurationMs = state.queue.getOrNull(index)?.duration?.inWholeMilliseconds ?: 0L
+
+			val position = if (songDurationMs > 0) {
+				(state.progress * songDurationMs).toLong()
+			} else {
+				0L
+			}
+
+			player.seekTo(index, position)
+			player.prepare()
 		}
-
-		if (state.queue.isEmpty() || player.mediaItemCount > 0) return
-
-		val mediaItems = state.queue.map { it.toMediaItem() }
-
-		player.setMediaItems(mediaItems)
-
-		player.shuffleModeEnabled = state.isShuffleEnabled
-		player.repeatMode = state.repeatMode
-
-		val index = if (state.currentIndex in 0 until mediaItems.size) state.currentIndex else 0
-
-		val songDurationMs = state.queue.getOrNull(index)?.duration?.inWholeMilliseconds ?: 0L
-
-		val position = if (songDurationMs > 0) {
-			(state.progress * songDurationMs).toLong()
-		} else {
-			0L
-		}
-
-		player.seekTo(index, position)
-		player.prepare()
 	}
 
 	private fun startProgressLoop() {
@@ -372,181 +384,207 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	private fun updateProgress() {
-		controller?.let { player ->
-			val duration = player.duration.coerceAtLeast(1)
-			val pos = player.currentPosition
-			val progress = (pos.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
-			_uiState.update { it.copy(progress = progress) }
+		viewModelScope.launch {
+			controller?.let { player ->
+				val duration = player.duration.coerceAtLeast(1)
+				val pos = player.currentPosition
+				val progress = (pos.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+				_uiState.update { it.copy(progress = progress) }
+			}
 		}
 	}
 
 	override fun addToQueueSingle(song: DomainSong) {
-		controller?.addMediaItem(song.toMediaItem())
-		_uiState.update { state ->
-			val newQueue = state.queue + song
-			state.copy(
-				queue = newQueue,
-				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-				currentSong = if (state.currentIndex == -1) song else state.currentSong
-			)
+		viewModelScope.launch {
+			controller?.addMediaItem(song.toMediaItem())
+			_uiState.update { state ->
+				val newQueue = state.queue + song
+				state.copy(
+					queue = newQueue,
+					currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+					currentSong = if (state.currentIndex == -1) song else state.currentSong
+				)
+			}
 		}
 	}
 
 	override fun addToQueue(collection: DomainSongCollection) {
-		val items = collection.songs.map { it.toMediaItem() }
-		controller?.addMediaItems(items)
-		_uiState.update { state ->
-			val newQueue = state.queue + collection.songs
-			state.copy(
-				queue = newQueue,
-				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-				currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
-			)
+		viewModelScope.launch {
+			val items = collection.songs.map { it.toMediaItem() }
+			controller?.addMediaItems(items)
+			_uiState.update { state ->
+				val newQueue = state.queue + collection.songs
+				state.copy(
+					queue = newQueue,
+					currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+					currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
+				)
+			}
 		}
 	}
 
 	override fun removeFromQueue(index: Int) {
-		controller?.removeMediaItem(index)
-		_uiState.update { state ->
-			val newQueue = state.queue.toMutableList().apply { removeAt(index) }
-			val newIndex = when {
-				index < state.currentIndex -> state.currentIndex - 1
-				index == state.currentIndex -> if (newQueue.isEmpty()) -1 else state.currentIndex.coerceAtMost(
-					newQueue.size - 1
-				)
+		viewModelScope.launch {
+			controller?.removeMediaItem(index)
+			_uiState.update { state ->
+				val newQueue = state.queue.toMutableList().apply { removeAt(index) }
+				val newIndex = when {
+					index < state.currentIndex -> state.currentIndex - 1
+					index == state.currentIndex -> if (newQueue.isEmpty()) -1 else state.currentIndex.coerceAtMost(
+						newQueue.size - 1
+					)
 
-				else -> state.currentIndex
+					else -> state.currentIndex
+				}
+				state.copy(
+					queue = newQueue,
+					currentIndex = newIndex,
+					currentSong = if (newIndex == -1) null else newQueue[newIndex]
+				)
 			}
-			state.copy(
-				queue = newQueue,
-				currentIndex = newIndex,
-				currentSong = if (newIndex == -1) null else newQueue[newIndex]
-			)
 		}
 	}
 
 	override fun moveQueueItem(fromIndex: Int, toIndex: Int) {
-		controller?.moveMediaItem(fromIndex, toIndex)
-		_uiState.update { state ->
-			val newQueue = state.queue.toMutableList().apply {
-				val item = removeAt(fromIndex)
-				add(toIndex, item)
+		viewModelScope.launch {
+			controller?.moveMediaItem(fromIndex, toIndex)
+			_uiState.update { state ->
+				val newQueue = state.queue.toMutableList().apply {
+					val item = removeAt(fromIndex)
+					add(toIndex, item)
+				}
+				val newIndex = when (state.currentIndex) {
+					fromIndex -> toIndex
+					in (fromIndex + 1)..toIndex -> state.currentIndex - 1
+					in toIndex until fromIndex -> state.currentIndex + 1
+					else -> state.currentIndex
+				}
+				state.copy(
+					queue = newQueue,
+					currentIndex = newIndex,
+					currentSong = if (newIndex == -1) null else newQueue[newIndex]
+				)
 			}
-			val newIndex = when (state.currentIndex) {
-				fromIndex -> toIndex
-				in (fromIndex + 1)..toIndex -> state.currentIndex - 1
-				in toIndex until fromIndex -> state.currentIndex + 1
-				else -> state.currentIndex
-			}
-			state.copy(
-				queue = newQueue,
-				currentIndex = newIndex,
-				currentSong = if (newIndex == -1) null else newQueue[newIndex]
-			)
 		}
 	}
 
 	override fun clearQueue() {
-		controller?.clearMediaItems()
-		_uiState.update {
-			it.copy(
-				queue = emptyList(),
-				currentSong = null,
-				currentIndex = -1,
-				progress = 0f
-			)
+		viewModelScope.launch {
+			controller?.clearMediaItems()
+			_uiState.update {
+				it.copy(
+					queue = emptyList(),
+					currentSong = null,
+					currentIndex = -1,
+					progress = 0f
+				)
+			}
 		}
 	}
 
 	override fun playAt(index: Int) {
-		resetSleepTimer()
-		controller?.let { player ->
-			if (index in 0 until player.mediaItemCount) {
-				val song = player.getMediaItemAt(index)
-				if (!isAvailable(song.mediaId)) {
-					player.seekToNextMediaItem()
-				} else {
-					player.seekTo(index, 0L)
-					player.play()
+		viewModelScope.launch {
+			controller?.let { player ->
+				if (index in 0 until player.mediaItemCount) {
+					val song = player.getMediaItemAt(index)
+					if (!isAvailable(song.mediaId)) {
+						player.seekToNextMediaItem()
+					} else {
+						player.seekTo(index, 0L)
+						player.play()
+					}
 				}
 			}
 		}
 	}
 
 	override fun shufflePlay(collection: DomainSongCollection) {
-		resetSleepTimer()
-		val shuffledSongs = collection.songs.shuffled()
-		val mediaItems = shuffledSongs.map { it.toMediaItem() }
+		viewModelScope.launch {
+			val shuffledSongs = collection.songs.shuffled()
+			val mediaItems = shuffledSongs.map { it.toMediaItem() }
 
-		controller?.let { player ->
-			player.shuffleModeEnabled = false
-			player.setMediaItems(mediaItems, 0, 0L)
-			player.prepare()
-			player.play()
-		}
+			controller?.let { player ->
+				player.shuffleModeEnabled = false
+				player.setMediaItems(mediaItems, 0, 0L)
+				player.prepare()
+				player.play()
+			}
 
-		_uiState.update { state ->
-			state.copy(
-				queue = shuffledSongs,
-				currentIndex = 0,
-				currentSong = shuffledSongs.firstOrNull()
-			)
+			_uiState.update { state ->
+				state.copy(
+					queue = shuffledSongs,
+					currentIndex = 0,
+					currentSong = shuffledSongs.firstOrNull()
+				)
+			}
 		}
 	}
 
 	override fun pause() {
-		controller?.pause()
+		viewModelScope.launch {
+			controller?.pause()
+		}
 	}
 
 	override fun resume() {
-		resetSleepTimer()
-		controller?.play()
+		viewModelScope.launch {
+			controller?.play()
+		}
 	}
 
 	override fun next() {
-		resetSleepTimer()
-		if (controller?.hasNextMediaItem() == true) controller?.seekToNextMediaItem()
+		viewModelScope.launch {
+			if (controller?.hasNextMediaItem() == true) controller?.seekToNextMediaItem()
+		}
 	}
 
 	override fun previous() {
-		resetSleepTimer()
-		val controller = controller ?: return
-		if (controller.hasPreviousMediaItem() && controller.currentPosition <= 1000) {
-			controller.seekToPreviousMediaItem()
-		} else {
-			controller.seekTo(0)
+		viewModelScope.launch {
+			val controller = controller ?: return@launch
+			if (controller.hasPreviousMediaItem() && controller.currentPosition <= 1000) {
+				controller.seekToPreviousMediaItem()
+			} else {
+				controller.seekTo(0)
+			}
 		}
 	}
 
 	override fun toggleShuffle() {
-		controller?.let { player ->
-			player.shuffleModeEnabled = !player.shuffleModeEnabled
+		viewModelScope.launch {
+			controller?.let { player ->
+				player.shuffleModeEnabled = !player.shuffleModeEnabled
+			}
 		}
 	}
 
 	override fun toggleRepeat() {
-		controller?.let { player ->
-			player.repeatMode = when (player.repeatMode) {
-				Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE
-				else -> Player.REPEAT_MODE_OFF
+		viewModelScope.launch {
+			controller?.let { player ->
+				player.repeatMode = when (player.repeatMode) {
+					Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE
+					else -> Player.REPEAT_MODE_OFF
+				}
 			}
 		}
 	}
 
 	override fun seek(normalized: Float) {
-		resetSleepTimer()
-		controller?.let {
-			val target = (it.duration * normalized).toLong()
-			it.seekTo(target)
-			_uiState.update { state ->
-				state.copy(progress = normalized)
+		viewModelScope.launch {
+			controller?.let {
+				val target = (it.duration * normalized).toLong()
+				it.seekTo(target)
+				_uiState.update { state ->
+					state.copy(progress = normalized)
+				}
 			}
 		}
 	}
 
 	override fun onCleared() {
-		super.onCleared()
-		controllerFuture?.let { MediaController.releaseFuture(it) }
+		viewModelScope.launch {
+			super.onCleared()
+			controllerFuture?.let { MediaController.releaseFuture(it) }
+		}
 	}
 
 	private fun DomainSong.toMediaItem(): MediaItem {

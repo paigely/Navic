@@ -37,7 +37,6 @@ import navic.composeapp.generated.resources.option_lyrics_priority
 import navic.composeapp.generated.resources.option_min_duration_to_scrobble
 import navic.composeapp.generated.resources.option_replay_gain
 import navic.composeapp.generated.resources.option_scrobble_percentage
-import navic.composeapp.generated.resources.option_sleep_timer
 import navic.composeapp.generated.resources.subtitle_audio_offload
 import navic.composeapp.generated.resources.subtitle_enable_scrobbling
 import navic.composeapp.generated.resources.subtitle_gapless_playback
@@ -141,32 +140,6 @@ fun SettingsPlaybackScreen() {
 						value = Settings.shared.enableScrobbling,
 						onSetValue = { Settings.shared.enableScrobbling = it }
 					)
-
-					FormRow {
-						Column(Modifier.fillMaxWidth()) {
-							Row(
-								modifier = Modifier.fillMaxWidth(),
-								horizontalArrangement = Arrangement.SpaceBetween
-							) {
-								Text(stringResource(Res.string.option_sleep_timer))
-								Text(
-									if (Settings.shared.sleepTimerDuration > 0) "${Settings.shared.sleepTimerDuration.toInt()}m" else "Off",
-									fontFamily = FontFamily.Monospace,
-									fontWeight = FontWeight(400),
-									fontSize = 13.sp,
-									color = MaterialTheme.colorScheme.onSurfaceVariant,
-								)
-							}
-							Slider(
-								value = Settings.shared.sleepTimerDuration,
-								onValueChange = {
-									Settings.shared.sleepTimerDuration = it
-								},
-								valueRange = 0f..120f,
-								steps = 119
-							)
-						}
-					}
 
 					FormRow {
 						Column(Modifier.fillMaxWidth()) {
