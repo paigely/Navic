@@ -9,63 +9,77 @@ android-minSdk = "24"
 android-targetSdk = "36"
 kotlin = "2.3.20"
 
+# Androidx
 androidx-activity = "1.13.0"
 androidx-lifecycle = "2.10.0"
-datastore = "1.2.1"
+androidx-datastore = "1.2.1"
+androidx-room3 = "3.0.0-alpha03"
+androidx-sqlite = "2.6.2"
+androidx-navigation3 = "1.1.0-rc01"
+androidx-media3 = "1.10.0"
+androidx-glance = "1.2.0-rc01"
 
-compose = "1.11.0-alpha04"
+# Compose/UI
+compose = "1.11.0-beta02"
+material3 = "1.11.0-alpha06"
 #noinspection NewerVersionAvailable do not update this to alpha05 it makes the detail pane always visible
 material3-adaptive = "1.3.0-alpha04"
-navigation3 = "1.1.0-beta01"
 
-ktor = "3.4.2"
-
-coil = "3.4.0"
-media3 = "1.10.0"
+# Compose 3rd party
 kmpalette = "3.1.0"
 
-aboutLibraries = "13.2.1"
-glance = "1.2.0-rc01"
+# Networking
+ktor = "3.4.2"
+coil = "3.4.0"
 
-room = "2.8.4"
-sqlite = "2.6.2"
+# Misc
+koin = "4.2.1"
+
+# Plugins
+aboutLibraries = "14.0.1"
 ksp = "2.3.6"
 
-koin = "4.2.0"
-
 [libraries]
+# Compose
 cmp-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
-cmp-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose" }
+cmp-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 cmp-material3-adaptive-nav = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation3", version.ref = "material3-adaptive" }
-cmp-material3-windowSize = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "compose" }
+cmp-material3-windowSize = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
 cmp-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
 cmp-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
 cmp-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
 
+# Androidx
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
-androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 androidx-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics", version = "1.10.6" }
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "androidx-sqlite" }
+androidx-room3-runtime = { module = "androidx.room3:room3-runtime", version.ref = "androidx-room3" }
+androidx-room3-compiler = { module = "androidx.room3:room3-compiler", version.ref = "androidx-room3" }
+androidx-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation3" }
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "androidx-media3" }
+androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "androidx-media3" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidx-glance" }
+androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "androidx-glance" }
 
+# Kotlinx
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.7.1" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.11.0" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.4.0" }
+
+# Networking
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
-
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil" }
 
-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
-
-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
-
-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glance" }
-
+# Compose 3rd party
 capsule = { module = "top.ltfan.capsule:capsule", version = "1.1.1" }
 wavySlider = { module = "ir.mahozad.multiplatform:wavy-slider", version = "2.2.0" }
 kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpalette" }
@@ -76,32 +90,25 @@ multiplatformSettings = { module = "com.russhwolf:multiplatform-settings-no-arg"
 aboutLibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
 aboutLibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 
-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.7.1" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.10.0" }
-
-subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.0-beta03" }
-
-androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
-androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
-androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-
+# Misc
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.0-beta03" }
 
 [bundles]
 cmp = ["cmp-foundation", "cmp-material3", "cmp-material3-adaptive-nav", "cmp-material3-windowSize", "cmp-resources", "cmp-runtime", "cmp-ui"]
 coil = ["coil-compose", "coil-network-ktor3"]
-media3 = ["media3-exoplayer", "media3-session"]
-glance = ["glance-appwidget", "glance-material3"]
+media3 = ["androidx-media3-exoplayer", "androidx-media3-session"]
+glance = ["androidx-glance-appwidget", "androidx-glance-material3"]
 ktor = ["ktor-client-core", "ktor-client-contentNegotiation", "ktor-serialization-json"]
 ktor-ios = ["ktor-client-darwin"]
 ktor-android = ["ktor-client-okhttp"]
 cmpThirdParty = ["capsule", "wavySlider", "kmpalette-core", "kmpalette-network", "materialKolor", "composePipette", "multiplatformSettings", "aboutLibraries-compose", "aboutLibraries-core"]
 androidx-android = ["androidx-activity-compose", "androidx-datastore-preferences", "androidx-animation-graphics"]
 androidx-lifecycle = ["androidx-lifecycle-viewmodel", "androidx-lifecycle-runtime"]
-room = ["androidx-room-runtime", "androidx-sqlite-bundled"]
+room = ["androidx-room3-runtime", "androidx-sqlite-bundled"]
 koin = ["koin-core", "koin-compose", "koin-compose-viewmodel"]
 
 [plugins]
@@ -114,4 +121,4 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
 valkyrie = { id = "io.github.composegears.valkyrie", version = "0.4.0" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-androidx-room = { id = "androidx.room", version.ref = "room" }
+androidx-room3 = { id = "androidx.room3", version.ref = "androidx-room3" }

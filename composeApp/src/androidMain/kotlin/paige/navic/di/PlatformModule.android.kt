@@ -1,6 +1,6 @@
 package paige.navic.di
 
-import androidx.room.Room
+import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel

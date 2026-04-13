@@ -1,6 +1,6 @@
 package paige.navic.domain.repositories
 
-import androidx.room.concurrent.AtomicInt
+import androidx.room3.concurrent.AtomicInt
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.client.SubsonicClient

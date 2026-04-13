@@ -1,9 +1,9 @@
 package paige.navic.data.database
 
-import androidx.room.ConstructedBy
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.RoomDatabaseConstructor
+import androidx.room3.ConstructedBy
+import androidx.room3.Database
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomDatabaseConstructor
 import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.entities.DownloadEntity
 
