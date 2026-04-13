@@ -45,6 +45,7 @@ import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.sheets.SleepTimerSheet
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
+import paige.navic.ui.theme.positive
 import paige.navic.utils.UiState
 import paige.navic.utils.label
 
@@ -160,12 +161,12 @@ private fun Actions(
 
 			if (sleepTimerLeft != null) {
 				DropdownItem(
-					text = { Text(stringResource(Res.string.action_sleep_timer_enabled, sleepTimerLeft.label()), color = MaterialTheme.colorScheme.error) },
+					text = { Text(stringResource(Res.string.action_sleep_timer_enabled, sleepTimerLeft.label()), color = MaterialTheme.colorScheme.positive) },
 					onClick = {
 						expanded = false
 						sleepTimerSheetOpen = true
 					},
-					leadingIcon = { Icon(Icons.Outlined.Bedtime, null, tint = MaterialTheme.colorScheme.error) }
+					leadingIcon = { Icon(Icons.Outlined.Bedtime, null, tint = MaterialTheme.colorScheme.positive) }
 				)
 			} else {
 				DropdownItem(
