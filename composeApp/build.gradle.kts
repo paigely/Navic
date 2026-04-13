@@ -50,9 +50,6 @@ extensions.configure<ValkyrieExtension> {
 }
 
 extensions.configure<AboutLibrariesExtension> {
-	collect {
-		configPath = file("acknowledgements")
-	}
 	export {
 		outputFile = file("src/commonMain/composeResources/files/acknowledgements.json")
 	}
