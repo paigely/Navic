@@ -72,6 +72,7 @@ import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.managers.SleepTimerManager
 import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.theme.positive
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -346,14 +347,14 @@ fun SongSheet(
 				content = {
 					Text(
 						stringResource(Res.string.action_sleep_timer_enabled, sleepTimerLeft.label()),
-						color = MaterialTheme.colorScheme.error // TODO: proper colour
+						color = MaterialTheme.colorScheme.positive
 					)
 				},
 				leadingContent = {
 					Icon(
 						Icons.Outlined.Bedtime,
 						null,
-						tint = MaterialTheme.colorScheme.error
+						tint = MaterialTheme.colorScheme.positive
 					)
 				},
 				onClick = {
