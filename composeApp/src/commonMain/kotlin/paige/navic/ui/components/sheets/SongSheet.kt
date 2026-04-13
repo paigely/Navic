@@ -46,7 +46,6 @@ import navic.composeapp.generated.resources.action_view_artist
 import navic.composeapp.generated.resources.action_view_playlist
 import navic.composeapp.generated.resources.info_click_to_retry
 import navic.composeapp.generated.resources.info_download_failed
-import navic.composeapp.generated.resources.option_sleep_timer
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.data.database.entities.DownloadStatus
@@ -72,7 +71,6 @@ import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.managers.SleepTimerManager
 import paige.navic.ui.components.common.CoverArt
-import kotlin.time.Clock
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -97,6 +95,7 @@ fun SongSheet(
 ) {
 	var sleepTimerSheetShown by rememberSaveable { mutableStateOf(false) }
 	val sleepTimerManager = koinInject<SleepTimerManager>()
+	val sleepTimerLeft = sleepTimerManager.timeLeft
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
 		containerColor = Color.Transparent,
@@ -340,11 +339,11 @@ fun SongSheet(
 			)
 		}
 
-		if (sleepTimerManager.endTimeStamp != null) {
+		if (sleepTimerLeft != null) {
 			ListItem(
 				content = {
 					Text(
-						stringResource(Res.string.action_sleep_timer_enabled, (sleepTimerManager.endTimeStamp!! - Clock.System.now()).label()),
+						stringResource(Res.string.action_sleep_timer_enabled, sleepTimerLeft.label()),
 						color = MaterialTheme.colorScheme.error // TODO: proper colour
 					)
 				},

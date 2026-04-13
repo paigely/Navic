@@ -20,9 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_disable_sleep_timer
+import navic.composeapp.generated.resources.action_sleep_timer
 import navic.composeapp.generated.resources.count_hours
 import navic.composeapp.generated.resources.count_minutes
-import navic.composeapp.generated.resources.option_sleep_timer
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -78,7 +79,7 @@ fun SleepTimerSheet(onDismissRequest: () -> Unit) {
 			verticalArrangement = Arrangement.spacedBy(8.dp)
 		) {
 			Text(
-				text = stringResource(Res.string.option_sleep_timer),
+				text = stringResource(Res.string.action_sleep_timer),
 				style = MaterialTheme.typography.titleLarge,
 				modifier = Modifier.padding(horizontal = 16.dp)
 			)
@@ -97,7 +98,7 @@ fun SleepTimerSheet(onDismissRequest: () -> Unit) {
 
 			sleepTimerManager.endTimeStamp?.let {
 				ListItem(
-					content = { Text("Turn off timer") },
+					content = { Text(stringResource(Res.string.action_disable_sleep_timer)) },
 					onClick = {
 						sleepTimerManager.stopTimer()
 						onDismissRequest()
