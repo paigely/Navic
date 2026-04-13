@@ -59,7 +59,9 @@ val durations = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SleepTimerSheet(onDismissRequest: () -> Unit) {
+fun SleepTimerSheet(
+	onDismissRequest: (confirmed: Boolean) -> Unit
+) {
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
 		containerColor = Color.Transparent,
@@ -69,7 +71,7 @@ fun SleepTimerSheet(onDismissRequest: () -> Unit) {
 	val sleepTimerManager = koinInject<SleepTimerManager>()
 
 	ModalBottomSheet(
-		onDismissRequest = onDismissRequest,
+		onDismissRequest = { onDismissRequest(false) },
 		sheetState = rememberModalBottomSheetState(true),
 		contentWindowInsets = { BottomSheetDefaults.modalWindowInsets.add(WindowInsets(
 			left = 8.dp,
@@ -90,7 +92,7 @@ fun SleepTimerSheet(onDismissRequest: () -> Unit) {
 					content = { Text(it.label()) },
 					onClick = {
 						sleepTimerManager.startTimer(it)
-						onDismissRequest()
+						onDismissRequest(true)
 					},
 					colors = colors,
 					contentPadding = contentPadding
@@ -102,7 +104,7 @@ fun SleepTimerSheet(onDismissRequest: () -> Unit) {
 					content = { Text(stringResource(Res.string.action_disable_sleep_timer), color = MaterialTheme.colorScheme.error) },
 					onClick = {
 						sleepTimerManager.stopTimer()
-						onDismissRequest()
+						onDismissRequest(true)
 					},
 					colors = colors,
 					contentPadding = contentPadding

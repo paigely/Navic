@@ -399,9 +399,13 @@ fun SongSheet(
 	}
 
 	if (sleepTimerSheetShown) {
-		SleepTimerSheet(onDismissRequest = {
-			sleepTimerSheetShown = false
-			onDismissRequest()
-		})
+		SleepTimerSheet(
+			onDismissRequest = { confirmed ->
+				sleepTimerSheetShown = false
+				if (confirmed) {
+					onDismissRequest()
+				}
+			}
+		)
 	}
 }
