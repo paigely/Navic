@@ -28,6 +28,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.managers.SleepTimerManager
+import kotlin.math.max
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -43,7 +44,7 @@ fun Duration.label(): String {
 		hours > 0 ->
 			pluralStringResource(Res.plurals.count_hours, hours, hours)
 		else ->
-			pluralStringResource(Res.plurals.count_minutes, minutes, minutes)
+			pluralStringResource(Res.plurals.count_minutes, max(1, minutes), max(1, minutes))
 	}
 }
 
@@ -98,7 +99,7 @@ fun SleepTimerSheet(onDismissRequest: () -> Unit) {
 
 			sleepTimerManager.endTimeStamp?.let {
 				ListItem(
-					content = { Text(stringResource(Res.string.action_disable_sleep_timer)) },
+					content = { Text(stringResource(Res.string.action_disable_sleep_timer), color = MaterialTheme.colorScheme.error) },
 					onClick = {
 						sleepTimerManager.stopTimer()
 						onDismissRequest()
