@@ -25,6 +25,7 @@ class SleepTimerManager(private val player: MediaPlayerViewModel, val scope: Cor
 
 			delay(duration)
 			player.pause()
+			stopTimer()
 		}
 	}
 
