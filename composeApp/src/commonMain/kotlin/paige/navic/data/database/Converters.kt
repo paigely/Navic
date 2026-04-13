@@ -1,6 +1,6 @@
 package paige.navic.data.database
 
-import androidx.room.TypeConverter
+import androidx.room3.TypeConverter
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainReplayGain
 import paige.navic.domain.repositories.LyricsProvider
