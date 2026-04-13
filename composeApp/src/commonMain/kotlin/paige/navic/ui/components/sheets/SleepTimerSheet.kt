@@ -1,0 +1,111 @@
+package paige.navic.ui.components.sheets
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.count_hours
+import navic.composeapp.generated.resources.count_minutes
+import navic.composeapp.generated.resources.option_sleep_timer
+import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import paige.navic.managers.SleepTimerManager
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+
+@Composable
+fun Duration.label(): String {
+	val hours = inWholeHours.toInt()
+	val minutes = (this - hours.hours).inWholeMinutes.toInt()
+
+	return when {
+		hours > 0 && minutes > 0 ->
+			"${pluralStringResource(Res.plurals.count_hours, hours, hours)} ${pluralStringResource(Res.plurals.count_minutes, minutes, minutes)}"
+		hours > 0 ->
+			pluralStringResource(Res.plurals.count_hours, hours, hours)
+		else ->
+			pluralStringResource(Res.plurals.count_minutes, minutes, minutes)
+	}
+}
+
+val durations = listOf(
+	5.minutes,
+	10.minutes,
+	15.minutes,
+	30.minutes,
+	45.minutes,
+	1.hours,
+)
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun SleepTimerSheet(onDismissRequest: () -> Unit) {
+	val contentPadding = PaddingValues(horizontal = 16.dp)
+	val colors = ListItemDefaults.colors(
+		containerColor = Color.Transparent,
+		trailingIconColor = MaterialTheme.colorScheme.onSurface,
+		headlineColor = MaterialTheme.colorScheme.onSurface
+	)
+	val sleepTimerManager = koinInject<SleepTimerManager>()
+
+	ModalBottomSheet(
+		onDismissRequest = onDismissRequest,
+		sheetState = rememberModalBottomSheetState(true),
+		contentWindowInsets = { BottomSheetDefaults.modalWindowInsets.add(WindowInsets(
+			left = 8.dp,
+			right = 8.dp
+		)) }
+	) {
+		Column(
+			verticalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			Text(
+				text = stringResource(Res.string.option_sleep_timer),
+				style = MaterialTheme.typography.titleLarge,
+				modifier = Modifier.padding(horizontal = 16.dp)
+			)
+
+			durations.forEach {
+				ListItem(
+					content = { Text(it.label()) },
+					onClick = {
+						sleepTimerManager.startTimer(it)
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
+			}
+
+			sleepTimerManager.endTimeStamp?.let {
+				ListItem(
+					content = { Text("Turn off timer") },
+					onClick = {
+						sleepTimerManager.stopTimer()
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
+			}
+		}
+	}
+}

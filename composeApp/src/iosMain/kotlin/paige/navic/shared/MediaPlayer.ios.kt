@@ -140,7 +140,6 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun playAt(index: Int) {
-		resetSleepTimer()
 		val songToPlay = _uiState.value.queue.getOrNull(index) ?: return
 
 		if (!isAvailable(songToPlay.id)) {
@@ -249,7 +248,6 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun resume() {
-		resetSleepTimer()
 		player.play()
 		_uiState.update { it.copy(isPaused = false) }
 		scrobbleManager.onIsPlayingChanged(true)
@@ -264,14 +262,12 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun next() {
-		resetSleepTimer()
 		if (_uiState.value.currentIndex + 1 < _uiState.value.queue.size) {
 			playAt(_uiState.value.currentIndex + 1)
 		}
 	}
 
 	override fun previous() {
-		resetSleepTimer()
 		if ((_uiState.value.currentIndex - 1) >= 0) {
 			playAt(_uiState.value.currentIndex - 1)
 		} else {
@@ -290,7 +286,6 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun shufflePlay(collection: DomainSongCollection) {
-		resetSleepTimer()
 		val shuffledSongs = collection.songs.shuffled()
 		_uiState.update { state ->
 			state.copy(
@@ -303,7 +298,6 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun seek(normalized: Float) {
-		resetSleepTimer()
 		val duration = player.currentItem?.duration ?: return
 		val totalSeconds = CMTimeGetSeconds(duration)
 		if (!totalSeconds.isNaN()) {

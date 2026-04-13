@@ -53,28 +53,10 @@ abstract class MediaPlayerViewModel(
 		return isOnline || isDownloaded
 	}
 
-	private var sleepTimerJob: Job? = null
-
 	init {
 		viewModelScope.launch {
 			restoreState()
 			observeAndSaveState()
-		}
-
-		viewModelScope.launch {
-			snapshotFlow { Settings.shared.sleepTimerDuration }
-				.collect { resetSleepTimer() }
-		}
-	}
-
-	fun resetSleepTimer() {
-		sleepTimerJob?.cancel()
-		val duration = Settings.shared.sleepTimerDuration
-		if (duration > 0f) {
-			sleepTimerJob = viewModelScope.launch {
-				delay(duration.toLong() * 60_000L)
-				pause()
-			}
 		}
 	}
 

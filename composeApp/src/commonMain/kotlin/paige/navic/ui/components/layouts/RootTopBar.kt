@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_log_out
 import navic.composeapp.generated.resources.action_view_shares
+import navic.composeapp.generated.resources.option_sleep_timer
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
@@ -32,11 +33,13 @@ import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Settings
 import paige.navic.icons.outlined.AccountCircle
+import paige.navic.icons.outlined.Bedtime
 import paige.navic.icons.outlined.Logout
 import paige.navic.icons.outlined.Search
 import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
+import paige.navic.ui.components.sheets.SleepTimerSheet
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.utils.UiState
@@ -124,6 +127,8 @@ private fun Actions(
 	}
 
 	var expanded by remember { mutableStateOf(false) }
+	var sleepTimerSheetOpen by remember { mutableStateOf(false) }
+
 	Box {
 		IconButton(onClick = {
 			ctx.clickSound()
@@ -147,6 +152,14 @@ private fun Actions(
 				leadingIcon = { Icon(Icons.Outlined.Share, null) }
 			)
 			DropdownItem(
+				text = { Text(stringResource(Res.string.option_sleep_timer)) },
+				onClick = {
+					expanded = false
+					sleepTimerSheetOpen = true
+				},
+				leadingIcon = { Icon(Icons.Outlined.Bedtime, null) }
+			)
+			DropdownItem(
 				text = { Text(stringResource(Res.string.action_log_out)) },
 				onClick = {
 					expanded = false
@@ -155,5 +168,9 @@ private fun Actions(
 				leadingIcon = { Icon(Icons.Outlined.Logout, null) }
 			)
 		}
+	}
+
+	if (sleepTimerSheetOpen) {
+		SleepTimerSheet(onDismissRequest = { sleepTimerSheetOpen = false })
 	}
 }

@@ -459,7 +459,6 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	override fun playAt(index: Int) {
-		resetSleepTimer()
 		controller?.let { player ->
 			if (index in 0 until player.mediaItemCount) {
 				val song = player.getMediaItemAt(index)
@@ -474,7 +473,6 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	override fun shufflePlay(collection: DomainSongCollection) {
-		resetSleepTimer()
 		val shuffledSongs = collection.songs.shuffled()
 		val mediaItems = shuffledSongs.map { it.toMediaItem() }
 
@@ -499,17 +497,14 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	override fun resume() {
-		resetSleepTimer()
 		controller?.play()
 	}
 
 	override fun next() {
-		resetSleepTimer()
 		if (controller?.hasNextMediaItem() == true) controller?.seekToNextMediaItem()
 	}
 
 	override fun previous() {
-		resetSleepTimer()
 		val controller = controller ?: return
 		if (controller.hasPreviousMediaItem() && controller.currentPosition <= 1000) {
 			controller.seekToPreviousMediaItem()
@@ -534,7 +529,6 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	override fun seek(normalized: Float) {
-		resetSleepTimer()
 		controller?.let {
 			val target = (it.duration * normalized).toLong()
 			it.seekTo(target)

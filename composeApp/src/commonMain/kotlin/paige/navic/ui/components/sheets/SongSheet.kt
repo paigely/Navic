@@ -18,6 +18,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -33,6 +37,8 @@ import navic.composeapp.generated.resources.action_download
 import navic.composeapp.generated.resources.action_remove_from_playlist
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
+import navic.composeapp.generated.resources.action_sleep_timer
+import navic.composeapp.generated.resources.action_sleep_timer_enabled
 import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.action_view_album
@@ -40,7 +46,9 @@ import navic.composeapp.generated.resources.action_view_artist
 import navic.composeapp.generated.resources.action_view_playlist
 import navic.composeapp.generated.resources.info_click_to_retry
 import navic.composeapp.generated.resources.info_download_failed
+import navic.composeapp.generated.resources.option_sleep_timer
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainAlbum
@@ -51,6 +59,7 @@ import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Artist
+import paige.navic.icons.outlined.Bedtime
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Download
@@ -61,7 +70,9 @@ import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
+import paige.navic.managers.SleepTimerManager
 import paige.navic.ui.components.common.CoverArt
+import kotlin.time.Clock
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -84,19 +95,26 @@ fun SongSheet(
 	onCancelDownload: (() -> Unit)? = null,
 	onDeleteDownload: (() -> Unit)? = null,
 ) {
+	var sleepTimerSheetShown by rememberSaveable { mutableStateOf(false) }
+	val sleepTimerManager = koinInject<SleepTimerManager>()
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
 		containerColor = Color.Transparent,
 		trailingIconColor = MaterialTheme.colorScheme.onSurface,
 		headlineColor = MaterialTheme.colorScheme.onSurface
 	)
+
 	ModalBottomSheet(
 		onDismissRequest = onDismissRequest,
 		dragHandle = null,
-		contentWindowInsets = { BottomSheetDefaults.modalWindowInsets.add(WindowInsets(
-			left = 8.dp,
-			right = 8.dp
-		)) }
+		contentWindowInsets = {
+			BottomSheetDefaults.modalWindowInsets.add(
+				WindowInsets(
+					left = 8.dp,
+					right = 8.dp
+				)
+			)
+		}
 	) {
 		Spacer(Modifier.height(16.dp))
 
@@ -118,19 +136,6 @@ fun SongSheet(
 		)
 
 		HorizontalDivider(Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
-
-		if (onAddToQueue != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_add_to_queue)) },
-				leadingContent = { Icon(Icons.Outlined.Queue, null) },
-				onClick = {
-					onAddToQueue()
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
 
 		if (onShare != null) {
 			ListItem(
@@ -255,45 +260,12 @@ fun SongSheet(
 			)
 		}
 
-		if (onTrackInfo != null) {
+		if (onAddToQueue != null) {
 			ListItem(
-				content = { Text(stringResource(Res.string.action_track_info)) },
-				leadingContent = { Icon(Icons.Outlined.Info, null) },
+				content = { Text(stringResource(Res.string.action_add_to_queue)) },
+				leadingContent = { Icon(Icons.Outlined.Queue, null) },
 				onClick = {
-					onTrackInfo()
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
-		if (onViewAlbum != null) {
-			ListItem(
-				content = {
-					Text(
-						stringResource(
-							if (collection is DomainPlaylist) Res.string.action_view_playlist
-							else Res.string.action_view_album
-						)
-					)
-				},
-				leadingContent = { Icon(Icons.Outlined.Album, null) },
-				onClick = {
-					onViewAlbum()
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
-		if (onViewArtist != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_view_artist)) },
-				leadingContent = { Icon(Icons.Outlined.Artist, null) },
-				onClick = {
-					onViewArtist()
+					onAddToQueue()
 					onDismissRequest()
 				},
 				colors = colors,
@@ -334,5 +306,100 @@ fun SongSheet(
 				contentPadding = contentPadding
 			)
 		}
+
+		if (onViewAlbum != null) {
+			ListItem(
+				content = {
+					Text(
+						stringResource(
+							if (collection is DomainPlaylist) Res.string.action_view_playlist
+							else Res.string.action_view_album
+						)
+					)
+				},
+				leadingContent = { Icon(Icons.Outlined.Album, null) },
+				onClick = {
+					onViewAlbum()
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
+
+		if (onViewArtist != null) {
+			ListItem(
+				content = { Text(stringResource(Res.string.action_view_artist)) },
+				leadingContent = { Icon(Icons.Outlined.Artist, null) },
+				onClick = {
+					onViewArtist()
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
+
+		if (sleepTimerManager.endTimeStamp != null) {
+			ListItem(
+				content = {
+					Text(
+						stringResource(Res.string.action_sleep_timer_enabled, (sleepTimerManager.endTimeStamp!! - Clock.System.now()).label()),
+						color = MaterialTheme.colorScheme.error // TODO: proper colour
+					)
+				},
+				leadingContent = {
+					Icon(
+						Icons.Outlined.Bedtime,
+						null,
+						tint = MaterialTheme.colorScheme.error
+					)
+				},
+				onClick = {
+					sleepTimerSheetShown = true
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		} else {
+			ListItem(
+				content = {
+					Text(
+						stringResource(Res.string.action_sleep_timer)
+					)
+				},
+				leadingContent = {
+					Icon(
+						Icons.Outlined.Bedtime,
+						null
+					)
+				},
+				onClick = {
+					sleepTimerSheetShown = true
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
+
+		if (onTrackInfo != null) {
+			ListItem(
+				content = { Text(stringResource(Res.string.action_track_info)) },
+				leadingContent = { Icon(Icons.Outlined.Info, null) },
+				onClick = {
+					onTrackInfo()
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
+	}
+
+	if (sleepTimerSheetShown) {
+		SleepTimerSheet(onDismissRequest = {
+			sleepTimerSheetShown = false
+			onDismissRequest()
+		})
 	}
 }
