@@ -48,7 +48,7 @@ fun LyricsScreenKaraokeText(
 	val lyricsBeatByBeat = Settings.shared.lyricsBeatByBeat
 	val lyricsBrightInactive = Settings.shared.lyricsBrightInactive
 
-	val inactiveAlpha = if (lyricsBrightInactive) 0.85f else 0.35f
+	val inactiveAlpha = if (lyricsBrightInactive) 0.9f else 0.35f
 
 	val alphaTransition by animateFloatAsState(
 		targetValue = if (isActive) 1f else inactiveAlpha,
@@ -61,7 +61,8 @@ fun LyricsScreenKaraokeText(
 			fontSize = 32.sp,
 			fontWeight = FontWeight.Bold,
 			style = MaterialTheme.typography.headlineLargeEmphasized,
-			color = Color.White.copy(alpha = alphaTransition * 0.4f),
+			color = if (lyricsBrightInactive) Color.White.copy(alpha = alphaTransition * 0.4f)
+					else MaterialTheme.colorScheme.onSurface.copy(alpha = alphaTransition * 0.4f),
 			onTextLayout = { textLayoutResult = it }
 		)
 
