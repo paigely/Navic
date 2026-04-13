@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox as M3PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -28,7 +28,7 @@ fun PullToRefreshBox(
 	state: PullToRefreshState = rememberPullToRefreshState(),
 	content: @Composable BoxScope.() -> Unit
 ) {
-	PullToRefreshBox(
+	M3PullToRefreshBox(
 		modifier = modifier,
 		state = state,
 		isRefreshing = isRefreshing,
@@ -66,7 +66,7 @@ fun PullToRefreshBox(
 		}
 	}
 
-	paige.navic.ui.components.layouts.PullToRefreshBox(
+	PullToRefreshBox(
 		isRefreshing = isRefreshing,
 		onRefresh = {
 			isRefreshing = true
