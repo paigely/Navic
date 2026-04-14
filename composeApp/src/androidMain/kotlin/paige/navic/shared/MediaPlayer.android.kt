@@ -503,74 +503,74 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	override fun playRadio(radio: DomainRadio) {
-		resetSleepTimer()
+		viewModelScope.launch {
+			val radioId = "radio_${radio.name.hashCode()}"
 
-		val radioId = "radio_${radio.name.hashCode()}"
-
-		val dummyRadioSong = DomainSong(
-			id = radioId,
-			title = radio.name,
-			artistName = "Live Radio",
-			albumId = "radio_album",
-			albumTitle = "Live Stream",
-			duration = Duration.ZERO,
-			trackNumber = 1,
-			coverArtId = null,
-			artistId = "",
-			parentId = "",
-			comment = null,
-			discNumber = null,
-			isrc = emptyList(),
-			year = null,
-			genre = null,
-			genres = emptyList(),
-			moods = emptyList(),
-			bpm = null,
-			contributors = emptyList(),
-			playCount = 0,
-			userRating = 0,
-			averageRating = null,
-			bitRate = null,
-			bitDepth = null,
-			sampleRate = null,
-			audioChannelCount = null,
-			replayGain = null,
-			fileSize = 0,
-			fileExtension = "",
-			mimeType = "",
-			filePath = radio.streamUrl,
-			starredAt = null,
-			musicBrainzId = null
-		)
-
-		val metadata = MediaMetadata.Builder()
-			.setTitle(radio.name)
-			.setArtist("Live Radio")
-			.setIsPlayable(true)
-			.build()
-
-		val mediaItem = MediaItem.Builder()
-			.setUri(radio.streamUrl)
-			.setMediaId("radio_${radio.name.hashCode()}")
-			.setMediaMetadata(metadata)
-			.setLiveConfiguration(MediaItem.LiveConfiguration.Builder().build())
-			.build()
-
-		controller?.let { player ->
-			player.stop()
-			player.clearMediaItems()
-			player.setMediaItem(mediaItem)
-			player.prepare()
-			player.play()
-		}
-
-		_uiState.update { state ->
-			state.copy(
-				queue = listOf(dummyRadioSong),
-				currentIndex = 0,
-				currentSong = dummyRadioSong,
-				isLoading = true
+			val dummyRadioSong = DomainSong(
+				id = radioId,
+				title = radio.name,
+				artistName = "Live Radio",
+				albumId = "radio_album",
+				albumTitle = "Live Stream",
+				duration = Duration.ZERO,
+				trackNumber = 1,
+				coverArtId = null,
+				artistId = "",
+				parentId = "",
+				comment = null,
+				discNumber = null,
+				isrc = emptyList(),
+				year = null,
+				genre = null,
+				genres = emptyList(),
+				moods = emptyList(),
+				bpm = null,
+				contributors = emptyList(),
+				playCount = 0,
+				userRating = 0,
+				averageRating = null,
+				bitRate = null,
+				bitDepth = null,
+				sampleRate = null,
+				audioChannelCount = null,
+				replayGain = null,
+				fileSize = 0,
+				fileExtension = "",
+				mimeType = "",
+				filePath = radio.streamUrl,
+				starredAt = null,
+				musicBrainzId = null
 			)
+
+			val metadata = MediaMetadata.Builder()
+				.setTitle(radio.name)
+				.setArtist("Live Radio")
+				.setIsPlayable(true)
+				.build()
+
+			val mediaItem = MediaItem.Builder()
+				.setUri(radio.streamUrl)
+				.setMediaId("radio_${radio.name.hashCode()}")
+				.setMediaMetadata(metadata)
+				.setLiveConfiguration(MediaItem.LiveConfiguration.Builder().build())
+				.build()
+
+			controller?.let { player ->
+				player.stop()
+				player.clearMediaItems()
+				player.setMediaItem(mediaItem)
+				player.prepare()
+				player.play()
+			}
+
+			_uiState.update { state ->
+				state.copy(
+					queue = listOf(dummyRadioSong),
+					currentIndex = 0,
+					currentSong = dummyRadioSong,
+					isLoading = true
+				)
+			}
 		}
 	}
 
