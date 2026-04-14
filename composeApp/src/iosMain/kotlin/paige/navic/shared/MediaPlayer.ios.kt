@@ -168,8 +168,6 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun playRadio(radio: DomainRadio) {
-		resetSleepTimer()
-
 		val radioId = "radio_${radio.name.hashCode()}"
 
 		val dummyRadioSong = DomainSong(
