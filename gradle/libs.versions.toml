@@ -15,7 +15,8 @@ androidx-lifecycle = "2.10.0"
 androidx-datastore = "1.2.1"
 androidx-room3 = "3.0.0-alpha03"
 androidx-sqlite = "2.6.2"
-androidx-navigation3 = "1.1.0-rc01"
+#noinspection NewerVersionAvailable do not update this to rc01 it breaks sheet animations
+androidx-navigation3 = "1.1.0-beta01"
 androidx-media3 = "1.10.0"
 androidx-glance = "1.2.0-rc01"
 
