@@ -69,4 +69,14 @@ interface AlbumDao {
 		}
 		insertAlbums(remoteAlbums)
 	}
+
+	@Transaction
+	suspend fun deleteObsoleteAlbums(remoteIds: Set<String>) {
+		getAllAlbumIds().forEach { localId ->
+			if (localId !in remoteIds) {
+				Logger.w("AlbumDao", "album $localId no longer exists remotely")
+				deleteAlbum(localId)
+			}
+		}
+	}
 }

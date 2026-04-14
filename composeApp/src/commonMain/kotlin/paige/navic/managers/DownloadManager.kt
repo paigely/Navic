@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.entities.DownloadEntity
@@ -36,6 +37,7 @@ import paige.navic.shared.Logger
 class DownloadManager(
 	private val platformContext: coil3.PlatformContext,
 	private val downloadDao: DownloadDao,
+	private val albumDao: AlbumDao,
 	private val storageManager: StorageManager,
 	private val lyricRepository: LyricRepository,
 	private val lyricDao: LyricDao,
@@ -91,7 +93,7 @@ class DownloadManager(
 	fun cancelDownload(songId: String) {
 		activeDownloads[songId]?.cancel()
 		activeDownloads.remove(songId)
-		scope.launch {
+		scope.launch(Dispatchers.IO) {
 			val existing = downloadDao.getDownloadById(songId)
 			if (existing?.status == DownloadStatus.DOWNLOADING
 				|| existing?.status == DownloadStatus.FAILED
@@ -101,12 +103,24 @@ class DownloadManager(
 		}
 	}
 
+	fun cancelCollectionDownload(collection: DomainSongCollection) {
+		collection.songs.forEach { song ->
+			cancelDownload(song.id)
+		}
+	}
+
 	fun deleteDownload(songId: String) {
 		cancelDownload(songId)
 		scope.launch {
 			val download = downloadDao.getDownloadById(songId)
 			download?.filePath?.let { storageManager.deleteFile(it) }
 			downloadDao.deleteDownload(songId)
+		}
+	}
+
+	fun deleteDownloadedCollection(collection: DomainSongCollection) {
+		collection.songs.forEach { song ->
+			deleteDownload(song.id)
 		}
 	}
 
@@ -146,6 +160,7 @@ class DownloadManager(
 			downloadDao.insertDownload(DownloadEntity(song.id, DownloadStatus.DOWNLOADING, 0f))
 
 			cacheCoverArt(song.coverArtId)
+			cacheAlbumCoverArt(song.albumId)
 			cacheLyrics(song)
 			downloadAudioFile(song)
 
@@ -173,6 +188,23 @@ class DownloadManager(
 
 		SingletonImageLoader.get(platformContext).execute(imageRequest)
 		Logger.i("DownloadManager", "cached cover art for $coverId")
+	}
+
+	private suspend fun cacheAlbumCoverArt(albumId: String?) {
+		if (albumId == null) return
+
+		try {
+			val albumWithSongs = albumDao.getAlbumById(albumId)
+			val albumCoverId = albumWithSongs?.album?.coverArtId
+
+			if (albumCoverId != null) {
+				Logger.i("DownloadManager", "Found album cover $albumCoverId for album $albumId")
+				cacheCoverArt(albumCoverId)
+			}
+		} catch (e: Exception) {
+			if (e is CancellationException) throw e
+			Logger.e("DownloadManager", "Failed to cache album cover art for album $albumId", e)
+		}
 	}
 
 	private suspend fun cacheLyrics(song: DomainSong) {

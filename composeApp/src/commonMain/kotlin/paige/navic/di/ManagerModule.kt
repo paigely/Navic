@@ -11,7 +11,7 @@ import paige.navic.managers.SleepTimerManager
 
 val managerModule = module {
 	single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.IO) }
-	single<DownloadManager> { DownloadManager(get(), get(), get(), get(), get(), get()) }
+	single<DownloadManager> { DownloadManager(get(), get(), get(), get(), get(), get(), get()) }
 	single<SleepTimerManager> { SleepTimerManager(get(), get()) }
 	single(createdAtStart = true) {
 		SyncManager(get(), get(), get(), get(), get()).apply {

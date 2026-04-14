@@ -21,9 +21,11 @@
 	<string name="title_delete_share">Delete share?</string>
 	<string name="title_create_share">Create share</string>
 	<string name="title_create_playlist">Create playlist</string>
+	<string name="title_create_radio">Create radio</string>
 	<string name="title_albums">Albums</string>
 	<string name="title_songs">Songs</string>
 	<string name="title_artists">Artists</string>
+	<string name="title_radios">Radios</string>
 	<string name="title_all">All</string>
 	<string name="title_similar_artists">Similar artists</string>
 	<string name="title_source">Source code</string>
@@ -77,6 +79,7 @@
 	<string name="option_lyrics_priority">Configure lyrics providers</string>
 	<string name="option_lyrics_keep_alive">Keep screen on in lyrics view</string>
 	<string name="option_lyrics_blur">Lyrics blur</string>
+	<string name="option_lyrics_bright_inactive">Bright inactive lyrics</string>
 	<string name="option_share_expires">Expires</string>
 	<string name="option_account_navidrome_instance">Instance URL</string>
 	<string name="option_account_username">Username</string>
@@ -115,6 +118,9 @@
 	<string name="option_downloaded_songs">Downloaded songs</string>
 	<string name="option_custom_headers">Custom server headers</string>
 	<string name="option_check_for_updates">Check for updates</string>
+	<string name="option_radio_name">Name</string>
+	<string name="option_radio_stream_url">Stream URL</string>
+	<string name="option_radio_homepage_url">Homepage URL</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>
@@ -298,6 +304,7 @@
 	<string name="info_not_available_offline">Not available offline</string>
 	<string name="info_no_queue">Nothing queued</string>
 	<string name="info_no_genres">No genres</string>
+	<string name="info_no_radios">No radios</string>
 	<string name="info_no_playlists_short">No playlists</string>
 	<string name="info_lyrics_provider">Lyrics provided by %1$s</string>
 	<string name="info_image_failed_to_load">Failed to load</string>
@@ -312,6 +319,7 @@
 	<string name="info_syncing_playlists">Syncing playlists...</string>
 	<string name="info_syncing_genres">Syncing genres...</string>
 	<string name="info_syncing_artists">Syncing artists...</string>
+	<string name="info_syncing_radios">Syncing radios...</string>
 	<string name="info_login_description_start">Log into your</string>
 	<string name="info_login_description_middle">Navidrome</string>
 	<string name="info_login_description_end">instance.</string>

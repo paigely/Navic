@@ -32,6 +32,7 @@ import navic.composeapp.generated.resources.option_gapless_playback
 import navic.composeapp.generated.resources.option_lyrics_autoscroll
 import navic.composeapp.generated.resources.option_lyrics_beat_by_beat
 import navic.composeapp.generated.resources.option_lyrics_blur
+import navic.composeapp.generated.resources.option_lyrics_bright_inactive
 import navic.composeapp.generated.resources.option_lyrics_keep_alive
 import navic.composeapp.generated.resources.option_lyrics_priority
 import navic.composeapp.generated.resources.option_min_duration_to_scrobble
@@ -123,6 +124,12 @@ fun SettingsPlaybackScreen() {
 						title = { Text(stringResource(Res.string.option_lyrics_blur)) },
 						value = Settings.shared.lyricsBlur,
 						onSetValue = { Settings.shared.lyricsBlur = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_lyrics_bright_inactive)) },
+						value = Settings.shared.lyricsBrightInactive,
+						onSetValue = { Settings.shared.lyricsBrightInactive = it }
 					)
 
 					FormRow(

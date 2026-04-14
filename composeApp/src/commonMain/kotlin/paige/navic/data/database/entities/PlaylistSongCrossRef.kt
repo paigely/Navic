@@ -2,9 +2,11 @@ package paige.navic.data.database.entities
 
 import androidx.room3.Entity
 import androidx.room3.ForeignKey
+import androidx.room3.Index
 
 @Entity(
 	primaryKeys = ["playlistId", "songId", "position"],
+	indices = [Index(value = ["songId"])],
 	foreignKeys = [
 		ForeignKey(
 			entity = PlaylistEntity::class,

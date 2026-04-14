@@ -19,6 +19,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
+import paige.navic.icons.outlined.Radio
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.CoverArt
 
@@ -30,8 +31,11 @@ fun NowPlayingArtwork(
 ) {
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
+
+	val isRadio = song.id.startsWith("radio_")
+
 	val padding by animateDpAsState(
-		targetValue = if (playerState.isPaused || playerState.currentSong?.id !== song.id)
+		targetValue = if (playerState.isPaused || playerState.currentSong?.id != song.id)
 			48.dp
 		else 16.dp
 	)
@@ -49,7 +53,7 @@ fun NowPlayingArtwork(
 		)
 		if (song.coverArtId.isNullOrEmpty()) {
 			Icon(
-				imageVector = Icons.Filled.Note,
+				imageVector = if (isRadio) Icons.Outlined.Radio else Icons.Filled.Note,
 				contentDescription = null,
 				tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
 				modifier = Modifier.size(96.dp)

@@ -11,7 +11,7 @@ data class NavbarConfig(
 ) {
 	companion object {
 		const val KEY = "navbarConfig"
-		const val VERSION = 6
+		const val VERSION = 7
 		val default = NavbarConfig(
 			tabs = listOf(
 				NavbarTab(NavbarTab.Id.LIBRARY, true),
@@ -20,7 +20,8 @@ data class NavbarConfig(
 				NavbarTab(NavbarTab.Id.ARTISTS, true),
 				NavbarTab(NavbarTab.Id.SEARCH, false),
 				NavbarTab(NavbarTab.Id.GENRES, false),
-				NavbarTab(NavbarTab.Id.SONGS, false)
+				NavbarTab(NavbarTab.Id.SONGS, false),
+				NavbarTab(NavbarTab.Id.RADIOS, false)
 			),
 			version = VERSION
 		)

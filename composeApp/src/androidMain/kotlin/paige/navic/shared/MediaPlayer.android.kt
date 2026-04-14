@@ -38,6 +38,7 @@ import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.CollectionRepository
@@ -45,8 +46,10 @@ import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.AndroidScrobbleManager
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
+import paige.navic.ui.components.common.CoilBitmapLoader
 import paige.navic.utils.effectiveGain
 import java.io.File
+import kotlin.time.Duration
 
 class PlaybackService : MediaSessionService(), KoinComponent {
 	private var mediaSession: MediaSession? = null
@@ -124,6 +127,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 
 		mediaSession = MediaSession.Builder(this, player)
 			.setSessionActivity(sessionPendingIntent)
+			.setBitmapLoader(CoilBitmapLoader(this))
 			.build()
 	}
 
@@ -498,6 +502,78 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
+	override fun playRadio(radio: DomainRadio) {
+		viewModelScope.launch {
+			val radioId = "radio_${radio.name.hashCode()}"
+
+			val dummyRadioSong = DomainSong(
+				id = radioId,
+				title = radio.name,
+				artistName = "Live Radio",
+				albumId = "radio_album",
+				albumTitle = "Live Stream",
+				duration = Duration.ZERO,
+				trackNumber = 1,
+				coverArtId = null,
+				artistId = "",
+				parentId = "",
+				comment = null,
+				discNumber = null,
+				isrc = emptyList(),
+				year = null,
+				genre = null,
+				genres = emptyList(),
+				moods = emptyList(),
+				bpm = null,
+				contributors = emptyList(),
+				playCount = 0,
+				userRating = 0,
+				averageRating = null,
+				bitRate = null,
+				bitDepth = null,
+				sampleRate = null,
+				audioChannelCount = null,
+				replayGain = null,
+				fileSize = 0,
+				fileExtension = "",
+				mimeType = "",
+				filePath = radio.streamUrl,
+				starredAt = null,
+				musicBrainzId = null
+			)
+
+			val metadata = MediaMetadata.Builder()
+				.setTitle(radio.name)
+				.setArtist("Live Radio")
+				.setIsPlayable(true)
+				.build()
+
+			val mediaItem = MediaItem.Builder()
+				.setUri(radio.streamUrl)
+				.setMediaId("radio_${radio.name.hashCode()}")
+				.setMediaMetadata(metadata)
+				.setLiveConfiguration(MediaItem.LiveConfiguration.Builder().build())
+				.build()
+
+			controller?.let { player ->
+				player.stop()
+				player.clearMediaItems()
+				player.setMediaItem(mediaItem)
+				player.prepare()
+				player.play()
+			}
+
+			_uiState.update { state ->
+				state.copy(
+					queue = listOf(dummyRadioSong),
+					currentIndex = 0,
+					currentSong = dummyRadioSong,
+					isLoading = true
+				)
+			}
+		}
+	}
+
 	override fun shufflePlay(collection: DomainSongCollection) {
 		viewModelScope.launch {
 			val shuffledSongs = collection.songs.shuffled()
@@ -593,21 +669,36 @@ class AndroidMediaPlayerViewModel(
 			.setArtist(artistName)
 			.setAlbumTitle(albumTitle)
 			.setArtworkUri(
-				coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true).toUri() }
+				coverArtId?.let {
+					SessionManager.api.getCoverArtUrl(it, auth = true).toUri()
+						.buildUpon()
+						.appendQueryParameter("cacheKey", it)
+						.build()
+				}
 			)
 			.build()
 
-		val localPath = downloadManager.getDownloadedFilePath(id)
-		val uri = if (localPath != null) {
-			File(localPath).toUri()
-		} else {
-			SessionManager.api.getStreamUrl(id).toUri()
+		val uri = when {
+			id.startsWith("radio_") && !filePath.isNullOrEmpty() -> { filePath.toUri() }
+			else -> {
+				val localPath = downloadManager.getDownloadedFilePath(id)
+				if (localPath != null) {
+					File(localPath).toUri()
+				} else {
+					SessionManager.api.getStreamUrl(id).toUri()
+				}
+			}
 		}
 
-		return MediaItem.Builder()
+		val builder = MediaItem.Builder()
 			.setUri(uri)
 			.setMediaId(id)
 			.setMediaMetadata(metadata)
-			.build()
+
+		if (id.startsWith("radio_")) {
+			builder.setLiveConfiguration(MediaItem.LiveConfiguration.Builder().build())
+		}
+
+		return builder.build()
 	}
 }

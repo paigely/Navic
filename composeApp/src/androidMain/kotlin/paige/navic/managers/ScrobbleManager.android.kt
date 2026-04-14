@@ -27,6 +27,22 @@ class AndroidScrobbleManager(
 		scrobbleManager.onMediaChanged(mediaItem?.mediaId)
 	}
 
+	override fun onPositionDiscontinuity(
+		oldPosition: Player.PositionInfo,
+		newPosition: Player.PositionInfo,
+		reason: Int
+	) {
+		val isSeekOrRepeat = reason == Player.DISCONTINUITY_REASON_SEEK ||
+			reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION
+
+		val jumpedToStart = newPosition.positionMs < 5000L
+		val wasFurtherAlong = oldPosition.positionMs > 10000L
+
+		if (isSeekOrRepeat && jumpedToStart && wasFurtherAlong) {
+			scrobbleManager.onMediaChanged(player.currentMediaItem?.mediaId)
+		}
+	}
+
 	override fun onIsPlayingChanged(isPlaying: Boolean) {
 		scrobbleManager.onPlayStateChanged(isPlaying)
 	}

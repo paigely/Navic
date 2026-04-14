@@ -1,5 +1,6 @@
 package paige.navic.ui.screens.nowPlaying.components.controls
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,12 +23,15 @@ import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.ThemeMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.MoreHoriz
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.ui.screens.share.dialogs.ShareDialog
+import paige.navic.ui.theme.NavicTheme
 
 @Composable
 fun NowPlayingMoreButton() {
@@ -56,47 +60,61 @@ fun NowPlayingMoreButton() {
 		)
 	}
 
+	val inDarkTheme = isSystemInDarkTheme()
+	val isDark = remember(Settings.shared.themeMode) {
+		when (Settings.shared.themeMode) {
+			ThemeMode.System -> inDarkTheme
+			ThemeMode.Dark -> true
+			ThemeMode.Light -> false
+		}
+	}
+
 	if (expanded && song != null) {
-		SongSheet(
-			onDismissRequest = { expanded = false },
-			song = song,
-			collection = playerState.currentCollection,
-			onViewAlbum = {
-				playerState.currentCollection?.let { collection ->
+		NavicTheme {
+			SongSheet(
+				onDismissRequest = { expanded = false },
+				song = song,
+				collection = playerState.currentCollection,
+				onViewAlbum = {
+					playerState.currentCollection?.let { collection ->
+						backStack.remove(Screen.NowPlaying)
+						backStack.add(Screen.CollectionDetail(collection.id, ""))
+					}
+				},
+				onViewArtist = {
 					backStack.remove(Screen.NowPlaying)
-					backStack.add(Screen.CollectionDetail(collection.id, ""))
+					backStack.add(Screen.ArtistDetail(song.artistId))
+				},
+				onShare = {
+					shareId = song.id
+				},
+				onAddToPlaylist = {
+					playlistDialogShown = true
+				},
+				onTrackInfo = {
+					backStack.remove(Screen.NowPlaying)
+					backStack.add(Screen.SongDetail(song.id))
 				}
-			},
-			onViewArtist = {
-				backStack.remove(Screen.NowPlaying)
-				backStack.add(Screen.ArtistDetail(song.artistId))
-			},
-			onShare = {
-				shareId = song.id
-			},
-			onAddToPlaylist = {
-				playlistDialogShown = true
-			},
-			onTrackInfo = {
-				backStack.remove(Screen.NowPlaying)
-				backStack.add(Screen.SongDetail(song.id))
-			}
-		)
+			)
+		}
 	}
 
 	if (playlistDialogShown && song != null) {
-		@Suppress("AssignedValueIsNeverRead")
-		PlaylistUpdateDialog(
-			songs = persistentListOf(song),
-			onDismissRequest = { playlistDialogShown = false }
-		)
+		NavicTheme {
+			@Suppress("AssignedValueIsNeverRead")
+			PlaylistUpdateDialog(
+				songs = persistentListOf(song),
+				onDismissRequest = { playlistDialogShown = false }
+			)
+		}
 	}
 
-	@Suppress("AssignedValueIsNeverRead")
-	ShareDialog(
-		id = shareId,
-		onIdClear = { shareId = null },
-		expiry = shareExpiry,
-		onExpiryChange = { shareExpiry = it }
-	)
+	NavicTheme {
+		ShareDialog(
+			id = shareId,
+			onIdClear = { shareId = null },
+			expiry = shareExpiry,
+			onExpiryChange = { shareExpiry = it }
+		)
+	}
 }

@@ -7,6 +7,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
 import paige.navic.data.database.SyncManager
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.CollectionRepository
@@ -142,21 +143,14 @@ class IOSMediaPlayerViewModel(
 	override fun playAt(index: Int) {
 		val songToPlay = _uiState.value.queue.getOrNull(index) ?: return
 
-		if (!isAvailable(songToPlay.id)) {
+		if (!songToPlay.id.startsWith("radio_") && !isAvailable(songToPlay.id)) {
 			next()
 			return
 		}
 
-		val localPath = downloadManager.getDownloadedFilePath(songToPlay.id)
-		val url = if (localPath != null) {
-			NSURL.fileURLWithPath(localPath)
-		} else {
-			NSURL.URLWithString(SessionManager.api.getStreamUrl(songToPlay.id))!!
-		}
+		val url = getSongUrl(songToPlay) ?: return
 
-		player.replaceCurrentItemWithPlayerItem(
-			AVPlayerItem(url)
-		)
+		player.replaceCurrentItemWithPlayerItem(AVPlayerItem(url))
 		player.play()
 
 		_uiState.update {
@@ -171,6 +165,65 @@ class IOSMediaPlayerViewModel(
 		scrobbleManager.onMediaChanged(songToPlay.id)
 		scrobbleManager.onIsPlayingChanged(true)
 		updateNowPlayingInfo(songToPlay)
+	}
+
+	override fun playRadio(radio: DomainRadio) {
+		val radioId = "radio_${radio.name.hashCode()}"
+
+		val dummyRadioSong = DomainSong(
+			id = radioId,
+			title = radio.name,
+			artistName = "Live Radio",
+			albumId = "radio_album",
+			albumTitle = "Live Stream",
+			duration = kotlin.time.Duration.ZERO,
+			trackNumber = 1,
+			coverArtId = null,
+			artistId = "",
+			parentId = "",
+			comment = null,
+			discNumber = null,
+			isrc = emptyList(),
+			year = null,
+			genre = null,
+			genres = emptyList(),
+			moods = emptyList(),
+			bpm = null,
+			contributors = emptyList(),
+			playCount = 0,
+			userRating = 0,
+			averageRating = null,
+			bitRate = null,
+			bitDepth = null,
+			sampleRate = null,
+			audioChannelCount = null,
+			replayGain = null,
+			fileSize = 0,
+			fileExtension = "",
+			mimeType = "",
+			filePath = radio.streamUrl,
+			starredAt = null,
+			musicBrainzId = null
+		)
+
+		val url = NSURL.URLWithString(radio.streamUrl)
+		if (url != null) {
+			player.replaceCurrentItemWithPlayerItem(AVPlayerItem(url))
+			player.play()
+		}
+
+		_uiState.update { state ->
+			state.copy(
+				queue = listOf(dummyRadioSong),
+				currentIndex = 0,
+				currentSong = dummyRadioSong,
+				isLoading = true
+			)
+		}
+
+		scrobbleManager.onMediaChanged(radioId)
+		scrobbleManager.onIsPlayingChanged(true)
+		updateNowPlayingInfo(dummyRadioSong)
 	}
 
 	override fun addToQueueSingle(song: DomainSong) {
@@ -368,9 +421,38 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun syncPlayerWithState(state: PlayerUiState) {
-		val song = state.queue.getOrNull(state.currentIndex) ?: return
-		val url = NSURL.URLWithString(SessionManager.api.getStreamUrl(song.id)) ?: return
+		if (state.queue.isEmpty() || player.currentItem != null) return
+
+		val index = if (state.currentIndex in 0 until state.queue.size) state.currentIndex else 0
+		val song = state.queue.getOrNull(index) ?: return
+
+		val url = getSongUrl(song) ?: return
 		player.replaceCurrentItemWithPlayerItem(AVPlayerItem(url))
+
+		if (!song.id.startsWith("radio_")) {
+			val durationMs = song.duration.inWholeMilliseconds
+			if (durationMs > 0) {
+				val positionSeconds = (state.progress * durationMs) / 1000.0
+				seekToTime(positionSeconds)
+			}
+		}
+
 		updateNowPlayingInfo(song)
+	}
+
+	private fun getSongUrl(song: DomainSong): NSURL? {
+		return when {
+			song.id.startsWith("radio_") && !song.filePath.isNullOrEmpty() -> {
+				NSURL.URLWithString(song.filePath)
+			}
+			else -> {
+				val localPath = downloadManager.getDownloadedFilePath(song.id)
+				if (localPath != null) {
+					NSURL.fileURLWithPath(localPath)
+				} else {
+					NSURL.URLWithString(SessionManager.api.getStreamUrl(song.id))
+				}
+			}
+		}
 	}
 }

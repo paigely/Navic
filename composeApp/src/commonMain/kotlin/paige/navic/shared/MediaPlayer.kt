@@ -15,6 +15,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import paige.navic.data.models.settings.Settings
+import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.CollectionRepository
@@ -66,6 +67,7 @@ abstract class MediaPlayerViewModel(
 	abstract fun moveQueueItem(fromIndex: Int, toIndex: Int)
 	abstract fun clearQueue()
 	abstract fun playAt(index: Int)
+	abstract fun playRadio(radio: DomainRadio)
 	abstract fun pause()
 	abstract fun resume()
 	abstract fun seek(normalized: Float)

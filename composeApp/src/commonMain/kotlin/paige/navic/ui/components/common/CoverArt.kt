@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.TextAutoSize
@@ -66,14 +67,18 @@ fun CoverArt(
 			.crossfade(crossfadeMs)
 			.build()
 	}
+
+	val commonModifier = modifier
+		.then(if (square) Modifier.aspectRatio(1f) else Modifier)
+		.shadow(shadowElevation, shape)
+		.clip(shape)
+		.background(MaterialTheme.colorScheme.surfaceContainer)
+
+	if (coverArtId.isNullOrBlank()) return Box(commonModifier)
 	SubcomposeAsyncImage(
 		model = model,
 		contentDescription = contentDescription,
-		modifier = modifier
-			.then(if (square) Modifier.aspectRatio(1f) else Modifier)
-			.shadow(shadowElevation, shape)
-			.clip(shape)
-			.background(MaterialTheme.colorScheme.surfaceContainer)
+		modifier = commonModifier
 			.then(
 				if (enabled) {
 					if (onClick != null) {

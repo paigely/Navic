@@ -32,19 +32,25 @@ fun NowPlayingDurationsRow() {
 		)
 	val color = MaterialTheme.colorScheme.onSurfaceVariant
 	Row(Modifier.padding(horizontal = 16.dp)) {
-		if (duration != null) {
-			Text(
-				text = ((duration.inWholeSeconds * playerState.progress).toDouble().seconds).toHoursMinutesSeconds(),
-				color = color, style = style
-			)
-		} else {
-			Text("--:--", color = color, style = style)
-		}
-		Spacer(Modifier.weight(1f))
-		if (duration != null) {
-			Text(duration.toHoursMinutesSeconds(), color = color, style = style)
-		} else {
-			Text("--:--", color = color, style = style)
+		when {
+			duration == kotlin.time.Duration.ZERO -> {
+				Text(text = "LIVE", color = color, style = style)
+				Spacer(Modifier.weight(1f))
+				Text(text = "∞", color = color, style = style)
+			}
+			duration != null -> {
+				Text(
+					text = ((duration.inWholeSeconds * playerState.progress).toDouble().seconds).toHoursMinutesSeconds(),
+					color = color, style = style
+				)
+				Spacer(Modifier.weight(1f))
+				Text(duration.toHoursMinutesSeconds(), color = color, style = style)
+			}
+			else -> {
+				Text("--:--", color = color, style = style)
+				Spacer(Modifier.weight(1f))
+				Text("--:--", color = color, style = style)
+			}
 		}
 	}
 }

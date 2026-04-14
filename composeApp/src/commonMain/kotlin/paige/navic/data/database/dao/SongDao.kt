@@ -61,4 +61,14 @@ interface SongDao {
 		}
 		insertSongs(remoteSongs)
 	}
+
+	@Transaction
+	suspend fun deleteObsoleteSongs(remoteIds: Set<String>) {
+		getAllSongIds().forEach { localId ->
+			if (localId !in remoteIds) {
+				Logger.w("SongDao", "song $localId no longer exists remotely")
+				deleteSong(localId)
+			}
+		}
+	}
 }
