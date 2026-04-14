@@ -137,6 +137,9 @@ class DbRepository(
 		val completedAlbums = AtomicInt(0)
 		val totalSongsSynced = AtomicInt(0)
 
+		val allValidAlbumIds = mutableSetOf<String>()
+		val allValidSongIds = mutableSetOf<String>()
+
 		onProgress(0.1f, Res.string.info_syncing_albums)
 
 		val networkChunkSize = 50
@@ -163,11 +166,17 @@ class DbRepository(
 				album.songs.map { it.toEntity() }
 			}
 
-			albumEntities.chunked(dbChunkSize).forEach { albumDao.updateAllAlbums(it) }
-			songEntities.chunked(dbChunkSize).forEach { songDao.updateAllSongs(it) }
+			allValidAlbumIds.addAll(albumEntities.map { it.albumId })
+			allValidSongIds.addAll(songEntities.map { it.songId })
+
+			albumEntities.chunked(dbChunkSize).forEach { albumDao.insertAlbums(it) }
+			songEntities.chunked(dbChunkSize).forEach { songDao.insertSongs(it) }
 
 			totalSongsSynced.set(totalSongsSynced.get() + songEntities.size)
 		}
+
+		albumDao.deleteObsoleteAlbums(allValidAlbumIds)
+		songDao.deleteObsoleteSongs(allValidSongIds)
 
 		Logger.i(
 			"DbRepository",
@@ -181,10 +190,13 @@ class DbRepository(
 	suspend fun syncPlaylists(): Result<List<PlaylistEntity>> = runDbOp {
 		val remotePlaylists = api.getPlaylists()
 		val playlistEntities = remotePlaylists.map { it.toEntity() }
+		val validPlaylistIds = playlistEntities.map { it.playlistId }.toSet()
 
 		playlistEntities.chunked(dbChunkSize).forEach { chunk ->
-			playlistDao.updateAllPlaylists(chunk)
+			playlistDao.insertPlaylists(chunk)
 		}
+
+		playlistDao.deleteObsoletePlaylists(validPlaylistIds)
 
 		Logger.i("DbRepository", "- Playlists Synced: ${playlistEntities.size} playlists found")
 

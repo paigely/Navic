@@ -78,4 +78,13 @@ interface PlaylistDao {
 		}
 		insertPlaylists(remotePlaylists)
 	}
+	@Transaction
+	suspend fun deleteObsoletePlaylists(remoteIds: Set<String>) {
+		getAllPlaylistIds().forEach { localId ->
+			if (localId !in remoteIds) {
+				Logger.w("PlaylistDao", "playlist $localId no longer exists remotely")
+				deletePlaylist(localId)
+			}
+		}
+	}
 }
