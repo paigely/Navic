@@ -12,6 +12,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerializationException
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_syncing
 import navic.composeapp.generated.resources.info_syncing_albums
@@ -144,21 +145,29 @@ class DbRepository(
 
 		val networkChunkSize = 50
 		allAlbumSummaries.chunked(networkChunkSize).forEach { chunk ->
-
 			val fullAlbums = coroutineScope {
 				chunk.map { summary ->
 					async {
 						concurrentRequestLimit.withPermit {
-							val album = api.getAlbum(summary.id)
+							try {
+								val album = api.getAlbum(summary.id)
 
-							val done = completedAlbums.incrementAndGet()
-							val fetchProgress = 0.1f + (0.8f * (done.toFloat() / totalAlbums))
-							onProgress(fetchProgress, Res.string.info_syncing_albums)
+								val done = completedAlbums.incrementAndGet()
+								val fetchProgress = 0.1f + (0.8f * (done.toFloat() / totalAlbums))
+								onProgress(fetchProgress, Res.string.info_syncing_albums)
 
-							album
+								album
+							} catch (e: Exception) {
+								if (e is SerializationException) {
+									Logger.e("DbRepository", "could not deserialize album ${summary.id} (${summary.name}); skipping it", e)
+									null
+								} else {
+									throw e
+								}
+							}
 						}
 					}
-				}.awaitAll()
+				}.awaitAll().filterNotNull()
 			}
 
 			val albumEntities = fullAlbums.map { it.toEntity() }
@@ -204,7 +213,16 @@ class DbRepository(
 	}
 
 	suspend fun syncPlaylistSongs(playlistId: String): Result<Int> = runDbOp {
-		val playlist = api.getPlaylist(playlistId)
+		val playlist = try {
+			api.getPlaylist(playlistId)
+		} catch (e: Exception) {
+			if (e is SerializationException) {
+				Logger.e("DbRepository", "could not deserialize playlist $playlistId; skipping it", e)
+				return@runDbOp 0
+			} else {
+				throw e
+			}
+		}
 		val songEntities = playlist.songs.map { it.toEntity() }
 
 		playlistDao.deletePlaylistSongCrossRefs(playlistId)
