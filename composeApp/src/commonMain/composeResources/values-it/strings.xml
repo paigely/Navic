@@ -329,4 +329,25 @@
     <string name="info_update">È stata rilasciata la versione %1$s</string>
     <string name="info_exception_handler">Questo farà immediatamente crashare l'app. Sei sicuro?</string>
     <string name="option_lyrics_blur">Blur del testo</string>
+    <string name="title_create_radio">Crea radio</string>
+    <string name="title_radios">Radio</string>
+    <string name="option_lyrics_bright_inactive">Testo inattivo più visibile</string>
+    <string name="option_radio_name">Nome</string>
+    <string name="option_radio_stream_url">URL Stream</string>
+    <string name="option_radio_homepage_url">URL Homepage</string>
+    <plurals name="count_minutes">
+        <item quantity="one">%1$d minuto</item>
+        <item quantity="many">%1$d minuti</item>
+        <item quantity="other">%1$d minuti</item>
+    </plurals>
+    <plurals name="count_hours">
+        <item quantity="one">%1$d ora</item>
+        <item quantity="many">%1$d ore</item>
+        <item quantity="other">%1$d ore</item>
+    </plurals>
+    <string name="action_sleep_timer">Timer sonno</string>
+    <string name="action_sleep_timer_enabled">Timer sonno - %1$s rimanenti</string>
+    <string name="action_disable_sleep_timer">Spegni timer</string>
+    <string name="info_no_radios">Niente radio</string>
+    <string name="info_syncing_radios">Sincronizzazione radio...</string>
 </resources>
