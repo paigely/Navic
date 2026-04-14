@@ -46,7 +46,7 @@
     <string name="option_use_wavy_slider">Barra de progreso animada</string>
     <string name="option_show_progress_in_bar">Mostrar progreso en la barra</string>
     <string name="option_use_detached_bar">Barra inferior flotante</string>
-    <string name="option_swipe_to_skip">Desliza para saltar canciones</string>
+    <string name="option_swipe_to_skip">Deslizar para cambiar de canción</string>
     <string name="option_artwork_shape">Forma de la portada</string>
     <string name="option_cover_art_size">Tamaño de la portada</string>
     <string name="option_use_marquee_text">Desplazamiento automático en textos grandes</string>
@@ -318,5 +318,19 @@
     <string name="subtitle_trigger_sync">Fuerza una actualización completa de la biblioteca inmediatamente</string>
     <string name="subtitle_rebuild_database">Borra todos los metadatos locales y fuerza una sincronización nueva</string>
     <string name="info_sync_date_format">%1$d %2$s</string>
-    <string name="info_exception_handler">Esto hará que la aplicación se cierre inmediatamente. ¿Estás seguro?</string>
+    <string name="info_exception_handler">Esto hará que la aplicación se cierre inmediatamente. ¿Lo confirma?</string>
+    <plurals name="count_minutes">
+        <item quantity="one">%1$d minuto</item>
+        <item quantity="many">%1$d de minutos</item>
+        <item quantity="other">%1$d minutos</item>
+    </plurals>
+    <plurals name="count_hours">
+        <item quantity="one">%1$d hora</item>
+        <item quantity="many">%1$d de horas</item>
+        <item quantity="other">%1$d horas</item>
+    </plurals>
+    <string name="action_sleep_timer">Temporizador de apagado</string>
+    <string name="action_sleep_timer_enabled">Temporizador de sueño • queda %1$s</string>
+    <string name="action_disable_sleep_timer">Apagar temporizador</string>
+    <string name="option_lyrics_blur">Desenfoque de letra</string>
 </resources>
