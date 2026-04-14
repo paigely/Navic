@@ -21,6 +21,7 @@
 	<string name="title_delete_share">Delete share?</string>
 	<string name="title_create_share">Create share</string>
 	<string name="title_create_playlist">Create playlist</string>
+	<string name="title_create_radio">Create radio</string>
 	<string name="title_albums">Albums</string>
 	<string name="title_songs">Songs</string>
 	<string name="title_artists">Artists</string>
@@ -117,6 +118,9 @@
 	<string name="option_downloaded_songs">Downloaded songs</string>
 	<string name="option_custom_headers">Custom server headers</string>
 	<string name="option_check_for_updates">Check for updates</string>
+	<string name="option_radio_name">Name</string>
+	<string name="option_radio_stream_url">Stream URL</string>
+	<string name="option_radio_homepage_url">Homepage URL</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>

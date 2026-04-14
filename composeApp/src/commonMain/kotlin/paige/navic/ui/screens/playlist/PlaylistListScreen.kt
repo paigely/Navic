@@ -51,8 +51,8 @@ import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.layouts.ArtGrid
-import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.screens.playlist.components.PlaylistListScreenSortButton
@@ -77,6 +77,7 @@ fun PlaylistListScreen(
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
 
 	val ctx = LocalCtx.current
+	val scrollManager = LocalBottomBarScrollManager.current
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -117,7 +118,7 @@ fun PlaylistListScreen(
 		},
 		floatingActionButton = {
 			AnimatedContent(
-				!gridState.lastScrolledForward
+				!scrollManager.isTriggered
 					|| Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.Never,
 				transitionSpec = {
 					val transformOrigin = TransformOrigin(0f, 1f)
@@ -149,7 +150,6 @@ fun PlaylistListScreen(
 			}
 		},
 		bottomBar = {
-			val scrollManager = LocalBottomBarScrollManager.current
 			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
