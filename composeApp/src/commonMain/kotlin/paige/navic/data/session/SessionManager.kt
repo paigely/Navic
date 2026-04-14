@@ -50,7 +50,7 @@ object SessionManager {
 						val key = parts.getOrNull(0)?.trim()?.takeIf { it.isNotBlank() }
 						val value = parts.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() }
 						if (parts.size == 2 && key != null && value != null) {
-							header(value, key)
+							header(key, value)
 						}
 					}
 				}
