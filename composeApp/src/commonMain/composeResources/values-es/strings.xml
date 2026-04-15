@@ -74,7 +74,7 @@
     <string name="option_min_duration_to_scrobble">Duración mínima para registrar</string>
     <string name="option_playlist_name">Título</string>
     <string name="option_playlist_songs">Canciones</string>
-    <string name="option_enable_scrobbling">Activar registro automático</string>
+    <string name="option_enable_scrobbling">Activar registro de música</string>
     <plurals name="count_songs">
         <item quantity="one">%1$d canción</item>
         <item quantity="many">%1$d de canciones</item>
@@ -333,4 +333,17 @@
     <string name="action_sleep_timer_enabled">Temporizador de sueño • queda %1$s</string>
     <string name="action_disable_sleep_timer">Apagar temporizador</string>
     <string name="option_lyrics_blur">Desenfoque de letra</string>
+    <string name="title_create_radio">Crear radio</string>
+    <string name="title_radios">Radios</string>
+    <string name="option_lyrics_bright_inactive">Letras brillantes e inactivas</string>
+    <string name="option_sort_downloaded">Descargada</string>
+    <string name="option_radio_name">Nombre</string>
+    <string name="option_radio_stream_url">URL de flujo</string>
+    <string name="option_radio_homepage_url">URL de página inicial</string>
+    <string name="action_test_exception_handler">Prueba de excepción de manipulador</string>
+    <string name="info_no_radios">Sin radios</string>
+    <string name="info_downloaded">Descargado</string>
+    <string name="info_syncing_saved">Guardado.</string>
+    <string name="info_syncing_finished">Finalizado.</string>
+    <string name="info_syncing_radios">Sincr. radios…</string>
 </resources>
