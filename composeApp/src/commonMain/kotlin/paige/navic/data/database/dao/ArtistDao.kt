@@ -33,7 +33,7 @@ interface ArtistDao {
 	suspend fun isArtistStarred(artistId: String): Boolean
 
 	@Query("SELECT * FROM ArtistEntity WHERE name LIKE '%' || :query || '%' COLLATE NOCASE")
-	fun searchArtists(query: String): Flow<List<ArtistEntity>>
+	suspend fun searchArtistsList(query: String): List<ArtistEntity>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertArtist(artist: ArtistEntity)

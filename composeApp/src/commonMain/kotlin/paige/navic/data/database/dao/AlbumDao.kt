@@ -40,8 +40,8 @@ interface AlbumDao {
 	fun getAlbumsByArtistExcluding(artistId: String, albumId: String): Flow<List<AlbumWithSongs>>
 
 	@Transaction
-	@Query("SELECT * FROM AlbumEntity WHERE name LIKE '%' || :query || '%'")
-	fun searchAlbums(query: String): Flow<List<AlbumWithSongs>>
+	@Query("SELECT * FROM AlbumEntity WHERE name LIKE '%' || :query || '%' COLLATE NOCASE")
+	suspend fun searchAlbumsList(query: String): List<AlbumWithSongs>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertAlbum(album: AlbumEntity)

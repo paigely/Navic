@@ -38,6 +38,9 @@ interface SongDao {
 	@Query("SELECT songId FROM SongEntity")
 	suspend fun getAllSongIds(): List<String>
 
+	@Query("SELECT * FROM SongEntity WHERE title LIKE '%' || :query || '%' COLLATE NOCASE")
+	suspend fun searchSongsList(query: String): List<SongEntity>
+
 	@Transaction
 	suspend fun updateSongsByAlbumId(albumId: String, remoteSongs: List<SongEntity>) {
 		val remoteIds = remoteSongs.map { it.songId }.toSet()

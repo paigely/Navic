@@ -245,9 +245,10 @@ fun SearchScreen(
 											}
 										}
 									) {
-										Box {
+										Box(
+											modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+										) {
 											ListItem(
-												modifier = Modifier.alpha(if (canPlay) 1f else 0.75f),
 												enabled = canPlay,
 												onClick = {
 													ctx.clickSound()
@@ -258,16 +259,22 @@ fun SearchScreen(
 												onLongClick = {
 													selectedSong = song
 												},
-												content = { Text(song.title) },
+												content = {
+													Text(
+														song.title,
+														modifier = Modifier.alpha(if (canPlay) 1f else 0.75f)
+													)
+												},
 												supportingContent = {
 													MarqueeText(
-														"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
+														"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}",
+														modifier = Modifier.alpha(if (canPlay) 1f else 0.75f)
 													)
 												},
 												leadingContent = {
 													CoverArt(
 														coverArtId = song.coverArtId,
-														modifier = Modifier.size(50.dp),
+														modifier = Modifier.size(50.dp).alpha(if (canPlay) 1f else 0.75f),
 														shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 													)
 												},
@@ -317,47 +324,51 @@ fun SearchScreen(
 								}
 							}
 
-							horizontalSection(
-								title = Res.string.title_albums,
-								destination = Screen.AlbumList(true),
-								state = UiState.Success(albums),
-								key = { it.id },
-								seeAll = false
-							) { album ->
-								AlbumListScreenItem(
-									modifier = Modifier.animateItem(fadeInSpec = null)
-										.width(150.dp),
-									tab = "search",
-									album = album,
-									selected = album == albumListSelection,
-									starred = albumListStarred,
-									onSelect = { albumListViewModel.selectAlbum(album) },
-									onDeselect = { albumListViewModel.clearSelection() },
-									onSetStarred = { albumListViewModel.starAlbum(it) },
-									onSetShareId = { },
-									isOnline = isOnline
-								)
+							if (albums.isNotEmpty()) {
+								horizontalSection(
+									title = Res.string.title_albums,
+									destination = Screen.AlbumList(true),
+									state = UiState.Success(albums),
+									key = { it.id },
+									seeAll = false
+								) { album ->
+									AlbumListScreenItem(
+										modifier = Modifier.animateItem(fadeInSpec = null)
+											.width(150.dp),
+										tab = "search",
+										album = album,
+										selected = album == albumListSelection,
+										starred = albumListStarred,
+										onSelect = { albumListViewModel.selectAlbum(album) },
+										onDeselect = { albumListViewModel.clearSelection() },
+										onSetStarred = { albumListViewModel.starAlbum(it) },
+										onSetShareId = { },
+										isOnline = isOnline
+									)
+								}
 							}
 
-							horizontalSection(
-								title = Res.string.title_artists,
-								destination = Screen.ArtistList(true),
-								state = UiState.Success(artists),
-								key = { it.id },
-								seeAll = false
-							) { artist ->
-								ArtistsScreenItem(
-									modifier = Modifier.animateItem(fadeInSpec = null)
-										.width(150.dp),
-									tab = "search",
-									artist = artist,
-									selected = artist == artistListSelection,
-									starred = artistListStarred,
-									onSelect = { artistListViewModel.selectArtist(artist) },
-									onDeselect = { artistListViewModel.clearSelection() },
-									onSetStarred = { artistListViewModel.starArtist(it) }
-								)
-							}
+							if (artists.isNotEmpty()) {
+								horizontalSection(
+									title = Res.string.title_artists,
+									destination = Screen.ArtistList(true),
+									state = UiState.Success(artists),
+									key = { it.id },
+									seeAll = false
+								) { artist ->
+									ArtistsScreenItem(
+										modifier = Modifier.animateItem(fadeInSpec = null)
+											.width(150.dp),
+										tab = "search",
+										artist = artist,
+										selected = artist == artistListSelection,
+										starred = artistListStarred,
+										onSelect = { artistListViewModel.selectArtist(artist) },
+										onDeselect = { artistListViewModel.clearSelection() },
+										onSetStarred = { artistListViewModel.starArtist(it) }
+									)
+								}
+								}
 						} else {
 							if (searchHistory.isNotEmpty()) {
 								item(span = { GridItemSpan(maxLineSpan) }) {
