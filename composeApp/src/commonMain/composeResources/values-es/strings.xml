@@ -335,7 +335,7 @@
     <string name="option_lyrics_blur">Desenfoque de letra</string>
     <string name="title_create_radio">Crear radio</string>
     <string name="title_radios">Radios</string>
-    <string name="option_lyrics_bright_inactive">Letras brillantes e inactivas</string>
+    <string name="option_lyrics_bright_inactive">Letras inactivas brillantes</string>
     <string name="option_sort_downloaded">Descargada</string>
     <string name="option_radio_name">Nombre</string>
     <string name="option_radio_stream_url">URL de flujo</string>
