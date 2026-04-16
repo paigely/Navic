@@ -19,7 +19,7 @@ fun initializeSingletonImageLoader(context: PlatformContext): ImageLoader {
 		}
 		.diskCache {
 			DiskCache.Builder()
-				.maxSizePercent(0.25)//maybe too much idk
+				.maxSizeBytes(2L shl 30)// 2Gb maybe should be settable or something
 				.build()
 		}
 		.crossfade(true)

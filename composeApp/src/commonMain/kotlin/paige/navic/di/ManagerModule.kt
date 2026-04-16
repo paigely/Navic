@@ -1,11 +1,13 @@
 package paige.navic.di
 
+import coil3.ImageLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import org.koin.dsl.module
 import paige.navic.data.database.SyncManager
+import paige.navic.data.images.initializeSingletonImageLoader
 import paige.navic.managers.DownloadManager
 import paige.navic.managers.SleepTimerManager
 
@@ -18,4 +20,5 @@ val managerModule = module {
 			startPeriodicSync()
 		}
 	}
+	single<ImageLoader> { initializeSingletonImageLoader(get()) }
 }

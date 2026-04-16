@@ -8,7 +8,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.dsl.module
 import paige.navic.androidApp.shared.AndroidResourceProvider
-import paige.navic.data.images.initializeSingletonImageLoader
 import paige.navic.di.initKoin
 import paige.navic.shared.ResourceProvider
 import kotlin.system.exitProcess
@@ -44,7 +43,6 @@ class Application : android.app.Application() {
 			androidContext(this@Application)
 			androidLogger()
 		}
-		initializeSingletonImageLoader(this@Application)
 	}
 
 	private fun isCrashProcess(): Boolean {
