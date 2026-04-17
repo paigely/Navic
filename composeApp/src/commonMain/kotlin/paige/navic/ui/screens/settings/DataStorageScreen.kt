@@ -53,7 +53,6 @@ import navic.composeapp.generated.resources.action_clear_pending_actions
 import navic.composeapp.generated.resources.action_rebuild_database
 import navic.composeapp.generated.resources.action_trigger_sync
 import navic.composeapp.generated.resources.count_songs
-import navic.composeapp.generated.resources.info_bulk_download_warning
 import navic.composeapp.generated.resources.info_library_download
 import navic.composeapp.generated.resources.info_library_download_warning
 import navic.composeapp.generated.resources.info_progress
@@ -145,7 +144,7 @@ fun SettingsDataStorageScreen() {
 
 	BulkDownloadDialog(
 		title = stringResource(Res.string.title_library_download),
-		message = stringResource(Res.string.info_bulk_download_warning),
+		message = stringResource(Res.string.info_library_download_warning),
 		showDialog = showLibraryDownloadDialog,
 		onDismissRequest = { showLibraryDownloadDialog = false },
 		onConfirm = {
