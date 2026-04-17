@@ -1,3 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="title_library">গান সংগ্রহ</string>
+    <string name="title_playlists">গান তালিকা</string>
+    <string name="title_settings">সেটিংস</string>
+    <string name="title_search">অনুসন্ধান করুন</string>
+    <string name="title_appearance">রূপ ও বিন্যাস</string>
+    <string name="title_behaviour">কার্যপ্রণালী</string>
+    <string name="title_now_playing">চলমান গান</string>
+    <string name="title_bottom_app_bar">নিচের প্যানেল</string>
+    <string name="title_playback">প্লেব্যাক</string>
+    <string name="title_data_storage">ডেটা ও স্টোরেজ</string>
+    <string name="title_sync_control">সিঙ্ক নিয়ন্ত্রণ</string>
+    <string name="title_cache_management">ক্যাশ ও স্টোরেজ ম্যানেজমেন্ট</string>
 </resources>
