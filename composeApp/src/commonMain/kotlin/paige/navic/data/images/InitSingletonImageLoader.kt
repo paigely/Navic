@@ -6,6 +6,7 @@ import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.crossfade
+import okio.FileSystem
 
 fun initializeSingletonImageLoader(context: PlatformContext): ImageLoader {
 	return ImageLoader.Builder(context)
@@ -19,6 +20,7 @@ fun initializeSingletonImageLoader(context: PlatformContext): ImageLoader {
 		}
 		.diskCache {
 			DiskCache.Builder()
+				.directory(FileSystem.SYSTEM_TEMPORARY_DIRECTORY/("image_cache"))
 				.maxSizeBytes(2L shl 30)// 2Gb maybe should be settable or something
 				.build()
 		}
