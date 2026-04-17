@@ -43,6 +43,7 @@
 	<string name="title_sort_by">Sort by</string>
 	<string name="title_direction">Direction</string>
 	<string name="title_bulk_download">Download All Albums</string>
+	<string name="title_library_download">Download Entire Library</string>
 	<string name="title_confirm">Confirm</string>
 	<string name="title_update">Update available</string>
 	<string name="title_changelog">Release notes</string>
@@ -124,12 +125,16 @@
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>
+	<string name="info_status_downloading">Downloading in progress...</string>
 	<string name="info_sync_never">Never</string>
 	<string name="info_sync_just_now">Just now</string>
 	<string name="info_sync_mins_ago">%1$d m ago</string>
 	<string name="info_sync_hours_ago">%1$d h ago</string>
 	<string name="info_sync_date_format">%1$d %2$s</string>
 	<string name="info_bulk_download_warning">Are you sure you want to download every album by %1$s?\nThis may require a significant amount of storage and data.</string>
+	<string name="info_library_download_warning">Are you sure you want to download your entire library? \nThis will skip items you've already downloaded, but it may still consume a significant amount of storage space and data.</string>
+	<string name="info_library_download">Save all synced music for offline playback</string>
+	<string name="info_progress">Progress</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>

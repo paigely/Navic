@@ -8,7 +8,10 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +23,7 @@ import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -29,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,13 +46,19 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_cancel_download
 import navic.composeapp.generated.resources.action_clear_downloads
 import navic.composeapp.generated.resources.action_clear_image_cache
 import navic.composeapp.generated.resources.action_clear_pending_actions
 import navic.composeapp.generated.resources.action_rebuild_database
 import navic.composeapp.generated.resources.action_trigger_sync
 import navic.composeapp.generated.resources.count_songs
+import navic.composeapp.generated.resources.info_bulk_download_warning
+import navic.composeapp.generated.resources.info_library_download
+import navic.composeapp.generated.resources.info_library_download_warning
+import navic.composeapp.generated.resources.info_progress
 import navic.composeapp.generated.resources.info_status_calculating
+import navic.composeapp.generated.resources.info_status_downloading
 import navic.composeapp.generated.resources.info_sync_date_format
 import navic.composeapp.generated.resources.info_sync_hours_ago
 import navic.composeapp.generated.resources.info_sync_just_now
@@ -64,6 +75,7 @@ import navic.composeapp.generated.resources.subtitle_trigger_sync
 import navic.composeapp.generated.resources.title_cache_management
 import navic.composeapp.generated.resources.title_danger_zone
 import navic.composeapp.generated.resources.title_data_storage
+import navic.composeapp.generated.resources.title_library_download
 import navic.composeapp.generated.resources.title_sync_control
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -73,6 +85,7 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
+import paige.navic.ui.components.dialogs.BulkDownloadDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.viewmodels.SettingsDataStorageViewModel
 import paige.navic.utils.fadeFromTop
@@ -92,6 +105,10 @@ fun SettingsDataStorageScreen() {
 	val pendingActionCount by viewModel.pendingActionCount.collectAsStateWithLifecycle()
 	val downloadCount by viewModel.downloadCount.collectAsStateWithLifecycle(0)
 	val downloadSize by viewModel.downloadSize.collectAsStateWithLifecycle(0L)
+
+	var showLibraryDownloadDialog by remember { mutableStateOf(false) }
+	val isDownloadingLibrary by viewModel.isDownloadingLibrary.collectAsStateWithLifecycle()
+	val libraryDownloadProgress by viewModel.libraryDownloadProgress.collectAsStateWithLifecycle()
 
 	val calculating = stringResource(Res.string.info_status_calculating)
 	var imageCacheSizeMb by remember { mutableStateOf(calculating) }
@@ -114,12 +131,28 @@ fun SettingsDataStorageScreen() {
 		)
 	)
 
+	val smoothLibraryDownloadProgress by animateFloatAsState(
+		targetValue = libraryDownloadProgress.coerceIn(0f, 1f),
+		animationSpec = tween(durationMillis = 500, easing = EaseOut)
+	)
+
 	LaunchedEffect(Unit) {
 		withContext(Dispatchers.IO) {
 			val sizeBytes = imageLoader.diskCache?.size ?: 0L
 			imageCacheSizeMb = "${sizeBytes / (1024 * 1024)} MB"
 		}
 	}
+
+	BulkDownloadDialog(
+		title = stringResource(Res.string.title_library_download),
+		message = stringResource(Res.string.info_bulk_download_warning),
+		showDialog = showLibraryDownloadDialog,
+		onDismissRequest = { showLibraryDownloadDialog = false },
+		onConfirm = {
+			showLibraryDownloadDialog = false
+			viewModel.downloadEntireLibrary()
+		}
+	)
 
 	Scaffold(
 		topBar = {
@@ -243,15 +276,73 @@ fun SettingsDataStorageScreen() {
 							)
 						}
 					}
+
+					FormRow(onClick = {
+						if (!isDownloadingLibrary) showLibraryDownloadDialog = true
+					}) {
+						Column(Modifier.fillMaxWidth()) {
+							Text(stringResource(Res.string.title_library_download))
+							Text(
+								text = stringResource(if (isDownloadingLibrary) Res.string.info_status_downloading else Res.string.info_library_download),
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+
+							AnimatedVisibility(
+								visible = isDownloadingLibrary,
+								enter = fadeIn() + expandVertically(clip = false),
+								exit = fadeOut() + shrinkVertically(clip = false)
+							) {
+								Column(modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
+									Row(
+										modifier = Modifier.fillMaxWidth(),
+										horizontalArrangement = Arrangement.SpaceBetween,
+										verticalAlignment = Alignment.CenterVertically
+									) {
+										Text(
+											text = stringResource(Res.string.info_progress),
+											style = MaterialTheme.typography.labelMedium,
+											color = MaterialTheme.colorScheme.primary
+										)
+
+										Row(verticalAlignment = Alignment.CenterVertically) {
+											TextButton(
+												onClick = { viewModel.cancelLibraryDownload() },
+												contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+												modifier = Modifier.padding(end = 8.dp)
+											) {
+												Text(
+													stringResource(Res.string.action_cancel_download),
+													style = MaterialTheme.typography.labelLarge,
+													color = MaterialTheme.colorScheme.error
+												)
+											}
+
+											Text(
+												text = "${(smoothLibraryDownloadProgress * 100).toInt()}%",
+												style = MaterialTheme.typography.labelMedium,
+												color = MaterialTheme.colorScheme.primary
+											)
+										}
+									}
+
+									LinearProgressIndicator(
+										progress = { smoothLibraryDownloadProgress },
+										modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
+									)
+								}
+							}
+						}
+					}
 				}
 
 				FormTitle(stringResource(Res.string.title_danger_zone))
 				Form {
 					FormRow(
 						onClick = {
+							imageLoader.memoryCache?.clear()
 							scope.launch(Dispatchers.IO) {
 								imageLoader.diskCache?.clear()
-								imageLoader.memoryCache?.clear()
 								imageCacheSizeMb = "0 MB"
 							}
 						}
