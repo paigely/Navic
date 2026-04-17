@@ -58,12 +58,6 @@ fun BlendBackground(
 			.memoryCachePolicy(CachePolicy.ENABLED)
 			.build()
 	}
-	val imageLoader = remember {
-		ImageLoader.Builder(platformContext)
-			.serviceLoaderEnabled(false)
-			.components { add(KtorNetworkFetcherFactory()) }
-			.build()
-	}
 
 	LaunchedEffect(isPaused) {
 		if (!isPaused) {
@@ -97,8 +91,7 @@ fun BlendBackground(
 			contentDescription = null,
 			contentScale = ContentScale.Crop,
 			colorFilter = ColorFilter.colorMatrix(colorMatrix),
-			modifier = Modifier.fillMaxSize(),
-			imageLoader = imageLoader
+			modifier = Modifier.fillMaxSize()
 		)
 		Box(
 			modifier = Modifier
@@ -119,8 +112,7 @@ fun BlendBackground(
 					colorFilter = ColorFilter.colorMatrix(colorMatrix),
 					modifier = Modifier
 						.fillMaxSize()
-						.rotate(topLeftRotation),
-					imageLoader = imageLoader
+						.rotate(topLeftRotation)
 				)
 			}
 			Box(
@@ -137,8 +129,7 @@ fun BlendBackground(
 					colorFilter = ColorFilter.colorMatrix(colorMatrix),
 					modifier = Modifier
 						.fillMaxSize()
-						.rotate(botRightRotation),
-					imageLoader = imageLoader
+						.rotate(botRightRotation)
 				)
 			}
 		}
