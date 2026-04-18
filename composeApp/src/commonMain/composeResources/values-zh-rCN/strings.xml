@@ -231,4 +231,6 @@
     <string name="action_queue">队列</string>
     <string name="action_reorder">重新排序</string>
     <string name="info_unknown">未知</string>
+    <string name="title_data_storage">数据&amp;存储</string>
+    <string name="title_sync_control">同步化控制</string>
 </resources>
