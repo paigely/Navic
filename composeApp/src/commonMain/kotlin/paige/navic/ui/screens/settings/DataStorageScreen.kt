@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +37,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.SingletonImageLoader
@@ -55,6 +58,7 @@ import navic.composeapp.generated.resources.action_trigger_sync
 import navic.composeapp.generated.resources.count_songs
 import navic.composeapp.generated.resources.info_library_download
 import navic.composeapp.generated.resources.info_library_download_warning
+import navic.composeapp.generated.resources.info_not_available_offline
 import navic.composeapp.generated.resources.info_progress
 import navic.composeapp.generated.resources.info_status_calculating
 import navic.composeapp.generated.resources.info_status_downloading
@@ -81,6 +85,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.Offline
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
@@ -109,6 +115,8 @@ fun SettingsDataStorageScreen() {
 	val isDownloadingLibrary by viewModel.isDownloadingLibrary.collectAsStateWithLifecycle()
 	val libraryDownloadProgress by viewModel.libraryDownloadProgress.collectAsStateWithLifecycle()
 
+	val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
+
 	val calculating = stringResource(Res.string.info_status_calculating)
 	var imageCacheSizeMb by remember { mutableStateOf(calculating) }
 
@@ -134,6 +142,17 @@ fun SettingsDataStorageScreen() {
 		targetValue = libraryDownloadProgress.coerceIn(0f, 1f),
 		animationSpec = tween(durationMillis = 500, easing = EaseOut)
 	)
+
+	val offlineModifier = Modifier.alpha(if (isOnline) 1f else 0.75f)
+	val offlineIcon = @Composable {
+		if (!isOnline) {
+			Icon(
+				Icons.Outlined.Offline,
+				stringResource(Res.string.info_not_available_offline),
+				modifier = Modifier.size(20.dp)
+			)
+		}
+	}
 
 	LaunchedEffect(Unit) {
 		withContext(Dispatchers.IO) {
@@ -199,7 +218,12 @@ fun SettingsDataStorageScreen() {
 						}
 					}
 
-					FormRow(onClick = { viewModel.triggerManualSync() }) {
+					FormRow(
+						modifier = offlineModifier,
+						onClick = if (isOnline) {
+							{ viewModel.triggerManualSync() }
+						} else null
+					) {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.action_trigger_sync))
 							Text(
@@ -208,6 +232,7 @@ fun SettingsDataStorageScreen() {
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
 						}
+						offlineIcon()
 					}
 
 					FormRow {
@@ -277,11 +302,12 @@ fun SettingsDataStorageScreen() {
 					}
 
 					FormRow(
-						onClick = if (!isDownloadingLibrary) {
+						modifier = offlineModifier,
+						onClick = if (!isDownloadingLibrary && isOnline) {
 							{ showLibraryDownloadDialog = true }
 						} else null
 					) {
-						Column(Modifier.fillMaxWidth()) {
+						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.title_library_download))
 							Text(
 								text = stringResource(if (isDownloadingLibrary) Res.string.info_status_downloading else Res.string.info_library_download),
@@ -334,6 +360,7 @@ fun SettingsDataStorageScreen() {
 								}
 							}
 						}
+						offlineIcon()
 					}
 				}
 
@@ -369,7 +396,12 @@ fun SettingsDataStorageScreen() {
 						)
 					}
 
-					FormRow(onClick = { viewModel.rebuildDatabase() }) {
+					FormRow(
+						modifier = offlineModifier,
+						onClick = if (isOnline) {
+							{ viewModel.rebuildDatabase() }
+						} else null
+					) {
 						Column(Modifier.weight(1f)) {
 							Text(
 								stringResource(Res.string.action_rebuild_database),
@@ -381,6 +413,7 @@ fun SettingsDataStorageScreen() {
 								color = MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
 							)
 						}
+						offlineIcon()
 					}
 				}
 			}
