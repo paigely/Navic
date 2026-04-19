@@ -25,27 +25,21 @@ class SearchRepository(
 			try {
 				val data = SessionManager.api.searchID3(query)
 
-				val existingAlbumIds = albumDao.getAllAlbumIds().toSet()
-				val existingArtistIds = artistDao.getAllArtistIds().toSet()
-				val existingSongIds = songDao.getAllSongIds().toSet()
+				albumDao.insertAlbumsIgnoringConflicts(data.albums.map { it.toEntity() })
+				artistDao.insertArtistsIgnoringConflicts(data.artists.map { it.toEntity() })
+				songDao.insertSongsIgnoringConflicts(data.songs.map { it.toEntity() })
 
-				albumDao.insertAlbums(data.albums.filter { it.id !in existingAlbumIds }.map { it.toEntity() })
-				artistDao.insertArtists(data.artists.filter { it.id !in existingArtistIds }.map { it.toEntity() })
-				songDao.insertSongs(data.songs.filter { it.id !in existingSongIds }.map { it.toEntity() })
+				val albums = albumDao.getAlbumsByIds(data.albums.map { it.id })
+				val artists = artistDao.getArtistsByIds(data.artists.map { it.id })
+				val songs = songDao.getSongsByIds(data.songs.map { it.id })
+				val localPlaylists = playlistDao.searchPlaylistsList(query)
 
-				val localPlaylists = playlistDao.searchPlaylistsList(query).map { it.toDomainModel() }
-
-				listOf(
-					data.albums.mapNotNull { albumDao.getAlbumById(it.id)?.toDomainModel() },
-					data.artists.mapNotNull { artistDao.getArtistById(it.id)?.toDomainModel() },
-					data.songs.mapNotNull { songDao.getSongById(it.id)?.toDomainModel() },
-					localPlaylists
-				).flatten()
-
+				(albums.map { it.toDomainModel() }
+					+ artists.map { it.toDomainModel() }
+					+ songs.map { it.toDomainModel() }
+					+ localPlaylists.map { it.toDomainModel() })
 			} catch (e: Exception) {
-				if (e is CancellationException)
-					throw e
-
+				if (e is CancellationException) throw e
 				Logger.e("SearchRepository", "Online search failed despite network connection, falling back to local DB", e)
 				performLocalSearch(query)
 			}

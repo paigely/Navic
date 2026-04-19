@@ -276,9 +276,11 @@ fun SettingsDataStorageScreen() {
 						}
 					}
 
-					FormRow(onClick = {
-						if (!isDownloadingLibrary) showLibraryDownloadDialog = true
-					}) {
+					FormRow(
+						onClick = if (!isDownloadingLibrary) {
+							{ showLibraryDownloadDialog = true }
+						} else null
+					) {
 						Column(Modifier.fillMaxWidth()) {
 							Text(stringResource(Res.string.title_library_download))
 							Text(

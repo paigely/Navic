@@ -216,6 +216,7 @@ fun SearchScreen(
 									SwipeToDismissBox(
 										state = dismissState,
 										enableDismissFromStartToEnd = false,
+										enableDismissFromEndToStart = canPlay,
 										backgroundContent = {
 											val backgroundColor by animateColorAsState(
 												targetValue = when (dismissState.targetValue) {
@@ -245,130 +246,119 @@ fun SearchScreen(
 											}
 										}
 									) {
-										Box(
-											modifier = Modifier.background(MaterialTheme.colorScheme.surface)
-										) {
-											ListItem(
-												enabled = canPlay,
-												onClick = {
-													ctx.clickSound()
-													player.clearQueue()
-													player.addToQueueSingle(song)
-													player.playAt(0)
-												},
-												onLongClick = {
-													selectedSong = song
-												},
-												content = {
-													Text(
-														song.title,
-														modifier = Modifier.alpha(if (canPlay) 1f else 0.75f)
+										ListItem(
+											enabled = canPlay,
+											modifier = Modifier
+												.background(MaterialTheme.colorScheme.surface)
+												.alpha(if (canPlay) 1f else 0.75f),
+											onClick = {
+												ctx.clickSound()
+												player.clearQueue()
+												player.addToQueueSingle(song)
+												player.playAt(0)
+											},
+											onLongClick = {
+												selectedSong = song
+											},
+											content = { Text(song.title) },
+											supportingContent = {
+												MarqueeText(
+													"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
+												)
+											},
+											leadingContent = {
+												CoverArt(
+													coverArtId = song.coverArtId,
+													modifier = Modifier.size(50.dp),
+													shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
+												)
+											},
+											trailingContent = {
+												if (!canPlay) {
+													Icon(
+														Icons.Outlined.Offline,
+														stringResource(Res.string.info_not_available_offline),
+														modifier = Modifier.size(20.dp)
 													)
+												}
+											}
+										)
+										if (selectedSong == song) {
+											SongSheet(
+												onDismissRequest = { selectedSong = null },
+												song = song,
+												onAddToQueue = {
+													if (player.uiState.value.queue.any { it.id == song.id }) {
+														songToQueue = song
+													} else {
+														player.addToQueueSingle(song)
+													}
 												},
-												supportingContent = {
-													MarqueeText(
-														"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}",
-														modifier = Modifier.alpha(if (canPlay) 1f else 0.75f)
+												isOnline = isOnline,
+												downloadStatus = if (downloadedSongs.containsKey(
+														song.id
 													)
+												) DownloadStatus.DOWNLOADED else null,
+												onTrackInfo = {
+													backStack.add(Screen.SongDetail(song.id))
 												},
-												leadingContent = {
-													CoverArt(
-														coverArtId = song.coverArtId,
-														modifier = Modifier.size(50.dp).alpha(if (canPlay) 1f else 0.75f),
-														shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
-													)
-												},
-												trailingContent = {
-													if (!canPlay) {
-														Icon(
-															Icons.Outlined.Offline,
-															stringResource(Res.string.info_not_available_offline),
-															modifier = Modifier.size(20.dp)
+												onViewAlbum = song.albumId?.let { albumId ->
+													{
+														backStack.add(
+															Screen.CollectionDetail(
+																collectionId = albumId,
+																tab = "search"
+															)
 														)
 													}
 												}
 											)
-											if (selectedSong == song) {
-												SongSheet(
-													onDismissRequest = { selectedSong = null },
-													song = song,
-													onAddToQueue = {
-														if (player.uiState.value.queue.any { it.id == song.id }) {
-															songToQueue = song
-														} else {
-															player.addToQueueSingle(song)
-														}
-													},
-													isOnline = isOnline,
-													downloadStatus = if (downloadedSongs.containsKey(
-															song.id
-														)
-													) DownloadStatus.DOWNLOADED else null,
-													onTrackInfo = {
-														backStack.add(Screen.SongDetail(song.id))
-													},
-													onViewAlbum = song.albumId?.let { albumId ->
-														{
-															backStack.add(
-																Screen.CollectionDetail(
-																	collectionId = albumId,
-																	tab = "search"
-																)
-															)
-														}
-													}
-												)
-											}
 										}
 									}
 								}
 							}
 
-							if (albums.isNotEmpty()) {
-								horizontalSection(
-									title = Res.string.title_albums,
-									destination = Screen.AlbumList(true),
-									state = UiState.Success(albums),
-									key = { it.id },
-									seeAll = false
-								) { album ->
-									AlbumListScreenItem(
-										modifier = Modifier.animateItem(fadeInSpec = null)
-											.width(150.dp),
-										tab = "search",
-										album = album,
-										selected = album == albumListSelection,
-										starred = albumListStarred,
-										onSelect = { albumListViewModel.selectAlbum(album) },
-										onDeselect = { albumListViewModel.clearSelection() },
-										onSetStarred = { albumListViewModel.starAlbum(it) },
-										onSetShareId = { },
-										isOnline = isOnline
-									)
-								}
+							horizontalSection(
+								title = Res.string.title_albums,
+								destination = Screen.AlbumList(true),
+								state = UiState.Success(albums),
+								key = { it.id },
+								seeAll = false
+							) { album ->
+								AlbumListScreenItem(
+									modifier = Modifier.animateItem(fadeInSpec = null)
+										.width(150.dp),
+									tab = "search",
+									album = album,
+									selected = album == albumListSelection,
+									starred = albumListStarred,
+									onSelect = { albumListViewModel.selectAlbum(album) },
+									onDeselect = { albumListViewModel.clearSelection() },
+									onSetStarred = { albumListViewModel.starAlbum(it) },
+									onSetShareId = { },
+									isOnline = isOnline
+								)
 							}
 
-							if (artists.isNotEmpty()) {
-								horizontalSection(
-									title = Res.string.title_artists,
-									destination = Screen.ArtistList(true),
-									state = UiState.Success(artists),
-									key = { it.id },
-									seeAll = false
-								) { artist ->
-									ArtistsScreenItem(
-										modifier = Modifier.animateItem(fadeInSpec = null)
-											.width(150.dp),
-										tab = "search",
-										artist = artist,
-										selected = artist == artistListSelection,
-										starred = artistListStarred,
-										onSelect = { artistListViewModel.selectArtist(artist) },
-										onDeselect = { artistListViewModel.clearSelection() },
-										onSetStarred = { artistListViewModel.starArtist(it) }
-									)
-								}
-								}
+							horizontalSection(
+								title = Res.string.title_artists,
+								destination = Screen.ArtistList(true),
+								state = UiState.Success(artists),
+								key = { it.id },
+								seeAll = false
+							) { artist ->
+								ArtistsScreenItem(
+									modifier = Modifier.animateItem(fadeInSpec = null)
+										.width(150.dp),
+									tab = "search",
+									artist = artist,
+									selected = artist == artistListSelection,
+									starred = artistListStarred,
+									onSelect = { artistListViewModel.selectArtist(artist) },
+									onDeselect = { artistListViewModel.clearSelection() },
+									onSetStarred = { artistListViewModel.starArtist(it) }
+								)
+							}
 						} else {
 							if (searchHistory.isNotEmpty()) {
 								item(span = { GridItemSpan(maxLineSpan) }) {

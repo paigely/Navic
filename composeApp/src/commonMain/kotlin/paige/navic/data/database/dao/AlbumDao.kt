@@ -49,6 +49,9 @@ interface AlbumDao {
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertAlbums(albums: List<AlbumEntity>)
 
+	@Insert(onConflict = OnConflictStrategy.IGNORE)
+	suspend fun insertAlbumsIgnoringConflicts(albums: List<AlbumEntity>)
+
 	@Query("DELETE FROM AlbumEntity WHERE albumId = :albumId")
 	suspend fun deleteAlbum(albumId: String)
 
@@ -57,6 +60,9 @@ interface AlbumDao {
 
 	@Query("SELECT albumId FROM AlbumEntity")
 	suspend fun getAllAlbumIds(): List<String>
+
+	@Query("SELECT * FROM AlbumEntity WHERE albumId IN (:ids)")
+	suspend fun getAlbumsByIds(ids: List<String>): List<AlbumWithSongs>
 
 	@Transaction
 	suspend fun updateAllAlbums(remoteAlbums: List<AlbumEntity>) {
