@@ -16,12 +16,12 @@ class SearchRepository(
 	private val artistDao: ArtistDao,
 	private val songDao: SongDao,
 	private val playlistDao: PlaylistDao,
-	private val connectivityManager: ConnectivityManager
+	connectivityManager: ConnectivityManager
 ) {
-	suspend fun search(query: String): List<Any> {
-		val isOnline = connectivityManager.isOnline.value
+	val isOnline = connectivityManager.isOnline
 
-		return if (isOnline) {
+	suspend fun search(query: String): List<Any> {
+		return if (isOnline.value) {
 			try {
 				val data = SessionManager.api.searchID3(query)
 
