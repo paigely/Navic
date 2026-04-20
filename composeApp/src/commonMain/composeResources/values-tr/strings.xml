@@ -325,4 +325,10 @@
     <string name="info_login_description_middle">navidrome</string>
     <string name="info_login_description_end">örnek.</string>
     <string name="info_exception_handler">Bu işlem uygulamayı hemen çökertecektir. Emin misiniz?</string>
+    <string name="option_now_playing_slider_style_squiggly">Dalgalı</string>
+    <string name="option_bottom_bar_collapse_mode">Daraltma modu</string>
+    <string name="option_navigation_bar_tabs">Gezinti çubuğu sekmelerinin sırasını yeniden düzenle</string>
+    <string name="option_mini_player_progress_style">Mini oynatıcı ilerleme stili</string>
+    <string name="option_mini_player_progress_style_seekable">aranabilir</string>
+    <string name="info_no_genres">Tür yok</string>
 </resources>
