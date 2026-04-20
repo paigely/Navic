@@ -327,4 +327,27 @@
     <string name="info_login_description_end">.</string>
     <string name="info_exception_handler">Это приведет к немедленному сбою приложения. Вы уверены в том, что хотите продолжить?</string>
     <string name="option_lyrics_blur">Размытие текста</string>
+    <string name="title_create_radio">Создать радио</string>
+    <string name="title_radios">Радио</string>
+    <string name="option_lyrics_bright_inactive">Яркий неактивный текст</string>
+    <string name="option_radio_name">Название</string>
+    <string name="option_radio_stream_url">URL потока</string>
+    <string name="option_radio_homepage_url">URL домашней страницы</string>
+    <plurals name="count_minutes">
+        <item quantity="one">%1$d минута</item>
+        <item quantity="few">%1$d минуты</item>
+        <item quantity="many">%1$d минут</item>
+        <item quantity="other">%1$d минут</item>
+    </plurals>
+    <plurals name="count_hours">
+        <item quantity="one">%1$d час</item>
+        <item quantity="few">%1$d часа</item>
+        <item quantity="many">%1$d часов</item>
+        <item quantity="other">%1$d часов</item>
+    </plurals>
+    <string name="action_sleep_timer">Таймер сна</string>
+    <string name="action_sleep_timer_enabled">Таймер сна - осталось %1$s</string>
+    <string name="action_disable_sleep_timer">Выключить таймер</string>
+    <string name="info_no_radios">Радио отсутствуют</string>
+    <string name="info_syncing_radios">Синхронизируем радио...</string>
 </resources>
