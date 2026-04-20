@@ -191,11 +191,7 @@ fun ArtistDetailScreen(
 						ArtistActionButtons(
 							onPlay = { viewModel.playArtistAlbums(player) },
 							onDownload = {
-								scope.launch {
-									state.albums.forEach { album ->
-										downloadManager.downloadCollection(album)
-									}
-								}
+								showDownloadDialog = true
 							},
 							onCancelDownload = {
 								state.albums.forEach { album ->
