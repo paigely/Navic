@@ -1,5 +1,6 @@
 package paige.navic.data.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
@@ -19,6 +20,22 @@ interface AlbumDao {
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity ORDER BY name ASC")
 	fun getAllAlbums(): Flow<List<AlbumWithSongs>>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY name ASC")
+	fun getAlbumsByNameAsc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY name DESC")
+	fun getAlbumsByNameDesc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY createdAt DESC")
+	fun getAlbumsNewest(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE starredAt IS NOT NULL ORDER BY starredAt DESC")
+	fun getStarredAlbums(): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity")

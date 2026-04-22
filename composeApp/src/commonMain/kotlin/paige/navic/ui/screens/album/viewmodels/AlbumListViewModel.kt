@@ -3,11 +3,16 @@ package paige.navic.ui.screens.album.viewmodels
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
@@ -41,6 +46,15 @@ open class AlbumListViewModel(
 	val isOnline = connectivityManager.isOnline
 
 	val gridState = LazyGridState()
+
+	val pagedAlbums: Flow<PagingData<DomainAlbum>> = combine(
+		_listType,
+		_selectedReversed
+	) { type, reversed ->
+		Pair(type, reversed)
+	}.flatMapLatest { (type, reversed) ->
+		repository.getPagedAlbums(type, reversed)
+	}.cachedIn(viewModelScope)
 
 	init {
 		viewModelScope.launch {
@@ -84,12 +98,10 @@ open class AlbumListViewModel(
 
 	fun setListType(listType: DomainAlbumListType) {
 		_listType.value = listType
-		refreshAlbums(false)
 	}
 
 	fun setReversed(reversed: Boolean) {
 		_selectedReversed.value = reversed
-		refreshAlbums(false)
 	}
 
 	fun clearError() {

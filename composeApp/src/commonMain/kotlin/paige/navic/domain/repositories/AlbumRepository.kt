@@ -1,5 +1,9 @@
 package paige.navic.domain.repositories
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -7,6 +11,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.DownloadDao
@@ -35,6 +40,34 @@ class AlbumRepository(
 			.toImmutableList()
 			.sortedByListType(listType, downloadDao)
 		return if (reversed) albums.reversed().toImmutableList() else albums
+	}
+
+	fun getPagedAlbums(
+		listType: DomainAlbumListType,
+		reversed: Boolean
+	): Flow<PagingData<DomainAlbum>> {
+		return Pager(
+			config = PagingConfig(
+				pageSize = 20,
+				enablePlaceholders = true,
+				prefetchDistance = 10
+			),
+			pagingSourceFactory = {
+				when (listType) {
+					DomainAlbumListType.AlphabeticalByName -> {
+						if (reversed) albumDao.getAlbumsByNameDesc()
+						else albumDao.getAlbumsByNameAsc()
+					}
+
+					DomainAlbumListType.Newest -> albumDao.getAlbumsNewest()
+					DomainAlbumListType.Starred -> albumDao.getStarredAlbums()
+					// TODO:Add all of them
+					else -> albumDao.getAlbumsByNameAsc()
+				}
+			}
+		).flow.map { pagingData ->
+			pagingData.map { it.toDomainModel() }
+		}
 	}
 
 	private suspend fun refreshLocalData(
