@@ -48,21 +48,31 @@ class AlbumRepository(
 	): Flow<PagingData<DomainAlbum>> {
 		return Pager(
 			config = PagingConfig(
-				pageSize = 20,
+				pageSize = 30,
 				enablePlaceholders = true,
-				prefetchDistance = 10
+				prefetchDistance = 15
 			),
 			pagingSourceFactory = {
 				when (listType) {
 					DomainAlbumListType.AlphabeticalByName -> {
-						if (reversed) albumDao.getAlbumsByNameDesc()
-						else albumDao.getAlbumsByNameAsc()
+						if (reversed) albumDao.getAlbumsByNameDesc() else albumDao.getAlbumsByNameAsc()
 					}
-
-					DomainAlbumListType.Newest -> albumDao.getAlbumsNewest()
+					DomainAlbumListType.AlphabeticalByArtist -> {
+						if (reversed) albumDao.getAlbumsByArtistDesc() else albumDao.getAlbumsByArtistAsc()
+					}
+					DomainAlbumListType.Newest -> {
+						if (reversed) albumDao.getAlbumsOldest() else albumDao.getAlbumsNewest()
+					}
+					DomainAlbumListType.Frequent -> {
+						if (reversed) albumDao.getAlbumsInfrequent() else albumDao.getAlbumsFrequent()
+					}
+					DomainAlbumListType.Recent -> {
+						if (reversed) albumDao.getAlbumsStale() else albumDao.getAlbumsRecent()
+					}
 					DomainAlbumListType.Starred -> albumDao.getStarredAlbums()
-					// TODO:Add all of them
-					else -> albumDao.getAlbumsByNameAsc()
+					DomainAlbumListType.Downloaded -> albumDao.getDownloadedAlbums()
+					DomainAlbumListType.Random -> albumDao.getAlbumsRandom()
+					else -> albumDao.getAlbumsByArtistAsc()
 				}
 			}
 		).flow.map { pagingData ->

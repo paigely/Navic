@@ -20,6 +20,7 @@ import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.utils.UiState
+import kotlin.time.Clock
 
 @OptIn(ExperimentalCoroutinesApi::class)
 open class AlbumListViewModel(
@@ -29,7 +30,6 @@ open class AlbumListViewModel(
 ) : ViewModel() {
 	private val _albumsState =
 		MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())
-	val albumsState = _albumsState.asStateFlow()
 
 	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
 	val selectedAlbum = _selectedAlbum.asStateFlow()
@@ -43,15 +43,18 @@ open class AlbumListViewModel(
 	private val _selectedReversed = MutableStateFlow(false)
 	val selectedReversed = _selectedReversed.asStateFlow()
 
+	private val _refreshTrigger = MutableStateFlow(Clock.System.now())
+
 	val isOnline = connectivityManager.isOnline
 
 	val gridState = LazyGridState()
 
 	val pagedAlbums: Flow<PagingData<DomainAlbum>> = combine(
 		_listType,
-		_selectedReversed
-	) { type, reversed ->
-		Pair(type, reversed)
+		_selectedReversed,
+		_refreshTrigger
+	) { type, reversed, _ ->
+		type to reversed
 	}.flatMapLatest { (type, reversed) ->
 		repository.getPagedAlbums(type, reversed)
 	}.cachedIn(viewModelScope)

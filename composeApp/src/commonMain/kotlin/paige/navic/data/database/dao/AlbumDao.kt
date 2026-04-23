@@ -30,12 +30,56 @@ interface AlbumDao {
 	fun getAlbumsByNameDesc(): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE starredAt IS NOT NULL ORDER BY starredAt DESC")
+	fun getStarredAlbums(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY artistName COLLATE NOCASE ASC, year DESC")
+	fun getAlbumsByArtistAsc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY artistName COLLATE NOCASE DESC, year DESC")
+	fun getAlbumsByArtistDesc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY RANDOM()")
+	fun getAlbumsRandom(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
 	@Query("SELECT * FROM AlbumEntity ORDER BY createdAt DESC")
 	fun getAlbumsNewest(): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
-	@Query("SELECT * FROM AlbumEntity WHERE starredAt IS NOT NULL ORDER BY starredAt DESC")
-	fun getStarredAlbums(): PagingSource<Int, AlbumWithSongs>
+	@Query("SELECT * FROM AlbumEntity ORDER BY createdAt ASC")
+	fun getAlbumsOldest(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY playCount DESC")
+	fun getAlbumsFrequent(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY playCount ASC")
+	fun getAlbumsInfrequent(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY lastPlayedAt DESC")
+	fun getAlbumsRecent(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY lastPlayedAt ASC")
+	fun getAlbumsStale(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("""
+    SELECT * FROM AlbumEntity 
+    WHERE albumId IN (
+        SELECT song.belongsToAlbumId FROM SongEntity AS song
+        INNER JOIN DownloadEntity AS dl ON song.songId = dl.songId
+        WHERE dl.status = 'DOWNLOADED'
+    )
+    ORDER BY name ASC
+	""")
+	fun getDownloadedAlbums(): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity")
