@@ -28,6 +28,9 @@ open class AlbumListViewModel(
 	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
 	val selectedAlbum = _selectedAlbum.asStateFlow()
 
+	private val _error = MutableStateFlow<Throwable?>(null)
+	val error = _error.asStateFlow()
+
 	private val _starred = MutableStateFlow(false)
 	val starred = _starred.asStateFlow()
 
@@ -64,7 +67,8 @@ open class AlbumListViewModel(
 		viewModelScope.launch {
 			try {
 				repository.syncLibrary()
-			} catch (_: Exception) {
+			} catch (e: Exception) {
+				_error.value = e
 			}
 		}
 	}
@@ -100,5 +104,9 @@ open class AlbumListViewModel(
 
 	fun setReversed(reversed: Boolean) {
 		_selectedReversed.value = reversed
+	}
+
+	fun clearError() {
+		_error.value = null
 	}
 }
