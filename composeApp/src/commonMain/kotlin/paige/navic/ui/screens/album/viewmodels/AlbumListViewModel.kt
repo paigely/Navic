@@ -5,8 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +17,6 @@ import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.managers.ConnectivityManager
-import paige.navic.utils.UiState
 import kotlin.time.Clock
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -28,9 +25,6 @@ open class AlbumListViewModel(
 	private val repository: AlbumRepository,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
-	private val _albumsState =
-		MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())
-
 	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
 	val selectedAlbum = _selectedAlbum.asStateFlow()
 
@@ -66,11 +60,12 @@ open class AlbumListViewModel(
 	}
 
 	fun refreshAlbums(fullRefresh: Boolean) {
+		if (!fullRefresh) return
 		viewModelScope.launch {
-			repository.getAlbumsFlow(fullRefresh, _listType.value, _selectedReversed.value)
-				.collect {
-					_albumsState.value = it
-				}
+			try {
+				repository.syncLibrary()
+			} catch (_: Exception) {
+			}
 		}
 	}
 
@@ -105,9 +100,5 @@ open class AlbumListViewModel(
 
 	fun setReversed(reversed: Boolean) {
 		_selectedReversed.value = reversed
-	}
-
-	fun clearError() {
-		_albumsState.value = UiState.Success(_albumsState.value.data ?: persistentListOf())
 	}
 }
