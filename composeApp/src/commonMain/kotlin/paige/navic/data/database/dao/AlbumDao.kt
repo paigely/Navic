@@ -82,8 +82,8 @@ interface AlbumDao {
 	fun getDownloadedAlbums(): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
-	@Query("SELECT * FROM AlbumEntity")
-	suspend fun getAllAlbumsList(): List<AlbumWithSongs>
+	@Query("SELECT COUNT(albumId) FROM AlbumEntity")
+	suspend fun getAlbumCount(): Int
 
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE albumId = :albumId LIMIT 1")
