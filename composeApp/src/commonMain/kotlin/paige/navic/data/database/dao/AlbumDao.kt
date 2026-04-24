@@ -42,8 +42,8 @@ interface AlbumDao {
 	fun getAlbumsByArtistDesc(): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
-	@Query("SELECT * FROM AlbumEntity ORDER BY RANDOM()")
-	fun getAlbumsRandom(): PagingSource<Int, AlbumWithSongs>
+	@Query("SELECT albumId FROM AlbumEntity ORDER BY RANDOM()")
+	suspend fun getRandomAlbumIds(): List<String>
 
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity ORDER BY createdAt DESC")
