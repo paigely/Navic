@@ -355,4 +355,10 @@
     <string name="info_library_download_warning">Вы уверены, что хотите загрузить всю вашу библиотеку?\nУже загруженные элементы будут пропущены, однако этот процесс все еще может использовать значительный объем хранилища и трафика.</string>
     <string name="info_library_download">Сохранить всю синхронизированную музыку для оффлайн воспроизведения</string>
     <string name="info_progress">Прогресс</string>
+    <string name="title_network">Сеть</string>
+    <string name="subtitle_offline_mode">Определяет, когда приложение должно перейти в режим оффлайн. Требуется перезапуск приложения</string>
+    <string name="option_offline_mode">Режим оффлайн</string>
+    <string name="option_offline_mode_auto">Автоматически</string>
+    <string name="option_offline_mode_forced">Принудительно</string>
+    <string name="option_offline_mode_no_wifi">Без Wi-Fi</string>
 </resources>
