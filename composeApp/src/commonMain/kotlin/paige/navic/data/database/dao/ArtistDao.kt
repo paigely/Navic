@@ -33,13 +33,16 @@ interface ArtistDao {
 	suspend fun isArtistStarred(artistId: String): Boolean
 
 	@Query("SELECT * FROM ArtistEntity WHERE name LIKE '%' || :query || '%' COLLATE NOCASE")
-	fun searchArtists(query: String): Flow<List<ArtistEntity>>
+	suspend fun searchArtistsList(query: String): List<ArtistEntity>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertArtist(artist: ArtistEntity)
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertArtists(artists: List<ArtistEntity>)
+
+	@Insert(onConflict = OnConflictStrategy.IGNORE)
+	suspend fun insertArtistsIgnoringConflicts(artists: List<ArtistEntity>)
 
 	@Query("DELETE FROM ArtistEntity WHERE artistId = :artistId")
 	suspend fun deleteArtist(artistId: String)
@@ -49,6 +52,9 @@ interface ArtistDao {
 
 	@Query("SELECT artistId FROM ArtistEntity")
 	suspend fun getAllArtistIds(): List<String>
+
+	@Query("SELECT * FROM ArtistEntity WHERE artistId IN (:ids)")
+	suspend fun getArtistsByIds(ids: List<String>): List<ArtistEntity>
 
 	@Transaction
 	suspend fun updateAllArtists(remoteArtists: List<ArtistEntity>) {

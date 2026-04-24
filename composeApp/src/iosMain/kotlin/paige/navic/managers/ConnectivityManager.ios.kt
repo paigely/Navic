@@ -3,6 +3,7 @@ package paige.navic.managers
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
@@ -10,7 +11,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
+import paige.navic.data.session.SessionManager
 import platform.Network.nw_path_get_status
 import platform.Network.nw_path_monitor_cancel
 import platform.Network.nw_path_monitor_create
@@ -24,6 +27,7 @@ actual class ConnectivityManager(
 	scope: CoroutineScope,
 	dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
+	@OptIn(ExperimentalCoroutinesApi::class)
 	actual val isOnline: StateFlow<Boolean> = callbackFlow {
 		val monitor = nw_path_monitor_create()
 		nw_path_monitor_set_update_handler(monitor) { path ->
@@ -37,6 +41,18 @@ actual class ConnectivityManager(
 			nw_path_monitor_cancel(monitor)
 		}
 	}
+		.mapLatest { isDeviceOnline ->
+			if (isDeviceOnline) {
+				try {
+					SessionManager.api.ping()
+					true
+				} catch (_: Exception) {
+					false
+				}
+			} else {
+				false
+			}
+		}
 		.distinctUntilChanged()
 		.flowOn(dispatcher)
 		.stateIn(scope, SharingStarted.WhileSubscribed(5000), true)

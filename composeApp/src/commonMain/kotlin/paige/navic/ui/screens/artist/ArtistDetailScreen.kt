@@ -54,8 +54,10 @@ import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_see_all
 import navic.composeapp.generated.resources.count_albums
+import navic.composeapp.generated.resources.info_bulk_download_warning
 import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.title_albums
+import navic.composeapp.generated.resources.title_bulk_download
 import navic.composeapp.generated.resources.title_similar_artists
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -159,7 +161,8 @@ fun ArtistDetailScreen(
 				is UiState.Success -> {
 					val state = it.data
 					BulkDownloadDialog(
-						artistName = state.artist.name,
+						title = stringResource(Res.string.title_bulk_download),
+						message = stringResource(Res.string.info_bulk_download_warning, state.artist.name),
 						showDialog = showDownloadDialog,
 						onDismissRequest = { showDownloadDialog = false },
 						onConfirm = {
@@ -188,11 +191,7 @@ fun ArtistDetailScreen(
 						ArtistActionButtons(
 							onPlay = { viewModel.playArtistAlbums(player) },
 							onDownload = {
-								scope.launch {
-									state.albums.forEach { album ->
-										downloadManager.downloadCollection(album)
-									}
-								}
+								showDownloadDialog = true
 							},
 							onCancelDownload = {
 								state.albums.forEach { album ->

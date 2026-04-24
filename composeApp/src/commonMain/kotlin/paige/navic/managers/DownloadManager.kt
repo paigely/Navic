@@ -3,6 +3,7 @@ package paige.navic.managers
 import coil3.SingletonImageLoader
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import coil3.size.Size
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.prepareRequest
@@ -13,14 +14,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.DownloadDao
@@ -44,6 +49,7 @@ class DownloadManager(
 	private val scope: CoroutineScope,
 	private val client: HttpClient = HttpClient()
 ) {
+	private val activeDownloadsMutex = Mutex()
 	private val activeDownloads = mutableMapOf<String, Job>()
 	private val downloadSemaphore =
 		Semaphore(10)// idk a good number, maybe u should be able to choose
@@ -59,6 +65,12 @@ class DownloadManager(
 	private val _downloadedSongs = MutableStateFlow<Map<String, String>>(emptyMap())
 	val downloadedSongs: StateFlow<Map<String, String>> = _downloadedSongs.asStateFlow()
 
+	private var libraryDownloadJob: Job? = null
+	private val _isDownloadingLibrary = MutableStateFlow(false)
+	val isDownloadingLibrary: StateFlow<Boolean> = _isDownloadingLibrary.asStateFlow()
+	private val _libraryDownloadProgress = MutableStateFlow(0f)
+	val libraryDownloadProgress: StateFlow<Float> = _libraryDownloadProgress.asStateFlow()
+
 	init {
 		scope.launch {
 			allDownloads.collectLatest { downloads ->
@@ -73,15 +85,22 @@ class DownloadManager(
 		return _downloadedSongs.value[songId]
 	}
 
-	fun downloadSong(song: DomainSong) {
-		if (activeDownloads.containsKey(song.id)) return
-
+	fun downloadSong(song: DomainSong): Job {
 		val job = scope.launch(Dispatchers.IO) {
-			downloadSemaphore.withPermit {
-				executeDownloadProcess(song)
+			val alreadyActive = activeDownloadsMutex.withLock { activeDownloads.containsKey(song.id) }
+			if (alreadyActive) return@launch
+
+			try {
+				activeDownloadsMutex.withLock { activeDownloads[song.id] = coroutineContext[Job]!! }
+
+				downloadSemaphore.withPermit {
+					executeDownloadProcess(song)
+				}
+			} finally {
+				activeDownloadsMutex.withLock { activeDownloads.remove(song.id) }
 			}
 		}
-		activeDownloads[song.id] = job
+		return job
 	}
 
 	suspend fun downloadCollection(collection: DomainSongCollection) {
@@ -90,10 +109,83 @@ class DownloadManager(
 			.forEach { downloadSong(it) }
 	}
 
-	fun cancelDownload(songId: String) {
-		activeDownloads[songId]?.cancel()
-		activeDownloads.remove(songId)
+	fun downloadEntireLibrary(songs: List<DomainSong>) {
+		if (_isDownloadingLibrary.value) return
+
+		libraryDownloadJob = scope.launch(Dispatchers.IO) {
+			try {
+				_isDownloadingLibrary.value = true
+				_libraryDownloadProgress.value = 0f
+
+				val songsToDownload = songs.filter { !isDownloaded(it.id) }
+				val totalToDownload = songsToDownload.size
+
+				if (totalToDownload == 0) {
+					_isDownloadingLibrary.value = false
+					_libraryDownloadProgress.value = 1f
+					return@launch
+				}
+
+				val downloadQueue = Channel<DomainSong>(Channel.UNLIMITED)
+				songsToDownload.forEach { downloadQueue.trySend(it) }
+				downloadQueue.close()
+
+				var processedCount = 0
+				val progressMutex = Mutex()
+
+				val workers = List(10) {
+					launch {
+						for (song in downloadQueue) {
+							downloadSong(song).join()
+
+							progressMutex.withLock {
+								processedCount++
+								_libraryDownloadProgress.value = processedCount.toFloat() / totalToDownload.toFloat()
+							}
+						}
+					}
+				}
+
+				workers.joinAll()
+				_isDownloadingLibrary.value = false
+
+			} catch (_: CancellationException) {
+				_isDownloadingLibrary.value = false
+				_libraryDownloadProgress.value = 0f
+			}
+		}
+	}
+
+	fun cancelAllActiveDownloads() {
+		libraryDownloadJob?.cancel()
+		libraryDownloadJob = null
+		_isDownloadingLibrary.value = false
+		_libraryDownloadProgress.value = 0f
+
 		scope.launch(Dispatchers.IO) {
+			val jobsToCancel = activeDownloadsMutex.withLock {
+				val copy = activeDownloads.toMap()
+				activeDownloads.clear()
+				copy
+			}
+
+			jobsToCancel.forEach { (songId, job) ->
+				job.cancel()
+				val existing = downloadDao.getDownloadById(songId)
+				if (existing?.status == DownloadStatus.DOWNLOADING) {
+					downloadDao.deleteDownload(songId)
+				}
+			}
+		}
+	}
+
+	fun cancelDownload(songId: String) {
+		scope.launch(Dispatchers.IO) {
+			activeDownloadsMutex.withLock {
+				activeDownloads[songId]?.cancel()
+				activeDownloads.remove(songId)
+			}
+
 			val existing = downloadDao.getDownloadById(songId)
 			if (existing?.status == DownloadStatus.DOWNLOADING
 				|| existing?.status == DownloadStatus.FAILED
@@ -146,8 +238,7 @@ class DownloadManager(
 
 	fun clearAllDownloads() {
 		scope.launch(Dispatchers.IO) {
-			activeDownloads.values.forEach { it.cancel() }
-			activeDownloads.clear()
+			cancelAllActiveDownloads()
 			storageManager.clearDownloads()
 			downloadDao.clearAllDownloads()
 			Logger.i("DownloadManager", "cleared all downloads")
@@ -169,7 +260,9 @@ class DownloadManager(
 			Logger.e("DownloadManager", "Failed to download song ${song.id}", e)
 			downloadDao.insertDownload(DownloadEntity(song.id, DownloadStatus.FAILED, 0f))
 		} finally {
-			activeDownloads.remove(song.id)
+			activeDownloadsMutex.withLock {
+				activeDownloads.remove(song.id)
+			}
 		}
 	}
 
@@ -181,9 +274,11 @@ class DownloadManager(
 
 		val imageRequest = ImageRequest.Builder(platformContext)
 			.data(coverArtUrl)
+			.size(Size.ORIGINAL)
 			.memoryCacheKey(coverId)
 			.diskCacheKey(coverId)
 			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.DISABLED)
 			.build()
 
 		SingletonImageLoader.get(platformContext).execute(imageRequest)
@@ -229,15 +324,20 @@ class DownloadManager(
 
 	private suspend fun downloadAudioFile(song: DomainSong) {
 		var lastProgress = 0f
+		var progressJob: Job? = null
+
 		val request = client.prepareRequest(SessionManager.api.getStreamUrl(song.id)) {
 			method = HttpMethod.Get
 			onDownload { bytesSentTotal, contentLength ->
-				if (contentLength != null && contentLength > 0f) {
+				if (contentLength != null && contentLength > 0L) {
 					val progress = (bytesSentTotal.toDouble() / contentLength).toFloat()
 					if (progress - lastProgress >= 0.01f || progress == 1f) {
 						lastProgress = progress
 						Logger.i("DownloadManager", "downloading ${song.id} $progress")
-						scope.launch {
+
+						progressJob?.cancel()
+
+						progressJob = scope.launch {
 							downloadDao.updateProgress(
 								song.id,
 								DownloadStatus.DOWNLOADING,
@@ -256,6 +356,8 @@ class DownloadManager(
 			val path = storageManager.getDownloadPath(song.id, song.fileExtension)
 			storageManager.saveFile(path, response.bodyAsChannel())
 			Logger.i("DownloadManager", "wrote download for ${song.id}")
+
+			progressJob?.cancel()
 
 			downloadDao.insertDownload(
 				DownloadEntity(

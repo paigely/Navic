@@ -216,6 +216,7 @@ fun SearchScreen(
 									SwipeToDismissBox(
 										state = dismissState,
 										enableDismissFromStartToEnd = false,
+										enableDismissFromEndToStart = canPlay,
 										backgroundContent = {
 											val backgroundColor by animateColorAsState(
 												targetValue = when (dismissState.targetValue) {
@@ -245,73 +246,73 @@ fun SearchScreen(
 											}
 										}
 									) {
-										Box {
-											ListItem(
-												modifier = Modifier.alpha(if (canPlay) 1f else 0.75f),
-												enabled = canPlay,
-												onClick = {
-													ctx.clickSound()
-													player.clearQueue()
-													player.addToQueueSingle(song)
-													player.playAt(0)
-												},
-												onLongClick = {
-													selectedSong = song
-												},
-												content = { Text(song.title) },
-												supportingContent = {
-													MarqueeText(
-														"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
+										ListItem(
+											enabled = canPlay,
+											modifier = Modifier
+												.background(MaterialTheme.colorScheme.surface)
+												.alpha(if (canPlay) 1f else 0.75f),
+											onClick = {
+												ctx.clickSound()
+												player.clearQueue()
+												player.addToQueueSingle(song)
+												player.playAt(0)
+											},
+											onLongClick = {
+												selectedSong = song
+											},
+											content = { Text(song.title) },
+											supportingContent = {
+												MarqueeText(
+													"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
+												)
+											},
+											leadingContent = {
+												CoverArt(
+													coverArtId = song.coverArtId,
+													modifier = Modifier.size(50.dp),
+													shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
+												)
+											},
+											trailingContent = {
+												if (!canPlay) {
+													Icon(
+														Icons.Outlined.Offline,
+														stringResource(Res.string.info_not_available_offline),
+														modifier = Modifier.size(20.dp)
 													)
+												}
+											}
+										)
+										if (selectedSong == song) {
+											SongSheet(
+												onDismissRequest = { selectedSong = null },
+												song = song,
+												onAddToQueue = {
+													if (player.uiState.value.queue.any { it.id == song.id }) {
+														songToQueue = song
+													} else {
+														player.addToQueueSingle(song)
+													}
 												},
-												leadingContent = {
-													CoverArt(
-														coverArtId = song.coverArtId,
-														modifier = Modifier.size(50.dp),
-														shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
+												isOnline = isOnline,
+												downloadStatus = if (downloadedSongs.containsKey(
+														song.id
 													)
+												) DownloadStatus.DOWNLOADED else null,
+												onTrackInfo = {
+													backStack.add(Screen.SongDetail(song.id))
 												},
-												trailingContent = {
-													if (!canPlay) {
-														Icon(
-															Icons.Outlined.Offline,
-															stringResource(Res.string.info_not_available_offline),
-															modifier = Modifier.size(20.dp)
+												onViewAlbum = song.albumId?.let { albumId ->
+													{
+														backStack.add(
+															Screen.CollectionDetail(
+																collectionId = albumId,
+																tab = "search"
+															)
 														)
 													}
 												}
 											)
-											if (selectedSong == song) {
-												SongSheet(
-													onDismissRequest = { selectedSong = null },
-													song = song,
-													onAddToQueue = {
-														if (player.uiState.value.queue.any { it.id == song.id }) {
-															songToQueue = song
-														} else {
-															player.addToQueueSingle(song)
-														}
-													},
-													isOnline = isOnline,
-													downloadStatus = if (downloadedSongs.containsKey(
-															song.id
-														)
-													) DownloadStatus.DOWNLOADED else null,
-													onTrackInfo = {
-														backStack.add(Screen.SongDetail(song.id))
-													},
-													onViewAlbum = song.albumId?.let { albumId ->
-														{
-															backStack.add(
-																Screen.CollectionDetail(
-																	collectionId = albumId,
-																	tab = "search"
-																)
-															)
-														}
-													}
-												)
-											}
 										}
 									}
 								}

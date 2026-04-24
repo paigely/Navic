@@ -2,15 +2,16 @@ package paige.navic.ui.screens.search.viewmodels
 
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.snapshotFlow
 import paige.navic.domain.repositories.SearchRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
@@ -39,24 +40,21 @@ class SearchViewModel(
 		viewModelScope.launch {
 			snapshotFlow { searchQuery.text }
 				.debounce(300)
-				.collectLatest {
-					refreshResults()
+				.collectLatest { queryText ->
+					val query = queryText.toString()
+					if (query.isBlank()) {
+						_searchState.value = UiState.Success(emptyList())
+					} else {
+						_searchState.value = UiState.Loading()
+						try {
+							_searchState.value = UiState.Success(repository.search(query))
+						} catch (e: Exception) {
+							if (e !is CancellationException) {
+								_searchState.value = UiState.Error(e)
+							}
+						}
+					}
 				}
-		}
-	}
-
-	private fun refreshResults() {
-		if (searchQuery.text.isBlank()) {
-			_searchState.value = UiState.Success(emptyList())
-			return
-		}
-		_searchState.value = UiState.Loading()
-		viewModelScope.launch {
-			_searchState.value = try {
-				UiState.Success(repository.search(searchQuery.text.toString()))
-			} catch (e: Exception) {
-				UiState.Error(e)
-			}
 		}
 	}
 

@@ -8,7 +8,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
@@ -31,8 +34,10 @@ import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.RadioDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.dao.SyncActionDao
+import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.entities.PlaylistSongCrossRef
+import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
@@ -106,10 +111,19 @@ class DbRepository(
 
 		val totalPlaylists = playlists.size
 		if (totalPlaylists > 0) {
-			playlists.forEachIndexed { index, playlist ->
-				val globalProgress = 0.75f + (0.25f * ((index + 1).toFloat() / totalPlaylists))
-				progressCallback(globalProgress, Res.string.info_syncing_playlists)
-				syncPlaylistSongs(playlist.playlistId).getOrThrow()
+			val completedPlaylists = AtomicInt(0)
+
+			coroutineScope {
+				playlists.map { playlist ->
+					async {
+						concurrentRequestLimit.withPermit {
+							syncPlaylistSongs(playlist.playlistId).getOrThrow()
+							val done = completedPlaylists.incrementAndGet()
+							val globalProgress = 0.75f + (0.25f * (done.toFloat() / totalPlaylists))
+							progressCallback(globalProgress, Res.string.info_syncing_playlists)
+						}
+					}
+				}.awaitAll()
 			}
 		}
 
@@ -136,18 +150,19 @@ class DbRepository(
 
 		val totalAlbums = allAlbumSummaries.size
 		val completedAlbums = AtomicInt(0)
-		val totalSongsSynced = AtomicInt(0)
+		var finalSongsSynced = 0
 
 		val allValidAlbumIds = mutableSetOf<String>()
 		val allValidSongIds = mutableSetOf<String>()
 
 		onProgress(0.1f, Res.string.info_syncing_albums)
 
-		val networkChunkSize = 50
-		allAlbumSummaries.chunked(networkChunkSize).forEach { chunk ->
-			val fullAlbums = coroutineScope {
-				chunk.map { summary ->
-					async {
+		val albumChannel = Channel<Album>(capacity = 100)
+
+		coroutineScope {
+			launch(Dispatchers.IO) {
+				allAlbumSummaries.map { summary ->
+					launch {
 						concurrentRequestLimit.withPermit {
 							try {
 								val album = api.getAlbum(summary.id)
@@ -156,32 +171,51 @@ class DbRepository(
 								val fetchProgress = 0.1f + (0.8f * (done.toFloat() / totalAlbums))
 								onProgress(fetchProgress, Res.string.info_syncing_albums)
 
-								album
+								albumChannel.send(album)
 							} catch (e: Exception) {
 								if (e is SerializationException) {
 									Logger.e("DbRepository", "could not deserialize album ${summary.id} (${summary.name}); skipping it", e)
-									null
 								} else {
 									throw e
 								}
 							}
 						}
 					}
-				}.awaitAll().filterNotNull()
+				}.joinAll()
+				albumChannel.close()
 			}
 
-			val albumEntities = fullAlbums.map { it.toEntity() }
-			val songEntities = fullAlbums.flatMap { album ->
-				album.songs.map { it.toEntity() }
+			launch(Dispatchers.IO) {
+				val albumBatch = mutableListOf<AlbumEntity>()
+				val songBatch = mutableListOf<SongEntity>()
+
+				for (album in albumChannel) {
+					val albumEntity = album.toEntity()
+					albumBatch.add(albumEntity)
+					allValidAlbumIds.add(albumEntity.albumId)
+
+					album.songs.forEach { song ->
+						val songEntity = song.toEntity()
+						songBatch.add(songEntity)
+						allValidSongIds.add(songEntity.songId)
+					}
+
+					if (albumBatch.size >= dbChunkSize || songBatch.size >= 1500) {
+						albumDao.insertAlbums(albumBatch)
+						songDao.insertSongs(songBatch)
+
+						finalSongsSynced += songBatch.size
+						albumBatch.clear()
+						songBatch.clear()
+					}
+				}
+
+				if (albumBatch.isNotEmpty() || songBatch.isNotEmpty()) {
+					if (albumBatch.isNotEmpty()) albumDao.insertAlbums(albumBatch)
+					if (songBatch.isNotEmpty()) songDao.insertSongs(songBatch)
+					finalSongsSynced += songBatch.size
+				}
 			}
-
-			allValidAlbumIds.addAll(albumEntities.map { it.albumId })
-			allValidSongIds.addAll(songEntities.map { it.songId })
-
-			albumEntities.chunked(dbChunkSize).forEach { albumDao.insertAlbums(it) }
-			songEntities.chunked(dbChunkSize).forEach { songDao.insertSongs(it) }
-
-			totalSongsSynced.set(totalSongsSynced.get() + songEntities.size)
 		}
 
 		albumDao.deleteObsoleteAlbums(allValidAlbumIds)
@@ -189,11 +223,11 @@ class DbRepository(
 
 		Logger.i(
 			"DbRepository",
-			"- Songs Synced: $totalAlbums albums, ${totalSongsSynced.get()} songs"
+			"- Songs Synced: $totalAlbums albums, $finalSongsSynced songs"
 		)
 
 		onProgress(1.0f, Res.string.info_syncing_saved)
-		totalSongsSynced.get()
+		finalSongsSynced
 	}
 
 	suspend fun syncPlaylists(): Result<List<PlaylistEntity>> = runDbOp {

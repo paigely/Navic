@@ -44,12 +44,14 @@ import androidx.navigation3.ui.NavDisplay.predictivePopTransitionSpec
 import androidx.navigation3.ui.NavDisplay.transitionSpec
 import androidx.savedstate.serialization.SavedStateConfiguration
 import coil3.compose.LocalPlatformContext
+import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.data.images.initializeSingletonImageLoader
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
@@ -112,6 +114,11 @@ val LocalSharedTransitionScope =
 @Composable
 fun App() {
 	val platformContext = LocalPlatformContext.current
+
+	setSingletonImageLoaderFactory { platformContext ->
+		initializeSingletonImageLoader(platformContext)
+	}
+
 	val ctx = rememberCtx()
 	val backStack = rememberNavBackStack(
 		config, if (SessionManager.currentUser != null) {

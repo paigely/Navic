@@ -24,13 +24,11 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
-import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
-import coil3.serviceLoaderEnabled
+import paige.navic.data.images.getStaticImageLoader
 import paige.navic.data.session.SessionManager
 import kotlin.time.TimeSource
 
@@ -49,19 +47,18 @@ fun BlendBackground(
 	}
 
 	val platformContext = LocalPlatformContext.current
+
+	val staticImageLoader = remember(platformContext) {
+		getStaticImageLoader(platformContext)
+	}
+
 	val model = remember(coverArtId) {
 		ImageRequest.Builder(platformContext)
 			.data(coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
-			.memoryCacheKey(coverArtId)
+			.memoryCacheKey(coverArtId?.let { "${it}_static" })
 			.diskCacheKey(coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)
 			.memoryCachePolicy(CachePolicy.ENABLED)
-			.build()
-	}
-	val imageLoader = remember {
-		ImageLoader.Builder(platformContext)
-			.serviceLoaderEnabled(false)
-			.components { add(KtorNetworkFetcherFactory()) }
 			.build()
 	}
 
@@ -94,11 +91,11 @@ fun BlendBackground(
 	) {
 		AsyncImage(
 			model = model,
+			imageLoader = staticImageLoader,
 			contentDescription = null,
 			contentScale = ContentScale.Crop,
 			colorFilter = ColorFilter.colorMatrix(colorMatrix),
-			modifier = Modifier.fillMaxSize(),
-			imageLoader = imageLoader
+			modifier = Modifier.fillMaxSize()
 		)
 		Box(
 			modifier = Modifier
@@ -113,14 +110,14 @@ fun BlendBackground(
 			) {
 				AsyncImage(
 					model = model,
+					imageLoader = staticImageLoader,
 					contentDescription = null,
 					contentScale = ContentScale.Crop,
 					alignment = Alignment.TopStart,
 					colorFilter = ColorFilter.colorMatrix(colorMatrix),
 					modifier = Modifier
 						.fillMaxSize()
-						.rotate(topLeftRotation),
-					imageLoader = imageLoader
+						.rotate(topLeftRotation)
 				)
 			}
 			Box(
@@ -131,14 +128,14 @@ fun BlendBackground(
 			) {
 				AsyncImage(
 					model = model,
+					imageLoader = staticImageLoader,
 					contentDescription = null,
 					contentScale = ContentScale.Crop,
 					alignment = Alignment.BottomEnd,
 					colorFilter = ColorFilter.colorMatrix(colorMatrix),
 					modifier = Modifier
 						.fillMaxSize()
-						.rotate(botRightRotation),
-					imageLoader = imageLoader
+						.rotate(botRightRotation)
 				)
 			}
 		}

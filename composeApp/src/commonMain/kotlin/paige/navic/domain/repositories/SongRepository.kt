@@ -25,6 +25,10 @@ class SongRepository(
 	private val dbRepository: DbRepository,
 	private val syncManager: SyncManager
 ) {
+	suspend fun getAllSongs(): List<DomainSong> {
+		return songDao.getAllSongs().map { it.toDomainModel() }
+	}
+
 	private suspend fun getLocalData(
 		listType: DomainSongListType,
 		reversed: Boolean,

@@ -7,15 +7,19 @@ import android.net.NetworkRequest
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
+import paige.navic.data.session.SessionManager
 import android.net.ConnectivityManager as AndroidConnectivityManager
 
+@OptIn(ExperimentalCoroutinesApi::class)
 actual class ConnectivityManager(
 	context: Context,
 	scope: CoroutineScope,
@@ -52,6 +56,18 @@ actual class ConnectivityManager(
 			connectivityManager.unregisterNetworkCallback(callback)
 		}
 	}
+		.mapLatest { isDeviceOnline ->
+			if (isDeviceOnline) {
+				try {
+					SessionManager.api.ping()
+					true
+				} catch (_: Exception) {
+					false
+				}
+			} else {
+				false
+			}
+		}
 		.distinctUntilChanged()
 		.flowOn(dispatcher)
 		.stateIn(scope, SharingStarted.WhileSubscribed(5000), true)

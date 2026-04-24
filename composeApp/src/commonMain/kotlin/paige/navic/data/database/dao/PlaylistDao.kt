@@ -68,6 +68,10 @@ interface PlaylistDao {
 	suspend fun getAllPlaylistIds(): List<String>
 
 	@Transaction
+	@Query("SELECT * FROM PlaylistEntity WHERE name LIKE '%' || :query || '%' COLLATE NOCASE")
+	suspend fun searchPlaylistsList(query: String): List<PlaylistWithSongs>
+
+	@Transaction
 	suspend fun updateAllPlaylists(remotePlaylists: List<PlaylistEntity>) {
 		val remoteIds = remotePlaylists.map { it.playlistId }.toSet()
 		getAllPlaylistIds().forEach { localId ->

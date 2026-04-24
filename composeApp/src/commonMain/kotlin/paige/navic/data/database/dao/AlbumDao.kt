@@ -1,5 +1,6 @@
 package paige.navic.data.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
@@ -21,6 +22,66 @@ interface AlbumDao {
 	fun getAllAlbums(): Flow<List<AlbumWithSongs>>
 
 	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY name ASC")
+	fun getAlbumsByNameAsc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY name DESC")
+	fun getAlbumsByNameDesc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE starredAt IS NOT NULL ORDER BY starredAt DESC")
+	fun getStarredAlbums(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY artistName COLLATE NOCASE ASC, year DESC")
+	fun getAlbumsByArtistAsc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY artistName COLLATE NOCASE DESC, year DESC")
+	fun getAlbumsByArtistDesc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY RANDOM()")
+	fun getAlbumsRandom(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY createdAt DESC")
+	fun getAlbumsNewest(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY createdAt ASC")
+	fun getAlbumsOldest(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY playCount DESC")
+	fun getAlbumsFrequent(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY playCount ASC")
+	fun getAlbumsInfrequent(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY lastPlayedAt DESC")
+	fun getAlbumsRecent(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY lastPlayedAt ASC")
+	fun getAlbumsStale(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("""
+    SELECT * FROM AlbumEntity 
+    WHERE albumId IN (
+        SELECT song.belongsToAlbumId FROM SongEntity AS song
+        INNER JOIN DownloadEntity AS dl ON song.songId = dl.songId
+        WHERE dl.status = 'DOWNLOADED'
+    )
+    ORDER BY name ASC
+	""")
+	fun getDownloadedAlbums(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
 	@Query("SELECT * FROM AlbumEntity")
 	suspend fun getAllAlbumsList(): List<AlbumWithSongs>
 
@@ -40,14 +101,17 @@ interface AlbumDao {
 	fun getAlbumsByArtistExcluding(artistId: String, albumId: String): Flow<List<AlbumWithSongs>>
 
 	@Transaction
-	@Query("SELECT * FROM AlbumEntity WHERE name LIKE '%' || :query || '%'")
-	fun searchAlbums(query: String): Flow<List<AlbumWithSongs>>
+	@Query("SELECT * FROM AlbumEntity WHERE name LIKE '%' || :query || '%' COLLATE NOCASE")
+	suspend fun searchAlbumsList(query: String): List<AlbumWithSongs>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertAlbum(album: AlbumEntity)
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertAlbums(albums: List<AlbumEntity>)
+
+	@Insert(onConflict = OnConflictStrategy.IGNORE)
+	suspend fun insertAlbumsIgnoringConflicts(albums: List<AlbumEntity>)
 
 	@Query("DELETE FROM AlbumEntity WHERE albumId = :albumId")
 	suspend fun deleteAlbum(albumId: String)
@@ -57,6 +121,9 @@ interface AlbumDao {
 
 	@Query("SELECT albumId FROM AlbumEntity")
 	suspend fun getAllAlbumIds(): List<String>
+
+	@Query("SELECT * FROM AlbumEntity WHERE albumId IN (:ids)")
+	suspend fun getAlbumsByIds(ids: List<String>): List<AlbumWithSongs>
 
 	@Transaction
 	suspend fun updateAllAlbums(remoteAlbums: List<AlbumEntity>) {

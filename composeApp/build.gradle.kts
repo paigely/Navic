@@ -143,6 +143,7 @@ extensions.configure<KotlinMultiplatformExtension> {
 			implementation(libs.bundles.androidx.lifecycle)
 			implementation(libs.bundles.room)
 			implementation(libs.bundles.koin)
+			implementation(libs.bundles.paging)
 
 			implementation(libs.androidx.navigation3.ui)
 			implementation(libs.kotlinx.datetime)
@@ -150,6 +151,7 @@ extensions.configure<KotlinMultiplatformExtension> {
 			implementation(libs.kotlinx.collections.immutable)
 			implementation(libs.androidx.datastore.preferences)
 			implementation(libs.coil.gif)
+			implementation(libs.androidx.room3.paging)
 
 			implementation(libs.subsonicKotlin)
 		}
@@ -175,7 +177,14 @@ extensions.configure<RoomExtension> {
 }
 
 dependencies {
-	"kspAndroid"(libs.androidx.room3.compiler)
-	"kspIosSimulatorArm64"(libs.androidx.room3.compiler)
-	"kspIosArm64"(libs.androidx.room3.compiler)
+	add("kspAndroid", libs.androidx.room3.compiler)
+	add("kspIosSimulatorArm64", libs.androidx.room3.compiler)
+	add("kspIosArm64", libs.androidx.room3.compiler)
+
+	add("kspAndroid", libs.androidx.room3.paging)
+	add("kspIosSimulatorArm64", libs.androidx.room3.paging)
+	add("kspIosArm64", libs.androidx.room3.paging)
+
+	add("kspCommonMainMetadata", libs.androidx.room3.compiler)
+	add("kspCommonMainMetadata", libs.androidx.room3.paging)
 }
