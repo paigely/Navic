@@ -90,7 +90,7 @@
         <item quantity="other">%1$d исполнителей</item>
     </plurals>
     <string name="action_ok">Ок</string>
-    <string name="action_play">Играть</string>
+    <string name="action_play">Воспроизвести</string>
     <string name="action_new">Новый</string>
     <string name="action_shuffle">Случайно</string>
     <string name="action_repeat">На повтор</string>
@@ -350,4 +350,9 @@
     <string name="action_disable_sleep_timer">Выключить таймер</string>
     <string name="info_no_radios">Радио отсутствуют</string>
     <string name="info_syncing_radios">Синхронизируем радио...</string>
+    <string name="title_library_download">Загрузить всю библиотеку</string>
+    <string name="info_status_downloading">Загрузка...</string>
+    <string name="info_library_download_warning">Вы уверены, что хотите загрузить всю вашу библиотеку?\nУже загруженные элементы будут пропущены, однако этот процесс все еще может использовать значительный объем хранилища и трафика.</string>
+    <string name="info_library_download">Сохранить всю синхронизированную музыку для оффлайн воспроизведения</string>
+    <string name="info_progress">Прогресс</string>
 </resources>
