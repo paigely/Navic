@@ -355,4 +355,10 @@
     <string name="info_progress">Progresso</string>
     <string name="info_library_download">Salva tutti i brani per il playback offline</string>
     <string name="info_library_download_warning">"Sei sicuro di voler scaricare tutta la libreria? \nVerranno saltati i brani già scaricati,  ma potrebbe consumare comunque una significativa quantità di dati e disco."</string>
+    <string name="title_network">Rete</string>
+    <string name="subtitle_offline_mode">Decide quando l'app debba usare la modalità offline. Richiede il ravvio dell'app</string>
+    <string name="option_offline_mode">Modalità offline</string>
+    <string name="option_offline_mode_auto">Auto</string>
+    <string name="option_offline_mode_forced">Forzata</string>
+    <string name="option_offline_mode_no_wifi">Senza Wi-Fi</string>
 </resources>
