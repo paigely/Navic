@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.SingletonImageLoader
 import coil3.compose.LocalPlatformContext
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
@@ -71,7 +72,9 @@ import navic.composeapp.generated.resources.option_downloaded_songs
 import navic.composeapp.generated.resources.option_image_cache_size
 import navic.composeapp.generated.resources.option_last_sync
 import navic.composeapp.generated.resources.option_live_status
+import navic.composeapp.generated.resources.option_offline_mode
 import navic.composeapp.generated.resources.option_pending_actions
+import navic.composeapp.generated.resources.subtitle_offline_mode
 import navic.composeapp.generated.resources.subtitle_pending_actions
 import navic.composeapp.generated.resources.subtitle_rebuild_database
 import navic.composeapp.generated.resources.subtitle_trigger_sync
@@ -79,12 +82,14 @@ import navic.composeapp.generated.resources.title_cache_management
 import navic.composeapp.generated.resources.title_danger_zone
 import navic.composeapp.generated.resources.title_data_storage
 import navic.composeapp.generated.resources.title_library_download
+import navic.composeapp.generated.resources.title_network
 import navic.composeapp.generated.resources.title_sync_control
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.OfflineMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Offline
 import paige.navic.ui.components.common.Form
@@ -92,6 +97,7 @@ import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.dialogs.BulkDownloadDialog
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.viewmodels.SettingsDataStorageViewModel
 import paige.navic.utils.fadeFromTop
 import kotlin.time.Clock
@@ -189,6 +195,18 @@ fun SettingsDataStorageScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp, bottom = 32.dp)
 					.fadeFromTop()
 			) {
+				FormTitle(stringResource(Res.string.title_network))
+				Form {
+					SettingSelectionRow(
+						title = { Text(stringResource(Res.string.option_offline_mode)) },
+						items = OfflineMode.entries.toImmutableList(),
+						label = { stringResource(it.displayName) },
+						description = stringResource(Res.string.subtitle_offline_mode),
+						selection = Settings.shared.offlineMode,
+						onSelect = { Settings.shared.offlineMode = it }
+					)
+				}
+
 				FormTitle(stringResource(Res.string.title_sync_control))
 				Form {
 					FormRow {

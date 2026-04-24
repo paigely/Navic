@@ -47,6 +47,7 @@
 	<string name="title_confirm">Confirm</string>
 	<string name="title_update">Update available</string>
 	<string name="title_changelog">Release notes</string>
+	<string name="title_network">Network</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
@@ -63,6 +64,7 @@
 	<string name="subtitle_audio_offload">Experimental. Requires application restart. May conflict with gapless playback on some devices</string>
 	<string name="subtitle_now_playing_background_style">Choose static if you have performance issues</string>
 	<string name="subtitle_check_for_updates">It is recommended to leave this on, as some updates provide important bug fixes</string>
+	<string name="subtitle_offline_mode">Dictates when the app should go in an offline mode. Requires application restart</string>
 
 	<string name="option_now_playing_background_style">Background style</string>
 	<string name="option_now_playing_background_style_static">Static</string>
@@ -122,6 +124,10 @@
 	<string name="option_radio_name">Name</string>
 	<string name="option_radio_stream_url">Stream URL</string>
 	<string name="option_radio_homepage_url">Homepage URL</string>
+	<string name="option_offline_mode">Offline mode</string>
+	<string name="option_offline_mode_auto">Auto</string>
+	<string name="option_offline_mode_forced">Forced</string>
+	<string name="option_offline_mode_no_wifi">No Wi-Fi</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>

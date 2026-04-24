@@ -14,6 +14,7 @@ import paige.navic.data.models.settings.enums.MiniPlayerStyle
 import paige.navic.data.models.settings.enums.NavigationBarStyle
 import paige.navic.data.models.settings.enums.NowPlayingBackgroundStyle
 import paige.navic.data.models.settings.enums.NowPlayingSliderStyle
+import paige.navic.data.models.settings.enums.OfflineMode
 import paige.navic.data.models.settings.enums.Theme
 import paige.navic.data.models.settings.enums.ThemeMode
 import paige.navic.data.models.settings.enums.ToolbarPosition
@@ -69,6 +70,8 @@ class Settings(
 
 	// sync related settings
 	var lastFullSyncTime by preference(0L)
+
+	var offlineMode by preference(OfflineMode.Auto)
 
 	companion object {
 		val shared = Settings(KmpSettings())
