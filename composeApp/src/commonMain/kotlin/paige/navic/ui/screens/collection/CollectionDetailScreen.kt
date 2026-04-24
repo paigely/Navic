@@ -103,6 +103,7 @@ fun CollectionDetailScreen(
 				isOnline = isOnline,
 				onDownloadAll = { viewModel.downloadAll() },
 				onCancelDownloadAll = { viewModel.cancelDownloadAll() },
+				onAddToQueue = { if (collection != null) player.addToQueue(collection) },
 				downloadStatus = downloadStatus
 			)
 		},

@@ -21,6 +21,7 @@ fun PlaylistListScreenItem(
 	tab: String,
 	playlist: DomainPlaylist,
 	selected: Boolean,
+	onAddToQueue: () -> Unit,
 	onSelect: () -> Unit,
 	onDeselect: () -> Unit,
 	onSetShareId: (String) -> Unit,
@@ -61,7 +62,8 @@ fun PlaylistListScreenItem(
 				collection = playlist,
 				isOnline = true,
 				onShare = { onSetShareId(playlist.id) },
-				onDelete = { onSetDeletionId(playlist.id) }
+				onDelete = { onSetDeletionId(playlist.id) },
+				onAddToQueue = onAddToQueue
 			)
 		}
 	}

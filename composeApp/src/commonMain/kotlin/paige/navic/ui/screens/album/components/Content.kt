@@ -24,6 +24,7 @@ fun LazyGridScope.albumListScreenContent(
 	onClearSelection: () -> Unit,
 	onSetShareId: (String) -> Unit,
 	onSetStarred: (Boolean) -> Unit,
+	onAddToQueue: () -> Unit,
 	isOnline: Boolean
 ) {
 	val refreshState = pagedAlbums.loadState.refresh
@@ -60,6 +61,7 @@ fun LazyGridScope.albumListScreenContent(
 				onDeselect = { onClearSelection() },
 				onSetStarred = { onSetStarred(it) },
 				onSetShareId = onSetShareId,
+				onAddToQueue = onAddToQueue,
 				isOnline = isOnline
 			)
 		}

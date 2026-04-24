@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_add_all_to_playlist
 import navic.composeapp.generated.resources.action_cancel_download
 import navic.composeapp.generated.resources.action_delete
@@ -50,6 +51,7 @@ import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
+import paige.navic.icons.outlined.Queue
 import paige.navic.ui.components.common.CoverArt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -63,6 +65,7 @@ fun CollectionSheet(
 	onCancelDownloadAll: (() -> Unit)? = null,
 	downloadStatus: DownloadStatus? = null,
 	onShare: (() -> Unit)? = null,
+	onAddToQueue: (() -> Unit)? = null,
 	onAddAllToPlaylist: (() -> Unit)? = null,
 	onViewOnLastFm: ((String) -> Unit)? = null,
 	onViewOnMusicBrainz: ((String) -> Unit)? = null,
@@ -143,6 +146,19 @@ fun CollectionSheet(
 				leadingContent = { Icon(Icons.Outlined.Share, null) },
 				onClick = {
 					onShare()
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
+
+		if (onAddToQueue != null) {
+			ListItem(
+				content = { Text(stringResource(Res.string.action_add_to_queue)) },
+				leadingContent = { Icon(Icons.Outlined.Queue, null) },
+				onClick = {
+					onAddToQueue()
 					onDismissRequest()
 				},
 				colors = colors,

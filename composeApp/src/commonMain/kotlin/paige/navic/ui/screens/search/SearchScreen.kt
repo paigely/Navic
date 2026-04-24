@@ -65,6 +65,7 @@ import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.History
@@ -336,6 +337,7 @@ fun SearchScreen(
 									onDeselect = { albumListViewModel.clearSelection() },
 									onSetStarred = { albumListViewModel.starAlbum(it) },
 									onSetShareId = { },
+									onAddToQueue = { player.addToQueue(album as DomainSongCollection)},
 									isOnline = isOnline
 								)
 							}

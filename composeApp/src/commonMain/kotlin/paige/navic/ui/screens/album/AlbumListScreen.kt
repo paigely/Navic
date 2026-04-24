@@ -29,6 +29,8 @@ import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.domain.models.DomainSongCollection
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.PullToRefreshBox
@@ -53,6 +55,7 @@ fun AlbumListScreen(
 		key = listType.toString(),
 		parameters = { parametersOf(listType) }
 	)
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val pagedAlbums = viewModel.pagedAlbums.collectAsLazyPagingItems()
 	val selectedSorting by viewModel.listType.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
@@ -115,6 +118,7 @@ fun AlbumListScreen(
 					pagedAlbums = pagedAlbums,
 					starred = starred,
 					selectedAlbum = selectedAlbum,
+					onAddToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum as DomainSongCollection) },
 					onUpdateSelection = { viewModel.selectAlbum(it) },
 					onClearSelection = { viewModel.clearSelection() },
 					onSetShareId = { newShareId ->

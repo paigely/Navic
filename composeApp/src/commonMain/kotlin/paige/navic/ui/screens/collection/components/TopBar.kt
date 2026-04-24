@@ -37,6 +37,7 @@ fun CollectionDetailScreenTopBar(
 	isOnline: Boolean,
 	onDownloadAll: () -> Unit,
 	onCancelDownloadAll: () -> Unit,
+	onAddToQueue: () -> Unit,
 	downloadStatus: DownloadStatus
 ) {
 	val uriHandler = LocalUriHandler.current
@@ -72,6 +73,7 @@ fun CollectionDetailScreenTopBar(
 						onCancelDownloadAll = onCancelDownloadAll,
 						downloadStatus = downloadStatus,
 						onShare = { onSetShareId(collection?.id) },
+						onAddToQueue = onAddToQueue,
 						onAddAllToPlaylist = { playlistDialogShown = true },
 						onViewOnLastFm = { url -> uriHandler.openUri(url) },
 						onViewOnMusicBrainz = { id ->

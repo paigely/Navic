@@ -23,6 +23,7 @@ fun AlbumListScreenItem(
 	onDeselect: () -> Unit,
 	onSetStarred: (starred: Boolean) -> Unit,
 	onSetShareId: (String) -> Unit,
+	onAddToQueue: () -> Unit,
 	isOnline: Boolean
 ) {
 	val ctx = LocalCtx.current
@@ -49,6 +50,7 @@ fun AlbumListScreenItem(
 				collection = album,
 				isOnline = isOnline,
 				onShare = { onSetShareId(album.id) },
+				onAddToQueue = onAddToQueue,
 				starred = starred,
 				onSetStarred = onSetStarred
 			)
