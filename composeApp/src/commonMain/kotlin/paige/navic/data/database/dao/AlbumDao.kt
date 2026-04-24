@@ -122,6 +122,7 @@ interface AlbumDao {
 	@Query("SELECT albumId FROM AlbumEntity")
 	suspend fun getAllAlbumIds(): List<String>
 
+	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE albumId IN (:ids)")
 	suspend fun getAlbumsByIds(ids: List<String>): List<AlbumWithSongs>
 
