@@ -350,4 +350,9 @@
     <string name="action_disable_sleep_timer">Spegni timer</string>
     <string name="info_no_radios">Niente radio</string>
     <string name="info_syncing_radios">Sincronizzazione radio...</string>
+    <string name="title_library_download">Scarica l'intera libreria</string>
+    <string name="info_status_downloading">Download in corso...</string>
+    <string name="info_progress">Progresso</string>
+    <string name="info_library_download">Salva tutti i brani per il playback offline</string>
+    <string name="info_library_download_warning">"Sei sicuro di voler scaricare tutta la libreria? \nVerranno saltati i brani già scaricati,  ma potrebbe consumare comunque una significativa quantità di dati e disco."</string>
 </resources>
