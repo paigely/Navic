@@ -26,16 +26,19 @@ import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
-import navic.composeapp.generated.resources.action_add_all_to_playlist
+import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_cancel_download
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_download
+import navic.composeapp.generated.resources.action_play_next
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
+import navic.composeapp.generated.resources.count_songs
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.pluralStringResource
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainAlbum
@@ -52,6 +55,7 @@ import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.icons.outlined.Queue
+import paige.navic.icons.outlined.QueuePlayNext
 import paige.navic.ui.components.common.CoverArt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -65,6 +69,7 @@ fun CollectionSheet(
 	onCancelDownloadAll: (() -> Unit)? = null,
 	downloadStatus: DownloadStatus? = null,
 	onShare: (() -> Unit)? = null,
+	onPlayNext: (() -> Unit)? = null,
 	onAddToQueue: (() -> Unit)? = null,
 	onAddAllToPlaylist: (() -> Unit)? = null,
 	onViewOnLastFm: ((String) -> Unit)? = null,
@@ -105,7 +110,12 @@ fun CollectionSheet(
 						(collection as? DomainAlbum)?.artistName,
 						(collection as? DomainPlaylist)?.comment,
 						(collection as? DomainAlbum)?.genre,
-						(collection as? DomainAlbum)?.year
+						(collection as? DomainAlbum)?.year,
+						pluralStringResource(
+							Res.plurals.count_songs,
+							if (collection != null) collection.songCount else 0,
+							if (collection != null) collection.songCount else 0
+						)
 					).joinToString(" • ")
 				)
 			},
@@ -153,6 +163,19 @@ fun CollectionSheet(
 			)
 		}
 
+		if (onPlayNext != null) {
+			ListItem(
+				content = { Text(stringResource(Res.string.action_play_next)) },
+				leadingContent = { Icon(Icons.Outlined.QueuePlayNext, null) },
+				onClick = {
+					onPlayNext()
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
+
 		if (onAddToQueue != null) {
 			ListItem(
 				content = { Text(stringResource(Res.string.action_add_to_queue)) },
@@ -168,7 +191,7 @@ fun CollectionSheet(
 
 		if (onAddAllToPlaylist != null) {
 			ListItem(
-				content = { Text(stringResource(Res.string.action_add_all_to_playlist)) },
+				content = { Text(stringResource(Res.string.action_add_to_playlist)) },
 				leadingContent = { Icon(Icons.Outlined.PlaylistAdd, null) },
 				onClick = {
 					onAddAllToPlaylist()

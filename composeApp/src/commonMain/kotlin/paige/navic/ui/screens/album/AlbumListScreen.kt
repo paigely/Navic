@@ -118,6 +118,7 @@ fun AlbumListScreen(
 					pagedAlbums = pagedAlbums,
 					starred = starred,
 					selectedAlbum = selectedAlbum,
+					onPlayNext = { if (selectedAlbum != null) player.playNext(selectedAlbum as DomainSongCollection) },
 					onAddToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum as DomainSongCollection) },
 					onUpdateSelection = { viewModel.selectAlbum(it) },
 					onClearSelection = { viewModel.clearSelection() },

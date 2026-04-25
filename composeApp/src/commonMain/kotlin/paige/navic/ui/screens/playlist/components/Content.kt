@@ -21,6 +21,7 @@ fun LazyGridScope.playlistListScreenContent(
 	onClearSelection: () -> Unit,
 	onSetShareId: (String) -> Unit,
 	onSetDeletionId: (String) -> Unit,
+	onPlayNext: () -> Unit,
 	onAddToQueue: () -> Unit,
 ) {
 	val data = state.data.orEmpty()
@@ -35,6 +36,7 @@ fun LazyGridScope.playlistListScreenContent(
 				onDeselect = { onClearSelection() },
 				onSetShareId = onSetShareId,
 				onSetDeletionId = onSetDeletionId,
+				onPlayNext = onPlayNext,
 				onAddToQueue = onAddToQueue,
 			)
 		}

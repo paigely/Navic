@@ -288,6 +288,13 @@ fun SearchScreen(
 											SongSheet(
 												onDismissRequest = { selectedSong = null },
 												song = song,
+												onPlayNext = {
+													if (player.uiState.value.queue.any { it.id == song.id }) {
+														songToQueue = song
+													} else {
+														player.playNextSingle(song)
+													}
+												},
 												onAddToQueue = {
 													if (player.uiState.value.queue.any { it.id == song.id }) {
 														songToQueue = song
@@ -337,6 +344,7 @@ fun SearchScreen(
 									onDeselect = { albumListViewModel.clearSelection() },
 									onSetStarred = { albumListViewModel.starAlbum(it) },
 									onSetShareId = { },
+									onPlayNext = { player.playNext(album as DomainSongCollection)},
 									onAddToQueue = { player.addToQueue(album as DomainSongCollection)},
 									isOnline = isOnline
 								)

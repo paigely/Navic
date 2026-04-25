@@ -66,6 +66,7 @@ fun LibraryScreenContent(
 	onSelectArtist: (DomainArtist) -> Unit,
 	onClearArtistSelection: () -> Unit,
 	onStarSelectedArtist: (Boolean) -> Unit,
+	onPlayAlbumNext: () -> Unit,
 	onAddAlbumToQueue: () -> Unit,
 
 	// playlists
@@ -74,6 +75,7 @@ fun LibraryScreenContent(
 	onSelectPlaylist: (DomainPlaylist) -> Unit,
 	onClearPlaylistSelection: () -> Unit,
 	onDeletePlaylist: (String) -> Unit,
+	onPlayPlaylistNext: () -> Unit,
 	onAddPlaylistToQueue: () -> Unit,
 
 	// genres
@@ -127,6 +129,7 @@ fun LibraryScreenContent(
 				onDeselect = { onClearAlbumSelection() },
 				onSetStarred = { onStarSelectedAlbum(it) },
 				onSetShareId = { onSetShareId(it) },
+				onPlayNext = onPlayAlbumNext,
 				onAddToQueue = onAddAlbumToQueue,
 				isOnline = isOnline
 			)
@@ -148,6 +151,7 @@ fun LibraryScreenContent(
 				onDeselect = { onClearPlaylistSelection() },
 				onSetDeletionId = { onDeletePlaylist(it) },
 				onSetShareId = { onSetShareId(it) },
+				onPlayNext = onPlayPlaylistNext,
 				onAddToQueue = onAddPlaylistToQueue
 			)
 		}

@@ -502,6 +502,43 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
+	override fun playNextSingle(song: DomainSong) {
+		viewModelScope.launch {
+			controller?.addMediaItem(_uiState.value.currentIndex + 1, song.toMediaItem())
+			_uiState.update { state ->
+				val newQueue = 
+					if (state.queue.isEmpty()) 
+						state.queue + song
+					else
+						state.queue.slice(0..state.currentIndex) + song + state.queue.slice(state.currentIndex+1..state.queue.size-1)
+				state.copy(
+					queue = newQueue,
+					currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+					currentSong = if (state.currentIndex == -1) song else state.currentSong
+				)
+			}
+		}
+	}
+
+	override fun playNext(collection: DomainSongCollection) {
+		viewModelScope.launch {
+			val items = collection.songs.map { it.toMediaItem() }
+			controller?.addMediaItems(_uiState.value.currentIndex + 1, items)
+			_uiState.update { state ->
+				val newQueue = 
+					if (state.queue.isEmpty()) 
+						state.queue + collection.songs
+					else
+						state.queue.slice(0..state.currentIndex) + collection.songs + state.queue.slice(state.currentIndex+1..state.queue.size-1)
+				state.copy(
+					queue = newQueue,
+					currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+					currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
+				)
+			}
+		}
+	}
+
 	override fun playRadio(radio: DomainRadio) {
 		viewModelScope.launch {
 			val radioId = "radio_${radio.name.hashCode()}"
