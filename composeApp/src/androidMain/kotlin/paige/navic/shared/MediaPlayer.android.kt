@@ -82,6 +82,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 		val player = ExoPlayer.Builder(this)
 			.setLoadControl(loadControl)
 			.setHandleAudioBecomingNoisy(true)
+			.setWakeMode(C.WAKE_MODE_NETWORK)
 			.build()
 			.apply {
 				setAudioAttributes(
