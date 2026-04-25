@@ -270,4 +270,12 @@
     <string name="notice_login_suggestion">Bedoelde je...</string>
     <string name="info_no_songs">Geen liedjes</string>
     <string name="info_not_available_offline">Niet offline toegankelijk</string>
+    <string name="title_radios">Radios</string>
+    <string name="title_direction">Richting</string>
+    <string name="title_bulk_download">Download alle Albums</string>
+    <string name="title_confirm">Bevestiging</string>
+    <string name="title_update">Update beschikbaar</string>
+    <string name="title_changelog">Wijzigingslogboek</string>
+    <string name="title_network">Net</string>
+    <string name="subtitle_check_for_updates">Het wordt aanbevolen om dit aan te laten, want sommige updates bezorgen belangrijke bugfixes</string>
 </resources>

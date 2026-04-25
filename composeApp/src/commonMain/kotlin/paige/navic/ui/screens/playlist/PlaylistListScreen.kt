@@ -185,6 +185,7 @@ fun PlaylistListScreen(
 					onSetDeletionId = { newDeletionId ->
 						deletionId = newDeletionId
 					},
+					onPlayNext = { if (selectedPlaylist != null) player.playNext(selectedPlaylist as DomainSongCollection)},
 					onAddToQueue = { if (selectedPlaylist != null) player.addToQueue(selectedPlaylist as DomainSongCollection)}
 				)
 			}

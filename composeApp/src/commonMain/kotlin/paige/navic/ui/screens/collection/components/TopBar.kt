@@ -37,6 +37,7 @@ fun CollectionDetailScreenTopBar(
 	isOnline: Boolean,
 	onDownloadAll: () -> Unit,
 	onCancelDownloadAll: () -> Unit,
+	onPlayNext: () -> Unit,
 	onAddToQueue: () -> Unit,
 	downloadStatus: DownloadStatus
 ) {
@@ -73,6 +74,7 @@ fun CollectionDetailScreenTopBar(
 						onCancelDownloadAll = onCancelDownloadAll,
 						downloadStatus = downloadStatus,
 						onShare = { onSetShareId(collection?.id) },
+						onPlayNext = onPlayNext,
 						onAddToQueue = onAddToQueue,
 						onAddAllToPlaylist = { playlistDialogShown = true },
 						onViewOnLastFm = { url -> uriHandler.openUri(url) },

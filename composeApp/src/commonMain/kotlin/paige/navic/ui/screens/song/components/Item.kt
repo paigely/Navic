@@ -52,6 +52,7 @@ fun SongListScreenItem(
 	onDeselect: () -> Unit,
 	onSetStarred: (starred: Boolean) -> Unit,
 	onSetShareId: (String) -> Unit,
+	onPlayNext: () -> Unit,
 	onAddToQueue: () -> Unit,
 	onClick: () -> Unit
 ) {
@@ -133,6 +134,7 @@ fun SongListScreenItem(
 					starred = starred,
 					onSetStarred = onSetStarred,
 					onShare = { onSetShareId(song.id) },
+					onPlayNext = onPlayNext,
 					onAddToQueue = onAddToQueue,
 					onTrackInfo = {
 						backStack.add(Screen.SongDetail(song.id))
