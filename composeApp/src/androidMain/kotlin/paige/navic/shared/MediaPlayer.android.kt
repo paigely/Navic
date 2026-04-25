@@ -202,6 +202,12 @@ class AndroidMediaPlayerViewModel(
 				addListener(object : Player.Listener {
 					override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 						updatePlaybackState()
+
+						mediaItem?.mediaId?.let { id ->
+							if (!isAvailable(id)) {
+								controller?.seekToNextMediaItem()
+							}
+						}
 					}
 
 					override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -486,8 +492,8 @@ class AndroidMediaPlayerViewModel(
 		viewModelScope.launch {
 			controller?.let { player ->
 				if (index in 0 until player.mediaItemCount) {
-						player.seekTo(index, 0L)
-						player.play()
+					player.seekTo(index, 0L)
+					player.play()
 				}
 			}
 		}
