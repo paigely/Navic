@@ -346,4 +346,15 @@
     <string name="info_syncing_saved">Guardado.</string>
     <string name="info_syncing_finished">Finalizado.</string>
     <string name="info_syncing_radios">Sincronizando radios…</string>
+    <string name="title_library_download">Descargar Biblioteca Completa</string>
+    <string name="title_network">Red</string>
+    <string name="subtitle_offline_mode">Dictar cuando la app iría en un modo desconectado. Requiere reiniciar la aplicación</string>
+    <string name="option_offline_mode">Modo desconectado</string>
+    <string name="option_offline_mode_auto">Auto</string>
+    <string name="option_offline_mode_forced">Forzado</string>
+    <string name="option_offline_mode_no_wifi">Sin Wi-Fi</string>
+    <string name="info_status_downloading">Descargado en proceso…</string>
+    <string name="info_library_download_warning">¿Seguro que desea descargar su biblioteca completa?\nEsto omitirá elementos que ya ha descargado, pero pude aún consumir una cantidad significante del espacio de almacén y datos.</string>
+    <string name="info_library_download">Guarda toda la música sincronizada para reproducir desconectado</string>
+    <string name="info_progress">Progreso</string>
 </resources>

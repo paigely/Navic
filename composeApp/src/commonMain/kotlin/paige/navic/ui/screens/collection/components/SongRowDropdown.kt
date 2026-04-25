@@ -36,6 +36,7 @@ fun CollectionDetailScreenSongRowDropdown(
 	onDownload: () -> Unit,
 	onCancelDownload: () -> Unit,
 	onDeleteDownload: () -> Unit,
+	onPlayNext: () -> Unit,
 	onAddToQueue: () -> Unit,
 ) {
 	val player = koinViewModel<MediaPlayerViewModel>()
@@ -53,6 +54,13 @@ fun CollectionDetailScreenSongRowDropdown(
 				if (starred) onAddStar() else onRemoveStar()
 			},
 			onShare = onShare,
+			onPlayNext = {
+				if (player.uiState.value.queue.any { it.id == song.id }) {
+					duplicateQueueDialogShown = true
+				} else {
+					onPlayNext()
+				}
+			},
 			onAddToQueue = {
 				if (player.uiState.value.queue.any { it.id == song.id }) {
 					duplicateQueueDialogShown = true

@@ -167,6 +167,36 @@ class IOSMediaPlayerViewModel(
 		updateNowPlayingInfo(songToPlay)
 	}
 
+	override fun playNextSingle(song: DomainSong) {
+		_uiState.update { state ->
+			val newQueue = 
+				if (state.queue == null || state.queue.isEmpty()) 
+					state.queue + song
+				else
+					state.queue.slice(0..state.currentIndex) + song + state.queue.slice(state.currentIndex+1..state.queue.size-1)
+			state.copy(
+				queue = newQueue,
+				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+				currentSong = if (state.currentIndex == -1) song else state.currentSong
+			)
+		}
+	}
+
+	override fun playNext(collection: DomainSongCollection) {
+		_uiState.update { state ->
+			val newQueue = 
+				if (state.queue == null || state.queue.isEmpty()) 
+					state.queue + collection.songs
+				else
+					state.queue.slice(0..state.currentIndex) + collection.songs + state.queue.slice(state.currentIndex+1..state.queue.size-1)
+			state.copy(
+				queue = newQueue,
+				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+				currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
+			)
+		}
+	}
+
 	override fun playRadio(radio: DomainRadio) {
 		val radioId = "radio_${radio.name.hashCode()}"
 

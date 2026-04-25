@@ -2,6 +2,7 @@ package paige.navic.ui.screens.collection.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
+import navic.composeapp.generated.resources.action_play_next
 import navic.composeapp.generated.resources.info_download_failed
 import navic.composeapp.generated.resources.info_downloaded
 import navic.composeapp.generated.resources.info_not_available_offline
@@ -54,6 +56,7 @@ import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Offline
 import paige.navic.icons.outlined.Queue
+import paige.navic.icons.outlined.QueuePlayNext
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.Waveform
@@ -67,6 +70,7 @@ fun CollectionDetailScreenSongRow(
 	count: Int,
 	onClick: (() -> Unit),
 	onLongClick: (() -> Unit),
+	onPlayNext: (() -> Unit),
 	onAddToQueue: (() -> Unit),
 	download: DownloadEntity? = null,
 	isOffline: Boolean = false
@@ -90,12 +94,16 @@ fun CollectionDetailScreenSongRow(
 			onAddToQueue()
 			dismissState.snapTo(SwipeToDismissBoxValue.Settled)
 		}
+		if (dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd) {
+			onPlayNext()
+			dismissState.snapTo(SwipeToDismissBoxValue.Settled)
+		}
 	}
 
 	SwipeToDismissBox(
 		modifier = Modifier.padding(horizontal = 16.dp, vertical = 1.5.dp),
 		state = dismissState,
-		enableDismissFromStartToEnd = false,
+		enableDismissFromStartToEnd = true,
 		backgroundContent = {
 			val backgroundColor by animateColorAsState(
 				targetValue = when (dismissState.targetValue) {
@@ -110,14 +118,20 @@ fun CollectionDetailScreenSongRow(
 				}
 			)
 
-			Box(
+			Row(
 				modifier = Modifier
 					.fillMaxSize()
 					.clip(itemShape.shape)
 					.background(color = backgroundColor)
 					.padding(horizontal = 20.dp),
-				contentAlignment = Alignment.CenterEnd
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.SpaceBetween
 			) {
+				Icon(
+					imageVector = Icons.Outlined.QueuePlayNext,
+					contentDescription = stringResource(Res.string.action_play_next),
+					tint = iconColor
+				)
 				Icon(
 					imageVector = Icons.Outlined.Queue,
 					contentDescription = stringResource(Res.string.action_add_to_queue),

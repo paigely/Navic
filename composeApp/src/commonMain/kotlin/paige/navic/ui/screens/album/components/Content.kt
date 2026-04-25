@@ -24,6 +24,7 @@ fun LazyGridScope.albumListScreenContent(
 	onClearSelection: () -> Unit,
 	onSetShareId: (String) -> Unit,
 	onSetStarred: (Boolean) -> Unit,
+	onPlayNext: () -> Unit,
 	onAddToQueue: () -> Unit,
 	isOnline: Boolean
 ) {
@@ -61,6 +62,7 @@ fun LazyGridScope.albumListScreenContent(
 				onDeselect = { onClearSelection() },
 				onSetStarred = { onSetStarred(it) },
 				onSetShareId = onSetShareId,
+				onPlayNext = onPlayNext,
 				onAddToQueue = onAddToQueue,
 				isOnline = isOnline
 			)

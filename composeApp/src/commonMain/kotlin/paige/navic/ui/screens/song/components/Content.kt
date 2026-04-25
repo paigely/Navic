@@ -21,6 +21,7 @@ fun LazyListScope.songListScreenContent(
 	onClearSelection: () -> Unit,
 	onSetShareId: (String) -> Unit,
 	onSetStarred: (Boolean) -> Unit,
+	onPlayNext: (DomainSong) -> Unit,
 	onAddToQueue: (DomainSong) -> Unit,
 	onPlaySong: (DomainSong) -> Unit
 ) {
@@ -36,6 +37,7 @@ fun LazyListScope.songListScreenContent(
 				onDeselect = { onClearSelection() },
 				onSetStarred = { onSetStarred(it) },
 				onSetShareId = onSetShareId,
+				onPlayNext = { onPlayNext(song) },
 				onAddToQueue = { onAddToQueue(song) },
 				onClick = { onPlaySong(song) }
 			)
