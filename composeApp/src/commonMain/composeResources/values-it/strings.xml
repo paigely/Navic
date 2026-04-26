@@ -364,4 +364,12 @@
     <string name="action_play_next">Riproduci come prossimo</string>
     <string name="title_disc_number">Disco %1$s</string>
     <string name="option_sort_rating">Valutazione</string>
+    <string name="option_now_playing_slider_style_slim">Sottile</string>
+    <string name="option_now_playing_slider_style_yoyo">Yoyo</string>
+    <string name="option_animation_style">Stile dell' animazione</string>
+    <string name="option_animation_style_expressive">Espressiva</string>
+    <string name="option_animation_style_standard">Standard</string>
+    <string name="option_navigation_bar_label_visibility">Visibilità della label</string>
+    <string name="option_navigation_bar_label_visibility_always">Sempre</string>
+    <string name="option_navigation_bar_label_visibility_only_selected">Solo se selezionata</string>
 </resources>
