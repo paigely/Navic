@@ -74,6 +74,8 @@
 	<string name="option_now_playing_slider_style">Slider style</string>
 	<string name="option_now_playing_slider_style_flat">Flat</string>
 	<string name="option_now_playing_slider_style_squiggly">Squiggly</string>
+	<string name="option_now_playing_slider_style_slim">Slim</string>
+	<string name="option_now_playing_slider_style_yoyo">Yoyo</string>
 	<string name="option_swipe_to_skip">Swipe to change songs</string>
 	<string name="option_artwork_shape">Artwork shape</string>
 	<string name="option_cover_art_size">Cover artwork size</string>
@@ -129,6 +131,9 @@
 	<string name="option_offline_mode_auto">Auto</string>
 	<string name="option_offline_mode_forced">Forced</string>
 	<string name="option_offline_mode_no_wifi">No Wi-Fi</string>
+	<string name="option_animation_style">Animation style</string>
+	<string name="option_animation_style_expressive">Expressive</string>
+	<string name="option_animation_style_standard">Standard</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>
@@ -158,6 +163,9 @@
 	<string name="option_navigation_bar_style">Navigation bar style</string>
 	<string name="option_navigation_bar_style_normal">Normal</string>
 	<string name="option_navigation_bar_style_short">Short</string>
+	<string name="option_navigation_bar_label_visibility">Label visibility</string>
+	<string name="option_navigation_bar_label_visibility_always">Always</string>
+	<string name="option_navigation_bar_label_visibility_only_selected">Only selected</string>
 	<string name="option_navigation_bar_tabs">Reorder navigation bar tabs</string>
 
 	<string name="option_mini_player_style">Mini player style</string>

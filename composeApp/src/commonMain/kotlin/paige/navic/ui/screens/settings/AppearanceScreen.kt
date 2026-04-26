@@ -41,6 +41,7 @@ import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_accent_colour
 import navic.composeapp.generated.resources.option_alphabetical_scroll
+import navic.composeapp.generated.resources.option_animation_style
 import navic.composeapp.generated.resources.option_artwork_shape
 import navic.composeapp.generated.resources.option_choose_theme
 import navic.composeapp.generated.resources.option_cover_art_size
@@ -55,6 +56,7 @@ import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.AnimationStyle
 import paige.navic.data.models.settings.enums.MarqueeSpeed
 import paige.navic.data.models.settings.enums.Theme
 import paige.navic.ui.components.common.Dropdown
@@ -278,6 +280,14 @@ fun SettingsAppearanceScreen() {
 						title = { Text(stringResource(Res.string.option_alphabetical_scroll)) },
 						value = Settings.shared.alphabeticalScroll,
 						onSetValue = { Settings.shared.alphabeticalScroll = it }
+					)
+
+					SettingSelectionRow(
+						title = { Text(stringResource(Res.string.option_animation_style)) },
+						items = AnimationStyle.entries.toImmutableList(),
+						label = { stringResource(it.displayName) },
+						selection = Settings.shared.animationStyle,
+						onSelect = { Settings.shared.animationStyle = it }
 					)
 				}
 			}
