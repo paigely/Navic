@@ -5,45 +5,39 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_star
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.LocalCtx
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Star
 import paige.navic.shared.MediaPlayerViewModel
 
 @Composable
-fun NowPlayingStarButton() {
+fun NowPlayingStarButton(
+	songIsStarred: Boolean,
+	onSetSongIsStarred: (Boolean) -> Unit
+) {
+	val ctx = LocalCtx.current
 	val player = koinViewModel<MediaPlayerViewModel>()
-	val playerState by player.uiState.collectAsState()
-	var isStarred by remember(playerState.currentSong) {
-		mutableStateOf(playerState.currentSong?.starredAt != null)
-	}
-	val scope = rememberCoroutineScope()
+	val playerState by player.uiState.collectAsStateWithLifecycle()
 	IconButton(
 		onClick = {
-			isStarred = !isStarred
-			scope.launch {
-				if (isStarred) player.starSong() else player.unstarSong()
-			}
+			ctx.clickSound()
+			onSetSongIsStarred(!songIsStarred)
 		},
 		colors = IconButtonDefaults.filledTonalIconButtonColors(),
 		modifier = Modifier.size(32.dp),
 		enabled = playerState.currentSong != null
 	) {
 		Icon(
-			if (isStarred) Icons.Filled.Star else Icons.Outlined.Star,
+			if (songIsStarred) Icons.Filled.Star else Icons.Outlined.Star,
 			contentDescription = stringResource(Res.string.action_star)
 		)
 	}

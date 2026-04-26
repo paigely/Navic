@@ -80,11 +80,11 @@ import paige.navic.data.models.settings.enums.ToolbarPosition
 import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.KeyboardArrowDown
+import paige.navic.icons.outlined.List
 import paige.navic.icons.outlined.Lyrics
-import paige.navic.icons.outlined.Queue
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.TopBarButton
-import paige.navic.ui.scenes.BottomSheetSceneStrategy.Companion.bottomSheet
+import paige.navic.ui.scenes.NowPlayingSceneStrategy.Companion.bottomSheet
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.ui.theme.defaultFont
 
@@ -227,7 +227,7 @@ internal class NowPlayingScene<T : Any>(
 									if (!backStack.contains(Screen.Lyrics)) backStack.add(Screen.Lyrics)
 								}
 								SheetTopButton(
-									icon = Icons.Outlined.Queue,
+									icon = Icons.Outlined.List,
 									contentDescription = stringResource(Res.string.action_queue),
 									isEndRounded = true
 								) {

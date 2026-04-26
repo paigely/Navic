@@ -39,7 +39,9 @@ fun CollectionDetailScreenTopBar(
 	onCancelDownloadAll: () -> Unit,
 	onPlayNext: () -> Unit,
 	onAddToQueue: () -> Unit,
-	downloadStatus: DownloadStatus
+	downloadStatus: DownloadStatus,
+	rating: Int?,
+	onSetRating: ((Int) -> Unit)?
 ) {
 	val uriHandler = LocalUriHandler.current
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
@@ -81,7 +83,8 @@ fun CollectionDetailScreenTopBar(
 						onViewOnMusicBrainz = { id ->
 							uriHandler.openUri("https://musicbrainz.org/release/$id")
 						},
-
+						rating = rating,
+						onSetRating = onSetRating
 					)
 				}
 			}

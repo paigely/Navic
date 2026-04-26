@@ -1,6 +1,5 @@
 package paige.navic.ui.screens.nowPlaying.components.controls
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -14,7 +13,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlin.time.Duration
 import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
@@ -23,8 +21,6 @@ import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.ThemeMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.MoreHoriz
 import paige.navic.shared.MediaPlayerViewModel
@@ -32,9 +28,13 @@ import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.theme.NavicTheme
+import kotlin.time.Duration
 
 @Composable
-fun NowPlayingMoreButton() {
+fun NowPlayingMoreButton(
+	songRating: Int,
+	onSetSongRating: (Int) -> Unit
+) {
 	val backStack = LocalNavStack.current
 	val ctx = LocalCtx.current
 	val player = koinViewModel<MediaPlayerViewModel>()
@@ -58,15 +58,6 @@ fun NowPlayingMoreButton() {
 			imageVector = Icons.Outlined.MoreHoriz,
 			contentDescription = stringResource(Res.string.action_more)
 		)
-	}
-
-	val inDarkTheme = isSystemInDarkTheme()
-	val isDark = remember(Settings.shared.themeMode) {
-		when (Settings.shared.themeMode) {
-			ThemeMode.System -> inDarkTheme
-			ThemeMode.Dark -> true
-			ThemeMode.Light -> false
-		}
 	}
 
 	if (expanded && song != null) {
@@ -94,7 +85,9 @@ fun NowPlayingMoreButton() {
 				onTrackInfo = {
 					backStack.remove(Screen.NowPlaying)
 					backStack.add(Screen.SongDetail(song.id))
-				}
+				},
+				rating = songRating,
+				onSetRating = onSetSongRating
 			)
 		}
 	}

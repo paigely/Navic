@@ -1,6 +1,5 @@
 package paige.navic.ui.components.sheets
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -109,28 +108,27 @@ fun CollectionSheet(
 			},
 			headlineContent = { MarqueeText(collection?.name.orEmpty()) },
 			supportingContent = {
-				Column {
-					MarqueeText(
-						listOfNotNull(
-							(collection as? DomainAlbum)?.artistName,
-							(collection as? DomainPlaylist)?.comment,
-							(collection as? DomainAlbum)?.genre,
-							(collection as? DomainAlbum)?.year,
-							collection?.songCount?.let {
-								pluralStringResource(Res.plurals.count_songs, it, it)
-							}
-						).joinToString(" • ")
-					)
-					if (rating != null && onSetRating != null) {
-						RatingRow(
-							rating = rating,
-							setRating = onSetRating
-						)
-					}
-				}
+				MarqueeText(
+					listOfNotNull(
+						(collection as? DomainAlbum)?.artistName,
+						(collection as? DomainPlaylist)?.comment,
+						(collection as? DomainAlbum)?.genre,
+						(collection as? DomainAlbum)?.year,
+						collection?.songCount?.let {
+							pluralStringResource(Res.plurals.count_songs, it, it)
+						}
+					).joinToString(" • ")
+				)
 			},
 			colors = colors
 		)
+		if (rating != null && onSetRating != null) {
+			RatingRow(
+				rating = rating,
+				setRating = onSetRating
+			)
+			Spacer(Modifier.height(14.dp))
+		}
 
 		HorizontalDivider(Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
 

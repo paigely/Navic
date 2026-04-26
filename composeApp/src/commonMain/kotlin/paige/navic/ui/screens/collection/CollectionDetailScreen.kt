@@ -40,6 +40,7 @@ import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainPlaylist
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Note
@@ -93,6 +94,8 @@ fun CollectionDetailScreen(
 	val downloadStatus by viewModel.collectionDownloadStatus()
 		.collectAsState(DownloadStatus.NOT_DOWNLOADED)
 
+	val rating by viewModel.rating.collectAsStateWithLifecycle()
+
 	val titleAlpha by remember {
 		derivedStateOf {
 			if (viewModel.listState.firstVisibleItemIndex >= 1) return@derivedStateOf 1f
@@ -118,7 +121,9 @@ fun CollectionDetailScreen(
 				onCancelDownloadAll = { viewModel.cancelDownloadAll() },
 				onPlayNext = { if (collection != null) player.playNext(collection) },
 				onAddToQueue = { if (collection != null) player.addToQueue(collection) },
-				downloadStatus = downloadStatus
+				downloadStatus = downloadStatus,
+				rating = if (collection !is DomainPlaylist) rating else null,
+				onSetRating = if (collection !is DomainPlaylist) { { viewModel.rateAlbum(it) } } else null
 			)
 		},
 		bottomBar = {

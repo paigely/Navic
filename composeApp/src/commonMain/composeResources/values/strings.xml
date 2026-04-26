@@ -221,6 +221,11 @@
 		<item quantity="other">%1$d hours</item>
 	</plurals>
 
+	<plurals name="count_rate_stars">
+		<item quantity="one">Rate %1$d star</item>
+		<item quantity="other">Rate %1$d stars</item>
+	</plurals>
+
 	<string name="action_ok">OK</string>
 	<string name="action_play">Play</string>
 	<string name="action_new">New</string>

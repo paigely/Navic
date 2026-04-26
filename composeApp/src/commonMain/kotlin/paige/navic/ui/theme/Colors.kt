@@ -8,7 +8,3 @@ import androidx.compose.ui.graphics.Color
 val ColorScheme.positive: Color
 	@Composable
 	get() = if (isSystemInDarkTheme()) Color(0xFF50C660) else Color(0xFF238636)
-
-val ColorScheme.yellow: Color
-	@Composable
-	get() = if (isSystemInDarkTheme()) Color(0xFFECDB36) else Color(0xFFD2B507)

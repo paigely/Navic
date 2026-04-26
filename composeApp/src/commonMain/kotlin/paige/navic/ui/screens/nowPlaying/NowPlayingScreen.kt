@@ -15,11 +15,11 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
@@ -30,6 +30,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingArtworkPager
 import paige.navic.ui.screens.nowPlaying.components.rows.NowPlayingControlsRow
+import paige.navic.ui.screens.nowPlaying.viewmodels.NowPlayingViewModel
 import paige.navic.utils.fadeFromTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -42,8 +43,12 @@ fun NowPlayingScreen() {
 	val isPlayerCurrent = currentScreen is Screen.NowPlaying
 		|| currentScreen is Screen.Queue
 
-	val playerState by player.uiState.collectAsState()
+	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val song = playerState.currentSong
+
+	val viewModel = koinViewModel<NowPlayingViewModel>()
+	val songIsStarred by viewModel.songIsStarred.collectAsStateWithLifecycle()
+	val songRating by viewModel.songRating.collectAsStateWithLifecycle()
 
 	Box(Modifier.fillMaxSize()) {
 		when (Settings.shared.nowPlayingBackgroundStyle) {
@@ -83,7 +88,11 @@ fun NowPlayingScreen() {
 					)
 					NowPlayingControlsRow(
 						modifier = Modifier.weight(1f).fillMaxHeight(),
-						isLandscape = true
+						isLandscape = true,
+						songIsStarred = songIsStarred,
+						onSetSongIsStarred = { viewModel.starSong(it) },
+						songRating = songRating,
+						onSetSongRating = { viewModel.rateSong(it) }
 					)
 				}
 			} else {
@@ -98,7 +107,11 @@ fun NowPlayingScreen() {
 					)
 					NowPlayingControlsRow(
 						modifier = Modifier.weight(1f),
-						isLandscape = false
+						isLandscape = false,
+						songIsStarred = songIsStarred,
+						onSetSongIsStarred = { viewModel.starSong(it) },
+						songRating = songRating,
+						onSetSongRating = { viewModel.rateSong(it) }
 					)
 				}
 			}

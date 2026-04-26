@@ -1,6 +1,5 @@
 package paige.navic.ui.components.sheets
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -132,17 +131,9 @@ fun SongSheet(
 		ListItem(
 			headlineContent = { MarqueeText(song.title) },
 			supportingContent = {
-				Column {
-					MarqueeText(
-						"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
-					)
-					if (rating != null && onSetRating != null) {
-						RatingRow(
-							rating = rating,
-							setRating = onSetRating
-						)
-					}
-				}
+				MarqueeText(
+					"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
+				)
 			},
 			leadingContent = {
 				CoverArt(
@@ -153,6 +144,13 @@ fun SongSheet(
 			},
 			colors = colors
 		)
+		if (rating != null && onSetRating != null) {
+			RatingRow(
+				rating = rating,
+				setRating = onSetRating
+			)
+			Spacer(Modifier.height(14.dp))
+		}
 
 		HorizontalDivider(Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
 

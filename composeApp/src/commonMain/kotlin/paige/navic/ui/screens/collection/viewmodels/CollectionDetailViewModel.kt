@@ -18,6 +18,7 @@ import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.domain.repositories.SongRepository
 import paige.navic.managers.ConnectivityManager
@@ -29,6 +30,7 @@ class CollectionDetailViewModel(
 	private val collectionId: String,
 	private val repository: CollectionRepository,
 	private val songRepository: SongRepository,
+	private val albumRepository: AlbumRepository,
 	private val downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
@@ -72,6 +74,9 @@ class CollectionDetailViewModel(
 	private val _selectedSongRating = MutableStateFlow(0)
 	val selectedSongRating = _selectedSongRating.asStateFlow()
 
+	private val _rating = MutableStateFlow(0)
+	val rating = _rating.asStateFlow()
+
 	val listState = LazyListState()
 
 	init {
@@ -85,6 +90,7 @@ class CollectionDetailViewModel(
 			repository.getCollectionFlow(fullRefresh, collectionId).collect {
 				_collectionState.value = it
 				if (it.data is DomainAlbum) {
+					_rating.value = albumRepository.getAlbumRating(it.data as DomainAlbum)
 					try {
 						val albumInfo = repository.getAlbumInfo(collectionId)
 						_albumInfoState.value = UiState.Success(albumInfo.toDomainModel())
@@ -157,6 +163,15 @@ class CollectionDetailViewModel(
 			runCatching {
 				songRepository.rateSong(selection, rating)
 				_selectedSongRating.value = rating
+			}
+		}
+	}
+
+	fun rateAlbum(rating: Int) {
+		viewModelScope.launch {
+			(_collectionState.value.data as? DomainAlbum)?.let { album ->
+				albumRepository.rateAlbum(album, rating)
+				_rating.value = rating
 			}
 		}
 	}

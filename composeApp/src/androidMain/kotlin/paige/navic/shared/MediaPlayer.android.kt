@@ -164,13 +164,11 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 class AndroidMediaPlayerViewModel(
 	private val application: Application,
 	stateRepository: PlayerStateRepository,
-	songRepository: SongRepository,
 	private val albumDao: AlbumDao,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
-	songRepository = songRepository,
 	downloadManager = downloadManager,
 	connectivityManager = connectivityManager
 ) {

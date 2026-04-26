@@ -15,10 +15,8 @@ import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.domain.repositories.SongRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
-import kotlin.time.Clock
 
 @Serializable
 data class PlayerUiState(
@@ -35,7 +33,6 @@ data class PlayerUiState(
 
 abstract class MediaPlayerViewModel(
 	private val stateRepository: PlayerStateRepository,
-	private val songRepository: SongRepository,
 	protected val connectivityManager: ConnectivityManager,
 	protected val downloadManager: DownloadManager
 ) : ViewModel() {
@@ -80,30 +77,6 @@ abstract class MediaPlayerViewModel(
 			pause()
 		} else {
 			resume()
-		}
-	}
-
-	fun starSong() {
-		val song = _uiState.value.currentSong ?: return
-
-		viewModelScope.launch {
-			_uiState.value = _uiState.value.copy(
-				currentSong = song.copy(starredAt = Clock.System.now())
-			)
-
-			songRepository.starSong(song)
-		}
-	}
-
-	fun unstarSong() {
-		val song = _uiState.value.currentSong ?: return
-
-		viewModelScope.launch {
-			_uiState.value = _uiState.value.copy(
-				currentSong = song.copy(starredAt = null)
-			)
-
-			songRepository.unstarSong(song)
 		}
 	}
 
