@@ -8,7 +8,6 @@ import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
-import kotlin.collections.map
 
 suspend fun ImmutableList<DomainSong>.sortedByListType(
 	listType: DomainSongListType,
@@ -23,6 +22,7 @@ suspend fun ImmutableList<DomainSong>.sortedByListType(
 				.filter { it.status == DownloadStatus.DOWNLOADED }
 				.any { it.songId == song.id }
 		}
+		DomainSongListType.Rating -> sortedByDescending { it.userRating ?: 0 }
 	}.toImmutableList()
 }
 

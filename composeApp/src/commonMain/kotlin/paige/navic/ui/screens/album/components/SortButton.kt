@@ -29,6 +29,7 @@ fun AlbumListScreenSortButton(
 			DomainAlbumListType.Frequent,
 			DomainAlbumListType.Recent,
 			DomainAlbumListType.Newest,
+			DomainAlbumListType.Highest,
 			DomainAlbumListType.Starred,
 			DomainAlbumListType.Random,
 			DomainAlbumListType.Downloaded
