@@ -105,6 +105,9 @@ fun SearchScreen(
 	nested: Boolean
 ) {
 	val viewModel = koinViewModel<SearchViewModel>()
+	val selectedSong by viewModel.selectedSong.collectAsStateWithLifecycle()
+	val selectedSongIsStarred by viewModel.selectedSongIsStarred.collectAsStateWithLifecycle()
+	val selectedSongRating by viewModel.selectedSongRating.collectAsStateWithLifecycle()
 
 	val artistListViewModel = koinViewModel<ArtistListViewModel>()
 	val artistListSelection by artistListViewModel.selectedArtist.collectAsState()
@@ -128,7 +131,6 @@ fun SearchScreen(
 	val backStack = LocalNavStack.current
 
 	var selectedCategory by remember { mutableStateOf(SearchCategory.ALL) }
-	var selectedSong by remember { mutableStateOf<DomainSong?>(null) }
 	var songToQueue by remember { mutableStateOf<DomainSong?>(null) }
 
 	Scaffold(
@@ -260,9 +262,7 @@ fun SearchScreen(
 												player.addToQueueSingle(song)
 												player.playAt(0)
 											},
-											onLongClick = {
-												selectedSong = song
-											},
+											onLongClick = { viewModel.selectSong(song) },
 											content = { Text(song.title) },
 											supportingContent = {
 												MarqueeText(
@@ -288,7 +288,7 @@ fun SearchScreen(
 										)
 										if (selectedSong == song) {
 											SongSheet(
-												onDismissRequest = { selectedSong = null },
+												onDismissRequest = { viewModel.clearSelectedSong() },
 												song = song,
 												onPlayNext = {
 													if (player.uiState.value.queue.any { it.id == song.id }) {
@@ -321,7 +321,11 @@ fun SearchScreen(
 															)
 														)
 													}
-												}
+												},
+												starred = selectedSongIsStarred,
+												onSetStarred = { viewModel.starSelectedSong(it) },
+												rating = selectedSongRating,
+												onSetRating = { viewModel.rateSelectedSong(it) }
 											)
 										}
 									}

@@ -41,8 +41,8 @@ import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
-import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.domain.repositories.SongRepository
 import paige.navic.managers.AndroidScrobbleManager
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
@@ -164,13 +164,13 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 class AndroidMediaPlayerViewModel(
 	private val application: Application,
 	stateRepository: PlayerStateRepository,
-	collectionRepository: CollectionRepository,
+	songRepository: SongRepository,
 	private val albumDao: AlbumDao,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
-	collectionRepository = collectionRepository,
+	songRepository = songRepository,
 	downloadManager = downloadManager,
 	connectivityManager = connectivityManager
 ) {

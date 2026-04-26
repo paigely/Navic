@@ -56,7 +56,7 @@ actual val platformModule = module {
 	viewModel<MediaPlayerViewModel> {
 		IOSMediaPlayerViewModel(
 			stateRepository = get(),
-			collectionRepository = get(),
+			songRepository = get(),
 			downloadManager = get(),
 			connectivityManager = get(),
 			syncManager = get()

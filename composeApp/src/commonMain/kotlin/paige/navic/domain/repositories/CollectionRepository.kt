@@ -11,16 +11,13 @@ import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
-import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
-import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.utils.UiState
-import kotlin.time.Clock
 
 class CollectionRepository(
 	private val albumDao: AlbumDao,
@@ -81,23 +78,5 @@ class CollectionRepository(
 
 	suspend fun getAlbumInfo(albumId: String): AlbumInfo {
 		return SessionManager.api.getAlbumInfo(albumId)
-	}
-
-	suspend fun isSongStarred(songId: String) = songDao.isSongStarred(songId)
-
-	suspend fun starSong(song: DomainSong) {
-		val starredEntity = song.toEntity().copy(
-			starredAt = Clock.System.now()
-		)
-		songDao.insertSong(starredEntity)
-		syncManager.enqueueAction(SyncActionType.STAR, song.id)
-	}
-
-	suspend fun unstarSong(song: DomainSong) {
-		val unstarredEntity = song.toEntity().copy(
-			starredAt = null
-		)
-		songDao.insertSong(unstarredEntity)
-		syncManager.enqueueAction(SyncActionType.UNSTAR, song.id)
 	}
 }
