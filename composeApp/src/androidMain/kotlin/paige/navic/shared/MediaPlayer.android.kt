@@ -82,6 +82,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 		val player = ExoPlayer.Builder(this)
 			.setLoadControl(loadControl)
 			.setHandleAudioBecomingNoisy(true)
+			.setWakeMode(C.WAKE_MODE_NETWORK)
 			.build()
 			.apply {
 				setAudioAttributes(
@@ -201,6 +202,7 @@ class AndroidMediaPlayerViewModel(
 				addListener(object : Player.Listener {
 					override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 						updatePlaybackState()
+
 						mediaItem?.mediaId?.let { id ->
 							if (!isAvailable(id)) {
 								controller?.seekToNextMediaItem()
@@ -490,13 +492,8 @@ class AndroidMediaPlayerViewModel(
 		viewModelScope.launch {
 			controller?.let { player ->
 				if (index in 0 until player.mediaItemCount) {
-					val song = player.getMediaItemAt(index)
-					if (!isAvailable(song.mediaId)) {
-						player.seekToNextMediaItem()
-					} else {
-						player.seekTo(index, 0L)
-						player.play()
-					}
+					player.seekTo(index, 0L)
+					player.play()
 				}
 			}
 		}
@@ -674,7 +671,8 @@ class AndroidMediaPlayerViewModel(
 		viewModelScope.launch {
 			controller?.let { player ->
 				player.repeatMode = when (player.repeatMode) {
-					Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE
+					Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL
+					Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE
 					else -> Player.REPEAT_MODE_OFF
 				}
 			}

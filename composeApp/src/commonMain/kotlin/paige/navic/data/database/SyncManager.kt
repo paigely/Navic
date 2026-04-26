@@ -12,7 +12,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_status_idle
-import navic.composeapp.generated.resources.info_syncing
 import org.jetbrains.compose.resources.StringResource
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.SyncActionDao
@@ -64,7 +63,7 @@ class SyncManager(
 		if (syncJob?.isActive == true) return
 
 		scope.launch {
-			if (albumDao.getAllAlbumsList().isEmpty()
+			if (albumDao.getAlbumCount() == 0
 				|| Settings.shared.lastFullSyncTime <= 0L) {
 				Logger.i("SyncManager", "Syncing now because we haven't synced before")
 				runSyncCycle()

@@ -42,8 +42,8 @@ interface AlbumDao {
 	fun getAlbumsByArtistDesc(): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
-	@Query("SELECT * FROM AlbumEntity ORDER BY RANDOM()")
-	fun getAlbumsRandom(): PagingSource<Int, AlbumWithSongs>
+	@Query("SELECT albumId FROM AlbumEntity ORDER BY RANDOM()")
+	suspend fun getRandomAlbumIds(): List<String>
 
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity ORDER BY createdAt DESC")
@@ -82,8 +82,8 @@ interface AlbumDao {
 	fun getDownloadedAlbums(): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
-	@Query("SELECT * FROM AlbumEntity")
-	suspend fun getAllAlbumsList(): List<AlbumWithSongs>
+	@Query("SELECT COUNT(albumId) FROM AlbumEntity")
+	suspend fun getAlbumCount(): Int
 
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE albumId = :albumId LIMIT 1")
@@ -122,6 +122,7 @@ interface AlbumDao {
 	@Query("SELECT albumId FROM AlbumEntity")
 	suspend fun getAllAlbumIds(): List<String>
 
+	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE albumId IN (:ids)")
 	suspend fun getAlbumsByIds(ids: List<String>): List<AlbumWithSongs>
 
