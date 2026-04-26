@@ -35,6 +35,9 @@ interface SongDao {
 	@Query("SELECT EXISTS(SELECT 1 FROM SongEntity WHERE songId = :songId AND starredAt IS NOT NULL)")
 	suspend fun isSongStarred(songId: String): Boolean
 
+	@Query("SELECT userRating FROM SongEntity WHERE songId = :songId")
+	suspend fun getSongRating(songId: String): Int?
+
 	@Query("DELETE FROM SongEntity")
 	suspend fun clearAllSongs()
 

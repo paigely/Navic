@@ -3,10 +3,10 @@ package paige.navic.ui.screens.album.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
@@ -25,12 +25,14 @@ fun AlbumListScreenItem(
 	album: DomainAlbum,
 	selected: Boolean,
 	starred: Boolean,
+	rating: Int,
 	onSelect: () -> Unit,
 	onDeselect: () -> Unit,
 	onSetStarred: (starred: Boolean) -> Unit,
 	onSetShareId: (String) -> Unit,
 	onPlayNext: () -> Unit,
 	onAddToQueue: () -> Unit,
+	onSetRating: (Int) -> Unit,
 	isOnline: Boolean
 ) {
 	val ctx = LocalCtx.current
@@ -65,6 +67,8 @@ fun AlbumListScreenItem(
 				starred = starred,
 				onSetStarred = onSetStarred,
 				onAddAllToPlaylist = { playlistDialogShown = true },
+				rating = rating,
+				onSetRating = onSetRating
 			)
 		}
 

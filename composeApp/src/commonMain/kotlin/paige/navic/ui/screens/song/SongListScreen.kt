@@ -31,8 +31,8 @@ import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainSong
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
-import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.screens.share.dialogs.ShareDialog
@@ -61,6 +61,7 @@ fun SongListScreen(
 	val selectedSorting by viewModel.selectedSorting.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
 	val starred by viewModel.starred.collectAsStateWithLifecycle()
+	val selectedSongRating by viewModel.selectedSongRating.collectAsStateWithLifecycle()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -118,7 +119,8 @@ fun SongListScreen(
 			) {
 				songListScreenContent(
 					state = songsState,
-					starred = starred,
+					selectedSongIsStarred = starred,
+					selectedSongRating = selectedSongRating,
 					selectedSong = selectedSong,
 					onUpdateSelection = { viewModel.selectSong(it) },
 					onClearSelection = { viewModel.clearSelection() },
@@ -144,7 +146,8 @@ fun SongListScreen(
 						player.clearQueue()
 						player.addToQueueSingle(song)
 						player.playAt(0)
-					}
+					},
+					onSetRating = { viewModel.rateSelectedSong(it) }
 				)
 			}
 		}

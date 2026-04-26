@@ -91,7 +91,7 @@
 	<string name="option_lyrics_beat_by_beat">Beat-by-beat lyrics</string>
 	<string name="option_sort_random">Random</string>
 	<string name="option_sort_newest">Recently added</string>
-	<string name="option_sort_highest">Highest</string>
+	<string name="option_sort_rating">Rating</string>
 	<string name="option_sort_frequent">Frequently played</string>
 	<string name="option_sort_recent">Recently played</string>
 	<string name="option_sort_downloaded">Downloaded</string>

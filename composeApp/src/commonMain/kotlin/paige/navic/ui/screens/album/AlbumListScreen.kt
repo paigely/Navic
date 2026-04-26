@@ -33,8 +33,8 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.layouts.ArtGrid
-import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.screens.album.components.AlbumListScreenSortButton
@@ -61,6 +61,7 @@ fun AlbumListScreen(
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
 	val selectedAlbum by viewModel.selectedAlbum.collectAsStateWithLifecycle()
 	val starred by viewModel.starred.collectAsStateWithLifecycle()
+	val rating by viewModel.rating.collectAsStateWithLifecycle()
 	val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -118,6 +119,7 @@ fun AlbumListScreen(
 					pagedAlbums = pagedAlbums,
 					starred = starred,
 					selectedAlbum = selectedAlbum,
+					selectedAlbumRating = rating,
 					onPlayNext = { if (selectedAlbum != null) player.playNext(selectedAlbum as DomainSongCollection) },
 					onAddToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum as DomainSongCollection) },
 					onUpdateSelection = { viewModel.selectAlbum(it) },
@@ -126,7 +128,8 @@ fun AlbumListScreen(
 						shareId = newShareId
 					},
 					onSetStarred = { viewModel.starAlbum(it) },
-					isOnline = isOnline
+					isOnline = isOnline,
+					onRateSelectedAlbum = { viewModel.setRating(it) }
 				)
 			}
 		}

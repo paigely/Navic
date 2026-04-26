@@ -48,13 +48,15 @@ fun SongListScreenItem(
 	song: DomainSong,
 	selected: Boolean,
 	starred: Boolean,
+	rating: Int,
 	onSelect: () -> Unit,
 	onDeselect: () -> Unit,
 	onSetStarred: (starred: Boolean) -> Unit,
 	onSetShareId: (String) -> Unit,
 	onPlayNext: () -> Unit,
 	onAddToQueue: () -> Unit,
-	onClick: () -> Unit
+	onClick: () -> Unit,
+	onSetRating: (Int) -> Unit
 ) {
 	val backStack = LocalNavStack.current
 	val dismissState = rememberSwipeToDismissBoxState()
@@ -132,6 +134,7 @@ fun SongListScreenItem(
 					onDismissRequest = onDeselect,
 					song = song,
 					starred = starred,
+					rating = rating,
 					onSetStarred = onSetStarred,
 					onShare = { onSetShareId(song.id) },
 					onPlayNext = onPlayNext,
@@ -151,7 +154,8 @@ fun SongListScreenItem(
 					},
 					onAddToPlaylist = {
 						playlistDialogShown = true
-					}
+					},
+					onSetRating = onSetRating
 				)
 			}
 		}

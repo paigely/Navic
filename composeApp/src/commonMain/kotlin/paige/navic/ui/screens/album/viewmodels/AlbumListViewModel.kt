@@ -34,6 +34,9 @@ open class AlbumListViewModel(
 	private val _starred = MutableStateFlow(false)
 	val starred = _starred.asStateFlow()
 
+	private val _rating = MutableStateFlow(0)
+	val rating = _rating.asStateFlow()
+
 	private val _listType = MutableStateFlow(initialListType)
 	val listType = _listType.asStateFlow()
 
@@ -77,6 +80,7 @@ open class AlbumListViewModel(
 		viewModelScope.launch {
 			_selectedAlbum.value = album
 			_starred.value = repository.isAlbumStarred(album)
+			_rating.value = repository.getAlbumRating(album)
 		}
 	}
 
@@ -94,6 +98,16 @@ open class AlbumListViewModel(
 					repository.unstarAlbum(selection)
 				}
 				_starred.value = starred
+			}
+		}
+	}
+
+	fun setRating(rating: Int) {
+		viewModelScope.launch {
+			val selection = _selectedAlbum.value ?: return@launch
+			runCatching {
+				_rating.value = rating
+				repository.rateAlbum(selection, rating)
 			}
 		}
 	}

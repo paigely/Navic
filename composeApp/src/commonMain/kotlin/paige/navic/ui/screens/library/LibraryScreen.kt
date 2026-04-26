@@ -56,6 +56,7 @@ fun LibraryScreen() {
 	val pagedAlbums = albumsViewModel.pagedAlbums.collectAsLazyPagingItems()
 	val selectedAlbum by albumsViewModel.selectedAlbum.collectAsStateWithLifecycle()
 	val selectedAlbumIsStarred by albumsViewModel.starred.collectAsStateWithLifecycle()
+	val selectedAlbumRating by albumsViewModel.rating.collectAsStateWithLifecycle()
 
 	val playlistsViewModel = koinViewModel<PlaylistListViewModel>()
 	val playlistsState by playlistsViewModel.playlistsState.collectAsStateWithLifecycle()
@@ -123,11 +124,13 @@ fun LibraryScreen() {
 				pagedAlbums = pagedAlbums,
 				selectedAlbum = selectedAlbum,
 				selectedAlbumIsStarred = selectedAlbumIsStarred,
+				selectedAlbumRating = selectedAlbumRating,
 				onSelectAlbum = { albumsViewModel.selectAlbum(it) },
 				onClearAlbumSelection = { albumsViewModel.clearSelection() },
 				onStarSelectedAlbum = { albumsViewModel.starAlbum(it) },
 				onPlayAlbumNext = { if (selectedAlbum != null) player.playNext(selectedAlbum as DomainSongCollection)},
 				onAddAlbumToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum as DomainSongCollection)},
+				onRateSelectedAlbum = { albumsViewModel.setRating(it) },
 
 				artistsState = artistsState,
 				selectedArtist = selectedArtist,

@@ -92,6 +92,9 @@ interface AlbumDao {
 	@Query("SELECT EXISTS(SELECT 1 FROM AlbumEntity WHERE albumId = :albumId AND starredAt IS NOT NULL)")
 	suspend fun isAlbumStarred(albumId: String): Boolean
 
+	@Query("SELECT userRating FROM AlbumEntity WHERE albumId = :albumId")
+	suspend fun getAlbumRating(albumId: String): Int?
+
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE artistId = :artistId ORDER BY year DESC")
 	fun getAlbumsByArtist(artistId: String): Flow<List<AlbumWithSongs>>

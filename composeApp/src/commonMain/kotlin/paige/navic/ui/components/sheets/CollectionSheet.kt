@@ -1,5 +1,6 @@
 package paige.navic.ui.components.sheets
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -25,8 +26,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_add_to_playlist
+import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_cancel_download
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_download
@@ -37,8 +38,8 @@ import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
 import navic.composeapp.generated.resources.count_songs
-import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainAlbum
@@ -52,11 +53,13 @@ import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.PlaylistRemove
-import paige.navic.icons.outlined.Share
-import paige.navic.icons.outlined.Star
 import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.QueuePlayNext
+import paige.navic.icons.outlined.Share
+import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.components.common.MarqueeText
+import paige.navic.ui.components.common.RatingRow
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -77,6 +80,8 @@ fun CollectionSheet(
 	starred: Boolean? = null,
 	onSetStarred: ((Boolean) -> Unit)? = null,
 	onDelete: (() -> Unit)? = null,
+	rating: Int? = null,
+	onSetRating: ((Int) -> Unit)? = null
 ) {
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
@@ -102,22 +107,27 @@ fun CollectionSheet(
 					shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 				)
 			},
-			headlineContent = { Text(collection?.name.orEmpty()) },
+			headlineContent = { MarqueeText(collection?.name.orEmpty()) },
 			supportingContent = {
-				Text(
-					listOfNotNull(
-						collection?.name,
-						(collection as? DomainAlbum)?.artistName,
-						(collection as? DomainPlaylist)?.comment,
-						(collection as? DomainAlbum)?.genre,
-						(collection as? DomainAlbum)?.year,
-						pluralStringResource(
-							Res.plurals.count_songs,
-							if (collection != null) collection.songCount else 0,
-							if (collection != null) collection.songCount else 0
+				Column {
+					MarqueeText(
+						listOfNotNull(
+							(collection as? DomainAlbum)?.artistName,
+							(collection as? DomainPlaylist)?.comment,
+							(collection as? DomainAlbum)?.genre,
+							(collection as? DomainAlbum)?.year,
+							collection?.songCount?.let {
+								pluralStringResource(Res.plurals.count_songs, it, it)
+							}
+						).joinToString(" • ")
+					)
+					if (rating != null && onSetRating != null) {
+						RatingRow(
+							rating = rating,
+							setRating = onSetRating
 						)
-					).joinToString(" • ")
-				)
+					}
+				}
 			},
 			colors = colors
 		)

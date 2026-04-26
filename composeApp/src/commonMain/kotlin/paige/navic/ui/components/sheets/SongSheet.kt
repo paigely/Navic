@@ -1,5 +1,6 @@
 package paige.navic.ui.components.sheets
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -74,6 +75,8 @@ import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.managers.SleepTimerManager
 import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.components.common.MarqueeText
+import paige.navic.ui.components.common.RatingRow
 import paige.navic.ui.theme.positive
 import paige.navic.utils.label
 
@@ -98,6 +101,8 @@ fun SongSheet(
 	onDownload: (() -> Unit)? = null,
 	onCancelDownload: (() -> Unit)? = null,
 	onDeleteDownload: (() -> Unit)? = null,
+	rating: Int? = null,
+	onSetRating: ((Int) -> Unit)? = null
 ) {
 	var sleepTimerSheetShown by rememberSaveable { mutableStateOf(false) }
 	val sleepTimerManager = koinInject<SleepTimerManager>()
@@ -125,11 +130,19 @@ fun SongSheet(
 		Spacer(Modifier.height(16.dp))
 
 		ListItem(
-			headlineContent = { Text(song.title) },
+			headlineContent = { MarqueeText(song.title) },
 			supportingContent = {
-				Text(
-					"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
-				)
+				Column {
+					MarqueeText(
+						"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
+					)
+					if (rating != null && onSetRating != null) {
+						RatingRow(
+							rating = rating,
+							setRating = onSetRating
+						)
+					}
+				}
 			},
 			leadingContent = {
 				CoverArt(
