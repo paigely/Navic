@@ -204,7 +204,7 @@
     <string name="option_navigation_bar_style">Стиль панели навигации</string>
     <string name="option_navigation_bar_style_normal">Обычный</string>
     <string name="option_navigation_bar_style_short">Короткий</string>
-    <string name="option_navigation_bar_tabs">Измените порядок вкладок панели навигации</string>
+    <string name="option_navigation_bar_tabs">Изменить порядок вкладок панели навигации</string>
     <string name="option_mini_player_style">Стиль мини-плеера</string>
     <string name="option_mini_player_style_unified">Соединённый</string>
     <string name="option_mini_player_style_detached">Отдельный</string>
@@ -362,4 +362,6 @@
     <string name="option_offline_mode_forced">Принудительно</string>
     <string name="option_offline_mode_no_wifi">Без Wi-Fi</string>
     <string name="action_play_next">Воспроизвести следующим</string>
+    <string name="title_disc_number">Диск %1$s</string>
+    <string name="option_sort_rating">Оценка</string>
 </resources>
