@@ -80,7 +80,8 @@ fun CollectionDetailScreenTopBar(
 						onViewOnLastFm = { url -> uriHandler.openUri(url) },
 						onViewOnMusicBrainz = { id ->
 							uriHandler.openUri("https://musicbrainz.org/release/$id")
-						}
+						},
+
 					)
 				}
 			}

@@ -140,6 +140,12 @@ class SyncManager(
 					SyncActionType.UNSTAR -> SessionManager.api.unstar(action.itemId)
 					SyncActionType.DELETE_PLAYLIST -> SessionManager.api.deletePlaylist(action.itemId)
 					SyncActionType.SCROBBLE -> SessionManager.api.scrobble(action.itemId, submission = true)
+					SyncActionType.STAR_0 -> SessionManager.api.setRating(action.itemId, 0)
+					SyncActionType.STAR_1 -> SessionManager.api.setRating(action.itemId, 1)
+					SyncActionType.STAR_2 -> SessionManager.api.setRating(action.itemId, 2)
+					SyncActionType.STAR_3 -> SessionManager.api.setRating(action.itemId, 3)
+					SyncActionType.STAR_4 -> SessionManager.api.setRating(action.itemId, 4)
+					SyncActionType.STAR_5 -> SessionManager.api.setRating(action.itemId, 5)
 				}
 
 				syncDao.removeAction(action.id)

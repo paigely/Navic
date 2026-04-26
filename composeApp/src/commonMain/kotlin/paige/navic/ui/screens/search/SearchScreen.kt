@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
@@ -114,6 +115,7 @@ fun SearchScreen(
 	}
 	val albumListSelection by albumListViewModel.selectedAlbum.collectAsState()
 	val albumListStarred by albumListViewModel.starred.collectAsState()
+	val selectedAlbumRating by albumListViewModel.rating.collectAsStateWithLifecycle()
 
 	val query = viewModel.searchQuery
 	val state by viewModel.searchState.collectAsState()
@@ -346,7 +348,9 @@ fun SearchScreen(
 									onSetShareId = { },
 									onPlayNext = { player.playNext(album as DomainSongCollection)},
 									onAddToQueue = { player.addToQueue(album as DomainSongCollection)},
-									isOnline = isOnline
+									isOnline = isOnline,
+									rating = selectedAlbumRating,
+									onSetRating = { albumListViewModel.setRating(it) }
 								)
 							}
 
