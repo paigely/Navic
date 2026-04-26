@@ -1,5 +1,6 @@
 package paige.navic.ui.components.common
 
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
@@ -48,6 +49,7 @@ fun CoverArt(
 	coverArtId: String?,
 	contentDescription: String? = null,
 	onClick: (() -> Unit)? = null,
+	onLongClick: (() -> Unit)? = null,
 	enabled: Boolean = false,
 	square: Boolean = true,
 	crossfadeMs: Int = 500,
@@ -82,9 +84,10 @@ fun CoverArt(
 			.then(
 				if (enabled) {
 					if (onClick != null) {
-						Modifier.clickable(
+						Modifier.combinedClickable(
 							interactionSource = interactionSource,
-							onClick = onClick
+							onClick = onClick,
+							onLongClick = onLongClick
 						)
 					} else {
 						Modifier.clickable(interactionSource = interactionSource) {

@@ -26,7 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ContainedLoadingIndicator
@@ -42,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +50,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_see_all
@@ -79,13 +82,17 @@ import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.layouts.RootBottomBar
+import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.screens.artist.components.ArtistActionButtons
 import paige.navic.ui.screens.artist.components.ArtistDetailScreenHeading
 import paige.navic.ui.screens.artist.components.ArtistDetailScreenTopBar
 import paige.navic.ui.screens.artist.viewmodels.ArtistDetailViewModel
+import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
+import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 import paige.navic.utils.fadeFromTop
+import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -98,12 +105,23 @@ fun ArtistDetailScreen(
 	)
 	val ctx = LocalCtx.current
 	val player = koinViewModel<MediaPlayerViewModel>()
+	val playerState by player.uiState.collectAsStateWithLifecycle()
+
+	val selection by viewModel.selectedSong.collectAsStateWithLifecycle()
+	val selectedSongIsStarred by viewModel.selectedSongIsStarred.collectAsStateWithLifecycle()
+	val selectedSongRating by viewModel.selectedSongRating.collectAsStateWithLifecycle()
+
+	val selectedAlbum by viewModel.selectedAlbum.collectAsStateWithLifecycle()
+	val selectedAlbumIsStarred by viewModel.selectedAlbumIsStarred.collectAsStateWithLifecycle()
+	val selectedAlbumRating by viewModel.selectedAlbumRating.collectAsStateWithLifecycle()
+
 	val downloadManager = koinInject<DownloadManager>()
 	val density = LocalDensity.current
 	val backStack = LocalNavStack.current
 	val layoutDirection = LocalLayoutDirection.current
-	val artistState by viewModel.artistState.collectAsState()
-	val isOnline by viewModel.isOnline.collectAsState()
+	val artistState by viewModel.artistState.collectAsStateWithLifecycle()
+	val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
+	val allDownloads by viewModel.allDownloads.collectAsStateWithLifecycle()
 	val downloadStatus by viewModel.collectionDownloadStatus()
 		.collectAsState(DownloadStatus.NOT_DOWNLOADED)
 	val scope = rememberCoroutineScope()
@@ -118,6 +136,11 @@ fun ArtistDetailScreen(
 	}
 
 	var showDownloadDialog by remember { mutableStateOf(false) }
+
+	var shareId by remember { mutableStateOf<String?>(null) }
+	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
+
+	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
 		topBar = {
@@ -261,10 +284,38 @@ fun ArtistDetailScreen(
 										rows = GridCells.Fixed(3),
 										modifier = Modifier.fillMaxWidth().height(250.dp)
 									) {
-										items(songs) { song ->
+										itemsIndexed(songs) { index, song ->
+											val download = allDownloads.find { it.songId == song.id }
 											SongRow(
 												modifier = Modifier.weight(1f),
-												song = song
+												song = song,
+												selected = selection == song,
+												onClick = {
+													if (playerState.currentSong?.id != song.id) {
+														player.clearQueue()
+														songs.forEach { player.addToQueueSingle(it) }
+														player.playAt(index)
+													} else {
+														player.togglePlay()
+													}
+												},
+												onLongClick = {
+													viewModel.selectSong(song)
+												},
+												onDismissRequest = { viewModel.clearSelection() },
+												starredState = selectedSongIsStarred,
+												onAddStar = { viewModel.starSelectedSong() },
+												onRemoveStar = { viewModel.unstarSelectedSong() },
+												download = download,
+												onDownload = { viewModel.downloadSong(song) },
+												onCancelDownload = { viewModel.cancelDownload(song.id) },
+												onDeleteDownload = { viewModel.deleteDownload(song.id) },
+												onPlayNext = { player.playNextSingle(song) },
+												onAddToQueue = { player.addToQueueSingle(song) },
+												onShare = { shareId = song.id },
+												isOnline = isOnline,
+												rating = selectedSongRating,
+												onSetRating = { viewModel.rateSelectedSong(it) }
 											)
 										}
 									}
@@ -274,8 +325,28 @@ fun ArtistDetailScreen(
 								state.albums.sortedByDescending { album -> album.playCount }
 									.toImmutableList()
 							) { album ->
-								ArtCarouselItem(album.coverArtId, album.name, null) {
+								ArtCarouselItem(
+									coverArtId = album.coverArtId, 
+									title = album.name, 
+									contentDescription = null,
+									onSelect = { viewModel.selectAlbum(album) }
+								) {
 									backStack.add(Screen.CollectionDetail(album.id, "artist"))
+								}
+								if (selectedAlbum == album) {
+									CollectionSheet(
+										onDismissRequest = { viewModel.clearAlbumSelection() },
+										collection = album,
+										starred = selectedAlbumIsStarred,
+										onShare = { shareId = album.id },
+										onPlayNext = { player.playNext(album) },
+										onAddToQueue = { player.addToQueue(album) },
+										onSetStarred = { viewModel.starAlbum(!selectedAlbumIsStarred) },
+										onAddAllToPlaylist = { playlistDialogShown = true },
+										isOnline = isOnline,
+										rating = selectedAlbumRating,
+										onSetRating = { viewModel.rateSelectedAlbum(it) }
+									)
 								}
 							}
 							Text(
@@ -320,6 +391,22 @@ fun ArtistDetailScreen(
 				}
 			}
 		}
+	}
+	
+	@Suppress("AssignedValueIsNeverRead")
+	ShareDialog(
+		id = shareId,
+		onIdClear = { shareId = null; viewModel.clearSelection() },
+		expiry = shareExpiry,
+		onExpiryChange = { shareExpiry = it }
+	)
+
+	if (playlistDialogShown) {
+		@Suppress("AssignedValueIsNeverRead")
+		PlaylistUpdateDialog(
+			songs = selectedAlbum?.songs.orEmpty().toPersistentList(),
+			onDismissRequest = { playlistDialogShown = false }
+		)
 	}
 }
 

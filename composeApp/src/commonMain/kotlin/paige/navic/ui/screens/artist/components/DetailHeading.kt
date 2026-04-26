@@ -70,9 +70,10 @@ fun ArtistDetailScreenHeading(
 					.fillMaxSize()
 					.background(
 						Brush.linearGradient(
-							colors = listOf(Color.Black, Color.Transparent),
+							0.025f to MaterialTheme.colorScheme.background,
+							1.0f to Color.Transparent,
 							start = Offset(0f, Float.POSITIVE_INFINITY),
-							end = Offset(Float.POSITIVE_INFINITY, 0f)
+							end = Offset(0f, 0f)
 						)
 					)
 			)
@@ -80,7 +81,7 @@ fun ArtistDetailScreenHeading(
 			Column(
 				modifier = Modifier
 					.align(Alignment.BottomStart)
-					.padding(horizontal = 20.dp, vertical = 24.dp)
+					.padding(horizontal = 20.dp)
 					.padding(start = innerPadding.calculateStartPadding(layoutDirection))
 					.padding(end = innerPadding.calculateEndPadding(layoutDirection)),
 				verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -97,7 +98,7 @@ fun ArtistDetailScreenHeading(
 							}
 						},
 						style = MaterialTheme.typography.bodySmall,
-						color = Color.LightGray,
+						color = MaterialTheme.colorScheme.onSurface,
 						modifier = Modifier.widthIn(max = 500.dp)
 					)
 				}
@@ -105,7 +106,6 @@ fun ArtistDetailScreenHeading(
 					text = artistName,
 					style = MaterialTheme.typography.displaySmall.copy(
 						fontWeight = FontWeight.Bold,
-						color = Color.White
 					),
 					modifier = Modifier
 						.fillMaxWidth()
