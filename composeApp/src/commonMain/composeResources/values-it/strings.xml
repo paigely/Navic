@@ -362,4 +362,6 @@
     <string name="option_offline_mode_forced">Forzata</string>
     <string name="option_offline_mode_no_wifi">Senza Wi-Fi</string>
     <string name="action_play_next">Riproduci come prossimo</string>
+    <string name="title_disc_number">Disco %1$s</string>
+    <string name="option_sort_rating">Valutazione</string>
 </resources>
