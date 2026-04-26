@@ -248,7 +248,12 @@ fun segmentedShapes(
 	val overrideShape = ContinuousRoundedRectangle(18.dp)
 	return remember(index, count, defaultShapes, overrideShape) {
 		when {
-			count == 1 -> defaultShapes
+			count == 1 -> {
+				val defaultBaseShape = defaultShapes.shape
+				defaultShapes.copy(
+					shape = overrideShape
+				)
+			}
 
 			index == 0 -> {
 				val defaultBaseShape = defaultShapes.shape
