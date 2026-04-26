@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.collections.immutable.persistentListOf
+import paige.navic.LocalCtx
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
@@ -23,6 +24,7 @@ fun AlbumListScreenSortButton(
 	selectedReversed: Boolean,
 	onSetReversed: (Boolean) -> Unit
 ) {
+	val ctx = LocalCtx.current
 	val entries = remember {
 		persistentListOf(
 			DomainAlbumListType.AlphabeticalByArtist,
@@ -38,6 +40,7 @@ fun AlbumListScreenSortButton(
 	var expanded by remember { mutableStateOf(false) }
 	if (!nested) {
 		IconButton(onClick = {
+			ctx.clickSound()
 			expanded = true
 		}) {
 			Icon(
@@ -47,6 +50,7 @@ fun AlbumListScreenSortButton(
 		}
 	} else {
 		TopBarButton({
+			ctx.clickSound()
 			expanded = true
 		}) {
 			Icon(

@@ -39,6 +39,7 @@ import navic.composeapp.generated.resources.action_view_on_musicbrainz
 import navic.composeapp.generated.resources.count_songs
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainAlbum
@@ -82,6 +83,7 @@ fun CollectionSheet(
 	rating: Int? = null,
 	onSetRating: ((Int) -> Unit)? = null
 ) {
+	val ctx = LocalCtx.current
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
 		containerColor = Color.Transparent,
@@ -137,6 +139,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_view_on_lastfm)) },
 				leadingContent = { Icon(Icons.Brand.Lastfm, null) },
 				onClick = {
+					ctx.clickSound()
 					onViewOnLastFm(albumInfo.lastFmUrl)
 					onDismissRequest()
 				},
@@ -150,6 +153,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_view_on_musicbrainz)) },
 				leadingContent = { Icon(Icons.Brand.Musicbrainz, null) },
 				onClick = {
+					ctx.clickSound()
 					onViewOnMusicBrainz(albumInfo.musicBrainzId)
 					onDismissRequest()
 				},
@@ -163,6 +167,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_share)) },
 				leadingContent = { Icon(Icons.Outlined.Share, null) },
 				onClick = {
+					ctx.clickSound()
 					onShare()
 					onDismissRequest()
 				},
@@ -176,6 +181,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_play_next)) },
 				leadingContent = { Icon(Icons.Outlined.QueuePlayNext, null) },
 				onClick = {
+					ctx.clickSound()
 					onPlayNext()
 					onDismissRequest()
 				},
@@ -189,6 +195,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_add_to_queue)) },
 				leadingContent = { Icon(Icons.Outlined.Queue, null) },
 				onClick = {
+					ctx.clickSound()
 					onAddToQueue()
 					onDismissRequest()
 				},
@@ -202,6 +209,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_add_to_playlist)) },
 				leadingContent = { Icon(Icons.Outlined.PlaylistAdd, null) },
 				onClick = {
+					ctx.clickSound()
 					onAddAllToPlaylist()
 					onDismissRequest()
 				},
@@ -219,6 +227,7 @@ fun CollectionSheet(
 					Icon(if (starred) Icons.Filled.Star else Icons.Outlined.Star, null)
 				},
 				onClick = {
+					ctx.clickSound()
 					onSetStarred(!starred)
 					onDismissRequest()
 				},
@@ -248,6 +257,7 @@ fun CollectionSheet(
 				modifier = Modifier
 					.alpha(if (enabled) 1f else 0.5f),
 				onClick = {
+					ctx.clickSound()
 					if (!downloading) {
 						onDownloadAll()
 					} else {
@@ -266,6 +276,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_delete)) },
 				leadingContent = { Icon(Icons.Outlined.PlaylistRemove, null) },
 				onClick = {
+					ctx.clickSound()
 					onDelete()
 					onDismissRequest()
 				},

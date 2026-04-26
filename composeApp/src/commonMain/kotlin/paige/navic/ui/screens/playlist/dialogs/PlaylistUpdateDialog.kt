@@ -137,7 +137,6 @@ fun PlaylistUpdateDialog(
 			) {
 				FormButton(
 					onClick = {
-						ctx.clickSound()
 						viewModel.confirm()
 					},
 					enabled = confirmState !is UiState.Loading && selectedPlaylists.isNotEmpty(),
@@ -154,7 +153,6 @@ fun PlaylistUpdateDialog(
 			} else {
 				FormButton(
 					onClick = {
-						ctx.clickSound()
 						createDialogShown = true
 					},
 					content = { Text(stringResource(Res.string.action_new)) }
@@ -162,7 +160,6 @@ fun PlaylistUpdateDialog(
 			}
 			FormButton(
 				onClick = {
-					ctx.clickSound()
 					onDismissRequest()
 				},
 				enabled = state !is UiState.Loading,

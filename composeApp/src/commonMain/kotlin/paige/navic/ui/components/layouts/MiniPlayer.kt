@@ -238,7 +238,10 @@ fun MiniPlayer(
 					hoveredShape = shape,
 					draggedShape = shape
 				),
-				onClick = onClick,
+				onClick = {
+					ctx.clickSound()
+					onClick()
+				},
 				onLongClick = {
 					haptics.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
 					onClick()

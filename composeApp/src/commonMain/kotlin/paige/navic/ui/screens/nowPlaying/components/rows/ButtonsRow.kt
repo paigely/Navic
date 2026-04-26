@@ -84,7 +84,10 @@ fun NowPlayingButtonsRow() {
 	) {
 		IconButton(
 			modifier = Modifier.weight(1f).aspectRatio(1f),
-			onClick = { player.toggleShuffle() },
+			onClick = {
+				ctx.clickSound()
+				player.toggleShuffle()
+			},
 			enabled = enabled,
 		) {
 			Icon(
@@ -97,7 +100,10 @@ fun NowPlayingButtonsRow() {
 		}
 		IconButton(
 			modifier = Modifier.weight(1f).aspectRatio(1f),
-			onClick = { player.previous() },
+			onClick = {
+				ctx.clickSound()
+				player.previous()
+			},
 			enabled = enabled
 		) {
 			Icon(
