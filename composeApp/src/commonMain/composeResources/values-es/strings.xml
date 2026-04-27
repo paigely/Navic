@@ -358,4 +358,14 @@
     <string name="info_library_download">Guarda toda la música sincronizada para reproducir desconectado</string>
     <string name="info_progress">Progreso</string>
     <string name="action_play_next">Reproducir siguiente</string>
+    <string name="title_disc_number">Disco %1$s</string>
+    <string name="option_now_playing_slider_style_slim">Esbelto</string>
+    <string name="option_now_playing_slider_style_yoyo">Yoyo</string>
+    <string name="option_sort_rating">Valoración</string>
+    <string name="option_animation_style">Estilo de animación</string>
+    <string name="option_animation_style_expressive">Expresivo</string>
+    <string name="option_animation_style_standard">Estándar</string>
+    <string name="option_navigation_bar_label_visibility">Visibilidad de etiqueta</string>
+    <string name="option_navigation_bar_label_visibility_always">Siempre</string>
+    <string name="option_navigation_bar_label_visibility_only_selected">Sólo seleccionado</string>
 </resources>
