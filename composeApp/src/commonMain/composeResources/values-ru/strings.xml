@@ -364,4 +364,18 @@
     <string name="action_play_next">Воспроизвести следующим</string>
     <string name="title_disc_number">Диск %1$s</string>
     <string name="option_sort_rating">Оценка</string>
+    <string name="option_now_playing_slider_style_slim">Тонкий</string>
+    <string name="option_now_playing_slider_style_yoyo">Йо-йо</string>
+    <string name="option_animation_style">Стиль анимаций</string>
+    <string name="option_animation_style_expressive">Expressive</string>
+    <string name="option_animation_style_standard">Стандартный</string>
+    <string name="option_navigation_bar_label_visibility">Отображение подписей</string>
+    <string name="option_navigation_bar_label_visibility_always">Всегда</string>
+    <string name="option_navigation_bar_label_visibility_only_selected">Только под выбранным</string>
+    <plurals name="count_rate_stars">
+        <item quantity="one">Оценка %1$d звезда</item>
+        <item quantity="few">Оценка %1$d звезды</item>
+        <item quantity="many">Оценка %1$d звёзд</item>
+        <item quantity="other">Оценка %1$d звёзд</item>
+    </plurals>
 </resources>
