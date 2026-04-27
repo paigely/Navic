@@ -81,7 +81,6 @@ import paige.navic.ui.screens.lyrics.dialogs.LyricsShareSheet
 import paige.navic.ui.screens.lyrics.viewmodels.LyricsScreenViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.calculateWordProgress
-import paige.navic.utils.fadeFromTop
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -288,7 +287,7 @@ fun LyricsScreen(
 						}
 
 						LazyColumn(
-							Modifier.fillMaxSize().fadeFromTop(),
+							Modifier.fillMaxSize(),
 							state = listState,
 							contentPadding = contentPadding
 						) {

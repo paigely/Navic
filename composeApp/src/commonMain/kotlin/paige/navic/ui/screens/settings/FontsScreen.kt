@@ -38,7 +38,6 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.theme.googleSans
-import paige.navic.utils.fadeFromTop
 
 @Composable
 fun FontsScreen() {
@@ -49,7 +48,6 @@ fun FontsScreen() {
 			LocalMinimumInteractiveComponentSize provides 0.dp
 		) {
 			LazyColumn(
-				modifier = Modifier.fadeFromTop(),
 				verticalArrangement = Arrangement.spacedBy(3.dp),
 				contentPadding = contentPadding + PaddingValues(
 					top = 16.dp, end = 16.dp, start = 16.dp

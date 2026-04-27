@@ -86,8 +86,7 @@ fun CarouselItemScope.ArtCarouselItem(
 				focusManager.clearFocus(true)
 				onClick()
 			},
-			onLongClick = onSelect,
-			enabled = true
+			onLongClick = onSelect
 		)
 
 		Text(

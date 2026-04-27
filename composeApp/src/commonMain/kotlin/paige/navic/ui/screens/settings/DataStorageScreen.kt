@@ -99,7 +99,6 @@ import paige.navic.ui.components.dialogs.BulkDownloadDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.viewmodels.SettingsDataStorageViewModel
-import paige.navic.utils.fadeFromTop
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -193,7 +192,6 @@ fun SettingsDataStorageScreen() {
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp, bottom = 32.dp)
-					.fadeFromTop()
 			) {
 				FormTitle(stringResource(Res.string.title_network))
 				Form {

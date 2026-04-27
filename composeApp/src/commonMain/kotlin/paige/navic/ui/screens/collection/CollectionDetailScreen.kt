@@ -60,7 +60,6 @@ import paige.navic.ui.screens.collection.viewmodels.CollectionDetailViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
-import paige.navic.utils.fadeFromTop
 import paige.navic.utils.withoutTop
 import kotlin.time.Duration
 
@@ -144,8 +143,7 @@ fun CollectionDetailScreen(
 			LazyColumn(
 				modifier = Modifier
 					.background(MaterialTheme.colorScheme.surface)
-					.fillMaxSize()
-					.fadeFromTop(),
+					.fillMaxSize(),
 				horizontalAlignment = Alignment.CenterHorizontally,
 				contentPadding = contentPadding.withoutTop(),
 				state = viewModel.listState

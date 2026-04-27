@@ -52,8 +52,7 @@ fun CollectionDetailScreenHeadingRow(
 					animatedVisibilityScope = LocalNavAnimatedContentScope.current
 				)
 				.alpha(titleAlpha),
-			crossfadeMs = 0,
-			enabled = true
+			crossfadeMs = 0
 		)
 		Spacer(Modifier.height(10.dp))
 		Column(

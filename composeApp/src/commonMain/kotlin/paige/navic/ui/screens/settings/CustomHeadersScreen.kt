@@ -32,7 +32,6 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_new
 import navic.composeapp.generated.resources.option_custom_headers
-import navic.composeapp.generated.resources.title_developer
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
@@ -45,7 +44,6 @@ import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.theme.defaultFont
-import paige.navic.utils.fadeFromTop
 import kotlin.random.Random
 
 private data class Header(
@@ -93,7 +91,6 @@ fun SettingsCustomHeadersScreen() {
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
-					.fadeFromTop()
 			) {
 				FormTitle(stringResource(Res.string.option_custom_headers))
 				Form(

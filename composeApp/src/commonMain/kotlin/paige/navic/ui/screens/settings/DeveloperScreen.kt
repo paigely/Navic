@@ -41,7 +41,6 @@ import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.dialogs.FormDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
-import paige.navic.utils.fadeFromTop
 
 @Composable
 fun SettingsDeveloperScreen() {
@@ -65,7 +64,6 @@ fun SettingsDeveloperScreen() {
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
-					.fadeFromTop()
 			) {
 				Form {
 					SettingSwitchRow(

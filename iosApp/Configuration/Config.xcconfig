@@ -1,7 +1,7 @@
 NAVIC_PRODUCT_NAME=Navic
 NAVIC_PRODUCT_BUNDLE_IDENTIFIER=paige.Navic
 
-NAVIC_PROJECT_VERSION=v1.0.0-alpha34
+NAVIC_PROJECT_VERSION=v1.0.0-alpha35
 
 // The `NAVIC_DISAMBIGUATOR` configuration is to make it easier to build
 // and run the project. Once you set your project's development team,

@@ -1,7 +1,6 @@
 package paige.navic.ui.components.layouts
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
@@ -113,57 +112,24 @@ fun MiniPlayer(
 
 	val detached = Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached
 
-	val spec = MaterialTheme.motionScheme.defaultSpatialSpec<Dp>()
-	val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Dp>()
-
-	val containerColor by animateColorAsState(
-		if (isSystemInDarkTheme() || (!isSystemInDarkTheme() && !detached))
-			if (detached)
-				MaterialTheme.colorScheme.surfaceContainer
-			else MaterialTheme.colorScheme.surfaceContainerHigh
-		else MaterialTheme.colorScheme.surface,
-		MaterialTheme.motionScheme.defaultSpatialSpec()
-	)
-	val outerPadding by animateDpAsState(
-		if (detached) 12.dp else 0.dp, effectsSpec
-	)
-	val contentPaddingHorizontal by animateDpAsState(
-		if (detached) 10.dp else 16.dp, effectsSpec
-	)
-	val contentPaddingBottom by animateDpAsState(
-		if (detached) 10.dp else 12.dp, effectsSpec
-	)
-	val contentPaddingTop by animateDpAsState(
-		if (detached) 10.dp else 16.dp, effectsSpec
-	)
-	val shadowRadius by animateDpAsState(
-		if (detached) 10.dp else 8.dp, effectsSpec
-	)
-	val coverSize by animateDpAsState(
-		if (detached) 48.dp else 50.dp, spec
-	)
+	val containerColor = when {
+		isSystemInDarkTheme() || !isSystemInDarkTheme() && !detached -> if (detached) {
+			MaterialTheme.colorScheme.surfaceContainer
+		} else {
+			MaterialTheme.colorScheme.surfaceContainerHigh
+		}
+		else -> MaterialTheme.colorScheme.surface
+	}
+	val outerPadding = if (detached) 12.dp else 0.dp
 	val coverRounding by animateDpAsState(
 		if (playerState.isLoading)
 			46.dp
 		else if (detached) 12.dp else 8.dp
 	)
-	val coverPadding by animateDpAsState(
-		if (playerState.isLoading)
-			8.dp
-		else 0.dp
-	)
-	val iconSize by animateDpAsState(
-		if (detached) 24.dp else 32.dp, spec
-	)
-	val iconSpacing by animateDpAsState(
-		if (detached) 8.dp else 12.dp, effectsSpec
-	)
-	val cornerSize by animateDpAsState(
-		if (detached) 20.dp else 0.dp, effectsSpec
-	)
+	val iconSize = if (detached) 24.dp else 32.dp
 
 	val shape = ContinuousRoundedRectangle(
-		cornerSize
+		if (detached) 20.dp else 0.dp
 	)
 
 	val onClick = {
@@ -201,7 +167,7 @@ fun MiniPlayer(
 					.dropShadow(
 						shape,
 						Shadow(
-							radius = shadowRadius,
+							radius = if (detached) 10.dp else 8.dp,
 							alpha = 0.25f
 						)
 					)
@@ -221,10 +187,10 @@ fun MiniPlayer(
 						)
 					},
 				contentPadding = PaddingValues(
-					start = contentPaddingHorizontal,
-					end = contentPaddingHorizontal,
-					top = contentPaddingTop,
-					bottom = contentPaddingBottom + if (detached) 0.dp else navBarPadding
+					start = if (detached) 10.dp else 16.dp,
+					end = if (detached) 10.dp else 16.dp,
+					top = if (detached) 10.dp else 16.dp,
+					bottom = (if (detached) 10.dp else 12.dp) + if (detached) 0.dp else navBarPadding
 				),
 				verticalAlignment = Alignment.CenterVertically,
 				colors = ListItemDefaults.colors(
@@ -253,8 +219,8 @@ fun MiniPlayer(
 							contentDescription = null,
 							contentScale = ContentScale.Crop,
 							modifier = Modifier
-								.size(coverSize)
-								.padding(coverPadding)
+								.size(if (detached) 48.dp else 50.dp)
+								.padding(if (playerState.isLoading) 8.dp else 0.dp)
 								.clip(
 									ContinuousRoundedRectangle(coverRounding)
 								)
@@ -284,7 +250,9 @@ fun MiniPlayer(
 				},
 				trailingContent = {
 					Row(
-						horizontalArrangement = Arrangement.spacedBy(iconSpacing)
+						horizontalArrangement = Arrangement.spacedBy(
+							if (detached) 8.dp else 12.dp
+						)
 					) {
 						val colors = IconButtonDefaults.iconButtonVibrantColors()
 						IconButton(

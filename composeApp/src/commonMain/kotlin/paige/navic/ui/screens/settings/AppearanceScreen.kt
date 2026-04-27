@@ -71,7 +71,6 @@ import paige.navic.ui.screens.settings.dialogs.GridSizeDialog
 import paige.navic.ui.screens.settings.dialogs.GridSizePreview
 import paige.navic.ui.screens.settings.dialogs.Shapes
 import paige.navic.ui.screens.settings.dialogs.ThemeDialog
-import paige.navic.utils.fadeFromTop
 
 @Composable
 fun SettingsAppearanceScreen() {
@@ -96,7 +95,6 @@ fun SettingsAppearanceScreen() {
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
-					.fadeFromTop()
 			) {
 				Form {
 					FormRow(

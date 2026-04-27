@@ -1,8 +1,7 @@
 package paige.navic.ui.components.common
 
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +22,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,14 +48,12 @@ fun CoverArt(
 	contentDescription: String? = null,
 	onClick: (() -> Unit)? = null,
 	onLongClick: (() -> Unit)? = null,
-	enabled: Boolean = false,
 	square: Boolean = true,
 	crossfadeMs: Int = 500,
 	shadowElevation: Dp = 0.dp,
 	interactionSource: MutableInteractionSource? = null,
 	shape: Shape = ContinuousRoundedRectangle(Settings.shared.artGridRounding.dp)
 ) {
-	val uriHandler = LocalUriHandler.current
 	val platformContext = LocalPlatformContext.current
 	val model = remember(coverArtId) {
 		ImageRequest.Builder(platformContext)
@@ -75,36 +71,22 @@ fun CoverArt(
 		.shadow(shadowElevation, shape)
 		.clip(shape)
 		.background(MaterialTheme.colorScheme.surfaceContainer)
+		.then(if (onClick != null)
+			Modifier.combinedClickable(
+				onClick = onClick,
+				onLongClick = onLongClick,
+				interactionSource = interactionSource
+			)
+		else Modifier)
+		.then(if (interactionSource != null)
+			Modifier.indication(interactionSource, ripple())
+		else Modifier)
 
 	if (coverArtId.isNullOrBlank()) return Box(commonModifier)
 	SubcomposeAsyncImage(
 		model = model,
 		contentDescription = contentDescription,
-		modifier = commonModifier
-			.then(
-				if (enabled) {
-					if (onClick != null) {
-						Modifier.combinedClickable(
-							interactionSource = interactionSource,
-							onClick = onClick,
-							onLongClick = onLongClick
-						)
-					} else {
-						Modifier.clickable(interactionSource = interactionSource) {
-							(model.data as? String)?.let { uri ->
-								uriHandler.openUri(uri)
-							}
-						}
-					}
-				} else {
-					Modifier
-				}
-			)
-			.then(
-				if (interactionSource != null)
-					Modifier.indication(interactionSource, ripple())
-				else Modifier
-			),
+		modifier = commonModifier,
 		contentScale = ContentScale.Crop,
 		error = {
 			LaunchedEffect(it.result.throwable) {
