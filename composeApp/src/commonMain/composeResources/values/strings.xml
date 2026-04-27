@@ -71,6 +71,7 @@
 	<string name="option_now_playing_background_style_static">Static</string>
 	<string name="option_now_playing_background_style_dynamic">Dynamic</string>
 	<string name="option_accent_colour">Accent colour</string>
+	<string name="option_now_playing_song_info">Show technical song info</string>
 	<string name="option_now_playing_slider_style">Slider style</string>
 	<string name="option_now_playing_slider_style_flat">Flat</string>
 	<string name="option_now_playing_slider_style_squiggly">Squiggly</string>
