@@ -353,8 +353,7 @@ fun SongSheet(
 				content = {
 					Text(
 						stringResource(
-							if (collection is DomainPlaylist) Res.string.action_view_playlist
-							else Res.string.action_view_album
+							Res.string.action_view_album
 						)
 					)
 				},
