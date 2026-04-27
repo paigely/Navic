@@ -82,7 +82,15 @@ class ChangelogViewModel(
 				val release: GitHubRelease =
 					updateClient.get("https://api.github.com/repos/paigely/Navic/releases/latest")
 						.body()
-				if (release.tag != currentVersion) release else null
+				val remoteVersion = release.tag
+					.filter { it.isDigit() }
+					.toIntOrNull() ?: return@launch
+				val localVersion = currentVersion
+					.filter { it.isDigit() }
+					.toIntOrNull() ?: return@launch
+				if (remoteVersion > localVersion || "$remoteVersion".length != "$localVersion".length)
+					release
+				else null
 			} catch (e: Exception) {
 				Logger.e("ChangelogViewModel", "couldn't check for updates", e)
 				null

@@ -45,7 +45,6 @@ import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.action_view_album
 import navic.composeapp.generated.resources.action_view_artist
-import navic.composeapp.generated.resources.action_view_playlist
 import navic.composeapp.generated.resources.info_click_to_retry
 import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.stringResource
@@ -54,7 +53,6 @@ import paige.navic.LocalCtx
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainAlbum
-import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
@@ -102,7 +100,8 @@ fun SongSheet(
 	onCancelDownload: (() -> Unit)? = null,
 	onDeleteDownload: (() -> Unit)? = null,
 	rating: Int? = null,
-	onSetRating: ((Int) -> Unit)? = null
+	onSetRating: ((Int) -> Unit)? = null,
+	showSleepTimer: Boolean = false
 ) {
 	val ctx = LocalCtx.current
 	var sleepTimerSheetShown by rememberSaveable { mutableStateOf(false) }
@@ -351,11 +350,7 @@ fun SongSheet(
 		if (onViewAlbum != null) {
 			ListItem(
 				content = {
-					Text(
-						stringResource(
-							Res.string.action_view_album
-						)
-					)
+					Text(stringResource(Res.string.action_view_album))
 				},
 				leadingContent = { Icon(Icons.Outlined.Album, null) },
 				onClick = {
@@ -382,48 +377,53 @@ fun SongSheet(
 			)
 		}
 
-		if (sleepTimerLeft != null) {
-			ListItem(
-				content = {
-					Text(
-						stringResource(Res.string.action_sleep_timer_enabled, sleepTimerLeft.label()),
-						color = MaterialTheme.colorScheme.positive
-					)
-				},
-				leadingContent = {
-					Icon(
-						Icons.Outlined.Bedtime,
-						null,
-						tint = MaterialTheme.colorScheme.positive
-					)
-				},
-				onClick = {
-					ctx.clickSound()
-					sleepTimerSheetShown = true
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		} else {
-			ListItem(
-				content = {
-					Text(
-						stringResource(Res.string.action_sleep_timer)
-					)
-				},
-				leadingContent = {
-					Icon(
-						Icons.Outlined.Bedtime,
-						null
-					)
-				},
-				onClick = {
-					ctx.clickSound()
-					sleepTimerSheetShown = true
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
+		if (showSleepTimer) {
+			if (sleepTimerLeft != null) {
+				ListItem(
+					content = {
+						Text(
+							stringResource(
+								Res.string.action_sleep_timer_enabled,
+								sleepTimerLeft.label()
+							),
+							color = MaterialTheme.colorScheme.positive
+						)
+					},
+					leadingContent = {
+						Icon(
+							Icons.Outlined.Bedtime,
+							null,
+							tint = MaterialTheme.colorScheme.positive
+						)
+					},
+					onClick = {
+						ctx.clickSound()
+						sleepTimerSheetShown = true
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
+			} else {
+				ListItem(
+					content = {
+						Text(
+							stringResource(Res.string.action_sleep_timer)
+						)
+					},
+					leadingContent = {
+						Icon(
+							Icons.Outlined.Bedtime,
+							null
+						)
+					},
+					onClick = {
+						ctx.clickSound()
+						sleepTimerSheetShown = true
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
+			}
 		}
 
 		if (onTrackInfo != null) {
