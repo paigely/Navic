@@ -167,7 +167,9 @@ fun PlaylistListScreen(
 			key = playlistsState
 		) {
 			ArtGrid(
-				modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+				modifier = if (!nested)
+					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+				else Modifier,
 				state = gridState,
 				contentPadding = innerPadding.withoutTop(),
 				verticalArrangement = if ((playlistsState as? UiState.Success)?.data?.isEmpty() == true)
