@@ -214,6 +214,7 @@ fun CollectionDetailScreen(
 										song = song,
 										index = index,
 										count = group.value.count(),
+										isPlaylist = false,
 										onClick = {
 											if (playerState.currentSong?.id != song.id) {
 												player.clearQueue()
@@ -272,6 +273,7 @@ fun CollectionDetailScreen(
 								song = song,
 								index = index,
 								count = collection.songs.count(),
+								isPlaylist = true,
 								onClick = {
 									if (playerState.currentSong?.id != song.id) {
 										player.clearQueue()
