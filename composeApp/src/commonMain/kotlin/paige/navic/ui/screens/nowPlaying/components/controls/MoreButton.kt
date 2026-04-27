@@ -87,7 +87,8 @@ fun NowPlayingMoreButton(
 					backStack.add(Screen.SongDetail(song.id))
 				},
 				rating = songRating,
-				onSetRating = onSetSongRating
+				onSetRating = onSetSongRating,
+				showSleepTimer = true
 			)
 		}
 	}
