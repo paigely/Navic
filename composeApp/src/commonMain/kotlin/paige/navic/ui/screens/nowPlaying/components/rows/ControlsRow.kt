@@ -53,6 +53,7 @@ fun NowPlayingControlsRow(
 			)
 			NowPlayingProgressBar()
 			NowPlayingDurationsRow()
+			NowPlayingTechnicalInfoRow()
 		}
 		Spacer(modifier = Modifier.height(if (isLandscape) 24.dp else 30.dp))
 		NowPlayingButtonsRow()
