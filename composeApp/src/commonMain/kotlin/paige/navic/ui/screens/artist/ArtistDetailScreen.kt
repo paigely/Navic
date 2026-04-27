@@ -8,6 +8,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ContainedLoadingIndicator
@@ -133,6 +135,8 @@ fun ArtistDetailScreen(
 			with(density) { viewModel.scrollState.value.toDp() } >= 200.dp
 		}
 	}
+
+	val gridState = rememberLazyGridState()
 
 	var showDownloadDialog by remember { mutableStateOf(false) }
 
@@ -280,6 +284,8 @@ fun ArtistDetailScreen(
 									}
 									LazyHorizontalGrid(
 										rows = GridCells.Fixed(3),
+										state = gridState,
+										flingBehavior = rememberSnapFlingBehavior(lazyGridState = gridState),
 										modifier = Modifier.fillMaxWidth().height(250.dp)
 									) {
 										itemsIndexed(songs) { index, song ->

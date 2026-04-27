@@ -109,24 +109,24 @@ object LyricsContentParser {
 	private fun parseJson(jsonString: String): List<LyricLine>? {
 		val jsonObject = jsonParser.parseToJsonElement(jsonString).jsonObject
 
-		return when {
-			jsonObject.containsKey("syncedLyrics") -> {
-				val syncedStr = jsonObject["syncedLyrics"]?.jsonPrimitive?.contentOrNull
-				if (!syncedStr.isNullOrEmpty()) parseLrc(syncedStr) else null
-			}
-
-			jsonObject.containsKey("plainLyrics") -> {
-				val plainStr = jsonObject["plainLyrics"]?.jsonPrimitive?.contentOrNull
-				plainStr?.lineSequence()?.map { LyricLine(text = it) }?.toList()
-			}
-
-			jsonObject.containsKey("lyrics") -> {
-				val youlyResponse = jsonParser.decodeFromString<YoulyResponse>(jsonString)
-				parseYoulyResponse(youlyResponse)
-			}
-
-			else -> null
+		val syncedStr = jsonObject["syncedLyrics"]?.jsonPrimitive?.contentOrNull
+		if (!syncedStr.isNullOrEmpty()) {
+			return parseLrc(syncedStr)
 		}
+
+		val plainStr = jsonObject["plainLyrics"]?.jsonPrimitive?.contentOrNull
+		if (!plainStr.isNullOrEmpty()) {
+			return plainStr.lineSequence()
+				.map { LyricLine(text = it.trim()) }
+				.toList()
+		}
+
+		if (jsonObject.containsKey("lyrics")) {
+			val youlyResponse = jsonParser.decodeFromString<YoulyResponse>(jsonString)
+			return parseYoulyResponse(youlyResponse)
+		}
+
+		return null
 	}
 
 	private fun parseYoulyResponse(response: YoulyResponse): List<LyricLine>? {
@@ -234,14 +234,23 @@ class LyricRepository(
 
 					LyricsProvider.SUBSONIC -> {
 						val subsonicLyrics = SessionManager.api.getLyrics(song.id).firstOrNull()
-						val lines = subsonicLyrics?.lines?.map { line ->
-							LyricLine(time = line.start.milliseconds, text = line.value)
+
+						val lines = subsonicLyrics?.lines?.flatMap { line ->
+							if (!subsonicLyrics.synced && line.value.contains("\n")) {
+								line.value.lineSequence()
+									.filter { it.isNotBlank() }
+									.map { LyricLine(time = null, text = it.trim()) }
+									.toList()
+							} else {
+								val time = if (subsonicLyrics.synced) line.start.milliseconds else null
+								listOf(LyricLine(time = time, text = line.value))
+							}
 						}
 
 						if (!lines.isNullOrEmpty()) {
 							rawContentToCache = lines.joinToString("\n") { l ->
 								val t = l.time
-								if (t != null && t.inWholeMilliseconds > 0) {
+								if (t != null) {
 									val m = t.inWholeMinutes.toString().padStart(2, '0')
 									val s = (t.inWholeSeconds % 60).toString().padStart(2, '0')
 									val ms = ((t.inWholeMilliseconds % 1000) / 10).toString()
