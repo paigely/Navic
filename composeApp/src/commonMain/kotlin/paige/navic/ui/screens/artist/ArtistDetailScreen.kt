@@ -348,40 +348,21 @@ fun ArtistDetailScreen(
 								}
 							}
 							if (state.similarArtists.isEmpty()) return@Column
-							Text(
+							ArtCarousel(
 								stringResource(Res.string.title_similar_artists),
-								style = MaterialTheme.typography.titleMediumEmphasized,
-								fontWeight = FontWeight(600),
-								modifier = Modifier
-									.height(32.dp)
-									.padding(top = 8.dp)
-									.padding(horizontal = 20.dp)
-									.fillMaxWidth()
-							)
-							LazyRow(
-								modifier = Modifier.fillMaxWidth().animateContentSize(
-									animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-								),
-								horizontalArrangement = Arrangement.spacedBy(8.dp),
-								contentPadding = PaddingValues(horizontal = 20.dp)
-							) {
-								items(state.similarArtists) { artist ->
-									ArtGridItem(
-										modifier = Modifier.width(150.dp),
-										onClick = {
-											ctx.clickSound()
-											backStack.add(Screen.ArtistDetail(artist.id))
-										},
-										coverArtId = artist.coverArtId,
-										title = artist.name,
-										subtitle = pluralStringResource(
-											Res.plurals.count_albums,
-											artist.albumCount,
-											artist.albumCount
-										),
-										id = artist.id,
-										tab = "artist"
-									)
+								state.similarArtists.toImmutableList()
+							) { artist ->
+								ArtCarouselItem(
+									coverArtId = artist.coverArtId, 
+									title = artist.name, 
+									subtitle = pluralStringResource(
+										Res.plurals.count_albums,
+										artist.albumCount,
+										artist.albumCount
+									),
+									contentDescription = null,
+								) {
+									backStack.add(Screen.ArtistDetail(artist.id))
 								}
 							}
 						}
