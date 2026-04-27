@@ -173,7 +173,11 @@ fun App() {
 							remember { BottomSheetSceneStrategy() },
 							rememberListDetailSceneStrategy()
 						),
-						onBack = backStack::removeLastOrNull,
+						onBack = {
+							if (backStack.size > 1) {
+								backStack.removeLastOrNull()
+							}
+						},
 						entryProvider = entryProvider(backStack),
 						transitionSpec = {
 							Material3Transitions.SharedXAxisEnterTransition(density) togetherWith Material3Transitions.SharedXAxisExitTransition(

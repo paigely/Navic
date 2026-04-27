@@ -79,6 +79,7 @@ class SongRepository(
 	}.flowOn(Dispatchers.IO)
 
 	suspend fun isSongStarred(song: DomainSong) = songDao.isSongStarred(song.id)
+	suspend fun getSongRating(song: DomainSong) = songDao.getSongRating(song.id) ?: 0
 	suspend fun starSong(song: DomainSong) {
 		val starredEntity = song.toEntity().copy(
 			starredAt = Clock.System.now()
@@ -93,5 +94,20 @@ class SongRepository(
 		)
 		songDao.insertSong(unstarredEntity)
 		syncManager.enqueueAction(SyncActionType.UNSTAR, song.id)
+	}
+
+	suspend fun rateSong(song: DomainSong, rating: Int) {
+		val ratedEntity = song.toEntity().copy(
+			userRating = rating
+		)
+		songDao.insertSong(ratedEntity)
+		when (rating) {
+			0 -> syncManager.enqueueAction(SyncActionType.STAR_0, song.id)
+			1 -> syncManager.enqueueAction(SyncActionType.STAR_1, song.id)
+			2 -> syncManager.enqueueAction(SyncActionType.STAR_2, song.id)
+			3 -> syncManager.enqueueAction(SyncActionType.STAR_3, song.id)
+			4 -> syncManager.enqueueAction(SyncActionType.STAR_4, song.id)
+			5 -> syncManager.enqueueAction(SyncActionType.STAR_5, song.id)
+		}
 	}
 }

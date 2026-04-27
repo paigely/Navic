@@ -45,15 +45,14 @@ import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.action_view_album
 import navic.composeapp.generated.resources.action_view_artist
-import navic.composeapp.generated.resources.action_view_playlist
 import navic.composeapp.generated.resources.info_click_to_retry
 import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import paige.navic.LocalCtx
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainAlbum
-import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
@@ -74,6 +73,8 @@ import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.managers.SleepTimerManager
 import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.components.common.MarqueeText
+import paige.navic.ui.components.common.RatingRow
 import paige.navic.ui.theme.positive
 import paige.navic.utils.label
 
@@ -98,7 +99,11 @@ fun SongSheet(
 	onDownload: (() -> Unit)? = null,
 	onCancelDownload: (() -> Unit)? = null,
 	onDeleteDownload: (() -> Unit)? = null,
+	rating: Int? = null,
+	onSetRating: ((Int) -> Unit)? = null,
+	showSleepTimer: Boolean = false
 ) {
+	val ctx = LocalCtx.current
 	var sleepTimerSheetShown by rememberSaveable { mutableStateOf(false) }
 	val sleepTimerManager = koinInject<SleepTimerManager>()
 	val sleepTimerLeft = sleepTimerManager.timeLeft
@@ -125,9 +130,9 @@ fun SongSheet(
 		Spacer(Modifier.height(16.dp))
 
 		ListItem(
-			headlineContent = { Text(song.title) },
+			headlineContent = { MarqueeText(song.title) },
 			supportingContent = {
-				Text(
+				MarqueeText(
 					"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
 				)
 			},
@@ -140,6 +145,13 @@ fun SongSheet(
 			},
 			colors = colors
 		)
+		if (rating != null && onSetRating != null) {
+			RatingRow(
+				rating = rating,
+				setRating = onSetRating
+			)
+			Spacer(Modifier.height(14.dp))
+		}
 
 		HorizontalDivider(Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
 
@@ -148,6 +160,7 @@ fun SongSheet(
 				content = { Text(stringResource(Res.string.action_share)) },
 				leadingContent = { Icon(Icons.Outlined.Share, null) },
 				onClick = {
+					ctx.clickSound()
 					onShare()
 					onDismissRequest()
 				},
@@ -165,6 +178,7 @@ fun SongSheet(
 					Icon(if (starred) Icons.Filled.Star else Icons.Outlined.Star, null)
 				},
 				onClick = {
+					ctx.clickSound()
 					onSetStarred(!starred)
 					onDismissRequest()
 				},
@@ -180,6 +194,7 @@ fun SongSheet(
 						content = { Text(stringResource(Res.string.action_cancel_download)) },
 						leadingContent = { Icon(Icons.Outlined.Close, null) },
 						onClick = {
+							ctx.clickSound()
 							onCancelDownload?.invoke()
 							onDismissRequest()
 						},
@@ -193,6 +208,7 @@ fun SongSheet(
 						content = { Text(stringResource(Res.string.action_delete_download)) },
 						leadingContent = { Icon(Icons.Outlined.Delete, null) },
 						onClick = {
+							ctx.clickSound()
 							onDeleteDownload?.invoke()
 							onDismissRequest()
 						},
@@ -224,6 +240,7 @@ fun SongSheet(
 							)
 						},
 						onClick = {
+							ctx.clickSound()
 							onDownload?.invoke()
 							onDismissRequest()
 						},
@@ -239,6 +256,7 @@ fun SongSheet(
 						modifier = Modifier
 							.alpha(if (isOnline) 1f else 0.5f),
 						onClick = {
+							ctx.clickSound()
 							onDownload?.invoke()
 							onDismissRequest()
 						},
@@ -255,10 +273,9 @@ fun SongSheet(
 				modifier = Modifier
 					.alpha(if (isOnline) 1f else 0.5f),
 				onClick = {
-					if (isOnline) {
-						onDownload()
-						onDismissRequest()
-					}
+					ctx.clickSound()
+					onDownload()
+					onDismissRequest()
 				},
 				colors = colors,
 				enabled = isOnline,
@@ -271,6 +288,7 @@ fun SongSheet(
 				content = { Text(stringResource(Res.string.action_play_next)) },
 				leadingContent = { Icon(Icons.Outlined.QueuePlayNext, null) },
 				onClick = {
+					ctx.clickSound()
 					onPlayNext()
 					onDismissRequest()
 				},
@@ -284,6 +302,7 @@ fun SongSheet(
 				content = { Text(stringResource(Res.string.action_add_to_queue)) },
 				leadingContent = { Icon(Icons.Outlined.Queue, null) },
 				onClick = {
+					ctx.clickSound()
 					onAddToQueue()
 					onDismissRequest()
 				},
@@ -305,6 +324,7 @@ fun SongSheet(
 				},
 				leadingContent = { Icon(Icons.Outlined.PlaylistAdd, null) },
 				onClick = {
+					ctx.clickSound()
 					onAddToPlaylist()
 					onDismissRequest()
 				},
@@ -318,6 +338,7 @@ fun SongSheet(
 				content = { Text(stringResource(Res.string.action_remove_from_playlist)) },
 				leadingContent = { Icon(Icons.Outlined.PlaylistRemove, null) },
 				onClick = {
+					ctx.clickSound()
 					onRemoveFromPlaylist()
 					onDismissRequest()
 				},
@@ -329,15 +350,11 @@ fun SongSheet(
 		if (onViewAlbum != null) {
 			ListItem(
 				content = {
-					Text(
-						stringResource(
-							if (collection is DomainPlaylist) Res.string.action_view_playlist
-							else Res.string.action_view_album
-						)
-					)
+					Text(stringResource(Res.string.action_view_album))
 				},
 				leadingContent = { Icon(Icons.Outlined.Album, null) },
 				onClick = {
+					ctx.clickSound()
 					onViewAlbum()
 					onDismissRequest()
 				},
@@ -351,6 +368,7 @@ fun SongSheet(
 				content = { Text(stringResource(Res.string.action_view_artist)) },
 				leadingContent = { Icon(Icons.Outlined.Artist, null) },
 				onClick = {
+					ctx.clickSound()
 					onViewArtist()
 					onDismissRequest()
 				},
@@ -359,46 +377,53 @@ fun SongSheet(
 			)
 		}
 
-		if (sleepTimerLeft != null) {
-			ListItem(
-				content = {
-					Text(
-						stringResource(Res.string.action_sleep_timer_enabled, sleepTimerLeft.label()),
-						color = MaterialTheme.colorScheme.positive
-					)
-				},
-				leadingContent = {
-					Icon(
-						Icons.Outlined.Bedtime,
-						null,
-						tint = MaterialTheme.colorScheme.positive
-					)
-				},
-				onClick = {
-					sleepTimerSheetShown = true
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		} else {
-			ListItem(
-				content = {
-					Text(
-						stringResource(Res.string.action_sleep_timer)
-					)
-				},
-				leadingContent = {
-					Icon(
-						Icons.Outlined.Bedtime,
-						null
-					)
-				},
-				onClick = {
-					sleepTimerSheetShown = true
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
+		if (showSleepTimer) {
+			if (sleepTimerLeft != null) {
+				ListItem(
+					content = {
+						Text(
+							stringResource(
+								Res.string.action_sleep_timer_enabled,
+								sleepTimerLeft.label()
+							),
+							color = MaterialTheme.colorScheme.positive
+						)
+					},
+					leadingContent = {
+						Icon(
+							Icons.Outlined.Bedtime,
+							null,
+							tint = MaterialTheme.colorScheme.positive
+						)
+					},
+					onClick = {
+						ctx.clickSound()
+						sleepTimerSheetShown = true
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
+			} else {
+				ListItem(
+					content = {
+						Text(
+							stringResource(Res.string.action_sleep_timer)
+						)
+					},
+					leadingContent = {
+						Icon(
+							Icons.Outlined.Bedtime,
+							null
+						)
+					},
+					onClick = {
+						ctx.clickSound()
+						sleepTimerSheetShown = true
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
+			}
 		}
 
 		if (onTrackInfo != null) {
@@ -406,6 +431,7 @@ fun SongSheet(
 				content = { Text(stringResource(Res.string.action_track_info)) },
 				leadingContent = { Icon(Icons.Outlined.Info, null) },
 				onClick = {
+					ctx.clickSound()
 					onTrackInfo()
 					onDismissRequest()
 				},

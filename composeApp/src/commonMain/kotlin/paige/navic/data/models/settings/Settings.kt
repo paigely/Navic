@@ -4,6 +4,7 @@
 
 package paige.navic.data.models.settings
 
+import paige.navic.data.models.settings.enums.AnimationStyle
 import paige.navic.data.models.settings.enums.BottomBarCollapseMode
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.data.models.settings.enums.FontOption
@@ -11,6 +12,7 @@ import paige.navic.data.models.settings.enums.GridSize
 import paige.navic.data.models.settings.enums.MarqueeSpeed
 import paige.navic.data.models.settings.enums.MiniPlayerProgressStyle
 import paige.navic.data.models.settings.enums.MiniPlayerStyle
+import paige.navic.data.models.settings.enums.NavigationBarLabelVisibility
 import paige.navic.data.models.settings.enums.NavigationBarStyle
 import paige.navic.data.models.settings.enums.NowPlayingBackgroundStyle
 import paige.navic.data.models.settings.enums.NowPlayingSliderStyle
@@ -25,6 +27,7 @@ class Settings(
 ) : BasePreferenceManager(settings) {
 	var font by preference(FontOption.GoogleSans)
 	var fontPath by preference("")
+	var animationStyle by preference(AnimationStyle.Expressive)
 	var nowPlayingBackgroundStyle by preference(NowPlayingBackgroundStyle.Dynamic)
 	var swipeToSkip by preference(true)
 	var artGridRounding by preference(16f)
@@ -52,6 +55,7 @@ class Settings(
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)
 	var bottomBarVisibilityMode by preference(BottomBarVisibilityMode.Default)
 	var navigationBarStyle by preference(NavigationBarStyle.Normal)
+	var navigationBarLabelVisibility by preference(NavigationBarLabelVisibility.Always)
 	var miniPlayerStyle by preference(MiniPlayerStyle.Detached)
 	var miniPlayerProgressStyle by preference(MiniPlayerProgressStyle.Seekable)
 

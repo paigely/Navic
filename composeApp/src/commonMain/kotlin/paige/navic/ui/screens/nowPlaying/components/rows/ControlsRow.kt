@@ -24,7 +24,11 @@ import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingProgressB
 @Composable
 fun NowPlayingControlsRow(
 	modifier: Modifier = Modifier,
-	isLandscape: Boolean
+	isLandscape: Boolean,
+	songIsStarred: Boolean,
+	onSetSongIsStarred: (Boolean) -> Unit,
+	songRating: Int,
+	onSetSongRating: (Int) -> Unit
 ) {
 	var visible by rememberSaveable { mutableStateOf(false) }
 	val scale by animateFloatAsState(if (visible) 1f else 0f)
@@ -41,7 +45,12 @@ fun NowPlayingControlsRow(
 		verticalArrangement = Arrangement.Center
 	) {
 		Column {
-			NowPlayingInfoRow()
+			NowPlayingInfoRow(
+				songIsStarred = songIsStarred,
+				onSetSongIsStarred = onSetSongIsStarred,
+				songRating = songRating,
+				onSetSongRating = onSetSongRating
+			)
 			NowPlayingProgressBar()
 			NowPlayingDurationsRow()
 		}

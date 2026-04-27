@@ -55,9 +55,11 @@ fun LibraryScreenContent(
 	pagedAlbums: LazyPagingItems<DomainAlbum>,
 	selectedAlbum: DomainAlbum?,
 	selectedAlbumIsStarred: Boolean,
+	selectedAlbumRating: Int,
 	onSelectAlbum: (DomainAlbum) -> Unit,
 	onClearAlbumSelection: () -> Unit,
 	onStarSelectedAlbum: (Boolean) -> Unit,
+	onRateSelectedAlbum: (Int) -> Unit,
 
 	// artists
 	artistsState: UiState<ImmutableList<DomainArtist>>,
@@ -131,7 +133,9 @@ fun LibraryScreenContent(
 				onSetShareId = { onSetShareId(it) },
 				onPlayNext = onPlayAlbumNext,
 				onAddToQueue = onAddAlbumToQueue,
-				isOnline = isOnline
+				isOnline = isOnline,
+				rating = selectedAlbumRating,
+				onSetRating = onRateSelectedAlbum
 			)
 		}
 

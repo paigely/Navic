@@ -10,7 +10,6 @@ import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
-import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
@@ -56,13 +55,11 @@ import platform.UIKit.UIImage
 
 class IOSMediaPlayerViewModel(
 	stateRepository: PlayerStateRepository,
-	collectionRepository: CollectionRepository,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
 	syncManager: SyncManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
-	collectionRepository = collectionRepository,
 	downloadManager = downloadManager,
 	connectivityManager = connectivityManager
 ) {

@@ -2,6 +2,7 @@ package paige.navic.ui.screens.search.viewmodels
 
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
@@ -11,8 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.snapshotFlow
+import paige.navic.domain.models.DomainSong
 import paige.navic.domain.repositories.SearchRepository
+import paige.navic.domain.repositories.SongRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
 import paige.navic.utils.UiState
@@ -20,6 +22,7 @@ import paige.navic.utils.UiState
 @OptIn(FlowPreview::class)
 class SearchViewModel(
 	private val repository: SearchRepository,
+	private val songRepository: SongRepository,
 	connectivityManager: ConnectivityManager,
 	downloadManager: DownloadManager
 ) : ViewModel() {
@@ -28,6 +31,15 @@ class SearchViewModel(
 
 	private val _searchHistory = MutableStateFlow<List<String>>(emptyList())
 	val searchHistory = _searchHistory.asStateFlow()
+
+	private val _selectedSong = MutableStateFlow<DomainSong?>(null)
+	val selectedSong = _selectedSong.asStateFlow()
+
+	private val _selectedSongIsStarred = MutableStateFlow(false)
+	val selectedSongIsStarred = _selectedSongIsStarred.asStateFlow()
+
+	private val _selectedSongRating = MutableStateFlow(0)
+	val selectedSongRating = _selectedSongRating.asStateFlow()
 
 	val searchQuery = TextFieldState()
 
@@ -72,5 +84,41 @@ class SearchViewModel(
 		val current = _searchHistory.value.toMutableList()
 		current.remove(query)
 		_searchHistory.value = current
+	}
+
+	fun selectSong(song: DomainSong) {
+		viewModelScope.launch {
+			_selectedSong.value = song
+			_selectedSongIsStarred.value = songRepository.isSongStarred(song)
+			_selectedSongRating.value = songRepository.getSongRating(song)
+		}
+	}
+
+	fun starSelectedSong(starred: Boolean) {
+		viewModelScope.launch {
+			val selection = _selectedSong.value ?: return@launch
+			runCatching {
+				if (starred) {
+					songRepository.starSong(selection)
+				} else {
+					songRepository.unstarSong(selection)
+				}
+				_selectedSongIsStarred.value = starred
+			}
+		}
+	}
+
+	fun rateSelectedSong(rating: Int) {
+		viewModelScope.launch {
+			val selection = _selectedSong.value ?: return@launch
+			runCatching {
+				songRepository.rateSong(selection, rating)
+				_selectedSongRating.value = rating
+			}
+		}
+	}
+
+	fun clearSelectedSong() {
+		_selectedSong.value = null
 	}
 }

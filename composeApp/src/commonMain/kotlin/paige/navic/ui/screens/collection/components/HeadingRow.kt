@@ -21,6 +21,7 @@ import navic.composeapp.generated.resources.info_unknown_genre
 import navic.composeapp.generated.resources.info_unknown_year
 import navic.composeapp.generated.resources.subtitle_playlist
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.Screen
@@ -36,6 +37,7 @@ fun CollectionDetailScreenHeadingRow(
 	tab: String,
 	titleAlpha: Float
 ) {
+	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	with(LocalSharedTransitionScope.current) {
 		CoverArt(
@@ -50,8 +52,7 @@ fun CollectionDetailScreenHeadingRow(
 					animatedVisibilityScope = LocalNavAnimatedContentScope.current
 				)
 				.alpha(titleAlpha),
-			crossfadeMs = 0,
-			enabled = true
+			crossfadeMs = 0
 		)
 		Spacer(Modifier.height(10.dp))
 		Column(
@@ -75,6 +76,7 @@ fun CollectionDetailScreenHeadingRow(
 					subtitle,
 					color = MaterialTheme.colorScheme.primary,
 					modifier = Modifier.clickable(collection is DomainAlbum) {
+						ctx.clickSound()
 						(collection as? DomainAlbum)?.artistId?.let { id ->
 							backStack.add(Screen.ArtistDetail(id))
 						}

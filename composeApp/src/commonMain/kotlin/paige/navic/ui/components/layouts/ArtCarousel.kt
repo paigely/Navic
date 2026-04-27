@@ -64,6 +64,7 @@ fun CarouselItemScope.ArtCarouselItem(
 	coverArtId: String?,
 	title: String,
 	contentDescription: String?,
+	onSelect: () -> Unit = {},
 	onClick: () -> Unit = {}
 ) {
 	val ctx = LocalCtx.current
@@ -85,7 +86,7 @@ fun CarouselItemScope.ArtCarouselItem(
 				focusManager.clearFocus(true)
 				onClick()
 			},
-			enabled = true
+			onLongClick = onSelect
 		)
 
 		Text(

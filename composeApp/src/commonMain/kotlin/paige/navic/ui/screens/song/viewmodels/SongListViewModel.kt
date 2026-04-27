@@ -27,6 +27,9 @@ class SongListViewModel(
 	private val _starred = MutableStateFlow(false)
 	val starred = _starred.asStateFlow()
 
+	private val _selectedSongRating = MutableStateFlow(0)
+	val selectedSongRating = _selectedSongRating.asStateFlow()
+
 	private val _selectedSorting = MutableStateFlow(DomainSongListType.FrequentlyPlayed)
 	val selectedSorting = _selectedSorting.asStateFlow()
 
@@ -43,6 +46,7 @@ class SongListViewModel(
 		viewModelScope.launch {
 			_selectedSong.value = song
 			_starred.value = repository.isSongStarred(song)
+			_selectedSongRating.value = repository.getSongRating(song)
 		}
 	}
 
@@ -73,6 +77,16 @@ class SongListViewModel(
 					repository.unstarSong(selection)
 				}
 				_starred.value = starred
+			}
+		}
+	}
+
+	fun rateSelectedSong(rating: Int) {
+		viewModelScope.launch {
+			val selection = _selectedSong.value ?: return@launch
+			runCatching {
+				repository.rateSong(selection, rating)
+				_selectedSongRating.value = rating
 			}
 		}
 	}

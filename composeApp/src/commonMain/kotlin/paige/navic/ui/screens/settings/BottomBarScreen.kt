@@ -23,6 +23,7 @@ import navic.composeapp.generated.resources.option_bottom_bar_collapse_mode
 import navic.composeapp.generated.resources.option_bottom_bar_visibility_mode
 import navic.composeapp.generated.resources.option_mini_player_progress_style
 import navic.composeapp.generated.resources.option_mini_player_style
+import navic.composeapp.generated.resources.option_navigation_bar_label_visibility
 import navic.composeapp.generated.resources.option_navigation_bar_style
 import navic.composeapp.generated.resources.option_navigation_bar_tabs
 import navic.composeapp.generated.resources.option_swipe_to_skip
@@ -36,6 +37,7 @@ import paige.navic.data.models.settings.enums.BottomBarCollapseMode
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.data.models.settings.enums.MiniPlayerProgressStyle
 import paige.navic.data.models.settings.enums.MiniPlayerStyle
+import paige.navic.data.models.settings.enums.NavigationBarLabelVisibility
 import paige.navic.data.models.settings.enums.NavigationBarStyle
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
@@ -46,7 +48,6 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.settings.dialogs.NavtabsDialog
-import paige.navic.utils.fadeFromTop
 
 @Composable
 fun BottomBarScreen() {
@@ -69,7 +70,6 @@ fun BottomBarScreen() {
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
-					.fadeFromTop()
 			) {
 				Form {
 					SettingSwitchRow(
@@ -103,6 +103,14 @@ fun BottomBarScreen() {
 						selection = Settings.shared.navigationBarStyle,
 						onSelect = { Settings.shared.navigationBarStyle = it },
 						title = { Text(stringResource(Res.string.option_navigation_bar_style)) },
+					)
+
+					SettingSelectionRow(
+						items = NavigationBarLabelVisibility.entries.toImmutableList(),
+						label = { stringResource(it.displayName) },
+						selection = Settings.shared.navigationBarLabelVisibility,
+						onSelect = { Settings.shared.navigationBarLabelVisibility = it },
+						title = { Text(stringResource(Res.string.option_navigation_bar_label_visibility)) },
 					)
 
 					FormRow(

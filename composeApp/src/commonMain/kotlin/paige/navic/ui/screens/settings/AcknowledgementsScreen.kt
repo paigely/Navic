@@ -14,7 +14,6 @@ import navic.composeapp.generated.resources.title_acknowledgements
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.ui.components.layouts.NestedTopBar
-import paige.navic.utils.fadeFromTop
 
 @Composable
 fun SettingsAcknowledgementsScreen() {
@@ -34,8 +33,7 @@ fun SettingsAcknowledgementsScreen() {
 		LibrariesContainer(
 			libraries,
 			modifier = Modifier
-				.fillMaxSize()
-				.fadeFromTop(),
+				.fillMaxSize(),
 			contentPadding = innerPadding
 		)
 	}

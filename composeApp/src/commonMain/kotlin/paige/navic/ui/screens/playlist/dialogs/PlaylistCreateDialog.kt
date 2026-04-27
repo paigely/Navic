@@ -24,7 +24,6 @@ import navic.composeapp.generated.resources.title_create_playlist
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.domain.models.DomainSong
@@ -46,7 +45,6 @@ fun PlaylistCreateDialog(
 		key = songs.joinToString { it.id },
 		parameters = { parametersOf(songs) }
 	)
-	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val state by viewModel.creationState.collectAsState()
 
@@ -74,7 +72,6 @@ fun PlaylistCreateDialog(
 		buttons = {
 			FormButton(
 				onClick = {
-					ctx.clickSound()
 					viewModel.create()
 				},
 				enabled = state !is UiState.Loading && viewModel.name.text.isNotBlank(),
@@ -90,7 +87,6 @@ fun PlaylistCreateDialog(
 			}
 			FormButton(
 				onClick = {
-					ctx.clickSound()
 					onDismissRequest()
 				},
 				enabled = state !is UiState.Loading,

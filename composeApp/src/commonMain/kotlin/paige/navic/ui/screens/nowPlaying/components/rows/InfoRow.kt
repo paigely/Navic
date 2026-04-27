@@ -24,7 +24,12 @@ import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingMoreButto
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingStarButton
 
 @Composable
-fun NowPlayingInfoRow() {
+fun NowPlayingInfoRow(
+	songIsStarred: Boolean,
+	onSetSongIsStarred: (Boolean) -> Unit,
+	songRating: Int,
+	onSetSongRating: (Int) -> Unit
+) {
 	val backStack = LocalNavStack.current
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
@@ -85,8 +90,14 @@ fun NowPlayingInfoRow() {
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(10.dp)
 		) {
-			NowPlayingStarButton()
-			NowPlayingMoreButton()
+			NowPlayingStarButton(
+				songIsStarred = songIsStarred,
+				onSetSongIsStarred = onSetSongIsStarred
+			)
+			NowPlayingMoreButton(
+				songRating = songRating,
+				onSetSongRating = onSetSongRating
+			)
 		}
 	}
 }

@@ -18,7 +18,9 @@ import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.domain.repositories.CollectionRepository
+import paige.navic.domain.repositories.SongRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
 import paige.navic.shared.Logger
@@ -27,6 +29,8 @@ import paige.navic.utils.UiState
 class CollectionDetailViewModel(
 	private val collectionId: String,
 	private val repository: CollectionRepository,
+	private val songRepository: SongRepository,
+	private val albumRepository: AlbumRepository,
 	private val downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
@@ -64,8 +68,14 @@ class CollectionDetailViewModel(
 	private val _albumInfoState = MutableStateFlow<UiState<DomainAlbumInfo>>(UiState.Loading())
 	val albumInfoState = _albumInfoState.asStateFlow()
 
-	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
-	val starredState = _starredState.asStateFlow()
+	private val _selectedSongIsStarred = MutableStateFlow(false)
+	val selectedSongIsStarred = _selectedSongIsStarred.asStateFlow()
+
+	private val _selectedSongRating = MutableStateFlow(0)
+	val selectedSongRating = _selectedSongRating.asStateFlow()
+
+	private val _rating = MutableStateFlow(0)
+	val rating = _rating.asStateFlow()
 
 	val listState = LazyListState()
 
@@ -80,6 +90,7 @@ class CollectionDetailViewModel(
 			repository.getCollectionFlow(fullRefresh, collectionId).collect {
 				_collectionState.value = it
 				if (it.data is DomainAlbum) {
+					_rating.value = albumRepository.getAlbumRating(it.data as DomainAlbum)
 					try {
 						val albumInfo = repository.getAlbumInfo(collectionId)
 						_albumInfoState.value = UiState.Success(albumInfo.toDomainModel())
@@ -94,14 +105,8 @@ class CollectionDetailViewModel(
 	fun selectSong(song: DomainSong) {
 		viewModelScope.launch {
 			_selectedSong.value = song
-			_starredState.value = UiState.Loading()
-			_albumInfoState.value = UiState.Loading()
-			try {
-				val isStarred = repository.isSongStarred(song.id)
-				_starredState.value = UiState.Success(isStarred)
-			} catch (e: Exception) {
-				_starredState.value = UiState.Error(e)
-			}
+			_selectedSongIsStarred.value = songRepository.isSongStarred(song)
+			_selectedSongRating.value = songRepository.getSongRating(song)
 		}
 	}
 
@@ -134,20 +139,39 @@ class CollectionDetailViewModel(
 
 	fun starSelectedSong() {
 		viewModelScope.launch {
-			try {
-				repository.starSong(_selectedSong.value!!)
-			} catch (e: Exception) {
-				Logger.e("CollectionDetailViewModel", "Failed to star song", e)
+			val selection = _selectedSong.value ?: return@launch
+			runCatching {
+				songRepository.starSong(selection)
+				_selectedSongIsStarred.value = true
 			}
 		}
 	}
 
 	fun unstarSelectedSong() {
 		viewModelScope.launch {
-			try {
-				repository.unstarSong(_selectedSong.value!!)
-			} catch (e: Exception) {
-				Logger.e("CollectionDetailViewModel", "Failed to unstar song", e)
+			val selection = _selectedSong.value ?: return@launch
+			runCatching {
+				songRepository.unstarSong(selection)
+				_selectedSongIsStarred.value = false
+			}
+		}
+	}
+
+	fun rateSelectedSong(rating: Int) {
+		viewModelScope.launch {
+			val selection = _selectedSong.value ?: return@launch
+			runCatching {
+				songRepository.rateSong(selection, rating)
+				_selectedSongRating.value = rating
+			}
+		}
+	}
+
+	fun rateAlbum(rating: Int) {
+		viewModelScope.launch {
+			(_collectionState.value.data as? DomainAlbum)?.let { album ->
+				albumRepository.rateAlbum(album, rating)
+				_rating.value = rating
 			}
 		}
 	}

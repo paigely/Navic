@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
 import paige.navic.domain.models.DomainPlaylistListType
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
@@ -25,10 +26,12 @@ fun PlaylistListScreenSortButton(
 	selectedReversed: Boolean,
 	onSetReversed: (Boolean) -> Unit
 ) {
+	val ctx = LocalCtx.current
 	val entries = remember { DomainPlaylistListType.entries.toImmutableList() }
 	var expanded by remember { mutableStateOf(false) }
 	if (!nested) {
 		IconButton(onClick = {
+			ctx.clickSound()
 			expanded = true
 		}) {
 			Icon(
@@ -38,6 +41,7 @@ fun PlaylistListScreenSortButton(
 		}
 	} else {
 		TopBarButton({
+			ctx.clickSound()
 			expanded = true
 		}) {
 			Icon(

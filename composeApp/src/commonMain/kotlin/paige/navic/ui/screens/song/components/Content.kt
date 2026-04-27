@@ -15,15 +15,17 @@ import paige.navic.utils.UiState
 
 fun LazyListScope.songListScreenContent(
 	state: UiState<ImmutableList<DomainSong>>,
-	starred: Boolean,
 	selectedSong: DomainSong?,
+	selectedSongIsStarred: Boolean,
+	selectedSongRating: Int,
 	onUpdateSelection: (DomainSong) -> Unit,
 	onClearSelection: () -> Unit,
 	onSetShareId: (String) -> Unit,
 	onSetStarred: (Boolean) -> Unit,
 	onPlayNext: (DomainSong) -> Unit,
 	onAddToQueue: (DomainSong) -> Unit,
-	onPlaySong: (DomainSong) -> Unit
+	onPlaySong: (DomainSong) -> Unit,
+	onSetRating: (Int) -> Unit
 ) {
 	val data = state.data.orEmpty()
 	if (data.isNotEmpty()) {
@@ -32,14 +34,16 @@ fun LazyListScope.songListScreenContent(
 				modifier = Modifier.animateItem(),
 				song = song,
 				selected = song == selectedSong,
-				starred = starred,
+				starred = selectedSongIsStarred,
+				rating = selectedSongRating,
 				onSelect = { onUpdateSelection(song) },
 				onDeselect = { onClearSelection() },
 				onSetStarred = { onSetStarred(it) },
 				onSetShareId = onSetShareId,
 				onPlayNext = { onPlayNext(song) },
 				onAddToQueue = { onAddToQueue(song) },
-				onClick = { onPlaySong(song) }
+				onClick = { onPlaySong(song) },
+				onSetRating = onSetRating
 			)
 		}
 	} else {

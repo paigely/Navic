@@ -31,13 +31,13 @@ import navic.composeapp.generated.resources.title_fonts_external
 import navic.composeapp.generated.resources.title_fonts_inbuilt
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.FontOption
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.theme.googleSans
-import paige.navic.utils.fadeFromTop
 
 @Composable
 fun FontsScreen() {
@@ -48,7 +48,6 @@ fun FontsScreen() {
 			LocalMinimumInteractiveComponentSize provides 0.dp
 		) {
 			LazyColumn(
-				modifier = Modifier.fadeFromTop(),
 				verticalArrangement = Arrangement.spacedBy(3.dp),
 				contentPadding = contentPadding + PaddingValues(
 					top = 16.dp, end = 16.dp, start = 16.dp
@@ -116,9 +115,13 @@ private fun FontRow(
 	count: Int,
 	onClick: () -> Unit
 ) {
+	val ctx = LocalCtx.current
 	val color = MaterialTheme.colorScheme.surfaceContainer
 	SegmentedListItem(
-		onClick = onClick,
+		onClick = {
+			ctx.clickSound()
+			onClick()
+		},
 		selected = selected,
 		colors = ListItemDefaults.colors(
 			containerColor = color,

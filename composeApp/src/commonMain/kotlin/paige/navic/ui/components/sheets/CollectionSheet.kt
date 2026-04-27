@@ -25,8 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_add_to_playlist
+import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_cancel_download
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_download
@@ -37,8 +37,9 @@ import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
 import navic.composeapp.generated.resources.count_songs
-import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainAlbum
@@ -52,11 +53,13 @@ import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.PlaylistRemove
-import paige.navic.icons.outlined.Share
-import paige.navic.icons.outlined.Star
 import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.QueuePlayNext
+import paige.navic.icons.outlined.Share
+import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.components.common.MarqueeText
+import paige.navic.ui.components.common.RatingRow
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -77,7 +80,10 @@ fun CollectionSheet(
 	starred: Boolean? = null,
 	onSetStarred: ((Boolean) -> Unit)? = null,
 	onDelete: (() -> Unit)? = null,
+	rating: Int? = null,
+	onSetRating: ((Int) -> Unit)? = null
 ) {
+	val ctx = LocalCtx.current
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
 		containerColor = Color.Transparent,
@@ -102,25 +108,29 @@ fun CollectionSheet(
 					shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 				)
 			},
-			headlineContent = { Text(collection?.name.orEmpty()) },
+			headlineContent = { MarqueeText(collection?.name.orEmpty()) },
 			supportingContent = {
-				Text(
+				MarqueeText(
 					listOfNotNull(
-						collection?.name,
 						(collection as? DomainAlbum)?.artistName,
 						(collection as? DomainPlaylist)?.comment,
 						(collection as? DomainAlbum)?.genre,
 						(collection as? DomainAlbum)?.year,
-						pluralStringResource(
-							Res.plurals.count_songs,
-							if (collection != null) collection.songCount else 0,
-							if (collection != null) collection.songCount else 0
-						)
+						collection?.songCount?.let {
+							pluralStringResource(Res.plurals.count_songs, it, it)
+						}
 					).joinToString(" • ")
 				)
 			},
 			colors = colors
 		)
+		if (rating != null && onSetRating != null) {
+			RatingRow(
+				rating = rating,
+				setRating = onSetRating
+			)
+			Spacer(Modifier.height(14.dp))
+		}
 
 		HorizontalDivider(Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
 
@@ -129,6 +139,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_view_on_lastfm)) },
 				leadingContent = { Icon(Icons.Brand.Lastfm, null) },
 				onClick = {
+					ctx.clickSound()
 					onViewOnLastFm(albumInfo.lastFmUrl)
 					onDismissRequest()
 				},
@@ -142,6 +153,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_view_on_musicbrainz)) },
 				leadingContent = { Icon(Icons.Brand.Musicbrainz, null) },
 				onClick = {
+					ctx.clickSound()
 					onViewOnMusicBrainz(albumInfo.musicBrainzId)
 					onDismissRequest()
 				},
@@ -155,6 +167,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_share)) },
 				leadingContent = { Icon(Icons.Outlined.Share, null) },
 				onClick = {
+					ctx.clickSound()
 					onShare()
 					onDismissRequest()
 				},
@@ -168,6 +181,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_play_next)) },
 				leadingContent = { Icon(Icons.Outlined.QueuePlayNext, null) },
 				onClick = {
+					ctx.clickSound()
 					onPlayNext()
 					onDismissRequest()
 				},
@@ -181,6 +195,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_add_to_queue)) },
 				leadingContent = { Icon(Icons.Outlined.Queue, null) },
 				onClick = {
+					ctx.clickSound()
 					onAddToQueue()
 					onDismissRequest()
 				},
@@ -194,6 +209,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_add_to_playlist)) },
 				leadingContent = { Icon(Icons.Outlined.PlaylistAdd, null) },
 				onClick = {
+					ctx.clickSound()
 					onAddAllToPlaylist()
 					onDismissRequest()
 				},
@@ -211,6 +227,7 @@ fun CollectionSheet(
 					Icon(if (starred) Icons.Filled.Star else Icons.Outlined.Star, null)
 				},
 				onClick = {
+					ctx.clickSound()
 					onSetStarred(!starred)
 					onDismissRequest()
 				},
@@ -240,6 +257,7 @@ fun CollectionSheet(
 				modifier = Modifier
 					.alpha(if (enabled) 1f else 0.5f),
 				onClick = {
+					ctx.clickSound()
 					if (!downloading) {
 						onDownloadAll()
 					} else {
@@ -258,6 +276,7 @@ fun CollectionSheet(
 				content = { Text(stringResource(Res.string.action_delete)) },
 				leadingContent = { Icon(Icons.Outlined.PlaylistRemove, null) },
 				onClick = {
+					ctx.clickSound()
 					onDelete()
 					onDismissRequest()
 				},

@@ -36,7 +36,6 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.settings.dialogs.NowPlayingSliderStyleDialog
-import paige.navic.utils.fadeFromTop
 
 @Composable
 fun SettingsNowPlayingScreen() {
@@ -58,7 +57,6 @@ fun SettingsNowPlayingScreen() {
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
-					.fadeFromTop()
 			) {
 				Form {
 					SettingSwitchRow(

@@ -14,7 +14,7 @@ import paige.navic.ui.components.layouts.ArtCarouselItem
 fun LazyListScope.collectionDetailScreenMoreByArtistRow(
 	artistName: String,
 	artistAlbums: List<DomainAlbum>,
-	tab: String
+	tab: String,
 ) {
 	item {
 		val backStack = LocalNavStack.current

@@ -15,18 +15,11 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -56,30 +49,38 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_navigate_back
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.info_lyrics_provider
 import navic.composeapp.generated.resources.info_no_lyrics
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import paige.navic.LocalCtx
+import paige.navic.LocalNavStack
+import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.ToolbarPosition
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
+import paige.navic.icons.outlined.KeyboardArrowDown
 import paige.navic.icons.outlined.Lyrics
 import paige.navic.icons.outlined.Share
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.KeepScreenOn
+import paige.navic.ui.components.layouts.SheetScaffold
+import paige.navic.ui.components.layouts.TopBarButton
+import paige.navic.ui.components.toolbars.SheetToolbar
 import paige.navic.ui.screens.lyrics.components.LyricsScreenKaraokeText
 import paige.navic.ui.screens.lyrics.components.LyricsScreenLoadingView
 import paige.navic.ui.screens.lyrics.dialogs.LyricsShareSheet
 import paige.navic.ui.screens.lyrics.viewmodels.LyricsScreenViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.calculateWordProgress
-import paige.navic.utils.fadeFromTop
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -88,6 +89,8 @@ import kotlin.time.Duration.Companion.milliseconds
 fun LyricsScreen(
 	song: DomainSong?
 ) {
+	val ctx = LocalCtx.current
+	val backStack = LocalNavStack.current
 	val viewModel = koinViewModel<LyricsScreenViewModel>(
 		key = song?.id,
 		parameters = { parametersOf(song) }
@@ -131,7 +134,84 @@ fun LyricsScreen(
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
 
-	Box(modifier = Modifier.fillMaxSize()) {
+	SheetScaffold(
+		toolbar = { windowInsets ->
+			SheetToolbar(
+				windowInsets = windowInsets,
+				navigationIcon = {
+					TopBarButton(
+						onClick = { backStack.remove(Screen.Lyrics) },
+						content = {
+							Icon(
+								imageVector = Icons.Outlined.KeyboardArrowDown,
+								contentDescription = stringResource(Res.string.action_navigate_back)
+							)
+						}
+					)
+				}
+			)
+		},
+		floatingActionButton = {
+			Row(
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.spacedBy(12.dp)
+			) {
+				AnimatedVisibility(
+					visible = isSelectionMode && selectedIndices.isNotEmpty(),
+					enter = scaleIn() + fadeIn(),
+					exit = scaleOut() + fadeOut()
+				) {
+					IconButton(
+						modifier = Modifier
+							.size(48.dp)
+							.background(
+								color = MaterialTheme.colorScheme.onPrimary,
+								shape = MaterialTheme.shapes.medium
+							),
+						onClick = {
+							ctx.clickSound()
+							showShareSheet = true
+						}
+					) {
+						Icon(
+							imageVector = Icons.Outlined.Check,
+							contentDescription = stringResource(Res.string.action_share)
+						)
+					}
+				}
+				IconButton(
+					modifier = Modifier
+						.size(48.dp)
+						.background(
+							color = if (isSelectionMode) MaterialTheme.colorScheme.primary else Color.Black.copy(
+								alpha = 0.2f
+							),
+							shape = MaterialTheme.shapes.medium
+						),
+					onClick = {
+						ctx.clickSound()
+						if (isSelectionMode) {
+							isSelectionMode = false
+							selectedIndices.clear()
+							if (wasPlayingBeforeSelection) {
+								player.resume()
+							}
+						} else {
+							wasPlayingBeforeSelection = !playerState.isPaused
+							player.pause()
+							isSelectionMode = true
+						}
+					}) {
+					Icon(
+						imageVector = if (isSelectionMode) Icons.Outlined.Close else Icons.Outlined.Share,
+						contentDescription = null,
+						tint = if (isSelectionMode) MaterialTheme.colorScheme.onPrimary else Color.White
+					)
+				}
+			}
+		},
+		toolbarPosition = ToolbarPosition.Top
+	) { contentPadding ->
 		AnimatedContent(
 			state,
 			modifier = Modifier.fillMaxSize(),
@@ -207,11 +287,9 @@ fun LyricsScreen(
 						}
 
 						LazyColumn(
-							Modifier.fillMaxSize().fadeFromTop(),
+							Modifier.fillMaxSize(),
 							state = listState,
-							contentPadding = WindowInsets.statusBars.asPaddingValues()
-								+ WindowInsets.systemBars.asPaddingValues()
-								+ PaddingValues(vertical = 40.dp)
+							contentPadding = contentPadding
 						) {
 							itemsIndexed(lyrics) { index, line ->
 								val isActive = index == activeIndex
@@ -362,62 +440,6 @@ fun LyricsScreen(
 					} else {
 						placeholder()
 					}
-				}
-			}
-		}
-		Row(
-			modifier = Modifier
-				.align(Alignment.BottomStart)
-				.padding(12.dp),
-			verticalAlignment = Alignment.CenterVertically,
-			horizontalArrangement = Arrangement.spacedBy(12.dp)
-		) {
-			IconButton(
-				modifier = Modifier
-					.size(48.dp)
-					.background(
-						color = if (isSelectionMode) MaterialTheme.colorScheme.primary else Color.Black.copy(
-							alpha = 0.2f
-						),
-						shape = MaterialTheme.shapes.medium
-					),
-				onClick = {
-					if (isSelectionMode) {
-						isSelectionMode = false
-						selectedIndices.clear()
-						if (wasPlayingBeforeSelection) {
-							player.resume()
-						}
-					} else {
-						wasPlayingBeforeSelection = !playerState.isPaused
-						player.pause()
-						isSelectionMode = true
-					}
-				}) {
-				Icon(
-					imageVector = if (isSelectionMode) Icons.Outlined.Close else Icons.Outlined.Share,
-					contentDescription = null,
-					tint = if (isSelectionMode) MaterialTheme.colorScheme.onPrimary else Color.White
-				)
-			}
-			AnimatedVisibility(
-				visible = isSelectionMode && selectedIndices.isNotEmpty(),
-				enter = scaleIn() + fadeIn(),
-				exit = scaleOut() + fadeOut()
-			) {
-				IconButton(
-					modifier = Modifier
-						.size(48.dp)
-						.background(
-							color = MaterialTheme.colorScheme.onPrimary,
-							shape = MaterialTheme.shapes.medium
-						),
-					onClick = { showShareSheet = true }
-				) {
-					Icon(
-						imageVector = Icons.Outlined.Check,
-						contentDescription = stringResource(Res.string.action_share)
-					)
 				}
 			}
 		}

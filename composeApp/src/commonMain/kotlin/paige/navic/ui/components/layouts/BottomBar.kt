@@ -39,6 +39,7 @@ import paige.navic.data.models.NavbarConfig
 import paige.navic.data.models.NavbarTab
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.NavigationBarLabelVisibility
 import paige.navic.data.models.settings.enums.NavigationBarStyle
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Album
@@ -156,6 +157,8 @@ fun BottomBar(
 					NavigationBarItem(
 						selected = selected,
 						enabled = enabled,
+						alwaysShowLabel = Settings.shared.navigationBarLabelVisibility
+							== NavigationBarLabelVisibility.Always,
 						onClick = {
 							ctx.clickSound()
 							backStack.apply {

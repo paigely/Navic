@@ -5,12 +5,15 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
+import paige.navic.data.database.paging.RandomAlbumPagingSource
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import kotlin.time.Clock
@@ -24,6 +27,26 @@ class AlbumRepository(
 		listType: DomainAlbumListType,
 		reversed: Boolean
 	): Flow<PagingData<DomainAlbum>> {
+
+		if (listType == DomainAlbumListType.Random) {
+			return flow {
+				val randomIds = albumDao.getRandomAlbumIds()
+
+				val randomPager = Pager(
+					config = PagingConfig(
+						pageSize = 30,
+						enablePlaceholders = true,
+						prefetchDistance = 15
+					),
+					pagingSourceFactory = { RandomAlbumPagingSource(albumDao, randomIds) }
+				).flow.map { pagingData ->
+					pagingData.map { it.toDomainModel() }
+				}
+
+				emitAll(randomPager)
+			}
+		}
+
 		return Pager(
 			config = PagingConfig(
 				pageSize = 30,
@@ -49,7 +72,6 @@ class AlbumRepository(
 					}
 					DomainAlbumListType.Starred -> albumDao.getStarredAlbums()
 					DomainAlbumListType.Downloaded -> albumDao.getDownloadedAlbums()
-					DomainAlbumListType.Random -> albumDao.getAlbumsRandom()
 					else -> albumDao.getAlbumsByArtistAsc()
 				}
 			}
@@ -63,6 +85,7 @@ class AlbumRepository(
 	}
 
 	suspend fun isAlbumStarred(album: DomainAlbum) = albumDao.isAlbumStarred(album.id)
+	suspend fun getAlbumRating(album: DomainAlbum) = albumDao.getAlbumRating(album.id) ?: 0
 
 	suspend fun starAlbum(album: DomainAlbum) {
 		val starredEntity = album.toEntity().copy(
@@ -78,5 +101,20 @@ class AlbumRepository(
 		)
 		albumDao.insertAlbum(unstarredEntity)
 		syncManager.enqueueAction(SyncActionType.UNSTAR, album.id)
+	}
+
+	suspend fun rateAlbum(album: DomainAlbum, rating: Int) {
+		val ratedEntity = album.toEntity().copy(
+			userRating = rating
+		)
+		albumDao.insertAlbum(ratedEntity)
+		when (rating) {
+			0 -> syncManager.enqueueAction(SyncActionType.STAR_0, album.id)
+			1 -> syncManager.enqueueAction(SyncActionType.STAR_1, album.id)
+			2 -> syncManager.enqueueAction(SyncActionType.STAR_2, album.id)
+			3 -> syncManager.enqueueAction(SyncActionType.STAR_3, album.id)
+			4 -> syncManager.enqueueAction(SyncActionType.STAR_4, album.id)
+			5 -> syncManager.enqueueAction(SyncActionType.STAR_5, album.id)
+		}
 	}
 }

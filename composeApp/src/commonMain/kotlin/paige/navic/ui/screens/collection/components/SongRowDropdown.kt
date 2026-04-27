@@ -18,7 +18,6 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import paige.navic.utils.UiState
 
 @Composable
 fun CollectionDetailScreenSongRowDropdown(
@@ -30,7 +29,7 @@ fun CollectionDetailScreenSongRowDropdown(
 	collection: DomainSongCollection,
 	song: DomainSong,
 	onRemoveFromPlaylist: () -> Unit,
-	starredState: UiState<Boolean>,
+	starred: Boolean,
 	downloadStatus: DownloadStatus?,
 	isOnline: Boolean,
 	onDownload: () -> Unit,
@@ -38,6 +37,8 @@ fun CollectionDetailScreenSongRowDropdown(
 	onDeleteDownload: () -> Unit,
 	onPlayNext: () -> Unit,
 	onAddToQueue: () -> Unit,
+	rating: Int,
+	onSetRating: (Int) -> Unit
 ) {
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val backStack = LocalNavStack.current
@@ -49,7 +50,7 @@ fun CollectionDetailScreenSongRowDropdown(
 			onDismissRequest = onDismissRequest,
 			song = song,
 			collection = collection,
-			starred = (starredState as? UiState.Success)?.data,
+			starred = starred,
 			onSetStarred = { starred ->
 				if (starred) onAddStar() else onRemoveStar()
 			},
@@ -89,7 +90,9 @@ fun CollectionDetailScreenSongRowDropdown(
 			isOnline = isOnline,
 			onDownload = onDownload,
 			onCancelDownload = onCancelDownload,
-			onDeleteDownload = onDeleteDownload
+			onDeleteDownload = onDeleteDownload,
+			rating = rating,
+			onSetRating = onSetRating
 		)
 	}
 

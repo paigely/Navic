@@ -5,23 +5,20 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,20 +27,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_from_queue
 import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.info_not_available_offline
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.DragHandle
 import paige.navic.icons.outlined.Offline
+import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.Waveform
 import paige.navic.utils.DraggableListState
@@ -74,7 +71,7 @@ fun QueueScreenItem(
 	val dismissState = rememberSwipeToDismissBoxState()
 
 	LaunchedEffect(dismissState.currentValue) {
-		if (dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd) {
+		if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
 			onRemove()
 			dismissState.snapTo(SwipeToDismissBoxValue.Settled)
 		}
@@ -96,18 +93,18 @@ fun QueueScreenItem(
 
 	SwipeToDismissBox(
 		state = dismissState,
-		enableDismissFromEndToStart = false,
-		enableDismissFromStartToEnd = true,
+		enableDismissFromEndToStart = true,
+		enableDismissFromStartToEnd = false,
 		backgroundContent = {
 			val backgroundColor by animateColorAsState(
 				targetValue = when (dismissState.targetValue) {
-					SwipeToDismissBoxValue.StartToEnd -> Color.Red
+					SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.errorContainer
 					else -> Color.Transparent
 				}
 			)
 			val iconColor by animateColorAsState(
 				targetValue = when (dismissState.targetValue) {
-					SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.onErrorContainer
+					SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.onErrorContainer
 					else -> MaterialTheme.colorScheme.onSurfaceVariant
 				}
 			)
@@ -116,9 +113,9 @@ fun QueueScreenItem(
 				modifier = Modifier
 					.fillMaxSize()
 					.clip(itemShape.shape)
-					.background(color = backgroundColor)
+					.background(backgroundColor)
 					.padding(horizontal = 20.dp),
-				contentAlignment = Alignment.CenterStart
+				contentAlignment = Alignment.CenterEnd
 			) {
 				Icon(
 					imageVector = Icons.Outlined.Delete,
@@ -148,15 +145,10 @@ fun QueueScreenItem(
 					content = { MarqueeText(song.title) },
 					supportingContent = { MarqueeText(song.artistName) },
 					leadingContent = {
-						Text(
-							text = "${index + 1}",
-							modifier = Modifier.width(25.dp),
-							style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),
-							fontWeight = FontWeight(400),
-							color = MaterialTheme.colorScheme.onSurfaceVariant,
-							maxLines = 1,
-							textAlign = TextAlign.Center,
-							autoSize = TextAutoSize.StepBased(6.sp, 13.sp)
+						CoverArt(
+							modifier = Modifier.size(48.dp),
+							coverArtId = song.coverArtId,
+							shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 						)
 					},
 					trailingContent = {
@@ -187,7 +179,8 @@ fun QueueScreenItem(
 								)
 							}
 						}
-					}
+					},
+					contentPadding = PaddingValues(10.dp)
 				)
 			}
 		}
