@@ -42,7 +42,6 @@ import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.domain.repositories.SongRepository
 import paige.navic.managers.AndroidScrobbleManager
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
@@ -194,6 +193,21 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
+	private fun getStreamUrl(id: String) =
+		when (connectivityManager.isCellular.value) {
+			true -> SessionManager.api.getStreamUrl(
+				id,
+				Settings.shared.streamingQualityCellular.bitrateAndroid,
+				Settings.shared.streamingQualityCellular.containerAndroid
+			).toUri()
+
+			false -> SessionManager.api.getStreamUrl(
+				id,
+				Settings.shared.streamingQualityWifi.bitrateAndroid,
+				Settings.shared.streamingQualityWifi.containerAndroid
+			).toUri()
+		}.buildUpon().appendQueryParameter("estimateContentLength", "true").build()
+
 	private fun setupController() {
 		viewModelScope.launch {
 			controller?.apply {
@@ -271,7 +285,7 @@ class AndroidMediaPlayerViewModel(
 							player.replaceMediaItem(i, newItem)
 						} else if (localPath == null && isCurrentlyLocal) {
 							val newItem = item.buildUpon()
-								.setUri(SessionManager.api.getStreamUrl(id).toUri())
+								.setUri(getStreamUrl(id))
 								.build()
 							player.replaceMediaItem(i, newItem)
 						}
@@ -718,7 +732,7 @@ class AndroidMediaPlayerViewModel(
 				if (localPath != null) {
 					File(localPath).toUri()
 				} else {
-					SessionManager.api.getStreamUrl(id).toUri()
+					getStreamUrl(id)
 				}
 			}
 		}

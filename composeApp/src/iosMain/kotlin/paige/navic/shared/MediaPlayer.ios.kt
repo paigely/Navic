@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
 import paige.navic.data.database.SyncManager
+import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
@@ -467,6 +468,21 @@ class IOSMediaPlayerViewModel(
 		updateNowPlayingInfo(song)
 	}
 
+	private fun getStreamUrl(id: String) =
+		when (connectivityManager.isCellular.value) {
+			true -> SessionManager.api.getStreamUrl(
+				id,
+				Settings.shared.streamingQualityCellular.bitrateIos,
+				Settings.shared.streamingQualityCellular.containerIos
+			)
+
+			false -> SessionManager.api.getStreamUrl(
+				id,
+				Settings.shared.streamingQualityWifi.bitrateIos,
+				Settings.shared.streamingQualityWifi.containerIos
+			)
+		} + "&estimateContentLength=true"
+
 	private fun getSongUrl(song: DomainSong): NSURL? {
 		return when {
 			song.id.startsWith("radio_") && !song.filePath.isNullOrEmpty() -> {
@@ -477,7 +493,7 @@ class IOSMediaPlayerViewModel(
 				if (localPath != null) {
 					NSURL.fileURLWithPath(localPath)
 				} else {
-					NSURL.URLWithString(SessionManager.api.getStreamUrl(song.id))
+					NSURL.URLWithString(getStreamUrl(song.id))
 				}
 			}
 		}

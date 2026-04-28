@@ -49,6 +49,9 @@
 	<string name="title_update">Update available</string>
 	<string name="title_changelog">Release notes</string>
 	<string name="title_network">Network</string>
+	<string name="title_streaming_quality">Streaming quality</string>
+	<string name="title_wifi">Wi-Fi</string>
+	<string name="title_cellular">Cellular</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
@@ -66,6 +69,7 @@
 	<string name="subtitle_now_playing_background_style">Choose static if you have performance issues</string>
 	<string name="subtitle_check_for_updates">It is recommended to leave this on, as some updates provide important bug fixes</string>
 	<string name="subtitle_offline_mode">Dictates when the app should go in an offline mode. Requires application restart</string>
+	<string name="subtitle_streaming_quality">Adjust the quality of streamed music</string>
 
 	<string name="option_now_playing_background_style">Background style</string>
 	<string name="option_now_playing_background_style_static">Static</string>
@@ -135,6 +139,10 @@
 	<string name="option_animation_style">Animation style</string>
 	<string name="option_animation_style_expressive">Expressive</string>
 	<string name="option_animation_style_standard">Standard</string>
+	<string name="option_quality_low">Low</string>
+	<string name="option_quality_medium">Medium</string>
+	<string name="option_quality_high">High</string>
+	<string name="option_quality_lossless">Lossless</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>
@@ -148,6 +156,7 @@
 	<string name="info_library_download_warning">Are you sure you want to download your entire library? \nThis will skip items you've already downloaded, but it may still consume a significant amount of storage space and data.</string>
 	<string name="info_library_download">Save all synced music for offline playback</string>
 	<string name="info_progress">Progress</string>
+	<string name="info_in_use">(in use)</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>
@@ -351,6 +360,7 @@
 	<string name="info_login_description_middle">Navidrome</string>
 	<string name="info_login_description_end">instance.</string>
 	<string name="info_exception_handler">This will immediately crash the application. Are you sure?</string>
+	<string name="info_streaming_quality">Higher quality presets will use more data. The difference between lossless and high quality are imperceptible with typical headphones/speakers.</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>
