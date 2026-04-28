@@ -145,8 +145,8 @@
     <string name="info_track_name">Título</string>
     <string name="info_track_artist">Artista(s)</string>
     <string name="info_track_artist_id">ID del Artista</string>
-    <string name="info_track_bitrate">Tasa de bit</string>
-    <string name="info_track_bit_depth">Profundidad de bit</string>
+    <string name="info_track_bitrate">Tasa de bits</string>
+    <string name="info_track_bit_depth">Profundidad de bits</string>
     <string name="info_track_file_size">Tamaño de archivo</string>
     <string name="info_track_format">Formato</string>
     <string name="info_track_sampling_rate">Frecuencia de muestreo</string>
@@ -346,14 +346,14 @@
     <string name="info_syncing_saved">Guardado.</string>
     <string name="info_syncing_finished">Finalizado.</string>
     <string name="info_syncing_radios">Sincronizando radios…</string>
-    <string name="title_library_download">Descargar Biblioteca Completa</string>
+    <string name="title_library_download">Descargar fonoteca completa</string>
     <string name="title_network">Red</string>
     <string name="subtitle_offline_mode">Dictar cuando la app iría en un modo desconectado. Requiere reiniciar la aplicación</string>
     <string name="option_offline_mode">Modo desconectado</string>
-    <string name="option_offline_mode_auto">Auto</string>
+    <string name="option_offline_mode_auto">Automático</string>
     <string name="option_offline_mode_forced">Forzado</string>
-    <string name="option_offline_mode_no_wifi">Sin Wi-Fi</string>
-    <string name="info_status_downloading">Descargado en proceso…</string>
+    <string name="option_offline_mode_no_wifi">Sin wifi</string>
+    <string name="info_status_downloading">Descarga en proceso…</string>
     <string name="info_library_download_warning">¿Seguro que desea descargar su biblioteca completa?\nEsto omitirá elementos que ya ha descargado, pero pude aún consumir una cantidad significante del espacio de almacén y datos.</string>
     <string name="info_library_download">Guarda toda la música sincronizada para reproducir desconectado</string>
     <string name="info_progress">Progreso</string>
@@ -369,4 +369,9 @@
     <string name="option_navigation_bar_label_visibility_always">Siempre</string>
     <string name="option_navigation_bar_label_visibility_only_selected">Sólo seleccionado</string>
     <string name="option_now_playing_song_info">Mostrar información técnica de la canción</string>
+    <plurals name="count_rate_stars">
+        <item quantity="one">Valorar con %1$d estrella</item>
+        <item quantity="many">Valorar con %1$d de estrellas</item>
+        <item quantity="other">Valorar con %1$d estrellas</item>
+    </plurals>
 </resources>
