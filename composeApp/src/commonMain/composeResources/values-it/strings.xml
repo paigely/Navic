@@ -385,7 +385,8 @@
     <string name="option_quality_low">Bassa</string>
     <string name="option_quality_medium">Media</string>
     <string name="option_quality_high">Alta</string>
-    <string name="option_quality_lossless">Lossless</string>
+    <string name="option_quality_lossless">Lossless •Transcoding disattivato)</string>
     <string name="info_in_use">(in uso)</string>
-    <string name="info_streaming_quality">Preset di qualità più elevata useranno più dati. La differenza tra lossless e alto è di solito impercettibile con cuffie/speaker.</string>
+    <string name="info_streaming_quality">Preset di qualità più elevata useranno più dati. Il transcoding può influire sui tempi di caricamento e causare il desync dei lyrics. Scegliere Lossless se si hanno problemi.</string>
+    <string name="info_explicit">Esplicita</string>
 </resources>
