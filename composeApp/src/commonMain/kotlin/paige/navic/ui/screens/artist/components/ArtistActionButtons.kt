@@ -53,7 +53,7 @@ fun ArtistActionButtons(
 	Row(
 		modifier = modifier
 			.fillMaxWidth()
-			.padding(horizontal = 20.dp, vertical = 8.dp),
+			.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
 		horizontalArrangement = Arrangement.spacedBy(12.dp),
 		verticalAlignment = Alignment.CenterVertically
 	) {
