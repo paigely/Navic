@@ -194,6 +194,21 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
+	private fun getStreamUrl(id: String) =
+		when (connectivityManager.isOnCellular) {
+			true -> SessionManager.api.getStreamUrl(
+				id,
+				Settings.shared.streamingQualityCellular.bitrateAndroid,
+				Settings.shared.streamingQualityCellular.containerAndroid
+			).toUri()
+
+			false -> SessionManager.api.getStreamUrl(
+				id,
+				Settings.shared.streamingQualityWifi.bitrateAndroid,
+				Settings.shared.streamingQualityWifi.containerAndroid
+			).toUri()
+		}
+
 	private fun setupController() {
 		viewModelScope.launch {
 			controller?.apply {
@@ -271,7 +286,7 @@ class AndroidMediaPlayerViewModel(
 							player.replaceMediaItem(i, newItem)
 						} else if (localPath == null && isCurrentlyLocal) {
 							val newItem = item.buildUpon()
-								.setUri(SessionManager.api.getStreamUrl(id).toUri())
+								.setUri(getStreamUrl(id))
 								.build()
 							player.replaceMediaItem(i, newItem)
 						}
@@ -718,7 +733,7 @@ class AndroidMediaPlayerViewModel(
 				if (localPath != null) {
 					File(localPath).toUri()
 				} else {
-					SessionManager.api.getStreamUrl(id).toUri()
+					getStreamUrl(id)
 				}
 			}
 		}

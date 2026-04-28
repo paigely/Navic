@@ -30,6 +30,10 @@ actual class ConnectivityManager(
 	private val connectivityManager =
 		context.getSystemService(Context.CONNECTIVITY_SERVICE) as AndroidConnectivityManager
 
+	val isOnCellular = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)?.hasTransport(
+		NetworkCapabilities.TRANSPORT_CELLULAR
+	) ?: false
+
 	actual val isOnline: StateFlow<Boolean> = callbackFlow {
 		val callback = object : AndroidConnectivityManager.NetworkCallback() {
 			override fun onAvailable(network: Network) {
