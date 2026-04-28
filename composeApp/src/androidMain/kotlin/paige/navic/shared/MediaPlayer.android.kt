@@ -42,7 +42,6 @@ import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.domain.repositories.SongRepository
 import paige.navic.managers.AndroidScrobbleManager
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
@@ -195,7 +194,7 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	private fun getStreamUrl(id: String) =
-		when (connectivityManager.isOnCellular) {
+		when (connectivityManager.isCellular.value) {
 			true -> SessionManager.api.getStreamUrl(
 				id,
 				Settings.shared.streamingQualityCellular.bitrateAndroid,
