@@ -68,7 +68,7 @@ fun NowPlayingProgressBar() {
 				track = { sliderState ->
 					SliderDefaults.Track(
 						sliderState = sliderState,
-						thumbTrackGapSize = 0.dp,
+						thumbTrackGapSize = if (isYoyo) 0.dp else 6.dp,
 						waveLength = if (isYoyo) 32.dp else 26.dp,
 						waveHeight = waveHeight,
 						animationSpecs = SliderDefaults.WaveAnimationSpecs.copy(
