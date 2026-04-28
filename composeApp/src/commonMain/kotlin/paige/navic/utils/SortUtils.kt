@@ -2,23 +2,29 @@ package paige.navic.utils
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import paige.navic.data.database.dao.DownloadDao
+import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
 
-suspend fun ImmutableList<DomainSong>.sortedByListType(
+fun ImmutableList<DomainSong>.sortedByListType(
 	listType: DomainSongListType,
-	downloadDao: DownloadDao
+	downloads: List<DownloadEntity>,
+	albums: List<DomainAlbum>
 ): ImmutableList<DomainSong> {
 	return when (listType) {
 		DomainSongListType.FrequentlyPlayed -> sortedByDescending { it.playCount }
+		DomainSongListType.Newest -> sortedByDescending {
+			albums
+				.firstOrNull { album -> album.id == it.albumId }
+				?.createdAt
+		}
 		DomainSongListType.Starred -> filter { it.starredAt != null }.sortedBy { it.starredAt }
 		DomainSongListType.Random -> shuffled()
 		DomainSongListType.Downloaded -> filter { song ->
-			downloadDao.getAllDownloadsList()
+			downloads
 				.filter { it.status == DownloadStatus.DOWNLOADED }
 				.any { it.songId == song.id }
 		}
@@ -26,9 +32,10 @@ suspend fun ImmutableList<DomainSong>.sortedByListType(
 	}.toImmutableList()
 }
 
-suspend fun ImmutableList<DomainAlbum>.sortedByListType(
+// TODO: why isn't this used lol
+fun ImmutableList<DomainAlbum>.sortedByListType(
 	listType: DomainAlbumListType,
-	downloadDao: DownloadDao
+	downloads: List<DownloadEntity>
 ): ImmutableList<DomainAlbum> {
 	return when (listType) {
 		DomainAlbumListType.AlphabeticalByArtist -> this.sortedBy { it.artistName.lowercase() }
@@ -50,7 +57,7 @@ suspend fun ImmutableList<DomainAlbum>.sortedByListType(
 		}
 
 		DomainAlbumListType.Downloaded -> filter { album ->
-			downloadDao.getAllDownloadsList()
+			downloads
 				.filter { it.status == DownloadStatus.DOWNLOADED }
 				.map { it.songId }
 				.containsAll(album.songs.map { it.id })

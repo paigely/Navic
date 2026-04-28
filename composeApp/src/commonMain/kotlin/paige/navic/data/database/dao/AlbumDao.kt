@@ -23,6 +23,10 @@ interface AlbumDao {
 
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity ORDER BY name ASC")
+	suspend fun getAllAlbumsList(): List<AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY name ASC")
 	fun getAlbumsByNameAsc(): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
