@@ -206,7 +206,7 @@ class AndroidMediaPlayerViewModel(
 				Settings.shared.streamingQualityWifi.bitrateAndroid,
 				Settings.shared.streamingQualityWifi.containerAndroid
 			).toUri()
-		}
+		}.buildUpon().appendQueryParameter("estimateContentLength", "true").build()
 
 	private fun setupController() {
 		viewModelScope.launch {

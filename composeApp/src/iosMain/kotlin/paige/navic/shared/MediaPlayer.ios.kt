@@ -481,7 +481,7 @@ class IOSMediaPlayerViewModel(
 				Settings.shared.streamingQualityWifi.bitrateIos,
 				Settings.shared.streamingQualityWifi.containerIos
 			)
-		}
+		} + "&estimateContentLength=true"
 
 	private fun getSongUrl(song: DomainSong): NSURL? {
 		return when {
