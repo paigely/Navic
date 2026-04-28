@@ -21,9 +21,11 @@ import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_now_playing_background_style
 import navic.composeapp.generated.resources.option_now_playing_slider_style
+import navic.composeapp.generated.resources.option_now_playing_song_info
 import navic.composeapp.generated.resources.option_now_playing_toolbar_position
 import navic.composeapp.generated.resources.option_swipe_to_skip
 import navic.composeapp.generated.resources.subtitle_now_playing_background_style
+import navic.composeapp.generated.resources.title_layout
 import navic.composeapp.generated.resources.title_now_playing
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
@@ -32,6 +34,7 @@ import paige.navic.data.models.settings.enums.NowPlayingBackgroundStyle
 import paige.navic.data.models.settings.enums.ToolbarPosition
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
+import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
@@ -93,6 +96,15 @@ fun SettingsNowPlayingScreen() {
 					NowPlayingSliderStyleDialog(
 						presented = showSliderStyleDialog,
 						onDismissRequest = { showSliderStyleDialog = false }
+					)
+				}
+
+				FormTitle(stringResource(Res.string.title_layout))
+				Form {
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_now_playing_song_info)) },
+						value = Settings.shared.nowPlayingSongInfo,
+						onSetValue = { Settings.shared.nowPlayingSongInfo = it }
 					)
 
 					SettingSelectionRow(
