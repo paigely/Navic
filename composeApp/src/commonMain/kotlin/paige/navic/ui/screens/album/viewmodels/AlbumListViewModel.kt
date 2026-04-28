@@ -12,17 +12,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.managers.ConnectivityManager
+import paige.navic.managers.DownloadManager
 import kotlin.time.Clock
 
 @OptIn(ExperimentalCoroutinesApi::class)
 open class AlbumListViewModel(
 	initialListType: DomainAlbumListType = DomainAlbumListType.AlphabeticalByArtist,
 	private val repository: AlbumRepository,
+	private val downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
@@ -122,5 +125,30 @@ open class AlbumListViewModel(
 
 	fun clearError() {
 		_error.value = null
+	}
+
+	fun downloadAlbum() {
+		val album = _selectedAlbum.value ?: return
+		viewModelScope.launch {
+			downloadManager.downloadCollection(album)
+		}
+	}
+
+	fun cancelDownloadAlbum() {
+		_selectedAlbum.value?.songs?.forEach {
+			downloadManager.cancelDownload(it.id)
+		}
+	}
+
+	fun deleteDownloadAlbum() {
+		val album = _selectedAlbum.value ?: return
+		viewModelScope.launch {
+			downloadManager.deleteDownloadedCollection(album)
+		}
+	}
+
+	fun albumDownloadStatus(): Flow<DownloadStatus> {
+		val songs = _selectedAlbum.value?.songs.orEmpty()
+		return downloadManager.getCollectionDownloadStatus(songs.map { it.id })
 	}
 }

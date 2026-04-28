@@ -10,6 +10,7 @@ import androidx.paging.compose.itemKey
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_albums
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Album

@@ -28,15 +28,19 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_cancel_download
+import navic.composeapp.generated.resources.action_delete_download
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_download
 import navic.composeapp.generated.resources.action_play_next
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_star
+import navic.composeapp.generated.resources.action_view_artist
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
 import navic.composeapp.generated.resources.count_songs
+import navic.composeapp.generated.resources.info_click_to_retry
+import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
@@ -50,7 +54,11 @@ import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
 import paige.navic.icons.filled.Star
+import paige.navic.icons.outlined.Artist
+import paige.navic.icons.outlined.Close
+import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Download
+import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.PlaylistAdd
 import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Queue
@@ -70,11 +78,13 @@ fun CollectionSheet(
 	isOnline: Boolean,
 	onDownloadAll: (() -> Unit)? = null,
 	onCancelDownloadAll: (() -> Unit)? = null,
+	onDeleteDownloadAll: (() -> Unit)? = null,
 	downloadStatus: DownloadStatus? = null,
 	onShare: (() -> Unit)? = null,
 	onPlayNext: (() -> Unit)? = null,
 	onAddToQueue: (() -> Unit)? = null,
 	onAddAllToPlaylist: (() -> Unit)? = null,
+	onViewArtist: (() -> Unit)? = null,
 	onViewOnLastFm: ((String) -> Unit)? = null,
 	onViewOnMusicBrainz: ((String) -> Unit)? = null,
 	starred: Boolean? = null,
@@ -218,6 +228,21 @@ fun CollectionSheet(
 			)
 		}
 
+		if (onViewArtist != null) {
+			ListItem(
+				content = { Text(stringResource(Res.string.action_view_artist)) },
+				leadingContent = { Icon(Icons.Outlined.Artist, null) },
+				onClick = {
+					ctx.clickSound()
+					onViewArtist()
+					onDismissRequest()
+				},
+				colors = colors,
+				contentPadding = contentPadding
+			)
+		}
+
+
 		if (starred != null && onSetStarred != null) {
 			ListItem(
 				content = {
@@ -236,37 +261,98 @@ fun CollectionSheet(
 			)
 		}
 
-		if (onDownloadAll != null && onCancelDownloadAll != null && downloadStatus != null) {
-			val downloading = downloadStatus === DownloadStatus.DOWNLOADING
-			val enabled = isOnline && collection?.songs.orEmpty().isNotEmpty()
+		if (downloadStatus != null) {
+			when (downloadStatus) {
+				DownloadStatus.DOWNLOADING -> {
+					ListItem(
+						content = { Text(stringResource(Res.string.action_cancel_download)) },
+						leadingContent = { Icon(Icons.Outlined.Close, null) },
+						onClick = {
+							ctx.clickSound()
+							onCancelDownloadAll?.invoke()
+							onDismissRequest()
+						},
+						colors = colors,
+						contentPadding = contentPadding
+					)
+				}
 
+				DownloadStatus.DOWNLOADED -> {
+					ListItem(
+						content = { Text(stringResource(Res.string.action_delete_download)) },
+						leadingContent = { Icon(Icons.Outlined.Delete, null) },
+						onClick = {
+							ctx.clickSound()
+							onDeleteDownloadAll?.invoke()
+							onDismissRequest()
+						},
+						colors = colors,
+						contentPadding = contentPadding
+					)
+				}
+
+				DownloadStatus.FAILED -> {
+					ListItem(
+						content = {
+							Text(
+								text = stringResource(Res.string.info_download_failed),
+								color = MaterialTheme.colorScheme.error
+							)
+						},
+						supportingContent = {
+							Text(
+								text = stringResource(Res.string.info_click_to_retry),
+								color = MaterialTheme.colorScheme.error,
+								style = MaterialTheme.typography.labelSmall
+							)
+						},
+						leadingContent = {
+							Icon(
+								Icons.Outlined.DownloadOff,
+								null,
+								tint = MaterialTheme.colorScheme.error
+							)
+						},
+						onClick = {
+							ctx.clickSound()
+							onDownloadAll?.invoke()
+							onDismissRequest()
+						},
+						colors = colors,
+						contentPadding = contentPadding
+					)
+				}
+
+				else -> {
+					ListItem(
+						content = { Text(stringResource(Res.string.action_download)) },
+						leadingContent = { Icon(Icons.Outlined.Download, null) },
+						modifier = Modifier
+							.alpha(if (isOnline) 1f else 0.5f),
+						onClick = {
+							ctx.clickSound()
+							onDownloadAll?.invoke()
+							onDismissRequest()
+						},
+						colors = colors,
+						enabled = isOnline,
+						contentPadding = contentPadding
+					)
+				}
+			}
+		} else if (onDownloadAll != null) {
 			ListItem(
-				content = {
-					Text(stringResource(if (!downloading) Res.string.action_download else Res.string.action_cancel_download))
-				},
-				leadingContent = {
-					if (!downloading) {
-						Icon(Icons.Outlined.Download, null)
-					} else {
-						CircularProgressIndicator(
-							modifier = Modifier.size(20.dp),
-							strokeWidth = 2.dp
-						)
-					}
-				},
+				content = { Text(stringResource(Res.string.action_download)) },
+				leadingContent = { Icon(Icons.Outlined.Download, null) },
 				modifier = Modifier
-					.alpha(if (enabled) 1f else 0.5f),
+					.alpha(if (isOnline) 1f else 0.5f),
 				onClick = {
 					ctx.clickSound()
-					if (!downloading) {
-						onDownloadAll()
-					} else {
-						onCancelDownloadAll()
-					}
+					onDownloadAll()
 					onDismissRequest()
 				},
-				enabled = enabled,
 				colors = colors,
+				enabled = isOnline,
 				contentPadding = contentPadding
 			)
 		}
