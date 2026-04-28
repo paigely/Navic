@@ -125,6 +125,7 @@ fun ArtistDetailScreen(
 	val allDownloads by viewModel.allDownloads.collectAsStateWithLifecycle()
 	val downloadStatus by viewModel.collectionDownloadStatus()
 		.collectAsState(DownloadStatus.NOT_DOWNLOADED)
+
 	val scope = rememberCoroutineScope()
 
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
@@ -329,6 +330,9 @@ fun ArtistDetailScreen(
 								state.albums.sortedByDescending { album -> album.playCount }
 									.toImmutableList()
 							) { album ->
+								val albumDownloadStatus by downloadManager
+									.getCollectionDownloadStatus(album.songs.map { it.id })
+									.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
 								ArtCarouselItem(
 									coverArtId = album.coverArtId, 
 									title = album.name, 
@@ -347,6 +351,22 @@ fun ArtistDetailScreen(
 										onAddToQueue = { player.addToQueue(album) },
 										onSetStarred = { viewModel.starAlbum(!selectedAlbumIsStarred) },
 										onAddAllToPlaylist = { playlistDialogShown = true },
+										downloadStatus = albumDownloadStatus,
+										onDownloadAll = { 
+											scope.launch {
+												downloadManager.downloadCollection(album)
+											}
+										},
+										onCancelDownloadAll = {
+											scope.launch {
+												album.songs.forEach { downloadManager.cancelDownload(it.id) }
+											}
+										},
+										onDeleteDownloadAll = {
+											scope.launch {
+												downloadManager.deleteDownloadedCollection(album)
+											}
+										},
 										isOnline = isOnline,
 										rating = selectedAlbumRating,
 										onSetRating = { viewModel.rateSelectedAlbum(it) }

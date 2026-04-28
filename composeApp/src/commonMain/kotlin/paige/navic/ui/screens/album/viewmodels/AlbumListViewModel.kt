@@ -126,29 +126,4 @@ open class AlbumListViewModel(
 	fun clearError() {
 		_error.value = null
 	}
-
-	fun downloadAlbum() {
-		val album = _selectedAlbum.value ?: return
-		viewModelScope.launch {
-			downloadManager.downloadCollection(album)
-		}
-	}
-
-	fun cancelDownloadAlbum() {
-		_selectedAlbum.value?.songs?.forEach {
-			downloadManager.cancelDownload(it.id)
-		}
-	}
-
-	fun deleteDownloadAlbum() {
-		val album = _selectedAlbum.value ?: return
-		viewModelScope.launch {
-			downloadManager.deleteDownloadedCollection(album)
-		}
-	}
-
-	fun albumDownloadStatus(): Flow<DownloadStatus> {
-		val songs = _selectedAlbum.value?.songs.orEmpty()
-		return downloadManager.getCollectionDownloadStatus(songs.map { it.id })
-	}
 }
