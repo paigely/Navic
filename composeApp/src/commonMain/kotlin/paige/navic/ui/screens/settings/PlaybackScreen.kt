@@ -84,22 +84,22 @@ fun SettingsPlaybackScreen() {
 					.verticalScroll(rememberScrollState())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
-				if (!listOf("ipados", "ios").contains(ctx.name.lowercase())) {
-					Form {
-						FormRow(
-							onClick = { backStack.add(Screen.Settings.StreamingQuality) },
-							horizontalArrangement = Arrangement.Start
-						) {
-							Column(Modifier.weight(1f)) {
-								Text(stringResource(Res.string.title_streaming_quality))
-								Text(
-									text = stringResource(Res.string.subtitle_streaming_quality),
-									style = MaterialTheme.typography.bodyMedium,
-									color = MaterialTheme.colorScheme.onSurfaceVariant
-								)
-							}
-							Icon(Icons.Outlined.ChevronForward, null)
+				Form {
+					FormRow(
+						onClick = { backStack.add(Screen.Settings.StreamingQuality) },
+						horizontalArrangement = Arrangement.Start
+					) {
+						Column(Modifier.weight(1f)) {
+							Text(stringResource(Res.string.title_streaming_quality))
+							Text(
+								text = stringResource(Res.string.subtitle_streaming_quality),
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
 						}
+						Icon(Icons.Outlined.ChevronForward, null)
+					}
+					if (!listOf("ipados", "ios").contains(ctx.name.lowercase())) {
 						SettingSwitchRow(
 							title = { Text(stringResource(Res.string.option_replay_gain)) },
 							value = Settings.shared.replayGain,
