@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.unit.sp
 import paige.navic.data.models.settings.Settings
@@ -48,6 +50,12 @@ fun LyricsScreenKaraokeText(
 	val lyricsBeatByBeat = Settings.shared.lyricsBeatByBeat
 	val lyricsBrightInactive = Settings.shared.lyricsBrightInactive
 
+	val isRtl = textLayoutResult?.let { layout ->
+		(0 until layout.lineCount).any { lineIndex ->
+			layout.getBidiRunDirection(layout.getLineStart(lineIndex)) == ResolvedTextDirection.Rtl
+		}
+	} ?: false
+
 	val inactiveAlpha = if (lyricsBrightInactive) 0.9f else 0.35f
 
 	val alphaTransition by animateFloatAsState(
@@ -60,10 +68,12 @@ fun LyricsScreenKaraokeText(
 			text = text,
 			fontSize = 32.sp,
 			fontWeight = FontWeight.Bold,
+			textAlign = if (isRtl) TextAlign.End else TextAlign.Start,
 			style = MaterialTheme.typography.headlineLargeEmphasized,
 			color = if (lyricsBrightInactive) Color.White.copy(alpha = alphaTransition * 0.4f)
 					else MaterialTheme.colorScheme.onSurface.copy(alpha = alphaTransition * 0.4f),
-			onTextLayout = { textLayoutResult = it }
+			onTextLayout = { textLayoutResult = it },
+			modifier = Modifier.fillMaxWidth()
 		)
 
 		if (isActive) {
@@ -71,9 +81,11 @@ fun LyricsScreenKaraokeText(
 				text = text,
 				fontSize = 32.sp,
 				fontWeight = FontWeight.Bold,
+				textAlign = if (isRtl) TextAlign.End else TextAlign.Start,
 				style = MaterialTheme.typography.headlineLargeEmphasized,
 				color = Color.White,
 				modifier = Modifier
+					.fillMaxWidth()
 					.alpha(alphaTransition)
 					.then(
 						if (lyricsBeatByBeat) {

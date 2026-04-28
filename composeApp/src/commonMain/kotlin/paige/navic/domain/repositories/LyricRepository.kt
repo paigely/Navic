@@ -34,7 +34,9 @@ data class LyricsResult(
 	val lines: List<LyricLine>,
 	val provider: LyricsProvider,
 	val rawContent: String? = null
-)
+) {
+	val isSynced: Boolean = lines.any { it.time != null }
+}
 
 @Serializable
 enum class LyricsProvider(

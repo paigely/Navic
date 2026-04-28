@@ -237,16 +237,20 @@ fun LyricsScreen(
 
 				is UiState.Loading -> LyricsScreenLoadingView()
 				is UiState.Success -> {
-					val lyrics = uiState.data?.lines
-					val provider = uiState.data?.provider
+					val data = uiState.data
+					val lyrics = data?.lines
+					val isSynced = data?.isSynced == true
+					val provider = data?.provider
 					val maxSelectionChars = 150
 					fun totalSelectedChars(): Int =
 						selectedIndices.sumOf { lyrics?.getOrNull(it)?.text?.length ?: 0 }
 
 					if (!lyrics.isNullOrEmpty()) {
-						val activeIndex = lyrics.indexOfLast { line ->
-							line.time != null && currentDuration >= line.time
-						}
+						val activeIndex = if (isSynced) {
+							lyrics.indexOfLast { line ->
+								line.time != null && currentDuration >= line.time
+							}
+						} else -1
 
 						LaunchedEffect(activeIndex, isSelectionMode) {
 							if (!lyricsAutoscroll) return@LaunchedEffect
@@ -292,13 +296,14 @@ fun LyricsScreen(
 							contentPadding = contentPadding
 						) {
 							itemsIndexed(lyrics) { index, line ->
-								val isActive = index == activeIndex
+								val isActive = if (isSynced) index == activeIndex else true
 								val isSelected = selectedIndices.contains(index)
 								val distance = abs(index - activeIndex)
 
 								val blurRadius by animateDpAsState(
 									targetValue = when {
 										isSelectionMode -> 0.dp
+										!isSynced -> 0.dp
 										isActive -> 0.dp
 										distance == 1 -> 1.5.dp
 										distance == 2 -> 3.dp
@@ -323,7 +328,7 @@ fun LyricsScreen(
 								}
 
 								val padding by animateDpAsState(
-									if ((isActive && !isSelectionMode) || (isSelectionMode && isSelected)) 20.dp else 12.dp,
+									if ((isActive && !isSelectionMode && isSynced) || (isSelectionMode && isSelected)) 20.dp else 12.dp,
 									animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
 								)
 
@@ -333,13 +338,13 @@ fun LyricsScreen(
 								val animatedColor by animateColorAsState(
 									targetColor
 								)
-								val targetScale = if (isActive && !isSelectionMode) 1.05f else 0.98f
+								val targetScale = if (isActive && !isSelectionMode && isSynced) 1.05f else if (!isSynced) 1.0f else 0.98f
 								val animatedScale by animateFloatAsState(
 									targetValue = targetScale,
 									animationSpec = spring(stiffness = Spring.StiffnessLow)
 								)
 
-								val targetOffsetY = if (isActive || isSelectionMode) 0.dp else if (index > activeIndex) 8.dp else (-8).dp
+								val targetOffsetY = if (isActive || isSelectionMode || !isSynced) 0.dp else if (index > activeIndex) 8.dp else (-8).dp
 								val animatedOffsetY by animateDpAsState(
 									targetValue = targetOffsetY,
 									animationSpec = spring(stiffness = Spring.StiffnessLow)
@@ -347,6 +352,8 @@ fun LyricsScreen(
 
 								val highlight = if (isSelectionMode) isSelected else isActive
 								val progress = if (isSelectionMode && isSelected) {
+									1.0f
+								} else if (!isSynced) {
 									1.0f
 								} else if (!isSelectionMode && isActive) {
 									if (line.words.isNullOrEmpty()) {

@@ -49,6 +49,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -373,32 +375,43 @@ fun AutoResizedText(
 	color: Color,
 	modifier: Modifier = Modifier,
 	sizeFactor: Float = 0.12f,
-	minFontSize: TextUnit = 10.sp
+	minFontSize: TextUnit = 10.sp,
+	maxFontSize: TextUnit = 48.sp
 ) {
 	BoxWithConstraints(modifier = modifier) {
 		val density = LocalDensity.current
 
 		val referenceDimension = minOf(maxWidth, maxHeight)
 		val proportionalBaseSize = with(density) { (referenceDimension * sizeFactor).toSp() }
+		val initialFontSize = if (proportionalBaseSize < maxFontSize) proportionalBaseSize else maxFontSize
 
-		var scaledStyle by remember(text, proportionalBaseSize) {
+		var scaledStyle by remember(text, initialFontSize) {
 			mutableStateOf(
 				TextStyle(
-					fontSize = proportionalBaseSize,
-					lineHeight = proportionalBaseSize * 1.2f,
+					fontSize = initialFontSize,
+					lineHeight = initialFontSize.value.sp * 1.3f,
 					fontWeight = FontWeight.Bold
 				)
 			)
 		}
 
 		var readyToDraw by remember(text) { mutableStateOf(false) }
+		var isRtl by remember(text) { mutableStateOf(false) }
 
 		Text(
 			text = text,
 			color = if (readyToDraw) color else Color.Transparent,
 			style = scaledStyle,
+			textAlign = if (isRtl) TextAlign.End else TextAlign.Start,
 			modifier = Modifier.fillMaxWidth(),
 			onTextLayout = { textLayoutResult ->
+				val detectedRtl = (0 until textLayoutResult.lineCount).any { lineIndex ->
+					textLayoutResult.getBidiRunDirection(textLayoutResult.getLineStart(lineIndex)) == ResolvedTextDirection.Rtl
+				}
+				if (detectedRtl != isRtl) {
+					isRtl = detectedRtl
+				}
+
 				if (textLayoutResult.hasVisualOverflow || textLayoutResult.didOverflowHeight) {
 					if (scaledStyle.fontSize > minFontSize) {
 						scaledStyle = scaledStyle.copy(
