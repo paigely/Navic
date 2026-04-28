@@ -142,7 +142,7 @@
 	<string name="option_quality_low">Low</string>
 	<string name="option_quality_medium">Medium</string>
 	<string name="option_quality_high">High</string>
-	<string name="option_quality_lossless">Lossless</string>
+	<string name="option_quality_lossless">Lossless (no transcoding)</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>
@@ -361,7 +361,7 @@
 	<string name="info_login_description_middle">Navidrome</string>
 	<string name="info_login_description_end">instance.</string>
 	<string name="info_exception_handler">This will immediately crash the application. Are you sure?</string>
-	<string name="info_streaming_quality">Higher quality presets will use more data. The difference between lossless and high quality are imperceptible with typical headphones/speakers.</string>
+	<string name="info_streaming_quality">Higher quality presets will use more data. Transcoding can severely impact load times and cause lyrics to become unsynced. Select Lossless if you encounter any issues.</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>

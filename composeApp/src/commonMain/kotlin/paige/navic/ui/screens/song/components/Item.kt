@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -23,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlinx.collections.immutable.persistentListOf
@@ -34,12 +36,15 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
+import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Queue
 import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
+import paige.navic.utils.InlineExplicitIcon
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -107,7 +112,16 @@ fun SongListScreenItem(
 				onClick = onClick,
 				onLongClick = onSelect,
 				content = {
-					Text(song.title)
+					MarqueeText(
+						text = buildAnnotatedString {
+							append(song.title)
+							if (song.explicitStatus == DomainExplicitStatus.Explicit) {
+								append(" ")
+								appendInlineContent("InlineExplicitIcon")
+							}
+						},
+						inlineContent = InlineExplicitIcon,
+					)
 				},
 				supportingContent = {
 					Text(
