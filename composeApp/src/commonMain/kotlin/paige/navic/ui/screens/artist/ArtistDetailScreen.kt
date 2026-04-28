@@ -121,6 +121,7 @@ fun ArtistDetailScreen(
 	val backStack = LocalNavStack.current
 	val layoutDirection = LocalLayoutDirection.current
 	val artistState by viewModel.artistState.collectAsStateWithLifecycle()
+	val starred by viewModel.starred.collectAsState()
 	val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
 	val allDownloads by viewModel.allDownloads.collectAsStateWithLifecycle()
 	val downloadStatus by viewModel.collectionDownloadStatus()
@@ -145,12 +146,16 @@ fun ArtistDetailScreen(
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
+	var addArtistToPlaylistDialogShown by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
 		topBar = {
 			ArtistDetailScreenTopBar(
 				scrolled = scrolled,
-				artistState = artistState
+				artistState = artistState,
+				isOnline = isOnline,
+				starred = starred,
+				onSetStarred = { viewModel.starArtist(it) },
 			)
 		},
 		bottomBar = {

@@ -22,6 +22,7 @@ import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.repositories.AlbumRepository
+import paige.navic.domain.repositories.ArtistRepository
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.domain.repositories.SongRepository
 import paige.navic.managers.ConnectivityManager
@@ -41,6 +42,7 @@ data class ArtistState(
 class ArtistDetailViewModel(
 	private val artistId: String,
 	private val repository: DbRepository,
+	private val artistRepository: ArtistRepository,
 	private val songRepository: SongRepository,
 	private val albumRepository: AlbumRepository,
 	private val artistDao: ArtistDao,
@@ -50,6 +52,9 @@ class ArtistDetailViewModel(
 ) : ViewModel() {
 	private val _artistState = MutableStateFlow<UiState<ArtistState>>(UiState.Loading())
 	val artistState = _artistState.asStateFlow()
+
+	private val _starred = MutableStateFlow(false)
+	val starred = _starred.asStateFlow()
 
 	private val _selectedSong = MutableStateFlow<DomainSong?>(null)
 	val selectedSong = _selectedSong.asStateFlow()
@@ -103,6 +108,8 @@ class ArtistDetailViewModel(
 				val initialSimilarArtists = domainArtist.similarArtistIds.mapNotNull { id ->
 					artistDao.getArtistById(id)?.toDomainModel()
 				}
+
+				_starred.value = artistRepository.isArtistStarred(domainArtist)
 
 				_artistState.value = UiState.Success(
 					ArtistState(
@@ -200,6 +207,20 @@ class ArtistDetailViewModel(
 			runCatching {
 				_selectedSongRating.value = rating
 				songRepository.rateSong(selection, rating)
+			}
+		}
+	}
+
+	fun starArtist(starred: Boolean) {
+		val artist = (_artistState.value as? UiState.Success)?.data?.artist ?: return
+		viewModelScope.launch {
+			runCatching {
+				if (starred) {
+					artistRepository.starArtist(artist)
+				} else {
+					artistRepository.unstarArtist(artist)
+				}
+				_starred.value = starred
 			}
 		}
 	}

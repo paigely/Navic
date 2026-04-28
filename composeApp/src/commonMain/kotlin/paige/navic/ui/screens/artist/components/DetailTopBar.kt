@@ -16,12 +16,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalUriHandler
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
+import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
@@ -30,19 +33,30 @@ import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.TopBarButton
+import paige.navic.ui.components.sheets.ArtistSheet
 import paige.navic.ui.screens.artist.viewmodels.ArtistState
+import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.utils.UiState
+import paige.navic.shared.MediaPlayerViewModel
 
 @Composable
 fun ArtistDetailScreenTopBar(
 	scrolled: Boolean,
-	artistState: UiState<ArtistState>
+	artistState: UiState<ArtistState>,
+	isOnline: Boolean,
+	starred: Boolean? = null,
+	onSetStarred: ((Boolean) -> Unit)? = null,
 ) {
 	val uriHandler = LocalUriHandler.current
 	val state = (artistState as? UiState.Success)?.data
 	val alpha by animateFloatAsState(
 		if (scrolled) 1f else 0f
 	)
+
+	val player = koinViewModel<MediaPlayerViewModel>()
+
+	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
+
 	if (state != null) {
 		NestedTopBar(
 			colors = TopAppBarDefaults.topAppBarColors(
@@ -68,38 +82,52 @@ fun ArtistDetailScreenTopBar(
 							stringResource(Res.string.action_more)
 						)
 					}
-					Dropdown(
-						expanded = expanded,
-						onDismissRequest = { expanded = false }
-					) {
-						DropdownItem(
-							text = { Text(stringResource(Res.string.action_view_on_lastfm)) },
-							leadingIcon = { Icon(Icons.Brand.Lastfm, null) },
-							enabled = state.artist.lastFmUrl != null,
-							onClick = {
+					if (expanded) {
+						ArtistSheet(
+							onDismissRequest = { expanded = false },
+							artist = state.artist,
+							isOnline = isOnline,
+							onPlayNext = { 
+								state.albums.reversed().forEach { album ->
+									player.playNext(album)
+								}
+							},
+							onAddToQueue = {
+								state.albums.forEach { album ->
+									player.addToQueue(album)
+								}
+							},
+							onAddAllToPlaylist = {
+								playlistDialogShown = true
+							},
+							onViewOnLastFm = { 
 								expanded = false
 								state.artist.lastFmUrl?.let { url ->
 									uriHandler.openUri(url)
 								}
-							}
-						)
-						DropdownItem(
-							text = { Text(stringResource(Res.string.action_view_on_musicbrainz)) },
-							leadingIcon = { Icon(Icons.Brand.Musicbrainz, null) },
-							enabled = state.artist.musicBrainzId != null,
-							onClick = {
+							},
+							onViewOnMusicBrainz = { 								
 								expanded = false
 								state.artist.musicBrainzId?.let { id ->
 									uriHandler.openUri(
 										"https://musicbrainz.org/artist/$id"
 									)
 								}
-							}
+							},
+							starred = starred,
+							onSetStarred = onSetStarred
 						)
 					}
 				}
 			}
 		)
+		if (playlistDialogShown) {
+			@Suppress("AssignedValueIsNeverRead")
+			PlaylistUpdateDialog(
+				songs = state.albums.flatMap { it.songs }.toPersistentList(),
+				onDismissRequest = { playlistDialogShown = false }
+			)
+		}
 	} else {
 		NestedTopBar({})
 	}
