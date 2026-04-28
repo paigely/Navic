@@ -87,9 +87,10 @@ fun CollectionDetailScreenTopBar(
 						onViewOnMusicBrainz = { id ->
 							uriHandler.openUri("https://musicbrainz.org/release/$id")
 						},
-						onViewArtist = {
-							if (collection is DomainAlbum) backStack.add(Screen.ArtistDetail(collection.artistId)) else null
-						},
+						onViewArtist =
+							if (collection is DomainAlbum) 
+								{ { backStack.add(Screen.ArtistDetail(collection.artistId)) } }
+							else null,
 						rating = rating,
 						onSetRating = onSetRating
 					)
