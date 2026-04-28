@@ -156,6 +156,7 @@
 	<string name="info_library_download_warning">Are you sure you want to download your entire library? \nThis will skip items you've already downloaded, but it may still consume a significant amount of storage space and data.</string>
 	<string name="info_library_download">Save all synced music for offline playback</string>
 	<string name="info_progress">Progress</string>
+	<string name="info_in_use">(in use)</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>
