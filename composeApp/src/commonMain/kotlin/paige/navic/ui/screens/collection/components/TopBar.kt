@@ -17,7 +17,10 @@ import kotlinx.collections.immutable.toPersistentList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
+import paige.navic.data.models.Screen
+import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
@@ -45,6 +48,7 @@ fun CollectionDetailScreenTopBar(
 ) {
 	val uriHandler = LocalUriHandler.current
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
+	val backStack = LocalNavStack.current
 
 	NestedTopBar(
 		title = {
@@ -83,6 +87,10 @@ fun CollectionDetailScreenTopBar(
 						onViewOnMusicBrainz = { id ->
 							uriHandler.openUri("https://musicbrainz.org/release/$id")
 						},
+						onViewArtist =
+							if (collection is DomainAlbum) 
+								{ { backStack.add(Screen.ArtistDetail(collection.artistId)) } }
+							else null,
 						rating = rating,
 						onSetRating = onSetRating
 					)

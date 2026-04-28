@@ -63,6 +63,7 @@ fun <T> ArtCarousel(
 fun CarouselItemScope.ArtCarouselItem(
 	coverArtId: String?,
 	title: String,
+	subtitle: String? = null,
 	contentDescription: String?,
 	onSelect: () -> Unit = {},
 	onClick: () -> Unit = {}
@@ -98,5 +99,17 @@ fun CarouselItemScope.ArtCarouselItem(
 			modifier = Modifier
 				.padding(top = 8.dp, start = 4.dp, end = 4.dp)
 		)
+
+		subtitle?.let {
+			Text(
+				text = subtitle,
+				style = MaterialTheme.typography.bodySmall,
+				color = MaterialTheme.colorScheme.onSurfaceVariant,
+				modifier = Modifier
+					.fillMaxWidth()
+					.padding(start = 4.dp, end = 4.dp),
+				maxLines = 2
+			)
+		}
 	}
 }

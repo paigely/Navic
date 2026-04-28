@@ -82,6 +82,9 @@ fun CollectionDetailScreenSongRowDropdown(
 					)
 				}
 			} else null,
+			onViewArtist = {
+				backStack.add(Screen.ArtistDetail(song.artistId))
+			},
 			onAddToPlaylist = {
 				playlistDialogShown = true
 			},

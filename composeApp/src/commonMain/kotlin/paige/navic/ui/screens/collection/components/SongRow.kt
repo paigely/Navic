@@ -50,6 +50,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
+import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
@@ -58,6 +59,7 @@ import paige.navic.icons.outlined.Offline
 import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.QueuePlayNext
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.Waveform
 import paige.navic.utils.toHoursMinutesSeconds
@@ -68,6 +70,7 @@ fun CollectionDetailScreenSongRow(
 	song: DomainSong,
 	index: Int,
 	count: Int,
+	isPlaylist: Boolean = false,
 	onClick: (() -> Unit),
 	onLongClick: (() -> Unit),
 	onPlayNext: (() -> Unit),
@@ -151,16 +154,23 @@ fun CollectionDetailScreenSongRow(
 				disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
 			),
 			leadingContent = {
-				Text(
-					text = "${index + 1}",
-					modifier = Modifier.width(25.dp),
-					style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),
-					fontWeight = FontWeight(400),
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-					maxLines = 1,
-					textAlign = TextAlign.Center,
-					autoSize = TextAutoSize.StepBased(6.sp, 13.sp)
-				)
+				if (isPlaylist) 
+						CoverArt(
+							modifier = Modifier.size(48.dp),
+							coverArtId = song.coverArtId,
+							shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
+						)
+				else 
+					Text(
+						text = "${index + 1}",
+						modifier = Modifier.width(25.dp),
+						style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum"),
+						fontWeight = FontWeight(400),
+						color = MaterialTheme.colorScheme.onSurfaceVariant,
+						maxLines = 1,
+						textAlign = TextAlign.Center,
+						autoSize = TextAutoSize.StepBased(6.sp, 13.sp)
+					)
 			},
 			content = {
 				Column {

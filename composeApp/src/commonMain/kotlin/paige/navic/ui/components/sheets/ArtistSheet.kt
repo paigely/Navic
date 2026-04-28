@@ -38,7 +38,7 @@ import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_view_artist
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
-import navic.composeapp.generated.resources.count_songs
+import navic.composeapp.generated.resources.count_albums
 import navic.composeapp.generated.resources.info_click_to_retry
 import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.pluralStringResource
@@ -48,8 +48,8 @@ import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
+import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainPlaylist
-import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
@@ -71,27 +71,21 @@ import paige.navic.ui.components.common.RatingRow
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun CollectionSheet(
+fun ArtistSheet(
 	onDismissRequest: () -> Unit,
-	collection: DomainSongCollection?,
-	albumInfo: DomainAlbumInfo? = null,
+	artist: DomainArtist,
 	isOnline: Boolean,
-	onDownloadAll: (() -> Unit)? = null,
-	onCancelDownloadAll: (() -> Unit)? = null,
-	onDeleteDownloadAll: (() -> Unit)? = null,
-	downloadStatus: DownloadStatus? = null,
-	onShare: (() -> Unit)? = null,
 	onPlayNext: (() -> Unit)? = null,
 	onAddToQueue: (() -> Unit)? = null,
 	onAddAllToPlaylist: (() -> Unit)? = null,
-	onViewArtist: (() -> Unit)? = null,
 	onViewOnLastFm: ((String) -> Unit)? = null,
 	onViewOnMusicBrainz: ((String) -> Unit)? = null,
 	starred: Boolean? = null,
 	onSetStarred: ((Boolean) -> Unit)? = null,
-	onDelete: (() -> Unit)? = null,
-	rating: Int? = null,
-	onSetRating: ((Int) -> Unit)? = null
+	downloadStatus: DownloadStatus? = null,
+	onDownloadAll: (() -> Unit)? = null,
+	onCancelDownloadAll: (() -> Unit)? = null,
+	onDeleteDownloadAll: (() -> Unit)? = null,
 ) {
 	val ctx = LocalCtx.current
 	val contentPadding = PaddingValues(horizontal = 16.dp)
@@ -113,44 +107,31 @@ fun CollectionSheet(
 		ListItem(
 			leadingContent = {
 				CoverArt(
-					coverArtId = collection?.coverArtId,
+					coverArtId = artist.coverArtId,
 					modifier = Modifier.size(50.dp),
 					shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 				)
 			},
-			headlineContent = { MarqueeText(collection?.name.orEmpty()) },
+			headlineContent = { MarqueeText(artist.name.orEmpty()) },
 			supportingContent = {
-				MarqueeText(
-					listOfNotNull(
-						(collection as? DomainAlbum)?.artistName,
-						(collection as? DomainPlaylist)?.comment,
-						(collection as? DomainAlbum)?.genre,
-						(collection as? DomainAlbum)?.year,
-						collection?.songCount?.let {
-							pluralStringResource(Res.plurals.count_songs, it, it)
-						}
-					).joinToString(" • ")
+				Text(
+					text = artist.albumCount.let {
+						pluralStringResource(Res.plurals.count_albums, it, it)
+					}
 				)
 			},
 			colors = colors
 		)
-		if (rating != null && onSetRating != null) {
-			RatingRow(
-				rating = rating,
-				setRating = onSetRating
-			)
-			Spacer(Modifier.height(14.dp))
-		}
 
 		HorizontalDivider(Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
 
-		if (onViewOnLastFm != null && albumInfo?.lastFmUrl != null) {
+		if (onViewOnLastFm != null && artist.lastFmUrl != null) {
 			ListItem(
 				content = { Text(stringResource(Res.string.action_view_on_lastfm)) },
 				leadingContent = { Icon(Icons.Brand.Lastfm, null) },
 				onClick = {
 					ctx.clickSound()
-					onViewOnLastFm(albumInfo.lastFmUrl)
+					onViewOnLastFm(artist.lastFmUrl)
 					onDismissRequest()
 				},
 				colors = colors,
@@ -158,27 +139,13 @@ fun CollectionSheet(
 			)
 		}
 
-		if (onViewOnMusicBrainz != null && albumInfo?.musicBrainzId != null) {
+		if (onViewOnMusicBrainz != null && artist.musicBrainzId != null) {
 			ListItem(
 				content = { Text(stringResource(Res.string.action_view_on_musicbrainz)) },
 				leadingContent = { Icon(Icons.Brand.Musicbrainz, null) },
 				onClick = {
 					ctx.clickSound()
-					onViewOnMusicBrainz(albumInfo.musicBrainzId)
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
-		if (onShare != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_share)) },
-				leadingContent = { Icon(Icons.Outlined.Share, null) },
-				onClick = {
-					ctx.clickSound()
-					onShare()
+					onViewOnMusicBrainz(artist.musicBrainzId)
 					onDismissRequest()
 				},
 				colors = colors,
@@ -227,21 +194,6 @@ fun CollectionSheet(
 				contentPadding = contentPadding
 			)
 		}
-
-		if (onViewArtist != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_view_artist)) },
-				leadingContent = { Icon(Icons.Outlined.Artist, null) },
-				onClick = {
-					ctx.clickSound()
-					onViewArtist()
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
 
 		if (starred != null && onSetStarred != null) {
 			ListItem(
@@ -353,20 +305,6 @@ fun CollectionSheet(
 				},
 				colors = colors,
 				enabled = isOnline,
-				contentPadding = contentPadding
-			)
-		}
-
-		if (onDelete != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_delete)) },
-				leadingContent = { Icon(Icons.Outlined.PlaylistRemove, null) },
-				onClick = {
-					ctx.clickSound()
-					onDelete()
-					onDismissRequest()
-				},
-				colors = colors,
 				contentPadding = contentPadding
 			)
 		}

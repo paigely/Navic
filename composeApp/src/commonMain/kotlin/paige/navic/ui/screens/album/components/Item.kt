@@ -2,6 +2,7 @@ package paige.navic.ui.screens.album.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -10,13 +11,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
+import paige.navic.managers.DownloadManager
 
 @Composable
 fun AlbumListScreenItem(
@@ -41,6 +45,11 @@ fun AlbumListScreenItem(
 
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
 
+	val downloadManager = koinInject<DownloadManager>()
+	val downloadStatus by downloadManager
+		.getCollectionDownloadStatus(album.songs.map { it.id })
+		.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
+
 	Box(modifier) {
 		ArtGridItem(
 			onClick = {
@@ -64,9 +73,28 @@ fun AlbumListScreenItem(
 				onShare = { onSetShareId(album.id) },
 				onPlayNext = onPlayNext,
 				onAddToQueue = onAddToQueue,
+				downloadStatus = downloadStatus,
+				onDownloadAll = { 
+					scope.launch {
+						downloadManager.downloadCollection(album) 
+					}
+				},
+				onCancelDownloadAll = {
+					scope.launch {
+						album.songs.forEach { downloadManager.cancelDownload(it.id) }
+					}
+				},
+				onDeleteDownloadAll = {
+					scope.launch {
+						downloadManager.deleteDownloadedCollection(album)
+					}
+				},
 				starred = starred,
 				onSetStarred = onSetStarred,
 				onAddAllToPlaylist = { playlistDialogShown = true },
+				onViewArtist = {
+					backStack.add(Screen.ArtistDetail(album.artistId))
+				},
 				rating = rating,
 				onSetRating = onSetRating
 			)

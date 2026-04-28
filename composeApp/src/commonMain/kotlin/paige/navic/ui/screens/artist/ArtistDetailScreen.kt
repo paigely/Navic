@@ -121,10 +121,12 @@ fun ArtistDetailScreen(
 	val backStack = LocalNavStack.current
 	val layoutDirection = LocalLayoutDirection.current
 	val artistState by viewModel.artistState.collectAsStateWithLifecycle()
+	val starred by viewModel.starred.collectAsState()
 	val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
 	val allDownloads by viewModel.allDownloads.collectAsStateWithLifecycle()
 	val downloadStatus by viewModel.collectionDownloadStatus()
 		.collectAsState(DownloadStatus.NOT_DOWNLOADED)
+
 	val scope = rememberCoroutineScope()
 
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
@@ -144,12 +146,16 @@ fun ArtistDetailScreen(
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
+	var addArtistToPlaylistDialogShown by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
 		topBar = {
 			ArtistDetailScreenTopBar(
 				scrolled = scrolled,
-				artistState = artistState
+				artistState = artistState,
+				isOnline = isOnline,
+				starred = starred,
+				onSetStarred = { viewModel.starArtist(it) },
 			)
 		},
 		bottomBar = {
@@ -329,6 +335,9 @@ fun ArtistDetailScreen(
 								state.albums.sortedByDescending { album -> album.playCount }
 									.toImmutableList()
 							) { album ->
+								val albumDownloadStatus by downloadManager
+									.getCollectionDownloadStatus(album.songs.map { it.id })
+									.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
 								ArtCarouselItem(
 									coverArtId = album.coverArtId, 
 									title = album.name, 
@@ -347,6 +356,22 @@ fun ArtistDetailScreen(
 										onAddToQueue = { player.addToQueue(album) },
 										onSetStarred = { viewModel.starAlbum(!selectedAlbumIsStarred) },
 										onAddAllToPlaylist = { playlistDialogShown = true },
+										downloadStatus = albumDownloadStatus,
+										onDownloadAll = { 
+											scope.launch {
+												downloadManager.downloadCollection(album)
+											}
+										},
+										onCancelDownloadAll = {
+											scope.launch {
+												album.songs.forEach { downloadManager.cancelDownload(it.id) }
+											}
+										},
+										onDeleteDownloadAll = {
+											scope.launch {
+												downloadManager.deleteDownloadedCollection(album)
+											}
+										},
 										isOnline = isOnline,
 										rating = selectedAlbumRating,
 										onSetRating = { viewModel.rateSelectedAlbum(it) }
@@ -354,40 +379,21 @@ fun ArtistDetailScreen(
 								}
 							}
 							if (state.similarArtists.isEmpty()) return@Column
-							Text(
+							ArtCarousel(
 								stringResource(Res.string.title_similar_artists),
-								style = MaterialTheme.typography.titleMediumEmphasized,
-								fontWeight = FontWeight(600),
-								modifier = Modifier
-									.height(32.dp)
-									.padding(top = 8.dp)
-									.padding(horizontal = 20.dp)
-									.fillMaxWidth()
-							)
-							LazyRow(
-								modifier = Modifier.fillMaxWidth().animateContentSize(
-									animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-								),
-								horizontalArrangement = Arrangement.spacedBy(8.dp),
-								contentPadding = PaddingValues(horizontal = 20.dp)
-							) {
-								items(state.similarArtists) { artist ->
-									ArtGridItem(
-										modifier = Modifier.width(150.dp),
-										onClick = {
-											ctx.clickSound()
-											backStack.add(Screen.ArtistDetail(artist.id))
-										},
-										coverArtId = artist.coverArtId,
-										title = artist.name,
-										subtitle = pluralStringResource(
-											Res.plurals.count_albums,
-											artist.albumCount,
-											artist.albumCount
-										),
-										id = artist.id,
-										tab = "artist"
-									)
+								state.similarArtists.toImmutableList()
+							) { artist ->
+								ArtCarouselItem(
+									coverArtId = artist.coverArtId, 
+									title = artist.name, 
+									subtitle = pluralStringResource(
+										Res.plurals.count_albums,
+										artist.albumCount,
+										artist.albumCount
+									),
+									contentDescription = null,
+								) {
+									backStack.add(Screen.ArtistDetail(artist.id))
 								}
 							}
 						}
