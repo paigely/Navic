@@ -2,6 +2,7 @@ package paige.navic.data.database
 
 import androidx.room3.TypeConverter
 import paige.navic.domain.models.DomainContributor
+import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainReplayGain
 import paige.navic.domain.repositories.LyricsProvider
 import paige.navic.shared.Logger
@@ -105,4 +106,12 @@ class Converters {
 			LyricsProvider.SUBSONIC
 		}
 	}
+
+	// DomainExplicitStatus
+	@TypeConverter
+	fun fromExplicitStatus(explicitStatus: DomainExplicitStatus)
+		= explicitStatus.ordinal
+	@TypeConverter
+	fun toExplicitStatus(ordinal: Int)
+		= DomainExplicitStatus.entries.getOrNull(ordinal) ?: DomainExplicitStatus.Unknown
 }

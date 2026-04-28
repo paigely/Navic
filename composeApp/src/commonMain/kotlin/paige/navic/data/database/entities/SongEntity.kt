@@ -4,6 +4,7 @@ import androidx.room3.Entity
 import androidx.room3.PrimaryKey
 import kotlinx.serialization.Serializable
 import paige.navic.domain.models.DomainContributor
+import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainReplayGain
 import kotlin.time.Duration
 import kotlin.time.Instant
@@ -43,5 +44,6 @@ data class SongEntity(
 	val filePath: String?,
 	val starredAt: Instant?,
 	val coverArtId: String?,
-	val musicBrainzId: String?
+	val musicBrainzId: String?,
+	val explicitStatus: DomainExplicitStatus
 )

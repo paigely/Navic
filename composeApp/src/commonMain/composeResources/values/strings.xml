@@ -157,6 +157,7 @@
 	<string name="info_library_download">Save all synced music for offline playback</string>
 	<string name="info_progress">Progress</string>
 	<string name="info_in_use">(in use)</string>
+	<string name="info_explicit">Explicit</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>

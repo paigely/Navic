@@ -38,6 +38,7 @@ import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
@@ -585,7 +586,8 @@ class AndroidMediaPlayerViewModel(
 				mimeType = "",
 				filePath = radio.streamUrl,
 				starredAt = null,
-				musicBrainzId = null
+				musicBrainzId = null,
+				explicitStatus = DomainExplicitStatus.Unknown
 			)
 
 			val metadata = MediaMetadata.Builder()

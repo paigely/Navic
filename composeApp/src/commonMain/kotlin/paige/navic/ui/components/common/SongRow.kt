@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -19,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.capsule.ContinuousRoundedRectangle
@@ -36,6 +38,7 @@ import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
+import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
@@ -45,6 +48,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
+import paige.navic.utils.InlineExplicitIcon
 
 @Composable
 fun SongRow(
@@ -88,7 +92,17 @@ fun SongRow(
 				onLongClick = onLongClick
 			),
 		headlineContent = {
-			Text(song.title)
+			Text(
+				text = buildAnnotatedString {
+					append(song.title)
+					if (song.explicitStatus == DomainExplicitStatus.Explicit) {
+						append(" ")
+						appendInlineContent("InlineExplicitIcon")
+					}
+				},
+				inlineContent = InlineExplicitIcon,
+				maxLines = 2
+			)
 		},
 		supportingContent = {
 			MarqueeText(

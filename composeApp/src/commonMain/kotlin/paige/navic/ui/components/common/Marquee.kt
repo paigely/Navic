@@ -5,6 +5,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -41,6 +43,22 @@ fun MarqueeText(
 		}
 	} else {
 		Text(text, maxLines = 1, style = style, overflow = TextOverflow.Ellipsis)
+	}
+}
+
+@Composable
+fun MarqueeText(
+	text: AnnotatedString,
+	style: TextStyle = LocalTextStyle.current,
+	inlineContent: Map<String, InlineTextContent> = mapOf(),
+	modifier: Modifier = Modifier
+) {
+	if (Settings.shared.marqueeSpeed != MarqueeSpeed.Disabled) {
+		Marquee(modifier) {
+			Text(text, maxLines = 1, style = style, inlineContent = inlineContent)
+		}
+	} else {
+		Text(text, maxLines = 1, style = style, overflow = TextOverflow.Ellipsis, inlineContent = inlineContent)
 	}
 }
 

@@ -2,6 +2,7 @@ package paige.navic.data.database.mappers
 
 import paige.navic.data.database.entities.SongEntity
 import paige.navic.domain.models.DomainContributor
+import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainReplayGain
 import paige.navic.domain.models.DomainSong
 import kotlin.time.Duration.Companion.seconds
@@ -57,6 +58,11 @@ fun ApiSong.toEntity() = SongEntity(
 			fallbackGain = it.fallbackGain
 		)
 	},
+	explicitStatus = when (this.explicitStatus) {
+		ApiSong.ExplicitStatus.EXPLICIT -> DomainExplicitStatus.Explicit
+		ApiSong.ExplicitStatus.CLEAN -> DomainExplicitStatus.Clean
+		else -> DomainExplicitStatus.Unknown
+	}
 )
 
 fun SongEntity.toDomainModel() = DomainSong(
@@ -93,6 +99,7 @@ fun SongEntity.toDomainModel() = DomainSong(
 	musicBrainzId = this.musicBrainzId,
 	contributors = this.contributors,
 	replayGain = this.replayGain,
+	explicitStatus = this.explicitStatus
 )
 
 fun DomainSong.toEntity() = SongEntity(
@@ -128,5 +135,6 @@ fun DomainSong.toEntity() = SongEntity(
 	fileSize = this.fileSize,
 	musicBrainzId = this.musicBrainzId,
 	replayGain = this.replayGain,
-	contributors = this.contributors
+	contributors = this.contributors,
+	explicitStatus = this.explicitStatus
 )

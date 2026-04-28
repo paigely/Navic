@@ -40,5 +40,6 @@ data class DomainSong(
 	val filePath: String?,
 	val starredAt: Instant?,
 	val coverArtId: String?,
-	val musicBrainzId: String?
+	val musicBrainzId: String?,
+	val explicitStatus: DomainExplicitStatus
 )
