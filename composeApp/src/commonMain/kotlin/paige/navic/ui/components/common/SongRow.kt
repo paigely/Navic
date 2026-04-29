@@ -217,7 +217,6 @@ fun SongRow(
 				playlistDialogShown = true
 			},
 			downloadStatus = download?.status,
-			isOnline = isOnline,
 			onDownload = onDownload,
 			onCancelDownload = onCancelDownload,
 			onDeleteDownload = onDeleteDownload,

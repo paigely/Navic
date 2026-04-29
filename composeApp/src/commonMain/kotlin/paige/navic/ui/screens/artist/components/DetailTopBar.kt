@@ -15,35 +15,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalUriHandler
+import kotlinx.collections.immutable.toPersistentList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
-import navic.composeapp.generated.resources.action_view_on_lastfm
-import navic.composeapp.generated.resources.action_view_on_musicbrainz
-import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.icons.Icons
-import paige.navic.icons.brand.Lastfm
-import paige.navic.icons.brand.Musicbrainz
 import paige.navic.icons.outlined.MoreVert
-import paige.navic.ui.components.common.Dropdown
-import paige.navic.ui.components.common.DropdownItem
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.components.sheets.ArtistSheet
 import paige.navic.ui.screens.artist.viewmodels.ArtistState
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.utils.UiState
-import paige.navic.shared.MediaPlayerViewModel
 
 @Composable
 fun ArtistDetailScreenTopBar(
 	scrolled: Boolean,
 	artistState: UiState<ArtistState>,
-	isOnline: Boolean,
 	starred: Boolean? = null,
 	onSetStarred: ((Boolean) -> Unit)? = null,
 ) {
@@ -86,8 +79,7 @@ fun ArtistDetailScreenTopBar(
 						ArtistSheet(
 							onDismissRequest = { expanded = false },
 							artist = state.artist,
-							isOnline = isOnline,
-							onPlayNext = { 
+							onPlayNext = {
 								state.albums.reversed().forEach { album ->
 									player.playNext(album)
 								}

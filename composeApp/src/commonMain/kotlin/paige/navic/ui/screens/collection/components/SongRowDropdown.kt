@@ -90,7 +90,6 @@ fun CollectionDetailScreenSongRowDropdown(
 			},
 			onRemoveFromPlaylist = onRemoveFromPlaylist,
 			downloadStatus = downloadStatus,
-			isOnline = isOnline,
 			onDownload = onDownload,
 			onCancelDownload = onCancelDownload,
 			onDeleteDownload = onDeleteDownload,

@@ -10,7 +10,6 @@ import androidx.paging.compose.itemKey
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_albums
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Album
@@ -28,8 +27,7 @@ fun LazyGridScope.albumListScreenContent(
 	onSetStarred: (Boolean) -> Unit,
 	onPlayNext: () -> Unit,
 	onAddToQueue: () -> Unit,
-	onRateSelectedAlbum: (Int) -> Unit,
-	isOnline: Boolean
+	onRateSelectedAlbum: (Int) -> Unit
 ) {
 	val refreshState = pagedAlbums.loadState.refresh
 
@@ -67,7 +65,6 @@ fun LazyGridScope.albumListScreenContent(
 				onSetShareId = onSetShareId,
 				onPlayNext = onPlayNext,
 				onAddToQueue = onAddToQueue,
-				isOnline = isOnline,
 				rating = selectedAlbumRating,
 				onSetRating = onRateSelectedAlbum
 			)

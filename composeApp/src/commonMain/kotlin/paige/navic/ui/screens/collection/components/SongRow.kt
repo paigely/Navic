@@ -150,11 +150,9 @@ fun CollectionDetailScreenSongRow(
 			contentPadding = PaddingValues(14.dp),
 			onClick = onClick,
 			onLongClick = onLongClick,
-			enabled = canPlay,
 			shapes = itemShape,
 			colors = ListItemDefaults.segmentedColors(
-				containerColor = MaterialTheme.colorScheme.surfaceContainer,
-				disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
+				containerColor = MaterialTheme.colorScheme.surfaceContainer
 			),
 			leadingContent = {
 				if (isPlaylist) 

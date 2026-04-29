@@ -1,7 +1,6 @@
 package paige.navic.ui.screens.artist
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -12,7 +11,6 @@ import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -23,13 +21,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -82,7 +77,6 @@ import paige.navic.ui.components.common.SongRow
 import paige.navic.ui.components.dialogs.BulkDownloadDialog
 import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
-import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.screens.artist.components.ArtistActionButtons
@@ -146,14 +140,12 @@ fun ArtistDetailScreen(
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
-	var addArtistToPlaylistDialogShown by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
 		topBar = {
 			ArtistDetailScreenTopBar(
 				scrolled = scrolled,
 				artistState = artistState,
-				isOnline = isOnline,
 				starred = starred,
 				onSetStarred = { viewModel.starArtist(it) },
 			)
@@ -237,8 +229,7 @@ fun ArtistDetailScreen(
 							},
 							downloadStatus = downloadStatus,
 							playEnabled = state.albums.isNotEmpty(),
-							modifier = Modifier.padding(top = 8.dp),
-							isOnline = isOnline
+							modifier = Modifier.padding(top = 8.dp)
 						)
 						Column(
 							modifier = Modifier
@@ -372,7 +363,6 @@ fun ArtistDetailScreen(
 												downloadManager.deleteDownloadedCollection(album)
 											}
 										},
-										isOnline = isOnline,
 										rating = selectedAlbumRating,
 										onSetRating = { viewModel.rateSelectedAlbum(it) }
 									)

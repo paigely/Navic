@@ -78,7 +78,6 @@ fun PlaylistListScreenItem(
 			CollectionSheet(
 				onDismissRequest = onDeselect,
 				collection = playlist,
-				isOnline = true,
 				onShare = { onSetShareId(playlist.id) },
 				onDelete = { onSetDeletionId(playlist.id) },
 				onPlayNext = onPlayNext,

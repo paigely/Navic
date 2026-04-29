@@ -75,7 +75,6 @@ fun CollectionDetailScreenTopBar(
 						onDismissRequest = { expanded = false },
 						collection = collection,
 						albumInfo = (albumInfoState as? UiState.Success)?.data,
-						isOnline = isOnline,
 						onDownloadAll = onDownloadAll,
 						onCancelDownloadAll = onCancelDownloadAll,
 						downloadStatus = downloadStatus,

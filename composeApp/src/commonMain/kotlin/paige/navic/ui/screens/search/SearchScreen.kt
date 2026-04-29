@@ -38,7 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -221,7 +220,7 @@ fun SearchScreen(
 									SwipeToDismissBox(
 										state = dismissState,
 										enableDismissFromStartToEnd = false,
-										enableDismissFromEndToStart = canPlay,
+										enableDismissFromEndToStart = true,
 										backgroundContent = {
 											val backgroundColor by animateColorAsState(
 												targetValue = when (dismissState.targetValue) {
@@ -252,10 +251,8 @@ fun SearchScreen(
 										}
 									) {
 										ListItem(
-											enabled = canPlay,
 											modifier = Modifier
-												.background(MaterialTheme.colorScheme.surface)
-												.alpha(if (canPlay) 1f else 0.75f),
+												.background(MaterialTheme.colorScheme.surface),
 											onClick = {
 												ctx.clickSound()
 												player.clearQueue()
@@ -304,7 +301,6 @@ fun SearchScreen(
 														player.addToQueueSingle(song)
 													}
 												},
-												isOnline = isOnline,
 												downloadStatus = if (downloadedSongs.containsKey(
 														song.id
 													)
@@ -352,7 +348,6 @@ fun SearchScreen(
 									onSetShareId = { },
 									onPlayNext = { player.playNext(album as DomainSongCollection)},
 									onAddToQueue = { player.addToQueue(album as DomainSongCollection)},
-									isOnline = isOnline,
 									rating = selectedAlbumRating,
 									onSetRating = { albumListViewModel.setRating(it) }
 								)

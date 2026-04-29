@@ -74,7 +74,6 @@ import paige.navic.ui.components.common.RatingRow
 fun ArtistSheet(
 	onDismissRequest: () -> Unit,
 	artist: DomainArtist,
-	isOnline: Boolean,
 	onPlayNext: (() -> Unit)? = null,
 	onAddToQueue: (() -> Unit)? = null,
 	onAddAllToPlaylist: (() -> Unit)? = null,
@@ -279,15 +278,12 @@ fun ArtistSheet(
 					ListItem(
 						content = { Text(stringResource(Res.string.action_download)) },
 						leadingContent = { Icon(Icons.Outlined.Download, null) },
-						modifier = Modifier
-							.alpha(if (isOnline) 1f else 0.5f),
 						onClick = {
 							ctx.clickSound()
 							onDownloadAll?.invoke()
 							onDismissRequest()
 						},
 						colors = colors,
-						enabled = isOnline,
 						contentPadding = contentPadding
 					)
 				}
@@ -296,15 +292,12 @@ fun ArtistSheet(
 			ListItem(
 				content = { Text(stringResource(Res.string.action_download)) },
 				leadingContent = { Icon(Icons.Outlined.Download, null) },
-				modifier = Modifier
-					.alpha(if (isOnline) 1f else 0.5f),
 				onClick = {
 					ctx.clickSound()
 					onDownloadAll()
 					onDismissRequest()
 				},
 				colors = colors,
-				enabled = isOnline,
 				contentPadding = contentPadding
 			)
 		}

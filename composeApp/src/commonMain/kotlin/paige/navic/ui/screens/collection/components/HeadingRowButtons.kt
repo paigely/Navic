@@ -123,7 +123,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 				scope.launch {
 					when (downloadStatus) {
 						DownloadStatus.NOT_DOWNLOADED, DownloadStatus.FAILED -> {
-							if (isOnline) downloadManager.downloadCollection(collection)
+							downloadManager.downloadCollection(collection)
 						}
 						DownloadStatus.DOWNLOADING -> {
 							downloadManager.cancelCollectionDownload(collection)
@@ -135,7 +135,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 				}
 			},
 			shape = shape,
-			enabled = (isOnline && collection.songs.isNotEmpty()) ||
+			enabled = collection.songs.isNotEmpty() ||
 				(downloadStatus == DownloadStatus.DOWNLOADED || downloadStatus == DownloadStatus.DOWNLOADING),
 			contentPadding = PaddingValues(0.dp)
 		) {

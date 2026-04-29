@@ -99,7 +99,6 @@ fun SongSheet(
 	onAddToPlaylist: (() -> Unit)? = null,
 	onRemoveFromPlaylist: (() -> Unit)? = null,
 	downloadStatus: DownloadStatus? = null,
-	isOnline: Boolean = true,
 	onDownload: (() -> Unit)? = null,
 	onCancelDownload: (() -> Unit)? = null,
 	onDeleteDownload: (() -> Unit)? = null,
@@ -268,15 +267,12 @@ fun SongSheet(
 					ListItem(
 						content = { Text(stringResource(Res.string.action_download)) },
 						leadingContent = { Icon(Icons.Outlined.Download, null) },
-						modifier = Modifier
-							.alpha(if (isOnline) 1f else 0.5f),
 						onClick = {
 							ctx.clickSound()
 							onDownload?.invoke()
 							onDismissRequest()
 						},
 						colors = colors,
-						enabled = isOnline,
 						contentPadding = contentPadding
 					)
 				}
@@ -285,15 +281,12 @@ fun SongSheet(
 			ListItem(
 				content = { Text(stringResource(Res.string.action_download)) },
 				leadingContent = { Icon(Icons.Outlined.Download, null) },
-				modifier = Modifier
-					.alpha(if (isOnline) 1f else 0.5f),
 				onClick = {
 					ctx.clickSound()
 					onDownload()
 					onDismissRequest()
 				},
 				colors = colors,
-				enabled = isOnline,
 				contentPadding = contentPadding
 			)
 		}

@@ -82,7 +82,6 @@ fun LibraryScreen() {
 
 	val player = koinViewModel<MediaPlayerViewModel>()
 
-	val isOnline by albumsViewModel.isOnline.collectAsStateWithLifecycle()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
 	LaunchedEffect(loginState is LoginState.Success) {
@@ -121,7 +120,6 @@ fun LibraryScreen() {
 				scrollBehavior = scrollBehavior,
 				innerPadding = innerPadding,
 				onSetShareId = { shareId = it },
-				isOnline = isOnline,
 
 				pagedAlbums = pagedAlbums,
 				selectedAlbum = selectedAlbum,

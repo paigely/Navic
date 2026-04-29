@@ -23,7 +23,6 @@ import navic.composeapp.generated.resources.option_sort_starred
 import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_genres
 import navic.composeapp.generated.resources.title_playlists
-import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
@@ -50,7 +49,6 @@ fun LibraryScreenContent(
 	scrollBehavior: TopAppBarScrollBehavior,
 	innerPadding: PaddingValues,
 	onSetShareId: (String) -> Unit,
-	isOnline: Boolean,
 
 	// albums
 	pagedAlbums: LazyPagingItems<DomainAlbum>,
@@ -134,7 +132,6 @@ fun LibraryScreenContent(
 				onSetShareId = { onSetShareId(it) },
 				onPlayNext = onPlayAlbumNext,
 				onAddToQueue = onAddAlbumToQueue,
-				isOnline = isOnline,
 				rating = selectedAlbumRating,
 				onSetRating = onRateSelectedAlbum
 			)

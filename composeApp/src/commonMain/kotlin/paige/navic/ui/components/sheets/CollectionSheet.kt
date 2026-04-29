@@ -75,7 +75,6 @@ fun CollectionSheet(
 	onDismissRequest: () -> Unit,
 	collection: DomainSongCollection?,
 	albumInfo: DomainAlbumInfo? = null,
-	isOnline: Boolean,
 	onDownloadAll: (() -> Unit)? = null,
 	onCancelDownloadAll: (() -> Unit)? = null,
 	onDeleteDownloadAll: (() -> Unit)? = null,
@@ -327,15 +326,12 @@ fun CollectionSheet(
 					ListItem(
 						content = { Text(stringResource(Res.string.action_download)) },
 						leadingContent = { Icon(Icons.Outlined.Download, null) },
-						modifier = Modifier
-							.alpha(if (isOnline) 1f else 0.5f),
 						onClick = {
 							ctx.clickSound()
 							onDownloadAll?.invoke()
 							onDismissRequest()
 						},
 						colors = colors,
-						enabled = isOnline,
 						contentPadding = contentPadding
 					)
 				}
@@ -344,15 +340,12 @@ fun CollectionSheet(
 			ListItem(
 				content = { Text(stringResource(Res.string.action_download)) },
 				leadingContent = { Icon(Icons.Outlined.Download, null) },
-				modifier = Modifier
-					.alpha(if (isOnline) 1f else 0.5f),
 				onClick = {
 					ctx.clickSound()
 					onDownloadAll()
 					onDismissRequest()
 				},
 				colors = colors,
-				enabled = isOnline,
 				contentPadding = contentPadding
 			)
 		}

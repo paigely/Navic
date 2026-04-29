@@ -45,7 +45,6 @@ fun ArtistActionButtons(
 	onDeleteDownload: () -> Unit,
 	downloadStatus: DownloadStatus,
 	playEnabled: Boolean,
-	isOnline: Boolean,
 	modifier: Modifier = Modifier
 ) {
 	val ctx = LocalCtx.current
@@ -102,7 +101,7 @@ fun ArtistActionButtons(
 				DownloadStatus.DOWNLOADED,
 				DownloadStatus.FAILED -> true
 
-				DownloadStatus.NOT_DOWNLOADED -> isOnline && playEnabled
+				DownloadStatus.NOT_DOWNLOADED -> playEnabled
 			},
 			contentPadding = PaddingValues(0.dp)
 		) {
