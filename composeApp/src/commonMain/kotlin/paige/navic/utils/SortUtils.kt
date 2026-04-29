@@ -1,5 +1,6 @@
 package paige.navic.utils
 
+import androidx.room3.RoomRawQuery
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import paige.navic.data.database.entities.DownloadEntity
@@ -9,6 +10,7 @@ import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
 
+// TODO: sort with sql instead
 fun ImmutableList<DomainSong>.sortedByListType(
 	listType: DomainSongListType,
 	downloads: List<DownloadEntity>,
@@ -32,34 +34,46 @@ fun ImmutableList<DomainSong>.sortedByListType(
 	}.toImmutableList()
 }
 
-fun ImmutableList<DomainAlbum>.sortedByListType(
-	listType: DomainAlbumListType,
-	downloads: List<DownloadEntity>
-): ImmutableList<DomainAlbum> {
-	return when (listType) {
-		DomainAlbumListType.AlphabeticalByArtist -> this.sortedBy { it.artistName.lowercase() }
-		DomainAlbumListType.AlphabeticalByName -> this.sortedBy { it.name.lowercase() }
-		DomainAlbumListType.Frequent -> this.filter { it.playCount != 0 }
-			.sortedByDescending { it.playCount }
+fun DomainAlbumListType.toSqlQuery(): RoomRawQuery {
+	val (where, orderBy) = when (this) {
+		DomainAlbumListType.AlphabeticalByArtist ->
+			null to "LOWER(artistName) ASC"
+		DomainAlbumListType.AlphabeticalByName ->
+			null to "LOWER(name) ASC"
+		DomainAlbumListType.Frequent ->
+			"playCount != 0" to "playCount DESC"
+		DomainAlbumListType.Highest ->
+			null to "userRating DESC"
+		DomainAlbumListType.Newest ->
+			null to "createdAt DESC"
+		DomainAlbumListType.Random ->
+			null to "RANDOM()"
+		DomainAlbumListType.Downloaded,
+		DomainAlbumListType.Recent ->
+			null to "lastPlayedAt DESC"
+		DomainAlbumListType.Starred ->
+			"starredAt IS NOT NULL" to "starredAt ASC"
+		is DomainAlbumListType.ByGenre ->
+			"genre = ?" to "LOWER(name) ASC"
+		is DomainAlbumListType.ByYear ->
+			"COALESCE(year, 0) BETWEEN ? AND ?" to "LOWER(name) ASC"
+	}
 
-		DomainAlbumListType.Highest -> this.sortedByDescending { it.userRating }
-		DomainAlbumListType.Newest -> this.sortedByDescending { it.createdAt }
-		DomainAlbumListType.Random -> this.shuffled()
-		DomainAlbumListType.Recent -> this.sortedByDescending { it.lastPlayedAt }
-		DomainAlbumListType.Starred -> this.filter { it.starredAt != null }
-			.sortedBy { it.starredAt }
+	val sql = buildString {
+		append("SELECT * FROM AlbumEntity")
+		if (where != null) append(" WHERE $where")
+		append(" ORDER BY $orderBy")
+	}
 
-		is DomainAlbumListType.ByGenre -> this.filter { it.genre == listType.genre }
-		is DomainAlbumListType.ByYear -> this.filter {
-			(it.year ?: 0) >= listType.fromYear
-				&& (it.year ?: 0) <= listType.toYear
+	return RoomRawQuery(sql) { statement ->
+		when (this) {
+			is DomainAlbumListType.ByGenre ->
+				statement.bindText(1, genre)
+			is DomainAlbumListType.ByYear -> {
+				statement.bindInt(1, fromYear)
+				statement.bindInt(2, toYear)
+			}
+			else -> Unit
 		}
-
-		DomainAlbumListType.Downloaded -> filter { album ->
-			downloads
-				.filter { it.status == DownloadStatus.DOWNLOADED }
-				.map { it.songId }
-				.containsAll(album.songs.map { it.id })
-		}
-	}.toImmutableList()
+	}
 }

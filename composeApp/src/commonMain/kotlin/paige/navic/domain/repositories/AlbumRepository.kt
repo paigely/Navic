@@ -10,13 +10,14 @@ import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.DownloadDao
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.utils.UiState
-import paige.navic.utils.sortedByListType
+import paige.navic.utils.toSqlQuery
 import kotlin.time.Clock
 
 class AlbumRepository(
@@ -29,12 +30,19 @@ class AlbumRepository(
 		listType: DomainAlbumListType,
 		reversed: Boolean
 	): ImmutableList<DomainAlbum> {
-		val albums = albumDao
-			.getAllAlbumsList()
+		val downloadedSongIds = if (listType == DomainAlbumListType.Downloaded) {
+			downloadDao.getAllDownloadsList()
+				.filter { it.status == DownloadStatus.DOWNLOADED }
+				.map { it.songId }
+				.toSet()
+		} else null
+
+		return albumDao
+			.getAlbumsByQuery(listType.toSqlQuery())
 			.map { it.toDomainModel() }
+			.let { if (reversed) it.asReversed() else it }
+			.filter { album -> downloadedSongIds == null || downloadedSongIds.containsAll(album.songs.map { it.id }) }
 			.toImmutableList()
-			.sortedByListType(listType, downloadDao.getAllDownloadsList())
-		return if (reversed) albums.reversed().toImmutableList() else albums
 	}
 
 	private suspend fun refreshLocalData(
