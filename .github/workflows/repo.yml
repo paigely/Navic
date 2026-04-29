@@ -1,4 +1,4 @@
-name: Update Repository
+name: Update AltStore repository
 
 on:
   release:
@@ -6,16 +6,16 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: main
+          ref: master
 
       - name: Dependencies
-        run: brew install jq
+        run: sudo apt install -y jq
 
       - name: Update app-repo.json
         run: |
@@ -49,6 +49,6 @@ jobs:
 
           git diff --cached --quiet && echo "No changes" && exit 0
 
-          git commit -m "chore: update repo for ${{ github.event.release.tag_name }}"
+          git commit -m "chore: update altstore repo for ${{ github.event.release.tag_name }}"
 
-          git push origin main
+          git push origin master
