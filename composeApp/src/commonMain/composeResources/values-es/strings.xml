@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Navic</string>
-    <string name="title_library">Fonoteca</string>
+    <string name="title_library">Biblioteca</string>
     <string name="title_playlists">Lista de reproducción</string>
-    <string name="title_settings">Configuración</string>
+    <string name="title_settings">Ajustes</string>
     <string name="title_search">Buscar</string>
     <string name="title_appearance">Apariencia</string>
     <string name="title_behaviour">Comportamiento</string>
@@ -26,7 +26,7 @@
     <string name="subtitle_appearance">Temas, colores, disposición</string>
     <string name="subtitle_behaviour">Cambia el el funcionamiento general</string>
     <string name="subtitle_now_playing">Personalice la vista de reproducción a pantalla completa</string>
-    <string name="subtitle_bottom_app_bar">Personalice la barra inferior y el minirreproductor</string>
+    <string name="subtitle_bottom_app_bar">Personalice la barra inferior y el mini‐reproductor</string>
     <string name="subtitle_scrobbling">Registra automáticamente la música que escuchas</string>
     <string name="subtitle_about">Información, versión, licencias</string>
     <string name="subtitle_system_font">Usa Google Sans de forma predeterminada.</string>
@@ -36,7 +36,7 @@
     <string name="subtitle_playlist">Lista de reproducción</string>
     <string name="subtitle_source">Ver el código fuente</string>
     <string name="subtitle_chat">Únete al Discord</string>
-    <string name="subtitle_enable_scrobbling">Registre la música escuchada en su servidor de Navidrome</string>
+    <string name="subtitle_enable_scrobbling">Pistas del registro de música reproducidas a su servidor Navidrome</string>
     <string name="subtitle_dynamic_colour">Disponible para Android 12+</string>
     <string name="option_system_font">Usar fuente del sistema</string>
     <string name="option_dynamic_colour">Usar color dinámico</string>
@@ -164,7 +164,7 @@
     <string name="title_more_by_artist">Más de %1$s</string>
     <string name="title_genres">Géneros</string>
     <string name="title_navigation_bar">Barra de navegación</string>
-    <string name="title_mini_player">Minirreproductor</string>
+    <string name="title_mini_player">Mini‐reproductor</string>
     <string name="title_layout">Disposición</string>
     <string name="subtitle_playback">Comportamiento de audio, scrobbling, letras</string>
     <string name="subtitle_developer">Depuración, pruebas</string>
@@ -255,14 +255,14 @@
     <string name="subtitle_audio_offload">Experimental. Debe reiniciar la aplicación. Puede entrar en conflicto con la reproducción sin pausas en algunos dispositivos</string>
     <string name="info_track_replay_gain_effective">Valor efectivo de ReplayGain</string>
     <string name="option_audio_offload">Relegación de audio</string>
-    <string name="subtitle_gapless_playback">Experimental. Debe reiniciar la aplicación. Puebe entrar en conflicto con la relegación de audio en algunos dispositivos</string>
-    <string name="subtitle_now_playing_background_style">Elija Estático si tiene problemas de rendimiento</string>
+    <string name="subtitle_gapless_playback">Experimental. Requiere reiniciar la aplicación. Puede entrar en conflicto con la relegación de audio en algunos dispositivos</string>
+    <string name="subtitle_now_playing_background_style">Elija estático si tiene incidencias de rendimiento</string>
     <string name="option_mini_player_style_detached">Separado</string>
     <string name="option_mini_player_progress_style_seekable">Desplazable</string>
     <string name="info_unknown_share">Compartición %1$s</string>
     <string name="title_data_storage">Datos y almacenamiento</string>
     <string name="title_sync_control">Control de sincronización</string>
-    <string name="title_cache_management">Gestión de antememoria y almacenamiento</string>
+    <string name="title_cache_management">Gestión de caché y almacenamiento</string>
     <string name="title_sort_by">Ordenar por</string>
     <string name="title_direction">Dirección</string>
     <string name="title_bulk_download">Descargar todos los álbumes</string>
@@ -313,7 +313,7 @@
     <string name="subtitle_check_for_updates">Es recomendable mantenerlo activado ya que algunas actualizaciones corrigen defectos importantes</string>
     <string name="title_danger_zone">Área de riesgo</string>
     <string name="info_update">Se ha publicado la versión %1$s</string>
-    <string name="subtitle_data_storage">Gestione la sincronización, el uso de red y la antememoria</string>
+    <string name="subtitle_data_storage">Gestione la sincronización, el uso de red y el caché</string>
     <string name="notice_login_suggestion">Quizá quiso decir…</string>
     <string name="subtitle_trigger_sync">Fuerza una actualización completa de la biblioteca inmediatamente</string>
     <string name="subtitle_rebuild_database">Purga todos los metadatos locales y fuerza una sincronización nueva</string>
@@ -374,4 +374,15 @@
         <item quantity="many">Valorar con %1$d de estrellas</item>
         <item quantity="other">Valorar con %1$d estrellas</item>
     </plurals>
+    <string name="title_streaming_quality">Calidad de transmisión</string>
+    <string name="title_wifi">Wi-Fi</string>
+    <string name="title_cellular">Móvil</string>
+    <string name="subtitle_streaming_quality">Ajuste la calidad de la música streaming</string>
+    <string name="option_quality_low">Baja</string>
+    <string name="option_quality_medium">Medio</string>
+    <string name="option_quality_high">Alto</string>
+    <string name="option_quality_lossless">Pérdida (sin transcodificación)</string>
+    <string name="info_in_use">(en uso)</string>
+    <string name="info_explicit">Explícito</string>
+    <string name="info_streaming_quality">La preselección de calidad más alta utilizará más dato. La transcodificación puede impactar severamente varias veces y causar que las líricas no se sincronicen. Seleccione menor pérdida si encuentras cualesquiera de las incidencias.</string>
 </resources>
