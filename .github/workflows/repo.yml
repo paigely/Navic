@@ -14,9 +14,6 @@ jobs:
           fetch-depth: 0
           ref: master
 
-      - name: Dependencies
-        run: sudo apt install -y jq
-
       - name: Update app-repo.json
         run: |
           TAG="${{ github.event.release.tag_name }}"
