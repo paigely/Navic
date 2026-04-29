@@ -1,88 +1,67 @@
 package paige.navic.domain.repositories
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.map
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
-import paige.navic.data.database.paging.RandomAlbumPagingSource
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.utils.UiState
+import paige.navic.utils.sortedByListType
 import kotlin.time.Clock
 
 class AlbumRepository(
 	private val albumDao: AlbumDao,
+	private val downloadDao: DownloadDao,
 	private val syncManager: SyncManager,
 	private val dbRepository: DbRepository
 ) {
-	fun getPagedAlbums(
+	private suspend fun getLocalData(
 		listType: DomainAlbumListType,
 		reversed: Boolean
-	): Flow<PagingData<DomainAlbum>> {
-
-		if (listType == DomainAlbumListType.Random) {
-			return flow {
-				val randomIds = albumDao.getRandomAlbumIds()
-
-				val randomPager = Pager(
-					config = PagingConfig(
-						pageSize = 30,
-						enablePlaceholders = true,
-						prefetchDistance = 15
-					),
-					pagingSourceFactory = { RandomAlbumPagingSource(albumDao, randomIds) }
-				).flow.map { pagingData ->
-					pagingData.map { it.toDomainModel() }
-				}
-
-				emitAll(randomPager)
-			}
-		}
-
-		return Pager(
-			config = PagingConfig(
-				pageSize = 30,
-				enablePlaceholders = true,
-				prefetchDistance = 15
-			),
-			pagingSourceFactory = {
-				when (listType) {
-					DomainAlbumListType.AlphabeticalByName -> {
-						if (reversed) albumDao.getAlbumsByNameDesc() else albumDao.getAlbumsByNameAsc()
-					}
-					DomainAlbumListType.AlphabeticalByArtist -> {
-						if (reversed) albumDao.getAlbumsByArtistDesc() else albumDao.getAlbumsByArtistAsc()
-					}
-					DomainAlbumListType.Newest -> {
-						if (reversed) albumDao.getAlbumsOldest() else albumDao.getAlbumsNewest()
-					}
-					DomainAlbumListType.Frequent -> {
-						if (reversed) albumDao.getAlbumsInfrequent() else albumDao.getAlbumsFrequent()
-					}
-					DomainAlbumListType.Recent -> {
-						if (reversed) albumDao.getAlbumsStale() else albumDao.getAlbumsRecent()
-					}
-					DomainAlbumListType.Starred -> albumDao.getStarredAlbums()
-					DomainAlbumListType.Downloaded -> albumDao.getDownloadedAlbums()
-					else -> albumDao.getAlbumsByArtistAsc()
-				}
-			}
-		).flow.map { pagingData ->
-			pagingData.map { it.toDomainModel() }
-		}
+	): ImmutableList<DomainAlbum> {
+		val albums = albumDao
+			.getAllAlbumsList()
+			.map { it.toDomainModel() }
+			.toImmutableList()
+			.sortedByListType(listType, downloadDao.getAllDownloadsList())
+		return if (reversed) albums.reversed().toImmutableList() else albums
 	}
 
-	suspend fun syncLibrary() {
+	private suspend fun refreshLocalData(
+		listType: DomainAlbumListType,
+		reversed: Boolean
+	): ImmutableList<DomainAlbum> {
 		dbRepository.syncLibrarySongs().getOrThrow()
+		return getLocalData(listType, reversed)
 	}
+
+	fun getAlbumsFlow(
+		fullRefresh: Boolean,
+		listType: DomainAlbumListType,
+		reversed: Boolean
+	): Flow<UiState<ImmutableList<DomainAlbum>>> = flow {
+		val localData = getLocalData(listType, reversed)
+		if (fullRefresh) {
+			emit(UiState.Loading(data = localData))
+			try {
+				emit(UiState.Success(data = refreshLocalData(listType, reversed)))
+			} catch (error: Exception) {
+				emit(UiState.Error(error = error, data = localData))
+			}
+		} else {
+			emit(UiState.Success(data = localData))
+		}
+	}.flowOn(Dispatchers.IO)
 
 	suspend fun isAlbumStarred(album: DomainAlbum) = albumDao.isAlbumStarred(album.id)
 	suspend fun getAlbumRating(album: DomainAlbum) = albumDao.getAlbumRating(album.id) ?: 0

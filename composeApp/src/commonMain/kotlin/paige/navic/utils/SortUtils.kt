@@ -32,7 +32,6 @@ fun ImmutableList<DomainSong>.sortedByListType(
 	}.toImmutableList()
 }
 
-// TODO: why isn't this used lol
 fun ImmutableList<DomainAlbum>.sortedByListType(
 	listType: DomainAlbumListType,
 	downloads: List<DownloadEntity>

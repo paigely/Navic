@@ -3,31 +3,29 @@ package paige.navic.ui.screens.album.viewmodels
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.repositories.AlbumRepository
-import kotlin.time.Clock
+import paige.navic.utils.UiState
 
 @OptIn(ExperimentalCoroutinesApi::class)
 open class AlbumListViewModel(
 	initialListType: DomainAlbumListType = DomainAlbumListType.AlphabeticalByArtist,
 	private val repository: AlbumRepository
 ) : ViewModel() {
+	private val _albumsState =
+		MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())
+	val albumsState = _albumsState.asStateFlow()
+
 	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
 	val selectedAlbum = _selectedAlbum.asStateFlow()
-
-	private val _error = MutableStateFlow<Throwable?>(null)
-	val error = _error.asStateFlow()
 
 	private val _starred = MutableStateFlow(false)
 	val starred = _starred.asStateFlow()
@@ -41,19 +39,7 @@ open class AlbumListViewModel(
 	private val _selectedReversed = MutableStateFlow(false)
 	val selectedReversed = _selectedReversed.asStateFlow()
 
-	private val _refreshTrigger = MutableStateFlow(Clock.System.now())
-
 	val gridState = LazyGridState()
-
-	val pagedAlbums: Flow<PagingData<DomainAlbum>> = combine(
-		_listType,
-		_selectedReversed,
-		_refreshTrigger
-	) { type, reversed, _ ->
-		type to reversed
-	}.flatMapLatest { (type, reversed) ->
-		repository.getPagedAlbums(type, reversed)
-	}.cachedIn(viewModelScope)
 
 	init {
 		viewModelScope.launch {
@@ -62,13 +48,11 @@ open class AlbumListViewModel(
 	}
 
 	fun refreshAlbums(fullRefresh: Boolean) {
-		if (!fullRefresh) return
 		viewModelScope.launch {
-			try {
-				repository.syncLibrary()
-			} catch (e: Exception) {
-				_error.value = e
-			}
+			repository.getAlbumsFlow(fullRefresh, _listType.value, _selectedReversed.value)
+				.collect {
+					_albumsState.value = it
+				}
 		}
 	}
 
@@ -110,13 +94,15 @@ open class AlbumListViewModel(
 
 	fun setListType(listType: DomainAlbumListType) {
 		_listType.value = listType
+		refreshAlbums(false)
 	}
 
 	fun setReversed(reversed: Boolean) {
 		_selectedReversed.value = reversed
+		refreshAlbums(false)
 	}
 
 	fun clearError() {
-		_error.value = null
+		_albumsState.value = UiState.Success(_albumsState.value.data ?: persistentListOf())
 	}
 }

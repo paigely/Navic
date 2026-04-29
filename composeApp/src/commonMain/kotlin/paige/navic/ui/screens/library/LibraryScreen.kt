@@ -9,7 +9,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,14 +17,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
-import androidx.paging.compose.collectAsLazyPagingItems
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_library
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.shared.MediaPlayerViewModel
@@ -55,7 +51,7 @@ fun LibraryScreen() {
 		key = "libraryAlbums",
 		parameters = { parametersOf(DomainAlbumListType.Recent) }
 	)
-	val pagedAlbums = albumsViewModel.pagedAlbums.collectAsLazyPagingItems()
+	val albumsState by albumsViewModel.albumsState.collectAsStateWithLifecycle()
 	val selectedAlbum by albumsViewModel.selectedAlbum.collectAsStateWithLifecycle()
 	val selectedAlbumIsStarred by albumsViewModel.starred.collectAsStateWithLifecycle()
 	val selectedAlbumRating by albumsViewModel.rating.collectAsStateWithLifecycle()
@@ -85,7 +81,7 @@ fun LibraryScreen() {
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
 	LaunchedEffect(loginState is LoginState.Success) {
-		pagedAlbums.refresh()
+		albumsViewModel.refreshAlbums(false)
 		playlistsViewModel.refreshPlaylists(false)
 		artistsViewModel.refreshArtists(false)
 		genresViewModel.refreshGenres(false)
@@ -98,30 +94,28 @@ fun LibraryScreen() {
 			RootBottomBar(scrolled = scrollManager.isTriggered)
 		}
 	) { innerPadding ->
-		val isAlbumsLoading = pagedAlbums.loadState.refresh is LoadState.Loading
-		val isAnythingLoading = isAlbumsLoading ||
-			playlistsState is UiState.Loading ||
-			artistsState is UiState.Loading ||
-			genresState is UiState.Loading
 		PullToRefreshBox(
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			finished = !isAnythingLoading,
+			finished = albumsState !is UiState.Loading &&
+				playlistsState !is UiState.Loading &&
+				artistsState !is UiState.Loading &&
+				genresState !is UiState.Loading,
 			onRefresh = {
-				pagedAlbums.refresh()
+				albumsViewModel.refreshAlbums(true)
 				playlistsViewModel.refreshPlaylists(true)
 				artistsViewModel.refreshArtists(true)
 				genresViewModel.refreshGenres(true)
 			},
-			key = listOf(pagedAlbums.itemSnapshotList, playlistsState, artistsState, genresState)
+			key = listOf(albumsState, playlistsState, artistsState, genresState)
 		) {
 			LibraryScreenContent(
 				scrollBehavior = scrollBehavior,
 				innerPadding = innerPadding,
 				onSetShareId = { shareId = it },
 
-				pagedAlbums = pagedAlbums,
+				albumsState = albumsState,
 				selectedAlbum = selectedAlbum,
 				selectedAlbumIsStarred = selectedAlbumIsStarred,
 				selectedAlbumRating = selectedAlbumRating,
@@ -153,7 +147,7 @@ fun LibraryScreen() {
 	}
 
 	val flattenedErrors = listOf(
-		(pagedAlbums.loadState.refresh as? LoadState.Error)?.error,
+		(albumsState as? UiState.Error)?.error,
 		(playlistsState as? UiState.Error)?.error,
 		(artistsState as? UiState.Error)?.error,
 		(genresState as? UiState.Error)?.error
