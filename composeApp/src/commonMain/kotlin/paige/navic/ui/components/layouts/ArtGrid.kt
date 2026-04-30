@@ -36,7 +36,6 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.utils.UiState
-import paige.navic.utils.onRightClick
 import paige.navic.utils.shimmerLoading
 
 @Composable
@@ -93,7 +92,6 @@ fun ArtGridItem(
 					onClick = onClick,
 					onLongClick = onLongClick
 				)
-				.onRightClick { onLongClick?.invoke() }
 				.then(modifier)
 		) {
 			CoverArt(

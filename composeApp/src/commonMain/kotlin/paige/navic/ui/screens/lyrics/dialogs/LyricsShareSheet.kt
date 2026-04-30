@@ -3,6 +3,7 @@ package paige.navic.ui.screens.lyrics.dialogs
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -29,6 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -39,6 +41,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
@@ -49,8 +52,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.ResolvedTextDirection
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,6 +61,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import com.materialkolor.rememberDynamicColorScheme
 import com.materialkolor.utils.ColorUtils.calculateLuminance
 import dev.zt64.compose.pipette.CircularColorPicker
 import dev.zt64.compose.pipette.HsvColor
@@ -80,6 +84,12 @@ import paige.navic.icons.outlined.Share
 import paige.navic.managers.ShareManager
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.FormRow
+import paige.navic.ui.theme.blue
+import paige.navic.ui.theme.pink
+import paige.navic.ui.theme.positive
+import paige.navic.ui.theme.purple
+import paige.navic.ui.theme.red
+import paige.navic.ui.theme.warning
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,25 +115,27 @@ fun LyricsShareSheet(
 			.build()
 	}
 
-	val defaultColor = MaterialTheme.colorScheme.onPrimary
+	val defaultColor = MaterialTheme.colorScheme.primary
+	val red = MaterialTheme.colorScheme.red
+	val green = MaterialTheme.colorScheme.positive
+	val blue = MaterialTheme.colorScheme.blue
+	val purple = MaterialTheme.colorScheme.purple
+	val pink = MaterialTheme.colorScheme.pink
+	val yellow = MaterialTheme.colorScheme.warning
 	val colors = remember {
 		listOf(
 			defaultColor,
-			Color.Green,
-			Color.Red,
-			Color.Magenta,
-			Color.Blue,
-			Color.Yellow,
-			Color.DarkGray,
-			Color.LightGray,
-			Color.Black
+			blue,
+			green,
+			yellow,
+			red,
+			purple,
+			pink
 		)
 	}
 
 	var selectedColor by remember { mutableStateOf(defaultColor) }
-
-	val contentColor = if (calculateLuminance(selectedColor.toArgb()) > 0.5)
-		Color.Black else Color.White
+	val colorScheme = rememberDynamicColorScheme(selectedColor, isSystemInDarkTheme())
 
 	var customHsv by remember { mutableStateOf(HsvColor(210f, 1f, 1f)) }
 	var expanded by remember { mutableStateOf(false) }
@@ -150,7 +162,7 @@ fun LyricsShareSheet(
 				modifier = Modifier.padding(top = 24.dp, bottom = 16.dp)
 			)
 
-			Box(
+			Surface(
 				modifier = Modifier
 					.padding(horizontal = 32.dp)
 					.drawWithContent {
@@ -160,13 +172,13 @@ fun LyricsShareSheet(
 						drawLayer(graphicsLayer)
 					}
 					.fillMaxWidth()
-					.aspectRatio(4f / 5f)
-					.clip(RoundedCornerShape(24.dp))
-					.background(color = selectedColor)
-					.padding(24.dp)
+					.aspectRatio(4f / 5f),
+				shape = RoundedCornerShape(24.dp),
+				color = colorScheme.primary,
+				contentColor = colorScheme.onPrimary
 			) {
 				Column(
-					modifier = Modifier.fillMaxSize()
+					modifier = Modifier.fillMaxSize().padding(24.dp)
 				) {
 					Row(
 						modifier = Modifier.fillMaxWidth(),
@@ -188,14 +200,12 @@ fun LyricsShareSheet(
 							Text(
 								text = song.title,
 								style = MaterialTheme.typography.titleMedium,
-								color = contentColor,
 								fontWeight = FontWeight.Bold
 							)
 
 							Text(
 								text = song.artistName,
-								style = MaterialTheme.typography.bodyMedium,
-								color = contentColor.copy(alpha = 0.8f)
+								style = MaterialTheme.typography.bodyMedium
 							)
 						}
 					}
@@ -210,10 +220,7 @@ fun LyricsShareSheet(
 							selectedLyrics.joinToString("\n")
 						}
 
-						AutoResizedText(
-							text = combinedLyrics,
-							color = contentColor
-						)
+						AutoResizedText(text = combinedLyrics)
 					}
 					Row(
 						verticalAlignment = Alignment.CenterVertically,
@@ -222,13 +229,11 @@ fun LyricsShareSheet(
 						Icon(
 							imageVector = Icons.Brand.Navic,
 							contentDescription = null,
-							tint = contentColor,
 							modifier = Modifier.size(24.dp)
 						)
 						Spacer(modifier = Modifier.size(8.dp))
 						Text(
 							text = stringResource(Res.string.app_name),
-							color = contentColor,
 							style = MaterialTheme.typography.titleSmall,
 							fontWeight = FontWeight.Bold
 						)
@@ -372,7 +377,6 @@ fun ColorCircle(
 @Composable
 fun AutoResizedText(
 	text: String,
-	color: Color,
 	modifier: Modifier = Modifier,
 	sizeFactor: Float = 0.12f,
 	minFontSize: TextUnit = 10.sp,
@@ -400,10 +404,11 @@ fun AutoResizedText(
 
 		Text(
 			text = text,
-			color = if (readyToDraw) color else Color.Transparent,
 			style = scaledStyle,
 			textAlign = if (isRtl) TextAlign.End else TextAlign.Start,
-			modifier = Modifier.fillMaxWidth(),
+			modifier = Modifier
+				.fillMaxWidth()
+				.alpha(if (readyToDraw) 1f else 0f),
 			onTextLayout = { textLayoutResult ->
 				val detectedRtl = (0 until textLayoutResult.lineCount).any { lineIndex ->
 					textLayoutResult.getBidiRunDirection(textLayoutResult.getLineStart(lineIndex)) == ResolvedTextDirection.Rtl

@@ -52,6 +52,7 @@
 	<string name="title_streaming_quality">Streaming quality</string>
 	<string name="title_wifi">Wi-Fi</string>
 	<string name="title_cellular">Cellular</string>
+	<string name="title_select_lyrics">Select Lyrics</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
@@ -235,6 +236,11 @@
 	<plurals name="count_rate_stars">
 		<item quantity="one">Rate %1$d star</item>
 		<item quantity="other">Rate %1$d stars</item>
+	</plurals>
+
+	<plurals name="count_lines">
+		<item quantity="one">%1$d line selected</item>
+		<item quantity="other">%1$d lines selected</item>
 	</plurals>
 
 	<string name="action_ok">OK</string>

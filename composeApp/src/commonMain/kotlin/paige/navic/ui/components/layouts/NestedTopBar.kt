@@ -73,6 +73,7 @@ fun TopBarButton(
 	onClick: () -> Unit,
 	modifier: Modifier = Modifier,
 	shadowElevation: Dp = 0.dp,
+	enabled: Boolean = true,
 	content: @Composable () -> Unit
 ) {
 	val ctx = LocalCtx.current
@@ -82,10 +83,15 @@ fun TopBarButton(
 			ctx.clickSound()
 			onClick()
 		},
+		enabled = enabled,
 		shape = CircleShape,
-		color = MaterialTheme.colorScheme.surfaceContainer,
-		contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-		shadowElevation = shadowElevation
+		shadowElevation = shadowElevation,
+		color = if (enabled)
+			MaterialTheme.colorScheme.surfaceContainer
+		else MaterialTheme.colorScheme.surfaceContainerLow,
+		contentColor = if (enabled)
+			MaterialTheme.colorScheme.onSurfaceVariant
+		else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .5f)
 	) {
 		Box(contentAlignment = Alignment.Center) {
 			Box(Modifier.size(24.dp)) {
