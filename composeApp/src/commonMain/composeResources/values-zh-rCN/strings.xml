@@ -301,4 +301,7 @@
     <string name="title_radios">电台</string>
     <string name="title_create_radio">创建电台</string>
     <string name="option_navigation_bar_label_visibility_always">总是</string>
+    <string name="title_direction">方向</string>
+    <string name="title_select_lyrics">选择歌词</string>
+    <string name="option_lyrics_blur">歌词模糊</string>
 </resources>
