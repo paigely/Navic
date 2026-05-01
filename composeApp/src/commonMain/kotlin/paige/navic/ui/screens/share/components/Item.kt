@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlinx.coroutines.delay
@@ -67,13 +68,6 @@ fun ShareListScreenItem(
 	val scope = rememberCoroutineScope()
 	val dismissState = rememberSwipeToDismissBoxState()
 
-	LaunchedEffect(dismissState.currentValue) {
-		if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-			onSetDeletionId(share.id)
-			dismissState.snapTo(SwipeToDismissBoxValue.Settled)
-		}
-	}
-
 	LaunchedEffect(share.expiresAt) {
 		while (true) {
 			delay(1.seconds)
@@ -83,17 +77,27 @@ fun ShareListScreenItem(
 
 	SwipeToDismissBox(
 		state = dismissState,
-		enableDismissFromStartToEnd = false,
-		enableDismissFromEndToStart = true,
+		onDismiss = {
+			if (it != SwipeToDismissBoxValue.Settled) onSetDeletionId(share.id)
+			scope.launch { dismissState.reset() }
+		},
 		backgroundContent = {
 			Box(
 				modifier = Modifier
 					.fillMaxSize()
+					.clip(MaterialTheme.shapes.extraSmall)
 					.background(MaterialTheme.colorScheme.errorContainer)
-					.padding(horizontal = 16.dp),
-				contentAlignment = Alignment.CenterEnd
+					.padding(horizontal = 20.dp)
 			) {
-				Icon(Icons.Outlined.Delete, null)
+				Icon(
+					imageVector = Icons.Outlined.Delete,
+					contentDescription = null,
+					tint = MaterialTheme.colorScheme.onErrorContainer,
+					modifier = Modifier.align(when (dismissState.dismissDirection) {
+						SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+						else -> Alignment.CenterEnd
+					})
+				)
 			}
 		}
 	) {

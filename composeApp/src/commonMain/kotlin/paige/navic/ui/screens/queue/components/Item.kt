@@ -1,6 +1,5 @@
 package paige.navic.ui.screens.queue.components
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,14 +20,14 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_from_queue
 import navic.composeapp.generated.resources.action_reorder
@@ -69,13 +68,7 @@ fun QueueScreenItem(
 	)
 
 	val dismissState = rememberSwipeToDismissBoxState()
-
-	LaunchedEffect(dismissState.currentValue) {
-		if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-			onRemove()
-			dismissState.snapTo(SwipeToDismissBoxValue.Settled)
-		}
-	}
+	val scope = rememberCoroutineScope()
 
 	val color = if (isSelected)
 		MaterialTheme.colorScheme.surfaceContainerHighest
@@ -93,34 +86,28 @@ fun QueueScreenItem(
 
 	SwipeToDismissBox(
 		state = dismissState,
-		enableDismissFromEndToStart = true,
-		enableDismissFromStartToEnd = false,
+		onDismiss = {
+			onRemove()
+			scope.launch {
+				dismissState.reset()
+			}
+		},
 		backgroundContent = {
-			val backgroundColor by animateColorAsState(
-				targetValue = when (dismissState.targetValue) {
-					SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.errorContainer
-					else -> Color.Transparent
-				}
-			)
-			val iconColor by animateColorAsState(
-				targetValue = when (dismissState.targetValue) {
-					SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.onErrorContainer
-					else -> MaterialTheme.colorScheme.onSurfaceVariant
-				}
-			)
-
 			Box(
 				modifier = Modifier
 					.fillMaxSize()
 					.clip(itemShape.shape)
-					.background(backgroundColor)
-					.padding(horizontal = 20.dp),
-				contentAlignment = Alignment.CenterEnd
+					.background(MaterialTheme.colorScheme.errorContainer)
+					.padding(horizontal = 20.dp)
 			) {
 				Icon(
 					imageVector = Icons.Outlined.Delete,
 					contentDescription = stringResource(Res.string.action_remove_from_queue),
-					tint = iconColor
+					tint = MaterialTheme.colorScheme.onErrorContainer,
+					modifier = Modifier.align(when (dismissState.dismissDirection) {
+						SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+						else -> Alignment.CenterEnd
+					})
 				)
 			}
 		},

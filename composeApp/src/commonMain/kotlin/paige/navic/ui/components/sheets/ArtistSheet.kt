@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
@@ -16,11 +15,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
@@ -29,13 +26,10 @@ import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_cancel_download
 import navic.composeapp.generated.resources.action_delete_download
-import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_download
 import navic.composeapp.generated.resources.action_play_next
 import navic.composeapp.generated.resources.action_remove_star
-import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_star
-import navic.composeapp.generated.resources.action_view_artist
 import navic.composeapp.generated.resources.action_view_on_lastfm
 import navic.composeapp.generated.resources.action_view_on_musicbrainz
 import navic.composeapp.generated.resources.count_albums
@@ -46,28 +40,21 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.settings.Settings
-import paige.navic.domain.models.DomainAlbum
-import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainArtist
-import paige.navic.domain.models.DomainPlaylist
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
 import paige.navic.icons.filled.Star
-import paige.navic.icons.outlined.Artist
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.PlaylistAdd
-import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.QueuePlayNext
-import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
-import paige.navic.ui.components.common.RatingRow
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

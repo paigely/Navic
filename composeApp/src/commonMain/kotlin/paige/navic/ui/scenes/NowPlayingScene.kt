@@ -7,7 +7,6 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -36,6 +35,7 @@ import io.ktor.http.Url
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.session.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.ui.components.sheets.ModalBottomSheet
 import paige.navic.ui.scenes.NowPlayingSceneStrategy.Companion.bottomSheet
 import paige.navic.ui.theme.NavicTheme
 

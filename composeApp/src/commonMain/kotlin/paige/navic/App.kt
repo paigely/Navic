@@ -60,7 +60,6 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.rememberCtx
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
-import paige.navic.ui.navigation.Material3Transitions
 import paige.navic.ui.scenes.BottomSheetSceneStrategy
 import paige.navic.ui.scenes.NowPlayingSceneStrategy
 import paige.navic.ui.screens.album.AlbumListScreen
@@ -94,6 +93,7 @@ import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.utils.BottomBarScrollManager
 import paige.navic.utils.LocalBottomBarScrollManager
+import paige.navic.utils.Material3Transitions
 
 @OptIn(ExperimentalSerializationApi::class)
 private val config = SavedStateConfiguration {

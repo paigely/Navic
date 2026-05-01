@@ -1,4 +1,4 @@
-package paige.navic.ui.navigation
+package paige.navic.utils
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -30,6 +30,15 @@ const val DurationLong2 = 500
 val EmphasizedEasing = PathEasing(pathForAnimation)
 val EmphasizedAccelerateEasing = CubicBezierEasing(0.3f, 0f, 0.8f, 0.15f)
 val EmphasizedDecelerateEasing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)
+
+val SheetShowMotionSpec = tween<Float>(
+	durationMillis = 400,
+	easing = EmphasizedDecelerateEasing
+)
+val SheetHideMotionSpec = tween<Float>(
+	durationMillis = 600,
+	easing = EmphasizedAccelerateEasing
+)
 
 object Material3Transitions {
 	val SharedXAxisEnterTransition: (Density) -> EnterTransition = { _ ->

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -23,6 +22,7 @@ import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import com.kyant.capsule.ContinuousCapsule
+import paige.navic.ui.components.sheets.ModalBottomSheet
 import paige.navic.ui.scenes.BottomSheetSceneStrategy.Companion.bottomSheet
 
 /** An [OverlayScene] that renders an [entry] within a [ModalBottomSheet]. */

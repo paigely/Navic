@@ -1,8 +1,7 @@
 package paige.navic.ui.screens.collection.components
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,13 +26,12 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.capsule.ContinuousRoundedRectangle
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_play_next
@@ -94,55 +93,43 @@ fun CollectionDetailScreenSongRow(
 	)
 
 	val dismissState = rememberSwipeToDismissBoxState()
-
-	LaunchedEffect(dismissState.currentValue) {
-		if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-			onAddToQueue()
-			dismissState.snapTo(SwipeToDismissBoxValue.Settled)
-		}
-		if (dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd) {
-			onPlayNext()
-			dismissState.snapTo(SwipeToDismissBoxValue.Settled)
-		}
-	}
+	val scope = rememberCoroutineScope()
 
 	SwipeToDismissBox(
 		modifier = Modifier.padding(horizontal = 16.dp, vertical = 1.5.dp),
 		state = dismissState,
-		enableDismissFromStartToEnd = true,
+		onDismiss = {
+			if (it == SwipeToDismissBoxValue.StartToEnd) onPlayNext()
+			if (it == SwipeToDismissBoxValue.EndToStart) onAddToQueue()
+			scope.launch { dismissState.reset() }
+		},
 		backgroundContent = {
-			val backgroundColor by animateColorAsState(
-				targetValue = when (dismissState.targetValue) {
-					SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.primaryContainer
-					else -> Color.Transparent
-				}
-			)
-			val iconColor by animateColorAsState(
-				targetValue = when (dismissState.targetValue) {
-					SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.onPrimaryContainer
-					else -> MaterialTheme.colorScheme.onSurfaceVariant
-				}
-			)
-
-			Row(
+			Box(
 				modifier = Modifier
 					.fillMaxSize()
 					.clip(itemShape.shape)
-					.background(color = backgroundColor)
-					.padding(horizontal = 20.dp),
-				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = Arrangement.SpaceBetween
+					.background(MaterialTheme.colorScheme.primaryContainer)
+					.padding(horizontal = 20.dp)
 			) {
-				Icon(
-					imageVector = Icons.Outlined.QueuePlayNext,
-					contentDescription = stringResource(Res.string.action_play_next),
-					tint = iconColor
-				)
-				Icon(
-					imageVector = Icons.Outlined.Queue,
-					contentDescription = stringResource(Res.string.action_add_to_queue),
-					tint = iconColor
-				)
+				when (dismissState.dismissDirection) {
+					SwipeToDismissBoxValue.StartToEnd -> {
+						Icon(
+							imageVector = Icons.Outlined.Queue,
+							contentDescription = stringResource(Res.string.action_add_to_queue),
+							tint = MaterialTheme.colorScheme.onPrimaryContainer,
+							modifier = Modifier.align(Alignment.CenterStart)
+						)
+					}
+					SwipeToDismissBoxValue.EndToStart -> {
+						Icon(
+							imageVector = Icons.Outlined.QueuePlayNext,
+							contentDescription = stringResource(Res.string.action_play_next),
+							tint = MaterialTheme.colorScheme.onPrimaryContainer,
+							modifier = Modifier.align(Alignment.CenterEnd)
+						)
+					}
+					else -> {}
+				}
 			}
 		}
 	) {
