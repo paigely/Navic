@@ -2,6 +2,7 @@ package paige.navic.domain.repositories
 
 import com.russhwolf.settings.Settings
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -186,10 +187,16 @@ object LyricsContentParser {
 
 class LyricRepository(
 	private val lyricDao: LyricDao,
-	private val client: HttpClient,
 	private val settings: Settings
 ) {
 
+	private val client = HttpClient {
+		install(HttpTimeout) {
+			requestTimeoutMillis = 40000
+			connectTimeoutMillis = 40000
+			socketTimeoutMillis = 40000
+		}
+	}
 	private val json = Json { ignoreUnknownKeys = true }
 
 	private fun getConfig(): LyricsConfig {
