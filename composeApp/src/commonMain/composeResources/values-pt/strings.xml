@@ -358,4 +358,11 @@
     <string name="action_clear_downloads">Limpar downloads</string>
     <string name="action_test_exception_handler">Testar manipulador de exceções</string>
     <string name="info_streaming_quality">Predefinições de qualidade maiores usam mais dados. A transcodificação pode afetar severamente o tempo de carregamento e fazer com que as letras não sejam sincronizadas. Selecione Sem Perdas se encontrar algum problema.</string>
+    <string name="title_select_lyrics">Selecionar letra</string>
+    <string name="option_now_playing_slider_style_yoyo">Ioiô</string>
+    <string name="option_offline_mode_auto">Automatico</string>
+    <string name="option_offline_mode_forced">Forçar</string>
+    <string name="option_quality_low">Baixa</string>
+    <string name="option_quality_medium">Média</string>
+    <string name="option_quality_high">Alta</string>
 </resources>
