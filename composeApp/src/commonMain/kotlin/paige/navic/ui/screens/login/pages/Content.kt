@@ -36,6 +36,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousCapsule
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_log_in
@@ -172,7 +173,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					textDecoration = TextDecoration.Underline,
 					modifier = Modifier
 						.padding(horizontal = 16.dp)
-						.clickable {
+						.clickable(onClick = dropUnlessResumed {
 							backStack.lastOrNull()?.let {
 								if (it is Screen.Login) {
 									ctx.clickSound()
@@ -180,7 +181,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 									focusManager.clearFocus(true)
 								}
 							}
-						}
+						})
 				)
 
 				Spacer(Modifier.weight(2.25f))

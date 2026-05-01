@@ -1,6 +1,7 @@
 package paige.navic.ui.screens.collection.components
 
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_more_by_artist
@@ -26,7 +27,7 @@ fun LazyListScope.collectionDetailScreenMoreByArtistRow(
 				coverArtId = album.coverArtId,
 				title = album.name,
 				contentDescription = album.name,
-				onClick = {
+				onClick = dropUnlessResumed {
 					backStack.add(Screen.CollectionDetail(album.id, tab))
 				}
 			)

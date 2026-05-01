@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
@@ -50,7 +51,7 @@ fun PlaylistListScreenItem(
 
 	Box(modifier) {
 		ArtGridItem(
-			onClick = {
+			onClick = dropUnlessResumed {
 				ctx.clickSound()
 				scope.launch {
 					backStack.add(Screen.CollectionDetail(playlist.id, tab))

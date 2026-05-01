@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.materialkolor.rememberDynamicColorScheme
 import dev.zt64.compose.pipette.HsvColor
 import navic.composeapp.generated.resources.Res
@@ -68,7 +69,7 @@ fun GenreListScreenCard(
 		contentColor = colorScheme.onPrimary,
 		shape = MaterialTheme.shapes.medium,
 		shadowElevation = 2.dp,
-		onClick = {
+		onClick = dropUnlessResumed {
 			ctx.clickSound()
 			backStack.add(
 				Screen.AlbumList(

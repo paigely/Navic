@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.persistentListOf
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
@@ -69,11 +70,11 @@ fun CollectionDetailScreenSongRowDropdown(
 					onAddToQueue()
 				}
 			},
-			onTrackInfo = {
+			onTrackInfo = dropUnlessResumed {
 				backStack.add(Screen.SongDetail(song.id))
 			},
 			onViewAlbum = if (collection !is DomainAlbum && song.albumId != null) {
-				{
+				dropUnlessResumed {
 					backStack.add(
 						Screen.CollectionDetail(
 							collectionId = song.albumId,
@@ -82,7 +83,7 @@ fun CollectionDetailScreenSongRowDropdown(
 					)
 				}
 			} else null,
-			onViewArtist = {
+			onViewArtist = dropUnlessResumed {
 				backStack.add(Screen.ArtistDetail(song.artistId))
 			},
 			onAddToPlaylist = {

@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_not_playing
 import org.jetbrains.compose.resources.stringResource
@@ -56,7 +57,7 @@ fun NowPlayingInfoRow(
 						}
 					},
 					inlineContent = InlineExplicitIconLarge,
-					modifier = Modifier.clickable {
+					modifier = Modifier.clickable(onClick = dropUnlessResumed {
 						song.albumId?.let {
 							backStack.removeLastOrNull()
 
@@ -71,12 +72,12 @@ fun NowPlayingInfoRow(
 							if (!isSameAlbum)
 								backStack.add(
 									Screen.CollectionDetail(
-										playerState.currentCollection?.id ?: return@clickable,
+										playerState.currentCollection?.id ?: return@dropUnlessResumed,
 										""
 									)
 								)
 						}
-					},
+					}),
 					style = MaterialTheme.typography.bodyLarge
 						.copy(
 							fontSize = MaterialTheme.typography.bodyLarge.fontSize * 1.1
@@ -84,12 +85,15 @@ fun NowPlayingInfoRow(
 				)
 			}
 			MarqueeText(
-				modifier = Modifier.clickable(song != null) {
-					song?.artistId?.let { id ->
-						backStack.remove(Screen.NowPlaying)
-						backStack.add(Screen.ArtistDetail(id))
+				modifier = Modifier.clickable(
+					song != null,
+					onClick = dropUnlessResumed {
+						song?.artistId?.let { id ->
+							backStack.remove(Screen.NowPlaying)
+							backStack.add(Screen.ArtistDetail(id))
+						}
 					}
-				},
+				),
 				style = MaterialTheme.typography.bodyMedium
 					.copy(
 						color = MaterialTheme.colorScheme.onSurfaceVariant,

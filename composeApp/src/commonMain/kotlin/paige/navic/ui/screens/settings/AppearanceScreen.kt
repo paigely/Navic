@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.compose.pipette.HsvColor
 import dev.zt64.compose.pipette.RingColorPicker
@@ -98,7 +99,7 @@ fun SettingsAppearanceScreen() {
 			) {
 				Form {
 					FormRow(
-						onClick = {
+						onClick = dropUnlessResumed {
 							backStack.add(Screen.Settings.Fonts)
 						}
 					) {

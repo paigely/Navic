@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.option_audio_offload
@@ -86,7 +87,7 @@ fun SettingsPlaybackScreen() {
 			) {
 				Form {
 					FormRow(
-						onClick = { backStack.add(Screen.Settings.StreamingQuality) },
+						onClick = dropUnlessResumed { backStack.add(Screen.Settings.StreamingQuality) },
 						horizontalArrangement = Arrangement.Start
 					) {
 						Column(Modifier.weight(1f)) {

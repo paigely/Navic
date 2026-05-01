@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
@@ -66,13 +67,13 @@ fun NowPlayingMoreButton(
 				onDismissRequest = { expanded = false },
 				song = song,
 				collection = playerState.currentCollection,
-				onViewAlbum = {
+				onViewAlbum = dropUnlessResumed {
 					playerState.currentCollection?.let { collection ->
 						backStack.remove(Screen.NowPlaying)
 						backStack.add(Screen.CollectionDetail(collection.id, ""))
 					}
 				},
-				onViewArtist = {
+				onViewArtist = dropUnlessResumed {
 					backStack.remove(Screen.NowPlaying)
 					backStack.add(Screen.ArtistDetail(song.artistId))
 				},
@@ -82,7 +83,7 @@ fun NowPlayingMoreButton(
 				onAddToPlaylist = {
 					playlistDialogShown = true
 				},
-				onTrackInfo = {
+				onTrackInfo = dropUnlessResumed {
 					backStack.remove(Screen.NowPlaying)
 					backStack.add(Screen.SongDetail(song.id))
 				},

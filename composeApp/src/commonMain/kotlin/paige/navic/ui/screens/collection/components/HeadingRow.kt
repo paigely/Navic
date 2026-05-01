@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown_genre
@@ -75,12 +76,12 @@ fun CollectionDetailScreenHeadingRow(
 				Text(
 					subtitle,
 					color = MaterialTheme.colorScheme.primary,
-					modifier = Modifier.clickable(collection is DomainAlbum) {
+					modifier = Modifier.clickable(collection is DomainAlbum, onClick = dropUnlessResumed {
 						ctx.clickSound()
 						(collection as? DomainAlbum)?.artistId?.let { id ->
 							backStack.add(Screen.ArtistDetail(id))
 						}
-					},
+					}),
 					style = MaterialTheme.typography.bodyMedium,
 					fontFamily = defaultFont(grade = 100, round = 100f)
 				)

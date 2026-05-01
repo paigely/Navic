@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
@@ -153,11 +154,11 @@ fun SongListScreenItem(
 					onShare = { onSetShareId(song.id) },
 					onPlayNext = onPlayNext,
 					onAddToQueue = onAddToQueue,
-					onTrackInfo = {
+					onTrackInfo = dropUnlessResumed {
 						backStack.add(Screen.SongDetail(song.id))
 					},
 					onViewAlbum = song.albumId?.let { albumId ->
-						{
+						dropUnlessResumed {
 							backStack.add(
 								Screen.CollectionDetail(
 									collectionId = albumId,

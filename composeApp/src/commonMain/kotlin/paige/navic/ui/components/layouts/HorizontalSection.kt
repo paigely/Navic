@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation3.runtime.NavKey
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_see_all
@@ -94,11 +95,12 @@ fun LazyGridScope.header(
 					.padding(top = 12.dp, end = 16.dp)
 					.clickable(
 						interactionSource = null,
-						indication = null
-					) {
-						ctx.clickSound()
-						backStack.add(destination)
-					}
+						indication = null,
+						onClick = dropUnlessResumed {
+					    	ctx.clickSound()
+					    	backStack.add(destination)
+					    }
+					)
 			)
 		}
 	}

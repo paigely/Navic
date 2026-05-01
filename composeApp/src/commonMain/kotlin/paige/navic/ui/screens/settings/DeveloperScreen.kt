@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_ok
@@ -73,7 +74,7 @@ fun SettingsDeveloperScreen() {
 						onSetValue = { Settings.shared.checkForUpdates = it }
 					)
 					FormRow(
-						onClick = {
+						onClick = dropUnlessResumed {
 							backStack.lastOrNull()?.let {
 								if (it is Screen.Settings.Developer) {
 									backStack.add(Screen.Settings.CustomHeaders)
