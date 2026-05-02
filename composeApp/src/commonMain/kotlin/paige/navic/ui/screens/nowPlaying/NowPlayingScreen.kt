@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.action_navigate_back
@@ -57,6 +58,7 @@ fun NowPlayingScreen() {
 	val currentScreen = backStack.lastOrNull()
 	val isPlayerCurrent = currentScreen is Screen.NowPlaying
 		|| currentScreen is Screen.Queue
+		|| currentScreen is Screen.PlaybackSpeed
 
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val song = playerState.currentSong
@@ -88,13 +90,13 @@ fun NowPlayingScreen() {
 					SheetActionButton(
 						icon = Icons.Outlined.Lyrics,
 						contentDescription = stringResource(Res.string.action_lyrics),
-						onClick = { backStack.add(Screen.Lyrics) },
+						onClick = dropUnlessResumed { backStack.add(Screen.Lyrics) },
 						isStartRounded = true
 					)
 					SheetActionButton(
 						icon = Icons.Outlined.List,
 						contentDescription = stringResource(Res.string.action_queue),
-						onClick = { backStack.add(Screen.Queue) },
+						onClick = dropUnlessResumed { backStack.add(Screen.Queue) },
 						isEndRounded = true
 					)
 				}
@@ -103,7 +105,8 @@ fun NowPlayingScreen() {
 	) { contentPadding ->
 		Box(Modifier.fillMaxSize()) {
 			if (Settings.shared.nowPlayingBackgroundStyle
-				== NowPlayingBackgroundStyle.Dynamic) {
+				== NowPlayingBackgroundStyle.Dynamic
+			) {
 				BlendBackground(
 					coverArtId = song?.coverArtId,
 					isPaused = playerState.isPaused
@@ -119,8 +122,18 @@ fun NowPlayingScreen() {
 				val toolbarPosition = Settings.shared.nowPlayingToolbarPosition
 				val padding = when {
 					isLandscape -> contentPadding
-					toolbarPosition == ToolbarPosition.Top -> contentPadding.plus(PaddingValues(bottom = 40.dp))
-					toolbarPosition == ToolbarPosition.Bottom -> contentPadding.plus(PaddingValues(top = 40.dp))
+					toolbarPosition == ToolbarPosition.Top -> contentPadding.plus(
+						PaddingValues(
+							bottom = 40.dp
+						)
+					)
+
+					toolbarPosition == ToolbarPosition.Bottom -> contentPadding.plus(
+						PaddingValues(
+							top = 40.dp
+						)
+					)
+
 					else -> contentPadding
 				}
 				if (isLandscape) {

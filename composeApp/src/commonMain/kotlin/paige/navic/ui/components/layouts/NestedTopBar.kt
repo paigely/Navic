@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_navigate_back
 import org.jetbrains.compose.resources.stringResource
@@ -52,7 +53,7 @@ fun NestedTopBar(
 			if (!hideBack) {
 				TopBarButton(
 					modifier = Modifier.padding(horizontal = 12.dp),
-					onClick = {
+					onClick = dropUnlessResumed {
 						if (backStack.size > 1) {
 							backStack.removeLastOrNull()
 						}

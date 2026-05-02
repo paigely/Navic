@@ -77,7 +77,7 @@ jobs:
 
   build-ipa:
     name: Build iOS IPA
-    runs-on: macos-26-intel
+    runs-on: macos-26
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5

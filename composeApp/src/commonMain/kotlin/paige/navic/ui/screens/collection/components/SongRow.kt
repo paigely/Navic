@@ -1,8 +1,7 @@
 package paige.navic.ui.screens.collection.components
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,14 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedListItem
@@ -27,13 +24,11 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.capsule.ContinuousRoundedRectangle
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_play_next
@@ -65,6 +61,7 @@ import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.Waveform
 import paige.navic.utils.InlineExplicitIcon
+import paige.navic.utils.segmentedShapes
 import paige.navic.utils.toHoursMinutesSeconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -88,61 +85,50 @@ fun CollectionDetailScreenSongRow(
 	val isCurrentTrack = playerState.currentSong?.id == song.id
 	val canPlay = !isOffline || isDownloaded
 
+	val dismissState = rememberSwipeToDismissBoxState()
+	val scope = rememberCoroutineScope()
+
 	val itemShape = segmentedShapes(
 		index = index,
-		count = count
+		count = count,
+		dismissDirection = dismissState.dismissDirection
 	)
-
-	val dismissState = rememberSwipeToDismissBoxState()
-
-	LaunchedEffect(dismissState.currentValue) {
-		if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-			onAddToQueue()
-			dismissState.snapTo(SwipeToDismissBoxValue.Settled)
-		}
-		if (dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd) {
-			onPlayNext()
-			dismissState.snapTo(SwipeToDismissBoxValue.Settled)
-		}
-	}
 
 	SwipeToDismissBox(
 		modifier = Modifier.padding(horizontal = 16.dp, vertical = 1.5.dp),
 		state = dismissState,
-		enableDismissFromStartToEnd = true,
+		onDismiss = {
+			if (it == SwipeToDismissBoxValue.StartToEnd) onPlayNext()
+			if (it == SwipeToDismissBoxValue.EndToStart) onAddToQueue()
+			scope.launch { dismissState.reset() }
+		},
 		backgroundContent = {
-			val backgroundColor by animateColorAsState(
-				targetValue = when (dismissState.targetValue) {
-					SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.primaryContainer
-					else -> Color.Transparent
-				}
-			)
-			val iconColor by animateColorAsState(
-				targetValue = when (dismissState.targetValue) {
-					SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.onPrimaryContainer
-					else -> MaterialTheme.colorScheme.onSurfaceVariant
-				}
-			)
-
-			Row(
+			Box(
 				modifier = Modifier
 					.fillMaxSize()
-					.clip(itemShape.shape)
-					.background(color = backgroundColor)
-					.padding(horizontal = 20.dp),
-				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = Arrangement.SpaceBetween
+					.clip(MaterialTheme.shapes.largeIncreased)
+					.background(MaterialTheme.colorScheme.primaryContainer)
+					.padding(horizontal = 20.dp)
 			) {
-				Icon(
-					imageVector = Icons.Outlined.QueuePlayNext,
-					contentDescription = stringResource(Res.string.action_play_next),
-					tint = iconColor
-				)
-				Icon(
-					imageVector = Icons.Outlined.Queue,
-					contentDescription = stringResource(Res.string.action_add_to_queue),
-					tint = iconColor
-				)
+				when (dismissState.dismissDirection) {
+					SwipeToDismissBoxValue.StartToEnd -> {
+						Icon(
+							imageVector = Icons.Outlined.Queue,
+							contentDescription = stringResource(Res.string.action_add_to_queue),
+							tint = MaterialTheme.colorScheme.onPrimaryContainer,
+							modifier = Modifier.align(Alignment.CenterStart)
+						)
+					}
+					SwipeToDismissBoxValue.EndToStart -> {
+						Icon(
+							imageVector = Icons.Outlined.QueuePlayNext,
+							contentDescription = stringResource(Res.string.action_play_next),
+							tint = MaterialTheme.colorScheme.onPrimaryContainer,
+							modifier = Modifier.align(Alignment.CenterEnd)
+						)
+					}
+					else -> {}
+				}
 			}
 		}
 	) {
@@ -255,57 +241,5 @@ fun CollectionDetailScreenSongRow(
 				}
 			}
 		)
-	}
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-fun segmentedShapes(
-	index: Int,
-	count: Int,
-	defaultShapes: ListItemShapes = ListItemDefaults.shapes(),
-): ListItemShapes {
-	val overrideShape = ContinuousRoundedRectangle(18.dp)
-	return remember(index, count, defaultShapes, overrideShape) {
-		when {
-			count == 1 -> {
-				val defaultBaseShape = defaultShapes.shape
-				defaultShapes.copy(
-					shape = overrideShape
-				)
-			}
-
-			index == 0 -> {
-				val defaultBaseShape = defaultShapes.shape
-				if (defaultBaseShape is CornerBasedShape) {
-					defaultShapes.copy(
-						shape =
-							defaultBaseShape.copy(
-								topStart = overrideShape.topStart,
-								topEnd = overrideShape.topEnd,
-							)
-					)
-				} else {
-					defaultShapes
-				}
-			}
-
-			index == count - 1 -> {
-				val defaultBaseShape = defaultShapes.shape
-				if (defaultBaseShape is CornerBasedShape) {
-					defaultShapes.copy(
-						shape =
-							defaultBaseShape.copy(
-								bottomStart = overrideShape.bottomStart,
-								bottomEnd = overrideShape.bottomEnd,
-							)
-					)
-				} else {
-					defaultShapes
-				}
-			}
-
-			else -> defaultShapes
-		}
 	}
 }

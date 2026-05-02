@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
@@ -267,7 +268,7 @@ fun ArtistDetailScreen(
 											stringResource(Res.string.action_see_all),
 											style = MaterialTheme.typography.labelLarge,
 											color = MaterialTheme.colorScheme.primary,
-											modifier = Modifier.clickable {
+											modifier = Modifier.clickable(onClick = dropUnlessResumed {
 												ctx.clickSound()
 												backStack.add(
 													Screen.SongList(
@@ -276,7 +277,7 @@ fun ArtistDetailScreen(
 														artistName = state.artist.name
 													)
 												)
-											}
+											})
 										)
 									}
 									LazyHorizontalGrid(
@@ -333,10 +334,11 @@ fun ArtistDetailScreen(
 									coverArtId = album.coverArtId, 
 									title = album.name, 
 									contentDescription = null,
-									onSelect = { viewModel.selectAlbum(album) }
-								) {
-									backStack.add(Screen.CollectionDetail(album.id, "artist"))
-								}
+									onSelect = { viewModel.selectAlbum(album) },
+									onClick = dropUnlessResumed {
+										backStack.add(Screen.CollectionDetail(album.id, "artist"))
+									}
+								)
 								if (selectedAlbum == album) {
 									CollectionSheet(
 										onDismissRequest = { viewModel.clearAlbumSelection() },
@@ -382,9 +384,10 @@ fun ArtistDetailScreen(
 										artist.albumCount
 									),
 									contentDescription = null,
-								) {
-									backStack.add(Screen.ArtistDetail(artist.id))
-								}
+									onClick = dropUnlessResumed {
+										backStack.add(Screen.ArtistDetail(artist.id))
+									}
+								)
 							}
 						}
 						Spacer(Modifier.height(contentPadding.calculateBottomPadding()))

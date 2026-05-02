@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation3.runtime.NavKey
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -57,7 +58,7 @@ fun LazyGridScope.libraryScreenOverviewButton(
 				containerColor = MaterialTheme.colorScheme.surfaceContainer,
 				contentColor = MaterialTheme.colorScheme.onSurfaceVariant
 			),
-			onClick = {
+			onClick = dropUnlessResumed {
 				ctx.clickSound()
 				if (backStack.lastOrNull() !is Screen.AlbumList) {
 					backStack.add(destination)

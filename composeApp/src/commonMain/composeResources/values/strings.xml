@@ -264,6 +264,7 @@
 	<string name="action_sleep_timer">Sleep timer</string>
 	<string name="action_sleep_timer_enabled">Sleep timer - %1$s left </string>
 	<string name="action_disable_sleep_timer">Turn off timer</string>
+	<string name="option_playback_speed">Playback speed</string>
 	<string name="action_navigate_back">Back</string>
 	<string name="action_log_out">Logout</string>
 	<string name="action_log_in">Log in</string>

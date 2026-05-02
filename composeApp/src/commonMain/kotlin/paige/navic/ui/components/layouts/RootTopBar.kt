@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_log_out
 import navic.composeapp.generated.resources.action_sleep_timer
@@ -109,7 +110,7 @@ private fun Actions(
 
 	if (!isSearchEnabled) {
 		IconButton(
-			onClick = {
+			onClick = dropUnlessResumed {
 				ctx.clickSound()
 				backStack.add(Screen.Search(nested = true))
 			}
@@ -121,7 +122,7 @@ private fun Actions(
 		}
 	}
 
-	IconButton(onClick = {
+	IconButton(onClick = dropUnlessResumed {
 		ctx.clickSound()
 		backStack.add(Screen.Settings.Root)
 	}) {
@@ -152,7 +153,7 @@ private fun Actions(
 		) {
 			DropdownItem(
 				text = { Text(stringResource(Res.string.action_view_shares)) },
-				onClick = {
+				onClick = dropUnlessResumed {
 					expanded = false
 					backStack.add(Screen.ShareList)
 				},

@@ -42,17 +42,10 @@ object SessionManager {
 				agent = "Navic"
 			}
 
-			val customHeaders = Settings.shared.customHeaders
-			if (customHeaders.isNotBlank()) {
+			val customHeaders = Settings.shared.customHeadersMap()
+			if (customHeaders.isNotEmpty()) {
 				defaultRequest {
-					customHeaders.lines().forEach { line ->
-						val parts = line.split(":", limit = 2)
-						val key = parts.getOrNull(0)?.trim()?.takeIf { it.isNotBlank() }
-						val value = parts.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() }
-						if (parts.size == 2 && key != null && value != null) {
-							header(key, value)
-						}
-					}
+					customHeaders.forEach { (key, value) -> header(key, value) }
 				}
 			}
 		}

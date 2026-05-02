@@ -1,5 +1,7 @@
 package paige.navic.ui.components.layouts
 
+import androidx.compose.animation.BoundsTransform
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import paige.navic.LocalCtx
@@ -35,6 +38,7 @@ import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.settings.Settings
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
+import paige.navic.utils.EmphasizedDecelerateEasing
 import paige.navic.utils.UiState
 import paige.navic.utils.shimmerLoading
 
@@ -101,6 +105,12 @@ fun ArtGridItem(
 					.fillMaxWidth()
 					.sharedElement(
 						sharedContentState = this@with.rememberSharedContentState("${tab}-${id}-cover"),
+						boundsTransform = BoundsTransform { _, _ ->
+							tween(
+								durationMillis = 500,
+								easing = EmphasizedDecelerateEasing
+							)
+						},
 						animatedVisibilityScope = LocalNavAnimatedContentScope.current
 					),
 				interactionSource = interactionSource
@@ -108,7 +118,9 @@ fun ArtGridItem(
 			Text(
 				text = title,
 				style = MaterialTheme.typography.titleSmallEmphasized,
-				modifier = Modifier.fillMaxWidth().padding(top = 6.dp)
+				modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+				maxLines = 2,
+				overflow = TextOverflow.Ellipsis
 			)
 			subtitle?.let {
 				Text(
@@ -116,7 +128,8 @@ fun ArtGridItem(
 					style = MaterialTheme.typography.bodySmall,
 					color = MaterialTheme.colorScheme.onSurfaceVariant,
 					modifier = Modifier.fillMaxWidth(),
-					maxLines = 2
+					maxLines = 2,
+					overflow = TextOverflow.Ellipsis
 				)
 			}
 		}

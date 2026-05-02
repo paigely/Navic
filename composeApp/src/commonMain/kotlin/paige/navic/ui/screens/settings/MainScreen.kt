@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.subtitle_about
 import navic.composeapp.generated.resources.subtitle_appearance
@@ -134,7 +135,7 @@ private fun PageRow(
 ) {
 	val backStack = LocalNavStack.current
 	FormRow(
-		onClick = {
+		onClick = dropUnlessResumed {
 			destination?.let { destination ->
 				backStack.lastOrNull()?.let {
 					if (it is Screen.Settings) {

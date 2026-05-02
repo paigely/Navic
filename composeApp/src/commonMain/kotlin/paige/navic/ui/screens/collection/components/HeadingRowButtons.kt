@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.TextAutoSize
@@ -19,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kyant.capsule.ContinuousCapsule
@@ -47,8 +49,7 @@ import paige.navic.ui.theme.defaultFont
 
 @Composable
 fun CollectionDetailScreenHeadingRowButtons(
-	collection: DomainSongCollection,
-	isOnline: Boolean
+	collection: DomainSongCollection
 ) {
 	val ctx = LocalCtx.current
 	val player = koinViewModel<MediaPlayerViewModel>()
@@ -67,57 +68,53 @@ fun CollectionDetailScreenHeadingRowButtons(
 			alignment = Alignment.CenterHorizontally
 		)
 	) {
-		val shape = ContinuousCapsule
+		val buttonShape = ContinuousCapsule
+		val buttonHeight = 44.dp
+		OutlinedButton(
+			modifier = Modifier.size(width = 52.dp, height = buttonHeight),
+			onClick = {
+				ctx.clickSound()
+				player.shufflePlay(collection)
+			},
+			shape = buttonShape,
+			contentPadding = PaddingValues(0.dp),
+			enabled = collection.songs.isNotEmpty()
+		) {
+			Icon(
+				Icons.Outlined.Shuffle,
+				contentDescription = stringResource(Res.string.action_shuffle),
+				modifier = Modifier.size(24.dp)
+			)
+		}
 		Button(
-			modifier = Modifier.weight(1f),
+			modifier = Modifier.weight(1f).height(buttonHeight),
 			onClick = {
 				ctx.clickSound()
 				player.clearQueue()
 				player.addToQueue(collection)
 				player.playAt(0)
 			},
-			shape = shape
+			shape = buttonShape,
+			enabled = collection.songs.isNotEmpty()
 		) {
 			Icon(
 				Icons.Filled.Play,
 				null,
-				modifier = Modifier.size(24.dp).padding(end = 4.dp)
+				modifier = Modifier.size(25.dp).padding(end = 3.dp)
 			)
 			Text(
 				stringResource(Res.string.action_play),
 				maxLines = 1,
 				autoSize = TextAutoSize.StepBased(
 					minFontSize = 1.sp,
-					maxFontSize = MaterialTheme.typography.labelLarge.fontSize
+					maxFontSize = 15.sp
 				),
-				fontFamily = defaultFont(grade = 100)
+				fontWeight = FontWeight.SemiBold,
+				fontFamily = defaultFont(round = 100f)
 			)
 		}
 		OutlinedButton(
-			modifier = Modifier.weight(1f),
-			onClick = {
-				ctx.clickSound()
-				player.shufflePlay(collection)
-			},
-			shape = shape
-		) {
-			Icon(
-				Icons.Outlined.Shuffle,
-				null,
-				modifier = Modifier.size(22.dp).padding(end = 6.dp)
-			)
-			Text(
-				stringResource(Res.string.action_shuffle),
-				maxLines = 1,
-				autoSize = TextAutoSize.StepBased(
-					minFontSize = 1.sp,
-					maxFontSize = MaterialTheme.typography.labelLarge.fontSize
-				),
-				fontFamily = defaultFont(grade = 100)
-			)
-		}
-		OutlinedButton(
-			modifier = Modifier.size(width = 52.dp, height = 40.dp),
+			modifier = Modifier.size(width = 52.dp, height = buttonHeight),
 			onClick = {
 				ctx.clickSound()
 				scope.launch {
@@ -134,7 +131,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 					}
 				}
 			},
-			shape = shape,
+			shape = buttonShape,
 			enabled = collection.songs.isNotEmpty() ||
 				(downloadStatus == DownloadStatus.DOWNLOADED || downloadStatus == DownloadStatus.DOWNLOADING),
 			contentPadding = PaddingValues(0.dp)

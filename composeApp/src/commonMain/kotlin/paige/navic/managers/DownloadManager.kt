@@ -5,7 +5,9 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.size.Size
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.onDownload
+import io.ktor.client.request.header
 import io.ktor.client.request.prepareRequest
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.HttpMethod
@@ -33,6 +35,7 @@ import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.entities.LyricEntity
+import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
@@ -46,9 +49,16 @@ class DownloadManager(
 	private val storageManager: StorageManager,
 	private val lyricRepository: LyricRepository,
 	private val lyricDao: LyricDao,
-	private val scope: CoroutineScope,
-	private val client: HttpClient = HttpClient()
+	private val scope: CoroutineScope
 ) {
+	private val client = HttpClient {
+		val customHeaders = Settings.shared.customHeadersMap()
+		if (customHeaders.isNotEmpty()) {
+			defaultRequest {
+				customHeaders.forEach { (key, value) -> header(key, value) }
+			}
+		}
+	}
 	private val activeDownloadsMutex = Mutex()
 	private val activeDownloads = mutableMapOf<String, Job>()
 	private val downloadSemaphore =

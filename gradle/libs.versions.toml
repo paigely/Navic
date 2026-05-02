@@ -7,7 +7,7 @@ android-compileSdk = "36"
 android-minSdk = "24"
 #noinspection UnusedVersionCatalogEntry
 android-targetSdk = "36"
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 
 # Androidx
 androidx-activity = "1.13.0"
@@ -56,7 +56,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
-androidx-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics", version = "1.10.6" }
+androidx-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics", version = "1.11.0" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "androidx-sqlite" }
 androidx-room3-runtime = { module = "androidx.room3:room3-runtime", version.ref = "androidx-room3" }
 androidx-room3-compiler = { module = "androidx.room3:room3-compiler", version.ref = "androidx-room3" }
@@ -100,7 +100,7 @@ koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
-subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.0-beta03" }
+subsonicKotlin = { module = "dev.zt64.subsonic:subsonic-client", version = "1.0.0-beta04" }
 
 [bundles]
 cmp = ["cmp-foundation", "cmp-material3", "cmp-material3-adaptive-nav", "cmp-material3-windowSize", "cmp-resources", "cmp-runtime", "cmp-ui"]

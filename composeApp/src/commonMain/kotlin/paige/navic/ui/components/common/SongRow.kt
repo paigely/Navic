@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
@@ -202,10 +203,10 @@ fun SongRow(
 					onAddToQueue()
 				}
 			},
-			onTrackInfo = {
+			onTrackInfo = dropUnlessResumed {
 				backStack.add(Screen.SongDetail(song.id))
 			},
-			onViewAlbum = {
+			onViewAlbum = dropUnlessResumed {
 				backStack.add(
 					Screen.CollectionDetail(
 						collectionId = song.albumId as String,

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toPersistentList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
@@ -87,8 +88,8 @@ fun CollectionDetailScreenTopBar(
 							uriHandler.openUri("https://musicbrainz.org/release/$id")
 						},
 						onViewArtist =
-							if (collection is DomainAlbum) 
-								{ { backStack.add(Screen.ArtistDetail(collection.artistId)) } }
+							if (collection is DomainAlbum)
+								dropUnlessResumed { backStack.add(Screen.ArtistDetail(collection.artistId)) }
 							else null,
 						rating = rating,
 						onSetRating = onSetRating

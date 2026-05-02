@@ -49,6 +49,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
@@ -132,7 +133,7 @@ fun MiniPlayer(
 		if (detached) 20.dp else 0.dp
 	)
 
-	val onClick = {
+	val onClick = dropUnlessResumed {
 		if (!backStack.contains(Screen.NowPlaying)) {
 			backStack.add(Screen.NowPlaying)
 		}

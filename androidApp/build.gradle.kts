@@ -20,8 +20,8 @@ extensions.configure<ApplicationExtension> {
 		applicationId = "paige.navic"
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
-		versionCode = 27
-		versionName = "v1.0.0-alpha37"
+		versionCode = 28
+		versionName = "v1.0.0-alpha38"
 
 		ndk {
 			abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))

@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
@@ -305,11 +306,11 @@ fun SearchScreen(
 														song.id
 													)
 												) DownloadStatus.DOWNLOADED else null,
-												onTrackInfo = {
+												onTrackInfo = dropUnlessResumed {
 													backStack.add(Screen.SongDetail(song.id))
 												},
 												onViewAlbum = song.albumId?.let { albumId ->
-													{
+													dropUnlessResumed {
 														backStack.add(
 															Screen.CollectionDetail(
 																collectionId = albumId,

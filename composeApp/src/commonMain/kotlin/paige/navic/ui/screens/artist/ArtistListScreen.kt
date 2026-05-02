@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_star
@@ -114,7 +115,7 @@ fun ArtistsScreenItem(
 	val backStack = LocalNavStack.current
 	Box(modifier) {
 		ArtGridItem(
-			onClick = {
+			onClick = dropUnlessResumed {
 				ctx.clickSound()
 				backStack.add(Screen.ArtistDetail(artist.id))
 			},

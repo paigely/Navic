@@ -60,7 +60,6 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.rememberCtx
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
-import paige.navic.ui.navigation.Material3Transitions
 import paige.navic.ui.scenes.BottomSheetSceneStrategy
 import paige.navic.ui.scenes.NowPlayingSceneStrategy
 import paige.navic.ui.screens.album.AlbumListScreen
@@ -72,6 +71,7 @@ import paige.navic.ui.screens.library.LibraryScreen
 import paige.navic.ui.screens.login.LoginScreen
 import paige.navic.ui.screens.lyrics.LyricsScreen
 import paige.navic.ui.screens.nowPlaying.NowPlayingScreen
+import paige.navic.ui.screens.nowPlaying.PlaybackSpeedScreen
 import paige.navic.ui.screens.playlist.PlaylistListScreen
 import paige.navic.ui.screens.queue.QueueScreen
 import paige.navic.ui.screens.radio.RadioListScreen
@@ -94,6 +94,7 @@ import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.utils.BottomBarScrollManager
 import paige.navic.utils.LocalBottomBarScrollManager
+import paige.navic.utils.Material3Transitions
 
 @OptIn(ExperimentalSerializationApi::class)
 private val config = SavedStateConfiguration {
@@ -266,6 +267,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Queue>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
 			QueueScreen()
+		}
+		entry<Screen.PlaybackSpeed>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
+			PlaybackSpeedScreen()
 		}
 		entry<Screen.CollectionDetail>(metadata = detailPane("root")) { key ->
 			CollectionDetailScreen(key.collectionId, key.tab)

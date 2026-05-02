@@ -9,6 +9,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -51,7 +52,7 @@ fun AlbumListScreenItem(
 
 	Box(modifier) {
 		ArtGridItem(
-			onClick = {
+			onClick = dropUnlessResumed {
 				ctx.clickSound()
 				scope.launch {
 					backStack.add(Screen.CollectionDetail(album.id, tab))
@@ -90,7 +91,7 @@ fun AlbumListScreenItem(
 				starred = starred,
 				onSetStarred = onSetStarred,
 				onAddAllToPlaylist = { playlistDialogShown = true },
-				onViewArtist = {
+				onViewArtist = dropUnlessResumed {
 					backStack.add(Screen.ArtistDetail(album.artistId))
 				},
 				rating = rating,

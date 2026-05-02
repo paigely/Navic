@@ -12,11 +12,14 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSession
@@ -79,8 +82,13 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 				setSmallIcon(resourceProvider.icNavic)
 			}
 
+		val httpDataSourceFactory = DefaultHttpDataSource.Factory()
+			.setDefaultRequestProperties(Settings.shared.customHeadersMap())
+		val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory)
+
 		val player = ExoPlayer.Builder(this)
 			.setLoadControl(loadControl)
+			.setMediaSourceFactory(mediaSourceFactory) // Injects custom headers
 			.setHandleAudioBecomingNoisy(true)
 			.setWakeMode(C.WAKE_MODE_NETWORK)
 			.build()
@@ -373,6 +381,7 @@ class AndroidMediaPlayerViewModel(
 
 			player.shuffleModeEnabled = state.isShuffleEnabled
 			player.repeatMode = state.repeatMode
+			player.playbackParameters = PlaybackParameters(state.playbackSpeed)
 
 			val index = if (state.currentIndex in 0 until mediaItems.size) state.currentIndex else 0
 
@@ -712,6 +721,13 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
+	override fun setPlaybackSpeed(value: Float) {
+		viewModelScope.launch {
+			controller?.setPlaybackSpeed(value)
+		}
+		_uiState.update { it.copy(playbackSpeed = value) }
+	}
+
 	private fun DomainSong.toMediaItem(): MediaItem {
 		val metadata = MediaMetadata.Builder()
 			.setTitle(title)
@@ -728,7 +744,10 @@ class AndroidMediaPlayerViewModel(
 			.build()
 
 		val uri = when {
-			id.startsWith("radio_") && !filePath.isNullOrEmpty() -> { filePath.toUri() }
+			id.startsWith("radio_") && !filePath.isNullOrEmpty() -> {
+				filePath.toUri()
+			}
+
 			else -> {
 				val localPath = downloadManager.getDownloadedFilePath(id)
 				if (localPath != null) {

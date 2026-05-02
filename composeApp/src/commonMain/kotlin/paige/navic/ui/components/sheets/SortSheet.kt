@@ -6,11 +6,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -48,6 +49,7 @@ fun <T> SortSheet(
 		sheetState = rememberModalBottomSheetState(true)
 	) {
 		Column(
+			modifier = Modifier.verticalScroll(rememberScrollState()),
 			verticalArrangement = Arrangement.spacedBy(8.dp)
 		) {
 			Text(
