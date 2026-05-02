@@ -378,4 +378,24 @@
         <item quantity="many">Оценка %1$d звёзд</item>
         <item quantity="other">Оценка %1$d звёзд</item>
     </plurals>
+    <string name="title_streaming_quality">Качество стриминга</string>
+    <string name="title_wifi">Wi-Fi</string>
+    <string name="title_cellular">Сотовая сеть</string>
+    <string name="title_select_lyrics">Выберите строки текста</string>
+    <string name="subtitle_streaming_quality">Выберите качество стриминга музыки</string>
+    <string name="option_now_playing_song_info">Показывать техническую информацию о песне</string>
+    <string name="option_quality_low">Низкое</string>
+    <string name="option_quality_medium">Среднее</string>
+    <string name="option_quality_high">Высокое</string>
+    <string name="option_quality_lossless">Сжатие без потерь (без перекодирования)</string>
+    <string name="info_in_use">(используется сейчас)</string>
+    <string name="info_explicit">Контент для взрослых</string>
+    <plurals name="count_lines">
+        <item quantity="one">%1$d строка выбрана</item>
+        <item quantity="few">%1$d строки выбрано</item>
+        <item quantity="many">%1$d строк выбрано</item>
+        <item quantity="other">%1$d строк выбрано</item>
+    </plurals>
+    <string name="option_playback_speed">Скорость воспроизведения</string>
+    <string name="info_streaming_quality">Более высокие пресеты качества будут использовать больше трафика. Перекодирование треков может значительно повлиять на время загрузки треков и привести к рассинхронизации текстов. Выберите "Сжатие без потерь", если встретились с какими-либо проблемами.</string>
 </resources>
