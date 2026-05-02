@@ -76,26 +76,38 @@ class IOSMediaPlayerViewModel(
 ) {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
+	private var playbackEndObserver: Any? = null
 	private val scrobbleManager =
 		IOSScrobbleManager(player, viewModelScope, connectivityManager, syncManager)
 	private var pendingSyncState: PlayerUiState? = null
+	private var isTransitioningBetweenTracks = false
 
 	init {
 		setupAudioSession()
 		setupRemoteCommands()
 		startProgressObserver()
 
-		NSNotificationCenter.defaultCenter.addObserverForName(
+		playbackEndObserver = NSNotificationCenter.defaultCenter.addObserverForName(
 			name = AVPlayerItemDidPlayToEndTimeNotification,
 			`object` = null,
 			queue = NSOperationQueue.mainQueue
 		) { _ ->
-			when (_uiState.value.repeatMode) {
-				1 -> {
-					seek(0f); resume()
-				}
+			val currentItem = player.currentItem
+			if (currentItem != null) {
+				val duration = currentItem.duration
+				val currentTime = player.currentTime()
+				val durationSeconds = CMTimeGetSeconds(duration)
+				val currentSeconds = CMTimeGetSeconds(currentTime)
 
-				else -> next()
+				if (!durationSeconds.isNaN() && !currentSeconds.isNaN() &&
+					(durationSeconds - currentSeconds) < 1.0) {
+					when (_uiState.value.repeatMode) {
+						1 -> {
+							seek(0f); resume()
+						}
+						else -> next()
+					}
+				}
 			}
 		}
 
@@ -150,6 +162,8 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun playAt(index: Int) {
+		if (isTransitioningBetweenTracks) return
+
 		val songToPlay = _uiState.value.queue.getOrNull(index) ?: return
 
 		if (!songToPlay.id.startsWith("radio_") && !isAvailable(songToPlay.id)) {
@@ -159,21 +173,28 @@ class IOSMediaPlayerViewModel(
 
 		val url = getSongUrl(songToPlay) ?: return
 
-		player.replaceCurrentItemWithPlayerItem(createAVPlayerItem(url))
-		player.play()
+		isTransitioningBetweenTracks = true
+		try {
+			player.pause()
+			player.replaceCurrentItemWithPlayerItem(null)
+			player.replaceCurrentItemWithPlayerItem(createAVPlayerItem(url))
+			player.play()
 
-		_uiState.update {
-			it.copy(
-				currentIndex = index,
-				currentSong = songToPlay,
-				isPaused = false,
-				isLoading = false
-			)
+			_uiState.update {
+				it.copy(
+					currentIndex = index,
+					currentSong = songToPlay,
+					isPaused = false,
+					isLoading = false
+				)
+			}
+
+			scrobbleManager.onMediaChanged(songToPlay.id)
+			scrobbleManager.onIsPlayingChanged(true)
+			updateNowPlayingInfo(songToPlay)
+		} finally {
+			isTransitioningBetweenTracks = false
 		}
-
-		scrobbleManager.onMediaChanged(songToPlay.id)
-		scrobbleManager.onIsPlayingChanged(true)
-		updateNowPlayingInfo(songToPlay)
 	}
 
 	override fun playNextSingle(song: DomainSong) {
@@ -248,6 +269,8 @@ class IOSMediaPlayerViewModel(
 
 		val url = NSURL.URLWithString(radio.streamUrl)
 		if (url != null) {
+			player.pause()
+			player.replaceCurrentItemWithPlayerItem(null)
 			player.replaceCurrentItemWithPlayerItem(createAVPlayerItem(url))
 			player.play()
 		}
@@ -332,9 +355,10 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun clearQueue() {
+		player.pause()
 		player.replaceCurrentItemWithPlayerItem(null)
 		_uiState.update {
-			it.copy(queue = emptyList(), currentSong = null, currentIndex = -1, progress = 0f)
+			it.copy(queue = emptyList(), currentSong = null, currentIndex = -1, progress = 0f, isPaused = true)
 		}
 		scrobbleManager.onIsPlayingChanged(false)
 		updateNowPlayingInfo(null)
@@ -484,6 +508,7 @@ class IOSMediaPlayerViewModel(
 	override fun onCleared() {
 		super.onCleared()
 		timeObserver?.let { player.removeTimeObserver(it) }
+		playbackEndObserver?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
 		player.replaceCurrentItemWithPlayerItem(null)
 	}
 
@@ -494,6 +519,9 @@ class IOSMediaPlayerViewModel(
 		val song = state.queue.getOrNull(index) ?: return
 
 		val url = getSongUrl(song) ?: return
+
+		player.pause()
+		player.replaceCurrentItemWithPlayerItem(null)
 		player.replaceCurrentItemWithPlayerItem(createAVPlayerItem(url))
 		player.setRate(state.playbackSpeed)
 
