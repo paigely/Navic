@@ -15,6 +15,7 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import paige.navic.data.database.dao.LyricDao
+import paige.navic.data.database.entities.LyricEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.shared.Logger
@@ -273,6 +274,18 @@ class LyricRepository(
 				}
 
 				if (!parsedLyrics.isNullOrEmpty()) {
+					try {
+						rawContentToCache?.let { content ->
+							val entity = LyricEntity(
+								songId = song.id,
+								provider = provider,
+								rawContent = content
+							)
+							lyricDao.insertLyrics(entity)
+						}
+					} catch (e: Exception) {
+						Logger.e("LyricRepository", "Failed to cache lyrics for ${song.title}", e)
+					}
 					return LyricsResult(parsedLyrics, provider, rawContentToCache)
 				}
 			} catch (e: Exception) {
