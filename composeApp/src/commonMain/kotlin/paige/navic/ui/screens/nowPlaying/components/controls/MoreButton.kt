@@ -89,7 +89,8 @@ fun NowPlayingMoreButton(
 				},
 				rating = songRating,
 				onSetRating = onSetSongRating,
-				showSleepTimer = true
+				showSleepTimer = true,
+				showPlaybackSpeed = true
 			)
 		}
 	}

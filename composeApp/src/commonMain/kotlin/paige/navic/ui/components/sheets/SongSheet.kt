@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_another_playlist
@@ -50,10 +51,13 @@ import navic.composeapp.generated.resources.action_view_album
 import navic.composeapp.generated.resources.action_view_artist
 import navic.composeapp.generated.resources.info_click_to_retry
 import navic.composeapp.generated.resources.info_download_failed
+import navic.composeapp.generated.resources.option_playback_speed
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalCtx
+import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
+import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainExplicitStatus
@@ -74,6 +78,7 @@ import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.QueuePlayNext
 import paige.navic.icons.outlined.Share
+import paige.navic.icons.outlined.Speed
 import paige.navic.icons.outlined.Star
 import paige.navic.managers.SleepTimerManager
 import paige.navic.ui.components.common.CoverArt
@@ -105,9 +110,11 @@ fun SongSheet(
 	onDeleteDownload: (() -> Unit)? = null,
 	rating: Int? = null,
 	onSetRating: ((Int) -> Unit)? = null,
-	showSleepTimer: Boolean = false
+	showSleepTimer: Boolean = false,
+	showPlaybackSpeed: Boolean = false
 ) {
 	val ctx = LocalCtx.current
+	val backStack = LocalNavStack.current
 	var sleepTimerSheetShown by rememberSaveable { mutableStateOf(false) }
 	val sleepTimerManager = koinInject<SleepTimerManager>()
 	val sleepTimerLeft = sleepTimerManager.timeLeft
@@ -434,6 +441,28 @@ fun SongSheet(
 						contentPadding = contentPadding
 					)
 				}
+			}
+
+			if (showPlaybackSpeed) {
+				ListItem(
+					content = {
+						Text(
+							stringResource(Res.string.option_playback_speed)
+						)
+					},
+					leadingContent = {
+						Icon(
+							Icons.Outlined.Speed,
+							null
+						)
+					},
+					onClick = dropUnlessResumed {
+						ctx.clickSound()
+						backStack.add(Screen.PlaybackSpeed)
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
 			}
 
 			if (onTrackInfo != null) {

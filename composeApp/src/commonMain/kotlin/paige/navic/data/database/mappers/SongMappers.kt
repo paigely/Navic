@@ -12,7 +12,8 @@ fun ApiSong.toEntity() = SongEntity(
 	songId = this.id,
 	title = this.title,
 	artistName = this.artistName,
-	artistId = this.artistId,
+	// TODO: figure out why this can be null and how to handle it
+	artistId = this.artistId ?: "unknown artist",
 	albumTitle = this.albumTitle,
 	belongsToAlbumId = this.albumId,
 	coverArtId = this.coverArtId,
@@ -38,7 +39,7 @@ fun ApiSong.toEntity() = SongEntity(
 	bitDepth = this.bitDepth,
 	sampleRate = this.sampleRate,
 	audioChannelCount = this.audioChannelCount,
-	fileSize = this.fileSize,
+	fileSize = this.fileSize ?: 0L,
 	musicBrainzId = this.musicBrainzId,
 	contributors = this.contributors.map {
 		DomainContributor(

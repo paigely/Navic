@@ -27,7 +27,6 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.action_navigate_back
 import navic.composeapp.generated.resources.action_queue
-import navic.composeapp.generated.resources.change_playback_speed
 import navic.composeapp.generated.resources.title_now_playing
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -40,7 +39,6 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.KeyboardArrowDown
 import paige.navic.icons.outlined.List
 import paige.navic.icons.outlined.Lyrics
-import paige.navic.icons.outlined.Speed
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.BlendBackground
 import paige.navic.ui.components.layouts.SheetScaffold
@@ -99,12 +97,6 @@ fun NowPlayingScreen() {
 						icon = Icons.Outlined.List,
 						contentDescription = stringResource(Res.string.action_queue),
 						onClick = dropUnlessResumed { backStack.add(Screen.Queue) },
-						isEndRounded = false
-					)
-					SheetActionButton(
-						icon = Icons.Outlined.Speed,
-						contentDescription = stringResource(Res.string.change_playback_speed),
-						onClick = dropUnlessResumed { backStack.add(Screen.PlaybackSpeed) },
 						isEndRounded = true
 					)
 				}
