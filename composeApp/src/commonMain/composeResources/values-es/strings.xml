@@ -385,4 +385,6 @@
     <string name="info_in_use">(en uso)</string>
     <string name="info_explicit">Explícito</string>
     <string name="info_streaming_quality">La preselección de calidad más alta utilizará más dato. La transcodificación puede impactar severamente varias veces y causar que las líricas no se sincronicen. Seleccione menor pérdida si encuentras cualesquiera de las incidencias.</string>
+    <string name="option_playback_speed">Velocidad de reproducción</string>
+    <string name="title_select_lyrics">Seleccionar letras</string>
 </resources>
