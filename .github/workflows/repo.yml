@@ -9,11 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          ref: master
-
       - name: Update app-repo.json
         run: |
           TAG="${{ github.event.release.tag_name }}"
@@ -39,8 +34,12 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git clone https://$USERNAME:$API_TOKEN@github.com/${{ github.repository }}.git repo
+
+          cd repo
 
           git add app-repo.json
 
@@ -48,4 +47,7 @@ jobs:
 
           git commit -m "chore: update altstore repo for ${{ github.event.release.tag_name }}"
 
-          git push origin master
+          git push https://$USERNAME:$API_TOKEN@github.com/${{ github.repository }}.git
+        env:
+          API_TOKEN: ${{ secrets.NAVIC_GITHUB_TOKEN }}
+          USERNAME: GitHub-Actions
