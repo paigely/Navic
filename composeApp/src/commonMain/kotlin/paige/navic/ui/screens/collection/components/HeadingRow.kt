@@ -4,9 +4,7 @@ import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
@@ -64,10 +62,10 @@ fun CollectionDetailScreenHeadingRow(
 				.alpha(titleAlpha),
 			crossfadeMs = 0
 		)
-		Spacer(Modifier.height(10.dp))
 		Column(
 			modifier = Modifier
 				.padding(horizontal = 31.dp)
+				.padding(top = 10.dp, bottom = 8.dp)
 				.alpha(titleAlpha),
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {

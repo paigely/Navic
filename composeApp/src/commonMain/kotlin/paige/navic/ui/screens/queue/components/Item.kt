@@ -44,6 +44,7 @@ import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.Waveform
 import paige.navic.utils.DraggableListState
 import paige.navic.utils.dragHandle
+import paige.navic.utils.segmentedShapes
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -82,7 +83,11 @@ fun QueueScreenItem(
 		MaterialTheme.colorScheme.primary.copy(alpha = .7f)
 	else MaterialTheme.colorScheme.onSurfaceVariant
 
-	val itemShape = ListItemDefaults.segmentedShapes(index = index, count = count)
+	val itemShape = segmentedShapes(
+		index = index,
+		count = count,
+		dismissDirection = dismissState.dismissDirection
+	)
 
 	SwipeToDismissBox(
 		state = dismissState,

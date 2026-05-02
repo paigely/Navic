@@ -1,5 +1,6 @@
 package paige.navic.ui.components.sheets
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -7,6 +8,8 @@ import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -25,8 +28,8 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_cancel_download
-import navic.composeapp.generated.resources.action_delete_download
 import navic.composeapp.generated.resources.action_delete
+import navic.composeapp.generated.resources.action_delete_download
 import navic.composeapp.generated.resources.action_download
 import navic.composeapp.generated.resources.action_play_next
 import navic.composeapp.generated.resources.action_remove_star
@@ -140,225 +143,231 @@ fun CollectionSheet(
 
 		HorizontalDivider(Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
 
-		if (onViewOnLastFm != null && albumInfo?.lastFmUrl != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_view_on_lastfm)) },
-				leadingContent = { Icon(Icons.Brand.Lastfm, null) },
-				onClick = {
-					ctx.clickSound()
-					onViewOnLastFm(albumInfo.lastFmUrl)
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
-		if (onViewOnMusicBrainz != null && albumInfo?.musicBrainzId != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_view_on_musicbrainz)) },
-				leadingContent = { Icon(Icons.Brand.Musicbrainz, null) },
-				onClick = {
-					ctx.clickSound()
-					onViewOnMusicBrainz(albumInfo.musicBrainzId)
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
-		if (onShare != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_share)) },
-				leadingContent = { Icon(Icons.Outlined.Share, null) },
-				onClick = {
-					ctx.clickSound()
-					onShare()
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
-		if (onPlayNext != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_play_next)) },
-				leadingContent = { Icon(Icons.Outlined.QueuePlayNext, null) },
-				onClick = {
-					ctx.clickSound()
-					onPlayNext()
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
-		if (onAddToQueue != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_add_to_queue)) },
-				leadingContent = { Icon(Icons.Outlined.Queue, null) },
-				onClick = {
-					ctx.clickSound()
-					onAddToQueue()
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
-		if (onAddAllToPlaylist != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_add_to_playlist)) },
-				leadingContent = { Icon(Icons.Outlined.PlaylistAdd, null) },
-				onClick = {
-					ctx.clickSound()
-					onAddAllToPlaylist()
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
-		if (onViewArtist != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_view_artist)) },
-				leadingContent = { Icon(Icons.Outlined.Artist, null) },
-				onClick = {
-					ctx.clickSound()
-					onViewArtist()
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
-
-		if (starred != null && onSetStarred != null) {
-			ListItem(
-				content = {
-					Text(stringResource(if (starred) Res.string.action_remove_star else Res.string.action_star))
-				},
-				leadingContent = {
-					Icon(if (starred) Icons.Filled.Star else Icons.Outlined.Star, null)
-				},
-				onClick = {
-					ctx.clickSound()
-					onSetStarred(!starred)
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
-
-		if (downloadStatus != null) {
-			when (downloadStatus) {
-				DownloadStatus.DOWNLOADING -> {
-					ListItem(
-						content = { Text(stringResource(Res.string.action_cancel_download)) },
-						leadingContent = { Icon(Icons.Outlined.Close, null) },
-						onClick = {
-							ctx.clickSound()
-							onCancelDownloadAll?.invoke()
-							onDismissRequest()
-						},
-						colors = colors,
-						contentPadding = contentPadding
-					)
-				}
-
-				DownloadStatus.DOWNLOADED -> {
-					ListItem(
-						content = { Text(stringResource(Res.string.action_delete_download)) },
-						leadingContent = { Icon(Icons.Outlined.Delete, null) },
-						onClick = {
-							ctx.clickSound()
-							onDeleteDownloadAll?.invoke()
-							onDismissRequest()
-						},
-						colors = colors,
-						contentPadding = contentPadding
-					)
-				}
-
-				DownloadStatus.FAILED -> {
-					ListItem(
-						content = {
-							Text(
-								text = stringResource(Res.string.info_download_failed),
-								color = MaterialTheme.colorScheme.error
-							)
-						},
-						supportingContent = {
-							Text(
-								text = stringResource(Res.string.info_click_to_retry),
-								color = MaterialTheme.colorScheme.error,
-								style = MaterialTheme.typography.labelSmall
-							)
-						},
-						leadingContent = {
-							Icon(
-								Icons.Outlined.DownloadOff,
-								null,
-								tint = MaterialTheme.colorScheme.error
-							)
-						},
-						onClick = {
-							ctx.clickSound()
-							onDownloadAll?.invoke()
-							onDismissRequest()
-						},
-						colors = colors,
-						contentPadding = contentPadding
-					)
-				}
-
-				else -> {
-					ListItem(
-						content = { Text(stringResource(Res.string.action_download)) },
-						leadingContent = { Icon(Icons.Outlined.Download, null) },
-						onClick = {
-							ctx.clickSound()
-							onDownloadAll?.invoke()
-							onDismissRequest()
-						},
-						colors = colors,
-						contentPadding = contentPadding
-					)
-				}
+		Column(Modifier.verticalScroll(rememberScrollState())) {
+			if (onViewOnLastFm != null && albumInfo?.lastFmUrl != null) {
+				ListItem(
+					content = { Text(stringResource(Res.string.action_view_on_lastfm)) },
+					leadingContent = { Icon(Icons.Brand.Lastfm, null) },
+					onClick = {
+						ctx.clickSound()
+						onViewOnLastFm(albumInfo.lastFmUrl)
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
 			}
-		} else if (onDownloadAll != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_download)) },
-				leadingContent = { Icon(Icons.Outlined.Download, null) },
-				onClick = {
-					ctx.clickSound()
-					onDownloadAll()
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
-		}
 
-		if (onDelete != null) {
-			ListItem(
-				content = { Text(stringResource(Res.string.action_delete)) },
-				leadingContent = { Icon(Icons.Outlined.PlaylistRemove, null) },
-				onClick = {
-					ctx.clickSound()
-					onDelete()
-					onDismissRequest()
-				},
-				colors = colors,
-				contentPadding = contentPadding
-			)
+			if (onViewOnMusicBrainz != null && albumInfo?.musicBrainzId != null) {
+				ListItem(
+					content = { Text(stringResource(Res.string.action_view_on_musicbrainz)) },
+					leadingContent = { Icon(Icons.Brand.Musicbrainz, null) },
+					onClick = {
+						ctx.clickSound()
+						onViewOnMusicBrainz(albumInfo.musicBrainzId)
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
+			}
+
+			if (onShare != null) {
+				ListItem(
+					content = { Text(stringResource(Res.string.action_share)) },
+					leadingContent = { Icon(Icons.Outlined.Share, null) },
+					onClick = {
+						ctx.clickSound()
+						onShare()
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
+			}
+
+			if (onPlayNext != null) {
+				ListItem(
+					content = { Text(stringResource(Res.string.action_play_next)) },
+					leadingContent = { Icon(Icons.Outlined.QueuePlayNext, null) },
+					onClick = {
+						ctx.clickSound()
+						onPlayNext()
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding,
+					enabled = !collection?.songs.isNullOrEmpty()
+				)
+			}
+
+			if (onAddToQueue != null) {
+				ListItem(
+					content = { Text(stringResource(Res.string.action_add_to_queue)) },
+					leadingContent = { Icon(Icons.Outlined.Queue, null) },
+					onClick = {
+						ctx.clickSound()
+						onAddToQueue()
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding,
+					enabled = !collection?.songs.isNullOrEmpty()
+				)
+			}
+
+			if (onAddAllToPlaylist != null) {
+				ListItem(
+					content = { Text(stringResource(Res.string.action_add_to_playlist)) },
+					leadingContent = { Icon(Icons.Outlined.PlaylistAdd, null) },
+					onClick = {
+						ctx.clickSound()
+						onAddAllToPlaylist()
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding,
+					enabled = !collection?.songs.isNullOrEmpty()
+				)
+			}
+
+			if (onViewArtist != null) {
+				ListItem(
+					content = { Text(stringResource(Res.string.action_view_artist)) },
+					leadingContent = { Icon(Icons.Outlined.Artist, null) },
+					onClick = {
+						ctx.clickSound()
+						onViewArtist()
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
+			}
+
+
+			if (starred != null && onSetStarred != null) {
+				ListItem(
+					content = {
+						Text(stringResource(if (starred) Res.string.action_remove_star else Res.string.action_star))
+					},
+					leadingContent = {
+						Icon(if (starred) Icons.Filled.Star else Icons.Outlined.Star, null)
+					},
+					onClick = {
+						ctx.clickSound()
+						onSetStarred(!starred)
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
+			}
+
+			if (downloadStatus != null) {
+				when (downloadStatus) {
+					DownloadStatus.DOWNLOADING -> {
+						ListItem(
+							content = { Text(stringResource(Res.string.action_cancel_download)) },
+							leadingContent = { Icon(Icons.Outlined.Close, null) },
+							onClick = {
+								ctx.clickSound()
+								onCancelDownloadAll?.invoke()
+								onDismissRequest()
+							},
+							colors = colors,
+							contentPadding = contentPadding
+						)
+					}
+
+					DownloadStatus.DOWNLOADED -> {
+						ListItem(
+							content = { Text(stringResource(Res.string.action_delete_download)) },
+							leadingContent = { Icon(Icons.Outlined.Delete, null) },
+							onClick = {
+								ctx.clickSound()
+								onDeleteDownloadAll?.invoke()
+								onDismissRequest()
+							},
+							colors = colors,
+							contentPadding = contentPadding
+						)
+					}
+
+					DownloadStatus.FAILED -> {
+						ListItem(
+							content = {
+								Text(
+									text = stringResource(Res.string.info_download_failed),
+									color = MaterialTheme.colorScheme.error
+								)
+							},
+							supportingContent = {
+								Text(
+									text = stringResource(Res.string.info_click_to_retry),
+									color = MaterialTheme.colorScheme.error,
+									style = MaterialTheme.typography.labelSmall
+								)
+							},
+							leadingContent = {
+								Icon(
+									Icons.Outlined.DownloadOff,
+									null,
+									tint = MaterialTheme.colorScheme.error
+								)
+							},
+							onClick = {
+								ctx.clickSound()
+								onDownloadAll?.invoke()
+								onDismissRequest()
+							},
+							colors = colors,
+							contentPadding = contentPadding
+						)
+					}
+
+					else -> {
+						ListItem(
+							content = { Text(stringResource(Res.string.action_download)) },
+							leadingContent = { Icon(Icons.Outlined.Download, null) },
+							onClick = {
+								ctx.clickSound()
+								onDownloadAll?.invoke()
+								onDismissRequest()
+							},
+							colors = colors,
+							contentPadding = contentPadding
+						)
+					}
+				}
+			} else if (onDownloadAll != null) {
+				ListItem(
+					content = { Text(stringResource(Res.string.action_download)) },
+					leadingContent = { Icon(Icons.Outlined.Download, null) },
+					onClick = {
+						ctx.clickSound()
+						onDownloadAll()
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding,
+					enabled = !collection?.songs.isNullOrEmpty()
+				)
+			}
+
+			if (onDelete != null) {
+				ListItem(
+					content = { Text(stringResource(Res.string.action_delete)) },
+					leadingContent = { Icon(Icons.Outlined.PlaylistRemove, null) },
+					onClick = {
+						ctx.clickSound()
+						onDelete()
+						onDismissRequest()
+					},
+					colors = colors,
+					contentPadding = contentPadding
+				)
+			}
 		}
 	}
 }

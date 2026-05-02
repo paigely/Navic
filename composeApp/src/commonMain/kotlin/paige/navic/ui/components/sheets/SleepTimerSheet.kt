@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -61,6 +63,7 @@ fun SleepTimerSheet(
 		)) }
 	) {
 		Column(
+			modifier = Modifier.verticalScroll(rememberScrollState()),
 			verticalArrangement = Arrangement.spacedBy(8.dp)
 		) {
 			Text(

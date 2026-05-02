@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedListItem
@@ -27,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +61,7 @@ import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.Waveform
 import paige.navic.utils.InlineExplicitIcon
+import paige.navic.utils.segmentedShapes
 import paige.navic.utils.toHoursMinutesSeconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -87,13 +85,14 @@ fun CollectionDetailScreenSongRow(
 	val isCurrentTrack = playerState.currentSong?.id == song.id
 	val canPlay = !isOffline || isDownloaded
 
-	val itemShape = segmentedShapes(
-		index = index,
-		count = count
-	)
-
 	val dismissState = rememberSwipeToDismissBoxState()
 	val scope = rememberCoroutineScope()
+
+	val itemShape = segmentedShapes(
+		index = index,
+		count = count,
+		dismissDirection = dismissState.dismissDirection
+	)
 
 	SwipeToDismissBox(
 		modifier = Modifier.padding(horizontal = 16.dp, vertical = 1.5.dp),
@@ -107,7 +106,7 @@ fun CollectionDetailScreenSongRow(
 			Box(
 				modifier = Modifier
 					.fillMaxSize()
-					.clip(itemShape.shape)
+					.clip(MaterialTheme.shapes.largeIncreased)
 					.background(MaterialTheme.colorScheme.primaryContainer)
 					.padding(horizontal = 20.dp)
 			) {
@@ -242,57 +241,5 @@ fun CollectionDetailScreenSongRow(
 				}
 			}
 		)
-	}
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-fun segmentedShapes(
-	index: Int,
-	count: Int,
-	defaultShapes: ListItemShapes = ListItemDefaults.shapes(),
-): ListItemShapes {
-	val overrideShape = ContinuousRoundedRectangle(18.dp)
-	return remember(index, count, defaultShapes, overrideShape) {
-		when {
-			count == 1 -> {
-				val defaultBaseShape = defaultShapes.shape
-				defaultShapes.copy(
-					shape = overrideShape
-				)
-			}
-
-			index == 0 -> {
-				val defaultBaseShape = defaultShapes.shape
-				if (defaultBaseShape is CornerBasedShape) {
-					defaultShapes.copy(
-						shape =
-							defaultBaseShape.copy(
-								topStart = overrideShape.topStart,
-								topEnd = overrideShape.topEnd,
-							)
-					)
-				} else {
-					defaultShapes
-				}
-			}
-
-			index == count - 1 -> {
-				val defaultBaseShape = defaultShapes.shape
-				if (defaultBaseShape is CornerBasedShape) {
-					defaultShapes.copy(
-						shape =
-							defaultBaseShape.copy(
-								bottomStart = overrideShape.bottomStart,
-								bottomEnd = overrideShape.bottomEnd,
-							)
-					)
-				} else {
-					defaultShapes
-				}
-			}
-
-			else -> defaultShapes
-		}
 	}
 }

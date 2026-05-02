@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import paige.navic.LocalCtx
@@ -117,7 +118,9 @@ fun ArtGridItem(
 			Text(
 				text = title,
 				style = MaterialTheme.typography.titleSmallEmphasized,
-				modifier = Modifier.fillMaxWidth().padding(top = 6.dp)
+				modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+				maxLines = 2,
+				overflow = TextOverflow.Ellipsis
 			)
 			subtitle?.let {
 				Text(
@@ -125,7 +128,8 @@ fun ArtGridItem(
 					style = MaterialTheme.typography.bodySmall,
 					color = MaterialTheme.colorScheme.onSurfaceVariant,
 					modifier = Modifier.fillMaxWidth(),
-					maxLines = 2
+					maxLines = 2,
+					overflow = TextOverflow.Ellipsis
 				)
 			}
 		}

@@ -19,8 +19,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.kyant.capsule.ContinuousCapsule
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_cancel_download
@@ -36,6 +40,7 @@ import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.DownloadOff
+import paige.navic.ui.theme.defaultFont
 
 @Composable
 fun ArtistActionButtons(
@@ -59,7 +64,7 @@ fun ArtistActionButtons(
 		Box(
 			modifier = Modifier
 				.weight(1f)
-				.height(52.dp)
+				.height(56.dp)
 				.clip(ContinuousCapsule)
 				.background(
 					if (playEnabled) MaterialTheme.colorScheme.primary
@@ -68,25 +73,33 @@ fun ArtistActionButtons(
 				.clickable(enabled = playEnabled) {
 					ctx.clickSound()
 					onPlay()
-				},
+				}
+				.semantics { role = Role.Button },
 			contentAlignment = Alignment.Center
 		) {
 			Row(
 				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = Arrangement.spacedBy(8.dp)
+				horizontalArrangement = Arrangement.spacedBy(3.dp)
 			) {
-				Icon(Icons.Filled.Play, null, tint = MaterialTheme.colorScheme.onPrimary)
+				Icon(
+					Icons.Filled.Play,
+					contentDescription = null,
+					tint = MaterialTheme.colorScheme.onPrimary,
+					modifier = Modifier.size(25.dp)
+				)
 				Text(
 					stringResource(Res.string.action_play),
 					style = MaterialTheme.typography.labelLarge,
 					color = MaterialTheme.colorScheme.onPrimary,
-					fontWeight = FontWeight.Bold
+					fontWeight = FontWeight.SemiBold,
+					fontSize = 16.sp,
+					fontFamily = defaultFont(round = 100f)
 				)
 			}
 		}
 
 		OutlinedButton(
-			modifier = Modifier.size(width = 52.dp, height = 40.dp),
+			modifier = Modifier.size(width = 52.dp, height = 44.dp),
 			onClick = {
 				ctx.clickSound()
 				when (downloadStatus) {
@@ -100,7 +113,6 @@ fun ArtistActionButtons(
 				DownloadStatus.DOWNLOADING,
 				DownloadStatus.DOWNLOADED,
 				DownloadStatus.FAILED -> true
-
 				DownloadStatus.NOT_DOWNLOADED -> playEnabled
 			},
 			contentPadding = PaddingValues(0.dp)

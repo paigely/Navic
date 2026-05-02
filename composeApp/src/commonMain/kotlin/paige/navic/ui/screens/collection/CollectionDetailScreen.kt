@@ -62,8 +62,6 @@ import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 import kotlin.time.Duration
-import kotlin.collections.sortedWith
-import kotlin.comparisons.compareBy
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -162,8 +160,7 @@ fun CollectionDetailScreen(
 
 				item {
 					CollectionDetailScreenHeadingRowButtons(
-						collection = collection,
-						isOnline = isOnline
+						collection = collection
 					)
 				}
 
