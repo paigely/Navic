@@ -373,4 +373,6 @@
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>
 	<string name="sideloading_warning_description">While the exact details of this change is not yet fully known, this could result in ALL sideloading being blocked unless the app signer doxxes themselves to Google and/or publicly.\n\nIf you are knowledgeable enough to install a custom ROM on your device, NOW IS THE TIME TO DO IT.\n\nPlease read more about what you can do and how to have your voice heard</string>
 	<string name="sideloading_warning_link_mask">here.</string>
+
+	<string name="change_playback_speed">Change playback speed</string>
 </resources>

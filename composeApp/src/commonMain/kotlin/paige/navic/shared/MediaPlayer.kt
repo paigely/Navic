@@ -28,7 +28,8 @@ data class PlayerUiState(
 	val isShuffleEnabled: Boolean = false,
 	val repeatMode: Int = 0,
 	val progress: Float = 0f,
-	val isLoading: Boolean = false
+	val isLoading: Boolean = false,
+	val playbackSpeed: Float = 1.0f
 )
 
 abstract class MediaPlayerViewModel(
@@ -71,6 +72,7 @@ abstract class MediaPlayerViewModel(
 	abstract fun toggleShuffle()
 	abstract fun toggleRepeat()
 	abstract fun shufflePlay(collection: DomainSongCollection)
+	abstract fun setPlaybackSpeed(value: Float)
 
 	fun togglePlay() {
 		if (!_uiState.value.isPaused) {
