@@ -9,10 +9,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout code
         run: |
           git clone https://$USERNAME:$API_TOKEN@github.com/${{ github.repository }}.git repo
+        env:
+          API_TOKEN: ${{ secrets.NAVIC_GITHUB_TOKEN }}
+          USERNAME: GitHub-Actions
 
       - name: Update app-repo.json
         run: |
