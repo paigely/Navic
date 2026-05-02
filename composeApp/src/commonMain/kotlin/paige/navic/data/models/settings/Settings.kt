@@ -79,6 +79,20 @@ class Settings(
 	// sync related settings
 	var lastFullSyncTime by preference(0L)
 
+	fun customHeadersMap(): Map<String, String> = buildMap {
+		for (line in customHeaders.lines()) {
+			val parts = line.split(":", limit = 2)
+			if (parts.size < 2) continue
+
+			val rawKey = parts[0]
+			val rawValue = parts[1]
+
+			val key = rawKey.trim()
+			val value = rawValue.trim()
+			if (key.isNotEmpty() && value.isNotEmpty()) put(key, value)
+		}
+	}
+
 	var offlineMode by preference(OfflineMode.Auto)
 
 	companion object {
