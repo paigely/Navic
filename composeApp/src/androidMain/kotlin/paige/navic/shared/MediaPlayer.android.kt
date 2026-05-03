@@ -236,26 +236,8 @@ class AndroidMediaPlayerViewModel(
 					override fun onIsPlayingChanged(isPlaying: Boolean) {
 						_uiState.update { it.copy(isPaused = !isPlaying) }
 						if (isPlaying) startProgressLoop()
-						val intent =
-							Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
-								setPackage(application.packageName)
-								putExtra("isPlaying", isPlaying)
-								putExtra(
-									"title",
-									_uiState.value.currentSong?.title ?: "Unknown song"
-								)
-								putExtra(
-									"artist",
-									_uiState.value.currentSong?.artistName ?: "Unknown artist"
-								)
-								putExtra(
-									"artUrl",
-									_uiState.value.currentSong?.coverArtId?.let { id ->
-										SessionManager.api.getCoverArtUrl(id, auth = true)
-									})
-							}
 
-						application.sendBroadcast(intent)
+						sendWidgetUpdateBroadcast(isPlaying, _uiState.value.currentSong)
 					}
 
 					override fun onPlaybackStateChanged(playbackState: Int) {
@@ -350,6 +332,8 @@ class AndroidMediaPlayerViewModel(
 				}
 				applyReplayGain()
 				updateProgress()
+
+				sendWidgetUpdateBroadcast(player.isPlaying, currentSong)
 			}
 		}
 	}
@@ -770,5 +754,18 @@ class AndroidMediaPlayerViewModel(
 		}
 
 		return builder.build()
+	}
+
+	private fun sendWidgetUpdateBroadcast(isPlaying: Boolean, song: DomainSong?) {
+		val intent = Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
+			setPackage(application.packageName)
+			putExtra("isPlaying", isPlaying)
+			putExtra("title", song?.title ?: "Unknown song")
+			putExtra("artist", song?.artistName ?: "Unknown artist")
+			putExtra("artUrl", song?.coverArtId?.let { id ->
+				SessionManager.api.getCoverArtUrl(id, auth = true)
+			})
+		}
+		application.sendBroadcast(intent)
 	}
 }
