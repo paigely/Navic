@@ -62,6 +62,8 @@ open class AlbumListViewModel(
 	}
 
 	fun refreshAlbums(fullRefresh: Boolean) {
+		_refreshTrigger.value = Clock.System.now()
+
 		if (!fullRefresh) return
 		viewModelScope.launch {
 			try {

@@ -83,7 +83,7 @@ fun LibraryScreen() {
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
 	LaunchedEffect(loginState is LoginState.Success) {
-		pagedAlbums.refresh()
+		albumsViewModel.refreshAlbums(true)
 		playlistsViewModel.refreshPlaylists(false)
 		artistsViewModel.refreshArtists(false)
 		genresViewModel.refreshGenres(false)

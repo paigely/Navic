@@ -101,7 +101,7 @@ fun AlbumListScreen(
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = !isRefreshing,
-			onRefresh = { pagedAlbums.refresh() },
+			onRefresh = { viewModel.refreshAlbums(true) },
 			key = pagedAlbums.itemSnapshotList
 		) {
 			ArtGrid(
