@@ -16,6 +16,7 @@ import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
@@ -83,8 +84,9 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			}
 
 		val httpDataSourceFactory = DefaultHttpDataSource.Factory()
-			.setDefaultRequestProperties(Settings.shared.customHeadersMap())
-		val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory)
+    		.setDefaultRequestProperties(Settings.shared.customHeadersMap())
+		val dataSourceFactory = DefaultDataSource.Factory(this, httpDataSourceFactory)
+		val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
 
 		val player = ExoPlayer.Builder(this)
 			.setLoadControl(loadControl)
