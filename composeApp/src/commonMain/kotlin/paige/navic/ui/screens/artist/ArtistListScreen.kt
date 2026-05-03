@@ -36,8 +36,8 @@ import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.layouts.ArtGridItem
-import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.screens.artist.components.ArtistListScreenContent

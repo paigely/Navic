@@ -4,10 +4,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toPersistentList
@@ -21,10 +21,10 @@ import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
 import paige.navic.domain.models.DomainPlaylist
+import paige.navic.managers.DownloadManager
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import paige.navic.managers.DownloadManager
 
 @Composable
 fun PlaylistListScreenItem(
