@@ -763,7 +763,11 @@ class AndroidMediaPlayerViewModel(
 			putExtra("title", song?.title ?: "Unknown song")
 			putExtra("artist", song?.artistName ?: "Unknown artist")
 			putExtra("artUrl", song?.coverArtId?.let { id ->
-				SessionManager.api.getCoverArtUrl(id, auth = true)
+				SessionManager.api.getCoverArtUrl(id, auth = true).toUri()
+					.buildUpon()
+					.appendQueryParameter("cacheKey", id)
+					.build()
+					.toString()
 			})
 		}
 		application.sendBroadcast(intent)
