@@ -53,6 +53,7 @@
 	<string name="title_wifi">Wi-Fi</string>
 	<string name="title_cellular">Cellular</string>
 	<string name="title_select_lyrics">Select Lyrics</string>
+	<string name="title_advanced">Advanced Transcoding</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
@@ -71,6 +72,7 @@
 	<string name="subtitle_check_for_updates">It is recommended to leave this on, as some updates provide important bug fixes</string>
 	<string name="subtitle_offline_mode">Dictates when the app should go in an offline mode. Requires application restart</string>
 	<string name="subtitle_streaming_quality">Adjust the quality of streamed music</string>
+	<string name="subtitle_max_bitrates">Max Bitrates</string>
 
 	<string name="option_off">Off</string>
 	<string name="option_now_playing_background_style">Background style</string>
@@ -145,6 +147,9 @@
 	<string name="option_quality_medium">Medium</string>
 	<string name="option_quality_high">High</string>
 	<string name="option_quality_lossless">Lossless (no transcoding)</string>
+	<string name="option_enable_custom_bitrates">Enable Custom Bitrates</string>
+	<string name="option_max_bitrate_wifi">Max Bitrate WiFi (kbps)</string>
+	<string name="option_max_bitrate_cellular">Max Bitrate Cellular (kbps)</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>
@@ -160,6 +165,7 @@
 	<string name="info_progress">Progress</string>
 	<string name="info_in_use">(in use)</string>
 	<string name="info_explicit">Explicit</string>
+	<string name="info_bitrate_default_zero">Leaving this empty defaults to 0. Letting the server pick.</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>

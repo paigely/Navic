@@ -237,13 +237,13 @@ class AndroidMediaPlayerViewModel(
 		when (connectivityManager.isCellular.value) {
 			true -> SessionManager.api.getStreamUrl(
 				id,
-				Settings.shared.streamingQualityCellular.bitrateAndroid,
+				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateCellular else Settings.shared.streamingQualityCellular.bitrateAndroid,
 				Settings.shared.streamingQualityCellular.containerAndroid
 			).toUri()
 
 			false -> SessionManager.api.getStreamUrl(
 				id,
-				Settings.shared.streamingQualityWifi.bitrateAndroid,
+				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateWifi else Settings.shared.streamingQualityWifi.bitrateAndroid,
 				Settings.shared.streamingQualityWifi.containerAndroid
 			).toUri()
 		}.buildUpon().appendQueryParameter("estimateContentLength", "true").build()
