@@ -42,6 +42,7 @@ import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.ReplayGainMode
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainRadio
@@ -372,7 +373,7 @@ class AndroidMediaPlayerViewModel(
 
 	private fun applyReplayGain() {
 		viewModelScope.launch {
-			if (Settings.shared.replayGain) {
+			if (Settings.shared.replayGainMode != ReplayGainMode.Off) {
 				(_uiState.value.currentSong)?.replayGain?.let { replayGain ->
 					controller?.volume = replayGain.effectiveGain(Settings.shared.replayGainMode)
 				}

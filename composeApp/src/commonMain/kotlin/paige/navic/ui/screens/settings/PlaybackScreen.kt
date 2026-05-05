@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.dropUnlessResumed
+import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.option_audio_offload
@@ -61,7 +62,6 @@ import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
-import kotlinx.collections.immutable.toImmutableList
 import paige.navic.ui.screens.settings.dialogs.LyricsPriorityDialog
 import kotlin.math.roundToInt
 
@@ -104,20 +104,13 @@ fun SettingsPlaybackScreen() {
 						Icon(Icons.Outlined.ChevronForward, null)
 					}
 					if (!listOf("ipados", "ios").contains(ctx.name.lowercase())) {
-						SettingSwitchRow(
+						SettingSelectionRow(
 							title = { Text(stringResource(Res.string.option_replay_gain)) },
-							value = Settings.shared.replayGain,
-							onSetValue = { Settings.shared.replayGain = it }
+							items = ReplayGainMode.entries.toImmutableList(),
+							label = { stringResource(it.displayName) },
+							selection = Settings.shared.replayGainMode,
+							onSelect = { Settings.shared.replayGainMode = it }
 						)
-						if (Settings.shared.replayGain) {
-							SettingSelectionRow(
-								title = { Text(stringResource(Res.string.option_replay_gain)) },
-								items = ReplayGainMode.entries.toImmutableList(),
-								label = { stringResource(it.displayName) },
-								selection = Settings.shared.replayGainMode,
-								onSelect = { Settings.shared.replayGainMode = it }
-							)
-						}
 						SettingSwitchRow(
 							title = { Text(stringResource(Res.string.option_gapless_playback)) },
 							subtitle = { Text(stringResource(Res.string.subtitle_gapless_playback)) },

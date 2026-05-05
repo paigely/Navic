@@ -72,6 +72,7 @@
 	<string name="subtitle_offline_mode">Dictates when the app should go in an offline mode. Requires application restart</string>
 	<string name="subtitle_streaming_quality">Adjust the quality of streamed music</string>
 
+	<string name="option_off">Off</string>
 	<string name="option_now_playing_background_style">Background style</string>
 	<string name="option_now_playing_background_style_static">Static</string>
 	<string name="option_now_playing_background_style_dynamic">Dynamic</string>
