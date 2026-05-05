@@ -17,6 +17,7 @@ import paige.navic.data.models.settings.enums.NavigationBarStyle
 import paige.navic.data.models.settings.enums.NowPlayingBackgroundStyle
 import paige.navic.data.models.settings.enums.NowPlayingSliderStyle
 import paige.navic.data.models.settings.enums.OfflineMode
+import paige.navic.data.models.settings.enums.ReplayGainMode
 import paige.navic.data.models.settings.enums.StreamingQuality
 import paige.navic.data.models.settings.enums.Theme
 import paige.navic.data.models.settings.enums.ThemeMode
@@ -45,6 +46,7 @@ class Settings(
 	var scrobblePercentage by preference(.5f)
 	var minDurationToScrobble by preference(30f)
 	var replayGain by preference(false)
+	var replayGainMode by preference(ReplayGainMode.Track)
 	var gaplessPlayback by preference(true)
 	var audioOffload by preference(false)
 	var streamingQualityWifi by preference(StreamingQuality.Lossless)
