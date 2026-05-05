@@ -2,7 +2,6 @@ package paige.navic.androidApp.widgets.turntable
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.view.KeyEvent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
@@ -10,9 +9,10 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalSize
+import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.action.actionSendBroadcast
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.SquareIconButton
@@ -26,6 +26,7 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import paige.navic.androidApp.R
+import paige.navic.androidApp.widgets.WidgetPlaybackAction
 import paige.navic.androidApp.widgets.nowplaying.NowPlayingWidget
 
 class TurnTableWidget : NowPlayingWidget() {
@@ -69,7 +70,9 @@ class TurnTableWidget : NowPlayingWidget() {
 					contentDescription = "Star",
 					backgroundColor = GlanceTheme.colors.tertiary,
 					contentColor = GlanceTheme.colors.onTertiary,
-					onClick = {},
+					onClick = actionRunCallback<WidgetPlaybackAction>(
+						actionParametersOf(WidgetPlaybackAction.actionKey to WidgetPlaybackAction.ACTION_STAR)
+					),
 					modifier = GlanceModifier.size(48.dp)
 				)
 			}
@@ -81,11 +84,8 @@ class TurnTableWidget : NowPlayingWidget() {
 				SquareIconButton(
 					imageProvider = ImageProvider(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play),
 					contentDescription = if (isPlaying) "Pause" else "Play",
-					onClick = actionSendBroadcast(
-						createMediaIntent(
-							context,
-							KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
-						)
+					onClick = actionRunCallback<WidgetPlaybackAction>(
+						actionParametersOf(WidgetPlaybackAction.actionKey to WidgetPlaybackAction.ACTION_PLAY_PAUSE)
 					),
 					modifier = GlanceModifier.size(55.dp)
 				)

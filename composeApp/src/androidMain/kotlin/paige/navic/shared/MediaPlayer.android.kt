@@ -14,6 +14,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
+import androidx.media3.common.Timeline
 import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
@@ -236,26 +237,8 @@ class AndroidMediaPlayerViewModel(
 					override fun onIsPlayingChanged(isPlaying: Boolean) {
 						_uiState.update { it.copy(isPaused = !isPlaying) }
 						if (isPlaying) startProgressLoop()
-						val intent =
-							Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
-								setPackage(application.packageName)
-								putExtra("isPlaying", isPlaying)
-								putExtra(
-									"title",
-									_uiState.value.currentSong?.title ?: "Unknown song"
-								)
-								putExtra(
-									"artist",
-									_uiState.value.currentSong?.artistName ?: "Unknown artist"
-								)
-								putExtra(
-									"artUrl",
-									_uiState.value.currentSong?.coverArtId?.let { id ->
-										SessionManager.api.getCoverArtUrl(id, auth = true)
-									})
-							}
 
-						application.sendBroadcast(intent)
+						sendWidgetUpdateBroadcast(controller)
 					}
 
 					override fun onPlaybackStateChanged(playbackState: Int) {
@@ -269,6 +252,10 @@ class AndroidMediaPlayerViewModel(
 
 					override fun onRepeatModeChanged(repeatMode: Int) {
 						_uiState.update { it.copy(repeatMode = repeatMode) }
+					}
+
+					override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+						updatePlaybackState()
 					}
 				})
 				updatePlaybackState()
@@ -350,6 +337,8 @@ class AndroidMediaPlayerViewModel(
 				}
 				applyReplayGain()
 				updateProgress()
+
+				sendWidgetUpdateBroadcast(player)
 			}
 		}
 	}
@@ -500,7 +489,6 @@ class AndroidMediaPlayerViewModel(
 
 	override fun clearQueue() {
 		viewModelScope.launch {
-			controller?.clearMediaItems()
 			_uiState.update {
 				it.copy(
 					queue = emptyList(),
@@ -509,6 +497,7 @@ class AndroidMediaPlayerViewModel(
 					progress = 0f
 				)
 			}
+			controller?.clearMediaItems()
 		}
 	}
 
@@ -638,19 +627,19 @@ class AndroidMediaPlayerViewModel(
 			val shuffledSongs = collection.songs.shuffled()
 			val mediaItems = shuffledSongs.map { it.toMediaItem() }
 
-			controller?.let { player ->
-				player.shuffleModeEnabled = false
-				player.setMediaItems(mediaItems, 0, 0L)
-				player.prepare()
-				player.play()
-			}
-
 			_uiState.update { state ->
 				state.copy(
 					queue = shuffledSongs,
 					currentIndex = 0,
 					currentSong = shuffledSongs.firstOrNull()
 				)
+			}
+
+			controller?.let { player ->
+				player.shuffleModeEnabled = false
+				player.setMediaItems(mediaItems, 0, 0L)
+				player.prepare()
+				player.play()
 			}
 		}
 	}
@@ -770,5 +759,21 @@ class AndroidMediaPlayerViewModel(
 		}
 
 		return builder.build()
+	}
+
+	private fun sendWidgetUpdateBroadcast(player: Player?) {
+		val mediaItem = player?.currentMediaItem
+		val title = mediaItem?.mediaMetadata?.title?.toString() ?: ""
+		val artist = mediaItem?.mediaMetadata?.artist?.toString() ?: ""
+		val artUrl = mediaItem?.mediaMetadata?.artworkUri?.toString()
+
+		val intent = Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
+			setPackage(application.packageName)
+			putExtra("isPlaying", player?.isPlaying ?: false)
+			putExtra("title", title)
+			putExtra("artist", artist)
+			putExtra("artUrl", artUrl)
+		}
+		application.sendBroadcast(intent)
 	}
 }
