@@ -165,7 +165,34 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 		stopSelf()
 	}
 
+	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+		val action = intent?.action
+
+		mediaSession?.player?.let { player ->
+			when (action) {
+				ACTION_PLAY_PAUSE -> {
+					if (player.isPlaying) player.pause() else player.play()
+				}
+				ACTION_NEXT -> {
+					if (player.hasNextMediaItem()) player.seekToNextMediaItem()
+				}
+				ACTION_PREV -> {
+					if (player.hasPreviousMediaItem() || player.currentPosition <= 3000) {
+						player.seekToPreviousMediaItem()
+					} else {
+						player.seekTo(0)
+					}
+				}
+			}
+		}
+		return super.onStartCommand(intent, flags, startId)
+	}
+
 	companion object {
+		const val ACTION_PLAY_PAUSE = "paige.navic.action.PLAY_PAUSE"
+		const val ACTION_NEXT = "paige.navic.action.NEXT"
+		const val ACTION_PREV = "paige.navic.action.PREV"
+
 		fun newSessionToken(context: Context): SessionToken {
 			return SessionToken(context, ComponentName(context, PlaybackService::class.java))
 		}
