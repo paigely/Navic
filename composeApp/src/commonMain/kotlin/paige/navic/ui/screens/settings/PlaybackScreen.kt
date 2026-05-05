@@ -52,13 +52,16 @@ import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.ReplayGainMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
+import kotlinx.collections.immutable.toImmutableList
 import paige.navic.ui.screens.settings.dialogs.LyricsPriorityDialog
 import kotlin.math.roundToInt
 
@@ -106,6 +109,15 @@ fun SettingsPlaybackScreen() {
 							value = Settings.shared.replayGain,
 							onSetValue = { Settings.shared.replayGain = it }
 						)
+						if (Settings.shared.replayGain) {
+							SettingSelectionRow(
+								title = { Text(stringResource(Res.string.option_replay_gain)) },
+								items = ReplayGainMode.entries.toImmutableList(),
+								label = { stringResource(it.displayName) },
+								selection = Settings.shared.replayGainMode,
+								onSelect = { Settings.shared.replayGainMode = it }
+							)
+						}
 						SettingSwitchRow(
 							title = { Text(stringResource(Res.string.option_gapless_playback)) },
 							subtitle = { Text(stringResource(Res.string.subtitle_gapless_playback)) },

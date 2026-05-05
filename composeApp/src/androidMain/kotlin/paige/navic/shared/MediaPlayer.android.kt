@@ -358,7 +358,7 @@ class AndroidMediaPlayerViewModel(
 		viewModelScope.launch {
 			if (Settings.shared.replayGain) {
 				(_uiState.value.currentSong)?.replayGain?.let { replayGain ->
-					controller?.volume = replayGain.effectiveGain()
+					controller?.volume = replayGain.effectiveGain(Settings.shared.replayGainMode)
 				}
 			} else {
 				controller?.volume = 1f
