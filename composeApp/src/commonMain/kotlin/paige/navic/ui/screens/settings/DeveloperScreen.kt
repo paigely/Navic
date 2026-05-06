@@ -67,12 +67,14 @@ fun SettingsDeveloperScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_check_for_updates)) },
-						subtitle = { Text(stringResource(Res.string.subtitle_check_for_updates)) },
-						value = Settings.shared.checkForUpdates,
-						onSetValue = { Settings.shared.checkForUpdates = it }
-					)
+					if (!listOf("ios", "ipados").contains(ctx.name.lowercase())) {
+						SettingSwitchRow(
+							title = { Text(stringResource(Res.string.option_check_for_updates)) },
+							subtitle = { Text(stringResource(Res.string.subtitle_check_for_updates)) },
+							value = Settings.shared.checkForUpdates,
+							onSetValue = { Settings.shared.checkForUpdates = it }
+						)
+					}
 					FormRow(
 						onClick = dropUnlessResumed {
 							backStack.lastOrNull()?.let {

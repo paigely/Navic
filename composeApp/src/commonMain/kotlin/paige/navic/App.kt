@@ -201,7 +201,9 @@ fun App() {
 				) {
 					SideloadingDialog()
 				}
-				if (Settings.shared.checkForUpdates) {
+				// version check is annoying to do on ios
+				if (Settings.shared.checkForUpdates
+					&& !listOf("ios", "ipados").contains(ctx.name.lowercase())) {
 					ChangelogSheet()
 				}
 			}
