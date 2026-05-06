@@ -149,7 +149,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 	}
 
 	override fun onTaskRemoved(rootIntent: Intent?) {
-		onDestroy()
+		stopSelf()
 	}
 
 	override fun onDestroy() {
@@ -163,7 +163,6 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 		}
 		super.onDestroy()
 		mediaSession = null
-		stopSelf()
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
