@@ -387,4 +387,10 @@
     <string name="info_streaming_quality">La preselección de calidad más alta utilizará más dato. La transcodificación puede impactar severamente varias veces y causar que las líricas no se sincronicen. Seleccione menor pérdida si encuentras cualesquiera de las incidencias.</string>
     <string name="option_playback_speed">Velocidad de reproducción</string>
     <string name="title_select_lyrics">Seleccionar letras</string>
+    <string name="title_advanced">Transcodificación Avanzada</string>
+    <string name="option_off">Apagado</string>
+    <string name="option_enable_custom_bitrates">Habilitar Tasa de Bit Personalizada</string>
+    <string name="option_max_bitrate_wifi">WiFi de Tasa de Bit Máx (kbps)</string>
+    <string name="option_max_bitrate_cellular">Móvil con Tasa Bit Máx (kbps)</string>
+    <string name="info_bitrate_default_zero">Si se deja este campo vacío, el valor predeterminado es 0. Dejando que el servidor elija.</string>
 </resources>
