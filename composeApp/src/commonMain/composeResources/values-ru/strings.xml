@@ -59,7 +59,7 @@
     <string name="option_sort_alphabetical_by_name">В алфавитном порядке по Имени</string>
     <string name="option_sort_alphabetical_by_artist">В алфавитном порядке по Исполнителю</string>
     <string name="option_sort_starred">Избранное</string>
-    <string name="option_sort_by_year">По Году</string>
+    <string name="option_sort_by_year">По году</string>
     <string name="option_sort_by_genre">По жанру</string>
     <string name="option_scrobble_percentage">Процент трека</string>
     <string name="option_min_duration_to_scrobble">Мин. прослушанная часть трека</string>
@@ -153,7 +153,7 @@
     <string name="title_now_playing">Сейчас играет</string>
     <string name="title_bottom_app_bar">Нижняя панель</string>
     <string name="title_playback">Воспроизведение</string>
-    <string name="title_all">Настройки для разработчиков</string>
+    <string name="title_all">Все</string>
     <string name="title_shares">Поделиться</string>
     <string name="title_choose_font">Шрифт приложения</string>
     <string name="title_fonts_inbuilt">Встроенные</string>
@@ -189,7 +189,7 @@
     <string name="option_sort_descending">Нисходящий</string>
     <string name="option_enable_scrobbling">История прослушивания</string>
     <string name="option_choose_theme">Тема приложения</string>
-    <string name="option_replay_gain">Повторное воспроизведение</string>
+    <string name="option_replay_gain">ReplayGain</string>
     <string name="option_gapless_playback">Воспроизведение без пропусков</string>
     <string name="option_audio_offload">Оффлайн аудио</string>
     <string name="option_now_playing_toolbar_position">Положение панели инструментов</string>
@@ -398,4 +398,6 @@
     </plurals>
     <string name="option_playback_speed">Скорость воспроизведения</string>
     <string name="info_streaming_quality">Более высокие пресеты качества будут использовать больше трафика. Перекодирование треков может значительно повлиять на время загрузки треков и привести к рассинхронизации текстов. Выберите "Сжатие без потерь", если встретились с какими-либо проблемами.</string>
+    <string name="title_advanced">Расширенное транскодирование</string>
+    <string name="subtitle_max_bitrates">Максимальный битрейт</string>
 </resources>
