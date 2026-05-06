@@ -3,6 +3,9 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+  push:
+    branches:
+      - chore/connect-funnies
 
 jobs:
   build:
