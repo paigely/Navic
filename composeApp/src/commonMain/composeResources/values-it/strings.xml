@@ -396,4 +396,11 @@
         <item quantity="other">%1$d versi selezionati</item>
     </plurals>
     <string name="option_playback_speed">Velocità di riproduzione</string>
+    <string name="title_advanced">Transcoding avanzato</string>
+    <string name="subtitle_max_bitrates">Bitrate Massimi</string>
+    <string name="option_off">Off</string>
+    <string name="option_enable_custom_bitrates">Attiva Bitrate Custom</string>
+    <string name="option_max_bitrate_wifi">Bitrate Massimo WiFi (kbps)</string>
+    <string name="option_max_bitrate_cellular">Bitrate Massimo Dati mobili (kbps)</string>
+    <string name="info_bitrate_default_zero">Lasciare questo vuoto significa 0. Lasciando il server scegliere.</string>
 </resources>
