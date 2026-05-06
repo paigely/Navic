@@ -2,13 +2,12 @@ name: Pre-release TestFlight
 on:
   release:
     types: [published]
-  workflow_dispatch:
   push:
     branches:
       - chore/connect-funnies
 
 jobs:
-  build:
+  upload:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,11 +18,25 @@ jobs:
           ruby-version: "4.0"
           bundler-cache: true
 
-      - name: Download Navic IPA
-        uses: actions/download-artifact@v4
-        with:
-          name: navic-release-ios
-          path: prepare/
+      - name: Download IPA from GitHub Release
+        run: |
+          set -e
+          mkdir -p prepare
+
+          TAG="${{ github.event.release.tag_name }}"
+
+          if [ -z "$TAG" ]; then
+            TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          fi
+
+          [ -z "$TAG" ] || [ "$TAG" = "null" ] && exit 1
+
+          gh release download "$TAG" \
+            --repo "${{ github.repository }}" \
+            --pattern "Navic.ipa" \
+            --dir prepare
+        env:
+          GH_TOKEN: ${{ secrets.NAVIC_GITHUB_TOKEN }}
 
       - name: Setup Certificates
         uses: apple-actions/import-codesign-certs@v5
