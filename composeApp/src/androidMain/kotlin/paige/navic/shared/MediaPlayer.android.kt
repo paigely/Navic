@@ -14,8 +14,10 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
+import androidx.media3.common.Timeline
 import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
@@ -40,6 +42,7 @@ import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.ReplayGainMode
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainRadio
@@ -83,8 +86,9 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			}
 
 		val httpDataSourceFactory = DefaultHttpDataSource.Factory()
-			.setDefaultRequestProperties(Settings.shared.customHeadersMap())
-		val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory)
+    		.setDefaultRequestProperties(Settings.shared.customHeadersMap())
+		val dataSourceFactory = DefaultDataSource.Factory(this, httpDataSourceFactory)
+		val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
 
 		val player = ExoPlayer.Builder(this)
 			.setLoadControl(loadControl)
@@ -162,7 +166,34 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 		stopSelf()
 	}
 
+	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+		val action = intent?.action
+
+		mediaSession?.player?.let { player ->
+			when (action) {
+				ACTION_PLAY_PAUSE -> {
+					if (player.isPlaying) player.pause() else player.play()
+				}
+				ACTION_NEXT -> {
+					if (player.hasNextMediaItem()) player.seekToNextMediaItem()
+				}
+				ACTION_PREV -> {
+					if (player.hasPreviousMediaItem() || player.currentPosition <= 3000) {
+						player.seekToPreviousMediaItem()
+					} else {
+						player.seekTo(0)
+					}
+				}
+			}
+		}
+		return super.onStartCommand(intent, flags, startId)
+	}
+
 	companion object {
+		const val ACTION_PLAY_PAUSE = "paige.navic.action.PLAY_PAUSE"
+		const val ACTION_NEXT = "paige.navic.action.NEXT"
+		const val ACTION_PREV = "paige.navic.action.PREV"
+
 		fun newSessionToken(context: Context): SessionToken {
 			return SessionToken(context, ComponentName(context, PlaybackService::class.java))
 		}
@@ -206,13 +237,13 @@ class AndroidMediaPlayerViewModel(
 		when (connectivityManager.isCellular.value) {
 			true -> SessionManager.api.getStreamUrl(
 				id,
-				Settings.shared.streamingQualityCellular.bitrateAndroid,
+				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateCellular else Settings.shared.streamingQualityCellular.bitrateAndroid,
 				Settings.shared.streamingQualityCellular.containerAndroid
 			).toUri()
 
 			false -> SessionManager.api.getStreamUrl(
 				id,
-				Settings.shared.streamingQualityWifi.bitrateAndroid,
+				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateWifi else Settings.shared.streamingQualityWifi.bitrateAndroid,
 				Settings.shared.streamingQualityWifi.containerAndroid
 			).toUri()
 		}.buildUpon().appendQueryParameter("estimateContentLength", "true").build()
@@ -234,26 +265,8 @@ class AndroidMediaPlayerViewModel(
 					override fun onIsPlayingChanged(isPlaying: Boolean) {
 						_uiState.update { it.copy(isPaused = !isPlaying) }
 						if (isPlaying) startProgressLoop()
-						val intent =
-							Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
-								setPackage(application.packageName)
-								putExtra("isPlaying", isPlaying)
-								putExtra(
-									"title",
-									_uiState.value.currentSong?.title ?: "Unknown song"
-								)
-								putExtra(
-									"artist",
-									_uiState.value.currentSong?.artistName ?: "Unknown artist"
-								)
-								putExtra(
-									"artUrl",
-									_uiState.value.currentSong?.coverArtId?.let { id ->
-										SessionManager.api.getCoverArtUrl(id, auth = true)
-									})
-							}
 
-						application.sendBroadcast(intent)
+						sendWidgetUpdateBroadcast(controller)
 					}
 
 					override fun onPlaybackStateChanged(playbackState: Int) {
@@ -267,6 +280,10 @@ class AndroidMediaPlayerViewModel(
 
 					override fun onRepeatModeChanged(repeatMode: Int) {
 						_uiState.update { it.copy(repeatMode = repeatMode) }
+					}
+
+					override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+						updatePlaybackState()
 					}
 				})
 				updatePlaybackState()
@@ -348,15 +365,17 @@ class AndroidMediaPlayerViewModel(
 				}
 				applyReplayGain()
 				updateProgress()
+
+				sendWidgetUpdateBroadcast(player)
 			}
 		}
 	}
 
 	private fun applyReplayGain() {
 		viewModelScope.launch {
-			if (Settings.shared.replayGain) {
+			if (Settings.shared.replayGainMode != ReplayGainMode.Off) {
 				(_uiState.value.currentSong)?.replayGain?.let { replayGain ->
-					controller?.volume = replayGain.effectiveGain()
+					controller?.volume = replayGain.effectiveGain(Settings.shared.replayGainMode)
 				}
 			} else {
 				controller?.volume = 1f
@@ -498,7 +517,6 @@ class AndroidMediaPlayerViewModel(
 
 	override fun clearQueue() {
 		viewModelScope.launch {
-			controller?.clearMediaItems()
 			_uiState.update {
 				it.copy(
 					queue = emptyList(),
@@ -507,6 +525,7 @@ class AndroidMediaPlayerViewModel(
 					progress = 0f
 				)
 			}
+			controller?.clearMediaItems()
 		}
 	}
 
@@ -636,19 +655,19 @@ class AndroidMediaPlayerViewModel(
 			val shuffledSongs = collection.songs.shuffled()
 			val mediaItems = shuffledSongs.map { it.toMediaItem() }
 
-			controller?.let { player ->
-				player.shuffleModeEnabled = false
-				player.setMediaItems(mediaItems, 0, 0L)
-				player.prepare()
-				player.play()
-			}
-
 			_uiState.update { state ->
 				state.copy(
 					queue = shuffledSongs,
 					currentIndex = 0,
 					currentSong = shuffledSongs.firstOrNull()
 				)
+			}
+
+			controller?.let { player ->
+				player.shuffleModeEnabled = false
+				player.setMediaItems(mediaItems, 0, 0L)
+				player.prepare()
+				player.play()
 			}
 		}
 	}
@@ -768,5 +787,21 @@ class AndroidMediaPlayerViewModel(
 		}
 
 		return builder.build()
+	}
+
+	private fun sendWidgetUpdateBroadcast(player: Player?) {
+		val mediaItem = player?.currentMediaItem
+		val title = mediaItem?.mediaMetadata?.title?.toString() ?: ""
+		val artist = mediaItem?.mediaMetadata?.artist?.toString() ?: ""
+		val artUrl = mediaItem?.mediaMetadata?.artworkUri?.toString()
+
+		val intent = Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
+			setPackage(application.packageName)
+			putExtra("isPlaying", player?.isPlaying ?: false)
+			putExtra("title", title)
+			putExtra("artist", artist)
+			putExtra("artUrl", artUrl)
+		}
+		application.sendBroadcast(intent)
 	}
 }

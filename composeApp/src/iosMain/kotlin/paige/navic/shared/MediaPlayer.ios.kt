@@ -550,13 +550,13 @@ class IOSMediaPlayerViewModel(
 		when (connectivityManager.isCellular.value) {
 			true -> SessionManager.api.getStreamUrl(
 				id,
-				Settings.shared.streamingQualityCellular.bitrateIos,
+				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateCellular else Settings.shared.streamingQualityCellular.bitrateIos,
 				Settings.shared.streamingQualityCellular.containerIos
 			)
 
 			false -> SessionManager.api.getStreamUrl(
 				id,
-				Settings.shared.streamingQualityWifi.bitrateIos,
+				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateWifi else Settings.shared.streamingQualityWifi.bitrateIos,
 				Settings.shared.streamingQualityWifi.containerIos
 			)
 		} + "&estimateContentLength=true"

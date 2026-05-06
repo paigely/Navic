@@ -1,8 +1,8 @@
 package paige.navic.data.database.mappers
 
-import dev.zt64.subsonic.api.model.InternetRadioStation as ApiRadio
 import paige.navic.data.database.entities.RadioEntity
 import paige.navic.domain.models.DomainRadio
+import dev.zt64.subsonic.api.model.InternetRadioStation as ApiRadio
 
 fun ApiRadio.toEntity() = RadioEntity(
 	radioId = id,

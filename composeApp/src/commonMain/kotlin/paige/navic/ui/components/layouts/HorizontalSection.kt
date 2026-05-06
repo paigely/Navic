@@ -23,6 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation3.runtime.NavKey
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_see_all
 import org.jetbrains.compose.resources.StringResource
@@ -60,6 +64,53 @@ fun <T> LazyGridScope.horizontalSection(
 			} else {
 				items(data, key = key) { item ->
 					itemContent(item)
+				}
+			}
+		}
+	}
+}
+
+fun <T : Any> LazyGridScope.pagedHorizontalSection(
+	seeAll: Boolean,
+	title: StringResource,
+	destination: NavKey,
+	items: LazyPagingItems<T>,
+	itemContent: @Composable LazyItemScope.(T) -> Unit,
+) {
+	val refreshState = items.loadState.refresh
+	val isInitialLoading = refreshState is LoadState.Loading && items.itemCount == 0
+	val isEmpty = refreshState is LoadState.NotLoading && items.itemCount == 0
+
+	if (isEmpty) return
+
+	header(title, destination = destination, active = seeAll)
+
+	item(span = { GridItemSpan(maxLineSpan) }) {
+		LazyRow(
+			modifier = Modifier
+				.animateContentSize(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()),
+			horizontalArrangement = Arrangement.spacedBy(12.dp),
+			contentPadding = PaddingValues(horizontal = 16.dp)
+		) {
+			if (isInitialLoading) {
+				items(8) {
+					ArtGridPlaceholder(Modifier.width(150.dp))
+				}
+			} else {
+				items(
+					count = items.itemCount,
+					key = items.itemKey(),
+					contentType = items.itemContentType()
+				) { index ->
+					items[index]?.let { item ->
+						itemContent(item)
+					}
+				}
+
+				if (items.loadState.append is LoadState.Loading) {
+					items(2) {
+						ArtGridPlaceholder(Modifier.width(150.dp))
+					}
 				}
 			}
 		}

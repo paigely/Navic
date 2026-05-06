@@ -98,8 +98,8 @@ fun CollectionDetailScreenSongRow(
 		modifier = Modifier.padding(horizontal = 16.dp, vertical = 1.5.dp),
 		state = dismissState,
 		onDismiss = {
-			if (it == SwipeToDismissBoxValue.StartToEnd) onPlayNext()
-			if (it == SwipeToDismissBoxValue.EndToStart) onAddToQueue()
+			if (it == SwipeToDismissBoxValue.StartToEnd) onAddToQueue()
+			if (it == SwipeToDismissBoxValue.EndToStart) onPlayNext()
 			scope.launch { dismissState.reset() }
 		},
 		backgroundContent = {

@@ -1,5 +1,6 @@
 package paige.navic.data.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
@@ -28,6 +29,66 @@ interface AlbumDao {
 
 	@RawQuery
 	suspend fun getAlbumsByQuery(query: RoomRawQuery): List<AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY name ASC")
+	fun getAlbumsByNameAsc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY name DESC")
+	fun getAlbumsByNameDesc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE starredAt IS NOT NULL ORDER BY starredAt DESC")
+	fun getStarredAlbums(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY artistName COLLATE NOCASE ASC, year DESC")
+	fun getAlbumsByArtistAsc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY artistName COLLATE NOCASE DESC, year DESC")
+	fun getAlbumsByArtistDesc(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT albumId FROM AlbumEntity ORDER BY RANDOM()")
+	suspend fun getRandomAlbumIds(): List<String>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY createdAt DESC")
+	fun getAlbumsNewest(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY createdAt ASC")
+	fun getAlbumsOldest(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY playCount DESC")
+	fun getAlbumsFrequent(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY playCount ASC")
+	fun getAlbumsInfrequent(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY lastPlayedAt DESC")
+	fun getAlbumsRecent(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity ORDER BY lastPlayedAt ASC")
+	fun getAlbumsStale(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("""
+    SELECT * FROM AlbumEntity 
+    WHERE albumId IN (
+        SELECT song.belongsToAlbumId FROM SongEntity AS song
+        INNER JOIN DownloadEntity AS dl ON song.songId = dl.songId
+        WHERE dl.status = 'DOWNLOADED'
+    )
+    ORDER BY name ASC
+	""")
+	fun getDownloadedAlbums(): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
 	@Query("SELECT COUNT(albumId) FROM AlbumEntity")

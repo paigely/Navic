@@ -59,7 +59,7 @@
 		<!-- miniplayer receiver -->
 		<receiver
 			android:name=".widgets.miniplayer.MiniPlayerReceiver"
-			android:exported="false"
+			android:exported="true"
 			android:label="Mini Player">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
