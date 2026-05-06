@@ -36,7 +36,8 @@ platform :ios do
     )
 
     pilot(
-      ipa: "prepare/Navic.ipa"
+      ipa: "prepare/Navic.ipa",
+      api_key: api_key
     )
   end
 end
