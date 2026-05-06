@@ -1,0 +1,50 @@
+name: Pre-release TestFlight
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  upload:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "4.0"
+          bundler-cache: true
+
+      - name: Download IPA from GitHub Release
+        run: |
+          set -e
+          mkdir -p prepare
+
+          TAG="${{ github.event.release.tag_name }}"
+
+          if [ -z "$TAG" ]; then
+            TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          fi
+
+          [ -z "$TAG" ] || [ "$TAG" = "null" ] && exit 1
+
+          gh release download "$TAG" \
+            --repo "${{ github.repository }}" \
+            --pattern "Navic.ipa" \
+            --dir prepare
+        env:
+          GH_TOKEN: ${{ secrets.NAVIC_GITHUB_TOKEN }}
+
+      - name: Setup Certificates
+        uses: apple-actions/import-codesign-certs@v5
+        with:
+          p12-file-base64: ${{ secrets.APP_STORE_CONNECT_P12 }}
+          p12-password: ${{ secrets.APP_STORE_CONNECT_P12_PASS }}
+
+      - run: bundle exec fastlane ios resign_and_upload
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+          APP_STORE_CONNECT_SIGNING_IDENTITY: ${{ secrets.APP_STORE_CONNECT_SIGNING_IDENTITY }}

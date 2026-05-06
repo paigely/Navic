@@ -10,4 +10,9 @@ max_line_length = 100
 tab_width = 4
 
 [*.yml]
-tab_width = 2
+indent_size = 2
+indent_style = space
+
+[*.rb]
+indent_size = 2
+indent_style = space

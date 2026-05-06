@@ -1,0 +1,28 @@
+default_platform(:ios)
+
+platform :ios do
+  lane :resign_and_upload do
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+      key_content: Base64.decode64(ENV["APP_STORE_CONNECT_API_KEY"])
+    )
+
+    profile_path = sigh(
+      app_identifier: "paige.Navic",
+      skip_install: true,
+      api_key: api_key
+    )
+
+    resign(
+      ipa: "prepare/Navic.ipa",
+      signing_identity: ENV["APP_STORE_CONNECT_SIGNING_IDENTITY"],
+      provisioning_profile: profile_path
+    )
+
+    pilot(
+      ipa: "prepare/Navic.ipa",
+      api_key: api_key
+    )
+  end
+end
