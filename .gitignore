@@ -22,3 +22,5 @@ iosApp/packages
 release
 acknowledgements.json
 /gradle/gradle-daemon-jvm.properties
+prepare/
+*.mobileprovision
