@@ -7,6 +7,7 @@ import kotlinx.collections.immutable.ImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_songs
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Note
@@ -18,6 +19,7 @@ fun LazyListScope.songListScreenContent(
 	selectedSong: DomainSong?,
 	selectedSongIsStarred: Boolean,
 	selectedSongRating: Int,
+	allDownloads: List<DownloadEntity>,
 	onUpdateSelection: (DomainSong) -> Unit,
 	onClearSelection: () -> Unit,
 	onSetShareId: (String) -> Unit,
@@ -25,17 +27,21 @@ fun LazyListScope.songListScreenContent(
 	onPlayNext: (DomainSong) -> Unit,
 	onAddToQueue: (DomainSong) -> Unit,
 	onPlaySong: (DomainSong) -> Unit,
-	onSetRating: (Int) -> Unit
+	onSetRating: (Int) -> Unit,
+	onDownload: (DomainSong) -> Unit,
+	onCancelDownload: (DomainSong) -> Unit,
+	onDeleteDownload: (DomainSong) -> Unit
 ) {
 	val data = state.data.orEmpty()
 	if (data.isNotEmpty()) {
 		items(data) { song ->
+			val download = allDownloads.find { it.songId == song.id }
 			SongListScreenItem(
 				modifier = Modifier.animateItem(),
 				song = song,
 				selected = song == selectedSong,
-				starred = selectedSongIsStarred,
-				rating = selectedSongRating,
+				starred = if (song == selectedSong) selectedSongIsStarred else false,
+				rating = if (song == selectedSong) selectedSongRating else 0,
 				onSelect = { onUpdateSelection(song) },
 				onDeselect = { onClearSelection() },
 				onSetStarred = { onSetStarred(it) },
@@ -43,7 +49,11 @@ fun LazyListScope.songListScreenContent(
 				onPlayNext = { onPlayNext(song) },
 				onAddToQueue = { onAddToQueue(song) },
 				onClick = { onPlaySong(song) },
-				onSetRating = onSetRating
+				onSetRating = onSetRating,
+				download = download,
+				onDownload = { onDownload(song) },
+				onCancelDownload = { onCancelDownload(song) },
+				onDeleteDownload = { onDeleteDownload(song) }
 			)
 		}
 	} else {

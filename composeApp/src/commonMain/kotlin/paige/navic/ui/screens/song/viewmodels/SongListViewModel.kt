@@ -5,21 +5,31 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
 import paige.navic.domain.repositories.SongRepository
+import paige.navic.managers.DownloadManager
 import paige.navic.utils.UiState
 
 class SongListViewModel(
 	private val artistId: String? = null,
-	private val repository: SongRepository
+	private val repository: SongRepository,
+	private val downloadManager: DownloadManager,
 ) : ViewModel() {
 	private val _songsState =
 		MutableStateFlow<UiState<ImmutableList<DomainSong>>>(UiState.Loading())
 	val songsState = _songsState.asStateFlow()
+	val allDownloads = downloadManager.allDownloads
+		.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.Lazily,
+			initialValue = emptyList()
+		)
 
 	private val _selectedSong = MutableStateFlow<DomainSong?>(null)
 	val selectedSong = _selectedSong.asStateFlow()
@@ -103,5 +113,17 @@ class SongListViewModel(
 
 	fun clearError() {
 		_songsState.value = UiState.Success(_songsState.value.data ?: persistentListOf())
+	}
+
+	fun downloadSong(song: DomainSong) {
+		downloadManager.downloadSong(song)
+	}
+
+	fun cancelDownload(songId: String) {
+		downloadManager.cancelDownload(songId)
+	}
+
+	fun deleteDownload(songId: String) {
+		downloadManager.deleteDownload(songId)
 	}
 }

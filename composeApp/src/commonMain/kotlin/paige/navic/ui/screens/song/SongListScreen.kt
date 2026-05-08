@@ -62,6 +62,7 @@ fun SongListScreen(
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
 	val starred by viewModel.starred.collectAsStateWithLifecycle()
 	val selectedSongRating by viewModel.selectedSongRating.collectAsStateWithLifecycle()
+	val allDownloads by viewModel.allDownloads.collectAsStateWithLifecycle()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -147,7 +148,11 @@ fun SongListScreen(
 						player.addToQueueSingle(song)
 						player.playAt(0)
 					},
-					onSetRating = { viewModel.rateSelectedSong(it) }
+					onSetRating = { viewModel.rateSelectedSong(it) },
+					onDownload = { viewModel.downloadSong(it) },
+					allDownloads = allDownloads,
+					onCancelDownload = { viewModel.cancelDownload(it.id) },
+					onDeleteDownload = { viewModel.deleteDownload(it.id) }
 				)
 			}
 		}

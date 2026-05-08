@@ -52,7 +52,8 @@ val viewModelModule = module {
 	viewModel { params ->
 		SongListViewModel(
 			artistId = params.getOrNull(),
-			repository = get()
+			repository = get(),
+			downloadManager = get()
 		)
 	}
 	viewModelOf(::ArtistListViewModel)
