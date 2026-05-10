@@ -30,6 +30,8 @@ class PlaylistCreateDialogViewModel(
 
 	fun create() {
 		viewModelScope.launch {
+			val serverId = SessionManager.activeServerId.value ?: return@launch
+
 			_creationState.value = UiState.Loading()
 			try {
 				val playlist = SessionManager.api.createPlaylist(
@@ -39,7 +41,7 @@ class PlaylistCreateDialogViewModel(
 				playlistDao.insertPlaylist(playlist.toEntity())
 				_events.send(
 					Event.Dismiss(
-						playlistDao.getPlaylistById(playlist.id)!!.toDomainModel()
+						playlistDao.getPlaylistById(playlist.id, serverId)!!.toDomainModel()
 					)
 				)
 				_creationState.value = UiState.Success(null)

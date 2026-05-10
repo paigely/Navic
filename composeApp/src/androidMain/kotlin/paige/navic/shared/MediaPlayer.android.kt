@@ -327,10 +327,14 @@ class AndroidMediaPlayerViewModel(
 
 		viewModelScope.launch {
 			runCatching {
-				val album = albumDao.getAlbumById(albumId)
+				val serverId = SessionManager.activeServerId.value
+					?: throw Exception("No active server for album lookup")
+
+				val album = albumDao.getAlbumById(albumId, serverId)
 
 				_uiState.update { it.copy(currentCollection = album?.toDomainModel()) }
-			}.onFailure {
+			}.onFailure { e ->
+				Logger.e("AndroidMediaPlayerViewModel", "Failed to refresh collection info", e)
 				loadingCollectionId = null
 			}
 		}

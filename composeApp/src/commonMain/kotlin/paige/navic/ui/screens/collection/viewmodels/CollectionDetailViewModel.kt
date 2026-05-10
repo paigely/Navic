@@ -36,8 +36,9 @@ class CollectionDetailViewModel(
 ) : ViewModel() {
 	private val _collectionState = MutableStateFlow<UiState<DomainSongCollection>>(
 		runBlocking {
+			val serverId = SessionManager.activeServerId.value ?: throw  Exception("No active server found")
 			try {
-				UiState.Loading(repository.getLocalData(collectionId))
+				UiState.Loading(repository.getLocalData(collectionId, serverId))
 			} catch (_: Exception) {
 				UiState.Loading()
 			}
