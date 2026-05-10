@@ -63,9 +63,11 @@ class SyncManager(
 		if (syncJob?.isActive == true) return
 
 		scope.launch {
-			if (albumDao.getAlbumCount() == 0
-				|| Settings.shared.lastFullSyncTime <= 0L) {
-				Logger.i("SyncManager", "Syncing now because we haven't synced before")
+			val serverId = SessionManager.activeServerId.value ?: return@launch
+
+			if (albumDao.getAlbumCount(serverId) == 0
+				|| Settings.shared.getLastFullSyncTime(serverId) <= 0L) {
+				Logger.i("SyncManager", "Syncing now because we haven't synced before for this server")
 				runSyncCycle()
 			}
 		}
@@ -80,7 +82,8 @@ class SyncManager(
 
 	fun triggerManualSync() {
 		scope.launch {
-			Settings.shared.lastFullSyncTime = 0
+			val serverId = SessionManager.activeServerId.value ?: return@launch
+			Settings.shared.setLastFullSyncTime(serverId, 0L)
 			runSyncCycle()
 		}
 	}
@@ -91,8 +94,20 @@ class SyncManager(
 	}
 
 	fun enqueueAction(actionType: SyncActionType, itemId: String) {
+		val serverId = SessionManager.activeServerId.value ?: run {
+			Logger.e("SyncManager", "Cannot enqueue action: No active server.")
+			return
+		}
+
 		scope.launch {
-			syncDao.enqueue(SyncActionEntity(actionType = actionType, itemId = itemId))
+			syncDao.enqueue(
+				SyncActionEntity(
+					actionType = actionType,
+					itemId = itemId,
+					serverId = serverId
+				)
+			)
+
 			if (!syncMutex.isLocked) {
 				syncMutex.withLock { processQueue() }
 			}
@@ -100,12 +115,16 @@ class SyncManager(
 	}
 
 	private suspend fun runSyncCycle() {
+		val serverId = SessionManager.activeServerId.value ?: return
+
 		syncMutex.withLock {
 			processQueue()
 
 			val currentTime = Clock.System.now()
-			if (currentTime - Instant.fromEpochMilliseconds(Settings.shared.lastFullSyncTime) > fullSyncThreshold) {
-				Logger.i("SyncManager", "Starting full library pull...")
+			val lastSyncTimeMs = Settings.shared.getLastFullSyncTime(serverId)
+
+			if (currentTime - Instant.fromEpochMilliseconds(lastSyncTimeMs) > fullSyncThreshold) {
+				Logger.i("SyncManager", "Starting full library pull for server: $serverId...")
 
 				_syncState.update {
 					it.copy(isSyncing = true)
@@ -118,8 +137,8 @@ class SyncManager(
 				}
 
 				if (result.isSuccess) {
-					Settings.shared.lastFullSyncTime = currentTime.toEpochMilliseconds()
-					Logger.i("SyncManager", "Full library sync complete.")
+					Settings.shared.setLastFullSyncTime(serverId, currentTime.toEpochMilliseconds())
+					Logger.i("SyncManager", "Full library sync complete for server: $serverId.")
 				}
 
 				_syncState.update {
@@ -130,7 +149,9 @@ class SyncManager(
 	}
 
 	private suspend fun processQueue() {
-		val actions = syncDao.getPendingActions()
+		val serverId = SessionManager.activeServerId.value ?: return
+
+		val actions = syncDao.getPendingActions(serverId)
 		if (actions.isEmpty()) return
 
 		for (action in actions) {
@@ -148,10 +169,10 @@ class SyncManager(
 					SyncActionType.STAR_5 -> SessionManager.api.setRating(action.itemId, 5)
 				}
 
-				syncDao.removeAction(action.id)
+				syncDao.removeAction(action.id, serverId)
 				Logger.i(
 					"SyncManager",
-					"Successfully synced ${action.actionType} for ${action.itemId}"
+					"Successfully synced ${action.actionType} for ${action.itemId} on server $serverId"
 				)
 
 			} catch (e: Exception) {
