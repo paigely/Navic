@@ -3,8 +3,10 @@ package paige.navic.domain.repositories
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.SyncManager
@@ -12,6 +14,7 @@ import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
+import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
 import paige.navic.utils.UiState
@@ -23,43 +26,59 @@ class ArtistRepository(
 	private val dbRepository: DbRepository
 ) {
 	private suspend fun getLocalData(
-		listType: DomainArtistListType
+		listType: DomainArtistListType,
+		serverId: String
 	): ImmutableList<DomainArtist> {
 		return when (listType) {
-			DomainArtistListType.AlphabeticalByName -> artistDao.getArtistsAlphabeticalByName()
-			DomainArtistListType.Random -> artistDao.getArtistsRandom()
-			DomainArtistListType.Starred -> artistDao.getArtistsStarred()
+			DomainArtistListType.AlphabeticalByName -> artistDao.getArtistsAlphabeticalByName(serverId)
+			DomainArtistListType.Random -> artistDao.getArtistsRandom(serverId)
+			DomainArtistListType.Starred -> artistDao.getArtistsStarred(serverId)
 		}.map { it.toDomainModel() }.toImmutableList()
 	}
 
 	private suspend fun refreshLocalData(
-		listType: DomainArtistListType
+		listType: DomainArtistListType,
+		serverId: String
 	): ImmutableList<DomainArtist> {
 		dbRepository.syncArtists().getOrThrow()
-		return getLocalData(listType)
+		return getLocalData(listType, serverId)
 	}
 
+	@OptIn(ExperimentalCoroutinesApi::class)
 	fun getArtistsFlow(
 		fullRefresh: Boolean,
 		listType: DomainArtistListType
-	): Flow<UiState<ImmutableList<DomainArtist>>> = flow {
-		val localData = getLocalData(listType)
-		if (fullRefresh) {
-			emit(UiState.Loading(data = localData))
-			try {
-				emit(UiState.Success(data = refreshLocalData(listType)))
-			} catch (error: Exception) {
-				emit(UiState.Error(error = error, data = localData))
+	): Flow<UiState<ImmutableList<DomainArtist>>> = SessionManager.activeServerId.flatMapLatest { serverId ->
+		flow {
+			if (serverId == null) {
+				emit(UiState.Success(data = emptyList<DomainArtist>().toImmutableList()))
+				return@flow
 			}
-		} else {
-			emit(UiState.Success(data = localData))
+
+			val localData = getLocalData(listType, serverId)
+
+			if (fullRefresh) {
+				emit(UiState.Loading(data = localData))
+				try {
+					emit(UiState.Success(data = refreshLocalData(listType, serverId)))
+				} catch (error: Exception) {
+					emit(UiState.Error(error = error, data = localData))
+				}
+			} else {
+				emit(UiState.Success(data = localData))
+			}
 		}
 	}.flowOn(Dispatchers.IO)
 
-	suspend fun isArtistStarred(artist: DomainArtist) = artistDao.isArtistStarred(artist.id)
+	suspend fun isArtistStarred(artist: DomainArtist): Boolean {
+		val serverId = SessionManager.activeServerId.value ?: return false
+		return artistDao.isArtistStarred(artist.id, serverId)
+	}
 
 	suspend fun starArtist(artist: DomainArtist) {
+		val serverId = SessionManager.activeServerId.value ?: return
 		val starredEntity = artist.toEntity().copy(
+			serverId = serverId,
 			starredAt = Clock.System.now()
 		)
 		artistDao.insertArtist(starredEntity)
@@ -67,7 +86,9 @@ class ArtistRepository(
 	}
 
 	suspend fun unstarArtist(artist: DomainArtist) {
+		val serverId = SessionManager.activeServerId.value ?: return
 		val unstarredEntity = artist.toEntity().copy(
+			serverId = serverId,
 			starredAt = null
 		)
 		artistDao.insertArtist(unstarredEntity)
