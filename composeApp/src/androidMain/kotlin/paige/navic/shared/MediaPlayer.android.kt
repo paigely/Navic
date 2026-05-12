@@ -340,6 +340,9 @@ class AndroidMediaPlayerViewModel(
 		viewModelScope.launch {
 			controller?.let { player ->
 				val index = player.currentMediaItemIndex
+
+				if (index == C.INDEX_UNSET || index >= _uiState.value.queue.size) return@let
+
 				val currentSong = _uiState.value.queue.getOrNull(index)
 
 				val derivedCollection = currentSong?.let { song ->
