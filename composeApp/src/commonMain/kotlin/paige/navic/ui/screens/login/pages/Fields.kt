@@ -30,10 +30,13 @@ import navic.composeapp.generated.resources.option_account_navidrome_instance
 import navic.composeapp.generated.resources.option_account_password
 import navic.composeapp.generated.resources.option_account_username
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.data.database.entities.ServerEntity
 
 @Composable
 fun LoginScreenFields(
 	isBusy: Boolean,
+	selectedServer: ServerEntity?,
+	serverNameState: TextFieldState,
 	instanceState: TextFieldState,
 	instanceError: Boolean,
 	instanceFocusRequester: FocusRequester,
@@ -48,6 +51,18 @@ fun LoginScreenFields(
 	onPasswordFocusChanged: () -> Unit,
 	onLogin: () -> Unit
 ) {
+	val isExistingServer = selectedServer != null
+
+	if (!isExistingServer) {
+		OutlinedTextField(
+			state = serverNameState,
+			label = { Text("Server Name (Optional)") },
+			enabled = !isBusy,
+			lineLimits = TextFieldLineLimits.SingleLine,
+			modifier = Modifier.fillMaxWidth()
+		)
+	}
+
 	var instanceWasFocused by remember { mutableStateOf(false) }
 	OutlinedTextField(
 		modifier = Modifier

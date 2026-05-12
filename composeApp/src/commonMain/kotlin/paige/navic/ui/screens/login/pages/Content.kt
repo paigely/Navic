@@ -13,9 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,6 +54,9 @@ import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.Add
+import paige.navic.ui.screens.login.components.ServerProfileChip
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.theme.defaultFont
 import paige.navic.utils.LoginState
@@ -57,10 +65,8 @@ import paige.navic.utils.LoginState
 fun LoginScreenContent(innerPadding: PaddingValues) {
 	val viewModel = koinViewModel<LoginViewModel>()
 	val loginState by viewModel.loginState.collectAsStateWithLifecycle()
-
-	val instanceState = viewModel.instanceState
-	val usernameState = viewModel.usernameState
-	val passwordState = viewModel.passwordState
+	val savedServers by viewModel.savedServers.collectAsStateWithLifecycle()
+	val selectedServer = viewModel.selectedServer
 
 	val isBusy = loginState is LoginState.Loading || loginState is LoginState.Syncing
 
@@ -144,21 +150,51 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					modifier = Modifier.padding(horizontal = 16.dp)
 				)
 
-				Spacer(Modifier.height(8.dp))
+
+				Spacer(Modifier.height(16.dp))
+
+				if (savedServers.isNotEmpty()) {
+					Text("Saved Servers", style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(horizontal = 16.dp))
+					Spacer(Modifier.height(8.dp))
+					LazyRow(
+						contentPadding = PaddingValues(horizontal = 16.dp),
+						horizontalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						items(savedServers, key = { it.serverId }) { server ->
+							ServerProfileChip(
+								server = server,
+								isSelected = selectedServer?.serverId == server.serverId,
+								onClick = { ctx.clickSound(); viewModel.selectServer(server) },
+								onDelete = { viewModel.deleteServer(server) }
+							)
+						}
+						item {
+							AssistChip(
+								onClick = { ctx.clickSound(); viewModel.addNewServer() },
+								label = { Text("Add New") },
+								leadingIcon = { Icon(Icons.Outlined.Add, null) },
+								shape = RoundedCornerShape(16.dp)
+							)
+						}
+					}
+					Spacer(Modifier.height(16.dp))
+				}
 
 				LoginScreenError(loginState = loginState)
 
 				LoginScreenFields(
 					isBusy = isBusy,
-					instanceState = instanceState,
+					selectedServer = selectedServer,
+					serverNameState = viewModel.serverNameState,
+					instanceState = viewModel.instanceState,
 					instanceError = viewModel.instanceError,
 					instanceFocusRequester = instanceFocusRequester,
 					onInstanceFocusChanged = { viewModel.validateInstance() },
-					usernameState = usernameState,
+					usernameState = viewModel.usernameState,
 					usernameError = viewModel.usernameError,
 					usernameFocusRequester = usernameFocusRequester,
 					onUsernameFocusChanged = { viewModel.validateUsername() },
-					passwordState = passwordState,
+					passwordState = viewModel.passwordState,
 					passwordError = viewModel.passwordError,
 					passwordFocusRequester = passwordFocusRequester,
 					onPasswordFocusChanged = { viewModel.validatePassword() },
