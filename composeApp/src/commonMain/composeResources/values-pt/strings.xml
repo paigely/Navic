@@ -365,4 +365,7 @@
     <string name="option_quality_low">Baixa</string>
     <string name="option_quality_medium">Média</string>
     <string name="option_quality_high">Alta</string>
+    <string name="title_advanced">Transcodificação avançada</string>
+    <string name="subtitle_max_bitrates">Bitrates máximos</string>
+    <string name="option_off">Desligado</string>
 </resources>
