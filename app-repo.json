@@ -14,10 +14,10 @@
       "iconURL": "https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/icons/ios.png",
       "versions": [
         {
-          "version": "v1.0.0-alpha35",
-          "date": "2026-04-27T02:12:15Z",
+          "version": "1.0.0-alpha39",
+          "date": "2026-05-06T20:30:06Z",
           "size": 19482674,
-          "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha35/Navic.ipa"
+          "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha39/Navic.ipa"
         }
       ],
       "appPermissions": {},
@@ -27,10 +27,10 @@
         "https://github.com/NavicApp/Branding/blob/main/screenshots/lyrics.png?raw=true",
         "https://github.com/NavicApp/Branding/blob/main/screenshots/player.png?raw=true"
       ],
-      "version": "v1.0.0-alpha35",
-      "versionDate": "2026-04-27T02:12:15Z",
+      "version": "1.0.0-alpha39",
+      "versionDate": "2026-05-06T20:30:06Z",
       "size": 19482674,
-      "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha35/Navic.ipa"
+      "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha39/Navic.ipa"
     }
   ]
 }
