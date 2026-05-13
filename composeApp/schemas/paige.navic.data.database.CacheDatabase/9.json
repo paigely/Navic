@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "10b1dea140b1808a7a764b3a613ba6ce",
+    "identityHash": "fd9324dc36ec7044f8cc544ae194f67b",
     "entities": [
       {
         "tableName": "AlbumEntity",
@@ -815,11 +815,105 @@
             "serverId"
           ]
         }
+      },
+      {
+        "tableName": "PlayerState",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `currentSongId` TEXT, `currentCollectionId` TEXT, `currentIndex` INTEGER NOT NULL, `isShuffleEnabled` INTEGER NOT NULL, `repeatMode` INTEGER NOT NULL, `progress` REAL NOT NULL, `playbackSpeed` REAL NOT NULL, PRIMARY KEY(`serverId`))",
+        "fields": [
+          {
+            "fieldPath": "serverId",
+            "columnName": "serverId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentSongId",
+            "columnName": "currentSongId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "currentCollectionId",
+            "columnName": "currentCollectionId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "currentIndex",
+            "columnName": "currentIndex",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isShuffleEnabled",
+            "columnName": "isShuffleEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "repeatMode",
+            "columnName": "repeatMode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "progress",
+            "columnName": "progress",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "playbackSpeed",
+            "columnName": "playbackSpeed",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "serverId"
+          ]
+        }
+      },
+      {
+        "tableName": "QueueItem",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `serverId` TEXT NOT NULL, `position` INTEGER NOT NULL, `songJson` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serverId",
+            "columnName": "serverId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "position",
+            "columnName": "position",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "songJson",
+            "columnName": "songJson",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '10b1dea140b1808a7a764b3a613ba6ce')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fd9324dc36ec7044f8cc544ae194f67b')"
     ]
   }
 }
