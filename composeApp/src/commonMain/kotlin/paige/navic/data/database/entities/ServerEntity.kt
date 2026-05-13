@@ -12,5 +12,6 @@ data class ServerEntity(
 	val name: String,
 	val url: String,
 	val username: String,
+	val password: String,
 	val lastUsedAt: Instant = Clock.System.now()
 )

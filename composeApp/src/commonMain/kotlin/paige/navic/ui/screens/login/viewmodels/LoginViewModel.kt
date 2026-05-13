@@ -62,7 +62,7 @@ class LoginViewModel(
 		serverNameState.setTextAndPlaceCursorAtEnd(server.name)
 		instanceState.setTextAndPlaceCursorAtEnd(server.url)
 		usernameState.setTextAndPlaceCursorAtEnd(server.username)
-		passwordState.clearText()
+		passwordState.setTextAndPlaceCursorAtEnd(server.password)
 		resetErrors()
 		login()
 	}
@@ -73,7 +73,7 @@ class LoginViewModel(
 		serverNameState.setTextAndPlaceCursorAtEnd(server.name)
 		instanceState.setTextAndPlaceCursorAtEnd(server.url)
 		usernameState.setTextAndPlaceCursorAtEnd(server.username)
-		passwordState.clearText()
+		passwordState.setTextAndPlaceCursorAtEnd(server.password)
 		resetErrors()
 	}
 
@@ -141,8 +141,9 @@ class LoginViewModel(
 				} else rawUrl
 
 				val username = usernameState.text.toString()
+				val password = passwordState.text.toString()
 
-				SessionManager.login(url, username, passwordState.text.toString())
+				SessionManager.login(url, username, password)
 
 				val user = SessionManager.currentUser ?: throw Exception("Login failed")
 				val serverId = SessionManager.activeServerId.value ?: url.hashCode().toString()
@@ -151,7 +152,8 @@ class LoginViewModel(
 					serverId = selectedServer?.serverId ?: serverId,
 					name = serverNameState.text.toString().ifBlank { "My Server" },
 					url = url,
-					username = username
+					username = username,
+					password = password
 				)
 
 				serverRepository.upsertServer(serverEntity)
