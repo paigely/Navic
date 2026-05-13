@@ -54,12 +54,23 @@ fun LoginScreenFields(
 	val isExistingServer = selectedServer != null
 
 	if (!isExistingServer) {
+		var serverWasFocused by remember { mutableStateOf(false) }
 		OutlinedTextField(
+			modifier = Modifier
+				.height(60.dp)
+				.padding(horizontal = 16.dp)
+				.fillMaxWidth()
+				.focusRequester(instanceFocusRequester)
+				.onFocusChanged { state ->
+					if (state.isFocused) {
+						serverWasFocused = true
+					}
+					if (serverWasFocused && !state.isFocused) onInstanceFocusChanged()
+				},
 			state = serverNameState,
 			label = { Text("Server Name (Optional)") },
 			enabled = !isBusy,
-			lineLimits = TextFieldLineLimits.SingleLine,
-			modifier = Modifier.fillMaxWidth()
+			lineLimits = TextFieldLineLimits.SingleLine
 		)
 	}
 

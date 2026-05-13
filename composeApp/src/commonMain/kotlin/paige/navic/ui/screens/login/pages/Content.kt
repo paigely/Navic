@@ -1,5 +1,11 @@
 package paige.navic.ui.screens.login.pages
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,13 +22,11 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,9 +58,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.icons.Icons
-import paige.navic.icons.outlined.Add
-import paige.navic.ui.screens.login.components.ServerProfileChip
+import paige.navic.ui.screens.login.components.AddServerCard
+import paige.navic.ui.screens.login.components.ServerCard
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.theme.defaultFont
 import paige.navic.utils.LoginState
@@ -67,6 +70,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 	val loginState by viewModel.loginState.collectAsStateWithLifecycle()
 	val savedServers by viewModel.savedServers.collectAsStateWithLifecycle()
 	val selectedServer = viewModel.selectedServer
+	val isEditing = viewModel.isEditing
 
 	val isBusy = loginState is LoginState.Loading || loginState is LoginState.Syncing
 
@@ -98,10 +102,12 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 	val login = {
 		if (!viewModel.login()) {
 			haptics.performHapticFeedback(HapticFeedbackType.Reject)
-			when {
-				viewModel.instanceError -> instanceFocusRequester.requestFocus()
-				viewModel.usernameError -> usernameFocusRequester.requestFocus()
-				viewModel.passwordError -> passwordFocusRequester.requestFocus()
+			if (selectedServer == null || isEditing) {
+				when {
+					viewModel.instanceError -> instanceFocusRequester.requestFocus()
+					viewModel.usernameError -> usernameFocusRequester.requestFocus()
+					viewModel.passwordError -> passwordFocusRequester.requestFocus()
+				}
 			}
 		}
 	}
@@ -136,11 +142,16 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					.weight(1f)
 					.widthIn(max = 600.dp)
 					.verticalScroll(rememberScrollState())
+					.animateContentSize()
 			) {
 				Spacer(Modifier.weight(1f))
 
 				Text(
-					text = stringResource(Res.string.action_log_in),
+					text = when {
+						isEditing -> "Edit Server"
+						selectedServer != null -> "Selected: ${selectedServer.name}"
+						else -> stringResource(Res.string.action_log_in)
+					},
 					style = MaterialTheme.typography.headlineMedium,
 					fontFamily = defaultFont(round = 100f),
 					modifier = Modifier.padding(horizontal = 16.dp)
@@ -150,75 +161,98 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					modifier = Modifier.padding(horizontal = 16.dp)
 				)
 
-
 				Spacer(Modifier.height(16.dp))
 
 				if (savedServers.isNotEmpty()) {
-					Text("Saved Servers", style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(horizontal = 16.dp))
+					Text(
+						"Saved Servers",
+						style = MaterialTheme.typography.labelLarge,
+						modifier = Modifier.padding(horizontal = 16.dp)
+					)
 					Spacer(Modifier.height(8.dp))
 					LazyRow(
 						contentPadding = PaddingValues(horizontal = 16.dp),
-						horizontalArrangement = Arrangement.spacedBy(8.dp)
+						horizontalArrangement = Arrangement.spacedBy(12.dp)
 					) {
 						items(savedServers, key = { it.serverId }) { server ->
-							ServerProfileChip(
+							ServerCard(
 								server = server,
-								isSelected = selectedServer?.serverId == server.serverId,
-								onClick = { ctx.clickSound(); viewModel.selectServer(server) },
+								isSelected = selectedServer?.serverId == server.serverId && !isEditing,
+								onClick = {
+									ctx.clickSound()
+									viewModel.selectServer(server)
+									login()
+								},
+								onEdit = { ctx.clickSound(); viewModel.editServer(server) },
 								onDelete = { viewModel.deleteServer(server) }
 							)
 						}
 						item {
-							AssistChip(
-								onClick = { ctx.clickSound(); viewModel.addNewServer() },
-								label = { Text("Add New") },
-								leadingIcon = { Icon(Icons.Outlined.Add, null) },
-								shape = RoundedCornerShape(16.dp)
+							AddServerCard(
+								isSelected = selectedServer == null,
+								onClick = { ctx.clickSound(); viewModel.addNewServer() }
 							)
 						}
 					}
-					Spacer(Modifier.height(16.dp))
+					Spacer(Modifier.height(24.dp))
 				}
 
 				LoginScreenError(loginState = loginState)
 
-				LoginScreenFields(
-					isBusy = isBusy,
-					selectedServer = selectedServer,
-					serverNameState = viewModel.serverNameState,
-					instanceState = viewModel.instanceState,
-					instanceError = viewModel.instanceError,
-					instanceFocusRequester = instanceFocusRequester,
-					onInstanceFocusChanged = { viewModel.validateInstance() },
-					usernameState = viewModel.usernameState,
-					usernameError = viewModel.usernameError,
-					usernameFocusRequester = usernameFocusRequester,
-					onUsernameFocusChanged = { viewModel.validateUsername() },
-					passwordState = viewModel.passwordState,
-					passwordError = viewModel.passwordError,
-					passwordFocusRequester = passwordFocusRequester,
-					onPasswordFocusChanged = { viewModel.validatePassword() },
-					onLogin = login
-				)
+				AnimatedVisibility(
+					visible = selectedServer == null || isEditing,
+					enter = expandVertically() + fadeIn(),
+					exit = shrinkVertically() + fadeOut()
+				) {
+					Column {
+						LoginScreenFields(
+							isBusy = isBusy,
+							selectedServer = selectedServer,
+							serverNameState = viewModel.serverNameState,
+							instanceState = viewModel.instanceState,
+							instanceError = viewModel.instanceError,
+							instanceFocusRequester = instanceFocusRequester,
+							onInstanceFocusChanged = { viewModel.validateInstance() },
+							usernameState = viewModel.usernameState,
+							usernameError = viewModel.usernameError,
+							usernameFocusRequester = usernameFocusRequester,
+							onUsernameFocusChanged = { viewModel.validateUsername() },
+							passwordState = viewModel.passwordState,
+							passwordError = viewModel.passwordError,
+							passwordFocusRequester = passwordFocusRequester,
+							onPasswordFocusChanged = { viewModel.validatePassword() },
+							onLogin = login
+						)
 
-				Spacer(Modifier.height(12.dp))
-
-				Text(
-					text = stringResource(Res.string.option_custom_headers),
-					color = MaterialTheme.colorScheme.primary,
-					textDecoration = TextDecoration.Underline,
-					modifier = Modifier
-						.padding(horizontal = 16.dp)
-						.clickable(onClick = dropUnlessResumed {
-							backStack.lastOrNull()?.let {
-								if (it is Screen.Login) {
-									ctx.clickSound()
-									backStack.add(Screen.Settings.CustomHeaders)
-									focusManager.clearFocus(true)
-								}
+						if (isEditing) {
+							TextButton(
+								onClick = { viewModel.cancelEdit() },
+								modifier = Modifier.padding(horizontal = 8.dp)
+							) {
+								Text("Cancel Editing")
 							}
-						})
-				)
+						}
+
+						Spacer(Modifier.height(12.dp))
+
+						Text(
+							text = stringResource(Res.string.option_custom_headers),
+							color = MaterialTheme.colorScheme.primary,
+							textDecoration = TextDecoration.Underline,
+							modifier = Modifier
+								.padding(horizontal = 16.dp)
+								.clickable(onClick = dropUnlessResumed {
+									backStack.lastOrNull()?.let {
+										if (it is Screen.Login) {
+											ctx.clickSound()
+											backStack.add(Screen.Settings.CustomHeaders)
+											focusManager.clearFocus(true)
+										}
+									}
+								})
+						)
+					}
+				}
 
 				Spacer(Modifier.weight(2.25f))
 			}
@@ -240,7 +274,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					shape = ContinuousCapsule
 				) {
 					Text(
-						text = stringResource(Res.string.action_log_in),
+						text = if (isEditing) "Save & Login" else stringResource(Res.string.action_log_in),
 						fontFamily = defaultFont(100)
 					)
 				}

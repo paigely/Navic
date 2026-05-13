@@ -37,6 +37,9 @@ class LoginViewModel(
 	var selectedServer by mutableStateOf<ServerEntity?>(null)
 		private set
 
+	var isEditing by mutableStateOf(false)
+		private set
+
 	val serverNameState = TextFieldState()
 	val instanceState = TextFieldState()
 	val usernameState = TextFieldState()
@@ -54,7 +57,19 @@ class LoginViewModel(
 	}
 
 	fun selectServer(server: ServerEntity) {
+		isEditing = false
 		selectedServer = server
+		serverNameState.setTextAndPlaceCursorAtEnd(server.name)
+		instanceState.setTextAndPlaceCursorAtEnd(server.url)
+		usernameState.setTextAndPlaceCursorAtEnd(server.username)
+		passwordState.clearText()
+		resetErrors()
+		login()
+	}
+
+	fun editServer(server: ServerEntity) {
+		selectedServer = server
+		isEditing = true
 		serverNameState.setTextAndPlaceCursorAtEnd(server.name)
 		instanceState.setTextAndPlaceCursorAtEnd(server.url)
 		usernameState.setTextAndPlaceCursorAtEnd(server.username)
@@ -64,6 +79,7 @@ class LoginViewModel(
 
 	fun addNewServer() {
 		selectedServer = null
+		isEditing = false
 		serverNameState.clearText()
 		instanceState.clearText()
 		usernameState.clearText()
@@ -71,12 +87,9 @@ class LoginViewModel(
 		resetErrors()
 	}
 
-	fun deleteServer(server: ServerEntity) {
-		viewModelScope.launch {
-			serverRepository.deleteServerEntry(server.serverId)
-			if (selectedServer?.serverId == server.serverId) {
-				addNewServer()
-			}
+	fun cancelEdit() {
+		if (isEditing) {
+			isEditing = false
 		}
 	}
 
@@ -101,6 +114,7 @@ class LoginViewModel(
 	fun validateStuff(): Boolean {
 		validateInstance()
 		validateUsername()
+		if (!isEditing && selectedServer != null && passwordState.text.isEmpty()) return true
 		validatePassword()
 		return !instanceError && !usernameError && !passwordError
 	}
@@ -134,14 +148,14 @@ class LoginViewModel(
 				val serverId = SessionManager.activeServerId.value ?: url.hashCode().toString()
 
 				val serverEntity = ServerEntity(
-					serverId = serverId,
+					serverId = selectedServer?.serverId ?: serverId,
 					name = serverNameState.text.toString().ifBlank { "My Server" },
 					url = url,
 					username = username
 				)
 
 				serverRepository.upsertServer(serverEntity)
-				serverRepository.updateLastUsed(serverId)
+				serverRepository.updateLastUsed(serverEntity.serverId)
 
 				dbRepository.syncEverything { progress, message ->
 					_loginState.value = LoginState.Syncing(progress, message)
@@ -156,6 +170,15 @@ class LoginViewModel(
 			}
 		}
 		return true
+	}
+
+	fun deleteServer(server: ServerEntity) {
+		viewModelScope.launch {
+			serverRepository.deleteServerEntry(server.serverId)
+			if (selectedServer?.serverId == server.serverId) {
+				addNewServer()
+			}
+		}
 	}
 
 	fun logout() {
