@@ -29,8 +29,10 @@ import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.dao.GenreDao
 import paige.navic.data.database.dao.LyricDao
+import paige.navic.data.database.dao.PlayerStateDao
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.RadioDao
+import paige.navic.data.database.dao.ServerDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.AlbumEntity
@@ -52,7 +54,9 @@ class DbRepository(
 	private val artistDao: ArtistDao,
 	private val radioDao: RadioDao,
 	private val lyricDao: LyricDao,
-	private val syncDao: SyncActionDao
+	private val syncDao: SyncActionDao,
+	private val serverDao: ServerDao,
+	private val playerStateDao: PlayerStateDao
 ) {
 	private val api: SubsonicClient get() = SessionManager.api
 	private val concurrentRequestLimit = Semaphore(20)
@@ -78,6 +82,8 @@ class DbRepository(
 		radioDao.clearRadiosForServer(serverId)
 		lyricDao.clearLyricsForServer(serverId)
 		syncDao.clearActionsForServer(serverId)
+		serverDao.deleteServer(serverId)
+		playerStateDao.clearQueue(serverId)
 		Logger.i("DbRepository", "Database wiped for server: $serverId")
 	}
 
