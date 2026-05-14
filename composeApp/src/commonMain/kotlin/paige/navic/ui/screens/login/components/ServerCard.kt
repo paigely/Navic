@@ -26,6 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_add_server
+import navic.composeapp.generated.resources.info_default_server_name
+import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.database.entities.ServerEntity
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
@@ -88,7 +92,7 @@ fun ServerCard(
 			}
 			Spacer(modifier = Modifier.weight(1f))
 			Text(
-				text = server.name.ifBlank { "Server ${server.serverId}" },
+				text = server.name.ifBlank { stringResource(Res.string.info_default_server_name, server.serverId) },
 				style = MaterialTheme.typography.titleMedium,
 				fontWeight = FontWeight.Bold,
 				maxLines = 1,
@@ -138,7 +142,7 @@ fun AddServerCard(
 			)
 			Spacer(modifier = Modifier.height(8.dp))
 			Text(
-				text = "Add Server",
+				text = stringResource(Res.string.action_add_server),
 				style = MaterialTheme.typography.titleMedium,
 				color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
 				fontWeight = FontWeight.Medium

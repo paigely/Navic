@@ -48,11 +48,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousCapsule
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_cancel_editing
 import navic.composeapp.generated.resources.action_log_in
+import navic.composeapp.generated.resources.action_save_and_login
 import navic.composeapp.generated.resources.info_login_description_end
 import navic.composeapp.generated.resources.info_login_description_middle
 import navic.composeapp.generated.resources.info_login_description_start
+import navic.composeapp.generated.resources.info_selected_server
 import navic.composeapp.generated.resources.option_custom_headers
+import navic.composeapp.generated.resources.title_edit_server
+import navic.composeapp.generated.resources.title_saved_servers
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
@@ -148,8 +153,8 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 
 				Text(
 					text = when {
-						isEditing -> "Edit Server"
-						selectedServer != null -> "Selected: ${selectedServer.name}"
+						isEditing -> stringResource(Res.string.title_edit_server)
+						selectedServer != null -> stringResource(Res.string.info_selected_server, selectedServer.name)
 						else -> stringResource(Res.string.action_log_in)
 					},
 					style = MaterialTheme.typography.headlineMedium,
@@ -165,7 +170,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 
 				if (savedServers.isNotEmpty()) {
 					Text(
-						"Saved Servers",
+						stringResource(Res.string.title_saved_servers),
 						style = MaterialTheme.typography.labelLarge,
 						modifier = Modifier.padding(horizontal = 16.dp)
 					)
@@ -229,7 +234,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 								onClick = { viewModel.cancelEdit() },
 								modifier = Modifier.padding(horizontal = 8.dp)
 							) {
-								Text("Cancel Editing")
+								Text(stringResource(Res.string.action_cancel_editing))
 							}
 						}
 
@@ -274,7 +279,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					shape = ContinuousCapsule
 				) {
 					Text(
-						text = if (isEditing) "Save & Login" else stringResource(Res.string.action_log_in),
+						text = if (isEditing) stringResource(Res.string.action_save_and_login) else stringResource(Res.string.action_log_in),
 						fontFamily = defaultFont(100)
 					)
 				}
