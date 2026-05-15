@@ -15,9 +15,6 @@ import paige.navic.shared.Logger
 
 @Dao
 interface AlbumDao {
-	@Transaction
-	@Query(" SELECT * FROM AlbumEntity WHERE genre = :genreName OR genres LIKE '%' || :genreName || '%' ORDER BY year DESC, name COLLATE NOCASE ASC")
-	fun getAlbumsByGenre(genreName: String): Flow<List<AlbumWithSongs>>
 
 	@Transaction
 	@Query("SELECT * FROM AlbumEntity ORDER BY name ASC")
@@ -89,6 +86,14 @@ interface AlbumDao {
     ORDER BY name ASC
 	""")
 	fun getDownloadedAlbums(): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE genre = :genreName OR genres LIKE '%' || :genreName || '%' ORDER BY year DESC, name COLLATE NOCASE ASC")
+	fun getAlbumsByGenre(genreName: String): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE genre = :genreName OR genres LIKE '%' || :genreName || '%' ORDER BY year ASC, name COLLATE NOCASE DESC")
+	fun getAlbumsByGenreReversed(genreName: String): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
 	@Query("SELECT COUNT(albumId) FROM AlbumEntity")
