@@ -29,6 +29,7 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -36,6 +37,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import paige.navic.data.database.SyncManager
@@ -457,15 +459,19 @@ class AndroidMediaPlayerViewModel(
 
 	override fun addToQueue(collection: DomainSongCollection) {
 		viewModelScope.launch {
-			val items = collection.songs.map { it.toMediaItem() }
-			controller?.addMediaItems(items)
-			_uiState.update { state ->
-				val newQueue = state.queue + collection.songs
-				state.copy(
-					queue = newQueue,
-					currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-					currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
-				)
+			withContext(Dispatchers.Default) {
+				val items = collection.songs.map { it.toMediaItem() }
+				withContext(Dispatchers.Main) {
+					controller?.addMediaItems(items)
+					_uiState.update { state ->
+						val newQueue = state.queue + collection.songs
+						state.copy(
+							queue = newQueue,
+							currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+							currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
+						)
+					}
+				}
 			}
 		}
 	}
@@ -560,19 +566,23 @@ class AndroidMediaPlayerViewModel(
 
 	override fun playNext(collection: DomainSongCollection) {
 		viewModelScope.launch {
-			val items = collection.songs.map { it.toMediaItem() }
-			controller?.addMediaItems(_uiState.value.currentIndex + 1, items)
-			_uiState.update { state ->
-				val newQueue = 
-					if (state.queue.isEmpty()) 
-						state.queue + collection.songs
-					else
-						state.queue.slice(0..state.currentIndex) + collection.songs + state.queue.slice(state.currentIndex+1..state.queue.size-1)
-				state.copy(
-					queue = newQueue,
-					currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-					currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
-				)
+			withContext(Dispatchers.Default) {
+				val items = collection.songs.map { it.toMediaItem() }
+				withContext(Dispatchers.Main) {
+					controller?.addMediaItems(_uiState.value.currentIndex + 1, items)
+					_uiState.update { state ->
+						val newQueue =
+							if (state.queue.isEmpty())
+								state.queue + collection.songs
+							else
+								state.queue.slice(0..state.currentIndex) + collection.songs + state.queue.slice(state.currentIndex+1..state.queue.size-1)
+						state.copy(
+							queue = newQueue,
+							currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
+							currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
+						)
+					}
+				}
 			}
 		}
 	}

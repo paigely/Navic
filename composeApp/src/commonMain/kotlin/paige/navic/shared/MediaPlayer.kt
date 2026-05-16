@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -108,10 +110,20 @@ abstract class MediaPlayerViewModel(
 	private fun observeAndSaveState() {
 		viewModelScope.launch {
 			_uiState
+				.map { state ->
+					PersistKey(
+						state.queue,
+						state.currentIndex,
+						state.isShuffleEnabled,
+						state.repeatMode,
+						state.playbackSpeed
+					)
+				}
+				.distinctUntilChanged()
 				.debounce(1000L)
-				.collect { state ->
+				.collect {
 					try {
-						val jsonString = Json.encodeToString(state)
+						val jsonString = Json.encodeToString(_uiState.value)
 						stateRepository.saveState(jsonString)
 					} catch (e: Exception) {
 						Logger.e("MediaPlayerViewModel", "Failed to save state!", e)
@@ -119,4 +131,12 @@ abstract class MediaPlayerViewModel(
 				}
 		}
 	}
+
+	private data class PersistKey(
+		val queue: List<DomainSong>,
+		val currentIndex: Int,
+		val isShuffleEnabled: Boolean,
+		val repeatMode: Int,
+		val playbackSpeed: Float
+	)
 }

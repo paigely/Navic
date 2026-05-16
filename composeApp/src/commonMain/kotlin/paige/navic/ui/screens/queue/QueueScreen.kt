@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -73,23 +74,25 @@ fun QueueScreen() {
 		}
 	}
 
-	val totalDurationText = remember(queue) {
-		val totalSeconds = queue.sumOf { it.duration.toInt(DurationUnit.SECONDS) }
+	val totalDurationText by remember(queue) {
+		derivedStateOf {
+			val totalSeconds = queue.sumOf { it.duration.toInt(DurationUnit.SECONDS) }
 
-		val hours = totalSeconds / 3600
-		val minutes = (totalSeconds % 3600) / 60
-		val seconds = totalSeconds % 60
+			val hours = totalSeconds / 3600
+			val minutes = (totalSeconds % 3600) / 60
+			val seconds = totalSeconds % 60
 
-		buildString {
-			if (hours > 0) {
-				append("${hours}h ")
+			buildString {
+				if (hours > 0) {
+					append("${hours}h ")
+				}
+
+				if (minutes > 0 || hours > 0) {
+					append("${minutes}m ")
+				}
+
+				append("${seconds}s")
 			}
-
-			if (minutes > 0 || hours > 0) {
-				append("${minutes}m ")
-			}
-
-			append("${seconds}s")
 		}
 	}
 
@@ -140,7 +143,7 @@ fun QueueScreen() {
 			draggableItemsIndexed(
 				state = draggableState,
 				items = queue,
-				key = { index, _ -> index }
+				key = { index, song -> "$index-${song.id}" }
 			) { index, song, isDragging ->
 				QueueScreenItem(
 					index = index,
