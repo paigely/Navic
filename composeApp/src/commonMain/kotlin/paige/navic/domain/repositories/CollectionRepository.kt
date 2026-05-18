@@ -1,10 +1,10 @@
 package paige.navic.domain.repositories
 
-import dev.zt64.subsonic.api.model.AlbumInfo
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import dev.zt64.subsonic.api.model.AlbumInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow

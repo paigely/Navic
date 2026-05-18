@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.stringResource
@@ -43,7 +42,6 @@ import paige.navic.ui.screens.song.components.SongListScreenSortButton
 import paige.navic.ui.screens.song.components.songListScreenContent
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 import kotlin.time.Duration
 

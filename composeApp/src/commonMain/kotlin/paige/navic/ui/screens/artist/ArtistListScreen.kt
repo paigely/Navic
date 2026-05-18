@@ -36,7 +36,6 @@ import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
-import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
@@ -45,7 +44,6 @@ import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.screens.artist.components.ArtistListScreenContent
 import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.UiState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

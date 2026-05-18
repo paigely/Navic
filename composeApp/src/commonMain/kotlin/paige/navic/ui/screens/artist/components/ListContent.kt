@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -30,7 +28,6 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.domain.models.DomainArtist
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Artist
-import paige.navic.ui.components.common.AlphabeticalScroller
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.screens.artist.ArtistsScreenItem

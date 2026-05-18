@@ -71,8 +71,8 @@ import navic.composeapp.generated.resources.info_sync_hours_ago
 import navic.composeapp.generated.resources.info_sync_just_now
 import navic.composeapp.generated.resources.info_sync_mins_ago
 import navic.composeapp.generated.resources.info_sync_never
-import navic.composeapp.generated.resources.option_high_quality_covers
 import navic.composeapp.generated.resources.option_downloaded_songs
+import navic.composeapp.generated.resources.option_high_quality_covers
 import navic.composeapp.generated.resources.option_image_cache_size
 import navic.composeapp.generated.resources.option_last_sync
 import navic.composeapp.generated.resources.option_live_status
