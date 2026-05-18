@@ -282,10 +282,13 @@ class DbRepository(
 	suspend fun syncGenres(): Result<Unit> = runDbOp {
 		val remoteGenres = api.getGenres()
 		val entities = remoteGenres.map { it.toEntity() }
+		val remoteNames = entities.map { it.genreName }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			genreDao.updateAllGenres(chunk)
+			genreDao.insertGenres(chunk)
 		}
+
+		genreDao.deleteObsoleteGenres(remoteNames)
 
 		Logger.i("DbRepository", "- Genres Synced: ${entities.size} genres found")
 	}
@@ -296,10 +299,13 @@ class DbRepository(
 			indexGroup.artists
 		}
 		val entities = flatArtists.map { it.toEntity() }
+		val remoteIds = entities.map { it.artistId }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			artistDao.updateAllArtists(chunk)
+			artistDao.insertArtists(chunk)
 		}
+
+		artistDao.deleteObsoleteArtists(remoteIds)
 
 		Logger.i("DbRepository", "- Artists Synced: ${entities.size} artists found")
 	}
@@ -307,10 +313,13 @@ class DbRepository(
 	suspend fun syncRadios(): Result<Unit> = runDbOp {
 		val remoteRadios = api.getInternetRadioStations()
 		val entities = remoteRadios.map { it.toEntity() }
+		val remoteIds = entities.map { it.radioId }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			radioDao.updateAllRadios(chunk)
+			radioDao.insertRadios(chunk)
 		}
+
+		radioDao.deleteObsoleteRadios(remoteIds)
 
 		Logger.i("DbRepository", "- Radios Synced: ${entities.size} stations found")
 	}

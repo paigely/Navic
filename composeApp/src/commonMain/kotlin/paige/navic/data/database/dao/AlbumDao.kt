@@ -155,12 +155,16 @@ interface AlbumDao {
 		insertAlbums(remoteAlbums)
 	}
 
+	@Query("DELETE FROM AlbumEntity WHERE albumId IN (:ids)")
+	suspend fun deleteAlbums(ids: List<String>)
+
 	@Transaction
 	suspend fun deleteObsoleteAlbums(remoteIds: Set<String>) {
-		getAllAlbumIds().forEach { localId ->
-			if (localId !in remoteIds) {
-				Logger.w("AlbumDao", "album $localId no longer exists remotely")
-				deleteAlbum(localId)
+		val localIds = getAllAlbumIds()
+		val toDelete = localIds.filter { it !in remoteIds }
+		if (toDelete.isNotEmpty()) {
+			toDelete.chunked(900).forEach { chunk ->
+				deleteAlbums(chunk)
 			}
 		}
 	}

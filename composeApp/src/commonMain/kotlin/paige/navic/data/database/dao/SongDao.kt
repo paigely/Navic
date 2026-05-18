@@ -74,12 +74,16 @@ interface SongDao {
 		insertSongs(remoteSongs)
 	}
 
+	@Query("DELETE FROM SongEntity WHERE songId IN (:ids)")
+	suspend fun deleteSongs(ids: List<String>)
+
 	@Transaction
 	suspend fun deleteObsoleteSongs(remoteIds: Set<String>) {
-		getAllSongIds().forEach { localId ->
-			if (localId !in remoteIds) {
-				Logger.w("SongDao", "song $localId no longer exists remotely")
-				deleteSong(localId)
+		val localIds = getAllSongIds()
+		val toDelete = localIds.filter { it !in remoteIds }
+		if (toDelete.isNotEmpty()) {
+			toDelete.chunked(900).forEach { chunk ->
+				deleteSongs(chunk)
 			}
 		}
 	}
