@@ -47,7 +47,11 @@ interface SongDao {
 	@Query("SELECT * FROM SongEntity WHERE songId IN (:ids)")
 	suspend fun getSongsByIds(ids: List<String>): List<SongEntity>
 
-	@Query("SELECT * FROM SongEntity WHERE title LIKE '%' || :query || '%' COLLATE NOCASE")
+	@Query("""
+		SELECT SongEntity.* FROM SongEntity 
+		JOIN SongFts ON SongEntity.rowid = SongFts.rowid 
+		WHERE SongFts MATCH :query
+	""")
 	suspend fun searchSongsList(query: String): List<SongEntity>
 
 	@Transaction

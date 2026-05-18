@@ -17,25 +17,33 @@ import paige.navic.data.database.dao.RadioDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.AlbumEntity
+import paige.navic.data.database.entities.AlbumFts
 import paige.navic.data.database.entities.ArtistEntity
+import paige.navic.data.database.entities.ArtistFts
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.GenreEntity
 import paige.navic.data.database.entities.LyricEntity
 import paige.navic.data.database.entities.PlaylistEntity
+import paige.navic.data.database.entities.PlaylistFts
 import paige.navic.data.database.entities.PlaylistSongCrossRef
 import paige.navic.data.database.entities.RadioEntity
 import paige.navic.data.database.entities.SongEntity
+import paige.navic.data.database.entities.SongFts
 import paige.navic.data.database.entities.SyncActionEntity
 
 @Database(
-	version = 8,
+	version = 10,
 	entities = [
 		AlbumEntity::class,
+		AlbumFts::class,
 		GenreEntity::class,
 		PlaylistEntity::class,
+		PlaylistFts::class,
 		PlaylistSongCrossRef::class,
 		SongEntity::class,
+		SongFts::class,
 		ArtistEntity::class,
+		ArtistFts::class,
 		RadioEntity::class,
 		LyricEntity::class,
 		SyncActionEntity::class,

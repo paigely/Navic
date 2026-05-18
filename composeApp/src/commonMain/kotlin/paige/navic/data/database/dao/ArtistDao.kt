@@ -31,7 +31,11 @@ interface ArtistDao {
 	@Query("SELECT EXISTS(SELECT 1 FROM ArtistEntity WHERE artistId = :artistId AND starredAt IS NOT NULL)")
 	suspend fun isArtistStarred(artistId: String): Boolean
 
-	@Query("SELECT * FROM ArtistEntity WHERE name LIKE '%' || :query || '%' COLLATE NOCASE")
+	@Query("""
+		SELECT ArtistEntity.* FROM ArtistEntity 
+		JOIN ArtistFts ON ArtistEntity.rowid = ArtistFts.rowid 
+		WHERE ArtistFts MATCH :query
+	""")
 	suspend fun searchArtistsList(query: String): List<ArtistEntity>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
