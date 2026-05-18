@@ -14,7 +14,7 @@ val managerModule = module {
 	single<DownloadManager> { DownloadManager(get(), get(), get(), get(), get(), get(), get()) }
 	single<SleepTimerManager> { SleepTimerManager(get(), get()) }
 	single(createdAtStart = true) {
-		SyncManager(get(), get(), get(), get(), get()).apply {
+		SyncManager(get(), get(), get(), get(), get(), get()).apply {
 			startPeriodicSync()
 		}
 	}

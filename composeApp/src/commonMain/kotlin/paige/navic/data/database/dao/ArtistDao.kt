@@ -1,5 +1,6 @@
 package paige.navic.data.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
@@ -11,13 +12,13 @@ import paige.navic.data.database.entities.ArtistEntity
 @Dao
 interface ArtistDao {
 	@Query("SELECT * FROM ArtistEntity ORDER BY name COLLATE NOCASE ASC")
-	suspend fun getArtistsAlphabeticalByName(): List<ArtistEntity>
+	fun getArtistsAlphabeticalByNamePaging(): PagingSource<Int, ArtistEntity>
 
 	@Query("SELECT * FROM ArtistEntity ORDER BY RANDOM()")
-	suspend fun getArtistsRandom(): List<ArtistEntity>
+	fun getArtistsRandomPaging(): PagingSource<Int, ArtistEntity>
 
 	@Query("SELECT * FROM ArtistEntity WHERE starredAt IS NOT NULL ORDER BY starredAt DESC")
-	suspend fun getArtistsStarred(): List<ArtistEntity>
+	fun getArtistsStarredPaging(): PagingSource<Int, ArtistEntity>
 
 	@Query("SELECT * FROM ArtistEntity ORDER BY name COLLATE NOCASE ASC")
 	fun getAllArtists(): Flow<List<ArtistEntity>>

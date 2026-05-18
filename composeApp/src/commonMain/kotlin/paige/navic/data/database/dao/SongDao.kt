@@ -1,5 +1,6 @@
 package paige.navic.data.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
@@ -12,6 +13,9 @@ import paige.navic.shared.Logger
 interface SongDao {
 	@Query("SELECT * FROM SongEntity WHERE songId = :songId LIMIT 1")
 	suspend fun getSongById(songId: String): SongEntity?
+
+	@Query("SELECT * FROM SongEntity ORDER BY title COLLATE NOCASE ASC")
+	fun getAllSongsPaging(): PagingSource<Int, SongEntity>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertSong(song: SongEntity)

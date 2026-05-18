@@ -15,6 +15,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.dropUnlessResumed
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_star
@@ -51,7 +53,7 @@ fun ArtistListScreen(
 	nested: Boolean = false
 ) {
 	val viewModel = koinViewModel<ArtistListViewModel>()
-	val artistsState by viewModel.artistsState.collectAsState()
+	val artists = viewModel.artistsPaging.collectAsLazyPagingItems()
 	val selectedArtist by viewModel.selectedArtist.collectAsState()
 	val starred by viewModel.starred.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -75,12 +77,12 @@ fun ArtistListScreen(
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			finished = artistsState !is UiState.Loading,
-			onRefresh = { viewModel.refreshArtists(true) },
-			key = artistsState
+			finished = artists.loadState.refresh !is LoadState.Loading,
+			onRefresh = { viewModel.refreshArtists() },
+			key = artists.loadState
 		) {
 			ArtistListScreenContent(
-				state = artistsState,
+				artists = artists,
 				starred = starred,
 				selectedArtist = selectedArtist,
 				gridState = viewModel.gridState,
@@ -93,11 +95,6 @@ fun ArtistListScreen(
 			)
 		}
 	}
-
-	ErrorSnackbar(
-		error = (artistsState as? UiState.Error)?.error,
-		onClearError = { viewModel.clearError() }
-	)
 }
 
 @Composable

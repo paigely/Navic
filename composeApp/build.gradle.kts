@@ -160,6 +160,7 @@ extensions.configure<KotlinMultiplatformExtension> {
 			implementation(libs.bundles.ktor.android)
 			implementation(libs.bundles.androidx.android)
 			implementation(libs.bundles.media3)
+			implementation(libs.androidx.work.runtime)
 		}
 
 		iosMain.dependencies {

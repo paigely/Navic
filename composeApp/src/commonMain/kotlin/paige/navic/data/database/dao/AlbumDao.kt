@@ -114,8 +114,16 @@ interface AlbumDao {
 	fun getAlbumsByArtist(artistId: String): Flow<List<AlbumWithSongs>>
 
 	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE artistId = :artistId ORDER BY year DESC")
+	fun getAlbumsByArtistPaging(artistId: String): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE artistId = :artistId AND albumId != :albumId ORDER BY year DESC")
 	fun getAlbumsByArtistExcluding(artistId: String, albumId: String): Flow<List<AlbumWithSongs>>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE artistId = :artistId AND albumId != :albumId ORDER BY year DESC")
+	fun getAlbumsByArtistExcludingPaging(artistId: String, albumId: String): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
 	@Query("""

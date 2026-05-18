@@ -83,6 +83,18 @@ class AlbumRepository(
 		}
 	}
 
+	fun getPagedAlbumsByArtist(artistId: String): Flow<PagingData<DomainAlbum>> {
+		return Pager(
+			config = PagingConfig(
+				pageSize = 20,
+				enablePlaceholders = false
+			),
+			pagingSourceFactory = { albumDao.getAlbumsByArtistPaging(artistId) }
+		).flow.map { pagingData ->
+			pagingData.map { it.toDomainModel() }
+		}
+	}
+
 	suspend fun syncLibrary() {
 		dbRepository.syncLibrarySongs().getOrThrow()
 	}

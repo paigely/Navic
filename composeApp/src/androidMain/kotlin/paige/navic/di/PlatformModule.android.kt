@@ -7,7 +7,9 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.data.database.DownloadDatabase
+import paige.navic.data.database.SyncScheduler
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.managers.AndroidSyncScheduler
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.ShareManager
 import paige.navic.managers.StorageManager
@@ -15,6 +17,7 @@ import paige.navic.shared.AndroidMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
 
 actual val platformModule = module {
+	single<SyncScheduler> { AndroidSyncScheduler(get()) }
 	single<CacheDatabase> {
 		val dbPath = androidApplication()
 			.getDatabasePath("cache.db")

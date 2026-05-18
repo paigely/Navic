@@ -38,12 +38,13 @@ class SyncManager(
 	private val syncDao: SyncActionDao,
 	private val albumDao: AlbumDao,
 	private val connectivityManager: ConnectivityManager,
+	private val scheduler: SyncScheduler,
 	private val scope: CoroutineScope
 ) {
 	private var syncJob: Job? = null
 	private val syncMutex = Mutex()
 
-	private val fullSyncThreshold = 1.hours
+	private val fullSyncThreshold = 24.hours
 
 	private val _syncState = MutableStateFlow(SyncState())
 	val syncState = _syncState.asStateFlow()
@@ -60,20 +61,14 @@ class SyncManager(
 
 	fun startPeriodicSync() {
 		Logger.i("SyncManager", "Starting periodic sync cicle.")
-		if (syncJob?.isActive == true) return
+		scheduler.schedulePeriodicSync()
 
+		// Still start an initial sync if needed
 		scope.launch {
 			if (albumDao.getAlbumCount() == 0
 				|| Settings.shared.lastFullSyncTime <= 0L) {
 				Logger.i("SyncManager", "Syncing now because we haven't synced before")
-				runSyncCycle()
-			}
-		}
-
-		syncJob = scope.launch {
-			while (isActive) {
-				runSyncCycle()
-				delay(15.minutes)
+				runSyncCycleInternal()
 			}
 		}
 	}
@@ -81,7 +76,7 @@ class SyncManager(
 	fun triggerManualSync() {
 		scope.launch {
 			Settings.shared.lastFullSyncTime = 0
-			runSyncCycle()
+			runSyncCycleInternal()
 		}
 	}
 
@@ -99,7 +94,7 @@ class SyncManager(
 		}
 	}
 
-	private suspend fun runSyncCycle() {
+	suspend fun runSyncCycleInternal() {
 		syncMutex.withLock {
 			processQueue()
 
