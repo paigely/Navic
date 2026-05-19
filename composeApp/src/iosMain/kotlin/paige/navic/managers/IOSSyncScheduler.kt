@@ -55,7 +55,7 @@ class IOSSyncScheduler : SyncScheduler, KoinComponent {
 		}
 
 		try {
-			var error: NSError? = null
+			val error: NSError? = null
 			val success = BGTaskScheduler.sharedScheduler.submitTaskRequest(request,
 				error as CPointer<ObjCObjectVar<NSError?>>?
 			)
