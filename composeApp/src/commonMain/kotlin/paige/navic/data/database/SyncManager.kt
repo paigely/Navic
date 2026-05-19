@@ -19,6 +19,7 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.managers.ConnectivityManager
+import paige.navic.managers.SyncScheduler
 import paige.navic.shared.Logger
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -59,11 +60,8 @@ class SyncManager(
 	fun startPeriodicSync() {
 		Logger.i("SyncManager", "Starting periodic sync cycle.")
 		scheduler.schedulePeriodicSync()
-
-		// Still start an initial sync if needed
 		scope.launch {
-			if (albumDao.getAlbumCount() == 0
-				|| Settings.shared.lastFullSyncTime <= 0L) {
+			if (albumDao.getAlbumCount() == 0 || Settings.shared.lastFullSyncTime <= 0) {
 				Logger.i("SyncManager", "Syncing now because we haven't synced before")
 				runSyncCycleInternal()
 			}

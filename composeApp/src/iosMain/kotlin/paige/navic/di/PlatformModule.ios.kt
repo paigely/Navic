@@ -9,12 +9,11 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.data.database.DownloadDatabase
-import paige.navic.data.database.SyncScheduler
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.IOSSyncScheduler
 import paige.navic.managers.ShareManager
 import paige.navic.managers.StorageManager
+import paige.navic.managers.SyncScheduler
 import paige.navic.shared.IOSMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
 import platform.Foundation.NSDocumentDirectory
@@ -22,7 +21,6 @@ import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
 actual val platformModule = module {
-	single<SyncScheduler> { IOSSyncScheduler() }
 	single<CacheDatabase> {
 		val dbPath = documentDirectory() + "/cache.db"
 		Room
@@ -66,6 +64,7 @@ actual val platformModule = module {
 	}
 
 	singleOf(::ShareManager)
+	singleOf(::SyncScheduler)
 	single<PlatformContext> { PlatformContext.INSTANCE }
 	single<StorageManager> { StorageManager() }
 	single<ConnectivityManager> { ConnectivityManager(get()) }
