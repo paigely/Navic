@@ -315,4 +315,5 @@
     <string name="sideloading_warning_subtitle">Google plant, das Sideloading für ALLE Geräte mit installierten Google Play Services zu unterbinden!\n</string>
     <string name="sideloading_warning_description">Auch wenn die genauen Einzelheiten dieser Änderung noch nicht vollständig bekannt sind, könnte dies dazu führen, dass jegliches Sideloading blockiert wird, es sei denn, der App-Signierer gibt seine Identität gegenüber Google und/oder öffentlich preis.\n\nWenn du über ausreichende Kenntnisse verfügst, um ein Custom-ROM auf deinem Gerät zu installieren, IST JETZT DER RICHTIGE ZEITPUNKT DAFÜR.\n\nBitte informiere dich darüber, was du tun kannst und wie du deine Meinung kundtun kannst.</string>
     <string name="sideloading_warning_link_mask">Hier zum Beitrag.</string>
+    <string name="title_create_radio">Radio erstellen</string>
 </resources>
