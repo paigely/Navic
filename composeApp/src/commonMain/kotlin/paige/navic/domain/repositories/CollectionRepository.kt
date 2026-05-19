@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -79,20 +80,20 @@ class CollectionRepository(
 	}.flowOn(Dispatchers.IO)
 
 	@OptIn(ExperimentalCoroutinesApi::class)
-	fun getOtherAlbums(artistId: String, albumId: String): Flow<List<DomainAlbum>> =
-		SessionManager.activeServerId.flatMapLatest { serverId ->
-			if (serverId == null) return@flatMapLatest flow { emit(emptyList()) }
-
-			albumDao.getAlbumsByArtistExcluding(artistId, albumId, serverId)
-				.map { it.map { album -> album.toDomainModel() } }
-		}
-
-	fun getOtherAlbumsPaging(artistId: String, albumId: String, serverId: String): Flow<PagingData<DomainAlbum>> {
-		return Pager(
-			config = PagingConfig(pageSize = 20, enablePlaceholders = false),
-			pagingSourceFactory = { albumDao.getAlbumsByArtistExcludingPaging(artistId, albumId, serverId) }
-		).flow.map { pagingData ->
-			pagingData.map { it.toDomainModel() }
+	fun getOtherAlbumsPaging(artistId: String, albumId: String): Flow<PagingData<DomainAlbum>> {
+		return SessionManager.activeServerId.filterNotNull().flatMapLatest { serverId ->
+			Pager(
+				config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+				pagingSourceFactory = {
+					albumDao.getAlbumsByArtistExcludingPaging(
+						artistId,
+						albumId,
+						serverId
+					)
+				}
+			).flow.map { pagingData ->
+				pagingData.map { it.toDomainModel() }
+			}
 		}
 	}
 

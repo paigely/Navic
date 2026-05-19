@@ -354,7 +354,7 @@ class AndroidMediaPlayerViewModel(
 				val currentSong = _uiState.value.queue.getOrNull(index)
 
 				val isCellular = connectivityManager.isCellular.value
-				val requestedBitrate = if (Settings.shared.isAdvancedTranscodingActive) {
+				if (Settings.shared.isAdvancedTranscodingActive) {
 					if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
 				} else {
 					if (isCellular) Settings.shared.streamingQualityCellular.bitrateAndroid else Settings.shared.streamingQualityWifi.bitrateAndroid

@@ -63,7 +63,7 @@ class SyncManager(
 		scope.launch {
 			val serverId = SessionManager.activeServerId.value ?: return@launch
 
-			if (albumDao.getAlbumCount(serverId) == 0 || Settings.shared.lastFullSyncTime(serverId) <= 0) {
+			if (albumDao.getAlbumCount(serverId) == 0 || Settings.shared.getLastFullSyncTime(serverId) <= 0) {
 				Logger.i("SyncManager", "Syncing now because we haven't synced before")
 				runSyncCycleInternal()
 			}
@@ -74,7 +74,7 @@ class SyncManager(
 		scope.launch {
 			val serverId = SessionManager.activeServerId.value ?: return@launch
 
-			Settings.shared.lastFullSyncTime(serverId) = 0
+			Settings.shared.setLastFullSyncTime(serverId, 0)
 			runSyncCycleInternal()
 		}
 	}

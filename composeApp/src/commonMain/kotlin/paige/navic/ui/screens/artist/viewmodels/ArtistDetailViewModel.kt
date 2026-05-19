@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -120,7 +121,7 @@ class ArtistDetailViewModel(
 					artistDao.getArtistById(id, serverId)?.toDomainModel()
 				}
 
-				_starred.value = artistRepository.isArtistStarred(domainArtist.id)
+				_starred.value = artistRepository.isArtistStarred(domainArtist)
 
 				_artistState.value = UiState.Success(
 					ArtistState(
@@ -252,7 +253,8 @@ class ArtistDetailViewModel(
 
 	fun playArtistAlbums(player: MediaPlayerViewModel) {
 		viewModelScope.launch {
-			val albums = albumDao.getAlbumsByArtist(artistId).firstOrNull() ?: emptyList()
+			val serverId = SessionManager.activeServerId.value ?: return@launch
+			val albums = albumDao.getAlbumsByArtist(artistId, serverId).firstOrNull() ?: emptyList()
 			player.clearQueue()
 			albums.forEach { album ->
 				player.addToQueue(album.toDomainModel())
@@ -275,22 +277,24 @@ class ArtistDetailViewModel(
 
 	@OptIn(ExperimentalCoroutinesApi::class)
 	fun collectionDownloadStatus(): Flow<DownloadStatus> {
-		return artistState.flatMapLatest { state ->
-			if (state is UiState.Success) {
-				flow {
-					val albums = albumDao.getAlbumsByArtist(artistId).first()
-					val allArtistSongIds = albums.flatMap { album ->
-						album.songs.map { it.songId }
-					}
+		return SessionManager.activeServerId.filterNotNull().flatMapLatest { serverId ->
+			artistState.flatMapLatest { state ->
+				if (state is UiState.Success) {
+					flow {
+						val albums = albumDao.getAlbumsByArtist(artistId, serverId).first()
+						val allArtistSongIds = albums.flatMap { album ->
+							album.songs.map { it.songId }
+						}
 
-					if (allArtistSongIds.isEmpty()) {
-						emit(DownloadStatus.NOT_DOWNLOADED)
-					} else {
-						emitAll(downloadManager.getCollectionDownloadStatus(allArtistSongIds))
+						if (allArtistSongIds.isEmpty()) {
+							emit(DownloadStatus.NOT_DOWNLOADED)
+						} else {
+							emitAll(downloadManager.getCollectionDownloadStatus(allArtistSongIds))
+						}
 					}
+				} else {
+					flowOf(DownloadStatus.NOT_DOWNLOADED)
 				}
-			} else {
-				flowOf(DownloadStatus.NOT_DOWNLOADED)
 			}
 		}
 	}

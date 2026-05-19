@@ -4,17 +4,9 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.entities.SyncActionType
@@ -30,7 +22,8 @@ class ArtistRepository(
 	private val syncManager: SyncManager,
 	private val dbRepository: DbRepository
 ) {
-	fun getArtistsCount(listType: DomainArtistListType, serverId: String): Flow<Int> {
+	fun getArtistsCount(listType: DomainArtistListType): Flow<Int> {
+		val serverId = SessionManager.activeServerId.value ?: ""
 		return when (listType) {
 			DomainArtistListType.AlphabeticalByName,
 			DomainArtistListType.Random -> artistDao.getArtistsCountFlow(serverId)

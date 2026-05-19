@@ -17,6 +17,7 @@ import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.info_syncing
 import navic.composeapp.generated.resources.info_syncing_albums
 import navic.composeapp.generated.resources.info_syncing_artists
 import navic.composeapp.generated.resources.info_syncing_finished
@@ -294,7 +295,7 @@ class DbRepository(
 		val remoteNames = entities.map { it.genreName }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			genreDao.insertGenres(serverId, chunk)
+			genreDao.insertGenres(chunk)
 		}
 
 		genreDao.deleteObsoleteGenres(serverId, remoteNames)
@@ -312,10 +313,10 @@ class DbRepository(
 		val remoteIds = entities.map { it.artistId }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			artistDao.insertArtists(serverId, chunk)
+			artistDao.insertArtists(chunk)
 		}
 
-		artistDao.deleteObsoleteArtists(serverId, remoteIds)
+		artistDao.deleteObsoleteArtists(remoteIds, serverId)
 
 		Logger.i("DbRepository", "- Artists Synced: ${entities.size} artists found")
 	}
@@ -327,7 +328,7 @@ class DbRepository(
 		val remoteIds = entities.map { it.radioId }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			radioDao.insertRadios(serverId, chunk)
+			radioDao.insertRadios(chunk)
 		}
 
 		radioDao.deleteObsoleteRadios(serverId, remoteIds)

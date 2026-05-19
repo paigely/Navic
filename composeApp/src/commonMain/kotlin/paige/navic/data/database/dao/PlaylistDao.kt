@@ -73,7 +73,7 @@ interface PlaylistDao {
 		JOIN PlaylistFts ON PlaylistEntity.rowid = PlaylistFts.rowid 
 		WHERE serverId = :serverId AND PlaylistFts MATCH :query
 	""")
-	suspend fun searchPlaylistsList(query: String): List<PlaylistWithSongs>
+	suspend fun searchPlaylistsList(query: String, serverId: String): List<PlaylistWithSongs>
 
 	@Transaction
 	suspend fun updateAllPlaylists(serverId: String, remotePlaylists: List<PlaylistEntity>) {

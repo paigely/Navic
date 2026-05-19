@@ -90,15 +90,18 @@ class AlbumRepository(
 		}
 	}
 
+	@OptIn(ExperimentalCoroutinesApi::class)
 	fun getPagedAlbumsByArtist(artistId: String): Flow<PagingData<DomainAlbum>> {
-		return Pager(
-			config = PagingConfig(
-				pageSize = 20,
-				enablePlaceholders = false
-			),
-			pagingSourceFactory = { albumDao.getAlbumsByArtistPaging(artistId) }
-		).flow.map { pagingData ->
-			pagingData.map { it.toDomainModel() }
+		return SessionManager.activeServerId.filterNotNull().flatMapLatest { serverId ->
+			Pager(
+				config = PagingConfig(
+					pageSize = 20,
+					enablePlaceholders = false
+				),
+				pagingSourceFactory = { albumDao.getAlbumsByArtistPaging(artistId, serverId) }
+			).flow.map { pagingData ->
+				pagingData.map { it.toDomainModel() }
+			}
 		}
 	}
 
