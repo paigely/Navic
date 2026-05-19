@@ -11,6 +11,12 @@ import paige.navic.data.database.entities.ArtistEntity
 
 @Dao
 interface ArtistDao {
+	@Query("SELECT COUNT(*) FROM ArtistEntity")
+	fun getArtistsCountFlow(): Flow<Int>
+
+	@Query("SELECT COUNT(*) FROM ArtistEntity WHERE starredAt IS NOT NULL")
+	fun getStarredArtistsCountFlow(): Flow<Int>
+
 	@Query("SELECT * FROM ArtistEntity ORDER BY name COLLATE NOCASE ASC")
 	fun getArtistsAlphabeticalByNamePaging(): PagingSource<Int, ArtistEntity>
 

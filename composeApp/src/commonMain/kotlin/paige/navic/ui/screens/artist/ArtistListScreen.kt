@@ -52,6 +52,7 @@ fun ArtistListScreen(
 ) {
 	val viewModel = koinViewModel<ArtistListViewModel>()
 	val artists = viewModel.artistsPaging.collectAsLazyPagingItems()
+	val totalCount by viewModel.totalArtistsCount.collectAsState()
 	val selectedArtist by viewModel.selectedArtist.collectAsState()
 	val starred by viewModel.starred.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -81,6 +82,7 @@ fun ArtistListScreen(
 		) {
 			ArtistListScreenContent(
 				artists = artists,
+				totalCount = totalCount,
 				starred = starred,
 				selectedArtist = selectedArtist,
 				gridState = viewModel.gridState,

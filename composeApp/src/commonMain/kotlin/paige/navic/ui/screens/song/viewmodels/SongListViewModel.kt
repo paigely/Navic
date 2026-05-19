@@ -22,7 +22,7 @@ class SongListViewModel(
 	private val downloadManager: DownloadManager,
 ) : ViewModel() {
 	val songsPaging: Flow<PagingData<DomainSong>> = repository
-		.getSongsPaging()
+		.getSongsPaging(artistId)
 		.cachedIn(viewModelScope)
 
 	val allDownloads = downloadManager.allDownloads

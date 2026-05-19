@@ -17,6 +17,9 @@ interface SongDao {
 	@Query("SELECT * FROM SongEntity ORDER BY title COLLATE NOCASE ASC")
 	fun getAllSongsPaging(): PagingSource<Int, SongEntity>
 
+	@Query("SELECT * FROM SongEntity WHERE artistId = :artistId ORDER BY title COLLATE NOCASE ASC")
+	fun getSongsByArtistPaging(artistId: String): PagingSource<Int, SongEntity>
+
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertSong(song: SongEntity)
 

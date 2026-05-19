@@ -37,6 +37,7 @@ import paige.navic.utils.withoutTop
 @OptIn(ExperimentalMaterial3Api::class)
 fun ArtistListScreenContent(
 	artists: LazyPagingItems<DomainArtist>,
+	totalCount: Int,
 	starred: Boolean,
 	gridState: LazyGridState,
 	scrollBehavior: TopAppBarScrollBehavior,
@@ -72,8 +73,8 @@ fun ArtistListScreenContent(
 						Text(
 							pluralStringResource(
 								Res.plurals.count_artists,
-								artists.itemCount,
-								artists.itemCount
+								totalCount,
+								totalCount
 							),
 							color = MaterialTheme.colorScheme.onSurfaceVariant
 						)

@@ -3,6 +3,7 @@ package paige.navic.ui.screens.artist
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,7 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -31,7 +35,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -110,9 +113,13 @@ fun ArtistDetailScreen(
 	var bulkDownloadDialogShown by remember { mutableStateOf(false) }
 
 	val player = koinViewModel<MediaPlayerViewModel>()
+	val playerState by player.uiState.collectAsStateWithLifecycle()
 
 	val backStack = LocalNavStack.current
 	val scope = rememberCoroutineScope()
+
+	// Create and remember the state for the horizontal grid
+	val gridState = rememberLazyGridState()
 
 	Scaffold(
 		topBar = {
@@ -157,7 +164,8 @@ fun ArtistDetailScreen(
 							.fillMaxSize()
 							.nestedScroll(LocalBottomBarScrollManager.current.connection),
 						state = viewModel.scrollState.toLazyListState(),
-						contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())
+						contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
+						verticalArrangement = Arrangement.spacedBy(4.dp)
 					) {
 						item {
 							ArtistDetailScreenHeading(
@@ -199,8 +207,8 @@ fun ArtistDetailScreen(
 								Row(
 									modifier = Modifier
 										.fillMaxWidth()
-										.padding(horizontal = 20.dp)
-										.padding(top = 24.dp, bottom = 12.dp),
+										.padding(horizontal = 16.dp)
+										.padding(top = 24.dp, bottom = 8.dp),
 									verticalAlignment = Alignment.CenterVertically,
 									horizontalArrangement = Arrangement.SpaceBetween
 								) {
@@ -213,37 +221,59 @@ fun ArtistDetailScreen(
 										text = stringResource(Res.string.action_see_all),
 										style = MaterialTheme.typography.labelLarge,
 										color = MaterialTheme.colorScheme.primary,
-										modifier = Modifier.padding(8.dp).background(Color.Transparent).clickable(onClick = onSeeAllClick)
+										modifier = Modifier
+											.clickable(onClick = onSeeAllClick)
+											.padding(8.dp)
 									)
 								}
 							}
 
-							items(artistData.topSongs, key = { it.id }) { song ->
-								SongRow(
-									modifier = Modifier.padding(horizontal = 8.dp),
-									song = song,
-									selected = selectedSong == song,
-									onClick = { viewModel.selectSong(song) },
-									onLongClick = { viewModel.selectSong(song) },
-									onDismissRequest = { viewModel.clearSelection() },
-									starredState = if (selectedSong == song) selectedSongIsStarred else false,
-									onAddStar = { viewModel.starArtist(true) },
-									onRemoveStar = { viewModel.starArtist(false) },
-									onShare = { shareId = song.id },
-									download = allDownloads.find { it.songId == song.id },
-									onDownload = { viewModel.downloadSong(song) },
-									onCancelDownload = { viewModel.cancelDownload(song.id) },
-									onDeleteDownload = { viewModel.deleteDownload(song.id) },
-									onPlayNext = { player.playNextSingle(song) },
-									onAddToQueue = { player.addToQueueSingle(song) },
-									isOnline = isOnline,
-									rating = if (selectedSong == song) selectedSongRating else 0,
-									onSetRating = { viewModel.rateSelectedSong(it) }
-								)
+							item {
+								LazyHorizontalGrid(
+									rows = GridCells.Fixed(3),
+									state = gridState,
+									flingBehavior = rememberSnapFlingBehavior(lazyGridState = gridState),
+									modifier = Modifier
+										.fillMaxWidth()
+										.height(250.dp)
+								) {
+									this.itemsIndexed(artistData.topSongs, key = { _, song -> song.id }) { index, song ->
+										SongRow(
+											modifier = Modifier.fillMaxWidth(),
+											song = song,
+											selected = selectedSong == song,
+											onClick = {
+												if (playerState.currentSong?.id != song.id) {
+													player.clearQueue()
+													artistData.topSongs.forEach { player.addToQueueSingle(it) }
+													player.playAt(index)
+												} else {
+													player.togglePlay()
+												}
+											},
+											onLongClick = { viewModel.selectSong(song) },
+											onDismissRequest = { viewModel.clearSelection() },
+											starredState = if (selectedSong == song) selectedSongIsStarred else false,
+											onAddStar = { viewModel.starSelectedSong() },
+											onRemoveStar = { viewModel.unstarSelectedSong() },
+											onShare = { shareId = song.id },
+											download = allDownloads.find { it.songId == song.id },
+											onDownload = { viewModel.downloadSong(song) },
+											onCancelDownload = { viewModel.cancelDownload(song.id) },
+											onDeleteDownload = { viewModel.deleteDownload(song.id) },
+											onPlayNext = { player.playNextSingle(song) },
+											onAddToQueue = { player.addToQueueSingle(song) },
+											isOnline = isOnline,
+											rating = if (selectedSong == song) selectedSongRating else 0,
+											onSetRating = { viewModel.rateSelectedSong(it) }
+										)
+									}
+								}
 							}
 						}
 
 						item {
+							Spacer(Modifier.height(16.dp))
 							PagedArtCarousel(
 								title = stringResource(Res.string.title_albums),
 								items = pagedAlbums
@@ -273,14 +303,13 @@ fun ArtistDetailScreen(
 
 						if (artistData.similarArtists.isNotEmpty()) {
 							item {
+								Spacer(Modifier.height(16.dp))
 								ArtCarousel(
 									title = stringResource(Res.string.title_similar_artists),
 									items = artistData.similarArtists.toImmutableList()
 								) { artist ->
 									val onSimilarArtistClick = dropUnlessResumed {
-										backStack.add(
-											Screen.ArtistDetail(artist.id)
-										)
+										backStack.add(Screen.ArtistDetail(artist.id))
 									}
 									ArtCarouselItem(
 										coverArtId = artist.coverArtId,
@@ -313,7 +342,7 @@ fun ArtistDetailScreen(
 			BulkDownloadDialog(
 				onDismissRequest = { bulkDownloadDialogShown = false },
 				title = stringResource(Res.string.title_bulk_download),
-				message = stringResource(Res.string.info_bulk_download_warning),
+				message = stringResource(Res.string.info_bulk_download_warning, artistData.artist.name),
 				showDialog = bulkDownloadDialogShown,
 				onConfirm = {
 					scope.launch {
@@ -351,7 +380,7 @@ fun ArtistDetailScreen(
 	if (shareId != null && (artistStateFlow as? UiState.Success)?.data?.topSongs?.any { it.id == shareId } == false && selectedAlbum?.id != shareId) {
 		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
-			songs = persistentListOf(), // This part seems to be for songs not in topSongs or selectedAlbum
+			songs = persistentListOf(),
 			onDismissRequest = { shareId = null }
 		)
 	}

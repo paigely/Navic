@@ -8,8 +8,11 @@ import androidx.paging.cachedIn
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
@@ -25,6 +28,15 @@ class ArtistListViewModel(
 	val artistsPaging: Flow<PagingData<DomainArtist>> = _listType
 		.flatMapLatest { repository.getArtistsPaging(it) }
 		.cachedIn(viewModelScope)
+
+	@OptIn(ExperimentalCoroutinesApi::class)
+	val totalArtistsCount: StateFlow<Int> = _listType
+		.flatMapLatest { repository.getArtistsCount(it) }
+		.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.WhileSubscribed(5000),
+			initialValue = 0
+		)
 
 	private val _starred = MutableStateFlow(false)
 	val starred = _starred.asStateFlow()

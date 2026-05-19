@@ -32,13 +32,19 @@ class SongRepository(
 	private val dbRepository: DbRepository,
 	private val syncManager: SyncManager
 ) {
-	fun getSongsPaging(): Flow<PagingData<DomainSong>> {
+	fun getSongsPaging(artistId: String? = null): Flow<PagingData<DomainSong>> {
 		return Pager(
 			config = PagingConfig(
 				pageSize = 50,
 				enablePlaceholders = false
 			),
-			pagingSourceFactory = { songDao.getAllSongsPaging() }
+			pagingSourceFactory = {
+				if (artistId != null) {
+					songDao.getSongsByArtistPaging(artistId)
+				} else {
+					songDao.getAllSongsPaging()
+				}
+			}
 		).flow.map { pagingData ->
 			pagingData.map { it.toDomainModel() }
 		}

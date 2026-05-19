@@ -20,6 +20,13 @@ class ArtistRepository(
 	private val syncManager: SyncManager,
 	private val dbRepository: DbRepository
 ) {
+	fun getArtistsCount(listType: DomainArtistListType): Flow<Int> {
+		return when (listType) {
+			DomainArtistListType.AlphabeticalByName,
+			DomainArtistListType.Random -> artistDao.getArtistsCountFlow()
+			DomainArtistListType.Starred -> artistDao.getStarredArtistsCountFlow()
+		}
+	}
 	fun getArtistsPaging(
 		listType: DomainArtistListType
 	): Flow<PagingData<DomainArtist>> {
