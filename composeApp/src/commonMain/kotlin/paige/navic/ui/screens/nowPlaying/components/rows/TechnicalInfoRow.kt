@@ -17,11 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.data.models.settings.Settings
+import paige.navic.managers.ConnectivityManager
 import paige.navic.shared.MediaPlayerViewModel
 
 @Composable
 fun NowPlayingTechnicalInfoRow() {
+	val connectivityManager = koinInject<ConnectivityManager>()
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong
@@ -49,13 +53,27 @@ fun NowPlayingTechnicalInfoRow() {
 				modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
 				verticalAlignment = Alignment.CenterVertically
 			) {
-				val sampleRateFormatted = song?.sampleRate?.let {
+				val sampleRateFormatted = (playerState.playbackSampleRate ?: song?.sampleRate)?.let {
 					if (it >= 1000) "${it / 1000.0} kHz" else "$it Hz"
 				} ?: "-- kHz"
 
-				val bitrateFormatted = song?.bitRate?.let { "$it kbps" } ?: "-- kbps"
+				val isCellular = connectivityManager.isCellular.value
+				val requestedBitrate = if (Settings.shared.isAdvancedTranscodingActive) {
+					if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
+				} else {
+					if (isCellular) Settings.shared.streamingQualityCellular.bitrateAndroid else Settings.shared.streamingQualityWifi.bitrateAndroid
+				}
 
-				val format = song?.fileExtension?.uppercase() ?: "--"
+				val bitrateFormatted = playerState.playbackBitrate?.let { "${it / 1000} kbps" }
+					?: if (playerState.playbackMimeType?.contains("opus") == true) {
+						"${if (requestedBitrate > 0) requestedBitrate else "--"} kbps"
+					} else {
+						song?.bitRate?.let { "$it kbps" }
+					} ?: "-- kbps"
+
+				val format = playerState.playbackMimeType?.split("/")?.lastOrNull()?.replace("mpeg", "mp3")?.uppercase()
+					?: song?.fileExtension?.uppercase()
+					?: "--"
 
 				Text(
 					text = "$format • $sampleRateFormatted • $bitrateFormatted",

@@ -54,6 +54,7 @@
 	<string name="title_cellular">Cellular</string>
 	<string name="title_select_lyrics">Select Lyrics</string>
 	<string name="title_advanced">Advanced Transcoding</string>
+	<string name="title_images">Images</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
@@ -150,6 +151,8 @@
 	<string name="option_enable_custom_bitrates">Enable Custom Bitrates</string>
 	<string name="option_max_bitrate_wifi">Max Bitrate WiFi (kbps)</string>
 	<string name="option_max_bitrate_cellular">Max Bitrate Cellular (kbps)</string>
+	<string name="option_high_quality_covers">High quality album covers</string>
+	<string name="subtitle_high_quality_covers">Fetch original resolution images. Uses significantly more data</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>

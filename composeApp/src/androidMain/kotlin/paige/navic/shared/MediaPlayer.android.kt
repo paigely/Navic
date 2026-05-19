@@ -16,6 +16,7 @@ import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
@@ -233,20 +234,21 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	private fun getStreamUrl(id: String) =
-		when (connectivityManager.isCellular.value) {
-			true -> SessionManager.api.getStreamUrl(
-				id,
-				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateCellular else Settings.shared.streamingQualityCellular.bitrateAndroid,
-				Settings.shared.streamingQualityCellular.containerAndroid
-			).toUri()
+	private fun getStreamUrl(id: String): android.net.Uri {
+		val isCellular = connectivityManager.isCellular.value
+		val bitrate = if (Settings.shared.isAdvancedTranscodingActive) {
+			if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
+		} else {
+			if (isCellular) Settings.shared.streamingQualityCellular.bitrateAndroid else Settings.shared.streamingQualityWifi.bitrateAndroid
+		}
+		val container = if (isCellular) Settings.shared.streamingQualityCellular.containerAndroid else Settings.shared.streamingQualityWifi.containerAndroid
 
-			false -> SessionManager.api.getStreamUrl(
-				id,
-				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateWifi else Settings.shared.streamingQualityWifi.bitrateAndroid,
-				Settings.shared.streamingQualityWifi.containerAndroid
-			).toUri()
-		}.buildUpon().appendQueryParameter("estimateContentLength", "true").build()
+		return SessionManager.api.getStreamUrl(id, bitrate, container)
+			.toUri()
+			.buildUpon()
+			.appendQueryParameter("estimateContentLength", "true")
+			.build()
+	}
 
 	private fun setupController() {
 		viewModelScope.launch {
@@ -282,11 +284,16 @@ class AndroidMediaPlayerViewModel(
 						_uiState.update { it.copy(repeatMode = repeatMode) }
 					}
 
+					override fun onTracksChanged(tracks: Tracks) {
+						updatePlaybackProperties(tracks)
+					}
+
 					override fun onTimelineChanged(timeline: Timeline, reason: Int) {
 						updatePlaybackState()
 					}
 				})
 				updatePlaybackState()
+				updatePlaybackProperties(currentTracks)
 
 				downloadManager.allDownloads.first()
 				pendingSyncState?.let { state ->
@@ -341,6 +348,13 @@ class AndroidMediaPlayerViewModel(
 			controller?.let { player ->
 				val index = player.currentMediaItemIndex
 				val currentSong = _uiState.value.queue.getOrNull(index)
+
+				val isCellular = connectivityManager.isCellular.value
+				val requestedBitrate = if (Settings.shared.isAdvancedTranscodingActive) {
+					if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
+				} else {
+					if (isCellular) Settings.shared.streamingQualityCellular.bitrateAndroid else Settings.shared.streamingQualityWifi.bitrateAndroid
+				}
 
 				val derivedCollection = currentSong?.let { song ->
 					val stateCollection = _uiState.value.currentCollection
@@ -437,6 +451,27 @@ class AndroidMediaPlayerViewModel(
 				val pos = player.currentPosition
 				val progress = (pos.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
 				_uiState.update { it.copy(progress = progress) }
+			}
+		}
+	}
+
+	@OptIn(UnstableApi::class)
+	private fun updatePlaybackProperties(tracks: Tracks) {
+		val audioGroup = tracks.groups.firstOrNull { it.type == C.TRACK_TYPE_AUDIO && it.isSelected }
+		if (audioGroup != null) {
+			for (i in 0 until audioGroup.length) {
+				if (audioGroup.isTrackSelected(i)) {
+					val format = audioGroup.getTrackFormat(i)
+					Logger.i("MediaPlayer", "Active Track Format: $format")
+					_uiState.update {
+						it.copy(
+							playbackBitrate = format.bitrate.takeIf { it > 0 },
+							playbackSampleRate = format.sampleRate.takeIf { it > 0 },
+							playbackMimeType = format.sampleMimeType
+						)
+					}
+					break
+				}
 			}
 		}
 	}
@@ -754,10 +789,15 @@ class AndroidMediaPlayerViewModel(
 			.setAlbumTitle(albumTitle)
 			.setArtworkUri(
 				coverArtId?.let {
-					SessionManager.api.getCoverArtUrl(it, auth = true).toUri()
+					val builder = SessionManager.api.getCoverArtUrl(it, auth = true).toUri()
 						.buildUpon()
 						.appendQueryParameter("cacheKey", it)
-						.build()
+					
+					if (!Settings.shared.highQualityCovers) {
+						builder.appendQueryParameter("size", "512")
+					}
+					
+					builder.build()
 				}
 			)
 			.build()

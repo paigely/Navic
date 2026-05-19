@@ -1,0 +1,25 @@
+name: First Interaction
+
+on:
+  issues:
+    types:
+      - opened
+  pull_request:
+    types:
+      - opened
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  first-interaction:
+    name: First Interaction
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/first-interaction@v3
+        with:
+          issue_message: |
+            Please make sure you have [checked existing issues](https://github.com/paigely/Navic/issues) for duplicates.
+          pr_message: |
+            Thank you for contributing! Please make sure you have read [CONTRIBUTING.md](https://github.com/paigely/Navic/blob/master/CONTRIBUTING.md).

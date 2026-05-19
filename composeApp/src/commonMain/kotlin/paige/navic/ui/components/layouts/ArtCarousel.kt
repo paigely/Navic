@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
 import kotlinx.collections.immutable.ImmutableList
 import paige.navic.LocalCtx
 import paige.navic.ui.components.common.CoverArt
@@ -53,6 +54,43 @@ fun <T> ArtCarousel(
 				itemSpacing = 8.dp
 			) { index ->
 				content(items[index])
+			}
+		}
+	}
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun <T : Any> PagedArtCarousel(
+	title: String,
+	items: LazyPagingItems<T>,
+	content: @Composable CarouselItemScope.(item: T) -> Unit
+) {
+	if (items.itemCount > 0) {
+		val state = rememberCarouselState { items.itemCount }
+		Column(Modifier.padding(horizontal = 16.dp)) {
+			Text(
+				title,
+				style = MaterialTheme.typography.titleMediumEmphasized,
+				fontWeight = FontWeight(600),
+				modifier = Modifier.heightIn(min = 32.dp).padding(top = 8.dp)
+			)
+			HorizontalMultiBrowseCarousel(
+				state = state,
+				flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(
+					state = state
+				),
+				modifier = Modifier
+					.fillMaxWidth()
+					.wrapContentHeight()
+					.padding(top = 16.dp, bottom = 16.dp),
+				preferredItemWidth = 150.dp,
+				itemSpacing = 8.dp
+			) { index ->
+				val item = items[index]
+				if (item != null) {
+					content(item)
+				}
 			}
 		}
 	}
