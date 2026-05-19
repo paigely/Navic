@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_see_all
 import navic.composeapp.generated.resources.count_albums
+import navic.composeapp.generated.resources.count_songs
 import navic.composeapp.generated.resources.info_bulk_download_warning
 import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.title_albums
@@ -300,7 +301,7 @@ fun ArtistDetailScreen(
 									coverArtId = album.coverArtId,
 									title = album.name,
 									subtitle = pluralStringResource(
-										Res.plurals.count_albums,
+										Res.plurals.count_songs,
 										album.songCount,
 										album.songCount
 									),
