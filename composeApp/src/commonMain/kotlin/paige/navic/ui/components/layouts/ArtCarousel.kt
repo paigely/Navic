@@ -11,7 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.carousel.CarouselDefaults
 import androidx.compose.material3.carousel.CarouselItemScope
-import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -41,7 +41,7 @@ fun <T> ArtCarousel(
 				fontWeight = FontWeight(600),
 				modifier = Modifier.heightIn(min = 32.dp).padding(top = 8.dp)
 			)
-			HorizontalMultiBrowseCarousel(
+			HorizontalUncontainedCarousel(
 				state = state,
 				flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(
 					state = state
@@ -50,7 +50,7 @@ fun <T> ArtCarousel(
 					.fillMaxWidth()
 					.wrapContentHeight()
 					.padding(top = 16.dp, bottom = 16.dp),
-				preferredItemWidth = 150.dp,
+				itemWidth = 150.dp,
 				itemSpacing = 8.dp
 			) { index ->
 				content(items[index])
@@ -75,7 +75,7 @@ fun <T : Any> PagedArtCarousel(
 				fontWeight = FontWeight(600),
 				modifier = Modifier.heightIn(min = 32.dp).padding(top = 8.dp)
 			)
-			HorizontalMultiBrowseCarousel(
+			HorizontalUncontainedCarousel(
 				state = state,
 				flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(
 					state = state
@@ -84,7 +84,7 @@ fun <T : Any> PagedArtCarousel(
 					.fillMaxWidth()
 					.wrapContentHeight()
 					.padding(top = 16.dp, bottom = 16.dp),
-				preferredItemWidth = 150.dp,
+				itemWidth = 150.dp,
 				itemSpacing = 8.dp
 			) { index ->
 				val item = items[index]
