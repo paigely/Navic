@@ -80,12 +80,12 @@ fun ArtistDetailScreenTopBar(
 							onDismissRequest = { expanded = false },
 							artist = state.artist,
 							onPlayNext = {
-								state.albums.reversed().forEach { album ->
+								for (album in state.albums.reversed()) {
 									player.playNext(album)
 								}
 							},
 							onAddToQueue = {
-								state.albums.forEach { album ->
+								for (album in state.albums) {
 									player.addToQueue(album)
 								}
 							},

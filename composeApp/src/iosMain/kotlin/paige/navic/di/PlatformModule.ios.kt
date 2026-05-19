@@ -13,6 +13,7 @@ import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.ShareManager
 import paige.navic.managers.StorageManager
+import paige.navic.managers.SyncScheduler
 import paige.navic.shared.IOSMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
 import platform.Foundation.NSDocumentDirectory
@@ -63,6 +64,7 @@ actual val platformModule = module {
 	}
 
 	singleOf(::ShareManager)
+	singleOf(::SyncScheduler)
 	single<PlatformContext> { PlatformContext.INSTANCE }
 	single<StorageManager> { StorageManager() }
 	single<ConnectivityManager> { ConnectivityManager(get()) }

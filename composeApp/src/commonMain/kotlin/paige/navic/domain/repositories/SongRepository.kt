@@ -1,5 +1,9 @@
 package paige.navic.domain.repositories
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -7,6 +11,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.DownloadDao
@@ -27,6 +32,28 @@ class SongRepository(
 	private val dbRepository: DbRepository,
 	private val syncManager: SyncManager
 ) {
+	fun getSongsPaging(artistId: String? = null): Flow<PagingData<DomainSong>> {
+		return Pager(
+			config = PagingConfig(
+				pageSize = 50,
+				enablePlaceholders = false
+			),
+			pagingSourceFactory = {
+				if (artistId != null) {
+					songDao.getSongsByArtistPaging(artistId)
+				} else {
+					songDao.getAllSongsPaging()
+				}
+			}
+		).flow.map { pagingData ->
+			pagingData.map { it.toDomainModel() }
+		}
+	}
+
+	suspend fun syncLibrarySongs() {
+		dbRepository.syncLibrarySongs().getOrThrow()
+	}
+
 	suspend fun getAllSongs(): List<DomainSong> {
 		return songDao.getAllSongs().map { it.toDomainModel() }
 	}

@@ -1,5 +1,6 @@
 package paige.navic.data.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
@@ -7,18 +8,23 @@ import androidx.room3.Query
 import androidx.room3.Transaction
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.ArtistEntity
-import paige.navic.shared.Logger
 
 @Dao
 interface ArtistDao {
+	@Query("SELECT COUNT(*) FROM ArtistEntity")
+	fun getArtistsCountFlow(): Flow<Int>
+
+	@Query("SELECT COUNT(*) FROM ArtistEntity WHERE starredAt IS NOT NULL")
+	fun getStarredArtistsCountFlow(): Flow<Int>
+
 	@Query("SELECT * FROM ArtistEntity ORDER BY name COLLATE NOCASE ASC")
-	suspend fun getArtistsAlphabeticalByName(): List<ArtistEntity>
+	fun getArtistsAlphabeticalByNamePaging(): PagingSource<Int, ArtistEntity>
 
 	@Query("SELECT * FROM ArtistEntity ORDER BY RANDOM()")
-	suspend fun getArtistsRandom(): List<ArtistEntity>
+	fun getArtistsRandomPaging(): PagingSource<Int, ArtistEntity>
 
 	@Query("SELECT * FROM ArtistEntity WHERE starredAt IS NOT NULL ORDER BY starredAt DESC")
-	suspend fun getArtistsStarred(): List<ArtistEntity>
+	fun getArtistsStarredPaging(): PagingSource<Int, ArtistEntity>
 
 	@Query("SELECT * FROM ArtistEntity ORDER BY name COLLATE NOCASE ASC")
 	fun getAllArtists(): Flow<List<ArtistEntity>>
@@ -32,7 +38,11 @@ interface ArtistDao {
 	@Query("SELECT EXISTS(SELECT 1 FROM ArtistEntity WHERE artistId = :artistId AND starredAt IS NOT NULL)")
 	suspend fun isArtistStarred(artistId: String): Boolean
 
-	@Query("SELECT * FROM ArtistEntity WHERE name LIKE '%' || :query || '%' COLLATE NOCASE")
+	@Query("""
+		SELECT ArtistEntity.* FROM ArtistEntity 
+		JOIN ArtistFts ON ArtistEntity.rowid = ArtistFts.rowid 
+		WHERE ArtistFts MATCH :query
+	""")
 	suspend fun searchArtistsList(query: String): List<ArtistEntity>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -56,15 +66,24 @@ interface ArtistDao {
 	@Query("SELECT * FROM ArtistEntity WHERE artistId IN (:ids)")
 	suspend fun getArtistsByIds(ids: List<String>): List<ArtistEntity>
 
+	@Query("DELETE FROM ArtistEntity WHERE artistId IN (:ids)")
+	suspend fun deleteArtists(ids: List<String>)
+
+	@Transaction
+	suspend fun deleteObsoleteArtists(remoteIds: Set<String>) {
+		val localIds = getAllArtistIds()
+		val toDelete = localIds.filter { it !in remoteIds }
+		if (toDelete.isNotEmpty()) {
+			toDelete.chunked(900).forEach { chunk ->
+				deleteArtists(chunk)
+			}
+		}
+	}
+
 	@Transaction
 	suspend fun updateAllArtists(remoteArtists: List<ArtistEntity>) {
 		val remoteIds = remoteArtists.map { it.artistId }.toSet()
-		getAllArtistIds().forEach { localId ->
-			if (localId !in remoteIds) {
-				Logger.w("ArtistDao", "artist $localId no longer exists remotely")
-				deleteArtist(localId)
-			}
-		}
+		deleteObsoleteArtists(remoteIds)
 		insertArtists(remoteArtists)
 	}
 }
