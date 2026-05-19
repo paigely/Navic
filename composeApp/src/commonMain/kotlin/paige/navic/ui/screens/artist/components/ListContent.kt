@@ -68,7 +68,7 @@ fun ArtistListScreenContent(
 							.padding(bottom = 8.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
-						// Note: Total count is harder to get exactly from Paging items 
+						// Note to myself: Total count is harder to get exactly from Paging items
 						// but usually available in the LoadState or can be estimated.
 						Text(
 							pluralStringResource(
