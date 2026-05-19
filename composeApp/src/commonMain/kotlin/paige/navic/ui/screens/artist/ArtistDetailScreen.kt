@@ -118,7 +118,6 @@ fun ArtistDetailScreen(
 	val backStack = LocalNavStack.current
 	val scope = rememberCoroutineScope()
 
-	// Create and remember the state for the horizontal grid
 	val gridState = rememberLazyGridState()
 
 	Scaffold(
@@ -229,13 +228,24 @@ fun ArtistDetailScreen(
 							}
 
 							item {
+								val rowCount = remember(artistData.topSongs.size) {
+									artistData.topSongs.size.coerceIn(1, 3)
+								}
+								val gridHeight = remember(rowCount) {
+									when (rowCount) {
+										1 -> 82.dp
+										2 -> 164.dp
+										else -> 246.dp
+									}
+								}
+
 								LazyHorizontalGrid(
-									rows = GridCells.Fixed(3),
+									rows = GridCells.Fixed(rowCount),
 									state = gridState,
 									flingBehavior = rememberSnapFlingBehavior(lazyGridState = gridState),
 									modifier = Modifier
 										.fillMaxWidth()
-										.height(250.dp)
+										.height(gridHeight)
 								) {
 									this.itemsIndexed(artistData.topSongs, key = { _, song -> song.id }) { index, song ->
 										SongRow(
