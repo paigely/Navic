@@ -29,7 +29,10 @@ data class PlayerUiState(
 	val repeatMode: Int = 0,
 	val progress: Float = 0f,
 	val isLoading: Boolean = false,
-	val playbackSpeed: Float = 1.0f
+	val playbackSpeed: Float = 1.0f,
+	val playbackBitrate: Int? = null,
+	val playbackSampleRate: Int? = null,
+	val playbackMimeType: String? = null
 )
 
 abstract class MediaPlayerViewModel(

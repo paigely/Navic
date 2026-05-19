@@ -91,6 +91,14 @@ interface AlbumDao {
 	fun getDownloadedAlbums(serverId: String): PagingSource<Int, AlbumWithSongs>
 
 	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE genre = :genreName OR genres LIKE '%' || :genreName || '%' ORDER BY year DESC, name COLLATE NOCASE ASC")
+	fun getAlbumsByGenre(genreName: String): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE genre = :genreName OR genres LIKE '%' || :genreName || '%' ORDER BY year ASC, name COLLATE NOCASE DESC")
+	fun getAlbumsByGenreReversed(genreName: String): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
 	@Query("SELECT COUNT(albumId) FROM AlbumEntity WHERE serverId = :serverId")
 	suspend fun getAlbumCount(serverId: String): Int
 
@@ -109,11 +117,23 @@ interface AlbumDao {
 	fun getAlbumsByArtist(artistId: String, serverId: String): Flow<List<AlbumWithSongs>>
 
 	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE artistId = :artistId AND serverId = :serverId ORDER BY year DESC")
+	fun getAlbumsByArtistPaging(artistId: String, serverId: String): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE artistId = :artistId AND albumId != :albumId AND serverId = :serverId ORDER BY year DESC")
 	fun getAlbumsByArtistExcluding(artistId: String, albumId: String, serverId: String): Flow<List<AlbumWithSongs>>
 
 	@Transaction
-	@Query("SELECT * FROM AlbumEntity WHERE serverId = :serverId AND name LIKE '%' || :query || '%' COLLATE NOCASE")
+	@Query("SELECT * FROM AlbumEntity WHERE artistId = :artistId AND albumId != :albumId AND serverId = :serverId ORDER BY year DESC")
+	fun getAlbumsByArtistExcludingPaging(artistId: String, albumId: String, serverId: String): PagingSource<Int, AlbumWithSongs>
+
+	@Transaction
+	@Query("""
+		SELECT AlbumEntity.* FROM AlbumEntity 
+		JOIN AlbumFts ON AlbumEntity.rowid = AlbumFts.rowid 
+		WHERE AlbumFts MATCH :query AND serverId = :serverId
+	""")
 	suspend fun searchAlbumsList(query: String, serverId: String): List<AlbumWithSongs>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -150,12 +170,16 @@ interface AlbumDao {
 		insertAlbums(remoteAlbums)
 	}
 
+	@Query("DELETE FROM AlbumEntity WHERE serverId = :serverId AND albumId IN (:ids)")
+	suspend fun deleteAlbums(serverId: String, ids: List<String>)
+
 	@Transaction
 	suspend fun deleteObsoleteAlbums(serverId: String, remoteIds: Set<String>) {
-		getAllAlbumIds(serverId).forEach { localId ->
-			if (localId !in remoteIds) {
-				Logger.w("AlbumDao", "album $localId no longer exists remotely")
-				deleteAlbum(localId, serverId)
+		val localIds = getAllAlbumIds(serverId)
+		val toDelete = localIds.filter { it !in remoteIds }
+		if (toDelete.isNotEmpty()) {
+			toDelete.chunked(900).forEach { chunk ->
+				deleteAlbums(serverId, chunk)
 			}
 		}
 	}

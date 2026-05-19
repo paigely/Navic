@@ -1,5 +1,9 @@
 package paige.navic.domain.repositories
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import dev.zt64.subsonic.api.model.AlbumInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -58,13 +62,10 @@ class CollectionRepository(
 		flow {
 			if (serverId == null) return@flow
 
-			val localData = try {
-				getLocalData(collectionId, serverId)
-			} catch (_: Exception) {
-				null
-			}
+			val localData = getLocalData(collectionId, serverId)
+			val shouldRefresh = fullRefresh || localData.songs.isEmpty()
 
-			if (fullRefresh) {
+			if (shouldRefresh) {
 				emit(UiState.Loading(data = localData))
 				try {
 					emit(UiState.Success(data = refreshLocalData(collectionId, serverId)))
@@ -72,9 +73,7 @@ class CollectionRepository(
 					emit(UiState.Error(error = error, data = localData))
 				}
 			} else {
-				localData?.let {
-					emit(UiState.Success(data = it))
-				}
+				emit(UiState.Success(data = localData))
 			}
 		}
 	}.flowOn(Dispatchers.IO)
@@ -87,6 +86,15 @@ class CollectionRepository(
 			albumDao.getAlbumsByArtistExcluding(artistId, albumId, serverId)
 				.map { it.map { album -> album.toDomainModel() } }
 		}
+
+	fun getOtherAlbumsPaging(artistId: String, albumId: String, serverId: String): Flow<PagingData<DomainAlbum>> {
+		return Pager(
+			config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+			pagingSourceFactory = { albumDao.getAlbumsByArtistExcludingPaging(artistId, albumId, serverId) }
+		).flow.map { pagingData ->
+			pagingData.map { it.toDomainModel() }
+		}
+	}
 
 	suspend fun getSongById(songId: String): paige.navic.domain.models.DomainSong? {
 		val serverId = SessionManager.activeServerId.value ?: return null

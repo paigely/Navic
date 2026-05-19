@@ -68,8 +68,12 @@ interface PlaylistDao {
 	suspend fun getAllPlaylistIds(serverId: String): List<String>
 
 	@Transaction
-	@Query("SELECT * FROM PlaylistEntity WHERE serverId = :serverId AND name LIKE '%' || :query || '%' COLLATE NOCASE")
-	suspend fun searchPlaylistsList(query: String, serverId: String): List<PlaylistWithSongs>
+	@Query("""
+		SELECT PlaylistEntity.* FROM PlaylistEntity 
+		JOIN PlaylistFts ON PlaylistEntity.rowid = PlaylistFts.rowid 
+		WHERE serverId = :serverId AND PlaylistFts MATCH :query
+	""")
+	suspend fun searchPlaylistsList(query: String): List<PlaylistWithSongs>
 
 	@Transaction
 	suspend fun updateAllPlaylists(serverId: String, remotePlaylists: List<PlaylistEntity>) {

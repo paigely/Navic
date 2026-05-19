@@ -34,7 +34,13 @@ class SearchRepository(
 				val albums = albumDao.getAlbumsByIds(data.albums.map { it.id }, serverId)
 				val artists = artistDao.getArtistsByIds(data.artists.map { it.id }, serverId)
 				val songs = songDao.getSongsByIds(data.songs.map { it.id }, serverId)
-				val localPlaylists = playlistDao.searchPlaylistsList(query, serverId)
+
+				val ftsQuery = formatFtsQuery(query)
+				val localPlaylists = if (ftsQuery.isNotEmpty()) {
+					playlistDao.searchPlaylistsList(ftsQuery, serverId)
+				} else {
+					emptyList()
+				}
 
 				(albums.map { it.toDomainModel() }
 					+ artists.map { it.toDomainModel() }
@@ -52,11 +58,23 @@ class SearchRepository(
 	}
 
 	private suspend fun performLocalSearch(query: String, serverId: String): List<Any> {
-		val localAlbums = albumDao.searchAlbumsList(query, serverId).map { it.toDomainModel() }
-		val localArtists = artistDao.searchArtistsList(query, serverId).map { it.toDomainModel() }
-		val localSongs = songDao.searchSongsList(query, serverId).map { it.toDomainModel() }
-		val localPlaylists = playlistDao.searchPlaylistsList(query, serverId).map { it.toDomainModel() }
+		val ftsQuery = formatFtsQuery(query)
+		if (ftsQuery.isEmpty()) return emptyList()
+
+		val localAlbums = albumDao.searchAlbumsList(ftsQuery, serverId).map { it.toDomainModel() }
+		val localArtists = artistDao.searchArtistsList(ftsQuery, serverId).map { it.toDomainModel() }
+		val localSongs = songDao.searchSongsList(ftsQuery, serverId).map { it.toDomainModel() }
+		val localPlaylists = playlistDao.searchPlaylistsList(ftsQuery, serverId).map { it.toDomainModel() }
 
 		return listOf(localAlbums, localArtists, localSongs, localPlaylists).flatten()
+	}
+
+	private fun formatFtsQuery(query: String): String {
+		val sanitized = query.replace(Regex("[^a-zA-Z0-9\\s]"), " ").trim()
+		if (sanitized.isEmpty()) return ""
+
+		return sanitized.split(Regex("\\s+"))
+			.filter { it.isNotEmpty() }
+			.joinToString(" ") { "$it*" }
 	}
 }

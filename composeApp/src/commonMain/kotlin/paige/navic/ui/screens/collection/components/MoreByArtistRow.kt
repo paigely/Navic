@@ -2,26 +2,26 @@ package paige.navic.ui.screens.collection.components
 
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.lifecycle.compose.dropUnlessResumed
-import kotlinx.collections.immutable.toImmutableList
+import androidx.paging.compose.LazyPagingItems
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_more_by_artist
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.domain.models.DomainAlbum
-import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
+import paige.navic.ui.components.layouts.PagedArtCarousel
 
 fun LazyListScope.collectionDetailScreenMoreByArtistRow(
 	artistName: String,
-	artistAlbums: List<DomainAlbum>,
+	artistAlbums: LazyPagingItems<DomainAlbum>,
 	tab: String,
 ) {
 	item {
 		val backStack = LocalNavStack.current
-		ArtCarousel(
+		PagedArtCarousel(
 			title = stringResource(Res.string.title_more_by_artist, artistName),
-			items = artistAlbums.sortedByDescending { it.playCount }.toImmutableList()
+			items = artistAlbums
 		) { album ->
 			ArtCarouselItem(
 				coverArtId = album.coverArtId,

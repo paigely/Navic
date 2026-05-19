@@ -3,23 +3,40 @@ package paige.navic.ui.screens.artist.viewmodels
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
 import paige.navic.domain.repositories.ArtistRepository
-import paige.navic.utils.UiState
 
 class ArtistListViewModel(
 	private val repository: ArtistRepository
 ) : ViewModel() {
-	private val _artistsState =
-		MutableStateFlow<UiState<ImmutableList<DomainArtist>>>(UiState.Loading())
-	val artistsState = _artistsState.asStateFlow()
+	private val _listType = MutableStateFlow(DomainArtistListType.AlphabeticalByName)
+	val listType = _listType.asStateFlow()
+
+	@OptIn(ExperimentalCoroutinesApi::class)
+	val artistsPaging: Flow<PagingData<DomainArtist>> = _listType
+		.flatMapLatest { repository.getArtistsPaging(it) }
+		.cachedIn(viewModelScope)
+
+	@OptIn(ExperimentalCoroutinesApi::class)
+	val totalArtistsCount: StateFlow<Int> = _listType
+		.flatMapLatest { repository.getArtistsCount(it) }
+		.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.WhileSubscribed(5000),
+			initialValue = 0
+		)
 
 	private val _starred = MutableStateFlow(false)
 	val starred = _starred.asStateFlow()
@@ -27,29 +44,18 @@ class ArtistListViewModel(
 	private val _selectedArtist = MutableStateFlow<DomainArtist?>(null)
 	val selectedArtist = _selectedArtist.asStateFlow()
 
-	private val _listType = MutableStateFlow(DomainArtistListType.AlphabeticalByName)
-	val listType = _listType.asStateFlow()
-
 	val gridState = LazyGridState()
 
-	init {
+	fun refreshArtists() {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect { if (it) refreshArtists(false) }
-		}
-	}
-
-	fun refreshArtists(fullRefresh: Boolean) {
-		viewModelScope.launch {
-			repository.getArtistsFlow(fullRefresh, _listType.value).collect {
-				_artistsState.value = it
-			}
+			repository.syncArtists()
 		}
 	}
 
 	fun selectArtist(artist: DomainArtist) {
 		viewModelScope.launch {
 			_selectedArtist.value = artist
-			_starred.value = repository.isArtistStarred(artist)
+			_starred.value = repository.isArtistStarred(artist.id)
 		}
 	}
 
@@ -73,9 +79,5 @@ class ArtistListViewModel(
 
 	fun setListType(listType: DomainArtistListType) {
 		_listType.value = listType
-	}
-
-	fun clearError() {
-		_artistsState.value = UiState.Success(_artistsState.value.data ?: persistentListOf())
 	}
 }

@@ -53,37 +53,52 @@ class AlbumRepository(
 				}
 			}
 
-			Pager(
-				config = PagingConfig(
-					pageSize = 30,
-					enablePlaceholders = true,
-					prefetchDistance = 15
-				),
-				pagingSourceFactory = {
-					when (listType) {
-						DomainAlbumListType.AlphabeticalByName -> {
-							if (reversed) albumDao.getAlbumsByNameDesc(serverId) else albumDao.getAlbumsByNameAsc(serverId)
-						}
-						DomainAlbumListType.AlphabeticalByArtist -> {
-							if (reversed) albumDao.getAlbumsByArtistDesc(serverId) else albumDao.getAlbumsByArtistAsc(serverId)
-						}
-						DomainAlbumListType.Newest -> {
-							if (reversed) albumDao.getAlbumsOldest(serverId) else albumDao.getAlbumsNewest(serverId)
-						}
-						DomainAlbumListType.Frequent -> {
-							if (reversed) albumDao.getAlbumsInfrequent(serverId) else albumDao.getAlbumsFrequent(serverId)
-						}
-						DomainAlbumListType.Recent -> {
-							if (reversed) albumDao.getAlbumsStale(serverId) else albumDao.getAlbumsRecent(serverId)
-						}
-						DomainAlbumListType.Starred -> albumDao.getStarredAlbums(serverId)
-						DomainAlbumListType.Downloaded -> albumDao.getDownloadedAlbums(serverId)
-						else -> albumDao.getAlbumsByArtistAsc(serverId)
+		Pager(
+			config = PagingConfig(
+				pageSize = 30,
+				enablePlaceholders = true,
+				prefetchDistance = 15
+			),
+			pagingSourceFactory = {
+				when (listType) {
+					DomainAlbumListType.AlphabeticalByName -> {
+						if (reversed) albumDao.getAlbumsByNameDesc(serverId) else albumDao.getAlbumsByNameAsc(serverId)
 					}
+					DomainAlbumListType.AlphabeticalByArtist -> {
+						if (reversed) albumDao.getAlbumsByArtistDesc(serverId) else albumDao.getAlbumsByArtistAsc(serverId)
+					}
+					DomainAlbumListType.Newest -> {
+						if (reversed) albumDao.getAlbumsOldest(serverId) else albumDao.getAlbumsNewest(serverId)
+					}
+					DomainAlbumListType.Frequent -> {
+						if (reversed) albumDao.getAlbumsInfrequent(serverId) else albumDao.getAlbumsFrequent(serverId)
+					}
+					DomainAlbumListType.Recent -> {
+						if (reversed) albumDao.getAlbumsStale(serverId) else albumDao.getAlbumsRecent(serverId)
+					}
+					DomainAlbumListType.Starred -> albumDao.getStarredAlbums(serverId)
+					DomainAlbumListType.Downloaded -> albumDao.getDownloadedAlbums(serverId)
+					is DomainAlbumListType.ByGenre -> {
+						if (reversed) albumDao.getAlbumsByGenreReversed(listType.genre) else albumDao.getAlbumsByGenre(listType.genre)
+					}
+					else -> albumDao.getAlbumsByArtistAsc(serverId)
 				}
+			}
 			).flow.map { pagingData ->
 				pagingData.map { it.toDomainModel() }
 			}
+		}
+	}
+
+	fun getPagedAlbumsByArtist(artistId: String): Flow<PagingData<DomainAlbum>> {
+		return Pager(
+			config = PagingConfig(
+				pageSize = 20,
+				enablePlaceholders = false
+			),
+			pagingSourceFactory = { albumDao.getAlbumsByArtistPaging(artistId) }
+		).flow.map { pagingData ->
+			pagingData.map { it.toDomainModel() }
 		}
 	}
 

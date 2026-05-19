@@ -1,13 +1,19 @@
 package paige.navic.domain.repositories
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.ArtistDao
@@ -17,7 +23,6 @@ import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
-import paige.navic.utils.UiState
 import kotlin.time.Clock
 
 class ArtistRepository(
@@ -25,50 +30,37 @@ class ArtistRepository(
 	private val syncManager: SyncManager,
 	private val dbRepository: DbRepository
 ) {
-	private suspend fun getLocalData(
-		listType: DomainArtistListType,
-		serverId: String
-	): ImmutableList<DomainArtist> {
+	fun getArtistsCount(listType: DomainArtistListType, serverId: String): Flow<Int> {
 		return when (listType) {
-			DomainArtistListType.AlphabeticalByName -> artistDao.getArtistsAlphabeticalByName(serverId)
-			DomainArtistListType.Random -> artistDao.getArtistsRandom(serverId)
-			DomainArtistListType.Starred -> artistDao.getArtistsStarred(serverId)
-		}.map { it.toDomainModel() }.toImmutableList()
-	}
-
-	private suspend fun refreshLocalData(
-		listType: DomainArtistListType,
-		serverId: String
-	): ImmutableList<DomainArtist> {
-		dbRepository.syncArtists().getOrThrow()
-		return getLocalData(listType, serverId)
-	}
-
-	@OptIn(ExperimentalCoroutinesApi::class)
-	fun getArtistsFlow(
-		fullRefresh: Boolean,
-		listType: DomainArtistListType
-	): Flow<UiState<ImmutableList<DomainArtist>>> = SessionManager.activeServerId.flatMapLatest { serverId ->
-		flow {
-			if (serverId == null) {
-				emit(UiState.Success(data = emptyList<DomainArtist>().toImmutableList()))
-				return@flow
-			}
-
-			val localData = getLocalData(listType, serverId)
-
-			if (fullRefresh) {
-				emit(UiState.Loading(data = localData))
-				try {
-					emit(UiState.Success(data = refreshLocalData(listType, serverId)))
-				} catch (error: Exception) {
-					emit(UiState.Error(error = error, data = localData))
-				}
-			} else {
-				emit(UiState.Success(data = localData))
-			}
+			DomainArtistListType.AlphabeticalByName,
+			DomainArtistListType.Random -> artistDao.getArtistsCountFlow(serverId)
+			DomainArtistListType.Starred -> artistDao.getStarredArtistsCountFlow(serverId)
 		}
-	}.flowOn(Dispatchers.IO)
+	}
+	fun getArtistsPaging(
+		listType: DomainArtistListType
+	): Flow<PagingData<DomainArtist>> {
+		val serverId = SessionManager.activeServerId.value ?: return flowOf(PagingData.empty())
+		return Pager(
+			config = PagingConfig(
+				pageSize = 50,
+				enablePlaceholders = false
+			),
+			pagingSourceFactory = {
+				when (listType) {
+					DomainArtistListType.AlphabeticalByName -> artistDao.getArtistsAlphabeticalByNamePaging(serverId)
+					DomainArtistListType.Random -> artistDao.getArtistsRandomPaging(serverId)
+					DomainArtistListType.Starred -> artistDao.getArtistsStarredPaging(serverId)
+				}
+			}
+		).flow.map { pagingData ->
+			pagingData.map { it.toDomainModel() }
+		}
+	}
+
+	suspend fun syncArtists() {
+		dbRepository.syncArtists().getOrThrow()
+	}
 
 	suspend fun isArtistStarred(artist: DomainArtist): Boolean {
 		val serverId = SessionManager.activeServerId.value ?: return false

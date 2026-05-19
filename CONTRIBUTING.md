@@ -1,10 +1,19 @@
 ## Rules
 
-* LLM-assisted contributions of any kind are **not allowed**
+### What's allowed
+
+* LLM-assisted contributions are **not allowed**
 * Typo contributions are **allowed**
-* Code cleaning contributions are **allowed** and **very welcome!**
-* Format and thoroughly test your code changes.
-	* Recommended to use android virtual device to iterate changes quickly
+* Code cleaning contributions are **allowed**
+
+### Conventions
+
+* Format your code
+* Test your changes, ensure UI is correct on different themes and form factors
+* Include a screenshot for UI changes
+* Keep PRs focused, create separate PRs for unrelated changes
+* Use [conventional commits](https://conventionalcommits.org/)
+* Use [conventional branch names](https://conventional-branch.github.io/)
 
 ## Contributing
 

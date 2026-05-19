@@ -473,9 +473,11 @@ class IOSMediaPlayerViewModel(
 			boundsSize = CGSizeMake(512.0, 512.0),
 			requestHandler = { _ ->
 				runCatching {
-					val url = song.coverArtId
+					val urlString = song.coverArtId
 						?.let { SessionManager.api.getCoverArtUrl(it, auth = true) }
-						?.let { NSURL.URLWithString(it) } ?: return@runCatching null
+						?.let { if (Settings.shared.highQualityCovers) it else "$it&size=512" }
+					
+					val url = urlString?.let { NSURL.URLWithString(it) } ?: return@runCatching null
 
 					val request = NSMutableURLRequest.requestWithURL(url).apply {
 						val customHeaders = Settings.shared.customHeadersMap()

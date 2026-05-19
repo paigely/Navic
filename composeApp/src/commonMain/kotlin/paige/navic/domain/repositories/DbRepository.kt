@@ -95,6 +95,8 @@ class DbRepository(
 			onProgress(progress, message)
 		}
 
+		progressCallback(0.0f, Res.string.info_syncing)
+
 		progressCallback(0.01f, Res.string.info_syncing_genres)
 		syncGenres().getOrThrow()
 
@@ -207,6 +209,7 @@ class DbRepository(
 					if (albumBatch.size >= dbChunkSize || songBatch.size >= 1500) {
 						albumDao.insertAlbums(albumBatch)
 						songDao.insertSongs(songBatch)
+
 						finalSongsSynced += songBatch.size
 						albumBatch.clear()
 						songBatch.clear()
@@ -288,10 +291,13 @@ class DbRepository(
 		val serverId = SessionManager.activeServerId.value ?: return@runDbOp
 		val remoteGenres = api.getGenres()
 		val entities = remoteGenres.map { it.toEntity() }
+		val remoteNames = entities.map { it.genreName }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			genreDao.updateAllGenres(serverId, chunk)
+			genreDao.insertGenres(serverId, chunk)
 		}
+
+		genreDao.deleteObsoleteGenres(serverId, remoteNames)
 
 		Logger.i("DbRepository", "- Genres Synced: ${entities.size} genres found")
 	}
@@ -303,10 +309,13 @@ class DbRepository(
 			indexGroup.artists
 		}
 		val entities = flatArtists.map { it.toEntity() }
+		val remoteIds = entities.map { it.artistId }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			artistDao.updateAllArtists(serverId, chunk)
+			artistDao.insertArtists(serverId, chunk)
 		}
+
+		artistDao.deleteObsoleteArtists(serverId, remoteIds)
 
 		Logger.i("DbRepository", "- Artists Synced: ${entities.size} artists found")
 	}
@@ -315,10 +324,13 @@ class DbRepository(
 		val serverId = SessionManager.activeServerId.value ?: return@runDbOp
 		val remoteRadios = api.getInternetRadioStations()
 		val entities = remoteRadios.map { it.toEntity() }
+		val remoteIds = entities.map { it.radioId }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			radioDao.updateAllRadios(serverId, chunk)
+			radioDao.insertRadios(serverId, chunk)
 		}
+
+		radioDao.deleteObsoleteRadios(serverId, remoteIds)
 
 		Logger.i("DbRepository", "- Radios Synced: ${entities.size} stations found")
 	}

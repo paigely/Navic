@@ -56,6 +56,7 @@
 	<string name="title_advanced">Advanced Transcoding</string>
 	<string name="title_edit_server">Edit Server</string>
 	<string name="title_saved_servers">Saved Servers</string>
+	<string name="title_images">Images</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
@@ -153,6 +154,8 @@
 	<string name="option_max_bitrate_wifi">Max Bitrate WiFi (kbps)</string>
 	<string name="option_max_bitrate_cellular">Max Bitrate Cellular (kbps)</string>
 	<string name="option_server_name_optional">Server Name (Optional)</string>
+	<string name="option_high_quality_covers">High quality album covers</string>
+	<string name="subtitle_high_quality_covers">Fetch original resolution images. Uses significantly more data</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>
@@ -298,6 +301,7 @@
 	<string name="action_queue">Queue</string>
 	<string name="action_reorder">Reorder</string>
 	<string name="action_remove_from_queue">Remove from queue</string>
+	<string name="action_clear_queue">Clear queue</string>
 	<string name="action_search_history">Recent Searches</string>
 	<string name="action_remove_from_history">Remove from history</string>
 	<string name="action_clear_image_cache">Clear image cache</string>

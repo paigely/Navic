@@ -2,11 +2,9 @@ package paige.navic.data.database
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -21,10 +19,10 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.managers.ConnectivityManager
+import paige.navic.managers.SyncScheduler
 import paige.navic.shared.Logger
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 data class SyncState(
@@ -38,12 +36,13 @@ class SyncManager(
 	private val syncDao: SyncActionDao,
 	private val albumDao: AlbumDao,
 	private val connectivityManager: ConnectivityManager,
+	private val scheduler: SyncScheduler,
 	private val scope: CoroutineScope
 ) {
 	private var syncJob: Job? = null
 	private val syncMutex = Mutex()
 
-	private val fullSyncThreshold = 1.hours
+	private val fullSyncThreshold = 24.hours
 
 	private val _syncState = MutableStateFlow(SyncState())
 	val syncState = _syncState.asStateFlow()
@@ -59,23 +58,14 @@ class SyncManager(
 	}
 
 	fun startPeriodicSync() {
-		Logger.i("SyncManager", "Starting periodic sync cicle.")
-		if (syncJob?.isActive == true) return
-
+		Logger.i("SyncManager", "Starting periodic sync cycle.")
+		scheduler.schedulePeriodicSync()
 		scope.launch {
 			val serverId = SessionManager.activeServerId.value ?: return@launch
 
-			if (albumDao.getAlbumCount(serverId) == 0
-				|| Settings.shared.getLastFullSyncTime(serverId) <= 0L) {
-				Logger.i("SyncManager", "Syncing now because we haven't synced before for this server")
-				runSyncCycle()
-			}
-		}
-
-		syncJob = scope.launch {
-			while (isActive) {
-				runSyncCycle()
-				delay(15.minutes)
+			if (albumDao.getAlbumCount(serverId) == 0 || Settings.shared.lastFullSyncTime(serverId) <= 0) {
+				Logger.i("SyncManager", "Syncing now because we haven't synced before")
+				runSyncCycleInternal()
 			}
 		}
 	}
@@ -83,8 +73,9 @@ class SyncManager(
 	fun triggerManualSync() {
 		scope.launch {
 			val serverId = SessionManager.activeServerId.value ?: return@launch
-			Settings.shared.setLastFullSyncTime(serverId, 0L)
-			runSyncCycle()
+
+			Settings.shared.lastFullSyncTime(serverId) = 0
+			runSyncCycleInternal()
 		}
 	}
 
@@ -114,7 +105,7 @@ class SyncManager(
 		}
 	}
 
-	private suspend fun runSyncCycle() {
+	suspend fun runSyncCycleInternal() {
 		val serverId = SessionManager.activeServerId.value ?: return
 
 		syncMutex.withLock {

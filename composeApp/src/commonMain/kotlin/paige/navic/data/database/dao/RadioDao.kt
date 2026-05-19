@@ -7,7 +7,6 @@ import androidx.room3.Query
 import androidx.room3.Transaction
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.RadioEntity
-import paige.navic.shared.Logger
 
 @Dao
 interface RadioDao {
@@ -32,15 +31,24 @@ interface RadioDao {
 	@Query("SELECT radioId FROM RadioEntity WHERE serverId = :serverId")
 	suspend fun getAllRadioIds(serverId: String): List<String>
 
+	@Query("DELETE FROM RadioEntity WHERE serverId = :serverId AND radioId IN (:ids)")
+	suspend fun deleteRadios(serverId: String, ids: List<String>)
+
+	@Transaction
+	suspend fun deleteObsoleteRadios(serverId: String, remoteIds: Set<String>) {
+		val localIds = getAllRadioIds(serverId)
+		val toDelete = localIds.filter { it !in remoteIds }
+		if (toDelete.isNotEmpty()) {
+			toDelete.chunked(900).forEach { chunk ->
+				deleteRadios(serverId, chunk)
+			}
+		}
+	}
+
 	@Transaction
 	suspend fun updateAllRadios(serverId: String, remoteRadios: List<RadioEntity>) {
 		val remoteIds = remoteRadios.map { it.radioId }.toSet()
-
-		getAllRadioIds(serverId).forEach { localId ->
-			if (localId !in remoteIds) {
-				deleteRadio(localId, serverId)
-			}
-		}
+		deleteObsoleteRadios(serverId, remoteIds)
 		insertRadios(remoteRadios)
 	}
 }
