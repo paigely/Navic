@@ -4,9 +4,11 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.flowOf
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.entities.SyncActionType
@@ -22,32 +24,41 @@ class ArtistRepository(
 	private val syncManager: SyncManager,
 	private val dbRepository: DbRepository
 ) {
+	@OptIn(ExperimentalCoroutinesApi::class)
 	fun getArtistsCount(listType: DomainArtistListType): Flow<Int> {
-		val serverId = SessionManager.activeServerId.value ?: ""
-		return when (listType) {
-			DomainArtistListType.AlphabeticalByName,
-			DomainArtistListType.Random -> artistDao.getArtistsCountFlow(serverId)
-			DomainArtistListType.Starred -> artistDao.getStarredArtistsCountFlow(serverId)
+		return SessionManager.activeServerId.filterNotNull().flatMapLatest { serverId ->
+			when (listType) {
+				DomainArtistListType.AlphabeticalByName,
+				DomainArtistListType.Random -> artistDao.getArtistsCountFlow(serverId)
+
+				DomainArtistListType.Starred -> artistDao.getStarredArtistsCountFlow(serverId)
+			}
 		}
 	}
+	@OptIn(ExperimentalCoroutinesApi::class)
 	fun getArtistsPaging(
 		listType: DomainArtistListType
 	): Flow<PagingData<DomainArtist>> {
-		val serverId = SessionManager.activeServerId.value ?: return flowOf(PagingData.empty())
-		return Pager(
-			config = PagingConfig(
-				pageSize = 50,
-				enablePlaceholders = false
-			),
-			pagingSourceFactory = {
-				when (listType) {
-					DomainArtistListType.AlphabeticalByName -> artistDao.getArtistsAlphabeticalByNamePaging(serverId)
-					DomainArtistListType.Random -> artistDao.getArtistsRandomPaging(serverId)
-					DomainArtistListType.Starred -> artistDao.getArtistsStarredPaging(serverId)
+		return SessionManager.activeServerId.filterNotNull().flatMapLatest { serverId ->
+			Pager(
+				config = PagingConfig(
+					pageSize = 30,
+					enablePlaceholders = false,
+					prefetchDistance = 15
+				),
+				pagingSourceFactory = {
+					when (listType) {
+						DomainArtistListType.AlphabeticalByName -> artistDao.getArtistsAlphabeticalByNamePaging(
+							serverId
+						)
+
+						DomainArtistListType.Random -> artistDao.getArtistsRandomPaging(serverId)
+						DomainArtistListType.Starred -> artistDao.getArtistsStarredPaging(serverId)
+					}
 				}
+			).flow.map { pagingData ->
+				pagingData.map { it.toDomainModel() }
 			}
-		).flow.map { pagingData ->
-			pagingData.map { it.toDomainModel() }
 		}
 	}
 
