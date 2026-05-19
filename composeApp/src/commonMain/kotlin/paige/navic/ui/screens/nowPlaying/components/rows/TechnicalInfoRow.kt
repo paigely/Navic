@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.models.settings.Settings
@@ -57,7 +58,7 @@ fun NowPlayingTechnicalInfoRow() {
 					if (it >= 1000) "${it / 1000.0} kHz" else "$it Hz"
 				} ?: "-- kHz"
 
-				val isCellular = connectivityManager.isCellular.value
+				val isCellular by connectivityManager.isCellular.collectAsStateWithLifecycle()
 				val requestedBitrate = if (Settings.shared.isAdvancedTranscodingActive) {
 					if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
 				} else {
