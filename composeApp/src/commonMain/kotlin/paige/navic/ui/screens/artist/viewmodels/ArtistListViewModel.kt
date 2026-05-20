@@ -55,7 +55,7 @@ class ArtistListViewModel(
 	fun selectArtist(artist: DomainArtist) {
 		viewModelScope.launch {
 			_selectedArtist.value = artist
-			_starred.value = repository.isArtistStarred(artist.id)
+			_starred.value = repository.isArtistStarred(artist)
 		}
 	}
 
@@ -75,9 +75,5 @@ class ArtistListViewModel(
 				_starred.value = starred
 			}
 		}
-	}
-
-	fun setListType(listType: DomainArtistListType) {
-		_listType.value = listType
 	}
 }

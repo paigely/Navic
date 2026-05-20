@@ -1,12 +1,12 @@
 package paige.navic.data.database.entities
 
 import androidx.room3.Entity
-import androidx.room3.PrimaryKey
 import paige.navic.domain.repositories.LyricsProvider
 
-@Entity
+@Entity(primaryKeys = ["serverId", "songId"])
 data class LyricEntity(
-	@PrimaryKey val songId: String,
+	val serverId: String,
+	val songId: String,
 	val rawContent: String,
 	val provider: LyricsProvider
 )

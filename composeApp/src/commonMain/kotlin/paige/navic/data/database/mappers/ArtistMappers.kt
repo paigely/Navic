@@ -1,11 +1,13 @@
 package paige.navic.data.database.mappers
 
 import paige.navic.data.database.entities.ArtistEntity
+import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainArtist
 import dev.zt64.subsonic.api.model.Artist as ApiArtist
 
-fun ApiArtist.toEntity() = ArtistEntity(
+fun ApiArtist.toEntity(serverId: String = SessionManager.activeServerId.value ?: "") = ArtistEntity(
 	artistId = this.id,
+	serverId = serverId,
 	name = this.name,
 	albumCount = this.albumCount,
 	coverArtId = this.coverArtId,
@@ -36,8 +38,9 @@ fun ArtistEntity.toDomainModel() = DomainArtist(
 	similarArtistIds = this.similarArtistIds
 )
 
-fun DomainArtist.toEntity() = ArtistEntity(
+fun DomainArtist.toEntity(serverId: String = SessionManager.activeServerId.value ?: "") = ArtistEntity(
 	artistId = this.id,
+	serverId = serverId,
 	name = this.name,
 	albumCount = this.albumCount,
 	coverArtId = this.coverArtId,

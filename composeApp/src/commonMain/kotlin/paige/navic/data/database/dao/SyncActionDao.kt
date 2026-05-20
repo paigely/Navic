@@ -12,12 +12,12 @@ interface SyncActionDao {
 	suspend fun enqueue(action: SyncActionEntity)
 
 	@Transaction
-	@Query("SELECT * FROM SyncActionEntity ORDER BY id ASC")
-	suspend fun getPendingActions(): List<SyncActionEntity>
+	@Query("SELECT * FROM SyncActionEntity WHERE serverId = :serverId ORDER BY id ASC")
+	suspend fun getPendingActions(serverId: String): List<SyncActionEntity>
 
-	@Query("DELETE FROM SyncActionEntity WHERE id = :id")
-	suspend fun removeAction(id: Int)
+	@Query("DELETE FROM SyncActionEntity WHERE id = :id AND serverId = :serverId")
+	suspend fun removeAction(id: Int, serverId: String)
 
-	@Query("DELETE FROM SyncActionEntity")
-	suspend fun clearAllActions()
+	@Query("DELETE FROM SyncActionEntity WHERE serverId = :serverId")
+	suspend fun clearActionsForServer(serverId: String)
 }

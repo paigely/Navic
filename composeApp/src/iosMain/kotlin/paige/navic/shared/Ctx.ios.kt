@@ -32,5 +32,3 @@ actual fun rememberCtx(): Ctx {
 		}
 	}
 }
-
-actual fun <T> synchronized(lock: Any, block: () -> T): T = block()

@@ -12,6 +12,7 @@ enum class SyncActionType {
 @Entity
 data class SyncActionEntity(
 	@PrimaryKey(autoGenerate = true) val id: Int = 0,
+	val serverId: String,
 	val actionType: SyncActionType,
 	val itemId: String
 )

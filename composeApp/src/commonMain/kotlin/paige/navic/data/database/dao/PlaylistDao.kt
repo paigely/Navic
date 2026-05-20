@@ -23,31 +23,31 @@ interface PlaylistDao {
 	suspend fun insertPlaylistSongCrossRefs(crossRefs: List<PlaylistSongCrossRef>)
 
 	@Transaction
-	@Query("SELECT * FROM PlaylistEntity ORDER BY name ASC")
-	suspend fun getAllPlaylistsByName(): List<PlaylistWithSongs>
+	@Query("SELECT * FROM PlaylistEntity WHERE serverId = :serverId ORDER BY name ASC")
+	suspend fun getAllPlaylistsByName(serverId: String): List<PlaylistWithSongs>
 
 	@Transaction
-	@Query("SELECT * FROM PlaylistEntity ORDER BY createdAt DESC")
-	suspend fun getAllPlaylistsByDateAdded(): List<PlaylistWithSongs>
+	@Query("SELECT * FROM PlaylistEntity WHERE serverId = :serverId ORDER BY createdAt DESC")
+	suspend fun getAllPlaylistsByDateAdded(serverId: String): List<PlaylistWithSongs>
 
 	@Transaction
-	@Query("SELECT * FROM PlaylistEntity ORDER BY duration DESC")
-	suspend fun getAllPlaylistsByDuration(): List<PlaylistWithSongs>
+	@Query("SELECT * FROM PlaylistEntity WHERE serverId = :serverId ORDER BY duration DESC")
+	suspend fun getAllPlaylistsByDuration(serverId: String): List<PlaylistWithSongs>
 
 	@Transaction
-	@Query("SELECT * FROM PlaylistEntity ORDER BY RANDOM()")
-	suspend fun getAllPlaylistsRandom(): List<PlaylistWithSongs>
+	@Query("SELECT * FROM PlaylistEntity WHERE serverId = :serverId ORDER BY RANDOM()")
+	suspend fun getAllPlaylistsRandom(serverId: String): List<PlaylistWithSongs>
 
 	@Transaction
-	@Query("SELECT * FROM PlaylistEntity ORDER BY name ASC")
-	fun getAllPlaylistsFlow(): Flow<List<PlaylistWithSongs>>
+	@Query("SELECT * FROM PlaylistEntity WHERE serverId = :serverId ORDER BY name ASC")
+	fun getAllPlaylistsFlow(serverId: String): Flow<List<PlaylistWithSongs>>
 
 	@Transaction
-	@Query("SELECT * FROM PlaylistEntity WHERE playlistId = :playlistId LIMIT 1")
-	suspend fun getPlaylistById(playlistId: String): PlaylistWithSongs?
+	@Query("SELECT * FROM PlaylistEntity WHERE playlistId = :playlistId AND serverId = :serverId LIMIT 1")
+	suspend fun getPlaylistById(playlistId: String, serverId: String): PlaylistWithSongs?
 
-	@Query("DELETE FROM PlaylistEntity WHERE playlistId = :playlistId")
-	suspend fun deletePlaylist(playlistId: String)
+	@Query("DELETE FROM PlaylistEntity WHERE playlistId = :playlistId AND serverId = :serverId")
+	suspend fun deletePlaylist(playlistId: String, serverId: String)
 
 	@Query("DELETE FROM PlaylistSongCrossRef WHERE playlistId = :playlistId")
 	suspend fun deletePlaylistSongCrossRefs(playlistId: String)
@@ -58,40 +58,41 @@ interface PlaylistDao {
 		insertPlaylistSongCrossRefs(crossRefs)
 	}
 
-	@Query("SELECT COUNT(*) FROM PlaylistEntity")
-	suspend fun getPlaylistCount(): Int
+	@Query("SELECT COUNT(*) FROM PlaylistEntity WHERE serverId = :serverId")
+	suspend fun getPlaylistCount(serverId: String): Int
 
-	@Query("DELETE FROM PlaylistEntity")
-	suspend fun clearAllPlaylists()
+	@Query("DELETE FROM PlaylistEntity WHERE serverId = :serverId")
+	suspend fun clearAllPlaylistsForServer(serverId: String)
 
-	@Query("SELECT playlistId FROM PlaylistEntity")
-	suspend fun getAllPlaylistIds(): List<String>
+	@Query("SELECT playlistId FROM PlaylistEntity WHERE serverId = :serverId")
+	suspend fun getAllPlaylistIds(serverId: String): List<String>
 
 	@Transaction
 	@Query("""
 		SELECT PlaylistEntity.* FROM PlaylistEntity 
 		JOIN PlaylistFts ON PlaylistEntity.rowid = PlaylistFts.rowid 
-		WHERE PlaylistFts MATCH :query
+		WHERE serverId = :serverId AND PlaylistFts MATCH :query
 	""")
-	suspend fun searchPlaylistsList(query: String): List<PlaylistWithSongs>
+	suspend fun searchPlaylistsList(query: String, serverId: String): List<PlaylistWithSongs>
 
 	@Transaction
-	suspend fun updateAllPlaylists(remotePlaylists: List<PlaylistEntity>) {
+	suspend fun updateAllPlaylists(serverId: String, remotePlaylists: List<PlaylistEntity>) {
 		val remoteIds = remotePlaylists.map { it.playlistId }.toSet()
-		getAllPlaylistIds().forEach { localId ->
+		getAllPlaylistIds(serverId).forEach { localId ->
 			if (localId !in remoteIds) {
 				Logger.w("PlaylistDao", "playlist $localId no longer exists remotely")
-				deletePlaylist(localId)
+				deletePlaylist(localId, serverId)
 			}
 		}
 		insertPlaylists(remotePlaylists)
 	}
+
 	@Transaction
-	suspend fun deleteObsoletePlaylists(remoteIds: Set<String>) {
-		getAllPlaylistIds().forEach { localId ->
+	suspend fun deleteObsoletePlaylists(serverId: String, remoteIds: Set<String>) {
+		getAllPlaylistIds(serverId).forEach { localId ->
 			if (localId !in remoteIds) {
 				Logger.w("PlaylistDao", "playlist $localId no longer exists remotely")
-				deletePlaylist(localId)
+				deletePlaylist(localId, serverId)
 			}
 		}
 	}

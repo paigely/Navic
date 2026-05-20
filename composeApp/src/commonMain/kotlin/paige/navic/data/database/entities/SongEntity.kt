@@ -2,7 +2,6 @@ package paige.navic.data.database.entities
 
 import androidx.room3.Entity
 import androidx.room3.Index
-import androidx.room3.PrimaryKey
 import kotlinx.serialization.Serializable
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainExplicitStatus
@@ -16,10 +15,12 @@ import kotlin.time.Instant
 		Index(value = ["belongsToAlbumId"]),
 		Index(value = ["artistId"]),
 		Index(value = ["title"])
-	]
+	],
+	primaryKeys = ["serverId", "songId"]
 )
 data class SongEntity(
-	@PrimaryKey val songId: String,
+	val serverId: String,
+	val songId: String,
 	val title: String,
 	val artistName: String,
 	val artistId: String,

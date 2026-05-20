@@ -1,43 +1,51 @@
 package paige.navic.domain.repositories
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
-import okio.Path.Companion.toPath
-import paige.navic.shared.synchronized
+import kotlinx.serialization.json.Json
+import paige.navic.data.database.dao.PlayerStateDao
+import paige.navic.data.database.entities.PlayerStateEntity
+import paige.navic.data.database.entities.QueueItemEntity
+import paige.navic.domain.models.DomainSong
+import paige.navic.shared.PlayerUiState
 
 class PlayerStateRepository(
-	private val dataStore: DataStore<Preferences>
+	private val playerStateDao: PlayerStateDao,
+	private val json: Json
 ) {
-	private val stateKey = stringPreferencesKey("player_ui_state_key")
+	suspend fun loadState(serverId: String): PlayerUiState? {
+		val stateEntity = playerStateDao.getPlayerState(serverId) ?: return null
+		val queueEntities = playerStateDao.getQueue(serverId)
 
-	suspend fun saveState(stateJson: String) {
-		dataStore.edit { prefs ->
-			prefs[stateKey] = stateJson
-		}
+		return PlayerUiState(
+			queue = queueEntities.map { json.decodeFromString<DomainSong>(it.songJson) },
+			currentSong = stateEntity.currentSongId?.let { null },
+			currentIndex = stateEntity.currentIndex,
+			isShuffleEnabled = stateEntity.isShuffleEnabled,
+			repeatMode = stateEntity.repeatMode,
+			progress = stateEntity.progress,
+			playbackSpeed = stateEntity.playbackSpeed
+		)
 	}
 
-	suspend fun loadState(): String? {
-		return dataStore.data.map { prefs ->
-			prefs[stateKey]
-		}.firstOrNull()
-	}
+	suspend fun saveState(serverId: String, uiState: PlayerUiState) {
+		val stateEntity = PlayerStateEntity(
+			serverId = serverId,
+			currentSongId = uiState.currentSong?.id,
+			currentCollectionId = uiState.currentCollection?.id,
+			currentIndex = uiState.currentIndex,
+			isShuffleEnabled = uiState.isShuffleEnabled,
+			repeatMode = uiState.repeatMode,
+			progress = uiState.progress,
+			playbackSpeed = uiState.playbackSpeed
+		)
 
-	companion object {
-		const val DATASTORE_FILE_NAME = "playback_session.preferences_pb"
-
-		private var instance: DataStore<Preferences>? = null
-
-		fun getInstance(producePath: () -> String): DataStore<Preferences> {
-			return instance ?: synchronized(this) {
-				instance ?: PreferenceDataStoreFactory.createWithPath(
-					produceFile = { producePath().toPath() }
-				).also { instance = it }
-			}
+		val queueEntities = uiState.queue.mapIndexed { index, song ->
+			QueueItemEntity(
+				serverId = serverId,
+				position = index,
+				songJson = json.encodeToString(song)
+			)
 		}
+
+		playerStateDao.saveFullState(serverId, stateEntity, queueEntities)
 	}
 }

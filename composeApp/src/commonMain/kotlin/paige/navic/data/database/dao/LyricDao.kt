@@ -10,12 +10,12 @@ import paige.navic.data.database.entities.LyricEntity
 @Dao
 interface LyricDao {
 	@Transaction
-	@Query("SELECT * FROM LyricEntity WHERE songId = :songId")
-	suspend fun getLyrics(songId: String): LyricEntity?
+	@Query("SELECT * FROM LyricEntity WHERE songId = :songId AND serverId = :serverId")
+	suspend fun getLyrics(songId: String, serverId: String): LyricEntity?
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertLyrics(lyrics: LyricEntity)
 
-	@Query("DELETE FROM LyricEntity")
-	suspend fun clearAllLyrics()
+	@Query("DELETE FROM LyricEntity WHERE serverId = :serverId")
+	suspend fun clearLyricsForServer(serverId: String)
 }

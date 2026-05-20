@@ -4,49 +4,43 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import paige.navic.data.database.SyncManager
-import paige.navic.data.database.dao.AlbumDao
-import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
+import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
-import paige.navic.domain.models.DomainSongListType
-import paige.navic.utils.UiState
-import paige.navic.utils.sortedByListType
 import kotlin.time.Clock
 
 class SongRepository(
 	private val songDao: SongDao,
-	private val albumDao: AlbumDao,
-	private val downloadDao: DownloadDao,
 	private val dbRepository: DbRepository,
 	private val syncManager: SyncManager
 ) {
+	@OptIn(ExperimentalCoroutinesApi::class)
 	fun getSongsPaging(artistId: String? = null): Flow<PagingData<DomainSong>> {
-		return Pager(
-			config = PagingConfig(
-				pageSize = 50,
-				enablePlaceholders = false
-			),
-			pagingSourceFactory = {
-				if (artistId != null) {
-					songDao.getSongsByArtistPaging(artistId)
-				} else {
-					songDao.getAllSongsPaging()
+		return SessionManager.activeServerId.filterNotNull().flatMapLatest { serverId ->
+			Pager(
+				config = PagingConfig(
+					pageSize = 50,
+					enablePlaceholders = false
+				),
+				pagingSourceFactory = {
+					if (artistId != null) {
+						songDao.getSongsByArtistPaging(artistId, serverId)
+					} else {
+						songDao.getAllSongsPaging(serverId)
+					}
 				}
+			).flow.map { pagingData ->
+				pagingData.map { it.toDomainModel() }
 			}
-		).flow.map { pagingData ->
-			pagingData.map { it.toDomainModel() }
 		}
 	}
 
@@ -55,66 +49,24 @@ class SongRepository(
 	}
 
 	suspend fun getAllSongs(): List<DomainSong> {
-		return songDao.getAllSongs().map { it.toDomainModel() }
+		val serverId = SessionManager.activeServerId.value ?: return emptyList()
+		return songDao.getAllSongs(serverId).map { it.toDomainModel() }
 	}
 
-	private suspend fun getLocalData(
-		listType: DomainSongListType,
-		reversed: Boolean,
-		artistId: String? = null
-	): ImmutableList<DomainSong> {
-		val songs = songDao
-			.getAllSongs()
-			.map { it.toDomainModel() }
-		val filtered = if (artistId != null) {
-			songs.filter { it.artistId == artistId }
-		} else {
-			songs
-		}.toImmutableList().sortedByListType(
-			listType,
-			downloads = downloadDao.getAllDownloadsList(),
-			albums = albumDao.getAllAlbumsList().map { it.toDomainModel() }
-		)
-
-		return if (reversed) {
-			filtered.reversed().toImmutableList()
-		} else {
-			filtered
-		}
+	suspend fun isSongStarred(song: DomainSong): Boolean {
+		val serverId = SessionManager.activeServerId.value ?: return false
+		return songDao.isSongStarred(song.id, serverId)
 	}
 
-	private suspend fun refreshLocalData(
-		listType: DomainSongListType,
-		reversed: Boolean,
-		artistId: String? = null
-	): ImmutableList<DomainSong> {
-		dbRepository.syncLibrarySongs().getOrThrow()
-		return getLocalData(listType, reversed, artistId)
+	suspend fun getSongRating(song: DomainSong): Int {
+		val serverId = SessionManager.activeServerId.value ?: return 0
+		return songDao.getSongRating(song.id, serverId) ?: 0
 	}
 
-	fun getSongsFlow(
-		fullRefresh: Boolean,
-		listType: DomainSongListType,
-		reversed: Boolean,
-		artistId: String? = null
-	): Flow<UiState<ImmutableList<DomainSong>>> = flow {
-		val localData = getLocalData(listType, reversed, artistId)
-		if (fullRefresh) {
-			emit(UiState.Loading(data = localData))
-			try {
-				emit(UiState.Success(data = refreshLocalData(listType, reversed, artistId)))
-			} catch (error: Exception) {
-				emit(UiState.Error(error = error, data = localData))
-			}
-		} else {
-			emit(UiState.Success(data = localData))
-		}
-	}.flowOn(Dispatchers.IO)
-
-	suspend fun isSongStarred(song: DomainSong) = songDao.isSongStarred(song.id)
-	suspend fun getSongRating(song: DomainSong) = songDao.getSongRating(song.id) ?: 0
 	suspend fun starSong(song: DomainSong) {
+		val serverId = SessionManager.activeServerId.value ?: return
 		val starredEntity = song.toEntity().copy(
+			serverId = serverId,
 			starredAt = Clock.System.now()
 		)
 		songDao.insertSong(starredEntity)
@@ -122,7 +74,9 @@ class SongRepository(
 	}
 
 	suspend fun unstarSong(song: DomainSong) {
+		val serverId = SessionManager.activeServerId.value ?: return
 		val unstarredEntity = song.toEntity().copy(
+			serverId = serverId,
 			starredAt = null
 		)
 		songDao.insertSong(unstarredEntity)
@@ -130,10 +84,13 @@ class SongRepository(
 	}
 
 	suspend fun rateSong(song: DomainSong, rating: Int) {
+		val serverId = SessionManager.activeServerId.value ?: return
 		val ratedEntity = song.toEntity().copy(
+			serverId = serverId,
 			userRating = rating
 		)
 		songDao.insertSong(ratedEntity)
+
 		when (rating) {
 			0 -> syncManager.enqueueAction(SyncActionType.STAR_0, song.id)
 			1 -> syncManager.enqueueAction(SyncActionType.STAR_1, song.id)

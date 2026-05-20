@@ -25,8 +25,8 @@ import paige.navic.data.models.settings.enums.ToolbarPosition
 import com.russhwolf.settings.Settings as KmpSettings
 
 class Settings(
-	settings: KmpSettings
-) : BasePreferenceManager(settings) {
+	private val kmpSettings: KmpSettings
+) : BasePreferenceManager(kmpSettings) {
 	var font by preference(FontOption.GoogleSans)
 	var fontPath by preference("")
 	var animationStyle by preference(AnimationStyle.Expressive)
@@ -40,7 +40,7 @@ class Settings(
 	var lyricsAutoscroll by preference(true)
 	var lyricsBeatByBeat by preference(true)
 	var lyricsKeepAlive by preference(true)
-	var lyricsBlur by preference(false)
+	var lyricsBlur by preference(true)
 	var lyricsBrightInactive by preference(false)
 	var enableScrobbling by preference(true)
 	var scrobblePercentage by preference(.5f)
@@ -99,6 +99,14 @@ class Settings(
 	}
 
 	var offlineMode by preference(OfflineMode.Auto)
+
+	fun getLastFullSyncTime(serverId: String): Long {
+		return kmpSettings.getLong("last_full_sync_time_$serverId", 0L)
+	}
+
+	fun setLastFullSyncTime(serverId: String, time: Long) {
+		kmpSettings.putLong("last_full_sync_time_$serverId", time)
+	}
 
 	companion object {
 		val shared = Settings(KmpSettings())

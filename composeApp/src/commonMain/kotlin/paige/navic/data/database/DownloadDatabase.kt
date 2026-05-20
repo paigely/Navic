@@ -8,7 +8,7 @@ import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.entities.DownloadEntity
 
 @Database(
-	version = 1,
+	version = 2,
 	entities = [DownloadEntity::class]
 )
 @ConstructedBy(DownloadDatabaseConstructor::class)
@@ -16,7 +16,6 @@ abstract class DownloadDatabase : RoomDatabase() {
 	abstract fun downloadDao(): DownloadDao
 }
 
-@Suppress("KotlinNoActualForExpect")
 expect object DownloadDatabaseConstructor : RoomDatabaseConstructor<DownloadDatabase> {
 	override fun initialize(): DownloadDatabase
 }

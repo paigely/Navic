@@ -46,7 +46,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_see_all
-import navic.composeapp.generated.resources.count_albums
+import navic.composeapp.generated.resources.count_songs
 import navic.composeapp.generated.resources.info_bulk_download_warning
 import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.title_albums
@@ -118,7 +118,6 @@ fun ArtistDetailScreen(
 	val backStack = LocalNavStack.current
 	val scope = rememberCoroutineScope()
 
-	// Create and remember the state for the horizontal grid
 	val gridState = rememberLazyGridState()
 
 	Scaffold(
@@ -229,13 +228,24 @@ fun ArtistDetailScreen(
 							}
 
 							item {
+								val rowCount = remember(artistData.topSongs.size) {
+									artistData.topSongs.size.coerceIn(1, 3)
+								}
+								val gridHeight = remember(rowCount) {
+									when (rowCount) {
+										1 -> 82.dp
+										2 -> 164.dp
+										else -> 246.dp
+									}
+								}
+
 								LazyHorizontalGrid(
-									rows = GridCells.Fixed(3),
+									rows = GridCells.Fixed(rowCount),
 									state = gridState,
 									flingBehavior = rememberSnapFlingBehavior(lazyGridState = gridState),
 									modifier = Modifier
 										.fillMaxWidth()
-										.height(250.dp)
+										.height(gridHeight)
 								) {
 									this.itemsIndexed(artistData.topSongs, key = { _, song -> song.id }) { index, song ->
 										SongRow(
@@ -290,7 +300,7 @@ fun ArtistDetailScreen(
 									coverArtId = album.coverArtId,
 									title = album.name,
 									subtitle = pluralStringResource(
-										Res.plurals.count_albums,
+										Res.plurals.count_songs,
 										album.songCount,
 										album.songCount
 									),

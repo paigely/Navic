@@ -1,6 +1,7 @@
 package paige.navic.data.database.mappers
 
 import paige.navic.data.database.entities.SongEntity
+import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainReplayGain
@@ -8,8 +9,9 @@ import paige.navic.domain.models.DomainSong
 import kotlin.time.Duration.Companion.seconds
 import dev.zt64.subsonic.api.model.Song as ApiSong
 
-fun ApiSong.toEntity() = SongEntity(
+fun ApiSong.toEntity(serverId: String = SessionManager.activeServerId.value ?: "") = SongEntity(
 	songId = this.id,
+	serverId = serverId,
 	title = this.title,
 	artistName = this.artistName,
 	// TODO: figure out why this can be null and how to handle it
@@ -103,8 +105,9 @@ fun SongEntity.toDomainModel() = DomainSong(
 	explicitStatus = this.explicitStatus
 )
 
-fun DomainSong.toEntity() = SongEntity(
+fun DomainSong.toEntity(serverId: String = SessionManager.activeServerId.value ?: "") = SongEntity(
 	songId = this.id,
+	serverId = serverId,
 	title = this.title,
 	artistName = this.artistName,
 	artistId = this.artistId,

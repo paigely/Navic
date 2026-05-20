@@ -2,11 +2,13 @@ package paige.navic.data.database.mappers
 
 import paige.navic.data.database.entities.GenreEntity
 import paige.navic.data.database.relations.GenreWithAlbums
+import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainGenre
 import dev.zt64.subsonic.api.model.Genre as ApiGenre
 
-fun ApiGenre.toEntity() = GenreEntity(
+fun ApiGenre.toEntity(serverId: String = SessionManager.activeServerId.value ?: "") = GenreEntity(
 	genreName = name,
+	serverId = serverId,
 	albumCount = albumCount,
 	songCount = songCount
 )
@@ -18,8 +20,9 @@ fun GenreWithAlbums.toDomainModel() = DomainGenre(
 	albums = albums.map { it.toDomainModel() }
 )
 
-fun DomainGenre.toEntity() = GenreEntity(
+fun DomainGenre.toEntity(serverId: String = SessionManager.activeServerId.value ?: "") = GenreEntity(
 	genreName = name,
+	serverId = serverId,
 	albumCount = albumCount,
 	songCount = songCount
 )

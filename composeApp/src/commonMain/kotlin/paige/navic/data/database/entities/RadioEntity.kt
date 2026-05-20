@@ -1,11 +1,11 @@
 package paige.navic.data.database.entities
 
 import androidx.room3.Entity
-import androidx.room3.PrimaryKey
 
-@Entity
+@Entity(primaryKeys = ["serverId", "radioId"])
 data class RadioEntity (
-	@PrimaryKey val radioId: String,
+	val serverId: String,
+	val radioId: String,
 	val name: String,
 	val streamUrl: String,
 	val homepageUrl: String? = null

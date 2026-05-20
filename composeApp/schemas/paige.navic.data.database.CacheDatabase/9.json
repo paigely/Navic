@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 10,
-    "identityHash": "fbbb49cb83572bed9f4378a3eb7c52f8",
+    "version": 9,
+    "identityHash": "5f65466cc3f7677ed10e5fef941335eb",
     "entities": [
       {
         "tableName": "AlbumEntity",
@@ -115,84 +115,7 @@
             "serverId",
             "albumId"
           ]
-        },
-        "indices": [
-          {
-            "name": "index_AlbumEntity_artistId",
-            "unique": false,
-            "columnNames": [
-              "artistId"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_AlbumEntity_artistId` ON `${TABLE_NAME}` (`artistId`)"
-          },
-          {
-            "name": "index_AlbumEntity_name",
-            "unique": false,
-            "columnNames": [
-              "name"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_AlbumEntity_name` ON `${TABLE_NAME}` (`name`)"
-          },
-          {
-            "name": "index_AlbumEntity_createdAt",
-            "unique": false,
-            "columnNames": [
-              "createdAt"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_AlbumEntity_createdAt` ON `${TABLE_NAME}` (`createdAt`)"
-          },
-          {
-            "name": "index_AlbumEntity_genre",
-            "unique": false,
-            "columnNames": [
-              "genre"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_AlbumEntity_genre` ON `${TABLE_NAME}` (`genre`)"
-          }
-        ]
-      },
-      {
-        "tableName": "AlbumFts",
-        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`name` TEXT NOT NULL, `artistName` TEXT NOT NULL, content=`AlbumEntity`)",
-        "fields": [
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "artistName",
-            "columnName": "artistName",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": []
-        },
-        "ftsVersion": "FTS4",
-        "ftsOptions": {
-          "tokenizer": "simple",
-          "tokenizerArgs": [],
-          "contentTable": "AlbumEntity",
-          "languageIdColumnName": "",
-          "matchInfo": "FTS4",
-          "notIndexedColumns": [],
-          "prefixSizes": [],
-          "preferredOrder": "ASC"
-        },
-        "contentSyncTriggers": [
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_AlbumFts_BEFORE_UPDATE BEFORE UPDATE ON `AlbumEntity` BEGIN DELETE FROM `AlbumFts` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_AlbumFts_BEFORE_DELETE BEFORE DELETE ON `AlbumEntity` BEGIN DELETE FROM `AlbumFts` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_AlbumFts_AFTER_UPDATE AFTER UPDATE ON `AlbumEntity` BEGIN INSERT INTO `AlbumFts`(`docid`, `name`, `artistName`) VALUES (NEW.`rowid`, NEW.`name`, NEW.`artistName`); END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_AlbumFts_AFTER_INSERT AFTER INSERT ON `AlbumEntity` BEGIN INSERT INTO `AlbumFts`(`docid`, `name`, `artistName`) VALUES (NEW.`rowid`, NEW.`name`, NEW.`artistName`); END"
-        ]
+        }
       },
       {
         "tableName": "GenreEntity",
@@ -322,39 +245,6 @@
             "playlistId"
           ]
         }
-      },
-      {
-        "tableName": "PlaylistFts",
-        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`name` TEXT NOT NULL, content=`PlaylistEntity`)",
-        "fields": [
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": []
-        },
-        "ftsVersion": "FTS4",
-        "ftsOptions": {
-          "tokenizer": "simple",
-          "tokenizerArgs": [],
-          "contentTable": "PlaylistEntity",
-          "languageIdColumnName": "",
-          "matchInfo": "FTS4",
-          "notIndexedColumns": [],
-          "prefixSizes": [],
-          "preferredOrder": "ASC"
-        },
-        "contentSyncTriggers": [
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_PlaylistFts_BEFORE_UPDATE BEFORE UPDATE ON `PlaylistEntity` BEGIN DELETE FROM `PlaylistFts` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_PlaylistFts_BEFORE_DELETE BEFORE DELETE ON `PlaylistEntity` BEGIN DELETE FROM `PlaylistFts` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_PlaylistFts_AFTER_UPDATE AFTER UPDATE ON `PlaylistEntity` BEGIN INSERT INTO `PlaylistFts`(`docid`, `name`) VALUES (NEW.`rowid`, NEW.`name`); END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_PlaylistFts_AFTER_INSERT AFTER INSERT ON `PlaylistEntity` BEGIN INSERT INTO `PlaylistFts`(`docid`, `name`) VALUES (NEW.`rowid`, NEW.`name`); END"
-        ]
       },
       {
         "tableName": "PlaylistSongCrossRef",
@@ -636,80 +526,7 @@
             "serverId",
             "songId"
           ]
-        },
-        "indices": [
-          {
-            "name": "index_SongEntity_belongsToAlbumId",
-            "unique": false,
-            "columnNames": [
-              "belongsToAlbumId"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_SongEntity_belongsToAlbumId` ON `${TABLE_NAME}` (`belongsToAlbumId`)"
-          },
-          {
-            "name": "index_SongEntity_artistId",
-            "unique": false,
-            "columnNames": [
-              "artistId"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_SongEntity_artistId` ON `${TABLE_NAME}` (`artistId`)"
-          },
-          {
-            "name": "index_SongEntity_title",
-            "unique": false,
-            "columnNames": [
-              "title"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_SongEntity_title` ON `${TABLE_NAME}` (`title`)"
-          }
-        ]
-      },
-      {
-        "tableName": "SongFts",
-        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`title` TEXT NOT NULL, `artistName` TEXT NOT NULL, `albumTitle` TEXT, content=`SongEntity`)",
-        "fields": [
-          {
-            "fieldPath": "title",
-            "columnName": "title",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "artistName",
-            "columnName": "artistName",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "albumTitle",
-            "columnName": "albumTitle",
-            "affinity": "TEXT"
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": []
-        },
-        "ftsVersion": "FTS4",
-        "ftsOptions": {
-          "tokenizer": "simple",
-          "tokenizerArgs": [],
-          "contentTable": "SongEntity",
-          "languageIdColumnName": "",
-          "matchInfo": "FTS4",
-          "notIndexedColumns": [],
-          "prefixSizes": [],
-          "preferredOrder": "ASC"
-        },
-        "contentSyncTriggers": [
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_SongFts_BEFORE_UPDATE BEFORE UPDATE ON `SongEntity` BEGIN DELETE FROM `SongFts` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_SongFts_BEFORE_DELETE BEFORE DELETE ON `SongEntity` BEGIN DELETE FROM `SongFts` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_SongFts_AFTER_UPDATE AFTER UPDATE ON `SongEntity` BEGIN INSERT INTO `SongFts`(`docid`, `title`, `artistName`, `albumTitle`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`artistName`, NEW.`albumTitle`); END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_SongFts_AFTER_INSERT AFTER INSERT ON `SongEntity` BEGIN INSERT INTO `SongFts`(`docid`, `title`, `artistName`, `albumTitle`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`artistName`, NEW.`albumTitle`); END"
-        ]
+        }
       },
       {
         "tableName": "ArtistEntity",
@@ -798,51 +615,7 @@
             "serverId",
             "artistId"
           ]
-        },
-        "indices": [
-          {
-            "name": "index_ArtistEntity_name",
-            "unique": false,
-            "columnNames": [
-              "name"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_ArtistEntity_name` ON `${TABLE_NAME}` (`name`)"
-          }
-        ]
-      },
-      {
-        "tableName": "ArtistFts",
-        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`name` TEXT NOT NULL, content=`ArtistEntity`)",
-        "fields": [
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": []
-        },
-        "ftsVersion": "FTS4",
-        "ftsOptions": {
-          "tokenizer": "simple",
-          "tokenizerArgs": [],
-          "contentTable": "ArtistEntity",
-          "languageIdColumnName": "",
-          "matchInfo": "FTS4",
-          "notIndexedColumns": [],
-          "prefixSizes": [],
-          "preferredOrder": "ASC"
-        },
-        "contentSyncTriggers": [
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_ArtistFts_BEFORE_UPDATE BEFORE UPDATE ON `ArtistEntity` BEGIN DELETE FROM `ArtistFts` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_ArtistFts_BEFORE_DELETE BEFORE DELETE ON `ArtistEntity` BEGIN DELETE FROM `ArtistFts` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_ArtistFts_AFTER_UPDATE AFTER UPDATE ON `ArtistEntity` BEGIN INSERT INTO `ArtistFts`(`docid`, `name`) VALUES (NEW.`rowid`, NEW.`name`); END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_ArtistFts_AFTER_INSERT AFTER INSERT ON `ArtistEntity` BEGIN INSERT INTO `ArtistFts`(`docid`, `name`) VALUES (NEW.`rowid`, NEW.`name`); END"
-        ]
+        }
       },
       {
         "tableName": "RadioEntity",
@@ -1146,7 +919,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fbbb49cb83572bed9f4378a3eb7c52f8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5f65466cc3f7677ed10e5fef941335eb')"
     ]
   }
 }

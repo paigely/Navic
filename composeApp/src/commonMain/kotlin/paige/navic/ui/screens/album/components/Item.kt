@@ -100,9 +100,8 @@ fun AlbumListScreenItem(
 		}
 
 		if (playlistDialogShown) {
-			@Suppress("AssignedValueIsNeverRead")
 			PlaylistUpdateDialog(
-				songs = album.songs.orEmpty().toPersistentList(),
+				songs = album.songs.toPersistentList(),
 				onDismissRequest = { playlistDialogShown = false }
 			)
 		}

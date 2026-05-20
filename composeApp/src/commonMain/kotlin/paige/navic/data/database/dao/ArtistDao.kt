@@ -11,39 +11,39 @@ import paige.navic.data.database.entities.ArtistEntity
 
 @Dao
 interface ArtistDao {
-	@Query("SELECT COUNT(*) FROM ArtistEntity")
-	fun getArtistsCountFlow(): Flow<Int>
+	@Query("SELECT COUNT(*) FROM ArtistEntity WHERE serverId = :serverId")
+	fun getArtistsCountFlow(serverId: String): Flow<Int>
 
-	@Query("SELECT COUNT(*) FROM ArtistEntity WHERE starredAt IS NOT NULL")
-	fun getStarredArtistsCountFlow(): Flow<Int>
+	@Query("SELECT COUNT(*) FROM ArtistEntity WHERE serverId = :serverId AND starredAt IS NOT NULL")
+	fun getStarredArtistsCountFlow(serverId: String): Flow<Int>
 
-	@Query("SELECT * FROM ArtistEntity ORDER BY name COLLATE NOCASE ASC")
-	fun getArtistsAlphabeticalByNamePaging(): PagingSource<Int, ArtistEntity>
+	@Query("SELECT * FROM ArtistEntity WHERE serverId = :serverId ORDER BY name COLLATE NOCASE ASC")
+	fun getArtistsAlphabeticalByNamePaging(serverId: String): PagingSource<Int, ArtistEntity>
 
-	@Query("SELECT * FROM ArtistEntity ORDER BY RANDOM()")
-	fun getArtistsRandomPaging(): PagingSource<Int, ArtistEntity>
+	@Query("SELECT * FROM ArtistEntity WHERE serverId = :serverId ORDER BY RANDOM()")
+	fun getArtistsRandomPaging(serverId: String): PagingSource<Int, ArtistEntity>
 
-	@Query("SELECT * FROM ArtistEntity WHERE starredAt IS NOT NULL ORDER BY starredAt DESC")
-	fun getArtistsStarredPaging(): PagingSource<Int, ArtistEntity>
+	@Query("SELECT * FROM ArtistEntity WHERE serverId = :serverId AND starredAt IS NOT NULL ORDER BY starredAt DESC")
+	fun getArtistsStarredPaging(serverId: String): PagingSource<Int, ArtistEntity>
 
-	@Query("SELECT * FROM ArtistEntity ORDER BY name COLLATE NOCASE ASC")
-	fun getAllArtists(): Flow<List<ArtistEntity>>
+	@Query("SELECT * FROM ArtistEntity WHERE serverId = :serverId ORDER BY name COLLATE NOCASE ASC")
+	fun getAllArtists(serverId: String): Flow<List<ArtistEntity>>
 
-	@Query("SELECT * FROM ArtistEntity")
-	suspend fun getAllArtistsList(): List<ArtistEntity>
+	@Query("SELECT * FROM ArtistEntity WHERE serverId = :serverId")
+	suspend fun getAllArtistsList(serverId: String): List<ArtistEntity>
 
-	@Query("SELECT * FROM ArtistEntity WHERE artistId = :artistId LIMIT 1")
-	suspend fun getArtistById(artistId: String): ArtistEntity?
+	@Query("SELECT * FROM ArtistEntity WHERE artistId = :artistId AND serverId = :serverId LIMIT 1")
+	suspend fun getArtistById(artistId: String, serverId: String): ArtistEntity?
 
-	@Query("SELECT EXISTS(SELECT 1 FROM ArtistEntity WHERE artistId = :artistId AND starredAt IS NOT NULL)")
-	suspend fun isArtistStarred(artistId: String): Boolean
+	@Query("SELECT EXISTS(SELECT 1 FROM ArtistEntity WHERE artistId = :artistId AND serverId = :serverId AND starredAt IS NOT NULL)")
+	suspend fun isArtistStarred(artistId: String, serverId: String): Boolean
 
 	@Query("""
 		SELECT ArtistEntity.* FROM ArtistEntity 
 		JOIN ArtistFts ON ArtistEntity.rowid = ArtistFts.rowid 
-		WHERE ArtistFts MATCH :query
+		WHERE serverId = :serverId AND ArtistFts MATCH :query
 	""")
-	suspend fun searchArtistsList(query: String): List<ArtistEntity>
+	suspend fun searchArtistsList(query: String, serverId: String): List<ArtistEntity>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertArtist(artist: ArtistEntity)
@@ -54,24 +54,24 @@ interface ArtistDao {
 	@Insert(onConflict = OnConflictStrategy.IGNORE)
 	suspend fun insertArtistsIgnoringConflicts(artists: List<ArtistEntity>)
 
-	@Query("DELETE FROM ArtistEntity WHERE artistId = :artistId")
-	suspend fun deleteArtist(artistId: String)
+	@Query("DELETE FROM ArtistEntity WHERE artistId = :artistId AND serverId = :serverId")
+	suspend fun deleteArtist(artistId: String, serverId: String)
 
-	@Query("DELETE FROM ArtistEntity")
-	suspend fun clearAllArtists()
+	@Query("DELETE FROM ArtistEntity WHERE serverId = :serverId")
+	suspend fun clearAllArtistsForServer(serverId: String)
 
-	@Query("SELECT artistId FROM ArtistEntity")
-	suspend fun getAllArtistIds(): List<String>
+	@Query("SELECT artistId FROM ArtistEntity WHERE serverId = :serverId")
+	suspend fun getAllArtistIds(serverId: String): List<String>
 
-	@Query("SELECT * FROM ArtistEntity WHERE artistId IN (:ids)")
-	suspend fun getArtistsByIds(ids: List<String>): List<ArtistEntity>
+	@Query("SELECT * FROM ArtistEntity WHERE serverId = :serverId AND artistId IN (:ids)")
+	suspend fun getArtistsByIds(ids: List<String>, serverId: String): List<ArtistEntity>
 
 	@Query("DELETE FROM ArtistEntity WHERE artistId IN (:ids)")
 	suspend fun deleteArtists(ids: List<String>)
 
 	@Transaction
-	suspend fun deleteObsoleteArtists(remoteIds: Set<String>) {
-		val localIds = getAllArtistIds()
+	suspend fun deleteObsoleteArtists(remoteIds: Set<String>, serverId: String) {
+		val localIds = getAllArtistIds(serverId)
 		val toDelete = localIds.filter { it !in remoteIds }
 		if (toDelete.isNotEmpty()) {
 			toDelete.chunked(900).forEach { chunk ->
@@ -81,9 +81,9 @@ interface ArtistDao {
 	}
 
 	@Transaction
-	suspend fun updateAllArtists(remoteArtists: List<ArtistEntity>) {
+	suspend fun updateAllArtists(serverId: String, remoteArtists: List<ArtistEntity>) {
 		val remoteIds = remoteArtists.map { it.artistId }.toSet()
-		deleteObsoleteArtists(remoteIds)
+		deleteObsoleteArtists(remoteIds, serverId)
 		insertArtists(remoteArtists)
 	}
 }
