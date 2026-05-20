@@ -35,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
@@ -47,7 +46,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
@@ -145,7 +143,7 @@ fun CollectionDetailScreenSongRow(
 						CoverArt(
 							modifier = Modifier.size(48.dp),
 							coverArtId = song.coverArtId,
-							shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
+							shape = MaterialTheme.shapes.small
 						)
 				else 
 					Text(

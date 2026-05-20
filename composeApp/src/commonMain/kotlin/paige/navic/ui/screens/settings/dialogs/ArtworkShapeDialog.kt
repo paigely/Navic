@@ -28,13 +28,7 @@ import navic.composeapp.generated.resources.option_artwork_shape
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
-
-val Shapes = arrayOf(
-	"Square" to 0f,
-	"Soft" to 16f,
-	"Curved" to 32f,
-	"Circle" to 200f
-)
+import paige.navic.data.models.settings.enums.CoverArtShape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -57,31 +51,30 @@ fun ArtworkShapeDialog(
 					.heightIn(max = 300.dp),
 				verticalArrangement = Arrangement.spacedBy(16.dp)
 			) {
-				Shapes.forEach { (name, radius) ->
+				CoverArtShape.entries.forEach { shape ->
 					Row(
 						modifier = Modifier
 							.fillMaxWidth()
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
 								ctx.clickSound()
-								Settings.shared.artGridRounding = radius
+								Settings.shared.coverArtShape = shape
 								onDismissRequest()
 							},
 						horizontalArrangement = Arrangement.spacedBy(16.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						RadioButton(
-							selected = Settings.shared.artGridRounding == radius,
+							selected = Settings.shared.coverArtShape == shape,
 							onClick = null
 						)
-						val shape = ContinuousRoundedRectangle(radius.dp / 2)
 						Box(
 							modifier = Modifier
 								.size(48.dp)
-								.background(MaterialTheme.colorScheme.primaryContainer, shape)
-								.border(2.dp, MaterialTheme.colorScheme.primary, shape)
+								.background(MaterialTheme.colorScheme.primaryContainer, shape.decreasedShape)
+								.border(2.dp, MaterialTheme.colorScheme.primary, shape.decreasedShape)
 						)
-						Text(text = name)
+						Text(text = shape.name)
 					}
 				}
 			}

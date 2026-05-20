@@ -32,7 +32,6 @@ import coil3.network.httpHeaders
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_image_failed_to_load
 import org.jetbrains.compose.resources.stringResource
@@ -54,7 +53,7 @@ fun CoverArt(
 	crossfadeMs: Int = 500,
 	shadowElevation: Dp = 0.dp,
 	interactionSource: MutableInteractionSource? = null,
-	shape: Shape = ContinuousRoundedRectangle(Settings.shared.artGridRounding.dp)
+	shape: Shape = Settings.shared.coverArtShape.shape
 ) {
 	val platformContext = LocalPlatformContext.current
 	val customHeaders = Settings.shared.customHeaders

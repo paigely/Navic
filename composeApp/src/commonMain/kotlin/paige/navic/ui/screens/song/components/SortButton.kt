@@ -38,9 +38,7 @@ fun SongListScreenSortButton(
 			)
 		}
 	} else {
-		TopBarButton({
-			expanded = true
-		}) {
+		TopBarButton({ expanded = true }) {
 			Icon(
 				Icons.Outlined.Sort,
 				contentDescription = null

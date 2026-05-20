@@ -35,7 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.dropUnlessResumed
-import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.compose.pipette.HsvColor
 import dev.zt64.compose.pipette.RingColorPicker
 import kotlinx.collections.immutable.toImmutableList
@@ -70,7 +69,6 @@ import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.settings.dialogs.ArtworkShapeDialog
 import paige.navic.ui.screens.settings.dialogs.GridSizeDialog
 import paige.navic.ui.screens.settings.dialogs.GridSizePreview
-import paige.navic.ui.screens.settings.dialogs.Shapes
 import paige.navic.ui.screens.settings.dialogs.ThemeDialog
 
 @Composable
@@ -195,15 +193,13 @@ fun SettingsAppearanceScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_artwork_shape))
 							Text(
-								Shapes.firstOrNull { it.second == Settings.shared.artGridRounding }?.first
-									?: Shapes[0].first,
+								Settings.shared.coverArtShape.name,
 								style = MaterialTheme.typography.bodyMedium,
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
 						}
 
-						val shape =
-							ContinuousRoundedRectangle(Settings.shared.artGridRounding.dp / 1.5f)
+						val shape = Settings.shared.coverArtShape.decreasedShape
 						Box(
 							modifier = Modifier
 								.size(48.dp)

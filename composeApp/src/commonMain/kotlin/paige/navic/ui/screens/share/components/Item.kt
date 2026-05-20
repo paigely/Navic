@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
@@ -109,7 +108,7 @@ fun ShareListScreenItem(
 						CoverArt(
 							coverArtId = share.items.firstOrNull()?.coverArtId,
 							modifier = Modifier.size(60.dp),
-							shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.5f).dp)
+							shape = Settings.shared.coverArtShape.decreasedShape
 						)
 					},
 					content = {

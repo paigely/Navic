@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.capsule.ContinuousRoundedRectangle
@@ -41,6 +40,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.screens.queue.components.QueueScreenItem
 import paige.navic.ui.screens.queue.viewmodels.QueueViewModel
+import paige.navic.ui.theme.defaultFont
 import paige.navic.utils.draggableItemsIndexed
 import paige.navic.utils.rememberDraggableListState
 import kotlin.time.DurationUnit
@@ -108,17 +108,24 @@ fun QueueScreen() {
 			Row(
 				modifier = Modifier
 					.fillMaxWidth()
-					.padding(horizontal = 24.dp, vertical = 8.dp),
+					.padding(
+						top = 8.dp,
+						bottom = 8.dp,
+						start = 16.dp,
+						end = 8.dp
+					),
 				horizontalArrangement = Arrangement.SpaceBetween,
 				verticalAlignment = Alignment.CenterVertically
 			) {
 				Text(
 					text = "$songsText • $totalDurationText",
-					style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-					color = MaterialTheme.colorScheme.onSurfaceVariant
+					style = MaterialTheme.typography.titleMedium,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+					fontFamily = defaultFont(round = 100f)
 				)
 				TextButton(
 					onClick = {
+						ctx.clickSound()
 						haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 						player.clearQueue()
 					}
