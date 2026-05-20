@@ -407,4 +407,12 @@
     <string name="title_images">Immagini</string>
     <string name="option_high_quality_covers">Cover in alta qualità</string>
     <string name="subtitle_high_quality_covers">Usa la risoluzione originale delle immagini. Causa un consumo di dati maggiore</string>
+    <string name="title_edit_server">Modifica server</string>
+    <string name="title_saved_servers">Server Salvati</string>
+    <string name="option_server_name_optional">Nome del server(facoltativo)</string>
+    <string name="info_default_server_name">Server %1$s</string>
+    <string name="action_cancel_editing">Annulla modifica</string>
+    <string name="action_save_and_login">Salva &amp; Accedi</string>
+    <string name="action_add_server">Aggiungi Server</string>
+    <string name="info_selected_server">Selezionato: %1$s</string>
 </resources>
