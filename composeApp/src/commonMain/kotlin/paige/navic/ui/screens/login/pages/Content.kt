@@ -183,19 +183,21 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 							ServerCard(
 								server = server,
 								isSelected = selectedServer?.serverId == server.serverId && !isEditing,
-								onClick = {
+								isEnabled = !isBusy,
+								onClick = dropUnlessResumed {
 									ctx.clickSound()
 									viewModel.selectServer(server)
 									login()
 								},
-								onEdit = { ctx.clickSound(); viewModel.editServer(server) },
-								onDelete = { viewModel.deleteServer(server) }
+								onEdit = dropUnlessResumed { ctx.clickSound(); viewModel.editServer(server) },
+								onDelete = dropUnlessResumed { viewModel.deleteServer(server) }
 							)
 						}
 						item {
 							AddServerCard(
 								isSelected = selectedServer == null,
-								onClick = { ctx.clickSound(); viewModel.addNewServer() }
+								isEnabled = !isBusy,
+								onClick = dropUnlessResumed { ctx.clickSound(); viewModel.addNewServer() }
 							)
 						}
 					}
