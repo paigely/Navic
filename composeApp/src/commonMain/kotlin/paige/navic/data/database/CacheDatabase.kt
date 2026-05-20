@@ -75,7 +75,6 @@ abstract class CacheDatabase : RoomDatabase() {
 	abstract fun playerStateDao(): PlayerStateDao
 }
 
-@Suppress("KotlinNoActualForExpect")
 expect object CacheDatabaseConstructor : RoomDatabaseConstructor<CacheDatabase> {
 	override fun initialize(): CacheDatabase
 }

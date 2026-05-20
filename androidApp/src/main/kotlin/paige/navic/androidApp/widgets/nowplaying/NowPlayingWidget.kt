@@ -1,10 +1,8 @@
 package paige.navic.androidApp.widgets.nowplaying
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.view.KeyEvent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -62,18 +60,6 @@ abstract class NowPlayingWidget : GlanceAppWidget() {
 		artist: String,
 		bitmap: Bitmap?
 	)
-
-	/**
-	 * Used to send pause/play/skip events.
-	 *
-	 * e.g. `.clickable(actionSendBroadcast(createMediaIntent(context, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)))`
-	 */
-	protected fun createMediaIntent(context: Context, keyCode: Int) =
-		Intent(Intent.ACTION_MEDIA_BUTTON).apply {
-			setPackage(context.packageName)
-			component = ComponentName(context, "androidx.media3.session.MediaButtonReceiver")
-			putExtra(Intent.EXTRA_KEY_EVENT, KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
-		}
 
 	protected fun launchIntent(context: Context) = Intent(context, MainActivity::class.java).apply {
 		action = Intent.ACTION_MAIN

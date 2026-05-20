@@ -101,7 +101,7 @@ fun ArtistSheet(
 					shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 				)
 			},
-			headlineContent = { MarqueeText(artist.name.orEmpty()) },
+			headlineContent = { MarqueeText(artist.name) },
 			supportingContent = {
 				Text(
 					text = artist.albumCount.let {

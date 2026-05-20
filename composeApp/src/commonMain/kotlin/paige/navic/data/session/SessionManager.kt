@@ -13,12 +13,6 @@ import paige.navic.data.models.User
 import paige.navic.data.models.settings.Settings
 import com.russhwolf.settings.Settings as KmpSettings
 
-data class ServerConfig(
-	val id: String,
-	val url: String,
-	val username: String
-)
-
 object SessionManager {
 	private val settings = KmpSettings()
 	private val _isLoggedIn = MutableStateFlow(false)
@@ -74,19 +68,6 @@ object SessionManager {
 			)
 		}
 
-	fun getSavedServers(): List<ServerConfig> {
-		val existingServers = settings.getString("serverIds", "").split(",").filter { it.isNotEmpty() }
-		return existingServers.mapNotNull { id ->
-			val url = settings.getStringOrNull("server_${id}_url")
-			val username = settings.getStringOrNull("server_${id}_username")
-			if (url != null && username != null) {
-				ServerConfig(id, url, username)
-			} else {
-				null
-			}
-		}
-	}
-
 	suspend fun login(
 		instanceUrl: String,
 		username: String,
@@ -115,32 +96,11 @@ object SessionManager {
 		setActiveServer(serverId, client)
 	}
 
-	fun switchServer(serverId: String) {
-		refreshClient(serverId)
-		settings["activeServerId"] = serverId
-		_activeServerId.value = serverId
-		_isLoggedIn.value = true
-	}
-
 	private fun setActiveServer(serverId: String, client: SubsonicClient) {
 		settings["activeServerId"] = serverId
 		_activeServerId.value = serverId
 		api = client
 		_isLoggedIn.value = true
-	}
-
-	fun removeServer(serverId: String) {
-		val existingServers = settings.getString("serverIds", "").split(",").filter { it.isNotEmpty() }.toMutableSet()
-		existingServers.remove(serverId)
-		settings["serverIds"] = existingServers.joinToString(",")
-
-		settings.remove("server_${serverId}_url")
-		settings.remove("server_${serverId}_username")
-		settings.remove("server_${serverId}_password")
-
-		if (_activeServerId.value == serverId) {
-			logout()
-		}
 	}
 
 	fun logout() {

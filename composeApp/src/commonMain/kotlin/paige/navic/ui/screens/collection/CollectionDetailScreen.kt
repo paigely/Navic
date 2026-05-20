@@ -116,7 +116,6 @@ fun CollectionDetailScreen(
 				collection = collection,
 				titleAlpha = titleAlpha,
 				onSetShareId = { shareId = it },
-				isOnline = isOnline,
 				onDownloadAll = { viewModel.downloadAll() },
 				onCancelDownloadAll = { viewModel.cancelDownloadAll() },
 				onPlayNext = { if (collection != null) player.playNext(collection) },
@@ -250,7 +249,6 @@ fun CollectionDetailScreen(
 										onDeleteDownload = { viewModel.deleteDownload(song.id) },
 										onPlayNext = { player.playNextSingle(song) },
 										onAddToQueue = { player.addToQueueSingle(song) },
-										isOnline = isOnline,
 										rating = selectedSongRating,
 										onSetRating = { viewModel.rateSelectedSong(it) }
 									)
@@ -304,7 +302,6 @@ fun CollectionDetailScreen(
 								onDeleteDownload = { viewModel.deleteDownload(song.id) },
 								onPlayNext = { player.playNextSingle(song) },
 								onAddToQueue = { player.addToQueueSingle(song) },
-								isOnline = isOnline,
 								rating = selectedSongRating,
 								onSetRating = { viewModel.rateSelectedSong(it) }
 							)

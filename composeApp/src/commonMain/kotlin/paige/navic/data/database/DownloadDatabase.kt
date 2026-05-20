@@ -16,7 +16,6 @@ abstract class DownloadDatabase : RoomDatabase() {
 	abstract fun downloadDao(): DownloadDao
 }
 
-@Suppress("KotlinNoActualForExpect")
 expect object DownloadDatabaseConstructor : RoomDatabaseConstructor<DownloadDatabase> {
 	override fun initialize(): DownloadDatabase
 }

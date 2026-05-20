@@ -37,7 +37,5 @@ class RandomAlbumPagingSource(
 		}
 	}
 
-	override fun getRefreshKey(state: PagingState<Int, AlbumWithSongs>): Int? {
-		return null
-	}
+	override fun getRefreshKey(state: PagingState<Int, AlbumWithSongs>) = null
 }

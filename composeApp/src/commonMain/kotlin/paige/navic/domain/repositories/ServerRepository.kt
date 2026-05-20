@@ -10,8 +10,6 @@ class ServerRepository(
 ) {
 	val allServers: Flow<List<ServerEntity>> = serverDao.getAllServersFlow()
 
-	suspend fun getServer(id: String) = serverDao.getServerById(id)
-
 	suspend fun upsertServer(server: ServerEntity) {
 		serverDao.insertServer(server)
 	}
