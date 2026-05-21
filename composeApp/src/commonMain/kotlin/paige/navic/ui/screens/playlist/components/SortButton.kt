@@ -40,7 +40,10 @@ fun PlaylistListScreenSortButton(
 			)
 		}
 	} else {
-		TopBarButton({ expanded = true }) {
+		TopBarButton({
+			ctx.clickSound()
+			expanded = true
+		}) {
 			Icon(
 				Icons.Outlined.Sort,
 				contentDescription = null

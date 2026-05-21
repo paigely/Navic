@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
+import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_remove_from_history
@@ -270,7 +271,7 @@ fun SearchScreen(
 												CoverArt(
 													coverArtId = song.coverArtId,
 													modifier = Modifier.size(50.dp),
-													shape = Settings.shared.coverArtShape.decreasedShape
+													shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 												)
 											},
 											trailingContent = {

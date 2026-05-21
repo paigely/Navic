@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
+import com.kyant.capsule.ContinuousRoundedRectangle
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
@@ -152,7 +153,7 @@ fun SongListScreenItem(
 					CoverArt(
 						coverArtId = song.coverArtId,
 						modifier = Modifier.size(50.dp),
-						shape = Settings.shared.coverArtShape.decreasedShape
+						shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
 					)
 				},
 				trailingContent = {
