@@ -22,6 +22,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_library
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.domain.models.DomainAlbumListType
@@ -78,7 +79,7 @@ fun LibraryScreen() {
 	var playlistDeletionId by rememberSaveable { mutableStateOf<String?>(null) }
 	var playlistCreateDialogShown by rememberSaveable { mutableStateOf(false) }
 
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 

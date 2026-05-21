@@ -32,7 +32,7 @@ import navic.composeapp.generated.resources.info_not_available_offline
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_year
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
@@ -72,7 +72,7 @@ fun SongRow(
 	rating: Int,
 	onSetRating: (Int) -> Unit
 ) {
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 
 	val backStack = LocalNavStack.current

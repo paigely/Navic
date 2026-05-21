@@ -35,6 +35,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_songs
 import navic.composeapp.generated.resources.title_disc_number
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.data.database.entities.DownloadStatus
@@ -75,7 +76,7 @@ fun CollectionDetailScreen(
 		parameters = { parametersOf(collectionId) }
 	)
 
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 
 	val collectionState by viewModel.collectionState.collectAsState()

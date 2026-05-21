@@ -15,6 +15,7 @@ import paige.navic.ui.screens.collection.viewmodels.CollectionDetailViewModel
 import paige.navic.ui.screens.genre.viewmodels.GenreListViewModel
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.screens.lyrics.viewmodels.LyricsScreenViewModel
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.screens.nowPlaying.viewmodels.NowPlayingViewModel
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistCreateDialogViewModel
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
@@ -72,7 +73,12 @@ val viewModelModule = module {
 	viewModelOf(::SongDetailViewModel)
 	viewModelOf(::SettingsDataStorageViewModel)
 	viewModelOf(::ChangelogViewModel)
-	viewModelOf(::NowPlayingViewModel)
+	viewModel { params ->
+		NowPlayingViewModel(
+			player = params.get(),
+			songRepository = get()
+		)
+	}
 	viewModel {
 		NavtabsViewModel(
 			settings = Settings(),

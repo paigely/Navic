@@ -32,7 +32,7 @@ import com.materialkolor.rememberDynamicColorScheme
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.Url
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
 import paige.navic.data.session.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.sheets.ModalBottomSheet
@@ -142,7 +142,7 @@ class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 
 @Composable
 private fun colorSchemeForCurrentSong(): ColorScheme {
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong
 	val coverUri = remember(song?.coverArtId) {

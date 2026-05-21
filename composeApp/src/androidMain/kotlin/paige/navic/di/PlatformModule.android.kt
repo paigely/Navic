@@ -55,7 +55,7 @@ actual val platformModule = module {
 		)
 	}
 
-	viewModel<MediaPlayerViewModel> {
+	single<MediaPlayerViewModel> {
 		AndroidMediaPlayerViewModel(
 			application = androidApplication(),
 			stateRepository = get(),

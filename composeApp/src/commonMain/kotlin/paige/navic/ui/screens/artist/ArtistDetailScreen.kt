@@ -112,7 +112,7 @@ fun ArtistDetailScreen(
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
 	var bulkDownloadDialogShown by remember { mutableStateOf(false) }
 
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 
 	val backStack = LocalNavStack.current
