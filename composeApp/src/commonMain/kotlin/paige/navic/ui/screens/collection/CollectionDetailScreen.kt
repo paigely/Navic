@@ -172,7 +172,7 @@ fun CollectionDetailScreen(
 						))
 					).let { album ->
 						album.songs.groupBy {it.discNumber}.forEach { group ->
-							val multipleDiscs = album.songs.groupBy { it.discNumber }.size > 1
+							val multipleDiscs = album.songs.last().discNumber != 1
 							if (group.key != null && multipleDiscs) {
 								item {
 									Row(
@@ -216,7 +216,12 @@ fun CollectionDetailScreen(
 											if (playerState.currentSong?.id != song.id) {
 												player.clearQueue()
 												player.addToQueue(album)
-												player.playAt(album.songs.indexOfFirst { it.id == song.id })
+												player.playAt(
+													if (group.key == null || !multipleDiscs)
+														index
+													else 
+														album.songs.indexOfFirst { it.id == song.id }
+												)
 											} else {
 												player.togglePlay()
 											}
