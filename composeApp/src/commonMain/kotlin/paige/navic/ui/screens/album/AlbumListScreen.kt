@@ -58,6 +58,7 @@ fun AlbumListScreen(
 	)
 	val player = koinInject<MediaPlayerViewModel>()
 	val pagedAlbums = viewModel.pagedAlbums.collectAsLazyPagingItems()
+	val error by viewModel.error.collectAsStateWithLifecycle()
 	val selectedSorting by viewModel.listType.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
 	val selectedAlbum by viewModel.selectedAlbum.collectAsStateWithLifecycle()
@@ -135,8 +136,7 @@ fun AlbumListScreen(
 	}
 
 	ErrorSnackbar(
-		error = (pagedAlbums.loadState.refresh as? LoadState.Error)?.error
-			?: (pagedAlbums.loadState.append as? LoadState.Error)?.error,
+		error = error,
 		onClearError = { viewModel.clearError() }
 	)
 

@@ -58,6 +58,7 @@ fun LibraryScreen() {
 	val selectedAlbum by albumsViewModel.selectedAlbum.collectAsStateWithLifecycle()
 	val selectedAlbumIsStarred by albumsViewModel.starred.collectAsStateWithLifecycle()
 	val selectedAlbumRating by albumsViewModel.rating.collectAsStateWithLifecycle()
+	val albumsError by albumsViewModel.error.collectAsStateWithLifecycle()
 
 	val playlistsViewModel = koinViewModel<PlaylistListViewModel>()
 	val playlistsState by playlistsViewModel.playlistsState.collectAsStateWithLifecycle()
@@ -67,6 +68,7 @@ fun LibraryScreen() {
 	val pagedArtists = artistsViewModel.artistsPaging.collectAsLazyPagingItems()
 	val selectedArtist by artistsViewModel.selectedArtist.collectAsStateWithLifecycle()
 	val selectedArtistIsStarred by artistsViewModel.starred.collectAsStateWithLifecycle()
+	val artistsError by artistsViewModel.error.collectAsStateWithLifecycle()
 
 	val genresViewModel = koinViewModel<GenreListViewModel>()
 	val genresState by genresViewModel.genresState.collectAsStateWithLifecycle()
@@ -152,9 +154,9 @@ fun LibraryScreen() {
 	}
 
 	val flattenedErrors = listOf(
-		(pagedAlbums.loadState.refresh as? LoadState.Error)?.error,
+		albumsError,
 		(playlistsState as? UiState.Error)?.error,
-		(pagedArtists.loadState.refresh as? LoadState.Error)?.error,
+		artistsError,
 		(genresState as? UiState.Error)?.error
 	).mapNotNull { it?.stackTraceToString() }.takeIf { it.isNotEmpty() }?.joinToString("\n\n")
 
@@ -163,7 +165,7 @@ fun LibraryScreen() {
 		onClearError = {
 			albumsViewModel.clearError()
 			playlistsViewModel.clearError()
-			artistsViewModel.refreshArtists() // Artists has no clearError, refresh instead or just omit
+			artistsViewModel.clearError()
 			genresViewModel.clearError()
 		}
 	)

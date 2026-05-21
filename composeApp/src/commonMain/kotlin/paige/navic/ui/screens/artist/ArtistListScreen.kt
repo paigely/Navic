@@ -11,9 +11,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -36,6 +36,7 @@ import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
+import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
@@ -52,10 +53,11 @@ fun ArtistListScreen(
 ) {
 	val viewModel = koinViewModel<ArtistListViewModel>()
 	val artists = viewModel.artistsPaging.collectAsLazyPagingItems()
-	val totalCount by viewModel.totalArtistsCount.collectAsState()
-	val selectedArtist by viewModel.selectedArtist.collectAsState()
-	val starred by viewModel.starred.collectAsState()
+	val totalCount by viewModel.totalArtistsCount.collectAsStateWithLifecycle()
+	val selectedArtist by viewModel.selectedArtist.collectAsStateWithLifecycle()
+	val starred by viewModel.starred.collectAsStateWithLifecycle()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+	val error by viewModel.error.collectAsStateWithLifecycle()
 
 	Scaffold(
 		topBar = {
@@ -95,6 +97,11 @@ fun ArtistListScreen(
 			)
 		}
 	}
+
+	ErrorSnackbar(
+		error = error,
+		onClearError = { viewModel.clearError() }
+	)
 }
 
 @Composable

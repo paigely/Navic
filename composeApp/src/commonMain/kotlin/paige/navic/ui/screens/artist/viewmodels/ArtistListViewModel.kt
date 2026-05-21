@@ -41,6 +41,9 @@ class ArtistListViewModel(
 	private val _starred = MutableStateFlow(false)
 	val starred = _starred.asStateFlow()
 
+	private val _error = MutableStateFlow<Throwable?>(null)
+	val error = _error.asStateFlow()
+
 	private val _selectedArtist = MutableStateFlow<DomainArtist?>(null)
 	val selectedArtist = _selectedArtist.asStateFlow()
 
@@ -48,7 +51,11 @@ class ArtistListViewModel(
 
 	fun refreshArtists() {
 		viewModelScope.launch {
-			repository.syncArtists()
+			try {
+				repository.syncArtists()
+			} catch (e: Exception) {
+				_error.value = e
+			}
 		}
 	}
 
@@ -61,6 +68,10 @@ class ArtistListViewModel(
 
 	fun clearSelection() {
 		_selectedArtist.value = null
+	}
+
+	fun clearError() {
+		_error.value = null
 	}
 
 	fun starArtist(starred: Boolean) {
