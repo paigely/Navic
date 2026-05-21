@@ -394,4 +394,16 @@
     <string name="option_max_bitrate_cellular">Móvil con Tasa Bit Máx (kbps)</string>
     <string name="info_bitrate_default_zero">Si se deja este campo vacío, el valor predeterminado es 0. Dejando que el servidor elija.</string>
     <string name="subtitle_max_bitrates">Tasas de bits máximas</string>
+    <string name="title_edit_server">Editar Servidor</string>
+    <string name="title_saved_servers">Servidores Guardados</string>
+    <string name="title_images">Imágenes</string>
+    <string name="option_server_name_optional">Nombre del Servidor (Opcional)</string>
+    <string name="option_high_quality_covers">Cubierta de álbum de calidad alta</string>
+    <string name="subtitle_high_quality_covers">Obtener las imágenes de resolución adicional. Utilice más datos significativamente</string>
+    <string name="info_selected_server">Seleccionado: %1$s</string>
+    <string name="info_default_server_name">Servidor %1$s</string>
+    <string name="action_clear_queue">Vaciar cola</string>
+    <string name="action_cancel_editing">Cancelar Editado</string>
+    <string name="action_save_and_login">Guardar e Iniciar Sesión</string>
+    <string name="action_add_server">Agregar Servidor</string>
 </resources>
