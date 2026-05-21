@@ -59,6 +59,7 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_not_playing
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
@@ -87,7 +88,7 @@ fun MiniPlayer(
 	enabled: Boolean = true
 ) {
 	val ctx = LocalCtx.current
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val navtabsViewModel = koinViewModel<NavtabsViewModel>()
 	val navtabsState by navtabsViewModel.state.collectAsState()
 	val tabs = ((navtabsState as? UiState.Success)?.data ?: NavbarConfig.default)

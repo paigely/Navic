@@ -30,6 +30,7 @@ import navic.composeapp.generated.resources.count_songs
 import navic.composeapp.generated.resources.info_no_queue
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
@@ -51,7 +52,7 @@ fun QueueScreen() {
 	val viewModel = koinViewModel<QueueViewModel>()
 	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
 	val downloadedSongs by viewModel.downloadedSongs.collectAsStateWithLifecycle()
