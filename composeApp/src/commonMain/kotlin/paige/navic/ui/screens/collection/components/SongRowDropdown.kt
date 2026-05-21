@@ -32,6 +32,7 @@ fun CollectionDetailScreenSongRowDropdown(
 	onRemoveFromPlaylist: () -> Unit,
 	starred: Boolean,
 	downloadStatus: DownloadStatus?,
+	isOnline: Boolean,
 	onDownload: () -> Unit,
 	onCancelDownload: () -> Unit,
 	onDeleteDownload: () -> Unit,

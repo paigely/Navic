@@ -2,13 +2,11 @@ package paige.navic.data.database.mappers
 
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.relations.PlaylistWithSongs
-import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainPlaylist
 import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 
-fun ApiPlaylist.toEntity(serverId: String = SessionManager.activeServerId.value ?: "") = PlaylistEntity(
+fun ApiPlaylist.toEntity() = PlaylistEntity(
 	playlistId = id,
-	serverId = serverId,
 	name = name,
 	owner = owner,
 	comment = comment,
@@ -42,9 +40,8 @@ fun PlaylistWithSongs.toDomainModel() = DomainPlaylist(
 		.map { it.song.toDomainModel() }
 )
 
-fun DomainPlaylist.toEntity(serverId: String = SessionManager.activeServerId.value ?: "") = PlaylistEntity(
+fun DomainPlaylist.toEntity() = PlaylistEntity(
 	playlistId = id,
-	serverId = serverId,
 	name = name,
 	owner = owner,
 	comment = comment,

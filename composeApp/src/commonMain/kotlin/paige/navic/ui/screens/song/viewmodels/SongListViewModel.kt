@@ -17,7 +17,7 @@ import paige.navic.managers.DownloadManager
 import paige.navic.shared.Logger
 
 class SongListViewModel(
-	artistId: String? = null,
+	private val artistId: String? = null,
 	private val repository: SongRepository,
 	private val downloadManager: DownloadManager,
 ) : ViewModel() {

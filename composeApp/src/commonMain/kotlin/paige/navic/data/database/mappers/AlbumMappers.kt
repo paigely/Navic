@@ -2,15 +2,13 @@ package paige.navic.data.database.mappers
 
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.relations.AlbumWithSongs
-import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
 import dev.zt64.subsonic.api.model.Album as ApiAlbum
 import dev.zt64.subsonic.api.model.AlbumInfo as ApiAlbumInfo
 
-fun ApiAlbum.toEntity(serverId: String = SessionManager.activeServerId.value ?: "") = AlbumEntity(
+fun ApiAlbum.toEntity() = AlbumEntity(
 	albumId = this.id,
-	serverId = serverId,
 	name = this.name,
 	artistId = this.artistId,
 	artistName = this.artistName,
@@ -52,9 +50,8 @@ fun AlbumWithSongs.toDomainModel() = DomainAlbum(
 		.sortedBy { it.trackNumber }
 )
 
-fun DomainAlbum.toEntity(serverId: String = SessionManager.activeServerId.value ?: "") = AlbumEntity(
+fun DomainAlbum.toEntity() = AlbumEntity(
 	albumId = this.id,
-	serverId = serverId,
 	name = this.name,
 	artistId = this.artistId,
 	artistName = this.artistName,

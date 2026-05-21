@@ -14,3 +14,5 @@ interface Ctx {
 
 @Composable
 expect fun rememberCtx(): Ctx
+
+expect fun <T> synchronized(lock: Any, block: () -> T): T

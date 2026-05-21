@@ -1,11 +1,5 @@
 package paige.navic.ui.screens.login.pages
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,14 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,23 +39,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousCapsule
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_cancel_editing
 import navic.composeapp.generated.resources.action_log_in
-import navic.composeapp.generated.resources.action_save_and_login
 import navic.composeapp.generated.resources.info_login_description_end
 import navic.composeapp.generated.resources.info_login_description_middle
 import navic.composeapp.generated.resources.info_login_description_start
-import navic.composeapp.generated.resources.info_selected_server
 import navic.composeapp.generated.resources.option_custom_headers
-import navic.composeapp.generated.resources.title_edit_server
-import navic.composeapp.generated.resources.title_saved_servers
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
-import paige.navic.ui.screens.login.components.AddServerCard
-import paige.navic.ui.screens.login.components.ServerCard
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.theme.defaultFont
 import paige.navic.utils.LoginState
@@ -73,9 +57,10 @@ import paige.navic.utils.LoginState
 fun LoginScreenContent(innerPadding: PaddingValues) {
 	val viewModel = koinViewModel<LoginViewModel>()
 	val loginState by viewModel.loginState.collectAsStateWithLifecycle()
-	val savedServers by viewModel.savedServers.collectAsStateWithLifecycle()
-	val selectedServer = viewModel.selectedServer
-	val isEditing = viewModel.isEditing
+
+	val instanceState = viewModel.instanceState
+	val usernameState = viewModel.usernameState
+	val passwordState = viewModel.passwordState
 
 	val isBusy = loginState is LoginState.Loading || loginState is LoginState.Syncing
 
@@ -107,12 +92,10 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 	val login = {
 		if (!viewModel.login()) {
 			haptics.performHapticFeedback(HapticFeedbackType.Reject)
-			if (selectedServer == null || isEditing) {
-				when {
-					viewModel.instanceError -> instanceFocusRequester.requestFocus()
-					viewModel.usernameError -> usernameFocusRequester.requestFocus()
-					viewModel.passwordError -> passwordFocusRequester.requestFocus()
-				}
+			when {
+				viewModel.instanceError -> instanceFocusRequester.requestFocus()
+				viewModel.usernameError -> usernameFocusRequester.requestFocus()
+				viewModel.passwordError -> passwordFocusRequester.requestFocus()
 			}
 		}
 	}
@@ -147,16 +130,11 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					.weight(1f)
 					.widthIn(max = 600.dp)
 					.verticalScroll(rememberScrollState())
-					.animateContentSize()
 			) {
 				Spacer(Modifier.weight(1f))
 
 				Text(
-					text = when {
-						isEditing -> stringResource(Res.string.title_edit_server)
-						selectedServer != null -> stringResource(Res.string.info_selected_server, selectedServer.name)
-						else -> stringResource(Res.string.action_log_in)
-					},
+					text = stringResource(Res.string.action_log_in),
 					style = MaterialTheme.typography.headlineMedium,
 					fontFamily = defaultFont(round = 100f),
 					modifier = Modifier.padding(horizontal = 16.dp)
@@ -166,100 +144,45 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					modifier = Modifier.padding(horizontal = 16.dp)
 				)
 
-				Spacer(Modifier.height(16.dp))
-
-				if (savedServers.isNotEmpty()) {
-					Text(
-						stringResource(Res.string.title_saved_servers),
-						style = MaterialTheme.typography.labelLarge,
-						modifier = Modifier.padding(horizontal = 16.dp)
-					)
-					Spacer(Modifier.height(8.dp))
-					LazyRow(
-						contentPadding = PaddingValues(horizontal = 16.dp),
-						horizontalArrangement = Arrangement.spacedBy(12.dp)
-					) {
-						items(savedServers, key = { it.serverId }) { server ->
-							ServerCard(
-								server = server,
-								isSelected = selectedServer?.serverId == server.serverId && !isEditing,
-								isEnabled = !isBusy,
-								onClick = dropUnlessResumed {
-									ctx.clickSound()
-									viewModel.selectServer(server)
-									login()
-								},
-								onEdit = dropUnlessResumed { ctx.clickSound(); viewModel.editServer(server) },
-								onDelete = dropUnlessResumed { viewModel.deleteServer(server) }
-							)
-						}
-						item {
-							AddServerCard(
-								isSelected = selectedServer == null,
-								isEnabled = !isBusy,
-								onClick = dropUnlessResumed { ctx.clickSound(); viewModel.addNewServer() }
-							)
-						}
-					}
-					Spacer(Modifier.height(24.dp))
-				}
+				Spacer(Modifier.height(8.dp))
 
 				LoginScreenError(loginState = loginState)
 
-				AnimatedVisibility(
-					visible = selectedServer == null || isEditing,
-					enter = expandVertically() + fadeIn(),
-					exit = shrinkVertically() + fadeOut()
-				) {
-					Column {
-						LoginScreenFields(
-							isBusy = isBusy,
-							selectedServer = selectedServer,
-							serverNameState = viewModel.serverNameState,
-							instanceState = viewModel.instanceState,
-							instanceError = viewModel.instanceError,
-							instanceFocusRequester = instanceFocusRequester,
-							onInstanceFocusChanged = { viewModel.validateInstance() },
-							usernameState = viewModel.usernameState,
-							usernameError = viewModel.usernameError,
-							usernameFocusRequester = usernameFocusRequester,
-							onUsernameFocusChanged = { viewModel.validateUsername() },
-							passwordState = viewModel.passwordState,
-							passwordError = viewModel.passwordError,
-							passwordFocusRequester = passwordFocusRequester,
-							onPasswordFocusChanged = { viewModel.validatePassword() },
-							onLogin = login
-						)
+				LoginScreenFields(
+					isBusy = isBusy,
+					instanceState = instanceState,
+					instanceError = viewModel.instanceError,
+					instanceFocusRequester = instanceFocusRequester,
+					onInstanceFocusChanged = { viewModel.validateInstance() },
+					usernameState = usernameState,
+					usernameError = viewModel.usernameError,
+					usernameFocusRequester = usernameFocusRequester,
+					onUsernameFocusChanged = { viewModel.validateUsername() },
+					passwordState = passwordState,
+					passwordError = viewModel.passwordError,
+					passwordFocusRequester = passwordFocusRequester,
+					onPasswordFocusChanged = { viewModel.validatePassword() },
+					onLogin = login
+				)
 
-						if (isEditing) {
-							TextButton(
-								onClick = { viewModel.cancelEdit() },
-								modifier = Modifier.padding(horizontal = 8.dp)
-							) {
-								Text(stringResource(Res.string.action_cancel_editing))
+				Spacer(Modifier.height(12.dp))
+
+				Text(
+					text = stringResource(Res.string.option_custom_headers),
+					color = MaterialTheme.colorScheme.primary,
+					textDecoration = TextDecoration.Underline,
+					modifier = Modifier
+						.padding(horizontal = 16.dp)
+						.clickable(onClick = dropUnlessResumed {
+							backStack.lastOrNull()?.let {
+								if (it is Screen.Login) {
+									ctx.clickSound()
+									backStack.add(Screen.Settings.CustomHeaders)
+									focusManager.clearFocus(true)
+								}
 							}
-						}
-
-						Spacer(Modifier.height(12.dp))
-
-						Text(
-							text = stringResource(Res.string.option_custom_headers),
-							color = MaterialTheme.colorScheme.primary,
-							textDecoration = TextDecoration.Underline,
-							modifier = Modifier
-								.padding(horizontal = 16.dp)
-								.clickable(onClick = dropUnlessResumed {
-									backStack.lastOrNull()?.let {
-										if (it is Screen.Login) {
-											ctx.clickSound()
-											backStack.add(Screen.Settings.CustomHeaders)
-											focusManager.clearFocus(true)
-										}
-									}
-								})
-						)
-					}
-				}
+						})
+				)
 
 				Spacer(Modifier.weight(2.25f))
 			}
@@ -281,7 +204,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					shape = ContinuousCapsule
 				) {
 					Text(
-						text = if (isEditing) stringResource(Res.string.action_save_and_login) else stringResource(Res.string.action_log_in),
+						text = stringResource(Res.string.action_log_in),
 						fontFamily = defaultFont(100)
 					)
 				}

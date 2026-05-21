@@ -38,6 +38,7 @@ fun CollectionDetailScreenTopBar(
 	albumInfoState: UiState<DomainAlbumInfo>,
 	titleAlpha: Float,
 	onSetShareId: (shareId: String?) -> Unit,
+	isOnline: Boolean,
 	onDownloadAll: () -> Unit,
 	onCancelDownloadAll: () -> Unit,
 	onPlayNext: () -> Unit,

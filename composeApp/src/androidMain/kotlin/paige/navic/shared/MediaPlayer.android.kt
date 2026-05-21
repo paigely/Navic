@@ -334,14 +334,10 @@ class AndroidMediaPlayerViewModel(
 
 		viewModelScope.launch {
 			runCatching {
-				val serverId = SessionManager.activeServerId.value
-					?: throw Exception("No active server for album lookup")
-
-				val album = albumDao.getAlbumById(albumId, serverId)
+				val album = albumDao.getAlbumById(albumId)
 
 				_uiState.update { it.copy(currentCollection = album?.toDomainModel()) }
-			}.onFailure { e ->
-				Logger.e("AndroidMediaPlayerViewModel", "Failed to refresh collection info", e)
+			}.onFailure {
 				loadingCollectionId = null
 			}
 		}
@@ -354,7 +350,7 @@ class AndroidMediaPlayerViewModel(
 				val currentSong = _uiState.value.queue.getOrNull(index)
 
 				val isCellular = connectivityManager.isCellular.value
-				if (Settings.shared.isAdvancedTranscodingActive) {
+				val requestedBitrate = if (Settings.shared.isAdvancedTranscodingActive) {
 					if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
 				} else {
 					if (isCellular) Settings.shared.streamingQualityCellular.bitrateAndroid else Settings.shared.streamingQualityWifi.bitrateAndroid

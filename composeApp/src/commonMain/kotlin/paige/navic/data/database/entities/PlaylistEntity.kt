@@ -1,15 +1,15 @@
 package paige.navic.data.database.entities
 
 import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 import kotlin.time.Instant
 
 @Serializable
-@Entity(primaryKeys = ["serverId", "playlistId"])
+@Entity
 data class PlaylistEntity(
-	val serverId: String,
-	val playlistId: String,
+	@PrimaryKey val playlistId: String,
 	val name: String,
 	val comment: String?,
 	val owner: String,

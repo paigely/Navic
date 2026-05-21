@@ -2,7 +2,6 @@ package paige.navic.di
 
 import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
@@ -40,19 +39,12 @@ actual val platformModule = module {
 			.build()
 	}
 
-	single {
-		Json {
-			ignoreUnknownKeys = true
-			coerceInputValues = true
-			encodeDefaults = true
-		}
-	}
-
 	single<PlayerStateRepository> {
-		PlayerStateRepository(
-			playerStateDao = get(),
-			json = get()
-		)
+		val context = androidApplication()
+		val producePath = {
+			context.filesDir.resolve(PlayerStateRepository.DATASTORE_FILE_NAME).absolutePath
+		}
+		PlayerStateRepository(PlayerStateRepository.getInstance(producePath))
 	}
 
 	viewModel<MediaPlayerViewModel> {

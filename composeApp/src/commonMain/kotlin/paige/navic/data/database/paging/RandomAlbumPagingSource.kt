@@ -7,7 +7,6 @@ import paige.navic.data.database.relations.AlbumWithSongs
 
 class RandomAlbumPagingSource(
 	private val albumDao: AlbumDao,
-	private val serverId: String,
 	private val randomIds: List<String>
 ) : PagingSource<Int, AlbumWithSongs>() {
 
@@ -23,7 +22,7 @@ class RandomAlbumPagingSource(
 		val idsChunk = randomIds.subList(position, endPosition)
 
 		return try {
-			val albums = albumDao.getAlbumsByIds(idsChunk, serverId)
+			val albums = albumDao.getAlbumsByIds(idsChunk)
 
 			val shuffledChunk = albums.shuffled()
 
@@ -37,5 +36,7 @@ class RandomAlbumPagingSource(
 		}
 	}
 
-	override fun getRefreshKey(state: PagingState<Int, AlbumWithSongs>) = null
+	override fun getRefreshKey(state: PagingState<Int, AlbumWithSongs>): Int? {
+		return null
+	}
 }

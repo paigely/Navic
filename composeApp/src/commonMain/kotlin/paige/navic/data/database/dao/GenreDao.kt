@@ -17,49 +17,49 @@ interface GenreDao {
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertGenres(genres: List<GenreEntity>)
 
-	@Query("DELETE FROM GenreEntity WHERE genreName = :genreName AND serverId = :serverId")
-	suspend fun deleteGenre(genreName: String, serverId: String)
+	@Query("DELETE FROM GenreEntity WHERE genreName = :genreName")
+	suspend fun deleteGenre(genreName: String)
 
 	@Transaction
-	@Query("SELECT * FROM GenreEntity WHERE serverId = :serverId ORDER BY albumCount DESC")
-	suspend fun getGenres(serverId: String): List<GenreEntity>
+	@Query("SELECT * FROM GenreEntity ORDER BY albumCount DESC")
+	suspend fun getGenres(): List<GenreEntity>
 
 	@Transaction
-	@Query("SELECT * FROM GenreEntity WHERE serverId = :serverId ORDER BY albumCount DESC")
-	fun getGenresFlow(serverId: String): Flow<List<GenreEntity>>
+	@Query("SELECT * FROM GenreEntity ORDER BY albumCount DESC")
+	fun getGenresFlow(): Flow<List<GenreEntity>>
 
 	@Transaction
-	@Query("SELECT * FROM GenreEntity WHERE serverId = :serverId ORDER BY albumCount DESC")
-	suspend fun getGenresWithAlbums(serverId: String): List<GenreWithAlbums>
+	@Query("SELECT * FROM GenreEntity ORDER BY albumCount DESC")
+	suspend fun getGenresWithAlbums(): List<GenreWithAlbums>
 
 	@Transaction
-	@Query("SELECT * FROM GenreEntity WHERE serverId = :serverId ORDER BY albumCount DESC")
-	fun getGenresWithAlbumsFlow(serverId: String): Flow<List<GenreWithAlbums>>
+	@Query("SELECT * FROM GenreEntity ORDER BY albumCount DESC")
+	fun getGenresWithAlbumsFlow(): Flow<List<GenreWithAlbums>>
 
-	@Query("DELETE FROM GenreEntity WHERE serverId = :serverId")
-	suspend fun clearGenresForServer(serverId: String)
+	@Query("DELETE FROM GenreEntity")
+	suspend fun clearAllGenres()
 
-	@Query("SELECT genreName FROM GenreEntity WHERE serverId = :serverId")
-	suspend fun getAllGenreNames(serverId: String): List<String>
+	@Query("SELECT genreName FROM GenreEntity")
+	suspend fun getAllGenreNames(): List<String>
 
-	@Query("DELETE FROM GenreEntity WHERE serverId = :serverId AND genreName IN (:names)")
-	suspend fun deleteGenres(serverId: String, names: List<String>)
+	@Query("DELETE FROM GenreEntity WHERE genreName IN (:names)")
+	suspend fun deleteGenres(names: List<String>)
 
 	@Transaction
-	suspend fun deleteObsoleteGenres(serverId: String, remoteNames: Set<String>) {
-		val localNames = getAllGenreNames(serverId)
+	suspend fun deleteObsoleteGenres(remoteNames: Set<String>) {
+		val localNames = getAllGenreNames()
 		val toDelete = localNames.filter { it !in remoteNames }
 		if (toDelete.isNotEmpty()) {
 			toDelete.chunked(900).forEach { chunk ->
-				deleteGenres(serverId, chunk)
+				deleteGenres(chunk)
 			}
 		}
 	}
 
 	@Transaction
-	suspend fun updateAllGenres(serverId: String, remoteGenres: List<GenreEntity>) {
+	suspend fun updateAllGenres(remoteGenres: List<GenreEntity>) {
 		val remoteNames = remoteGenres.map { it.genreName }.toSet()
-		deleteObsoleteGenres(serverId, remoteNames)
+		deleteObsoleteGenres(remoteNames)
 		insertGenres(remoteGenres)
 	}
 }

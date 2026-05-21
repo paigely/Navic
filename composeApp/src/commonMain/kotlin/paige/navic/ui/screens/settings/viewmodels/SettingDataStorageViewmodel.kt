@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.SyncActionDao
-import paige.navic.data.session.SessionManager
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.domain.repositories.SongRepository
 import paige.navic.managers.ConnectivityManager
@@ -53,8 +52,7 @@ class SettingsDataStorageViewModel(
 
 	private fun loadPendingActions() {
 		viewModelScope.launch(Dispatchers.IO) {
-			val serverId = SessionManager.activeServerId.value ?: return@launch
-			_pendingActionCount.value = syncDao.getPendingActions(serverId).size
+			_pendingActionCount.value = syncDao.getPendingActions().size
 		}
 	}
 
@@ -73,8 +71,7 @@ class SettingsDataStorageViewModel(
 
 	fun removeAllActions() {
 		viewModelScope.launch(Dispatchers.IO) {
-			val serverId = SessionManager.activeServerId.value ?: return@launch
-			syncDao.clearActionsForServer(serverId)
+			syncDao.clearAllActions()
 			_pendingActionCount.value = 0
 		}
 	}

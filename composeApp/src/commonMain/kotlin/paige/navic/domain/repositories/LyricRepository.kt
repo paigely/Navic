@@ -211,10 +211,8 @@ class LyricRepository(
 	}
 
 	suspend fun fetchLyrics(song: DomainSong): LyricsResult? {
-		val serverId = SessionManager.activeServerId.value ?: return null
-
 		try {
-			val cached = lyricDao.getLyrics(song.id, serverId)
+			val cached = lyricDao.getLyrics(song.id)
 			if (cached != null) {
 				val parsed = LyricsContentParser.parse(cached.rawContent)
 				if (!parsed.isNullOrEmpty()) return LyricsResult(
@@ -280,7 +278,6 @@ class LyricRepository(
 						rawContentToCache?.let { content ->
 							val entity = LyricEntity(
 								songId = song.id,
-								serverId = serverId,
 								provider = provider,
 								rawContent = content
 							)
