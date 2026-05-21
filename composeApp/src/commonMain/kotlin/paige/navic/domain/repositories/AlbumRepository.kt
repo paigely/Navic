@@ -72,9 +72,6 @@ class AlbumRepository(
 					}
 					DomainAlbumListType.Starred -> albumDao.getStarredAlbums()
 					DomainAlbumListType.Downloaded -> albumDao.getDownloadedAlbums()
-					is DomainAlbumListType.ByGenre -> {
-						if (reversed) albumDao.getAlbumsByGenreReversed(listType.genre) else albumDao.getAlbumsByGenre(listType.genre)
-					}
 					else -> albumDao.getAlbumsByArtistAsc()
 				}
 			}

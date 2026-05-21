@@ -61,7 +61,7 @@ class Settings(
 
 	// navigation bar settings
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)
-	var bottomBarVisibilityMode by preference(BottomBarVisibilityMode.AllScreens)
+	var bottomBarVisibilityMode by preference(BottomBarVisibilityMode.Default)
 	var navigationBarStyle by preference(NavigationBarStyle.Normal)
 	var navigationBarLabelVisibility by preference(NavigationBarLabelVisibility.Always)
 	var miniPlayerStyle by preference(MiniPlayerStyle.Detached)
