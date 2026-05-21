@@ -70,11 +70,9 @@ class TurnTableWidget : NowPlayingWidget() {
 					contentDescription = "Star",
 					backgroundColor = GlanceTheme.colors.tertiary,
 					contentColor = GlanceTheme.colors.onTertiary,
-					onClick = {
-//						actionRunCallback<WidgetPlaybackAction>(
-//							actionParametersOf(WidgetPlaybackAction.actionKey to WidgetPlaybackAction.ACTION_STAR)
-//						)
-					},
+					onClick = actionRunCallback<WidgetPlaybackAction>(
+						actionParametersOf(WidgetPlaybackAction.actionKey to WidgetPlaybackAction.ACTION_STAR)
+					),
 					modifier = GlanceModifier.size(48.dp)
 				)
 			}
