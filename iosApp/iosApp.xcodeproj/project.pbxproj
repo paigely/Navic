@@ -196,7 +196,7 @@
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(PROJECT_NAME)/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = Navic;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(NAVIC_PRODUCT_NAME)";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -298,7 +298,7 @@
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(PROJECT_NAME)/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = Navic;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(NAVIC_PRODUCT_NAME)";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

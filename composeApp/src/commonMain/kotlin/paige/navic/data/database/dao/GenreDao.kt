@@ -8,6 +8,7 @@ import androidx.room3.Transaction
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.GenreEntity
 import paige.navic.data.database.relations.GenreWithAlbums
+import paige.navic.shared.Logger
 
 @Dao
 interface GenreDao {
@@ -42,24 +43,15 @@ interface GenreDao {
 	@Query("SELECT genreName FROM GenreEntity")
 	suspend fun getAllGenreNames(): List<String>
 
-	@Query("DELETE FROM GenreEntity WHERE genreName IN (:names)")
-	suspend fun deleteGenres(names: List<String>)
-
-	@Transaction
-	suspend fun deleteObsoleteGenres(remoteNames: Set<String>) {
-		val localNames = getAllGenreNames()
-		val toDelete = localNames.filter { it !in remoteNames }
-		if (toDelete.isNotEmpty()) {
-			toDelete.chunked(900).forEach { chunk ->
-				deleteGenres(chunk)
-			}
-		}
-	}
-
 	@Transaction
 	suspend fun updateAllGenres(remoteGenres: List<GenreEntity>) {
 		val remoteNames = remoteGenres.map { it.genreName }.toSet()
-		deleteObsoleteGenres(remoteNames)
+		getAllGenreNames().forEach { localName ->
+			if (localName !in remoteNames) {
+				Logger.w("GenreDao", "genre $localName no longer exists remotely")
+				deleteGenre(localName)
+			}
+		}
 		insertGenres(remoteGenres)
 	}
 }

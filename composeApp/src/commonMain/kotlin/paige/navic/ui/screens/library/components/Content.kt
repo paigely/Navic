@@ -61,7 +61,7 @@ fun LibraryScreenContent(
 	onRateSelectedAlbum: (Int) -> Unit,
 
 	// artists
-	pagedArtists: LazyPagingItems<DomainArtist>,
+	artistsState: UiState<ImmutableList<DomainArtist>>,
 	selectedArtist: DomainArtist?,
 	selectedArtistIsStarred: Boolean,
 	onSelectArtist: (DomainArtist) -> Unit,
@@ -158,10 +158,11 @@ fun LibraryScreenContent(
 			)
 		}
 
-		pagedHorizontalSection(
+		horizontalSection(
 			title = Res.string.title_artists,
 			destination = Screen.ArtistList(true),
-			items = pagedArtists,
+			state = artistsState,
+			key = { it.id },
 			seeAll = true
 		) { artist ->
 			ArtistsScreenItem(

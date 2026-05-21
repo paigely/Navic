@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.collectAsLazyPagingItems
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_songs
 import navic.composeapp.generated.resources.title_disc_number
@@ -89,7 +88,7 @@ fun CollectionDetailScreen(
 	val albumInfoState by viewModel.albumInfoState.collectAsState()
 	val selectedSongIsStarred by viewModel.selectedSongIsStarred.collectAsStateWithLifecycle()
 	val selectedSongRating by viewModel.selectedSongRating.collectAsStateWithLifecycle()
-	val otherAlbums = viewModel.otherAlbumsPaging.collectAsLazyPagingItems()
+	val otherAlbums by viewModel.otherAlbums.collectAsState()
 	val allDownloads by viewModel.allDownloads.collectAsState()
 	val downloadStatus by viewModel.collectionDownloadStatus()
 		.collectAsState(DownloadStatus.NOT_DOWNLOADED)

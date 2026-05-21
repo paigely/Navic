@@ -56,7 +56,6 @@ class Settings(
 	var nowPlayingToolbarPosition by preference(ToolbarPosition.Bottom)
 	var nowPlayingSongInfo by preference(true)
 	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)
-	var highQualityCovers by preference(false)
 	var customHeaders by preference("")
 	var checkForUpdates by preference(true)
 

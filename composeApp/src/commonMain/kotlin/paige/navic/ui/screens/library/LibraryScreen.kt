@@ -63,7 +63,7 @@ fun LibraryScreen() {
 	val selectedPlaylist by playlistsViewModel.selectedPlaylist.collectAsStateWithLifecycle()
 
 	val artistsViewModel = koinViewModel<ArtistListViewModel>()
-	val pagedArtists = artistsViewModel.artistsPaging.collectAsLazyPagingItems()
+	val artistsState by artistsViewModel.artistsState.collectAsStateWithLifecycle()
 	val selectedArtist by artistsViewModel.selectedArtist.collectAsStateWithLifecycle()
 	val selectedArtistIsStarred by artistsViewModel.starred.collectAsStateWithLifecycle()
 
@@ -85,7 +85,7 @@ fun LibraryScreen() {
 	LaunchedEffect(loginState is LoginState.Success) {
 		albumsViewModel.refreshAlbums(true)
 		playlistsViewModel.refreshPlaylists(false)
-		artistsViewModel.refreshArtists()
+		artistsViewModel.refreshArtists(false)
 		genresViewModel.refreshGenres(false)
 	}
 
@@ -99,7 +99,7 @@ fun LibraryScreen() {
 		val isAlbumsLoading = pagedAlbums.loadState.refresh is LoadState.Loading
 		val isAnythingLoading = isAlbumsLoading ||
 			playlistsState is UiState.Loading ||
-			pagedArtists.loadState.refresh is LoadState.Loading ||
+			artistsState is UiState.Loading ||
 			genresState is UiState.Loading
 		PullToRefreshBox(
 			modifier = Modifier
@@ -109,10 +109,10 @@ fun LibraryScreen() {
 			onRefresh = {
 				pagedAlbums.refresh()
 				playlistsViewModel.refreshPlaylists(true)
-				pagedArtists.refresh()
+				artistsViewModel.refreshArtists(true)
 				genresViewModel.refreshGenres(true)
 			},
-			key = listOf(pagedAlbums.itemSnapshotList, playlistsState, pagedArtists.itemSnapshotList, genresState)
+			key = listOf(pagedAlbums.itemSnapshotList, playlistsState, artistsState, genresState)
 		) {
 			LibraryScreenContent(
 				scrollBehavior = scrollBehavior,
@@ -130,7 +130,7 @@ fun LibraryScreen() {
 				onAddAlbumToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum as DomainSongCollection)},
 				onRateSelectedAlbum = { albumsViewModel.setRating(it) },
 
-				pagedArtists = pagedArtists,
+				artistsState = artistsState,
 				selectedArtist = selectedArtist,
 				selectedArtistIsStarred = selectedArtistIsStarred,
 				onSelectArtist = { artistsViewModel.selectArtist(it) },
@@ -153,7 +153,7 @@ fun LibraryScreen() {
 	val flattenedErrors = listOf(
 		(pagedAlbums.loadState.refresh as? LoadState.Error)?.error,
 		(playlistsState as? UiState.Error)?.error,
-		(pagedArtists.loadState.refresh as? LoadState.Error)?.error,
+		(artistsState as? UiState.Error)?.error,
 		(genresState as? UiState.Error)?.error
 	).mapNotNull { it?.stackTraceToString() }.takeIf { it.isNotEmpty() }?.joinToString("\n\n")
 
@@ -162,7 +162,7 @@ fun LibraryScreen() {
 		onClearError = {
 			albumsViewModel.clearError()
 			playlistsViewModel.clearError()
-			artistsViewModel.refreshArtists() // Artists has no clearError, refresh instead or just omit
+			artistsViewModel.clearError()
 			genresViewModel.clearError()
 		}
 	)
