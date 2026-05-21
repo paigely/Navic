@@ -10,8 +10,8 @@ data class PlaylistWithSongs(
 	@Embedded val playlist: PlaylistEntity,
 	@Relation(
 		entity = PlaylistSongCrossRef::class,
-		parentColumn = "playlistId",
-		entityColumn = "playlistId"
+		parentColumns = ["playlistId"],
+		entityColumns = ["playlistId"]
 	)
 	val songs: List<PlaylistSong>
 )
@@ -19,8 +19,8 @@ data class PlaylistWithSongs(
 data class PlaylistSong(
 	@Embedded val crossRef: PlaylistSongCrossRef,
 	@Relation(
-		parentColumn = "songId",
-		entityColumn = "songId"
+		parentColumns = ["songId"],
+		entityColumns = ["songId"]
 	)
 	val song: SongEntity
 )

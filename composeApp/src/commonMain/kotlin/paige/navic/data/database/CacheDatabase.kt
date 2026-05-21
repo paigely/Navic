@@ -1,12 +1,10 @@
 package paige.navic.data.database
 
 import androidx.room3.ConstructedBy
-import androidx.room3.DaoReturnTypeConverters
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomDatabaseConstructor
 import androidx.room3.TypeConverters
-import androidx.room3.paging.PagingSourceDaoReturnTypeConverter
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.dao.DownloadDao
@@ -43,7 +41,6 @@ import paige.navic.data.database.entities.SyncActionEntity
 	]
 )
 @TypeConverters(Converters::class)
-@DaoReturnTypeConverters(PagingSourceDaoReturnTypeConverter::class)
 @ConstructedBy(CacheDatabaseConstructor::class)
 abstract class CacheDatabase : RoomDatabase() {
 	abstract fun albumDao(): AlbumDao
