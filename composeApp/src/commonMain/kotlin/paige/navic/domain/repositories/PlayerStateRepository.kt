@@ -15,10 +15,9 @@ class PlayerStateRepository(
 		val stateEntity = playerStateDao.getPlayerState(serverId) ?: return null
 		val queueEntities = playerStateDao.getQueue(serverId)
 
-		val queue = queueEntities.map { json.decodeFromString<DomainSong>(it.songJson) }
 		return PlayerUiState(
-			queue = queue,
-			currentSong = queue.getOrNull(stateEntity.currentIndex),
+			queue = queueEntities.map { json.decodeFromString<DomainSong>(it.songJson) },
+			currentSong = stateEntity.currentSongId?.let { null },
 			currentIndex = stateEntity.currentIndex,
 			isShuffleEnabled = stateEntity.isShuffleEnabled,
 			repeatMode = stateEntity.repeatMode,

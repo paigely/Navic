@@ -525,6 +525,7 @@ class IOSMediaPlayerViewModel(
 		player.pause()
 		player.replaceCurrentItemWithPlayerItem(null)
 		player.replaceCurrentItemWithPlayerItem(createAVPlayerItem(url))
+		player.setRate(state.playbackSpeed)
 
 		if (!song.id.startsWith("radio_")) {
 			val durationMs = song.duration.inWholeMilliseconds

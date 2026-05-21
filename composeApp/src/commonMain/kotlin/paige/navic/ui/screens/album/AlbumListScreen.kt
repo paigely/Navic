@@ -24,7 +24,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_albums
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
@@ -56,7 +55,7 @@ fun AlbumListScreen(
 		key = listType.toString(),
 		parameters = { parametersOf(listType) }
 	)
-	val player = koinInject<MediaPlayerViewModel>()
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val pagedAlbums = viewModel.pagedAlbums.collectAsLazyPagingItems()
 	val selectedSorting by viewModel.listType.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()

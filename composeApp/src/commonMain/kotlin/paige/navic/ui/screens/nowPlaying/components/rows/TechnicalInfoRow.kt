@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.managers.ConnectivityManager
 import paige.navic.shared.MediaPlayerViewModel
@@ -26,7 +27,7 @@ import paige.navic.shared.MediaPlayerViewModel
 @Composable
 fun NowPlayingTechnicalInfoRow() {
 	val connectivityManager = koinInject<ConnectivityManager>()
-	val player = koinInject<MediaPlayerViewModel>()
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong
 

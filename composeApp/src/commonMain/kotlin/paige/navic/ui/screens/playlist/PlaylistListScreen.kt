@@ -40,7 +40,6 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_create_playlist
 import navic.composeapp.generated.resources.title_playlists
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
@@ -74,7 +73,7 @@ fun PlaylistListScreen(
 	nested: Boolean = false
 ) {
 	val viewModel = koinViewModel<PlaylistListViewModel>()
-	val player = koinInject<MediaPlayerViewModel>()
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playlistsState by viewModel.playlistsState.collectAsState()
 	val selectedPlaylist by viewModel.selectedPlaylist.collectAsState()
 	val selectedSorting by viewModel.selectedSorting.collectAsStateWithLifecycle()

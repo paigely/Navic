@@ -57,7 +57,6 @@ import navic.composeapp.generated.resources.info_no_lyrics
 import navic.composeapp.generated.resources.title_select_lyrics
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalNavStack
@@ -97,7 +96,7 @@ fun LyricsScreen(
 		key = song?.id,
 		parameters = { parametersOf(song) }
 	)
-	val player = koinInject<MediaPlayerViewModel>()
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val state by viewModel.lyricsState.collectAsState()
 
