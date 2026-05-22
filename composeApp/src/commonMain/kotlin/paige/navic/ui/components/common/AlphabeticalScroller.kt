@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.Settings
 import kotlin.math.abs
 
 @Composable

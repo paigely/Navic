@@ -25,7 +25,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.LocalSharedTransitionScope
-import paige.navic.data.models.Screen
+import paige.navic.ui.model.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSongCollection

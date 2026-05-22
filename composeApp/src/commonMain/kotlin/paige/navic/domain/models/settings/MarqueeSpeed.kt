@@ -1,4 +1,4 @@
-package paige.navic.data.models.settings.enums
+package paige.navic.domain.models.settings
 
 enum class MarqueeSpeed(val value: Int) {
 	Disabled(0),

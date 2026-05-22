@@ -32,8 +32,8 @@ import navic.composeapp.generated.resources.title_developer
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
+import paige.navic.ui.model.Screen
+import paige.navic.domain.manager.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
 import paige.navic.ui.components.common.Form

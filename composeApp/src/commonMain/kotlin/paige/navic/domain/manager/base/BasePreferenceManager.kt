@@ -1,8 +1,9 @@
-package paige.navic.data.models.settings
+package paige.navic.domain.manager.base
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
 import kotlin.enums.enumEntries
@@ -18,7 +19,7 @@ private typealias Setter<T> = (key: String, newValue: T) -> Unit
  */
 @Suppress("SameParameterValue", "MemberVisibilityCanBePrivate", "unused")
 abstract class BasePreferenceManager(
-	protected val settings: com.russhwolf.settings.Settings
+	protected val settings: Settings
 ) {
 	protected fun preference(
 		key: String?,
@@ -142,7 +143,7 @@ abstract class BasePreferenceManager(
 }
 
 @PublishedApi
-internal inline fun <reified E : Enum<E>> com.russhwolf.settings.Settings.getEnum(
+internal inline fun <reified E : Enum<E>> Settings.getEnum(
 	key: String,
 	defaultValue: E
 ): E {
@@ -150,7 +151,7 @@ internal inline fun <reified E : Enum<E>> com.russhwolf.settings.Settings.getEnu
 }
 
 @PublishedApi
-internal inline fun <reified E : Enum<E>> com.russhwolf.settings.Settings.putEnum(
+internal inline fun <reified E : Enum<E>> Settings.putEnum(
 	key: String,
 	value: E
 ) {

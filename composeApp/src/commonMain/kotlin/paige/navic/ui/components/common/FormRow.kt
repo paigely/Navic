@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.Settings
 
 @Composable
 fun FormRow(

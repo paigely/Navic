@@ -54,7 +54,7 @@ import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.data.models.Screen
+import paige.navic.ui.model.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtist

@@ -1,4 +1,4 @@
-package paige.navic.data.models
+package paige.navic.ui.model
 
 import androidx.compose.runtime.Immutable
 import androidx.navigation3.runtime.NavKey

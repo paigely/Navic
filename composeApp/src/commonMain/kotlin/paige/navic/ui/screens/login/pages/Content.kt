@@ -48,7 +48,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.data.models.Screen
+import paige.navic.ui.model.Screen
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.theme.defaultFont
 import paige.navic.utils.LoginState

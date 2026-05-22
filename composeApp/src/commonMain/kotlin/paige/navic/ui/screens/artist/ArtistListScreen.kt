@@ -30,9 +30,9 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.ui.model.Screen
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType

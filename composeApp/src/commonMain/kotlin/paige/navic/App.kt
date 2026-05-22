@@ -48,9 +48,9 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.koinInject
-import paige.navic.data.images.initializeSingletonImageLoader
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
+import paige.navic.utils.initializeSingletonImageLoader
+import paige.navic.ui.model.Screen
+import paige.navic.domain.manager.Settings
 import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.PlatformContext

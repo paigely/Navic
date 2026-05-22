@@ -1,4 +1,4 @@
-package paige.navic.data.models.settings.enums
+package paige.navic.domain.models.settings
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
@@ -24,7 +24,7 @@ import navic.composeapp.generated.resources.theme_subtitle_seeded
 import navic.composeapp.generated.resources.theme_subtitle_spotify
 import org.jetbrains.compose.resources.StringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings.Companion.shared
+import paige.navic.domain.manager.Settings.Companion.shared
 import paige.navic.utils.darkIosColorScheme
 import paige.navic.utils.lightIosColorScheme
 

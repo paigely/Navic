@@ -20,7 +20,7 @@ import navic.composeapp.generated.resources.action_more
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.data.models.Screen
+import paige.navic.ui.model.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainSongCollection

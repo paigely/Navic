@@ -36,7 +36,6 @@ import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.entities.LyricEntity
-import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.LyricRepository

@@ -10,7 +10,7 @@ import io.ktor.client.request.header
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import paige.navic.data.models.User
+import paige.navic.ui.model.User
 
 class SessionManager(
 	private val settings: Settings
@@ -41,7 +41,7 @@ class SessionManager(
 				agent = "Navic"
 			}
 
-			val customHeaders = paige.navic.data.models.settings.Settings.shared.customHeadersMap()
+			val customHeaders = paige.navic.domain.manager.Settings.shared.customHeadersMap()
 			if (customHeaders.isNotEmpty()) {
 				defaultRequest {
 					customHeaders.forEach { (key, value) -> header(key, value) }
@@ -103,6 +103,6 @@ class SessionManager(
 	fun getCoverArtUrl(coverArtId: String) = api.getCoverArtUrl(
 		coverArtId,
 		auth = true,
-		size = "${paige.navic.data.models.settings.Settings.shared.coverArtQuality.value}"
+		size = "${paige.navic.domain.manager.Settings.shared.coverArtQuality.value}"
 	)
 }

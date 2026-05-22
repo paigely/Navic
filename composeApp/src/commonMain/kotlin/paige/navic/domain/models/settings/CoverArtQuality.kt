@@ -1,4 +1,4 @@
-package paige.navic.data.models.settings.enums
+package paige.navic.domain.models.settings
 
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_quality_high

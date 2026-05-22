@@ -21,8 +21,8 @@ import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WaveVelocity
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import org.koin.compose.koinInject
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.NowPlayingSliderStyle
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.NowPlayingSliderStyle
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.SlimSlider
 

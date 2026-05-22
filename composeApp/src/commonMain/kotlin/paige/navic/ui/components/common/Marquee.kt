@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.delay
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.MarqueeSpeed
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.MarqueeSpeed
 import kotlin.time.Duration.Companion.seconds
 
 @Composable

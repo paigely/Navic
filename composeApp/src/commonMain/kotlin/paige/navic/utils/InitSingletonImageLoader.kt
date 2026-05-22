@@ -1,4 +1,4 @@
-package paige.navic.data.images
+package paige.navic.utils
 
 import coil3.ImageLoader
 import coil3.disk.DiskCache

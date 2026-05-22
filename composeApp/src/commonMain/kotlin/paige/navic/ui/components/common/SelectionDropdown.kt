@@ -38,7 +38,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.ui.theme.defaultFont

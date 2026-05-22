@@ -43,8 +43,8 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_now_playing_slider_style
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.NowPlayingSliderStyle
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.NowPlayingSliderStyle
 import paige.navic.ui.components.common.SlimSlider
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

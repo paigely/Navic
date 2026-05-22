@@ -88,9 +88,9 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.CoverArtQuality
-import paige.navic.data.models.settings.enums.OfflineMode
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.CoverArtQuality
+import paige.navic.domain.models.settings.OfflineMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Offline
 import paige.navic.ui.components.common.Form

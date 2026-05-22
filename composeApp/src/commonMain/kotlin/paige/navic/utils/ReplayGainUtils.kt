@@ -1,6 +1,6 @@
 package paige.navic.utils
 
-import paige.navic.data.models.settings.enums.ReplayGainMode
+import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.models.DomainReplayGain
 import kotlin.math.pow
 

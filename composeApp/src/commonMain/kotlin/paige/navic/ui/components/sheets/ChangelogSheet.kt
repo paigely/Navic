@@ -46,7 +46,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.Settings
 import paige.navic.shared.Logger
 import paige.navic.shared.PlatformContext
 import paige.navic.ui.components.common.Markdown

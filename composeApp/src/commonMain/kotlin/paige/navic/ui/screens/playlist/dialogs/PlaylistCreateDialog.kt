@@ -25,7 +25,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalNavStack
-import paige.navic.data.models.Screen
+import paige.navic.ui.model.Screen
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistAdd

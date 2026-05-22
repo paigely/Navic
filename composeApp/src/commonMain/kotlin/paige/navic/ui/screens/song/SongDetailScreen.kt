@@ -38,7 +38,7 @@ import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.Settings
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar

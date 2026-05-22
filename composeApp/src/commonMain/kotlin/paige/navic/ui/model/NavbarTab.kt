@@ -1,4 +1,4 @@
-package paige.navic.data.models
+package paige.navic.ui.model
 
 import kotlinx.serialization.Serializable
 

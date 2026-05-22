@@ -31,7 +31,7 @@ import navic.composeapp.generated.resources.option_navigation_bar_tabs
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.NavbarTab
+import paige.navic.ui.model.NavbarTab
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle
 import paige.navic.ui.components.common.ErrorBox

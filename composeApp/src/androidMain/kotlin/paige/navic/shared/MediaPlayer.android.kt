@@ -45,8 +45,8 @@ import org.koin.core.component.inject
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.ReplayGainMode
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainExplicitStatus

@@ -29,8 +29,8 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.ThemeMode
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.ThemeMode
 import paige.navic.domain.models.DomainRadio
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Radio

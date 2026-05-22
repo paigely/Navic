@@ -10,8 +10,8 @@ import androidx.compose.ui.text.font.FontVariation
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.google_sans
 import org.jetbrains.compose.resources.Font
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.FontOption
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.FontOption
 
 private val defaultTypography = Typography()
 

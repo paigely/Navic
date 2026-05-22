@@ -9,7 +9,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.entities.SyncActionType
-import paige.navic.data.models.settings.Settings
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 

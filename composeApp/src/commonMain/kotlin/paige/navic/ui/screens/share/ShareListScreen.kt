@@ -28,8 +28,8 @@ import navic.composeapp.generated.resources.info_no_shares
 import navic.composeapp.generated.resources.title_shares
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.ShareOff
 import paige.navic.ui.components.common.ContentUnavailable

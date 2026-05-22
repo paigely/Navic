@@ -68,9 +68,9 @@ import org.koin.core.parameter.parametersOf
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.ui.model.Screen
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorBox

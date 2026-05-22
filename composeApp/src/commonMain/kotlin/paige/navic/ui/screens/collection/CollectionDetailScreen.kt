@@ -38,8 +38,8 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSongCollection

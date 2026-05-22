@@ -13,8 +13,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.OfflineMode
+import paige.navic.domain.models.settings.OfflineMode
 import platform.Network.nw_interface_type_cellular
 import platform.Network.nw_path_get_status
 import platform.Network.nw_path_monitor_cancel

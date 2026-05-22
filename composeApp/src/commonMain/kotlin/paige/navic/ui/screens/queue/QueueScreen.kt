@@ -35,7 +35,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.Screen
+import paige.navic.ui.model.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.shared.MediaPlayerViewModel

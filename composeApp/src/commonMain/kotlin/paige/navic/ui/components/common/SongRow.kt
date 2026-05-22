@@ -36,8 +36,8 @@ import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
+import paige.navic.ui.model.Screen
+import paige.navic.domain.manager.Settings
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons

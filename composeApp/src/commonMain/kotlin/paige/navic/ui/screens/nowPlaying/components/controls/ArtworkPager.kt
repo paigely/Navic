@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.Settings
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.screens.nowPlaying.components.NowPlayingArtwork
 import kotlin.time.Duration.Companion.milliseconds

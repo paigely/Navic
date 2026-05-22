@@ -61,11 +61,11 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.data.models.NavbarConfig
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.MiniPlayerProgressStyle
-import paige.navic.data.models.settings.enums.MiniPlayerStyle
+import paige.navic.ui.model.NavbarConfig
+import paige.navic.ui.model.Screen
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.MiniPlayerProgressStyle
+import paige.navic.domain.models.settings.MiniPlayerStyle
 import paige.navic.domain.manager.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note

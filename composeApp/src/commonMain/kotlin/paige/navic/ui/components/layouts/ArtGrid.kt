@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalSharedTransitionScope
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.Settings
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.utils.EmphasizedDecelerateEasing

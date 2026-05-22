@@ -30,9 +30,9 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.data.models.NavbarConfig
-import paige.navic.data.models.NavbarTab
-import paige.navic.data.models.Screen
+import paige.navic.ui.model.NavbarConfig
+import paige.navic.ui.model.NavbarTab
+import paige.navic.ui.model.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Settings
 import paige.navic.icons.outlined.AccountCircle

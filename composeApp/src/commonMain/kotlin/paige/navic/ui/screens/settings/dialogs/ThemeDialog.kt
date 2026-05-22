@@ -28,9 +28,9 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_choose_theme
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.Theme
-import paige.navic.data.models.settings.enums.ThemeMode
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.Theme
+import paige.navic.domain.models.settings.ThemeMode
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

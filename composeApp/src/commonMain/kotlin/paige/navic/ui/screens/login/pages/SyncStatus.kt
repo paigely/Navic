@@ -15,7 +15,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_syncing
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.models.User
+import paige.navic.ui.model.User
 import paige.navic.utils.LoginState
 
 @Composable

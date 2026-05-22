@@ -1,29 +1,26 @@
-// Adapted from https://github.com/zt64/tau/blob/main/core/src/main/kotlin/dev/zt64/tau/domain/manager/PreferencesManager.kt
-// Copyright (c) 2025 zt64
-// SPDX-License-Identifier: GPL-3.0
+package paige.navic.domain.manager
 
-package paige.navic.data.models.settings
-
-import paige.navic.data.models.settings.enums.AnimationStyle
-import paige.navic.data.models.settings.enums.BottomBarCollapseMode
-import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
-import paige.navic.data.models.settings.enums.CoverArtQuality
-import paige.navic.data.models.settings.enums.CoverArtShape
-import paige.navic.data.models.settings.enums.FontOption
-import paige.navic.data.models.settings.enums.GridSize
-import paige.navic.data.models.settings.enums.MarqueeSpeed
-import paige.navic.data.models.settings.enums.MiniPlayerProgressStyle
-import paige.navic.data.models.settings.enums.MiniPlayerStyle
-import paige.navic.data.models.settings.enums.NavigationBarLabelVisibility
-import paige.navic.data.models.settings.enums.NavigationBarStyle
-import paige.navic.data.models.settings.enums.NowPlayingBackgroundStyle
-import paige.navic.data.models.settings.enums.NowPlayingSliderStyle
-import paige.navic.data.models.settings.enums.OfflineMode
-import paige.navic.data.models.settings.enums.ReplayGainMode
-import paige.navic.data.models.settings.enums.StreamingQuality
-import paige.navic.data.models.settings.enums.Theme
-import paige.navic.data.models.settings.enums.ThemeMode
-import paige.navic.data.models.settings.enums.ToolbarPosition
+import paige.navic.domain.manager.base.BasePreferenceManager
+import paige.navic.domain.models.settings.AnimationStyle
+import paige.navic.domain.models.settings.BottomBarCollapseMode
+import paige.navic.domain.models.settings.BottomBarVisibilityMode
+import paige.navic.domain.models.settings.CoverArtQuality
+import paige.navic.domain.models.settings.CoverArtShape
+import paige.navic.domain.models.settings.FontOption
+import paige.navic.domain.models.settings.GridSize
+import paige.navic.domain.models.settings.MarqueeSpeed
+import paige.navic.domain.models.settings.MiniPlayerProgressStyle
+import paige.navic.domain.models.settings.MiniPlayerStyle
+import paige.navic.domain.models.settings.NavigationBarLabelVisibility
+import paige.navic.domain.models.settings.NavigationBarStyle
+import paige.navic.domain.models.settings.NowPlayingBackgroundStyle
+import paige.navic.domain.models.settings.NowPlayingSliderStyle
+import paige.navic.domain.models.settings.OfflineMode
+import paige.navic.domain.models.settings.ReplayGainMode
+import paige.navic.domain.models.settings.StreamingQuality
+import paige.navic.domain.models.settings.Theme
+import paige.navic.domain.models.settings.ThemeMode
+import paige.navic.domain.models.settings.ToolbarPosition
 import com.russhwolf.settings.Settings as KmpSettings
 
 class Settings(
@@ -66,7 +63,9 @@ class Settings(
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)
 	var bottomBarVisibilityMode by preference(BottomBarVisibilityMode.AllScreens)
 	var navigationBarStyle by preference(NavigationBarStyle.Normal)
-	var navigationBarLabelVisibility by preference(NavigationBarLabelVisibility.Always)
+	var navigationBarLabelVisibility by preference(
+        NavigationBarLabelVisibility.Always
+    )
 	var miniPlayerStyle by preference(MiniPlayerStyle.Detached)
 	var miniPlayerProgressStyle by preference(MiniPlayerProgressStyle.Seekable)
 

@@ -14,9 +14,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.BottomBarCollapseMode
-import paige.navic.data.models.settings.enums.MiniPlayerStyle
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.BottomBarCollapseMode
+import paige.navic.domain.models.settings.MiniPlayerStyle
 import paige.navic.utils.easedVerticalGradient
 
 @Composable

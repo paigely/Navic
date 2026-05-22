@@ -43,9 +43,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.BottomBarCollapseMode
-import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.BottomBarCollapseMode
+import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add

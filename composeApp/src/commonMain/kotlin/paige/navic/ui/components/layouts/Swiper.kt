@@ -33,7 +33,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.SkipNext
 import paige.navic.icons.filled.SkipPrevious

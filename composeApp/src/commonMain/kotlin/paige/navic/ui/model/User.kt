@@ -1,4 +1,4 @@
-package paige.navic.data.models
+package paige.navic.ui.model
 
 data class User(
 	val name: String,

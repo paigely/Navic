@@ -29,9 +29,9 @@ import navic.composeapp.generated.resources.title_layout
 import navic.composeapp.generated.resources.title_now_playing
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.NowPlayingBackgroundStyle
-import paige.navic.data.models.settings.enums.ToolbarPosition
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.NowPlayingBackgroundStyle
+import paige.navic.domain.models.settings.ToolbarPosition
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle

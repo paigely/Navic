@@ -32,8 +32,8 @@ import navic.composeapp.generated.resources.title_fonts_inbuilt
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.FontOption
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.FontOption
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.ui.components.layouts.NestedTopBar

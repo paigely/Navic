@@ -1,4 +1,4 @@
-package paige.navic.data.models.settings.enums
+package paige.navic.domain.models.settings
 
 /**
  * Different grid sizes which the user can choose from.

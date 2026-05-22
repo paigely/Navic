@@ -13,8 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.Theme
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.Theme
 
 @Composable
 fun Form(

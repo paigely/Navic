@@ -26,8 +26,8 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_artwork_shape
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.CoverArtShape
+import paige.navic.domain.manager.Settings
+import paige.navic.domain.models.settings.CoverArtShape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

@@ -1,4 +1,4 @@
-package paige.navic.data.models.settings.enums
+package paige.navic.domain.models.settings
 
 import androidx.compose.runtime.Composable
 import navic.composeapp.generated.resources.Res

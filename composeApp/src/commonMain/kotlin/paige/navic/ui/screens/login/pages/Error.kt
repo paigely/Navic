@@ -13,7 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import paige.navic.data.models.User
+import paige.navic.ui.model.User
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.utils.LoginState
 import paige.navic.utils.UiState
