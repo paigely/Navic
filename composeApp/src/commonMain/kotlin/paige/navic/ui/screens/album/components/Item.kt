@@ -16,7 +16,7 @@ import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.ui.model.Screen
+import paige.navic.ui.navigation.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.ui.components.layouts.ArtGridItem

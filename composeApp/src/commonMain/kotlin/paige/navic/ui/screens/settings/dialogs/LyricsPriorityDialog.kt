@@ -36,7 +36,7 @@ import paige.navic.icons.outlined.DragHandle
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.screens.settings.viewmodels.LyricsPriorityViewModel
 import paige.navic.utils.DraggableListState
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 import paige.navic.utils.dragHandle
 import paige.navic.utils.draggableItems
 import paige.navic.utils.rememberDraggableListState

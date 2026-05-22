@@ -12,7 +12,7 @@ import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainPlaylistListType
 import paige.navic.domain.repositories.PlaylistRepository
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class PlaylistListViewModel(
 	private val repository: PlaylistRepository,

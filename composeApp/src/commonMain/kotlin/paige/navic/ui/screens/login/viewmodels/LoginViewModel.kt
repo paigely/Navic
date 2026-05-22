@@ -9,10 +9,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.ui.model.User
+import paige.navic.domain.models.User
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.repositories.DbRepository
-import paige.navic.utils.LoginState
+import paige.navic.ui.core.LoginState
 
 class LoginViewModel(
 	private val repository: DbRepository,

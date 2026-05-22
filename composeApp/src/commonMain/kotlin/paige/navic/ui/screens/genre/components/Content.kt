@@ -11,7 +11,7 @@ import paige.navic.domain.models.DomainGenre
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Genre
 import paige.navic.ui.components.common.ContentUnavailable
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 fun LazyGridScope.genreListScreenContent(
 	state: UiState<List<DomainGenre>>

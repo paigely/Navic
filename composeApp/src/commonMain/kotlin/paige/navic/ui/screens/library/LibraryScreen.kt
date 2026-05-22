@@ -42,8 +42,8 @@ import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.LoginState
-import paige.navic.utils.UiState
+import paige.navic.ui.core.LoginState
+import paige.navic.ui.core.UiState
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)

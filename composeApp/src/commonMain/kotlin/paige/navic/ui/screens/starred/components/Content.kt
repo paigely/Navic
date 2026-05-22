@@ -54,7 +54,7 @@ import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.ui.model.Screen
+import paige.navic.ui.navigation.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtist
@@ -71,7 +71,7 @@ import paige.navic.ui.components.layouts.ArtCarouselItem
 import paige.navic.ui.components.sheets.ArtistSheet
 import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

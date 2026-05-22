@@ -61,7 +61,7 @@ import paige.navic.ui.screens.collection.components.collectionDetailScreenMoreBy
 import paige.navic.ui.screens.collection.viewmodels.CollectionDetailViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 import paige.navic.utils.withoutTop
 import kotlin.time.Duration
 

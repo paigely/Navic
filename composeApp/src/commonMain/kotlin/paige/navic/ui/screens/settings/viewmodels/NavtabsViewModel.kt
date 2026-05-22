@@ -6,9 +6,9 @@ import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
-import paige.navic.ui.model.NavbarConfig
-import paige.navic.ui.model.NavbarTab
-import paige.navic.utils.UiState
+import paige.navic.domain.models.settings.NavbarConfig
+import paige.navic.domain.models.settings.NavbarTab
+import paige.navic.ui.core.UiState
 
 class NavtabsViewModel(
 	private val settings: Settings,

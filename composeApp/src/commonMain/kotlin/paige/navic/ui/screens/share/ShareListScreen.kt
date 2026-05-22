@@ -42,7 +42,7 @@ import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.screens.share.components.ShareListScreenItem
 import paige.navic.ui.screens.share.viewmodels.ShareListViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 import paige.navic.utils.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

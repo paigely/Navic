@@ -29,7 +29,7 @@ import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.shared.Logger
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 @Immutable
 data class ArtistState(

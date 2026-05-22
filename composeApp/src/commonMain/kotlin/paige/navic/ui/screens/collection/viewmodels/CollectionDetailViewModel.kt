@@ -24,7 +24,7 @@ import paige.navic.domain.repositories.SongRepository
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.shared.Logger
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class CollectionDetailViewModel(
 	private val collectionId: String,

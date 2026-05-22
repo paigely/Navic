@@ -15,8 +15,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_syncing
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.ui.model.User
-import paige.navic.utils.LoginState
+import paige.navic.domain.models.User
+import paige.navic.ui.core.LoginState
 
 @Composable
 fun LoginScreenSyncStatus(

@@ -25,7 +25,7 @@ import navic.composeapp.generated.resources.title_source
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.ui.model.Screen
+import paige.navic.ui.navigation.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
 import paige.navic.ui.components.common.Form

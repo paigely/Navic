@@ -39,7 +39,7 @@ import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
 import paige.navic.ui.screens.starred.components.StarredScreenContent
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)

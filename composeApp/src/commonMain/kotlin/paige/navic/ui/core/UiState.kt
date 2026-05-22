@@ -1,4 +1,4 @@
-package paige.navic.utils
+package paige.navic.ui.core
 
 sealed class UiState<out T> {
 	abstract val data: T?

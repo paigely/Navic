@@ -35,9 +35,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.ui.model.NavbarConfig
-import paige.navic.ui.model.NavbarTab
-import paige.navic.ui.model.Screen
+import paige.navic.domain.models.settings.NavbarConfig
+import paige.navic.domain.models.settings.NavbarTab
+import paige.navic.ui.navigation.Screen
 import paige.navic.domain.manager.Settings
 import paige.navic.domain.models.settings.NavigationBarLabelVisibility
 import paige.navic.domain.models.settings.NavigationBarStyle
@@ -57,7 +57,7 @@ import paige.navic.icons.outlined.Radio
 import paige.navic.icons.outlined.Search
 import paige.navic.ui.components.common.animatedTabIconPainter
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 private enum class NavItem(
 	val destination: Screen,

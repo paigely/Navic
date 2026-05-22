@@ -10,7 +10,7 @@ import io.ktor.client.request.header
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import paige.navic.ui.model.User
+import paige.navic.domain.models.User
 
 class SessionManager(
 	private val settings: Settings

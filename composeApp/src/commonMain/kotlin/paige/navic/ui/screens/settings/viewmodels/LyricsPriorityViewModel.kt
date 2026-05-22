@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
 import paige.navic.domain.repositories.LyricsConfig
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class LyricsPriorityViewModel(
 	private val settings: Settings = Settings(),

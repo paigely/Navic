@@ -16,7 +16,7 @@ import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSongCollection
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class CollectionRepository(
 	private val albumDao: AlbumDao,

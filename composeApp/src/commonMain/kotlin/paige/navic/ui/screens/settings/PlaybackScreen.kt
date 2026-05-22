@@ -51,7 +51,7 @@ import navic.composeapp.generated.resources.title_streaming_quality
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.ui.model.Screen
+import paige.navic.ui.navigation.Screen
 import paige.navic.domain.manager.Settings
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.icons.Icons

@@ -59,7 +59,7 @@ import org.koin.core.parameter.parametersOf
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.ui.model.Screen
+import paige.navic.ui.navigation.Screen
 import paige.navic.domain.manager.Settings
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbum
@@ -91,7 +91,7 @@ import paige.navic.ui.screens.search.components.SearchScreenChips
 import paige.navic.ui.screens.search.components.SearchScreenTopBar
 import paige.navic.ui.screens.search.viewmodels.SearchViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 enum class SearchCategory(val res: StringResource) {
 	ALL(Res.string.title_all),

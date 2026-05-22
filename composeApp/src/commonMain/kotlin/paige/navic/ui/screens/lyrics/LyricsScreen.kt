@@ -61,7 +61,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalNavStack
-import paige.navic.ui.model.Screen
+import paige.navic.ui.navigation.Screen
 import paige.navic.domain.manager.Settings
 import paige.navic.domain.models.settings.ToolbarPosition
 import paige.navic.domain.models.DomainSong
@@ -82,7 +82,7 @@ import paige.navic.ui.screens.lyrics.components.LyricsScreenKaraokeText
 import paige.navic.ui.screens.lyrics.components.LyricsScreenLoadingView
 import paige.navic.ui.screens.lyrics.dialogs.LyricsShareSheet
 import paige.navic.ui.screens.lyrics.viewmodels.LyricsScreenViewModel
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 import paige.navic.utils.calculateWordProgress
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds

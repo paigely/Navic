@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.manager.SessionManager
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class RadioCreateDialogViewModel(
 	private val sessionManager: SessionManager

@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainGenre
 import paige.navic.domain.repositories.GenreRepository
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class GenreListViewModel(
 	private val repository: GenreRepository,

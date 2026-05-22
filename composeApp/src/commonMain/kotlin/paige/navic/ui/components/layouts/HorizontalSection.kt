@@ -29,7 +29,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun <T> LazyGridScope.horizontalSection(

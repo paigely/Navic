@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.repositories.CollectionRepository
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class SongDetailViewModel(
 	songId: String,

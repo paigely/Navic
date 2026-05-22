@@ -30,9 +30,9 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.ui.model.NavbarConfig
-import paige.navic.ui.model.NavbarTab
-import paige.navic.ui.model.Screen
+import paige.navic.domain.models.settings.NavbarConfig
+import paige.navic.domain.models.settings.NavbarTab
+import paige.navic.ui.navigation.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Settings
 import paige.navic.icons.outlined.AccountCircle
@@ -47,7 +47,7 @@ import paige.navic.ui.components.sheets.SleepTimerSheet
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.ui.theme.positive
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 import paige.navic.utils.label
 
 @OptIn(

@@ -28,7 +28,7 @@ import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.screens.genre.components.genreListScreenContent
 import paige.navic.ui.screens.genre.viewmodels.GenreListViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 import paige.navic.utils.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

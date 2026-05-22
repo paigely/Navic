@@ -39,7 +39,7 @@ import paige.navic.domain.manager.Settings
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.utils.EmphasizedDecelerateEasing
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 import paige.navic.utils.shimmerLoading
 
 @Composable

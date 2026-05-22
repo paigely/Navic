@@ -1,4 +1,4 @@
-package paige.navic.data.database
+package paige.navic.domain.manager
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -17,10 +17,7 @@ import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.SyncActionEntity
 import paige.navic.data.database.entities.SyncActionType
-import paige.navic.domain.manager.Settings
-import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.repositories.DbRepository
-import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.shared.Logger
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours

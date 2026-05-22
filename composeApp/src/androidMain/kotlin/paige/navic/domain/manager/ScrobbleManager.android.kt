@@ -3,7 +3,6 @@ package paige.navic.domain.manager
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import kotlinx.coroutines.CoroutineScope
-import paige.navic.data.database.SyncManager
 
 class AndroidScrobbleManager(
     private val player: Player,

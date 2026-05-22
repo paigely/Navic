@@ -61,8 +61,8 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.ui.model.NavbarConfig
-import paige.navic.ui.model.Screen
+import paige.navic.domain.models.settings.NavbarConfig
+import paige.navic.ui.navigation.Screen
 import paige.navic.domain.manager.Settings
 import paige.navic.domain.models.settings.MiniPlayerProgressStyle
 import paige.navic.domain.models.settings.MiniPlayerStyle
@@ -77,7 +77,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)

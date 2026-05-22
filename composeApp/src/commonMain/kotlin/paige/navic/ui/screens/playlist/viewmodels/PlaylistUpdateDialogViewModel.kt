@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainSong
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class PlaylistUpdateDialogViewModel(
 	private val songs: List<DomainSong>,

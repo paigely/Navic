@@ -14,8 +14,8 @@ import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import paige.navic.ui.model.User
-import paige.navic.utils.LoginState
+import paige.navic.domain.models.User
+import paige.navic.ui.core.LoginState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

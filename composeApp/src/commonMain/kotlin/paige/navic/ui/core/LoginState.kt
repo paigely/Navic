@@ -1,4 +1,4 @@
-package paige.navic.utils
+package paige.navic.ui.core
 
 import org.jetbrains.compose.resources.StringResource
 
