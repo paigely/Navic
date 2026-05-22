@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
@@ -14,7 +15,9 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
+import androidx.media3.common.Timeline
 import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
@@ -86,13 +89,13 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			}
 
 		val httpDataSourceFactory = DefaultHttpDataSource.Factory()
-    		.setDefaultRequestProperties(Settings.shared.customHeadersMap())
+			.setDefaultRequestProperties(Settings.shared.customHeadersMap())
 		val dataSourceFactory = DefaultDataSource.Factory(this, httpDataSourceFactory)
 		val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
 
 		val player = ExoPlayer.Builder(this)
 			.setLoadControl(loadControl)
-			.setMediaSourceFactory(mediaSourceFactory) // Injects custom headers
+			.setMediaSourceFactory(mediaSourceFactory)
 			.setHandleAudioBecomingNoisy(true)
 			.setWakeMode(C.WAKE_MODE_NETWORK)
 			.build()
@@ -206,20 +209,21 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	private fun getStreamUrl(id: String) =
-		when (connectivityManager.isCellular.value) {
-			true -> SessionManager.api.getStreamUrl(
-				id,
-				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateCellular else Settings.shared.streamingQualityCellular.bitrateAndroid,
-				Settings.shared.streamingQualityCellular.containerAndroid
-			).toUri()
+	private fun getStreamUrl(id: String): Uri {
+		val isCellular = connectivityManager.isCellular.value
+		val bitrate = if (Settings.shared.isAdvancedTranscodingActive) {
+			if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
+		} else {
+			if (isCellular) Settings.shared.streamingQualityCellular.bitrateAndroid else Settings.shared.streamingQualityWifi.bitrateAndroid
+		}
+		val container = if (isCellular) Settings.shared.streamingQualityCellular.containerAndroid else Settings.shared.streamingQualityWifi.containerAndroid
 
-			false -> SessionManager.api.getStreamUrl(
-				id,
-				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateWifi else Settings.shared.streamingQualityWifi.bitrateAndroid,
-				Settings.shared.streamingQualityWifi.containerAndroid
-			).toUri()
-		}.buildUpon().appendQueryParameter("estimateContentLength", "true").build()
+		return SessionManager.api.getStreamUrl(id, bitrate, container)
+			.toUri()
+			.buildUpon()
+			.appendQueryParameter("estimateContentLength", "true")
+			.build()
+	}
 
 	private fun setupController() {
 		viewModelScope.launch {
@@ -272,8 +276,17 @@ class AndroidMediaPlayerViewModel(
 					override fun onRepeatModeChanged(repeatMode: Int) {
 						_uiState.update { it.copy(repeatMode = repeatMode) }
 					}
+
+					override fun onTracksChanged(tracks: Tracks) {
+						updatePlaybackProperties(tracks)
+					}
+
+					override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+						updatePlaybackState()
+					}
 				})
 				updatePlaybackState()
+				updatePlaybackProperties(currentTracks)
 
 				downloadManager.allDownloads.first()
 				pendingSyncState?.let { state ->
@@ -426,6 +439,27 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
+	@OptIn(UnstableApi::class)
+	private fun updatePlaybackProperties(tracks: Tracks) {
+		val audioGroup = tracks.groups.firstOrNull { it.type == C.TRACK_TYPE_AUDIO && it.isSelected }
+		if (audioGroup != null) {
+			for (i in 0 until audioGroup.length) {
+				if (audioGroup.isTrackSelected(i)) {
+					val format = audioGroup.getTrackFormat(i)
+					Logger.i("MediaPlayer", "Active Track Format: $format")
+					_uiState.update {
+						it.copy(
+							playbackBitrate = format.bitrate.takeIf { it > 0 },
+							playbackSampleRate = format.sampleRate.takeIf { it > 0 },
+							playbackMimeType = format.sampleMimeType
+						)
+					}
+					break
+				}
+			}
+		}
+	}
+
 	override fun addToQueueSingle(song: DomainSong) {
 		viewModelScope.launch {
 			controller?.addMediaItem(song.toMediaItem())
@@ -506,7 +540,6 @@ class AndroidMediaPlayerViewModel(
 
 	override fun clearQueue() {
 		viewModelScope.launch {
-			controller?.clearMediaItems()
 			_uiState.update {
 				it.copy(
 					queue = emptyList(),
@@ -515,6 +548,7 @@ class AndroidMediaPlayerViewModel(
 					progress = 0f
 				)
 			}
+			controller?.clearMediaItems()
 		}
 	}
 
@@ -533,8 +567,8 @@ class AndroidMediaPlayerViewModel(
 		viewModelScope.launch {
 			controller?.addMediaItem(_uiState.value.currentIndex + 1, song.toMediaItem())
 			_uiState.update { state ->
-				val newQueue = 
-					if (state.queue.isEmpty()) 
+				val newQueue =
+					if (state.queue.isEmpty())
 						state.queue + song
 					else
 						state.queue.slice(0..state.currentIndex) + song + state.queue.slice(state.currentIndex+1..state.queue.size-1)

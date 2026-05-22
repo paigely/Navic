@@ -100,7 +100,7 @@ fun ArtistDetailScreen(
 		parameters = { parametersOf(artistId) }
 	)
 	val ctx = LocalCtx.current
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 
 	val selection by viewModel.selectedSong.collectAsStateWithLifecycle()

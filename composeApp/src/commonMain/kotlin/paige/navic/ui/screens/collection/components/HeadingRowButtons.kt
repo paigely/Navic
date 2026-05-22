@@ -32,7 +32,6 @@ import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainSongCollection
@@ -52,7 +51,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 	collection: DomainSongCollection
 ) {
 	val ctx = LocalCtx.current
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val downloadManager = koinInject<DownloadManager>()
 	val scope = rememberCoroutineScope()
 

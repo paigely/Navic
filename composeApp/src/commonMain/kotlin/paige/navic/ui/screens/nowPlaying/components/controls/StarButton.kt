@@ -12,7 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_star
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
 import paige.navic.LocalCtx
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
@@ -25,7 +25,7 @@ fun NowPlayingStarButton(
 	onSetSongIsStarred: (Boolean) -> Unit
 ) {
 	val ctx = LocalCtx.current
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	IconButton(
 		onClick = {

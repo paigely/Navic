@@ -22,7 +22,7 @@ import kotlinx.collections.immutable.toPersistentList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.MoreVert
 import paige.navic.shared.MediaPlayerViewModel
@@ -46,7 +46,7 @@ fun ArtistDetailScreenTopBar(
 		if (scrolled) 1f else 0f
 	)
 
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
 

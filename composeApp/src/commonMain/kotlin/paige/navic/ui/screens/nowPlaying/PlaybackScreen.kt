@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.utils.rememberDraggableListState
 import kotlin.math.round
@@ -33,7 +33,7 @@ import kotlin.math.round
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlaybackSpeedScreen(
-	player: MediaPlayerViewModel = koinViewModel<MediaPlayerViewModel>(),
+	player: MediaPlayerViewModel = koinInject<MediaPlayerViewModel>(),
 ) {
 	val lazyListState = rememberLazyListState()
 	val haptic = LocalHapticFeedback.current

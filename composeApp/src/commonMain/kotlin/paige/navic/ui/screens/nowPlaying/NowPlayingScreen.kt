@@ -29,7 +29,9 @@ import navic.composeapp.generated.resources.action_navigate_back
 import navic.composeapp.generated.resources.action_queue
 import navic.composeapp.generated.resources.title_now_playing
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
@@ -52,7 +54,7 @@ import paige.navic.ui.screens.nowPlaying.viewmodels.NowPlayingViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NowPlayingScreen() {
-	val player = koinViewModel<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val backStack = LocalNavStack.current
 
 	val currentScreen = backStack.lastOrNull()
@@ -63,7 +65,7 @@ fun NowPlayingScreen() {
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val song = playerState.currentSong
 
-	val viewModel = koinViewModel<NowPlayingViewModel>()
+	val viewModel = koinViewModel<NowPlayingViewModel> { parametersOf(player) }
 	val songIsStarred by viewModel.songIsStarred.collectAsStateWithLifecycle()
 	val songRating by viewModel.songRating.collectAsStateWithLifecycle()
 

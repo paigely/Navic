@@ -3,7 +3,6 @@ package paige.navic.di
 import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import org.koin.android.ext.koin.androidApplication
-import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.data.database.DownloadDatabase
@@ -45,7 +44,7 @@ actual val platformModule = module {
 		PlayerStateRepository(PlayerStateRepository.getInstance(producePath))
 	}
 
-	viewModel<MediaPlayerViewModel> {
+	single<MediaPlayerViewModel> {
 		AndroidMediaPlayerViewModel(
 			application = androidApplication(),
 			stateRepository = get(),

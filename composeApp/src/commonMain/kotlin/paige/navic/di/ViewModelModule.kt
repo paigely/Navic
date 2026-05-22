@@ -74,7 +74,12 @@ val viewModelModule = module {
 	viewModelOf(::SongDetailViewModel)
 	viewModelOf(::SettingsDataStorageViewModel)
 	viewModelOf(::ChangelogViewModel)
-	viewModelOf(::NowPlayingViewModel)
+	viewModel { params ->
+		NowPlayingViewModel(
+			player = params.get(),
+			songRepository = get()
+		)
+	}
 	viewModel {
 		NavtabsViewModel(
 			settings = Settings(),
