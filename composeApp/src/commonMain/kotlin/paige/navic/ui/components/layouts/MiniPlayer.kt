@@ -10,7 +10,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,6 +30,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -113,24 +113,16 @@ fun MiniPlayer(
 
 	val detached = Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached
 
-	val containerColor = when {
-		isSystemInDarkTheme() || !isSystemInDarkTheme() && !detached -> if (detached) {
-			MaterialTheme.colorScheme.surfaceContainer
-		} else {
-			MaterialTheme.colorScheme.surfaceContainerHigh
-		}
-		else -> MaterialTheme.colorScheme.surface
-	}
 	val outerPadding = if (detached) 12.dp else 0.dp
 	val coverRounding by animateDpAsState(
 		if (playerState.isLoading)
 			46.dp
-		else if (detached) 12.dp else 8.dp
+		else 8.dp
 	)
 	val iconSize = if (detached) 24.dp else 32.dp
 
 	val shape = ContinuousRoundedRectangle(
-		if (detached) 20.dp else 0.dp
+		if (detached) 16.dp else 0.dp
 	)
 
 	val onClick = dropUnlessResumed {
@@ -195,7 +187,7 @@ fun MiniPlayer(
 				),
 				verticalAlignment = Alignment.CenterVertically,
 				colors = ListItemDefaults.colors(
-					containerColor = containerColor
+					containerColor = NavigationBarDefaults.containerColor
 				),
 				shapes = ListItemDefaults.shapes(
 					shape = shape,

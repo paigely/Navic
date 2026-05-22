@@ -7,6 +7,7 @@ package paige.navic.data.models.settings
 import paige.navic.data.models.settings.enums.AnimationStyle
 import paige.navic.data.models.settings.enums.BottomBarCollapseMode
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.data.models.settings.enums.CoverArtShape
 import paige.navic.data.models.settings.enums.FontOption
 import paige.navic.data.models.settings.enums.GridSize
 import paige.navic.data.models.settings.enums.MarqueeSpeed
@@ -32,8 +33,8 @@ class Settings(
 	var animationStyle by preference(AnimationStyle.Expressive)
 	var nowPlayingBackgroundStyle by preference(NowPlayingBackgroundStyle.Dynamic)
 	var swipeToSkip by preference(true)
-	var artGridRounding by preference(16f)
 	var gridSize by preference(GridSize.TwoByTwo)
+	var coverArtShape by preference(CoverArtShape.Soft)
 	var artGridItemSize by preference(150f)
 	var marqueeSpeed by preference(MarqueeSpeed.Slow)
 	var alphabeticalScroll by preference(false)

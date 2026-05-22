@@ -117,7 +117,7 @@ fun SelectionDropdownItem(
 	val ctx = LocalCtx.current
 	val color by animateColorAsState(
 		if (selected && Settings.shared.theme.isMaterialLike())
-			MaterialTheme.colorScheme.tertiary
+			MaterialTheme.colorScheme.primary
 		else Color.Transparent,
 		animationSpec = MaterialTheme.motionScheme.fastEffectsSpec()
 	)
