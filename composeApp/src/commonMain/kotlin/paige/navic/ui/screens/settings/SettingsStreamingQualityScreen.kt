@@ -58,7 +58,7 @@ import paige.navic.data.models.settings.enums.StreamingQuality
 import paige.navic.data.models.settings.enums.description
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Info
-import paige.navic.managers.ConnectivityManager
+import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle

@@ -19,7 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
 import paige.navic.data.models.settings.Settings
-import paige.navic.managers.ConnectivityManager
+import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.shared.MediaPlayerViewModel
 
 @Composable

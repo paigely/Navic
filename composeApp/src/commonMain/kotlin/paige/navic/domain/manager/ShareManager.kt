@@ -1,4 +1,4 @@
-package paige.navic.managers
+package paige.navic.domain.manager
 
 import androidx.compose.ui.graphics.ImageBitmap
 

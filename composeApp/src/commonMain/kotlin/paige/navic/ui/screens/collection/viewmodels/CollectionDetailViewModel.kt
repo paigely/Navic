@@ -21,8 +21,8 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.domain.repositories.SongRepository
-import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.DownloadManager
+import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.DownloadManager
 import paige.navic.shared.Logger
 import paige.navic.utils.UiState
 

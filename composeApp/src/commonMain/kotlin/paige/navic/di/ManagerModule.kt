@@ -8,8 +8,8 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import paige.navic.data.database.SyncManager
 import paige.navic.data.session.SessionManager
-import paige.navic.managers.DownloadManager
-import paige.navic.managers.SleepTimerManager
+import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.manager.SleepTimerManager
 
 val managerModule = module {
 	single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.IO) }

@@ -1,4 +1,4 @@
-package paige.navic.managers
+package paige.navic.domain.manager
 
 import android.annotation.SuppressLint
 import android.content.Context

@@ -20,7 +20,7 @@ import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.repositories.DbRepository
-import paige.navic.managers.ConnectivityManager
+import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.shared.Logger
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours

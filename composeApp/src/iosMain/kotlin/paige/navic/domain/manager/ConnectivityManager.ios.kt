@@ -1,4 +1,4 @@
-package paige.navic.managers
+package paige.navic.domain.manager
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

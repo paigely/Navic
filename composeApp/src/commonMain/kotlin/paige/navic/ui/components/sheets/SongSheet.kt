@@ -79,7 +79,7 @@ import paige.navic.icons.outlined.QueuePlayNext
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Speed
 import paige.navic.icons.outlined.Star
-import paige.navic.managers.SleepTimerManager
+import paige.navic.domain.manager.SleepTimerManager
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.RatingRow

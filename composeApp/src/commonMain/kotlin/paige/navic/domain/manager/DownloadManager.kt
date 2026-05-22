@@ -1,4 +1,4 @@
-package paige.navic.managers
+package paige.navic.domain.manager
 
 import coil3.SingletonImageLoader
 import coil3.request.CachePolicy

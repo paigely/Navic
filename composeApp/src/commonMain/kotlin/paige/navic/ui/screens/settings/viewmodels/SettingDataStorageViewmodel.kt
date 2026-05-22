@@ -13,8 +13,8 @@ import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.domain.repositories.SongRepository
-import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.DownloadManager
+import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.DownloadManager
 
 class SettingsDataStorageViewModel(
 	private val syncManager: SyncManager,

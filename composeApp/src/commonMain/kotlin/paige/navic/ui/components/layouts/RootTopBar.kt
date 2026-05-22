@@ -40,7 +40,7 @@ import paige.navic.icons.outlined.Bedtime
 import paige.navic.icons.outlined.Logout
 import paige.navic.icons.outlined.Search
 import paige.navic.icons.outlined.Share
-import paige.navic.managers.SleepTimerManager
+import paige.navic.domain.manager.SleepTimerManager
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.sheets.SleepTimerSheet

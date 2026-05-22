@@ -8,7 +8,7 @@ import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.data.session.SessionManager
-import paige.navic.managers.ConnectivityManager
+import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.shared.Logger
 
 class SearchRepository(
