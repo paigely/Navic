@@ -38,7 +38,7 @@ import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.entities.LyricEntity
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
-import paige.navic.domain.repositories.LyricRepository
+import paige.navic.domain.repositories.LyricsRepository
 import paige.navic.shared.Logger
 import coil3.PlatformContext as CoilPlatformContext
 
@@ -47,7 +47,7 @@ class DownloadManager(
 	private val downloadDao: DownloadDao,
 	private val albumDao: AlbumDao,
 	private val storageManager: StorageManager,
-	private val lyricRepository: LyricRepository,
+	private val lyricsRepository: LyricsRepository,
 	private val lyricDao: LyricDao,
 	private val scope: CoroutineScope,
 	private val sessionManager: SessionManager
@@ -316,7 +316,7 @@ class DownloadManager(
 	private suspend fun cacheLyrics(song: DomainSong) {
 		Logger.i("DownloadManager", "caching lyrics for ${song.id}")
 		try {
-			val lyricsResult = lyricRepository.fetchLyrics(song)
+			val lyricsResult = lyricsRepository.fetchLyrics(song)
 			if (lyricsResult != null && lyricsResult.rawContent != null) {
 				lyricDao.insertLyrics(
 					LyricEntity(

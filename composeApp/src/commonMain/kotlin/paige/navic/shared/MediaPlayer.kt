@@ -17,24 +17,8 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
+import paige.navic.ui.core.PlayerUiState
 import kotlin.time.Duration.Companion.seconds
-
-@Serializable
-data class PlayerUiState(
-	val queue: List<DomainSong> = emptyList(),
-	val currentSong: DomainSong? = null,
-	val currentCollection: DomainSongCollection? = null,
-	val currentIndex: Int = -1,
-	val isPaused: Boolean = false,
-	val isShuffleEnabled: Boolean = false,
-	val repeatMode: Int = 0,
-	val progress: Float = 0f,
-	val isLoading: Boolean = false,
-	val playbackSpeed: Float = 1.0f,
-	val playbackBitrate: Int? = null,
-	val playbackSampleRate: Int? = null,
-	val playbackMimeType: String? = null
-)
 
 abstract class MediaPlayerViewModel(
 	private val stateRepository: PlayerStateRepository,

@@ -58,6 +58,7 @@ import paige.navic.domain.manager.AndroidScrobbleManager
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.ui.components.common.CoilBitmapLoader
+import paige.navic.ui.core.PlayerUiState
 import paige.navic.utils.effectiveGain
 import java.io.File
 import kotlin.time.Duration

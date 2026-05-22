@@ -1,9 +1,9 @@
 package paige.navic.utils
 
-import paige.navic.domain.repositories.LyricWord
+import paige.navic.domain.models.lyrics.LyricsWord
 import kotlin.time.Duration
 
-fun List<LyricWord>.calculateWordProgress(
+fun List<LyricsWord>.calculateWordProgress(
 	fullText: String,
 	currentDuration: Duration
 ): Float {
