@@ -1,11 +1,11 @@
 package paige.navic.data.database.entities
 
 import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 
-@Entity(primaryKeys = ["serverId", "genreName"])
+@Entity
 data class GenreEntity(
-	val serverId: String,
-	val genreName: String,
+	@PrimaryKey val genreName: String,
 	val albumCount: Int,
 	val songCount: Int
 )

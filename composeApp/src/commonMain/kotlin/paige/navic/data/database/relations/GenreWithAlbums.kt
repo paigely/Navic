@@ -9,8 +9,8 @@ data class GenreWithAlbums(
 	@Embedded val genre: GenreEntity,
 	@Relation(
 		entity = AlbumEntity::class,
-		parentColumn = "genreName",
-		entityColumn = "genre"
+		parentColumns = ["genreName"],
+		entityColumns = ["genre"]
 	)
 	val albums: List<AlbumWithSongs>
 )

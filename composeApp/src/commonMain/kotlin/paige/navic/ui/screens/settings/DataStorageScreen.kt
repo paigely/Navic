@@ -8,8 +8,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,7 +24,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -72,13 +69,11 @@ import navic.composeapp.generated.resources.info_sync_just_now
 import navic.composeapp.generated.resources.info_sync_mins_ago
 import navic.composeapp.generated.resources.info_sync_never
 import navic.composeapp.generated.resources.option_downloaded_songs
-import navic.composeapp.generated.resources.option_high_quality_covers
 import navic.composeapp.generated.resources.option_image_cache_size
 import navic.composeapp.generated.resources.option_last_sync
 import navic.composeapp.generated.resources.option_live_status
 import navic.composeapp.generated.resources.option_offline_mode
 import navic.composeapp.generated.resources.option_pending_actions
-import navic.composeapp.generated.resources.subtitle_high_quality_covers
 import navic.composeapp.generated.resources.subtitle_offline_mode
 import navic.composeapp.generated.resources.subtitle_pending_actions
 import navic.composeapp.generated.resources.subtitle_rebuild_database
@@ -86,7 +81,6 @@ import navic.composeapp.generated.resources.subtitle_trigger_sync
 import navic.composeapp.generated.resources.title_cache_management
 import navic.composeapp.generated.resources.title_danger_zone
 import navic.composeapp.generated.resources.title_data_storage
-import navic.composeapp.generated.resources.title_images
 import navic.composeapp.generated.resources.title_library_download
 import navic.composeapp.generated.resources.title_network
 import navic.composeapp.generated.resources.title_sync_control
@@ -209,43 +203,6 @@ fun SettingsDataStorageScreen() {
 						selection = Settings.shared.offlineMode,
 						onSelect = { Settings.shared.offlineMode = it }
 					)
-				}
-
-				FormTitle(stringResource(Res.string.title_images))
-				Form {
-					var highQualityCovers by remember { mutableStateOf(Settings.shared.highQualityCovers) }
-					val interactionSource = remember { MutableInteractionSource() }
-					FormRow(
-						modifier = Modifier.clickable(
-							interactionSource = interactionSource,
-							indication = null,
-							onClick = {
-								highQualityCovers = !highQualityCovers
-								Settings.shared.highQualityCovers = highQualityCovers
-							}
-						),
-						horizontalArrangement = Arrangement.SpaceBetween,
-						contentPadding = PaddingValues(16.dp)
-					) {
-						Column(Modifier.weight(1f)) {
-							Text(
-								text = stringResource(Res.string.option_high_quality_covers),
-								style = MaterialTheme.typography.bodyLarge
-							)
-							Text(
-								text = stringResource(Res.string.subtitle_high_quality_covers),
-								style = MaterialTheme.typography.bodyMedium,
-								color = MaterialTheme.colorScheme.onSurfaceVariant
-							)
-						}
-						Switch(
-							checked = highQualityCovers,
-							onCheckedChange = {
-								highQualityCovers = it
-								Settings.shared.highQualityCovers = it
-							}
-						)
-					}
 				}
 
 				FormTitle(stringResource(Res.string.title_sync_control))

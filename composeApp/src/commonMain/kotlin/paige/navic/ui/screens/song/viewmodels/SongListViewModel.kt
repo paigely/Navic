@@ -2,29 +2,28 @@ package paige.navic.ui.screens.song.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import kotlinx.coroutines.flow.Flow
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
 import paige.navic.domain.repositories.SongRepository
 import paige.navic.managers.DownloadManager
-import paige.navic.shared.Logger
+import paige.navic.utils.UiState
 
 class SongListViewModel(
-	artistId: String? = null,
+	private val artistId: String? = null,
 	private val repository: SongRepository,
 	private val downloadManager: DownloadManager,
 ) : ViewModel() {
-	val songsPaging: Flow<PagingData<DomainSong>> = repository
-		.getSongsPaging(artistId)
-		.cachedIn(viewModelScope)
-
+	private val _songsState =
+		MutableStateFlow<UiState<ImmutableList<DomainSong>>>(UiState.Loading())
+	val songsState = _songsState.asStateFlow()
 	val allDownloads = downloadManager.allDownloads
 		.stateIn(
 			scope = viewModelScope,
@@ -41,14 +40,16 @@ class SongListViewModel(
 	private val _selectedSongRating = MutableStateFlow(0)
 	val selectedSongRating = _selectedSongRating.asStateFlow()
 
-	private val _selectedSorting = MutableStateFlow(DomainSongListType.Newest)
+	private val _selectedSorting = MutableStateFlow(DomainSongListType.FrequentlyPlayed)
 	val selectedSorting = _selectedSorting.asStateFlow()
 
 	private val _selectedReversed = MutableStateFlow(false)
 	val selectedReversed = _selectedReversed.asStateFlow()
 
 	init {
-		Logger.i("SongListViewModel", "Initialized for artist: $artistId")
+		viewModelScope.launch {
+			SessionManager.isLoggedIn.collect { if (it) refreshSongs(false) }
+		}
 	}
 
 	fun selectSong(song: DomainSong) {
@@ -63,9 +64,16 @@ class SongListViewModel(
 		_selectedSong.value = null
 	}
 
-	fun refreshSongs() {
+	fun refreshSongs(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			repository.syncLibrarySongs()
+			repository.getSongsFlow(
+				fullRefresh,
+				_selectedSorting.value,
+				_selectedReversed.value,
+				artistId
+			).collect {
+				_songsState.value = it
+			}
 		}
 	}
 
@@ -95,10 +103,16 @@ class SongListViewModel(
 
 	fun setSorting(sorting: DomainSongListType) {
 		_selectedSorting.value = sorting
+		refreshSongs(false)
 	}
 
 	fun setReversed(reversed: Boolean) {
 		_selectedReversed.value = reversed
+		refreshSongs(false)
+	}
+
+	fun clearError() {
+		_songsState.value = UiState.Success(_songsState.value.data ?: persistentListOf())
 	}
 
 	fun downloadSong(song: DomainSong) {

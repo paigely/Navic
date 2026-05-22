@@ -20,7 +20,7 @@ import ir.mahozad.multiplatform.wavyslider.material3.Track
 import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WaveVelocity
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
-import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.NowPlayingSliderStyle
 import paige.navic.shared.MediaPlayerViewModel
@@ -29,7 +29,7 @@ import paige.navic.ui.components.common.SlimSlider
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NowPlayingProgressBar() {
-	val player = koinInject<MediaPlayerViewModel>()
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val enabled = playerState.currentSong != null
 	val waveHeight by animateDpAsState(

@@ -3,14 +3,14 @@ package paige.navic.shared
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import paige.navic.data.session.SessionManager
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromJsonElement
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
@@ -29,10 +29,7 @@ data class PlayerUiState(
 	val repeatMode: Int = 0,
 	val progress: Float = 0f,
 	val isLoading: Boolean = false,
-	val playbackSpeed: Float = 1.0f,
-	val playbackBitrate: Int? = null,
-	val playbackSampleRate: Int? = null,
-	val playbackMimeType: String? = null
+	val playbackSpeed: Float = 1.0f
 )
 
 abstract class MediaPlayerViewModel(
@@ -45,8 +42,6 @@ abstract class MediaPlayerViewModel(
 	protected val _uiState = MutableStateFlow(PlayerUiState())
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
-	private var statePersistenceJob: Job? = null
-
 	protected fun isAvailable(songId: String): Boolean {
 		val isOnline = connectivityManager.isOnline.value
 		val isDownloaded = downloadManager.downloadedSongs.value.containsKey(songId)
@@ -55,13 +50,8 @@ abstract class MediaPlayerViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.activeServerId.collect { serverId ->
-				if (serverId != null) {
-					statePersistenceJob?.cancel()
-					restoreState(serverId)
-					observeAndSaveState(serverId)
-				}
-			}
+			restoreState()
+			observeAndSaveState()
 		}
 	}
 
@@ -94,31 +84,35 @@ abstract class MediaPlayerViewModel(
 
 	abstract fun syncPlayerWithState(state: PlayerUiState)
 
-	private suspend fun restoreState(serverId: String) {
-		try {
-			val restoredState = stateRepository.loadState(serverId)
-
-			if (restoredState != null) {
+	private suspend fun restoreState() {
+		val savedJson = stateRepository.loadState()
+		if (!savedJson.isNullOrBlank()) {
+			try {
+				val restoredState = Json.decodeFromJsonElement<PlayerUiState>(
+					Json.parseToJsonElement(savedJson)
+				)
 				val stateToApply = restoredState.copy(isPaused = true, isLoading = false)
+
 				_uiState.value = stateToApply
+
 				syncPlayerWithState(stateToApply)
-			} else {
+
+			} catch (e: Exception) {
+				Logger.e("MediaPlayerViewModel", "Failed to restore state!", e)
 				_uiState.value = PlayerUiState()
 			}
-		} catch (e: Exception) {
-			Logger.e("MediaPlayerViewModel", "Failed to restore state for $serverId", e)
-			_uiState.value = PlayerUiState()
 		}
 	}
 
 	@OptIn(FlowPreview::class)
-	private fun observeAndSaveState(serverId: String) {
-		statePersistenceJob = viewModelScope.launch {
+	private fun observeAndSaveState() {
+		viewModelScope.launch {
 			_uiState
 				.debounce(1000L)
 				.collect { state ->
 					try {
-						stateRepository.saveState(serverId, state)
+						val jsonString = Json.encodeToString(state)
+						stateRepository.saveState(jsonString)
 					} catch (e: Exception) {
 						Logger.e("MediaPlayerViewModel", "Failed to save state!", e)
 					}

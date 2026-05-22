@@ -9,17 +9,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_artists
 import navic.composeapp.generated.resources.info_no_artists
@@ -28,16 +30,17 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.domain.models.DomainArtist
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Artist
+import paige.navic.ui.components.common.AlphabeticalScroller
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.screens.artist.ArtistsScreenItem
+import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ArtistListScreenContent(
-	artists: LazyPagingItems<DomainArtist>,
-	totalCount: Int,
+	state: UiState<ImmutableList<DomainArtist>>,
 	starred: Boolean,
 	gridState: LazyGridState,
 	scrollBehavior: TopAppBarScrollBehavior,
@@ -48,6 +51,24 @@ fun ArtistListScreenContent(
 	onClearSelection: () -> Unit,
 	onSetStarred: (Boolean) -> Unit
 ) {
+
+	val data = state.data.orEmpty()
+
+	val totalArtistCount = data.size
+
+	val grouped = data.groupBy { it.name.firstOrNull()?.uppercaseChar() ?: '#' }
+		.toList()
+		.sortedBy { it.first }
+
+	val headerIndices = remember(grouped) {
+		var currentIndex = 1
+		grouped.map { (letter, artists) ->
+			val pos = currentIndex
+			currentIndex += artists.size + 1
+			letter.toString() to pos
+		}.toImmutableList()
+	}
+
 	Box {
 		ArtGrid(
 			modifier = if (!nested)
@@ -56,11 +77,28 @@ fun ArtistListScreenContent(
 			else Modifier.fillMaxSize(),
 			state = gridState,
 			contentPadding = innerPadding.withoutTop(),
-			verticalArrangement = if (artists.itemCount == 0)
+			verticalArrangement = if (grouped.isEmpty())
 				Arrangement.Center
 			else Arrangement.spacedBy(12.dp)
 		) {
-			if (artists.itemCount > 0) {
+			item(span = { GridItemSpan(maxLineSpan) }) {
+				Row(
+					Modifier
+						.background(MaterialTheme.colorScheme.surface)
+						.padding(bottom = 8.dp),
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					Text(
+						pluralStringResource(
+							Res.plurals.count_artists,
+							totalArtistCount,
+							totalArtistCount
+						),
+						color = MaterialTheme.colorScheme.onSurfaceVariant
+					)
+				}
+			}
+			grouped.forEach { (letter, artists) ->
 				item(span = { GridItemSpan(maxLineSpan) }) {
 					Row(
 						Modifier
@@ -68,23 +106,13 @@ fun ArtistListScreenContent(
 							.padding(bottom = 8.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
-						// Note to myself: Total count is harder to get exactly from Paging items
-						// but usually available in the LoadState or can be estimated.
 						Text(
-							pluralStringResource(
-								Res.plurals.count_artists,
-								totalCount,
-								totalCount
-							),
+							text = letter.toString(),
 							color = MaterialTheme.colorScheme.onSurfaceVariant
 						)
 					}
 				}
-			}
-
-			items(count = artists.itemCount, key = { index -> artists[index]?.id ?: index }) { index ->
-				val artist = artists[index]
-				if (artist != null) {
+				items(artists, { it.id }) { artist ->
 					ArtistsScreenItem(
 						modifier = Modifier.animateItem(),
 						tab = "artists",
@@ -98,7 +126,7 @@ fun ArtistListScreenContent(
 				}
 			}
 
-			if (artists.itemCount == 0 && artists.loadState.refresh is LoadState.NotLoading) {
+			if (grouped.isEmpty()) {
 				item(span = { GridItemSpan(maxLineSpan) }) {
 					ContentUnavailable(
 						icon = Icons.Outlined.Artist,
@@ -107,5 +135,10 @@ fun ArtistListScreenContent(
 				}
 			}
 		}
+		AlphabeticalScroller(
+			state = gridState,
+			headers = headerIndices,
+			modifier = Modifier.align(Alignment.TopEnd)
+		)
 	}
 }

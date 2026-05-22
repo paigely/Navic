@@ -100,7 +100,7 @@ fun ArtistSheet(
 					shape = Settings.shared.coverArtShape.decreasedShape
 				)
 			},
-			headlineContent = { MarqueeText(artist.name) },
+			headlineContent = { MarqueeText(artist.name.orEmpty()) },
 			supportingContent = {
 				Text(
 					text = artist.albumCount.let {

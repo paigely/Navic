@@ -3,6 +3,7 @@ package paige.navic.androidApp.widgets.miniplayer
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.view.KeyEvent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -10,10 +11,9 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.components.CircleIconButton
@@ -33,7 +33,6 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import paige.navic.androidApp.R
 import paige.navic.androidApp.utils.appWidgetInnerCornerRadius
-import paige.navic.androidApp.widgets.WidgetPlaybackAction
 import paige.navic.androidApp.widgets.nowplaying.NowPlayingWidget
 
 class MiniPlayerWidget : NowPlayingWidget() {
@@ -102,8 +101,11 @@ class MiniPlayerWidget : NowPlayingWidget() {
 					imageProvider = ImageProvider(R.drawable.ic_previous),
 					contentDescription = "Previous",
 					contentColor = GlanceTheme.colors.onPrimaryContainer,
-					onClick = actionRunCallback<WidgetPlaybackAction>(
-						actionParametersOf(WidgetPlaybackAction.actionKey to WidgetPlaybackAction.ACTION_PREV)
+					onClick = actionSendBroadcast(
+						createMediaIntent(
+							context,
+							KeyEvent.KEYCODE_MEDIA_PREVIOUS
+						)
 					),
 					backgroundColor = null
 				)
@@ -111,8 +113,11 @@ class MiniPlayerWidget : NowPlayingWidget() {
 					imageProvider = ImageProvider(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play),
 					contentDescription = if (isPlaying) "Pause" else "Play",
 					contentColor = GlanceTheme.colors.onPrimaryContainer,
-					onClick = actionRunCallback<WidgetPlaybackAction>(
-						actionParametersOf(WidgetPlaybackAction.actionKey to WidgetPlaybackAction.ACTION_PLAY_PAUSE)
+					onClick = actionSendBroadcast(
+						createMediaIntent(
+							context,
+							KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
+						)
 					),
 					backgroundColor = null
 				)
@@ -120,8 +125,11 @@ class MiniPlayerWidget : NowPlayingWidget() {
 					imageProvider = ImageProvider(R.drawable.ic_next),
 					contentDescription = "Next",
 					contentColor = GlanceTheme.colors.onPrimaryContainer,
-					onClick = actionRunCallback<WidgetPlaybackAction>(
-						actionParametersOf(WidgetPlaybackAction.actionKey to WidgetPlaybackAction.ACTION_NEXT)
+					onClick = actionSendBroadcast(
+						createMediaIntent(
+							context,
+							KeyEvent.KEYCODE_MEDIA_NEXT
+						)
 					),
 					backgroundColor = null
 				)

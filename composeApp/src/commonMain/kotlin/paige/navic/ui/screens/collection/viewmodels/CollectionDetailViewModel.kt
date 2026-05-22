@@ -3,16 +3,11 @@ package paige.navic.ui.screens.collection.viewmodels
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -41,9 +36,8 @@ class CollectionDetailViewModel(
 ) : ViewModel() {
 	private val _collectionState = MutableStateFlow<UiState<DomainSongCollection>>(
 		runBlocking {
-			val serverId = SessionManager.activeServerId.value ?: throw  Exception("No active server found")
 			try {
-				UiState.Loading(repository.getLocalData(collectionId, serverId))
+				UiState.Loading(repository.getLocalData(collectionId))
 			} catch (_: Exception) {
 				UiState.Loading()
 			}
@@ -60,17 +54,13 @@ class CollectionDetailViewModel(
 			initialValue = emptyList()
 		)
 
-	@OptIn(ExperimentalCoroutinesApi::class)
-	val otherAlbumsPaging: Flow<PagingData<DomainAlbum>> = _collectionState
-		.flatMapLatest { state ->
-			val album = state.data as? DomainAlbum
-			if (album != null) {
-				repository.getOtherAlbumsPaging(album.artistId, album.id)
-			} else {
-				flowOf(PagingData.empty())
-			}
-		}
-		.cachedIn(viewModelScope)
+	val otherAlbums = (_collectionState.value.data as? DomainAlbum)?.let { album ->
+		repository.getOtherAlbums(album.artistId, album.id)
+	}?.stateIn(
+		scope = viewModelScope,
+		started = SharingStarted.Lazily,
+		initialValue = emptyList()
+	) ?: MutableStateFlow(emptyList())
 
 	private val _selectedSong = MutableStateFlow<DomainSong?>(null)
 	val selectedSong: StateFlow<DomainSong?> = _selectedSong.asStateFlow()

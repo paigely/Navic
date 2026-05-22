@@ -67,8 +67,6 @@ class DeletionViewModel(
 		id: String
 	) {
 		viewModelScope.launch {
-			val serverId = SessionManager.activeServerId.value ?: throw  Exception("No active server found")
-
 			_state.value = UiState.Loading()
 			try {
 				if (endpoint == DeletionEndpoint.SHARE) {
@@ -78,7 +76,7 @@ class DeletionViewModel(
 						actionType = SyncActionType.DELETE_PLAYLIST,
 						itemId = id
 					)
-					playlistDao.deletePlaylist(id, serverId)
+					playlistDao.deletePlaylist(id)
 				}
 				_state.value = UiState.Success(null)
 				_events.send(Event.Dismiss)

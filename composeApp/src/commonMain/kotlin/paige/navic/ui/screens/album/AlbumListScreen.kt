@@ -19,12 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
-import androidx.paging.compose.collectAsLazyPagingItems
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_albums
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
@@ -43,6 +40,7 @@ import paige.navic.ui.screens.album.components.albumListScreenContent
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.utils.LocalBottomBarScrollManager
+import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 import kotlin.time.Duration
 
@@ -56,11 +54,10 @@ fun AlbumListScreen(
 		key = listType.toString(),
 		parameters = { parametersOf(listType) }
 	)
-	val player = koinInject<MediaPlayerViewModel>()
-	val pagedAlbums = viewModel.pagedAlbums.collectAsLazyPagingItems()
-	val error by viewModel.error.collectAsStateWithLifecycle()
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val selectedSorting by viewModel.listType.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
+	val albumsState by viewModel.albumsState.collectAsStateWithLifecycle()
 	val selectedAlbum by viewModel.selectedAlbum.collectAsStateWithLifecycle()
 	val starred by viewModel.starred.collectAsStateWithLifecycle()
 	val rating by viewModel.rating.collectAsStateWithLifecycle()
@@ -97,14 +94,13 @@ fun AlbumListScreen(
 			}
 		}
 	) { innerPadding ->
-		val isRefreshing = pagedAlbums.loadState.refresh is LoadState.Loading
 		PullToRefreshBox(
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			finished = !isRefreshing,
+			finished = albumsState !is UiState.Loading,
 			onRefresh = { viewModel.refreshAlbums(true) },
-			key = pagedAlbums.itemSnapshotList
+			key = albumsState
 		) {
 			ArtGrid(
 				modifier = if (!nested)
@@ -112,12 +108,12 @@ fun AlbumListScreen(
 				else Modifier,
 				state = viewModel.gridState,
 				contentPadding = innerPadding.withoutTop(),
-				verticalArrangement = if (pagedAlbums.itemCount == 0 && !isRefreshing)
+				verticalArrangement = if ((albumsState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center
 				else Arrangement.spacedBy(12.dp)
 			) {
 				albumListScreenContent(
-					pagedAlbums = pagedAlbums,
+					state = albumsState,
 					starred = starred,
 					selectedAlbum = selectedAlbum,
 					selectedAlbumRating = rating,
@@ -136,7 +132,7 @@ fun AlbumListScreen(
 	}
 
 	ErrorSnackbar(
-		error = error,
+		error = (albumsState as? UiState.Error)?.error,
 		onClearError = { viewModel.clearError() }
 	)
 

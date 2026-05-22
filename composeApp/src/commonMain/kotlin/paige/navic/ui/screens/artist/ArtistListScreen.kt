@@ -11,12 +11,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
-import androidx.paging.LoadState
-import androidx.paging.compose.collectAsLazyPagingItems
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_star
@@ -45,6 +43,7 @@ import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.screens.artist.components.ArtistListScreenContent
 import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
+import paige.navic.utils.UiState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -52,12 +51,10 @@ fun ArtistListScreen(
 	nested: Boolean = false
 ) {
 	val viewModel = koinViewModel<ArtistListViewModel>()
-	val artists = viewModel.artistsPaging.collectAsLazyPagingItems()
-	val totalCount by viewModel.totalArtistsCount.collectAsStateWithLifecycle()
-	val selectedArtist by viewModel.selectedArtist.collectAsStateWithLifecycle()
-	val starred by viewModel.starred.collectAsStateWithLifecycle()
+	val artistsState by viewModel.artistsState.collectAsState()
+	val selectedArtist by viewModel.selectedArtist.collectAsState()
+	val starred by viewModel.starred.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-	val error by viewModel.error.collectAsStateWithLifecycle()
 
 	Scaffold(
 		topBar = {
@@ -78,13 +75,12 @@ fun ArtistListScreen(
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			finished = artists.loadState.refresh !is LoadState.Loading,
-			onRefresh = { viewModel.refreshArtists() },
-			key = artists.loadState
+			finished = artistsState !is UiState.Loading,
+			onRefresh = { viewModel.refreshArtists(true) },
+			key = artistsState
 		) {
 			ArtistListScreenContent(
-				artists = artists,
-				totalCount = totalCount,
+				state = artistsState,
 				starred = starred,
 				selectedArtist = selectedArtist,
 				gridState = viewModel.gridState,
@@ -99,7 +95,7 @@ fun ArtistListScreen(
 	}
 
 	ErrorSnackbar(
-		error = error,
+		error = (artistsState as? UiState.Error)?.error,
 		onClearError = { viewModel.clearError() }
 	)
 }

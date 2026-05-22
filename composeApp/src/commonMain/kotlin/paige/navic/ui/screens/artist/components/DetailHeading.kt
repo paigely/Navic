@@ -50,7 +50,6 @@ fun ArtistDetailScreenHeading(
 ) {
 	val layoutDirection = LocalLayoutDirection.current
 	val progress by animateFloatAsState(if (scrolled) 0f else 1f)
-
 	BoxWithConstraints(
 		modifier = Modifier.fillMaxWidth()
 	) {

@@ -32,7 +32,7 @@ import com.materialkolor.rememberDynamicColorScheme
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.Url
-import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.session.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.sheets.ModalBottomSheet
@@ -49,6 +49,7 @@ internal class NowPlayingScene<T : Any>(
 	private val modalBottomSheetProperties: ModalBottomSheetProperties,
 	private val sheetMaxWidth: Dp,
 	private val onBack: () -> Unit,
+	private val screenType: String?,
 	private val isTransparent: Boolean
 ) : OverlayScene<T> {
 
@@ -96,6 +97,7 @@ class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 		val bottomSheetProperties =
 			lastEntry?.metadata?.get(PROPERTIES_KEY) as? ModalBottomSheetProperties
 		val sheetMaxWidth = lastEntry?.metadata?.get(MAX_WIDTH_KEY) as? Dp
+		val screenType = lastEntry?.metadata?.get(SCREEN_TYPE_KEY) as? String
 		val isTransparent = lastEntry?.metadata?.get(IS_TRANSPARENT_KEY) as? Boolean ?: false
 		return bottomSheetProperties?.let { properties ->
 			@Suppress("UNCHECKED_CAST")
@@ -107,6 +109,7 @@ class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 				modalBottomSheetProperties = properties,
 				sheetMaxWidth = sheetMaxWidth ?: BottomSheetDefaults.SheetMaxWidth,
 				onBack = onBack,
+				screenType = screenType,
 				isTransparent = isTransparent
 			)
 		}
@@ -142,7 +145,7 @@ class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 
 @Composable
 private fun colorSchemeForCurrentSong(): ColorScheme {
-	val player = koinInject<MediaPlayerViewModel>()
+	val player = koinViewModel<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong
 	val coverUri = remember(song?.coverArtId) {

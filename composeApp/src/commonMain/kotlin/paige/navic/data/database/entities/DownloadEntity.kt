@@ -1,13 +1,13 @@
 package paige.navic.data.database.entities
 
 import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-@Entity(primaryKeys = ["serverId", "songId"])
+@Entity
 data class DownloadEntity(
-	val serverId: String,
-	val songId: String,
+	@PrimaryKey val songId: String,
 	val status: DownloadStatus,
 	val progress: Float = 0f,
 	val filePath: String? = null

@@ -14,9 +14,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
-import androidx.media3.common.Timeline
 import androidx.media3.common.TrackSelectionParameters
-import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
@@ -167,34 +165,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 		stopSelf()
 	}
 
-	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-		val action = intent?.action
-
-		mediaSession?.player?.let { player ->
-			when (action) {
-				ACTION_PLAY_PAUSE -> {
-					if (player.isPlaying) player.pause() else player.play()
-				}
-				ACTION_NEXT -> {
-					if (player.hasNextMediaItem()) player.seekToNextMediaItem()
-				}
-				ACTION_PREV -> {
-					if (player.hasPreviousMediaItem() || player.currentPosition <= 3000) {
-						player.seekToPreviousMediaItem()
-					} else {
-						player.seekTo(0)
-					}
-				}
-			}
-		}
-		return super.onStartCommand(intent, flags, startId)
-	}
-
 	companion object {
-		const val ACTION_PLAY_PAUSE = "paige.navic.action.PLAY_PAUSE"
-		const val ACTION_NEXT = "paige.navic.action.NEXT"
-		const val ACTION_PREV = "paige.navic.action.PREV"
-
 		fun newSessionToken(context: Context): SessionToken {
 			return SessionToken(context, ComponentName(context, PlaybackService::class.java))
 		}
@@ -234,21 +205,20 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	private fun getStreamUrl(id: String): android.net.Uri {
-		val isCellular = connectivityManager.isCellular.value
-		val bitrate = if (Settings.shared.isAdvancedTranscodingActive) {
-			if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
-		} else {
-			if (isCellular) Settings.shared.streamingQualityCellular.bitrateAndroid else Settings.shared.streamingQualityWifi.bitrateAndroid
-		}
-		val container = if (isCellular) Settings.shared.streamingQualityCellular.containerAndroid else Settings.shared.streamingQualityWifi.containerAndroid
+	private fun getStreamUrl(id: String) =
+		when (connectivityManager.isCellular.value) {
+			true -> SessionManager.api.getStreamUrl(
+				id,
+				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateCellular else Settings.shared.streamingQualityCellular.bitrateAndroid,
+				Settings.shared.streamingQualityCellular.containerAndroid
+			).toUri()
 
-		return SessionManager.api.getStreamUrl(id, bitrate, container)
-			.toUri()
-			.buildUpon()
-			.appendQueryParameter("estimateContentLength", "true")
-			.build()
-	}
+			false -> SessionManager.api.getStreamUrl(
+				id,
+				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateWifi else Settings.shared.streamingQualityWifi.bitrateAndroid,
+				Settings.shared.streamingQualityWifi.containerAndroid
+			).toUri()
+		}.buildUpon().appendQueryParameter("estimateContentLength", "true").build()
 
 	private fun setupController() {
 		viewModelScope.launch {
@@ -267,8 +237,26 @@ class AndroidMediaPlayerViewModel(
 					override fun onIsPlayingChanged(isPlaying: Boolean) {
 						_uiState.update { it.copy(isPaused = !isPlaying) }
 						if (isPlaying) startProgressLoop()
+						val intent =
+							Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
+								setPackage(application.packageName)
+								putExtra("isPlaying", isPlaying)
+								putExtra(
+									"title",
+									_uiState.value.currentSong?.title ?: "Unknown song"
+								)
+								putExtra(
+									"artist",
+									_uiState.value.currentSong?.artistName ?: "Unknown artist"
+								)
+								putExtra(
+									"artUrl",
+									_uiState.value.currentSong?.coverArtId?.let { id ->
+										SessionManager.api.getCoverArtUrl(id, auth = true)
+									})
+							}
 
-						sendWidgetUpdateBroadcast(controller)
+						application.sendBroadcast(intent)
 					}
 
 					override fun onPlaybackStateChanged(playbackState: Int) {
@@ -283,17 +271,8 @@ class AndroidMediaPlayerViewModel(
 					override fun onRepeatModeChanged(repeatMode: Int) {
 						_uiState.update { it.copy(repeatMode = repeatMode) }
 					}
-
-					override fun onTracksChanged(tracks: Tracks) {
-						updatePlaybackProperties(tracks)
-					}
-
-					override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-						updatePlaybackState()
-					}
 				})
 				updatePlaybackState()
-				updatePlaybackProperties(currentTracks)
 
 				downloadManager.allDownloads.first()
 				pendingSyncState?.let { state ->
@@ -334,14 +313,10 @@ class AndroidMediaPlayerViewModel(
 
 		viewModelScope.launch {
 			runCatching {
-				val serverId = SessionManager.activeServerId.value
-					?: throw Exception("No active server for album lookup")
-
-				val album = albumDao.getAlbumById(albumId, serverId)
+				val album = albumDao.getAlbumById(albumId)
 
 				_uiState.update { it.copy(currentCollection = album?.toDomainModel()) }
-			}.onFailure { e ->
-				Logger.e("AndroidMediaPlayerViewModel", "Failed to refresh collection info", e)
+			}.onFailure {
 				loadingCollectionId = null
 			}
 		}
@@ -352,13 +327,6 @@ class AndroidMediaPlayerViewModel(
 			controller?.let { player ->
 				val index = player.currentMediaItemIndex
 				val currentSong = _uiState.value.queue.getOrNull(index)
-
-				val isCellular = connectivityManager.isCellular.value
-				if (Settings.shared.isAdvancedTranscodingActive) {
-					if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
-				} else {
-					if (isCellular) Settings.shared.streamingQualityCellular.bitrateAndroid else Settings.shared.streamingQualityWifi.bitrateAndroid
-				}
 
 				val derivedCollection = currentSong?.let { song ->
 					val stateCollection = _uiState.value.currentCollection
@@ -383,8 +351,6 @@ class AndroidMediaPlayerViewModel(
 				}
 				applyReplayGain()
 				updateProgress()
-
-				sendWidgetUpdateBroadcast(player)
 			}
 		}
 	}
@@ -455,27 +421,6 @@ class AndroidMediaPlayerViewModel(
 				val pos = player.currentPosition
 				val progress = (pos.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
 				_uiState.update { it.copy(progress = progress) }
-			}
-		}
-	}
-
-	@OptIn(UnstableApi::class)
-	private fun updatePlaybackProperties(tracks: Tracks) {
-		val audioGroup = tracks.groups.firstOrNull { it.type == C.TRACK_TYPE_AUDIO && it.isSelected }
-		if (audioGroup != null) {
-			for (i in 0 until audioGroup.length) {
-				if (audioGroup.isTrackSelected(i)) {
-					val format = audioGroup.getTrackFormat(i)
-					Logger.i("MediaPlayer", "Active Track Format: $format")
-					_uiState.update {
-						it.copy(
-							playbackBitrate = format.bitrate.takeIf { it > 0 },
-							playbackSampleRate = format.sampleRate.takeIf { it > 0 },
-							playbackMimeType = format.sampleMimeType
-						)
-					}
-					break
-				}
 			}
 		}
 	}
@@ -556,6 +501,7 @@ class AndroidMediaPlayerViewModel(
 
 	override fun clearQueue() {
 		viewModelScope.launch {
+			controller?.clearMediaItems()
 			_uiState.update {
 				it.copy(
 					queue = emptyList(),
@@ -564,7 +510,6 @@ class AndroidMediaPlayerViewModel(
 					progress = 0f
 				)
 			}
-			controller?.clearMediaItems()
 		}
 	}
 
@@ -694,19 +639,19 @@ class AndroidMediaPlayerViewModel(
 			val shuffledSongs = collection.songs.shuffled()
 			val mediaItems = shuffledSongs.map { it.toMediaItem() }
 
+			controller?.let { player ->
+				player.shuffleModeEnabled = false
+				player.setMediaItems(mediaItems, 0, 0L)
+				player.prepare()
+				player.play()
+			}
+
 			_uiState.update { state ->
 				state.copy(
 					queue = shuffledSongs,
 					currentIndex = 0,
 					currentSong = shuffledSongs.firstOrNull()
 				)
-			}
-
-			controller?.let { player ->
-				player.shuffleModeEnabled = false
-				player.setMediaItems(mediaItems, 0, 0L)
-				player.prepare()
-				player.play()
 			}
 		}
 	}
@@ -793,15 +738,10 @@ class AndroidMediaPlayerViewModel(
 			.setAlbumTitle(albumTitle)
 			.setArtworkUri(
 				coverArtId?.let {
-					val builder = SessionManager.api.getCoverArtUrl(it, auth = true).toUri()
+					SessionManager.api.getCoverArtUrl(it, auth = true).toUri()
 						.buildUpon()
 						.appendQueryParameter("cacheKey", it)
-					
-					if (!Settings.shared.highQualityCovers) {
-						builder.appendQueryParameter("size", "512")
-					}
-					
-					builder.build()
+						.build()
 				}
 			)
 			.build()
@@ -831,21 +771,5 @@ class AndroidMediaPlayerViewModel(
 		}
 
 		return builder.build()
-	}
-
-	private fun sendWidgetUpdateBroadcast(player: Player?) {
-		val mediaItem = player?.currentMediaItem
-		val title = mediaItem?.mediaMetadata?.title?.toString() ?: ""
-		val artist = mediaItem?.mediaMetadata?.artist?.toString() ?: ""
-		val artUrl = mediaItem?.mediaMetadata?.artworkUri?.toString()
-
-		val intent = Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
-			setPackage(application.packageName)
-			putExtra("isPlaying", player?.isPlaying ?: false)
-			putExtra("title", title)
-			putExtra("artist", artist)
-			putExtra("artUrl", artUrl)
-		}
-		application.sendBroadcast(intent)
 	}
 }

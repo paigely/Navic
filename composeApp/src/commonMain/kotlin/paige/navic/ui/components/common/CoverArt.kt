@@ -57,17 +57,12 @@ fun CoverArt(
 ) {
 	val platformContext = LocalPlatformContext.current
 	val customHeaders = Settings.shared.customHeaders
-	val highQualityCovers = Settings.shared.highQualityCovers
-	val model = remember(coverArtId, customHeaders, highQualityCovers) {
+	val model = remember(coverArtId, customHeaders) {
 		val networkHeaders = NetworkHeaders.Builder().apply {
 			Settings.shared.customHeadersMap().forEach { (key, value) -> add(key, value) }
 		}.build()
-		val url = coverArtId?.let { 
-			val baseUrl = SessionManager.api.getCoverArtUrl(it, auth = true)
-			if (highQualityCovers) baseUrl else "$baseUrl&size=512"
-		}
 		ImageRequest.Builder(platformContext)
-			.data(url)
+			.data(coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
 			.memoryCacheKey(coverArtId)
 			.diskCacheKey(coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)

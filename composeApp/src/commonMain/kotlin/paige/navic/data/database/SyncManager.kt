@@ -2,9 +2,11 @@ package paige.navic.data.database
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -19,10 +21,10 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.SyncScheduler
 import paige.navic.shared.Logger
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 data class SyncState(
@@ -36,13 +38,12 @@ class SyncManager(
 	private val syncDao: SyncActionDao,
 	private val albumDao: AlbumDao,
 	private val connectivityManager: ConnectivityManager,
-	private val scheduler: SyncScheduler,
 	private val scope: CoroutineScope
 ) {
 	private var syncJob: Job? = null
 	private val syncMutex = Mutex()
 
-	private val fullSyncThreshold = 24.hours
+	private val fullSyncThreshold = 1.hours
 
 	private val _syncState = MutableStateFlow(SyncState())
 	val syncState = _syncState.asStateFlow()
@@ -58,24 +59,29 @@ class SyncManager(
 	}
 
 	fun startPeriodicSync() {
-		Logger.i("SyncManager", "Starting periodic sync cycle.")
-		scheduler.schedulePeriodicSync()
-		scope.launch {
-			val serverId = SessionManager.activeServerId.value ?: return@launch
+		Logger.i("SyncManager", "Starting periodic sync cicle.")
+		if (syncJob?.isActive == true) return
 
-			if (albumDao.getAlbumCount(serverId) == 0 || Settings.shared.getLastFullSyncTime(serverId) <= 0) {
+		scope.launch {
+			if (albumDao.getAlbumCount() == 0
+				|| Settings.shared.lastFullSyncTime <= 0L) {
 				Logger.i("SyncManager", "Syncing now because we haven't synced before")
-				runSyncCycleInternal()
+				runSyncCycle()
+			}
+		}
+
+		syncJob = scope.launch {
+			while (isActive) {
+				runSyncCycle()
+				delay(15.minutes)
 			}
 		}
 	}
 
 	fun triggerManualSync() {
 		scope.launch {
-			val serverId = SessionManager.activeServerId.value ?: return@launch
-
-			Settings.shared.setLastFullSyncTime(serverId, 0)
-			runSyncCycleInternal()
+			Settings.shared.lastFullSyncTime = 0
+			runSyncCycle()
 		}
 	}
 
@@ -85,37 +91,21 @@ class SyncManager(
 	}
 
 	fun enqueueAction(actionType: SyncActionType, itemId: String) {
-		val serverId = SessionManager.activeServerId.value ?: run {
-			Logger.e("SyncManager", "Cannot enqueue action: No active server.")
-			return
-		}
-
 		scope.launch {
-			syncDao.enqueue(
-				SyncActionEntity(
-					actionType = actionType,
-					itemId = itemId,
-					serverId = serverId
-				)
-			)
-
+			syncDao.enqueue(SyncActionEntity(actionType = actionType, itemId = itemId))
 			if (!syncMutex.isLocked) {
 				syncMutex.withLock { processQueue() }
 			}
 		}
 	}
 
-	suspend fun runSyncCycleInternal() {
-		val serverId = SessionManager.activeServerId.value ?: return
-
+	private suspend fun runSyncCycle() {
 		syncMutex.withLock {
 			processQueue()
 
 			val currentTime = Clock.System.now()
-			val lastSyncTimeMs = Settings.shared.getLastFullSyncTime(serverId)
-
-			if (currentTime - Instant.fromEpochMilliseconds(lastSyncTimeMs) > fullSyncThreshold) {
-				Logger.i("SyncManager", "Starting full library pull for server: $serverId...")
+			if (currentTime - Instant.fromEpochMilliseconds(Settings.shared.lastFullSyncTime) > fullSyncThreshold) {
+				Logger.i("SyncManager", "Starting full library pull...")
 
 				_syncState.update {
 					it.copy(isSyncing = true)
@@ -128,8 +118,8 @@ class SyncManager(
 				}
 
 				if (result.isSuccess) {
-					Settings.shared.setLastFullSyncTime(serverId, currentTime.toEpochMilliseconds())
-					Logger.i("SyncManager", "Full library sync complete for server: $serverId.")
+					Settings.shared.lastFullSyncTime = currentTime.toEpochMilliseconds()
+					Logger.i("SyncManager", "Full library sync complete.")
 				}
 
 				_syncState.update {
@@ -140,9 +130,7 @@ class SyncManager(
 	}
 
 	private suspend fun processQueue() {
-		val serverId = SessionManager.activeServerId.value ?: return
-
-		val actions = syncDao.getPendingActions(serverId)
+		val actions = syncDao.getPendingActions()
 		if (actions.isEmpty()) return
 
 		for (action in actions) {
@@ -160,10 +148,10 @@ class SyncManager(
 					SyncActionType.STAR_5 -> SessionManager.api.setRating(action.itemId, 5)
 				}
 
-				syncDao.removeAction(action.id, serverId)
+				syncDao.removeAction(action.id)
 				Logger.i(
 					"SyncManager",
-					"Successfully synced ${action.actionType} for ${action.itemId} on server $serverId"
+					"Successfully synced ${action.actionType} for ${action.itemId}"
 				)
 
 			} catch (e: Exception) {

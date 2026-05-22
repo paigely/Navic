@@ -29,15 +29,11 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_account_navidrome_instance
 import navic.composeapp.generated.resources.option_account_password
 import navic.composeapp.generated.resources.option_account_username
-import navic.composeapp.generated.resources.option_server_name_optional
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.database.entities.ServerEntity
 
 @Composable
 fun LoginScreenFields(
 	isBusy: Boolean,
-	selectedServer: ServerEntity?,
-	serverNameState: TextFieldState,
 	instanceState: TextFieldState,
 	instanceError: Boolean,
 	instanceFocusRequester: FocusRequester,
@@ -52,29 +48,6 @@ fun LoginScreenFields(
 	onPasswordFocusChanged: () -> Unit,
 	onLogin: () -> Unit
 ) {
-	val isExistingServer = selectedServer != null
-
-	if (!isExistingServer) {
-		var serverWasFocused by remember { mutableStateOf(false) }
-		OutlinedTextField(
-			modifier = Modifier
-				.height(60.dp)
-				.padding(horizontal = 16.dp)
-				.fillMaxWidth()
-				.focusRequester(instanceFocusRequester)
-				.onFocusChanged { state ->
-					if (state.isFocused) {
-						serverWasFocused = true
-					}
-					if (serverWasFocused && !state.isFocused) onInstanceFocusChanged()
-				},
-			state = serverNameState,
-			label = { Text(stringResource(Res.string.option_server_name_optional)) },
-			enabled = !isBusy,
-			lineLimits = TextFieldLineLimits.SingleLine
-		)
-	}
-
 	var instanceWasFocused by remember { mutableStateOf(false) }
 	OutlinedTextField(
 		modifier = Modifier

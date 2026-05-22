@@ -50,7 +50,7 @@ import coil3.request.crossfade
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.data.images.initializeSingletonImageLoader
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
@@ -262,7 +262,7 @@ private fun entryProvider(
 			NowPlayingScreen()
 		}
 		entry<Screen.Lyrics>(metadata = NowPlayingSceneStrategy.bottomSheet(isTransparent = true)) {
-			val player = koinInject<MediaPlayerViewModel>()
+			val player = koinViewModel<MediaPlayerViewModel>()
 			val playerState by player.uiState.collectAsState()
 			val song = playerState.currentSong
 			LyricsScreen(song)

@@ -54,9 +54,6 @@
 	<string name="title_cellular">Cellular</string>
 	<string name="title_select_lyrics">Select Lyrics</string>
 	<string name="title_advanced">Advanced Transcoding</string>
-	<string name="title_edit_server">Edit Server</string>
-	<string name="title_saved_servers">Saved Servers</string>
-	<string name="title_images">Images</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
@@ -153,9 +150,6 @@
 	<string name="option_enable_custom_bitrates">Enable Custom Bitrates</string>
 	<string name="option_max_bitrate_wifi">Max Bitrate WiFi (kbps)</string>
 	<string name="option_max_bitrate_cellular">Max Bitrate Cellular (kbps)</string>
-	<string name="option_server_name_optional">Server Name (Optional)</string>
-	<string name="option_high_quality_covers">High quality album covers</string>
-	<string name="subtitle_high_quality_covers">Fetch original resolution images. Uses significantly more data</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>
@@ -172,8 +166,6 @@
 	<string name="info_in_use">(in use)</string>
 	<string name="info_explicit">Explicit</string>
 	<string name="info_bitrate_default_zero">Leaving this empty defaults to 0. Letting the server pick.</string>
-	<string name="info_selected_server">Selected: %1$s</string>
-	<string name="info_default_server_name">Server %1$s</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>
@@ -301,7 +293,6 @@
 	<string name="action_queue">Queue</string>
 	<string name="action_reorder">Reorder</string>
 	<string name="action_remove_from_queue">Remove from queue</string>
-	<string name="action_clear_queue">Clear queue</string>
 	<string name="action_search_history">Recent Searches</string>
 	<string name="action_remove_from_history">Remove from history</string>
 	<string name="action_clear_image_cache">Clear image cache</string>
@@ -311,9 +302,6 @@
 	<string name="action_trigger_sync">Trigger manual sync</string>
 	<string name="action_test_exception_handler">Test exception handler</string>
 	<string name="action_dont_show_again">Don't show again</string>
-	<string name="action_cancel_editing">Cancel Editing</string>
-	<string name="action_save_and_login">Save &amp; Login</string>
-	<string name="action_add_server">Add Server</string>
 	<string name="subtitle_rebuild_database">Wipes all local metadata and forces a fresh sync</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>

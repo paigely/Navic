@@ -6,6 +6,7 @@ import dev.zt64.subsonic.client.SubsonicClient
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.header
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,28 +19,22 @@ object SessionManager {
 	private val _isLoggedIn = MutableStateFlow(false)
 	val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
-	private val _activeServerId = MutableStateFlow(settings.getStringOrNull("activeServerId"))
-	val activeServerId: StateFlow<String?> = _activeServerId.asStateFlow()
-
 	var api: SubsonicClient = createClient(
-		"",
-		"",
-		""
+		instanceUrl = settings.getString("instanceUrl", ""),
+		username = settings.getString("username", ""),
+		password = settings.getString("password", ""),
 	)
 		private set
 
-	init {
-		_activeServerId.value?.let {
-			refreshClient(it)
-			_isLoggedIn.value = true
-		}
-	}
-
-	private fun createClient(instanceUrl: String, username: String, password: String) = SubsonicClient(
+	private fun createClient(
+		instanceUrl: String,
+		username: String,
+		password: String,
+	) = SubsonicClient(
 		baseUrl = instanceUrl,
 		auth = SubsonicAuth.Token(
 			username = username,
-			password = password
+			password = password,
 		),
 		client = "Navic",
 		clientConfig = {
@@ -58,8 +53,8 @@ object SessionManager {
 
 	val currentUser: User?
 		get() {
-			val activeId = _activeServerId.value ?: return null
-			val username = settings.getStringOrNull("server_${activeId}_username") ?: return null
+			val username = settings.getStringOrNull("username") ?: return null
+
 			_isLoggedIn.value = true
 
 			return User(
@@ -68,6 +63,7 @@ object SessionManager {
 			)
 		}
 
+	@OptIn(DelicateCoroutinesApi::class)
 	suspend fun login(
 		instanceUrl: String,
 		username: String,
@@ -84,38 +80,25 @@ object SessionManager {
 			)
 		}
 
-		val serverId = "${instanceUrl}_${username}".hashCode().toString()
-		val existingServers = settings.getString("serverIds", "").split(",").filter { it.isNotEmpty() }.toMutableSet()
+		settings["instanceUrl"] = instanceUrl
+		settings["username"] = username
+		settings["password"] = password
 
-		existingServers.add(serverId)
-		settings["serverIds"] = existingServers.joinToString(",")
-		settings["server_${serverId}_url"] = instanceUrl
-		settings["server_${serverId}_username"] = username
-		settings["server_${serverId}_password"] = password
-
-		setActiveServer(serverId, client)
-	}
-
-	private fun setActiveServer(serverId: String, client: SubsonicClient) {
-		settings["activeServerId"] = serverId
-		_activeServerId.value = serverId
 		api = client
 		_isLoggedIn.value = true
 	}
 
 	fun logout() {
-		settings["activeServerId"] = null
-		_activeServerId.value = null
+		settings["username"] = null
+		settings["password"] = null
 		_isLoggedIn.value = false
-		api = createClient("", "", "")
 	}
 
-	fun refreshClient(serverId: String = _activeServerId.value ?: "") {
-		if (serverId.isEmpty()) return
+	fun refreshClient() {
 		api = createClient(
-			instanceUrl = settings.getString("server_${serverId}_url", ""),
-			username = settings.getString("server_${serverId}_username", ""),
-			password = settings.getString("server_${serverId}_password", ""),
+			instanceUrl = settings.getString("instanceUrl", ""),
+			username = settings.getString("username", ""),
+			password = settings.getString("password", ""),
 		)
 	}
 }

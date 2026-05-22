@@ -21,12 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
-import androidx.paging.compose.collectAsLazyPagingItems
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
@@ -43,6 +40,7 @@ import paige.navic.ui.screens.song.components.SongListScreenSortButton
 import paige.navic.ui.screens.song.components.songListScreenContent
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
+import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
 import kotlin.time.Duration
 
@@ -57,8 +55,8 @@ fun SongListScreen(
 		key = artistId,
 		parameters = { parametersOf(artistId) }
 	)
-	val player = koinInject<MediaPlayerViewModel>()
-	val songs = viewModel.songsPaging.collectAsLazyPagingItems()
+	val player = koinViewModel<MediaPlayerViewModel>()
+	val songsState by viewModel.songsState.collectAsStateWithLifecycle()
 	val selectedSong by viewModel.selectedSong.collectAsStateWithLifecycle()
 	val selectedSorting by viewModel.selectedSorting.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
@@ -107,21 +105,21 @@ fun SongListScreen(
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			finished = songs.loadState.refresh !is LoadState.Loading,
-			onRefresh = { viewModel.refreshSongs() },
-			key = songs.loadState
+			finished = songsState !is UiState.Loading,
+			onRefresh = { viewModel.refreshSongs(true) },
+			key = songsState
 		) {
 			LazyColumn(
 				modifier = if (!nested)
 					Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier.fillMaxSize(),
 				contentPadding = innerPadding.withoutTop(),
-				verticalArrangement = if (songs.itemCount == 0)
+				verticalArrangement = if ((songsState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center
 				else Arrangement.spacedBy(12.dp)
 			) {
 				songListScreenContent(
-					songs = songs,
+					state = songsState,
 					selectedSongIsStarred = starred,
 					selectedSongRating = selectedSongRating,
 					selectedSong = selectedSong,

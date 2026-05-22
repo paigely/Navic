@@ -11,7 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.carousel.CarouselDefaults
 import androidx.compose.material3.carousel.CarouselItemScope
-import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
 import kotlinx.collections.immutable.ImmutableList
 import paige.navic.LocalCtx
 import paige.navic.ui.components.common.CoverArt
@@ -41,7 +40,7 @@ fun <T> ArtCarousel(
 				fontWeight = FontWeight(600),
 				modifier = Modifier.heightIn(min = 32.dp).padding(top = 8.dp)
 			)
-			HorizontalUncontainedCarousel(
+			HorizontalMultiBrowseCarousel(
 				state = state,
 				flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(
 					state = state
@@ -50,47 +49,10 @@ fun <T> ArtCarousel(
 					.fillMaxWidth()
 					.wrapContentHeight()
 					.padding(top = 16.dp, bottom = 16.dp),
-				itemWidth = 150.dp,
+				preferredItemWidth = 150.dp,
 				itemSpacing = 8.dp
 			) { index ->
 				content(items[index])
-			}
-		}
-	}
-}
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-fun <T : Any> PagedArtCarousel(
-	title: String,
-	items: LazyPagingItems<T>,
-	content: @Composable CarouselItemScope.(item: T) -> Unit
-) {
-	if (items.itemCount > 0) {
-		val state = rememberCarouselState { items.itemCount }
-		Column(Modifier.padding(horizontal = 16.dp)) {
-			Text(
-				title,
-				style = MaterialTheme.typography.titleMediumEmphasized,
-				fontWeight = FontWeight(600),
-				modifier = Modifier.heightIn(min = 32.dp).padding(top = 8.dp)
-			)
-			HorizontalUncontainedCarousel(
-				state = state,
-				flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(
-					state = state
-				),
-				modifier = Modifier
-					.fillMaxWidth()
-					.wrapContentHeight()
-					.padding(top = 16.dp, bottom = 16.dp),
-				itemWidth = 150.dp,
-				itemSpacing = 8.dp
-			) { index ->
-				val item = items[index]
-				if (item != null) {
-					content(item)
-				}
 			}
 		}
 	}

@@ -2,9 +2,7 @@ package paige.navic.di
 
 import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidApplication
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
@@ -13,7 +11,6 @@ import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.ShareManager
 import paige.navic.managers.StorageManager
-import paige.navic.managers.SyncScheduler
 import paige.navic.shared.AndroidMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
 
@@ -40,22 +37,15 @@ actual val platformModule = module {
 			.build()
 	}
 
-	single {
-		Json {
-			ignoreUnknownKeys = true
-			coerceInputValues = true
-			encodeDefaults = true
-		}
-	}
-
 	single<PlayerStateRepository> {
-		PlayerStateRepository(
-			playerStateDao = get(),
-			json = get()
-		)
+		val context = androidApplication()
+		val producePath = {
+			context.filesDir.resolve(PlayerStateRepository.DATASTORE_FILE_NAME).absolutePath
+		}
+		PlayerStateRepository(PlayerStateRepository.getInstance(producePath))
 	}
 
-	single<MediaPlayerViewModel> {
+	viewModel<MediaPlayerViewModel> {
 		AndroidMediaPlayerViewModel(
 			application = androidApplication(),
 			stateRepository = get(),
@@ -79,6 +69,4 @@ actual val platformModule = module {
 			scope = get()
 		)
 	}
-
-	singleOf(::SyncScheduler)
 }

@@ -30,10 +30,8 @@ import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.dao.GenreDao
 import paige.navic.data.database.dao.LyricDao
-import paige.navic.data.database.dao.PlayerStateDao
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.RadioDao
-import paige.navic.data.database.dao.ServerDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.AlbumEntity
@@ -55,13 +53,12 @@ class DbRepository(
 	private val artistDao: ArtistDao,
 	private val radioDao: RadioDao,
 	private val lyricDao: LyricDao,
-	private val syncDao: SyncActionDao,
-	private val serverDao: ServerDao,
-	private val playerStateDao: PlayerStateDao
+	private val syncDao: SyncActionDao
 ) {
 	private val api: SubsonicClient get() = SessionManager.api
 	private val concurrentRequestLimit = Semaphore(20)
-	private val dbChunkSize = 500
+
+	private val dbChunkSize = 500 // should be enough
 
 	private suspend fun <T> runDbOp(block: suspend () -> T): Result<T> =
 		withContext(Dispatchers.IO) {
@@ -74,18 +71,15 @@ class DbRepository(
 		}
 
 	suspend fun removeEverything(): Result<Unit> = runDbOp {
-		val serverId = SessionManager.activeServerId.value ?: return@runDbOp
-		albumDao.clearAllAlbumsForServer(serverId)
-		playlistDao.clearAllPlaylistsForServer(serverId)
-		songDao.clearAllSongsForServer(serverId)
-		genreDao.clearGenresForServer(serverId)
-		artistDao.clearAllArtistsForServer(serverId)
-		radioDao.clearRadiosForServer(serverId)
-		lyricDao.clearLyricsForServer(serverId)
-		syncDao.clearActionsForServer(serverId)
-		serverDao.deleteServer(serverId)
-		playerStateDao.clearQueue(serverId)
-		Logger.i("DbRepository", "Database wiped for server: $serverId")
+		albumDao.clearAllAlbums()
+		playlistDao.clearAllPlaylists()
+		songDao.clearAllSongs()
+		genreDao.clearAllGenres()
+		artistDao.clearAllArtists()
+		radioDao.clearAllRadios()
+		lyricDao.clearAllLyrics()
+		syncDao.clearAllActions()
+		Logger.i("DbRepository", "Database wiped completely.")
 	}
 
 	suspend fun syncEverything(
@@ -139,7 +133,6 @@ class DbRepository(
 	suspend fun syncLibrarySongs(
 		onProgress: (Float, StringResource) -> Unit = { _, _ -> }
 	): Result<Int> = runDbOp {
-		val serverId = SessionManager.activeServerId.value ?: return@runDbOp 0
 		val pageSize = 500
 		var offset = 0
 		val allAlbumSummaries = mutableListOf<Album>()
@@ -197,12 +190,12 @@ class DbRepository(
 				val songBatch = mutableListOf<SongEntity>()
 
 				for (album in albumChannel) {
-					val albumEntity = album.toEntity().copy(serverId = serverId)
+					val albumEntity = album.toEntity()
 					albumBatch.add(albumEntity)
 					allValidAlbumIds.add(albumEntity.albumId)
 
 					album.songs.forEach { song ->
-						val songEntity = song.toEntity().copy(serverId = serverId)
+						val songEntity = song.toEntity()
 						songBatch.add(songEntity)
 						allValidSongIds.add(songEntity.songId)
 					}
@@ -225,8 +218,8 @@ class DbRepository(
 			}
 		}
 
-		albumDao.deleteObsoleteAlbums(serverId, allValidAlbumIds)
-		songDao.deleteObsoleteSongs(serverId, allValidSongIds)
+		albumDao.deleteObsoleteAlbums(allValidAlbumIds)
+		songDao.deleteObsoleteSongs(allValidSongIds)
 
 		Logger.i(
 			"DbRepository",
@@ -238,7 +231,6 @@ class DbRepository(
 	}
 
 	suspend fun syncPlaylists(): Result<List<PlaylistEntity>> = runDbOp {
-		val serverId = SessionManager.activeServerId.value ?: return@runDbOp emptyList()
 		val remotePlaylists = api.getPlaylists()
 		val playlistEntities = remotePlaylists.map { it.toEntity() }
 		val validPlaylistIds = playlistEntities.map { it.playlistId }.toSet()
@@ -247,7 +239,7 @@ class DbRepository(
 			playlistDao.insertPlaylists(chunk)
 		}
 
-		playlistDao.deleteObsoletePlaylists(serverId, validPlaylistIds)
+		playlistDao.deleteObsoletePlaylists(validPlaylistIds)
 
 		Logger.i("DbRepository", "- Playlists Synced: ${playlistEntities.size} playlists found")
 
@@ -255,7 +247,6 @@ class DbRepository(
 	}
 
 	suspend fun syncPlaylistSongs(playlistId: String): Result<Int> = runDbOp {
-		val serverId = SessionManager.activeServerId.value ?: ""
 		val playlist = try {
 			api.getPlaylist(playlistId)
 		} catch (e: Exception) {
@@ -276,7 +267,7 @@ class DbRepository(
 			}
 
 			val crossRefs = songEntities.mapIndexed { index, it ->
-				PlaylistSongCrossRef(playlistId = playlistId, songId = it.songId, position = index, serverId = serverId)
+				PlaylistSongCrossRef(playlistId = playlistId, songId = it.songId, position = index)
 			}
 
 			crossRefs.chunked(dbChunkSize).forEach { chunk ->
@@ -289,59 +280,46 @@ class DbRepository(
 	}
 
 	suspend fun syncGenres(): Result<Unit> = runDbOp {
-		val serverId = SessionManager.activeServerId.value ?: return@runDbOp
 		val remoteGenres = api.getGenres()
 		val entities = remoteGenres.map { it.toEntity() }
-		val remoteNames = entities.map { it.genreName }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			genreDao.insertGenres(chunk)
+			genreDao.updateAllGenres(chunk)
 		}
-
-		genreDao.deleteObsoleteGenres(serverId, remoteNames)
 
 		Logger.i("DbRepository", "- Genres Synced: ${entities.size} genres found")
 	}
 
 	suspend fun syncArtists(): Result<Unit> = runDbOp {
-		val serverId = SessionManager.activeServerId.value ?: return@runDbOp
 		val remoteArtistsWrapper = api.getArtists()
 		val flatArtists = remoteArtistsWrapper.flatMap { indexGroup ->
 			indexGroup.artists
 		}
 		val entities = flatArtists.map { it.toEntity() }
-		val remoteIds = entities.map { it.artistId }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			artistDao.insertArtists(chunk)
+			artistDao.updateAllArtists(chunk)
 		}
-
-		artistDao.deleteObsoleteArtists(remoteIds, serverId)
 
 		Logger.i("DbRepository", "- Artists Synced: ${entities.size} artists found")
 	}
 
 	suspend fun syncRadios(): Result<Unit> = runDbOp {
-		val serverId = SessionManager.activeServerId.value ?: return@runDbOp
 		val remoteRadios = api.getInternetRadioStations()
 		val entities = remoteRadios.map { it.toEntity() }
-		val remoteIds = entities.map { it.radioId }.toSet()
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			radioDao.insertRadios(chunk)
+			radioDao.updateAllRadios(chunk)
 		}
-
-		radioDao.deleteObsoleteRadios(serverId, remoteIds)
 
 		Logger.i("DbRepository", "- Radios Synced: ${entities.size} stations found")
 	}
 
 	suspend fun fetchArtistMetadata(artistId: String): Result<DomainArtist> = runDbOp {
-		val serverId = SessionManager.activeServerId.value ?: throw Exception("No server")
 		val artistInfo = api.getArtistInfo(artistId)
 		val simIds = artistInfo.similarArtists.map { it.id }
 
-		val currentEntity = artistDao.getArtistById(artistId, serverId)
+		val currentEntity = artistDao.getArtistById(artistId)
 			?: throw Exception("Artist not found in local DB")
 
 		val updatedEntity = currentEntity.copy(

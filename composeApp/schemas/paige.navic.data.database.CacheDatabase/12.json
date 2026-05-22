@@ -1,19 +1,13 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 9,
-    "identityHash": "5f65466cc3f7677ed10e5fef941335eb",
+    "version": 12,
+    "identityHash": "a5633d3b6a05443bd78e74863bdf920e",
     "entities": [
       {
         "tableName": "AlbumEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `albumId` TEXT NOT NULL, `name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `artistId` TEXT NOT NULL, `year` INTEGER, `coverArtId` TEXT NOT NULL, `genre` TEXT, `genres` TEXT NOT NULL, `songCount` INTEGER NOT NULL, `duration` INTEGER, `createdAt` INTEGER NOT NULL, `starredAt` INTEGER, `lastPlayedAt` INTEGER, `playCount` INTEGER NOT NULL, `userRating` INTEGER, `version` TEXT, `musicBrainzId` TEXT, PRIMARY KEY(`serverId`, `albumId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`albumId` TEXT NOT NULL, `name` TEXT NOT NULL, `artistName` TEXT NOT NULL, `artistId` TEXT NOT NULL, `year` INTEGER, `coverArtId` TEXT NOT NULL, `genre` TEXT, `genres` TEXT NOT NULL, `songCount` INTEGER NOT NULL, `duration` INTEGER, `createdAt` INTEGER NOT NULL, `starredAt` INTEGER, `lastPlayedAt` INTEGER, `playCount` INTEGER NOT NULL, `userRating` INTEGER, `version` TEXT, `musicBrainzId` TEXT, PRIMARY KEY(`albumId`))",
         "fields": [
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
           {
             "fieldPath": "albumId",
             "columnName": "albumId",
@@ -112,21 +106,14 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "serverId",
             "albumId"
           ]
         }
       },
       {
         "tableName": "GenreEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `genreName` TEXT NOT NULL, `albumCount` INTEGER NOT NULL, `songCount` INTEGER NOT NULL, PRIMARY KEY(`serverId`, `genreName`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`genreName` TEXT NOT NULL, `albumCount` INTEGER NOT NULL, `songCount` INTEGER NOT NULL, PRIMARY KEY(`genreName`))",
         "fields": [
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
           {
             "fieldPath": "genreName",
             "columnName": "genreName",
@@ -149,21 +136,14 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "serverId",
             "genreName"
           ]
         }
       },
       {
         "tableName": "PlaylistEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `playlistId` TEXT NOT NULL, `name` TEXT NOT NULL, `comment` TEXT, `owner` TEXT NOT NULL, `coverArtId` TEXT, `songCount` INTEGER NOT NULL, `duration` INTEGER NOT NULL, `public` INTEGER, `readOnly` INTEGER, `createdAt` INTEGER NOT NULL, `modifiedAt` INTEGER NOT NULL, `validUntil` INTEGER, `allowedUsers` TEXT NOT NULL, PRIMARY KEY(`serverId`, `playlistId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`playlistId` TEXT NOT NULL, `name` TEXT NOT NULL, `comment` TEXT, `owner` TEXT NOT NULL, `coverArtId` TEXT, `songCount` INTEGER NOT NULL, `duration` INTEGER NOT NULL, `public` INTEGER, `readOnly` INTEGER, `createdAt` INTEGER NOT NULL, `modifiedAt` INTEGER NOT NULL, `validUntil` INTEGER, `allowedUsers` TEXT NOT NULL, PRIMARY KEY(`playlistId`))",
         "fields": [
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
           {
             "fieldPath": "playlistId",
             "columnName": "playlistId",
@@ -241,21 +221,14 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "serverId",
             "playlistId"
           ]
         }
       },
       {
         "tableName": "PlaylistSongCrossRef",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `playlistId` TEXT NOT NULL, `songId` TEXT NOT NULL, `position` INTEGER NOT NULL, PRIMARY KEY(`serverId`, `playlistId`, `songId`, `position`), FOREIGN KEY(`serverId`, `playlistId`) REFERENCES `PlaylistEntity`(`serverId`, `playlistId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`serverId`, `songId`) REFERENCES `SongEntity`(`serverId`, `songId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`playlistId` TEXT NOT NULL, `songId` TEXT NOT NULL, `position` INTEGER NOT NULL, PRIMARY KEY(`playlistId`, `songId`, `position`), FOREIGN KEY(`playlistId`) REFERENCES `PlaylistEntity`(`playlistId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`songId`) REFERENCES `SongEntity`(`songId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
           {
             "fieldPath": "playlistId",
             "columnName": "playlistId",
@@ -278,7 +251,6 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "serverId",
             "playlistId",
             "songId",
             "position"
@@ -286,14 +258,13 @@
         },
         "indices": [
           {
-            "name": "index_PlaylistSongCrossRef_serverId_songId",
+            "name": "index_PlaylistSongCrossRef_songId",
             "unique": false,
             "columnNames": [
-              "serverId",
               "songId"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_PlaylistSongCrossRef_serverId_songId` ON `${TABLE_NAME}` (`serverId`, `songId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_PlaylistSongCrossRef_songId` ON `${TABLE_NAME}` (`songId`)"
           }
         ],
         "foreignKeys": [
@@ -302,11 +273,9 @@
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "serverId",
               "playlistId"
             ],
             "referencedColumns": [
-              "serverId",
               "playlistId"
             ]
           },
@@ -315,11 +284,9 @@
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "serverId",
               "songId"
             ],
             "referencedColumns": [
-              "serverId",
               "songId"
             ]
           }
@@ -327,14 +294,8 @@
       },
       {
         "tableName": "SongEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `songId` TEXT NOT NULL, `title` TEXT NOT NULL, `artistName` TEXT NOT NULL, `artistId` TEXT NOT NULL, `albumTitle` TEXT, `belongsToAlbumId` TEXT, `parentId` TEXT, `comment` TEXT, `trackNumber` INTEGER, `discNumber` INTEGER, `isrc` TEXT NOT NULL, `year` INTEGER, `genre` TEXT, `genres` TEXT NOT NULL, `moods` TEXT NOT NULL, `duration` INTEGER NOT NULL, `bpm` INTEGER, `contributors` TEXT NOT NULL, `playCount` INTEGER NOT NULL, `userRating` INTEGER, `averageRating` REAL, `bitRate` INTEGER, `bitDepth` INTEGER, `sampleRate` INTEGER, `audioChannelCount` INTEGER, `replayGain` TEXT, `fileSize` INTEGER NOT NULL, `fileExtension` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `filePath` TEXT, `starredAt` INTEGER, `coverArtId` TEXT, `musicBrainzId` TEXT, `explicitStatus` INTEGER NOT NULL, PRIMARY KEY(`serverId`, `songId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` TEXT NOT NULL, `title` TEXT NOT NULL, `artistName` TEXT NOT NULL, `artistId` TEXT NOT NULL, `albumTitle` TEXT, `belongsToAlbumId` TEXT, `parentId` TEXT, `comment` TEXT, `trackNumber` INTEGER, `discNumber` INTEGER, `isrc` TEXT NOT NULL, `year` INTEGER, `genre` TEXT, `genres` TEXT NOT NULL, `moods` TEXT NOT NULL, `duration` INTEGER NOT NULL, `bpm` INTEGER, `contributors` TEXT NOT NULL, `playCount` INTEGER NOT NULL, `userRating` INTEGER, `averageRating` REAL, `bitRate` INTEGER, `bitDepth` INTEGER, `sampleRate` INTEGER, `audioChannelCount` INTEGER, `replayGain` TEXT, `fileSize` INTEGER NOT NULL, `fileExtension` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `filePath` TEXT, `starredAt` INTEGER, `coverArtId` TEXT, `musicBrainzId` TEXT, `explicitStatus` INTEGER NOT NULL, PRIMARY KEY(`songId`))",
         "fields": [
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
           {
             "fieldPath": "songId",
             "columnName": "songId",
@@ -523,21 +484,14 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "serverId",
             "songId"
           ]
         }
       },
       {
         "tableName": "ArtistEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `artistId` TEXT NOT NULL, `name` TEXT NOT NULL, `albumCount` INTEGER NOT NULL, `coverArtId` TEXT, `artistImageUrl` TEXT, `starredAt` INTEGER, `userRating` INTEGER, `sortName` TEXT, `musicBrainzId` TEXT, `lastFmUrl` TEXT, `roles` TEXT NOT NULL, `biography` TEXT, `similarArtistIds` TEXT NOT NULL, PRIMARY KEY(`serverId`, `artistId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artistId` TEXT NOT NULL, `name` TEXT NOT NULL, `albumCount` INTEGER NOT NULL, `coverArtId` TEXT, `artistImageUrl` TEXT, `starredAt` INTEGER, `userRating` INTEGER, `sortName` TEXT, `musicBrainzId` TEXT, `lastFmUrl` TEXT, `roles` TEXT NOT NULL, `biography` TEXT, `similarArtistIds` TEXT NOT NULL, PRIMARY KEY(`artistId`))",
         "fields": [
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
           {
             "fieldPath": "artistId",
             "columnName": "artistId",
@@ -612,21 +566,14 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "serverId",
             "artistId"
           ]
         }
       },
       {
         "tableName": "RadioEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `radioId` TEXT NOT NULL, `name` TEXT NOT NULL, `streamUrl` TEXT NOT NULL, `homepageUrl` TEXT, PRIMARY KEY(`serverId`, `radioId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`radioId` TEXT NOT NULL, `name` TEXT NOT NULL, `streamUrl` TEXT NOT NULL, `homepageUrl` TEXT, PRIMARY KEY(`radioId`))",
         "fields": [
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
           {
             "fieldPath": "radioId",
             "columnName": "radioId",
@@ -654,21 +601,14 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "serverId",
             "radioId"
           ]
         }
       },
       {
         "tableName": "LyricEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `songId` TEXT NOT NULL, `rawContent` TEXT NOT NULL, `provider` TEXT NOT NULL, PRIMARY KEY(`serverId`, `songId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` TEXT NOT NULL, `rawContent` TEXT NOT NULL, `provider` TEXT NOT NULL, PRIMARY KEY(`songId`))",
         "fields": [
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
           {
             "fieldPath": "songId",
             "columnName": "songId",
@@ -691,25 +631,18 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "serverId",
             "songId"
           ]
         }
       },
       {
         "tableName": "SyncActionEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `serverId` TEXT NOT NULL, `actionType` TEXT NOT NULL, `itemId` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `actionType` TEXT NOT NULL, `itemId` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -734,14 +667,8 @@
       },
       {
         "tableName": "DownloadEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `songId` TEXT NOT NULL, `status` TEXT NOT NULL, `progress` REAL NOT NULL, `filePath` TEXT, PRIMARY KEY(`serverId`, `songId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` TEXT NOT NULL, `status` TEXT NOT NULL, `progress` REAL NOT NULL, `filePath` TEXT, PRIMARY KEY(`songId`))",
         "fields": [
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
           {
             "fieldPath": "songId",
             "columnName": "songId",
@@ -769,157 +696,14 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "serverId",
             "songId"
-          ]
-        }
-      },
-      {
-        "tableName": "ServerEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, `username` TEXT NOT NULL, `password` TEXT NOT NULL, `lastUsedAt` INTEGER NOT NULL, PRIMARY KEY(`serverId`))",
-        "fields": [
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "url",
-            "columnName": "url",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "username",
-            "columnName": "username",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "password",
-            "columnName": "password",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "lastUsedAt",
-            "columnName": "lastUsedAt",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "serverId"
-          ]
-        }
-      },
-      {
-        "tableName": "PlayerState",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`serverId` TEXT NOT NULL, `currentSongId` TEXT, `currentCollectionId` TEXT, `currentIndex` INTEGER NOT NULL, `isShuffleEnabled` INTEGER NOT NULL, `repeatMode` INTEGER NOT NULL, `progress` REAL NOT NULL, `playbackSpeed` REAL NOT NULL, PRIMARY KEY(`serverId`))",
-        "fields": [
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "currentSongId",
-            "columnName": "currentSongId",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "currentCollectionId",
-            "columnName": "currentCollectionId",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "currentIndex",
-            "columnName": "currentIndex",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isShuffleEnabled",
-            "columnName": "isShuffleEnabled",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "repeatMode",
-            "columnName": "repeatMode",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "progress",
-            "columnName": "progress",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "playbackSpeed",
-            "columnName": "playbackSpeed",
-            "affinity": "REAL",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "serverId"
-          ]
-        }
-      },
-      {
-        "tableName": "QueueItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `serverId` TEXT NOT NULL, `position` INTEGER NOT NULL, `songJson` TEXT NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "serverId",
-            "columnName": "serverId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "position",
-            "columnName": "position",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "songJson",
-            "columnName": "songJson",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "id"
           ]
         }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5f65466cc3f7677ed10e5fef941335eb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a5633d3b6a05443bd78e74863bdf920e')"
     ]
   }
 }
