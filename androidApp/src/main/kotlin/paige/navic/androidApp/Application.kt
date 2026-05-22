@@ -20,9 +20,7 @@ class Application : android.app.Application() {
 			return
 		}
 
-		val existingHandler = Thread.getDefaultUncaughtExceptionHandler()
-		Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-			existingHandler?.uncaughtException(thread, throwable)
+		Thread.setDefaultUncaughtExceptionHandler { _, throwable ->
 			try {
 				val intent = Intent(this, CrashActivity::class.java).apply {
 					putExtra("stacktrace", Log.getStackTraceString(throwable))
