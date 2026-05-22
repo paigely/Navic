@@ -16,7 +16,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.entities.LyricEntity
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.shared.Logger
 import kotlin.time.Duration

@@ -1,5 +1,6 @@
-package paige.navic.data.session
+package paige.navic.domain.manager
 
+import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 import dev.zt64.subsonic.client.SubsonicAuth
 import dev.zt64.subsonic.client.SubsonicClient
@@ -10,11 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import paige.navic.data.models.User
-import paige.navic.data.models.settings.Settings
-import com.russhwolf.settings.Settings as KmpSettings
 
 class SessionManager(
-	private val settings: KmpSettings
+	private val settings: Settings
 ) {
 	private val _isLoggedIn = MutableStateFlow(false)
 	val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
@@ -30,7 +29,7 @@ class SessionManager(
 		instanceUrl: String,
 		username: String,
 		password: String,
-	) = SubsonicClient(
+	) = SubsonicClient.Companion(
 		baseUrl = instanceUrl,
 		auth = SubsonicAuth.Token(
 			username = username,
@@ -42,7 +41,7 @@ class SessionManager(
 				agent = "Navic"
 			}
 
-			val customHeaders = Settings.shared.customHeadersMap()
+			val customHeaders = paige.navic.data.models.settings.Settings.shared.customHeadersMap()
 			if (customHeaders.isNotEmpty()) {
 				defaultRequest {
 					customHeaders.forEach { (key, value) -> header(key, value) }
@@ -104,6 +103,6 @@ class SessionManager(
 	fun getCoverArtUrl(coverArtId: String) = api.getCoverArtUrl(
 		coverArtId,
 		auth = true,
-		size = "${Settings.shared.coverArtQuality.value}"
+		size = "${paige.navic.data.models.settings.Settings.shared.coverArtQuality.value}"
 	)
 }

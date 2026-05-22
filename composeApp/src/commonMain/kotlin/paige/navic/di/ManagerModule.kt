@@ -7,7 +7,7 @@ import kotlinx.coroutines.SupervisorJob
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import paige.navic.data.database.SyncManager
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.SleepTimerManager
 

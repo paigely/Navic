@@ -51,7 +51,7 @@ import org.koin.compose.koinInject
 import paige.navic.data.images.initializeSingletonImageLoader
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.PlatformContext
 import paige.navic.shared.rememberPlatformContext

@@ -29,7 +29,7 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import org.koin.compose.koinInject
 import paige.navic.data.images.getStaticImageLoader
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import kotlin.time.TimeSource
 import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 

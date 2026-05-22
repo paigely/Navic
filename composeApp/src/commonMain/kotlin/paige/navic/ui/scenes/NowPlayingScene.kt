@@ -33,7 +33,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.Url
 import org.koin.compose.koinInject
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.sheets.ModalBottomSheet
 import paige.navic.ui.scenes.NowPlayingSceneStrategy.Companion.bottomSheet

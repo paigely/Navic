@@ -3,7 +3,6 @@ package paige.navic.domain.manager
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineScope
 import paige.navic.data.database.SyncManager
-import paige.navic.data.session.SessionManager
 import platform.AVFoundation.AVPlayer
 import platform.AVFoundation.currentItem
 import platform.AVFoundation.currentTime

@@ -38,7 +38,7 @@ import paige.navic.LocalSnackbarState
 import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.entities.SyncActionType
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.ui.components.common.FormButton

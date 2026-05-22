@@ -4,7 +4,6 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import kotlinx.coroutines.CoroutineScope
 import paige.navic.data.database.SyncManager
-import paige.navic.data.session.SessionManager
 
 class AndroidScrobbleManager(
     private val player: Player,

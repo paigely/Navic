@@ -18,7 +18,7 @@ import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.SyncActionEntity
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.models.settings.Settings
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.shared.Logger
