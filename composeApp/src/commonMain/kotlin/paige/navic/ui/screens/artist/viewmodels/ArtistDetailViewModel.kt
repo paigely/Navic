@@ -103,7 +103,7 @@ class ArtistDetailViewModel(
 				val domainSongs = albumsWithSongs.flatMap { it.songs }
 					.map { it.toDomainModel() }
 					.sortedByDescending { it.playCount }
-					.take(10)
+					.take(12)
 
 				val initialSimilarArtists = domainArtist.similarArtistIds.mapNotNull { id ->
 					artistDao.getArtistById(id)?.toDomainModel()
