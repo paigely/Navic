@@ -151,6 +151,7 @@
 	<string name="option_enable_custom_bitrates">Enable Custom Bitrates</string>
 	<string name="option_max_bitrate_wifi">Max Bitrate WiFi (kbps)</string>
 	<string name="option_max_bitrate_cellular">Max Bitrate Cellular (kbps)</string>
+	<string name="option_cover_art_quality">Cover art quality</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>

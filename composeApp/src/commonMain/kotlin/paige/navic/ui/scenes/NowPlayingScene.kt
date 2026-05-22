@@ -149,7 +149,7 @@ private fun colorSchemeForCurrentSong(): ColorScheme {
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong
 	val coverUri = remember(song?.coverArtId) {
-		song?.coverArtId?.let { SessionManager.api.getCoverArtUrl(it) }
+		song?.coverArtId?.let { SessionManager.getCoverArtUrl(it) }
 	}
 	val networkLoader = rememberNetworkLoader(HttpClient().config {
 		install(HttpTimeout) {

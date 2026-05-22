@@ -107,7 +107,7 @@ fun LyricsShareSheet(
 	val platformContext = LocalPlatformContext.current
 	val model = remember(song.coverArtId) {
 		ImageRequest.Builder(platformContext)
-			.data(song.coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
+			.data(song.coverArtId?.let { SessionManager.getCoverArtUrl(it) })
 			.memoryCacheKey(song.coverArtId)
 			.diskCacheKey(song.coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)

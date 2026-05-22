@@ -54,7 +54,7 @@ fun BlendBackground(
 
 	val model = remember(coverArtId) {
 		ImageRequest.Builder(platformContext)
-			.data(coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
+			.data(coverArtId?.let { SessionManager.getCoverArtUrl(it) })
 			.memoryCacheKey(coverArtId?.let { "${it}_static" })
 			.diskCacheKey(coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)

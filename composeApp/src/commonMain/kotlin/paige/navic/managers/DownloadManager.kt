@@ -280,7 +280,7 @@ class DownloadManager(
 		if (coverId == null) return
 
 		Logger.i("DownloadManager", "caching cover art for $coverId")
-		val coverArtUrl = SessionManager.api.getCoverArtUrl(coverId, auth = true)
+		val coverArtUrl = SessionManager.getCoverArtUrl(coverId)
 
 		val imageRequest = ImageRequest.Builder(platformContext)
 			.data(coverArtUrl)

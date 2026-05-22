@@ -68,6 +68,7 @@ import navic.composeapp.generated.resources.info_sync_hours_ago
 import navic.composeapp.generated.resources.info_sync_just_now
 import navic.composeapp.generated.resources.info_sync_mins_ago
 import navic.composeapp.generated.resources.info_sync_never
+import navic.composeapp.generated.resources.option_cover_art_quality
 import navic.composeapp.generated.resources.option_downloaded_songs
 import navic.composeapp.generated.resources.option_image_cache_size
 import navic.composeapp.generated.resources.option_last_sync
@@ -89,6 +90,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalCtx
 import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.CoverArtQuality
 import paige.navic.data.models.settings.enums.OfflineMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Offline
@@ -202,6 +204,20 @@ fun SettingsDataStorageScreen() {
 						description = stringResource(Res.string.subtitle_offline_mode),
 						selection = Settings.shared.offlineMode,
 						onSelect = { Settings.shared.offlineMode = it }
+					)
+					SettingSelectionRow(
+						title = { Text(stringResource(Res.string.option_cover_art_quality)) },
+						items = CoverArtQuality.entries.toImmutableList(),
+						label = { stringResource(it.displayName) },
+						selection = Settings.shared.coverArtQuality,
+						onSelect = {
+							Settings.shared.coverArtQuality = it
+							imageLoader.memoryCache?.clear()
+							scope.launch(Dispatchers.IO) {
+								imageLoader.diskCache?.clear()
+								imageCacheSizeMb = "0 MB"
+							}
+						}
 					)
 				}
 

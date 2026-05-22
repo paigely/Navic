@@ -101,4 +101,10 @@ object SessionManager {
 			password = settings.getString("password", ""),
 		)
 	}
+
+	fun getCoverArtUrl(coverArtId: String) = api.getCoverArtUrl(
+		coverArtId,
+		auth = true,
+		size = "${Settings.shared.coverArtQuality.value}"
+	)
 }

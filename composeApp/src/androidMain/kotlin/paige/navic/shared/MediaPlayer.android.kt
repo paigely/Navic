@@ -252,8 +252,8 @@ class AndroidMediaPlayerViewModel(
 								)
 								putExtra(
 									"artUrl",
-									_uiState.value.currentSong?.coverArtId?.let { id ->
-										SessionManager.api.getCoverArtUrl(id, auth = true)
+									_uiState.value.currentSong?.coverArtId?.let {
+										SessionManager.getCoverArtUrl(it)
 									})
 							}
 
@@ -746,12 +746,7 @@ class AndroidMediaPlayerViewModel(
 			.setArtist(artistName)
 			.setAlbumTitle(albumTitle)
 			.setArtworkUri(
-				coverArtId?.let {
-					SessionManager.api.getCoverArtUrl(it, auth = true).toUri()
-						.buildUpon()
-						.appendQueryParameter("cacheKey", it)
-						.build()
-				}
+				coverArtId?.let { SessionManager.getCoverArtUrl(it).toUri() }
 			)
 			.build()
 

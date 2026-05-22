@@ -483,7 +483,7 @@ class IOSMediaPlayerViewModel(
 			requestHandler = { _ ->
 				runCatching {
 					val url = song.coverArtId
-						?.let { SessionManager.api.getCoverArtUrl(it, auth = true) }
+						?.let { SessionManager.getCoverArtUrl(it) }
 						?.let { NSURL.URLWithString(it) } ?: return@runCatching null
 
 					val request = NSMutableURLRequest.requestWithURL(url).apply {

@@ -62,7 +62,7 @@ fun CoverArt(
 			Settings.shared.customHeadersMap().forEach { (key, value) -> add(key, value) }
 		}.build()
 		ImageRequest.Builder(platformContext)
-			.data(coverArtId?.let { SessionManager.api.getCoverArtUrl(it, auth = true) })
+			.data(coverArtId?.let { SessionManager.getCoverArtUrl(it) })
 			.memoryCacheKey(coverArtId)
 			.diskCacheKey(coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)
