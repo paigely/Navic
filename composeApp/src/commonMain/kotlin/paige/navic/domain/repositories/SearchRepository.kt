@@ -16,6 +16,7 @@ class SearchRepository(
 	private val artistDao: ArtistDao,
 	private val songDao: SongDao,
 	private val playlistDao: PlaylistDao,
+	private val sessionManager: SessionManager,
 	connectivityManager: ConnectivityManager
 ) {
 	val isOnline = connectivityManager.isOnline
@@ -23,7 +24,7 @@ class SearchRepository(
 	suspend fun search(query: String): List<Any> {
 		return if (isOnline.value) {
 			try {
-				val data = SessionManager.api.searchID3(query)
+				val data = sessionManager.api.searchID3(query)
 
 				albumDao.insertAlbumsIgnoringConflicts(data.albums.map { it.toEntity() })
 				artistDao.insertArtistsIgnoringConflicts(data.artists.map { it.toEntity() })

@@ -1,18 +1,18 @@
 package paige.navic.data.images
 
 import coil3.ImageLoader
-import coil3.PlatformContext
 import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.crossfade
 import coil3.serviceLoaderEnabled
 import okio.FileSystem
+import coil3.PlatformContext as CoilPlatformContext
 
 private var sharedMemoryCache: MemoryCache? = null
 private var sharedDiskCache: DiskCache? = null
 
-private fun getMemoryCache(context: PlatformContext): MemoryCache {
+private fun getMemoryCache(context: CoilPlatformContext): MemoryCache {
 	return sharedMemoryCache ?: MemoryCache.Builder()
 		.maxSizePercent(context, 0.25)
 		.build().also { sharedMemoryCache = it }
@@ -25,7 +25,7 @@ private fun getDiskCache(): DiskCache {
 		.build().also { sharedDiskCache = it }
 }
 
-fun initializeSingletonImageLoader(context: PlatformContext): ImageLoader {
+fun initializeSingletonImageLoader(context: CoilPlatformContext): ImageLoader {
 	return ImageLoader.Builder(context)
 		.components {
 			add(KtorNetworkFetcherFactory())
@@ -36,7 +36,7 @@ fun initializeSingletonImageLoader(context: PlatformContext): ImageLoader {
 		.build()
 }
 
-fun getStaticImageLoader(context: PlatformContext): ImageLoader {
+fun getStaticImageLoader(context: CoilPlatformContext): ImageLoader {
 	return ImageLoader.Builder(context)
 		.serviceLoaderEnabled(false)
 		.components {

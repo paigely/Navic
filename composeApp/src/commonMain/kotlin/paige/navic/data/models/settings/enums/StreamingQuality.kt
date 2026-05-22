@@ -7,7 +7,7 @@ import navic.composeapp.generated.resources.option_quality_lossless
 import navic.composeapp.generated.resources.option_quality_low
 import navic.composeapp.generated.resources.option_quality_medium
 import org.jetbrains.compose.resources.StringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 
 enum class StreamingQuality(
 	val displayName: StringResource,
@@ -48,9 +48,9 @@ enum class StreamingQuality(
 
 @Composable
 fun StreamingQuality.description(): String? {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	return if (containerAndroid != null && containerIos != null) {
-		if (listOf("ipados", "ios").contains(ctx.name.lowercase())) {
+		if (listOf("ipados", "ios").contains(platformContext.name.lowercase())) {
 			"${bitrateIos}kbps, ${containerIos.uppercase()}"
 		} else {
 			"${bitrateAndroid}kbps, ${containerAndroid.uppercase()}"

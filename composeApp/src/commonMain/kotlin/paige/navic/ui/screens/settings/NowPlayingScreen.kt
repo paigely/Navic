@@ -28,7 +28,7 @@ import navic.composeapp.generated.resources.subtitle_now_playing_background_styl
 import navic.composeapp.generated.resources.title_layout
 import navic.composeapp.generated.resources.title_now_playing
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.NowPlayingBackgroundStyle
 import paige.navic.data.models.settings.enums.ToolbarPosition
@@ -42,13 +42,13 @@ import paige.navic.ui.screens.settings.dialogs.NowPlayingSliderStyleDialog
 
 @Composable
 fun SettingsNowPlayingScreen() {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 
 	Scaffold(
 		topBar = {
 			NestedTopBar(
 				{ Text(stringResource(Res.string.title_now_playing)) },
-				hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
 		}
 	) { innerPadding ->

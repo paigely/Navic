@@ -38,7 +38,7 @@ import navic.composeapp.generated.resources.title_radios
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarCollapseMode
 import paige.navic.icons.Icons
@@ -62,7 +62,7 @@ import paige.navic.utils.withoutTop
 fun RadioListScreen(
 	nested: Boolean
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val scrollManager = LocalBottomBarScrollManager.current
 	val viewModel = koinViewModel<RadioListViewModel>()
 	val player = koinInject<MediaPlayerViewModel>()
@@ -103,7 +103,7 @@ fun RadioListScreen(
 						shape = MaterialTheme.shapes.large,
 						containerColor = MaterialTheme.colorScheme.primary,
 						onClick = {
-							ctx.clickSound()
+							platformContext.clickSound()
 							createDialogShown = true
 						}
 					) {
@@ -156,7 +156,6 @@ fun RadioListScreen(
 	)
 
 	if (createDialogShown) {
-		@Suppress("AssignedValueIsNeverRead")
 		RadioCreateDialog(
 			onDismissRequest = { createDialogShown = false },
 			onRefresh = { viewModel.refreshRadios(true) }

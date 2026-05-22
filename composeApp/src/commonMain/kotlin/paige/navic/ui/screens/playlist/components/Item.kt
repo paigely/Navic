@@ -16,7 +16,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_songs
 import org.jetbrains.compose.resources.pluralStringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
@@ -39,7 +39,7 @@ fun PlaylistListScreenItem(
 	onSetShareId: (String) -> Unit,
 	onSetDeletionId: (String) -> Unit
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	val scope = rememberCoroutineScope()
 
@@ -52,7 +52,7 @@ fun PlaylistListScreenItem(
 	Box(modifier) {
 		ArtGridItem(
 			onClick = dropUnlessResumed {
-				ctx.clickSound()
+				platformContext.clickSound()
 				scope.launch {
 					backStack.add(Screen.CollectionDetail(playlist.id, tab))
 				}
@@ -104,9 +104,8 @@ fun PlaylistListScreenItem(
 		}
 
 		if (playlistDialogShown) {
-			@Suppress("AssignedValueIsNeverRead")
 			PlaylistUpdateDialog(
-				songs = playlist.songs.orEmpty().toPersistentList(),
+				songs = playlist.songs.toPersistentList(),
 				onDismissRequest = { playlistDialogShown = false }
 			)
 		}

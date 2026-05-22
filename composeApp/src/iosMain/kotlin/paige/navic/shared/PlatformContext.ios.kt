@@ -13,10 +13,10 @@ import platform.UIKit.UIDevice
 	ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
-actual fun rememberCtx(): Ctx {
+actual fun rememberPlatformContext(): PlatformContext {
 	val sizeClass = calculateWindowSizeClass()
 	return remember {
-		object : Ctx {
+		object : PlatformContext {
 			override fun clickSound() {
 				// none for iOS
 			}

@@ -11,11 +11,7 @@ A modern Navidrome client for Android and iOS.
 [![Translate](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/translate.svg)](#translating)
 [![Codeberg](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/codeberg.svg)](https://codeberg.org/paige/Navic)
 
-<!--[![Matrix](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/matrix.svg)](https://matrix.to/#/#navic:nin0.dev)-->
-
 </div>
-
-<sub>Note: the Navic matrix room has been removed, please use issues or discord instead</sub>
 
 ## Features
 

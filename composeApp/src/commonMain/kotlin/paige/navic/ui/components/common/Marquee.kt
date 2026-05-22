@@ -27,9 +27,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.delay
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.MarqueeSpeed
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun MarqueeText(
@@ -50,7 +53,7 @@ fun MarqueeText(
 fun MarqueeText(
 	text: AnnotatedString,
 	style: TextStyle = LocalTextStyle.current,
-	inlineContent: Map<String, InlineTextContent> = mapOf(),
+	inlineContent: PersistentMap<String, InlineTextContent> = persistentMapOf(),
 	modifier: Modifier = Modifier
 ) {
 	if (Settings.shared.marqueeSpeed != MarqueeSpeed.Disabled) {
@@ -67,7 +70,6 @@ fun MarqueeText(
 private fun Marquee(
 	modifier: Modifier = Modifier,
 	edgeWidth: Dp = 16.dp,
-	delayMillis: Int = 1000,
 	content: @Composable () -> Unit
 ) {
 	val scrollState = rememberScrollState()
@@ -77,14 +79,14 @@ private fun Marquee(
 		if (scrollState.maxValue == 0) return@LaunchedEffect
 
 		while (true) {
-			delay(delayMillis.toLong())
+			delay(1.seconds)
 
 			scrollState.animateScrollTo(
 				value = scrollState.maxValue,
 				animationSpec = tween(Settings.shared.marqueeSpeed.value)
 			)
 
-			delay(delayMillis.toLong())
+			delay(1.seconds)
 
 			scrollState.animateScrollTo(
 				value = 0,

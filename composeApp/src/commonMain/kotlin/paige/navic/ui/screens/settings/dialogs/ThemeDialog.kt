@@ -27,7 +27,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_choose_theme
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.Theme
 import paige.navic.data.models.settings.enums.ThemeMode
@@ -40,7 +40,7 @@ fun ThemeDialog(
 ) {
 	if (!presented) return
 
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 
 	AlertDialog(
 		title = {
@@ -59,7 +59,7 @@ fun ThemeDialog(
 							.fillMaxWidth()
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
-								ctx.clickSound()
+								platformContext.clickSound()
 								Settings.shared.theme = theme
 								onDismissRequest()
 							},
@@ -88,7 +88,7 @@ fun ThemeDialog(
 		onDismissRequest = onDismissRequest,
 		confirmButton = {
 			Button(onClick = {
-				ctx.clickSound()
+				platformContext.clickSound()
 				onDismissRequest()
 			}) {
 				Text(stringResource(Res.string.action_ok))
@@ -100,7 +100,7 @@ fun ThemeDialog(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ThemeModeChooser() {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val themes = ThemeMode.entries
 	Row(
 		modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
@@ -114,7 +114,7 @@ private fun ThemeModeChooser() {
 			ToggleButton(
 				checked = checked,
 				onCheckedChange = { _ ->
-					ctx.clickSound()
+					platformContext.clickSound()
 					Settings.shared.themeMode = mode
 				},
 				shapes =

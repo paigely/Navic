@@ -30,7 +30,7 @@ import navic.composeapp.generated.resources.subtitle_check_for_updates
 import navic.composeapp.generated.resources.title_confirm
 import navic.composeapp.generated.resources.title_developer
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
@@ -45,7 +45,7 @@ import paige.navic.ui.screens.settings.components.SettingSwitchRow
 
 @Composable
 fun SettingsDeveloperScreen() {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	var exceptionConfirmationShown by rememberSaveable { mutableStateOf(false) }
 
@@ -53,7 +53,7 @@ fun SettingsDeveloperScreen() {
 		topBar = {
 			NestedTopBar(
 				{ Text(stringResource(Res.string.title_developer)) },
-				hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
 		}
 	) { innerPadding ->
@@ -67,7 +67,7 @@ fun SettingsDeveloperScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
-					if (!listOf("ios", "ipados").contains(ctx.name.lowercase())) {
+					if (!listOf("ios", "ipados").contains(platformContext.name.lowercase())) {
 						SettingSwitchRow(
 							title = { Text(stringResource(Res.string.option_check_for_updates)) },
 							subtitle = { Text(stringResource(Res.string.subtitle_check_for_updates)) },

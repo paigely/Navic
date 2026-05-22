@@ -52,7 +52,7 @@ import navic.composeapp.generated.resources.title_choose_font
 import navic.composeapp.generated.resources.title_layout
 import navic.composeapp.generated.resources.title_miscellaneous
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
@@ -73,7 +73,7 @@ import paige.navic.ui.screens.settings.dialogs.ThemeDialog
 
 @Composable
 fun SettingsAppearanceScreen() {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	var showArtworkShapeDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -81,7 +81,7 @@ fun SettingsAppearanceScreen() {
 		topBar = {
 			NestedTopBar(
 				{ Text(stringResource(Res.string.title_appearance)) },
-				hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
 		},
 		contentWindowInsets = WindowInsets.statusBars
@@ -212,11 +212,11 @@ fun SettingsAppearanceScreen() {
 					var presented by remember { mutableStateOf(false) }
 					val onClick = { presented = true }
 					FormRow(
-						onClick = if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact)
+						onClick = if (platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact)
 							onClick
 						else null
 					) {
-						if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
+						if (platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
 
 							Column(Modifier.weight(1f)) {
 								Text(stringResource(Res.string.option_grid_items_per_row))

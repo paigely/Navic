@@ -48,7 +48,7 @@ fun ArtistListScreenContent(
 	innerPadding: PaddingValues,
 	nested: Boolean,
 	selectedArtist: DomainArtist?,
-	selectedArtistAlbums: List<DomainAlbum>?,
+	selectedArtistAlbums: ImmutableList<DomainAlbum>?,
 	onUpdateSelection: (DomainArtist) -> Unit,
 	onClearSelection: () -> Unit,
 	onSetStarred: (Boolean) -> Unit,

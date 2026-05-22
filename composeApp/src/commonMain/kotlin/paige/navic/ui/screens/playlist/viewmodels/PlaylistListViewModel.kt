@@ -15,7 +15,8 @@ import paige.navic.domain.repositories.PlaylistRepository
 import paige.navic.utils.UiState
 
 class PlaylistListViewModel(
-	private val repository: PlaylistRepository
+	private val repository: PlaylistRepository,
+	private val sessionManager: SessionManager
 ) : ViewModel() {
 	private val _playlistsState =
 		MutableStateFlow<UiState<ImmutableList<DomainPlaylist>>>(UiState.Loading())
@@ -34,7 +35,7 @@ class PlaylistListViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect { if (it) refreshPlaylists(false) }
+			sessionManager.isLoggedIn.collect { if (it) refreshPlaylists(false) }
 		}
 	}
 

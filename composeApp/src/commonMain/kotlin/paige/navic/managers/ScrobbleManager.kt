@@ -12,6 +12,7 @@ import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 
 interface ScrobblePlayerSource {
 	val currentPosition: Long
@@ -22,6 +23,7 @@ class ScrobbleManager(
 	private val playerSource: ScrobblePlayerSource,
 	private val connectivityManager: ConnectivityManager,
 	private val syncManager: SyncManager,
+	private val sessionManager: SessionManager,
 	private val scope: CoroutineScope
 ) {
 	private var currentMediaId: String? = null
@@ -61,7 +63,7 @@ class ScrobbleManager(
 				accumulatedPlayTime += timePassed
 
 				checkProgress()
-				delay(2000)
+				delay(2.seconds)
 			}
 		}
 	}
@@ -88,7 +90,7 @@ class ScrobbleManager(
 		scope.launch(Dispatchers.IO) {
 			if (connectivityManager.isOnline.value) {
 				try {
-					SessionManager.api.scrobble(songId, submission = true)
+					sessionManager.api.scrobble(songId, submission = true)
 				} catch (_: Exception) {
 					syncManager.enqueueAction(SyncActionType.SCROBBLE, songId)
 				}
@@ -105,7 +107,7 @@ class ScrobbleManager(
 
 		scope.launch(Dispatchers.IO) {
 			try {
-				SessionManager.api.scrobble(songId, submission = false)
+				sessionManager.api.scrobble(songId, submission = false)
 			} catch (_: Exception) { }
 		}
 	}

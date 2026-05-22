@@ -17,6 +17,7 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
+import kotlin.time.Duration.Companion.seconds
 
 @Serializable
 data class PlayerUiState(
@@ -111,7 +112,7 @@ abstract class MediaPlayerViewModel(
 	private fun observeAndSaveState() {
 		viewModelScope.launch {
 			_uiState
-				.debounce(1000L)
+				.debounce(1.seconds)
 				.collect { state ->
 					try {
 						val jsonString = Json.encodeToString(state)

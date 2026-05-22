@@ -52,7 +52,7 @@ import navic.composeapp.generated.resources.title_streaming_quality
 import navic.composeapp.generated.resources.title_wifi
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.StreamingQuality
 import paige.navic.data.models.settings.enums.description
@@ -66,7 +66,7 @@ import paige.navic.ui.components.layouts.NestedTopBar
 
 @Composable
 fun SettingsStreamingQualityScreen() {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val connectivityManager = koinInject<ConnectivityManager>()
 	val isOnline by connectivityManager.isOnline.collectAsStateWithLifecycle()
 	val isCellular by connectivityManager.isCellular.collectAsStateWithLifecycle()
@@ -77,7 +77,7 @@ fun SettingsStreamingQualityScreen() {
 		topBar = {
 			NestedTopBar(
 				{ Text(stringResource(Res.string.title_streaming_quality)) },
-				hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
 		},
 		contentWindowInsets = WindowInsets.statusBars

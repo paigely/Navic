@@ -32,7 +32,7 @@ import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
@@ -50,7 +50,7 @@ import paige.navic.ui.theme.defaultFont
 fun CollectionDetailScreenHeadingRowButtons(
 	collection: DomainSongCollection
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val downloadManager = koinInject<DownloadManager>()
 	val scope = rememberCoroutineScope()
@@ -72,7 +72,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 		OutlinedButton(
 			modifier = Modifier.size(width = 52.dp, height = buttonHeight),
 			onClick = {
-				ctx.clickSound()
+				platformContext.clickSound()
 				player.shufflePlay(collection)
 			},
 			shape = buttonShape,
@@ -88,7 +88,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 		Button(
 			modifier = Modifier.weight(1f).height(buttonHeight),
 			onClick = {
-				ctx.clickSound()
+				platformContext.clickSound()
 				player.clearQueue()
 				player.addToQueue(collection)
 				player.playAt(0)
@@ -115,7 +115,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 		OutlinedButton(
 			modifier = Modifier.size(width = 52.dp, height = buttonHeight),
 			onClick = {
-				ctx.clickSound()
+				platformContext.clickSound()
 				scope.launch {
 					when (downloadStatus) {
 						DownloadStatus.NOT_DOWNLOADED, DownloadStatus.FAILED -> {

@@ -33,7 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.settings.Settings
 import paige.navic.ui.components.common.CoverArt
@@ -51,12 +51,12 @@ fun ArtGrid(
 	verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(12.dp),
 	content: LazyGridScope.() -> Unit
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val artGridItemSize = Settings.shared.artGridItemSize
 	LazyVerticalGrid(
 		modifier = modifier.fillMaxSize(),
 		state = state,
-		columns = if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact)
+		columns = if (platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact)
 			GridCells.Fixed(Settings.shared.gridSize.value)
 		else GridCells.Adaptive(artGridItemSize.dp),
 		contentPadding = contentPadding + PaddingValues(

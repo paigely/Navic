@@ -4,12 +4,14 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import kotlinx.coroutines.CoroutineScope
 import paige.navic.data.database.SyncManager
+import paige.navic.data.session.SessionManager
 
 class AndroidScrobbleManager(
 	private val player: Player,
 	scope: CoroutineScope,
 	connectivityManager: ConnectivityManager,
-	syncManager: SyncManager
+	syncManager: SyncManager,
+	sessionManager: SessionManager
 ) : Player.Listener {
 
 	private val playerSource = object : ScrobblePlayerSource {
@@ -17,7 +19,7 @@ class AndroidScrobbleManager(
 		override val duration: Long get() = player.duration
 	}
 
-	private val scrobbleManager = ScrobbleManager(playerSource, connectivityManager, syncManager, scope)
+	private val scrobbleManager = ScrobbleManager(playerSource, connectivityManager, syncManager, sessionManager, scope)
 
 	init {
 		player.addListener(this)

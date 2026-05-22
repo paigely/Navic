@@ -51,7 +51,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.kyant.capsule.ContinuousRoundedRectangle
@@ -60,7 +59,7 @@ import navic.composeapp.generated.resources.info_not_playing
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.models.NavbarConfig
 import paige.navic.data.models.Screen
@@ -79,6 +78,7 @@ import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.utils.UiState
+import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +86,7 @@ fun MiniPlayer(
 	modifier: Modifier = Modifier,
 	enabled: Boolean = true
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val navtabsViewModel = koinViewModel<NavtabsViewModel>()
 	val navtabsState by navtabsViewModel.state.collectAsState()
@@ -101,10 +101,11 @@ fun MiniPlayer(
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong
 
-	val platformContext = LocalPlatformContext.current
+	val coilPlatformContext = LocalCoilPlatformContext.current
+	val sessionManager = koinInject<SessionManager>()
 	val model = remember(song?.coverArtId) {
-		ImageRequest.Builder(platformContext)
-			.data(song?.coverArtId?.let { SessionManager.getCoverArtUrl(it) })
+		ImageRequest.Builder(coilPlatformContext)
+			.data(song?.coverArtId?.let { sessionManager.getCoverArtUrl(it) })
 			.memoryCacheKey(song?.coverArtId)
 			.diskCacheKey(song?.coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)
@@ -199,7 +200,7 @@ fun MiniPlayer(
 					draggedShape = shape
 				),
 				onClick = {
-					ctx.clickSound()
+					platformContext.clickSound()
 					onClick()
 				},
 				onLongClick = {
@@ -251,7 +252,7 @@ fun MiniPlayer(
 						val colors = IconButtonDefaults.iconButtonVibrantColors()
 						IconButton(
 							onClick = {
-								ctx.clickSound()
+								platformContext.clickSound()
 								if (playerState.isPaused) {
 									player.resume()
 								} else {
@@ -280,7 +281,7 @@ fun MiniPlayer(
 						}
 						IconButton(
 							onClick = {
-								ctx.clickSound()
+								platformContext.clickSound()
 								player.next()
 							},
 							enabled = isInteractive,

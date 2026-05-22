@@ -223,7 +223,6 @@ fun SongListScreenItem(
 	}
 
 	if (playlistDialogShown) {
-		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
 			songs = persistentListOf(song),
 			onDismissRequest = { playlistDialogShown = false }

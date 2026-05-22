@@ -31,7 +31,7 @@ import navic.composeapp.generated.resources.title_fonts_external
 import navic.composeapp.generated.resources.title_fonts_inbuilt
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.FontOption
 import paige.navic.icons.Icons
@@ -115,11 +115,11 @@ private fun FontRow(
 	count: Int,
 	onClick: () -> Unit
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val color = MaterialTheme.colorScheme.surfaceContainer
 	SegmentedListItem(
 		onClick = {
-			ctx.clickSound()
+			platformContext.clickSound()
 			onClick()
 		},
 		selected = selected,

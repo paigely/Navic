@@ -161,7 +161,6 @@ fun SongListScreen(
 		}
 	}
 
-	@Suppress("AssignedValueIsNeverRead")
 	ShareDialog(
 		id = shareId,
 		onIdClear = { shareId = null },

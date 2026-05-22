@@ -50,7 +50,8 @@ actual val platformModule = module {
 			stateRepository = get(),
 			albumDao = get(),
 			downloadManager = get(),
-			connectivityManager = get()
+			connectivityManager = get(),
+			sessionManager = get()
 		)
 	}
 

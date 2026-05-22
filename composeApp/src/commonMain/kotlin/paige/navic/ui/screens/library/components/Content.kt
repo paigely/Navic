@@ -63,7 +63,7 @@ fun LibraryScreenContent(
 	// artists
 	artistsState: UiState<ImmutableList<DomainArtist>>,
 	selectedArtist: DomainArtist?,
-	selectedArtistAlbums: List<DomainAlbum>?,
+	selectedArtistAlbums: ImmutableList<DomainAlbum>?,
 	selectedArtistIsStarred: Boolean,
 	onSelectArtist: (DomainArtist) -> Unit,
 	onClearArtistSelection: () -> Unit,

@@ -18,7 +18,8 @@ import paige.navic.utils.UiState
 
 class PlaylistCreateDialogViewModel(
 	private val songs: List<DomainSong>,
-	private val playlistDao: PlaylistDao
+	private val playlistDao: PlaylistDao,
+	private val sessionManager: SessionManager
 ) : ViewModel() {
 	private val _creationState = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
 	val creationState = _creationState.asStateFlow()
@@ -32,7 +33,7 @@ class PlaylistCreateDialogViewModel(
 		viewModelScope.launch {
 			_creationState.value = UiState.Loading()
 			try {
-				val playlist = SessionManager.api.createPlaylist(
+				val playlist = sessionManager.api.createPlaylist(
 					name = name.text.toString(),
 					songIds = songs.map { it.id }
 				)

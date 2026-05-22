@@ -65,7 +65,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
@@ -99,7 +99,7 @@ fun ArtistDetailScreen(
 		key = artistId,
 		parameters = { parametersOf(artistId) }
 	)
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 
@@ -173,10 +173,10 @@ fun ArtistDetailScreen(
 				))
 			},
 			modifier = Modifier.fillMaxSize()
-		) {
-			when (it) {
+		) { artistState ->
+			when (artistState) {
 				is UiState.Error -> Box(Modifier.fillMaxSize().padding(contentPadding)) {
-					ErrorBox(it)
+					ErrorBox(artistState)
 				}
 
 				is UiState.Loading -> Box(Modifier.fillMaxSize()) {
@@ -184,7 +184,7 @@ fun ArtistDetailScreen(
 				}
 
 				is UiState.Success -> {
-					val state = it.data
+					val state = artistState.data
 					BulkDownloadDialog(
 						title = stringResource(Res.string.title_bulk_download),
 						message = stringResource(Res.string.info_bulk_download_warning, state.artist.name),
@@ -269,7 +269,7 @@ fun ArtistDetailScreen(
 											style = MaterialTheme.typography.labelLarge,
 											color = MaterialTheme.colorScheme.primary,
 											modifier = Modifier.clickable(onClick = dropUnlessResumed {
-												ctx.clickSound()
+												platformContext.clickSound()
 												backStack.add(
 													Screen.SongList(
 														nested = true,
@@ -295,7 +295,7 @@ fun ArtistDetailScreen(
 												onClick = {
 													if (playerState.currentSong?.id != song.id) {
 														player.clearQueue()
-														songs.forEach { player.addToQueueSingle(it) }
+														songs.forEach { song -> player.addToQueueSingle(song) }
 														player.playAt(index)
 													} else {
 														player.togglePlay()
@@ -396,8 +396,7 @@ fun ArtistDetailScreen(
 			}
 		}
 	}
-	
-	@Suppress("AssignedValueIsNeverRead")
+
 	ShareDialog(
 		id = shareId,
 		onIdClear = { shareId = null; viewModel.clearSelection() },
@@ -406,7 +405,6 @@ fun ArtistDetailScreen(
 	)
 
 	if (playlistDialogShown) {
-		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
 			songs = selectedAlbum?.songs.orEmpty().toPersistentList(),
 			onDismissRequest = { playlistDialogShown = false }

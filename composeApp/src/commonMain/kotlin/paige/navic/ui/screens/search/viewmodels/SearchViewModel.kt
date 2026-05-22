@@ -18,6 +18,7 @@ import paige.navic.domain.repositories.SongRepository
 import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
 import paige.navic.utils.UiState
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 class SearchViewModel(
@@ -51,7 +52,7 @@ class SearchViewModel(
 	init {
 		viewModelScope.launch {
 			snapshotFlow { searchQuery.text }
-				.debounce(300)
+				.debounce(300.milliseconds)
 				.collectLatest { queryText ->
 					val query = queryText.toString()
 					if (query.isBlank()) {

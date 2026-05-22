@@ -33,7 +33,7 @@ import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.models.NavbarConfig
 import paige.navic.data.models.NavbarTab
@@ -123,7 +123,7 @@ fun BottomBar(
 ) {
 	val viewModel = koinViewModel<NavtabsViewModel>()
 	val backStack = LocalNavStack.current
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val state by viewModel.state.collectAsState()
 	val containerColor by animateColorAsState(containerColor)
 	val tabs = ((state as? UiState.Success)?.data ?: NavbarConfig.default)
@@ -131,7 +131,7 @@ fun BottomBar(
 
 	AnimatedContent(
 		Settings.shared.navigationBarStyle != NavigationBarStyle.Short
-			&& ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
+			&& platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
 			&& tabs.size > 1
 	) {
 		if (tabs.size < 2) return@AnimatedContent
@@ -160,7 +160,7 @@ fun BottomBar(
 						alwaysShowLabel = Settings.shared.navigationBarLabelVisibility
 							== NavigationBarLabelVisibility.Always,
 						onClick = {
-							ctx.clickSound()
+							platformContext.clickSound()
 							backStack.apply {
 								clear()
 								add(item.destination)
@@ -210,13 +210,13 @@ fun BottomBar(
 					val selected = backStack.last() == item.destination
 
 					ShortNavigationBarItem(
-						iconPosition = if (ctx.sizeClass.widthSizeClass > WindowWidthSizeClass.Compact)
+						iconPosition = if (platformContext.sizeClass.widthSizeClass > WindowWidthSizeClass.Compact)
 							NavigationItemIconPosition.Start
 						else NavigationItemIconPosition.Top,
 						selected = backStack.last() == item.destination,
 						enabled = enabled,
 						onClick = {
-							ctx.clickSound()
+							platformContext.clickSound()
 							backStack.apply {
 								clear()
 								add(item.destination)

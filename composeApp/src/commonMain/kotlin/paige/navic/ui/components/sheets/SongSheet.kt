@@ -53,7 +53,7 @@ import navic.composeapp.generated.resources.info_download_failed
 import navic.composeapp.generated.resources.option_playback_speed
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
@@ -112,7 +112,7 @@ fun SongSheet(
 	showSleepTimer: Boolean = false,
 	showPlaybackSpeed: Boolean = false
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	var sleepTimerSheetShown by rememberSaveable { mutableStateOf(false) }
 	val sleepTimerManager = koinInject<SleepTimerManager>()
@@ -182,7 +182,7 @@ fun SongSheet(
 					content = { Text(stringResource(Res.string.action_share)) },
 					leadingContent = { Icon(Icons.Outlined.Share, null) },
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onShare()
 						onDismissRequest()
 					},
@@ -200,7 +200,7 @@ fun SongSheet(
 						Icon(if (starred) Icons.Filled.Star else Icons.Outlined.Star, null)
 					},
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onSetStarred(!starred)
 						onDismissRequest()
 					},
@@ -216,7 +216,7 @@ fun SongSheet(
 							content = { Text(stringResource(Res.string.action_cancel_download)) },
 							leadingContent = { Icon(Icons.Outlined.Close, null) },
 							onClick = {
-								ctx.clickSound()
+								platformContext.clickSound()
 								onCancelDownload?.invoke()
 								onDismissRequest()
 							},
@@ -230,7 +230,7 @@ fun SongSheet(
 							content = { Text(stringResource(Res.string.action_delete_download)) },
 							leadingContent = { Icon(Icons.Outlined.Delete, null) },
 							onClick = {
-								ctx.clickSound()
+								platformContext.clickSound()
 								onDeleteDownload?.invoke()
 								onDismissRequest()
 							},
@@ -262,7 +262,7 @@ fun SongSheet(
 								)
 							},
 							onClick = {
-								ctx.clickSound()
+								platformContext.clickSound()
 								onDownload?.invoke()
 								onDismissRequest()
 							},
@@ -276,7 +276,7 @@ fun SongSheet(
 							content = { Text(stringResource(Res.string.action_download)) },
 							leadingContent = { Icon(Icons.Outlined.Download, null) },
 							onClick = {
-								ctx.clickSound()
+								platformContext.clickSound()
 								onDownload?.invoke()
 								onDismissRequest()
 							},
@@ -290,7 +290,7 @@ fun SongSheet(
 					content = { Text(stringResource(Res.string.action_download)) },
 					leadingContent = { Icon(Icons.Outlined.Download, null) },
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onDownload()
 						onDismissRequest()
 					},
@@ -304,7 +304,7 @@ fun SongSheet(
 					content = { Text(stringResource(Res.string.action_play_next)) },
 					leadingContent = { Icon(Icons.Outlined.QueuePlayNext, null) },
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onPlayNext()
 						onDismissRequest()
 					},
@@ -318,7 +318,7 @@ fun SongSheet(
 					content = { Text(stringResource(Res.string.action_add_to_queue)) },
 					leadingContent = { Icon(Icons.Outlined.Queue, null) },
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onAddToQueue()
 						onDismissRequest()
 					},
@@ -340,7 +340,7 @@ fun SongSheet(
 					},
 					leadingContent = { Icon(Icons.Outlined.PlaylistAdd, null) },
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onAddToPlaylist()
 						onDismissRequest()
 					},
@@ -354,7 +354,7 @@ fun SongSheet(
 					content = { Text(stringResource(Res.string.action_remove_from_playlist)) },
 					leadingContent = { Icon(Icons.Outlined.PlaylistRemove, null) },
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onRemoveFromPlaylist()
 						onDismissRequest()
 					},
@@ -370,7 +370,7 @@ fun SongSheet(
 					},
 					leadingContent = { Icon(Icons.Outlined.Album, null) },
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onViewAlbum()
 						onDismissRequest()
 					},
@@ -384,7 +384,7 @@ fun SongSheet(
 					content = { Text(stringResource(Res.string.action_view_artist)) },
 					leadingContent = { Icon(Icons.Outlined.Artist, null) },
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onViewArtist()
 						onDismissRequest()
 					},
@@ -413,7 +413,7 @@ fun SongSheet(
 							)
 						},
 						onClick = {
-							ctx.clickSound()
+							platformContext.clickSound()
 							sleepTimerSheetShown = true
 						},
 						colors = colors,
@@ -433,7 +433,7 @@ fun SongSheet(
 							)
 						},
 						onClick = {
-							ctx.clickSound()
+							platformContext.clickSound()
 							sleepTimerSheetShown = true
 						},
 						colors = colors,
@@ -456,7 +456,7 @@ fun SongSheet(
 						)
 					},
 					onClick = dropUnlessResumed {
-						ctx.clickSound()
+						platformContext.clickSound()
 						backStack.add(Screen.PlaybackSpeed)
 					},
 					colors = colors,
@@ -469,7 +469,7 @@ fun SongSheet(
 					content = { Text(stringResource(Res.string.action_track_info)) },
 					leadingContent = { Icon(Icons.Outlined.Info, null) },
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onTrackInfo()
 						onDismissRequest()
 					},

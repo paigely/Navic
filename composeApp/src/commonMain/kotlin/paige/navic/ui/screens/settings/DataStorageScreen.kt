@@ -41,7 +41,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.SingletonImageLoader
-import coil3.compose.LocalPlatformContext
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -88,7 +87,7 @@ import navic.composeapp.generated.resources.title_sync_control
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.CoverArtQuality
 import paige.navic.data.models.settings.enums.OfflineMode
@@ -103,15 +102,16 @@ import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.viewmodels.SettingsDataStorageViewModel
 import kotlin.time.Clock
 import kotlin.time.Instant
+import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
 @Composable
 fun SettingsDataStorageScreen() {
 	val viewModel = koinViewModel<SettingsDataStorageViewModel>()
 
-	val ctx = LocalCtx.current
-	val scope = rememberCoroutineScope()
 	val platformContext = LocalPlatformContext.current
-	val imageLoader = SingletonImageLoader.get(platformContext)
+	val scope = rememberCoroutineScope()
+	val coilPlatformContext = LocalCoilPlatformContext.current
+	val imageLoader = SingletonImageLoader.get(coilPlatformContext)
 
 	val syncState by viewModel.syncState.collectAsStateWithLifecycle()
 	val pendingActionCount by viewModel.pendingActionCount.collectAsStateWithLifecycle()
@@ -183,7 +183,7 @@ fun SettingsDataStorageScreen() {
 		topBar = {
 			NestedTopBar(
 				title = { Text(stringResource(Res.string.title_data_storage)) },
-				hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
 		},
 		contentWindowInsets = WindowInsets.statusBars
@@ -367,7 +367,7 @@ fun SettingsDataStorageScreen() {
 										Row(verticalAlignment = Alignment.CenterVertically) {
 											TextButton(
 												onClick = {
-													ctx.clickSound()
+													platformContext.clickSound()
 													viewModel.cancelLibraryDownload()
 												},
 												contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),

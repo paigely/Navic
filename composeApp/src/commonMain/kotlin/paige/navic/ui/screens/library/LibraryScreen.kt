@@ -172,27 +172,24 @@ fun LibraryScreen() {
 		}
 	)
 
-	@Suppress("AssignedValueIsNeverRead")
-	ShareDialog(
-		id = shareId,
-		onIdClear = { shareId = null },
-		expiry = shareExpiry,
-		onExpiryChange = { shareExpiry = it }
-	)
+    ShareDialog(
+        id = shareId,
+        onIdClear = { shareId = null },
+        expiry = shareExpiry,
+        onExpiryChange = { shareExpiry = it }
+    )
 
-	@Suppress("AssignedValueIsNeverRead")
-	DeletionDialog(
-		endpoint = DeletionEndpoint.PLAYLIST,
-		id = playlistDeletionId,
-		onIdClear = { playlistDeletionId = null },
-		onRefresh = { playlistsViewModel.refreshPlaylists(false) }
-	)
+    DeletionDialog(
+        endpoint = DeletionEndpoint.PLAYLIST,
+        id = playlistDeletionId,
+        onIdClear = { playlistDeletionId = null },
+        onRefresh = { playlistsViewModel.refreshPlaylists(false) }
+    )
 
 	if (playlistCreateDialogShown) {
-		@Suppress("AssignedValueIsNeverRead")
-		PlaylistCreateDialog(
-			onDismissRequest = { playlistCreateDialogShown = false },
-			onRefresh = { playlistsViewModel.refreshPlaylists(true) }
-		)
+        PlaylistCreateDialog(
+            onDismissRequest = { playlistCreateDialogShown = false },
+            onRefresh = { playlistsViewModel.refreshPlaylists(true) }
+        )
 	}
 }

@@ -20,10 +20,12 @@ class Application : android.app.Application() {
 			return
 		}
 
-		Thread.setDefaultUncaughtExceptionHandler { _, exception ->
+		val existingHandler = Thread.getDefaultUncaughtExceptionHandler()
+		Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+			existingHandler?.uncaughtException(thread, throwable)
 			try {
 				val intent = Intent(this, CrashActivity::class.java).apply {
-					putExtra("stacktrace", Log.getStackTraceString(exception))
+					putExtra("stacktrace", Log.getStackTraceString(throwable))
 					flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 				}
 				startActivity(intent)

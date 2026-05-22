@@ -2,7 +2,6 @@ package paige.navic.di
 
 import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import coil3.PlatformContext
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
@@ -18,6 +17,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
+import coil3.PlatformContext as CoilPlatformContext
 
 actual val platformModule = module {
 	single<CacheDatabase> {
@@ -58,12 +58,13 @@ actual val platformModule = module {
 			stateRepository = get(),
 			downloadManager = get(),
 			connectivityManager = get(),
-			syncManager = get()
+			syncManager = get(),
+			sessionManager = get()
 		)
 	}
 
 	singleOf(::ShareManager)
-	single<PlatformContext> { PlatformContext.INSTANCE }
+	single<CoilPlatformContext> { CoilPlatformContext.INSTANCE }
 	single<StorageManager> { StorageManager() }
 	single<ConnectivityManager> { ConnectivityManager(get()) }
 }

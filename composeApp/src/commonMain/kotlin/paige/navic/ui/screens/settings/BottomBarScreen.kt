@@ -31,7 +31,7 @@ import navic.composeapp.generated.resources.title_bottom_app_bar
 import navic.composeapp.generated.resources.title_mini_player
 import navic.composeapp.generated.resources.title_navigation_bar
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarCollapseMode
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
@@ -51,14 +51,14 @@ import paige.navic.ui.screens.settings.dialogs.NavtabsDialog
 
 @Composable
 fun BottomBarScreen() {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	var showNavtabsDialog by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
 		topBar = {
 			NestedTopBar(
 				{ Text(stringResource(Res.string.title_bottom_app_bar)) },
-				hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
 		}
 	) { innerPadding ->

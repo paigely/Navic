@@ -54,7 +54,8 @@ enum class DeletionEndpoint(
 
 class DeletionViewModel(
 	private val syncManager: SyncManager,
-	private val playlistDao: PlaylistDao
+	private val playlistDao: PlaylistDao,
+	private val sessionManager: SessionManager
 ) : ViewModel() {
 	private val _state = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
 	val state = _state.asStateFlow()
@@ -70,7 +71,7 @@ class DeletionViewModel(
 			_state.value = UiState.Loading()
 			try {
 				if (endpoint == DeletionEndpoint.SHARE) {
-					SessionManager.api.deleteShare(id)
+					sessionManager.api.deleteShare(id)
 				} else {
 					syncManager.enqueueAction(
 						actionType = SyncActionType.DELETE_PLAYLIST,

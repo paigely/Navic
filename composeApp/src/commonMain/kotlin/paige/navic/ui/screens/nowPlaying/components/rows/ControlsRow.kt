@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import paige.navic.data.models.settings.Settings
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingProgressBar
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun NowPlayingControlsRow(
@@ -34,10 +35,12 @@ fun NowPlayingControlsRow(
 	var visible by rememberSaveable { mutableStateOf(false) }
 	val scale by animateFloatAsState(if (visible) 1f else 0f)
 	val offset by animateDpAsState(if (visible) 0.dp else 200.dp)
+
 	LaunchedEffect(Unit) {
-		delay(200)
+		delay(200.milliseconds)
 		visible = true
 	}
+
 	Column(
 		modifier = modifier.scale(scale).offset {
 			IntOffset(x = 0, y = offset.roundToPx())

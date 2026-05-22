@@ -49,7 +49,6 @@ internal class NowPlayingScene<T : Any>(
 	private val modalBottomSheetProperties: ModalBottomSheetProperties,
 	private val sheetMaxWidth: Dp,
 	private val onBack: () -> Unit,
-	private val screenType: String?,
 	private val isTransparent: Boolean
 ) : OverlayScene<T> {
 
@@ -97,7 +96,6 @@ class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 		val bottomSheetProperties =
 			lastEntry?.metadata?.get(PROPERTIES_KEY) as? ModalBottomSheetProperties
 		val sheetMaxWidth = lastEntry?.metadata?.get(MAX_WIDTH_KEY) as? Dp
-		val screenType = lastEntry?.metadata?.get(SCREEN_TYPE_KEY) as? String
 		val isTransparent = lastEntry?.metadata?.get(IS_TRANSPARENT_KEY) as? Boolean ?: false
 		return bottomSheetProperties?.let { properties ->
 			@Suppress("UNCHECKED_CAST")
@@ -109,7 +107,6 @@ class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 				modalBottomSheetProperties = properties,
 				sheetMaxWidth = sheetMaxWidth ?: BottomSheetDefaults.SheetMaxWidth,
 				onBack = onBack,
-				screenType = screenType,
 				isTransparent = isTransparent
 			)
 		}
@@ -127,18 +124,15 @@ class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 		fun bottomSheet(
 			modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
 			maxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
-			screenType: String = "",
 			isTransparent: Boolean = false
 		): Map<String, Any> = mapOf(
 			PROPERTIES_KEY to modalBottomSheetProperties,
 			MAX_WIDTH_KEY to maxWidth,
-			SCREEN_TYPE_KEY to screenType,
 			IS_TRANSPARENT_KEY to isTransparent
 		)
 
 		internal const val PROPERTIES_KEY = "properties"
 		internal const val MAX_WIDTH_KEY = "max_width"
-		internal const val SCREEN_TYPE_KEY = "screen_type"
 		internal const val IS_TRANSPARENT_KEY = "is_transparent"
 	}
 }
@@ -146,10 +140,11 @@ class NowPlayingSceneStrategy<T : Any> : SceneStrategy<T> {
 @Composable
 private fun colorSchemeForCurrentSong(): ColorScheme {
 	val player = koinInject<MediaPlayerViewModel>()
+	val sessionManager = koinInject<SessionManager>()
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong
 	val coverUri = remember(song?.coverArtId) {
-		song?.coverArtId?.let { SessionManager.getCoverArtUrl(it) }
+		song?.coverArtId?.let { sessionManager.getCoverArtUrl(it) }
 	}
 	val networkLoader = rememberNetworkLoader(HttpClient().config {
 		install(HttpTimeout) {

@@ -32,9 +32,8 @@ import kotlin.math.round
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun PlaybackSpeedScreen(
-	player: MediaPlayerViewModel = koinInject<MediaPlayerViewModel>(),
-) {
+fun PlaybackSpeedScreen() {
+	val player = koinInject<MediaPlayerViewModel>()
 	val lazyListState = rememberLazyListState()
 	val haptic = LocalHapticFeedback.current
 	val playerState by player.uiState.collectAsStateWithLifecycle()

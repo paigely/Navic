@@ -25,7 +25,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_artwork_shape
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.CoverArtShape
 
@@ -37,7 +37,7 @@ fun ArtworkShapeDialog(
 ) {
 	if (!presented) return
 
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 
 	AlertDialog(
 		title = {
@@ -56,7 +56,7 @@ fun ArtworkShapeDialog(
 							.fillMaxWidth()
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
-								ctx.clickSound()
+								platformContext.clickSound()
 								Settings.shared.coverArtShape = shape
 								onDismissRequest()
 							},
@@ -81,7 +81,7 @@ fun ArtworkShapeDialog(
 		onDismissRequest = onDismissRequest,
 		confirmButton = {
 			Button(onClick = {
-				ctx.clickSound()
+				platformContext.clickSound()
 				onDismissRequest()
 			}) {
 				Text(stringResource(Res.string.action_ok))

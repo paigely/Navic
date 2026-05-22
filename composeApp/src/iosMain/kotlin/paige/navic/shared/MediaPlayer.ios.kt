@@ -69,7 +69,8 @@ class IOSMediaPlayerViewModel(
 	stateRepository: PlayerStateRepository,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
-	syncManager: SyncManager
+	syncManager: SyncManager,
+	private val sessionManager: SessionManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
 	downloadManager = downloadManager,
@@ -79,7 +80,7 @@ class IOSMediaPlayerViewModel(
 	private var timeObserver: Any? = null
 	private var playbackEndObserver: Any? = null
 	private val scrobbleManager =
-		IOSScrobbleManager(player, viewModelScope, connectivityManager, syncManager)
+		IOSScrobbleManager(player, viewModelScope, connectivityManager, syncManager, sessionManager)
 	private var pendingSyncState: PlayerUiState? = null
 	private var isTransitioningBetweenTracks = false
 
@@ -204,7 +205,7 @@ class IOSMediaPlayerViewModel(
 				if (state.queue.isEmpty())
 					state.queue + song
 				else
-					state.queue.slice(0..state.currentIndex) + song + state.queue.slice(state.currentIndex+1..state.queue.size-1)
+					state.queue.slice(0..state.currentIndex) + song + state.queue.slice(state.currentIndex+1..<state.queue.size)
 			state.copy(
 				queue = newQueue,
 				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
@@ -223,7 +224,9 @@ class IOSMediaPlayerViewModel(
 				if (state.queue.isEmpty())
 					state.queue + newCollection
 				else
-					state.queue.slice(0..state.currentIndex) + newCollection + state.queue.slice(state.currentIndex+1..state.queue.size-1)
+					state.queue.slice(0..state.currentIndex) + newCollection + state.queue.slice(
+						state.currentIndex+1..<state.queue.size
+					)
 			state.copy(
 				queue = newQueue,
 				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
@@ -483,7 +486,7 @@ class IOSMediaPlayerViewModel(
 			requestHandler = { _ ->
 				runCatching {
 					val url = song.coverArtId
-						?.let { SessionManager.getCoverArtUrl(it) }
+						?.let { sessionManager.getCoverArtUrl(it) }
 						?.let { NSURL.URLWithString(it) } ?: return@runCatching null
 
 					val request = NSMutableURLRequest.requestWithURL(url).apply {
@@ -524,7 +527,7 @@ class IOSMediaPlayerViewModel(
 	override fun syncPlayerWithState(state: PlayerUiState) {
 		if (state.queue.isEmpty() || player.currentItem != null) return
 
-		val index = if (state.currentIndex in 0 until state.queue.size) state.currentIndex else 0
+		val index = if (state.currentIndex in state.queue.indices) state.currentIndex else 0
 		val song = state.queue.getOrNull(index) ?: return
 
 		val url = getSongUrl(song) ?: return
@@ -557,13 +560,13 @@ class IOSMediaPlayerViewModel(
 
 	private fun getStreamUrl(id: String) =
 		when (connectivityManager.isCellular.value) {
-			true -> SessionManager.api.getStreamUrl(
+			true -> sessionManager.api.getStreamUrl(
 				id,
 				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateCellular else Settings.shared.streamingQualityCellular.bitrateIos,
 				Settings.shared.streamingQualityCellular.containerIos
 			)
 
-			false -> SessionManager.api.getStreamUrl(
+			false -> sessionManager.api.getStreamUrl(
 				id,
 				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateWifi else Settings.shared.streamingQualityWifi.bitrateIos,
 				Settings.shared.streamingQualityWifi.containerIos

@@ -32,7 +32,6 @@ fun CollectionDetailScreenSongRowDropdown(
 	onRemoveFromPlaylist: () -> Unit,
 	starred: Boolean,
 	downloadStatus: DownloadStatus?,
-	isOnline: Boolean,
 	onDownload: () -> Unit,
 	onCancelDownload: () -> Unit,
 	onDeleteDownload: () -> Unit,
@@ -100,7 +99,6 @@ fun CollectionDetailScreenSongRowDropdown(
 	}
 
 	if (playlistDialogShown) {
-		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
 			songs = persistentListOf(song),
 			playlistToExclude = if (collection is DomainPlaylist)

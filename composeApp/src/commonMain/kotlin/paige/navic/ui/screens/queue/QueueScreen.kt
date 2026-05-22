@@ -21,7 +21,7 @@ import navic.composeapp.generated.resources.info_no_queue
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
@@ -37,7 +37,7 @@ import paige.navic.utils.rememberDraggableListState
 @Composable
 fun QueueScreen() {
 	val viewModel = koinViewModel<QueueViewModel>()
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
@@ -86,7 +86,7 @@ fun QueueScreen() {
 				isDragging = isDragging,
 				draggableState = draggableState,
 				onClick = {
-					ctx.clickSound()
+					platformContext.clickSound()
 					if (playerState.currentIndex != index) {
 						player.playAt(index)
 						backStack.remove(Screen.Queue)

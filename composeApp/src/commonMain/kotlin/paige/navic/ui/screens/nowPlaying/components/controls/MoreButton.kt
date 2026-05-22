@@ -19,7 +19,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.icons.Icons
@@ -37,7 +37,7 @@ fun NowPlayingMoreButton(
 	onSetSongRating: (Int) -> Unit
 ) {
 	val backStack = LocalNavStack.current
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong
@@ -48,7 +48,7 @@ fun NowPlayingMoreButton(
 
 	IconButton(
 		onClick = {
-			ctx.clickSound()
+			platformContext.clickSound()
 			expanded = true
 		},
 		colors = IconButtonDefaults.filledTonalIconButtonColors(),
@@ -97,11 +97,10 @@ fun NowPlayingMoreButton(
 
 	if (playlistDialogShown && song != null) {
 		NavicTheme {
-			@Suppress("AssignedValueIsNeverRead")
-			PlaylistUpdateDialog(
-				songs = persistentListOf(song),
-				onDismissRequest = { playlistDialogShown = false }
-			)
+            PlaylistUpdateDialog(
+                songs = persistentListOf(song),
+                onDismissRequest = { playlistDialogShown = false }
+            )
 		}
 	}
 

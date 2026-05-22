@@ -114,7 +114,7 @@ fun StarredScreen() {
 				songsState = songsState,
 				selectedSong = selectedSong,
 				allDownloads = allDownloads,
-				onPlaySong = { song, index ->
+				onPlaySong = { index ->
 					player.clearQueue()
 					songsState.data.orEmpty().forEach {
 						player.addToQueueSingle(it)
@@ -176,13 +176,12 @@ fun StarredScreen() {
 		}
 	}
 
-	@Suppress("AssignedValueIsNeverRead")
-	ShareDialog(
-		id = shareId,
-		onIdClear = { shareId = null },
-		expiry = shareExpiry,
-		onExpiryChange = { shareExpiry = it }
-	)
+    ShareDialog(
+        id = shareId,
+        onIdClear = { shareId = null },
+        expiry = shareExpiry,
+        onExpiryChange = { shareExpiry = it }
+    )
 
 	if (songToQueue != null) {
 		QueueDuplicateDialog(

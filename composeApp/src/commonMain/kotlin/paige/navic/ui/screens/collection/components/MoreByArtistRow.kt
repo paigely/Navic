@@ -9,11 +9,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_more_by_artist
 import org.jetbrains.compose.resources.stringResource
-import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
@@ -98,9 +98,8 @@ fun LazyListScope.collectionDetailScreenMoreByArtistRow(
 		}
 		if (albumToAddToPlaylist != null) {
 			albumToAddToPlaylist?.let {
-				@Suppress("AssignedValueIsNeverRead")
 				PlaylistUpdateDialog(
-					songs = it.songs.orEmpty().toPersistentList(),
+					songs = it.songs.toPersistentList(),
 					onDismissRequest = { albumToAddToPlaylist = null }
 				)
 			}

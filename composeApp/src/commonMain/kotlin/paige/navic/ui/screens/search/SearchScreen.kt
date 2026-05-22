@@ -56,7 +56,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
@@ -130,7 +130,7 @@ fun SearchScreen(
 	val isOnline by viewModel.isOnline.collectAsState()
 	val downloadedSongs by viewModel.downloadedSongs.collectAsState()
 
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val backStack = LocalNavStack.current
 
@@ -259,7 +259,7 @@ fun SearchScreen(
 											modifier = Modifier
 												.background(MaterialTheme.colorScheme.surface),
 											onClick = {
-												ctx.clickSound()
+												platformContext.clickSound()
 												player.clearQueue()
 												player.addToQueueSingle(song)
 												player.playAt(0)
@@ -399,7 +399,7 @@ fun SearchScreen(
 									val historyItem = searchHistory[index]
 									ListItem(
 										modifier = Modifier.clickable {
-											ctx.clickSound()
+											platformContext.clickSound()
 											query.clearText()
 											query.edit { insert(0, historyItem) }
 										},
@@ -413,7 +413,7 @@ fun SearchScreen(
 										},
 										trailingContent = {
 											IconButton(onClick = {
-												ctx.clickSound()
+												platformContext.clickSound()
 												viewModel.removeFromSearchHistory(historyItem)
 											}) {
 												Icon(

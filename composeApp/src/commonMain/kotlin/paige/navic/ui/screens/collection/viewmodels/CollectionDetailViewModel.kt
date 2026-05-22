@@ -32,6 +32,7 @@ class CollectionDetailViewModel(
 	private val songRepository: SongRepository,
 	private val albumRepository: AlbumRepository,
 	private val downloadManager: DownloadManager,
+	private val sessionManager: SessionManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _collectionState = MutableStateFlow<UiState<DomainSongCollection>>(
@@ -93,7 +94,7 @@ class CollectionDetailViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect { if (it) refreshCollection(false) }
+			sessionManager.isLoggedIn.collect { if (it) refreshCollection(false) }
 		}
 	}
 
@@ -147,7 +148,7 @@ class CollectionDetailViewModel(
 		val songs = _collectionState.value.data?.songs ?: return
 		viewModelScope.launch {
 			try {
-				SessionManager.api.updatePlaylist(
+				sessionManager.api.updatePlaylist(
 					id = collectionId,
 					songIndicesToRemove = listOf(songs.indexOf(song))
 				)

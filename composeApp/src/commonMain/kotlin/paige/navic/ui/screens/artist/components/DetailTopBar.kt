@@ -114,7 +114,6 @@ fun ArtistDetailScreenTopBar(
 			}
 		)
 		if (playlistDialogShown) {
-			@Suppress("AssignedValueIsNeverRead")
 			PlaylistUpdateDialog(
 				songs = state.albums.flatMap { it.songs }.toPersistentList(),
 				onDismissRequest = { playlistDialogShown = false }

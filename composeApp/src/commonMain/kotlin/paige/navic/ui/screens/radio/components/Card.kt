@@ -28,7 +28,7 @@ import dev.zt64.compose.pipette.HsvColor
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.ThemeMode
 import paige.navic.domain.models.DomainRadio
@@ -43,7 +43,7 @@ fun RadioListScreenCard(
 	radio: DomainRadio,
 	onPlayClick: () -> Unit
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val inDarkTheme = isSystemInDarkTheme()
 
 	val isDark = remember(Settings.shared.themeMode) {
@@ -74,7 +74,7 @@ fun RadioListScreenCard(
 		shape = MaterialTheme.shapes.medium,
 		shadowElevation = 2.dp,
 		onClick = {
-			ctx.clickSound()
+			platformContext.clickSound()
 			onPlayClick()
 		}
 	) {

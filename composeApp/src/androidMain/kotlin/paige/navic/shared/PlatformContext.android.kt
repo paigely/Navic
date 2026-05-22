@@ -26,7 +26,7 @@ import paige.navic.data.models.settings.enums.ThemeMode
 	ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
-actual fun rememberCtx(): Ctx {
+actual fun rememberPlatformContext(): PlatformContext {
 	val view = LocalView.current
 	val context = LocalContext.current
 	val inDarkTheme = isSystemInDarkTheme()
@@ -45,7 +45,7 @@ actual fun rememberCtx(): Ctx {
 		}
 	}
 	return remember(isDark, sizeClass) {
-		object : Ctx {
+		object : PlatformContext {
 			override fun clickSound() {
 				view.playSoundEffect(SoundEffectConstants.CLICK)
 			}

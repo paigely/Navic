@@ -38,7 +38,6 @@ fun CollectionDetailScreenTopBar(
 	albumInfoState: UiState<DomainAlbumInfo>,
 	titleAlpha: Float,
 	onSetShareId: (shareId: String?) -> Unit,
-	isOnline: Boolean,
 	onDownloadAll: () -> Unit,
 	onCancelDownloadAll: () -> Unit,
 	onPlayNext: () -> Unit,
@@ -106,7 +105,6 @@ fun CollectionDetailScreenTopBar(
 	)
 
 	if (playlistDialogShown) {
-		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
 			songs = collection?.songs.orEmpty().toPersistentList(),
 			onDismissRequest = { playlistDialogShown = false }

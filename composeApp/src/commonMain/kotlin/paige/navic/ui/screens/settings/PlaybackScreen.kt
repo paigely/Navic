@@ -49,7 +49,7 @@ import navic.composeapp.generated.resources.title_behaviour
 import navic.composeapp.generated.resources.title_playback
 import navic.composeapp.generated.resources.title_streaming_quality
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
@@ -67,7 +67,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun SettingsPlaybackScreen() {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	var showLyricsPriorityDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -75,7 +75,7 @@ fun SettingsPlaybackScreen() {
 		topBar = {
 			NestedTopBar(
 				{ Text(stringResource(Res.string.title_playback)) },
-				hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
 		}
 	) { innerPadding ->
@@ -103,7 +103,7 @@ fun SettingsPlaybackScreen() {
 						}
 						Icon(Icons.Outlined.ChevronForward, null)
 					}
-					if (!listOf("ipados", "ios").contains(ctx.name.lowercase())) {
+					if (!listOf("ipados", "ios").contains(platformContext.name.lowercase())) {
 						SettingSelectionRow(
 							title = { Text(stringResource(Res.string.option_replay_gain)) },
 							items = ReplayGainMode.entries.toImmutableList(),

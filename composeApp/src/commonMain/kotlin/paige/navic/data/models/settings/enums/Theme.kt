@@ -23,7 +23,7 @@ import navic.composeapp.generated.resources.theme_subtitle_ios
 import navic.composeapp.generated.resources.theme_subtitle_seeded
 import navic.composeapp.generated.resources.theme_subtitle_spotify
 import org.jetbrains.compose.resources.StringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings.Companion.shared
 import paige.navic.utils.darkIosColorScheme
 import paige.navic.utils.lightIosColorScheme
@@ -69,7 +69,7 @@ enum class Theme(
 	@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 	@Composable
 	fun colorScheme(): ColorScheme {
-		val ctx = LocalCtx.current
+		val platformContext = LocalPlatformContext.current
 		val inDarkTheme = isSystemInDarkTheme()
 		val isDark = remember(shared.themeMode) {
 			when (shared.themeMode) {
@@ -79,7 +79,7 @@ enum class Theme(
 			}
 		}
 		return when (this) {
-			Dynamic -> ctx.colorScheme ?: remember(isDark) {
+			Dynamic -> platformContext.colorScheme ?: remember(isDark) {
 				if (isDark)
 					darkColorScheme()
 				else expressiveLightColorScheme()

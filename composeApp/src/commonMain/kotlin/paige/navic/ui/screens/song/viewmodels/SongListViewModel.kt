@@ -22,6 +22,7 @@ class SongListViewModel(
 	private val artistId: String? = null,
 	private val repository: SongRepository,
 	private val downloadManager: DownloadManager,
+	private val sessionManager: SessionManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _songsState =
@@ -31,7 +32,7 @@ class SongListViewModel(
 		.stateIn(
 			scope = viewModelScope,
 			started = SharingStarted.Lazily,
-			initialValue = emptyList()
+			initialValue = persistentListOf()
 		)
 
 	private val _selectedSong = MutableStateFlow<DomainSong?>(null)
@@ -53,7 +54,7 @@ class SongListViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect { if (it) refreshSongs(false) }
+			sessionManager.isLoggedIn.collect { if (it) refreshSongs(false) }
 		}
 	}
 

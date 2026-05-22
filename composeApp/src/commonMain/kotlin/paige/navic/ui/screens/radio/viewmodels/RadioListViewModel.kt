@@ -14,7 +14,8 @@ import paige.navic.domain.repositories.RadioRepository
 import paige.navic.utils.UiState
 
 class RadioListViewModel(
-	private val repository: RadioRepository
+	private val repository: RadioRepository,
+	private val sessionManager: SessionManager
 ) : ViewModel() {
 	private val _radiosState =
 		MutableStateFlow<UiState<ImmutableList<DomainRadio>>>(UiState.Loading())
@@ -24,7 +25,7 @@ class RadioListViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect { if (it) refreshRadios(false) }
+			sessionManager.isLoggedIn.collect { if (it) refreshRadios(false) }
 		}
 	}
 

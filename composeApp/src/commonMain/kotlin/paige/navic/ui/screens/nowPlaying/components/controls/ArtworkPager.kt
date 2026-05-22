@@ -26,6 +26,7 @@ import org.koin.compose.koinInject
 import paige.navic.data.models.settings.Settings
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.screens.nowPlaying.components.NowPlayingArtwork
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun NowPlayingArtworkPager(
@@ -43,8 +44,9 @@ fun NowPlayingArtworkPager(
 	var visible by rememberSaveable { mutableStateOf(false) }
 	val scale by animateFloatAsState(if (visible) 1f else 0f)
 	val offset by animateDpAsState(if (visible) 0.dp else 200.dp)
+
 	LaunchedEffect(Unit) {
-		delay(50)
+		delay(50.milliseconds)
 		visible = true
 	}
 

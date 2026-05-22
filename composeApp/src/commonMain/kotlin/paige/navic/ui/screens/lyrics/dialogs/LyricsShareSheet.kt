@@ -58,7 +58,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.materialkolor.rememberDynamicColorScheme
@@ -72,7 +71,7 @@ import navic.composeapp.generated.resources.action_share_lyrics
 import navic.composeapp.generated.resources.app_name
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalSnackbarState
 import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
@@ -90,6 +89,7 @@ import paige.navic.ui.theme.positive
 import paige.navic.ui.theme.purple
 import paige.navic.ui.theme.red
 import paige.navic.ui.theme.warning
+import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,15 +99,16 @@ fun LyricsShareSheet(
 	onDismiss: () -> Unit,
 	onShare: () -> Unit
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val shareManager = koinInject<ShareManager>()
 	val snackbarState = LocalSnackbarState.current
 	val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-	val platformContext = LocalPlatformContext.current
+	val coilPlatformContext = LocalCoilPlatformContext.current
+	val sessionManager = koinInject<SessionManager>()
 	val model = remember(song.coverArtId) {
-		ImageRequest.Builder(platformContext)
-			.data(song.coverArtId?.let { SessionManager.getCoverArtUrl(it) })
+		ImageRequest.Builder(coilPlatformContext)
+			.data(song.coverArtId?.let { sessionManager.getCoverArtUrl(it) })
 			.memoryCacheKey(song.coverArtId)
 			.diskCacheKey(song.coverArtId)
 			.diskCachePolicy(CachePolicy.ENABLED)
@@ -254,7 +255,7 @@ fun LyricsShareSheet(
 						color = color,
 						isSelected = color == selectedColor,
 						onClick = {
-							ctx.clickSound()
+							platformContext.clickSound()
 							selectedColor = color
 						},
 						isPicker = false
@@ -267,7 +268,7 @@ fun LyricsShareSheet(
 							color = customHsv.toColor(),
 							isSelected = selectedColor == customHsv.toColor(),
 							onClick = {
-								ctx.clickSound()
+								platformContext.clickSound()
 								selectedColor = customHsv.toColor()
 								expanded = true
 							},
@@ -299,7 +300,7 @@ fun LyricsShareSheet(
 
 			Button(
 				onClick = {
-					ctx.clickSound()
+					platformContext.clickSound()
 					scope.launch {
 						try {
 							val bmp = graphicsLayer.toImageBitmap()

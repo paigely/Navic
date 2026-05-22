@@ -3,7 +3,6 @@ package paige.navic.domain.repositories
 import androidx.room3.concurrent.AtomicInt
 import dev.zt64.subsonic.api.model.Album
 import dev.zt64.subsonic.api.model.AlbumListType
-import dev.zt64.subsonic.client.SubsonicClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
@@ -53,9 +52,9 @@ class DbRepository(
 	private val artistDao: ArtistDao,
 	private val radioDao: RadioDao,
 	private val lyricDao: LyricDao,
-	private val syncDao: SyncActionDao
+	private val syncDao: SyncActionDao,
+	private val sessionManager: SessionManager
 ) {
-	private val api: SubsonicClient get() = SessionManager.api
 	private val concurrentRequestLimit = Semaphore(20)
 
 	private val dbChunkSize = 500 // should be enough
@@ -139,7 +138,7 @@ class DbRepository(
 
 		onProgress(0.0f, Res.string.info_syncing_albums)
 		while (true) {
-			val batch = api.getAlbums(AlbumListType.AlphabeticalByName, pageSize, offset)
+			val batch = sessionManager.api.getAlbums(AlbumListType.AlphabeticalByName, pageSize, offset)
 			if (batch.isEmpty()) break
 			allAlbumSummaries.addAll(batch)
 			if (batch.size < pageSize) break
@@ -165,7 +164,7 @@ class DbRepository(
 					launch {
 						concurrentRequestLimit.withPermit {
 							try {
-								val album = api.getAlbum(summary.id)
+								val album = sessionManager.api.getAlbum(summary.id)
 
 								val done = completedAlbums.incrementAndGet()
 								val fetchProgress = 0.1f + (0.8f * (done.toFloat() / totalAlbums))
@@ -231,7 +230,7 @@ class DbRepository(
 	}
 
 	suspend fun syncPlaylists(): Result<List<PlaylistEntity>> = runDbOp {
-		val remotePlaylists = api.getPlaylists()
+		val remotePlaylists = sessionManager.api.getPlaylists()
 		val playlistEntities = remotePlaylists.map { it.toEntity() }
 		val validPlaylistIds = playlistEntities.map { it.playlistId }.toSet()
 
@@ -248,7 +247,7 @@ class DbRepository(
 
 	suspend fun syncPlaylistSongs(playlistId: String): Result<Int> = runDbOp {
 		val playlist = try {
-			api.getPlaylist(playlistId)
+			sessionManager.api.getPlaylist(playlistId)
 		} catch (e: Exception) {
 			if (e is SerializationException) {
 				Logger.e("DbRepository", "could not deserialize playlist $playlistId; skipping it", e)
@@ -280,7 +279,7 @@ class DbRepository(
 	}
 
 	suspend fun syncGenres(): Result<Unit> = runDbOp {
-		val remoteGenres = api.getGenres()
+		val remoteGenres = sessionManager.api.getGenres()
 		val entities = remoteGenres.map { it.toEntity() }
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
@@ -291,7 +290,7 @@ class DbRepository(
 	}
 
 	suspend fun syncArtists(): Result<Unit> = runDbOp {
-		val remoteArtistsWrapper = api.getArtists()
+		val remoteArtistsWrapper = sessionManager.api.getArtists()
 		val flatArtists = remoteArtistsWrapper.flatMap { indexGroup ->
 			indexGroup.artists
 		}
@@ -305,7 +304,7 @@ class DbRepository(
 	}
 
 	suspend fun syncRadios(): Result<Unit> = runDbOp {
-		val remoteRadios = api.getInternetRadioStations()
+		val remoteRadios = sessionManager.api.getInternetRadioStations()
 		val entities = remoteRadios.map { it.toEntity() }
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
@@ -316,7 +315,7 @@ class DbRepository(
 	}
 
 	suspend fun fetchArtistMetadata(artistId: String): Result<DomainArtist> = runDbOp {
-		val artistInfo = api.getArtistInfo(artistId)
+		val artistInfo = sessionManager.api.getArtistInfo(artistId)
 		val simIds = artistInfo.similarArtists.map { it.id }
 
 		val currentEntity = artistDao.getArtistById(artistId)

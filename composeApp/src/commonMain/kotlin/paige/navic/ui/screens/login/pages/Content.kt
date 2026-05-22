@@ -46,7 +46,7 @@ import navic.composeapp.generated.resources.info_login_description_start
 import navic.composeapp.generated.resources.option_custom_headers
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
@@ -80,7 +80,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 		}
 	}
 
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val haptics = LocalHapticFeedback.current
 	val backStack = LocalNavStack.current
 	val focusManager = LocalFocusManager.current
@@ -176,7 +176,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 						.clickable(onClick = dropUnlessResumed {
 							backStack.lastOrNull()?.let {
 								if (it is Screen.Login) {
-									ctx.clickSound()
+									platformContext.clickSound()
 									backStack.add(Screen.Settings.CustomHeaders)
 									focusManager.clearFocus(true)
 								}
@@ -197,7 +197,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 				Button(
 					modifier = Modifier.fillMaxWidth(),
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						login()
 					},
 					enabled = !isBusy,

@@ -137,7 +137,6 @@ fun AlbumListScreen(
 		onClearError = { viewModel.clearError() }
 	)
 
-	@Suppress("AssignedValueIsNeverRead")
 	ShareDialog(
 		id = shareId,
 		onIdClear = { shareId = null },

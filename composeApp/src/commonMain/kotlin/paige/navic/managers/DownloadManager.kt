@@ -11,6 +11,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.prepareRequest
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.HttpMethod
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,15 +42,17 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.LyricRepository
 import paige.navic.shared.Logger
+import coil3.PlatformContext as CoilPlatformContext
 
 class DownloadManager(
-	private val platformContext: coil3.PlatformContext,
+	private val coilPlatformContext: CoilPlatformContext,
 	private val downloadDao: DownloadDao,
 	private val albumDao: AlbumDao,
 	private val storageManager: StorageManager,
 	private val lyricRepository: LyricRepository,
 	private val lyricDao: LyricDao,
-	private val scope: CoroutineScope
+	private val scope: CoroutineScope,
+	private val sessionManager: SessionManager
 ) {
 	private val client = HttpClient {
 		val customHeaders = Settings.shared.customHeadersMap()
@@ -64,7 +67,7 @@ class DownloadManager(
 	private val downloadSemaphore =
 		Semaphore(10)// idk a good number, maybe u should be able to choose
 
-	val allDownloads = downloadDao.getAllDownloads()
+	val allDownloads = downloadDao.getAllDownloads().map { it.toImmutableList() }
 	val downloadCount = downloadDao.getDownloadsCount()
 	val downloadSize = allDownloads.map { downloads ->
 		downloads
@@ -280,9 +283,9 @@ class DownloadManager(
 		if (coverId == null) return
 
 		Logger.i("DownloadManager", "caching cover art for $coverId")
-		val coverArtUrl = SessionManager.getCoverArtUrl(coverId)
+		val coverArtUrl = sessionManager.getCoverArtUrl(coverId)
 
-		val imageRequest = ImageRequest.Builder(platformContext)
+		val imageRequest = ImageRequest.Builder(coilPlatformContext)
 			.data(coverArtUrl)
 			.size(Size.ORIGINAL)
 			.memoryCacheKey(coverId)
@@ -291,7 +294,7 @@ class DownloadManager(
 			.memoryCachePolicy(CachePolicy.DISABLED)
 			.build()
 
-		SingletonImageLoader.get(platformContext).execute(imageRequest)
+		SingletonImageLoader.get(coilPlatformContext).execute(imageRequest)
 		Logger.i("DownloadManager", "cached cover art for $coverId")
 	}
 
@@ -336,7 +339,7 @@ class DownloadManager(
 		var lastProgress = 0f
 		var progressJob: Job? = null
 
-		val request = client.prepareRequest(SessionManager.api.getStreamUrl(song.id)) {
+		val request = client.prepareRequest(sessionManager.api.getStreamUrl(song.id)) {
 			method = HttpMethod.Get
 			onDownload { bytesSentTotal, contentLength ->
 				if (contentLength != null && contentLength > 0L) {

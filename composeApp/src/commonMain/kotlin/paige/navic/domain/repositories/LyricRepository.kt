@@ -188,7 +188,8 @@ object LyricsContentParser {
 
 class LyricRepository(
 	private val lyricDao: LyricDao,
-	private val settings: Settings
+	private val settings: Settings,
+	private val sessionManager: SessionManager
 ) {
 
 	private val client = HttpClient {
@@ -243,7 +244,7 @@ class LyricRepository(
 					}
 
 					LyricsProvider.SUBSONIC -> {
-						val subsonicLyrics = SessionManager.api.getLyrics(song.id).firstOrNull()
+						val subsonicLyrics = sessionManager.api.getLyrics(song.id).firstOrNull()
 
 						val lines = subsonicLyrics?.lines?.flatMap { line ->
 							if (!subsonicLyrics.synced && line.value.contains("\n")) {

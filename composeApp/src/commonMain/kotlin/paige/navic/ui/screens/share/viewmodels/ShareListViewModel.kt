@@ -12,7 +12,8 @@ import paige.navic.domain.repositories.ShareRepository
 import paige.navic.utils.UiState
 
 class ShareListViewModel(
-	private val repository: ShareRepository = ShareRepository()
+	private val repository: ShareRepository,
+	private val sessionManager: SessionManager
 ) : ViewModel() {
 	private val _sharesState = MutableStateFlow<UiState<List<DomainShare>>>(UiState.Loading())
 	val sharesState = _sharesState.asStateFlow()
@@ -24,7 +25,7 @@ class ShareListViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect {
+			sessionManager.isLoggedIn.collect {
 				refreshShares()
 			}
 		}

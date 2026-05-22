@@ -50,7 +50,7 @@ import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
@@ -84,14 +84,14 @@ fun StarredScreenContent(
 	selectedSong: DomainSong?,
 	selectedSongIsStarred: Boolean,
 	selectedSongRating: Int,
-	allDownloads: List<DownloadEntity>,
+	allDownloads: ImmutableList<DownloadEntity>,
 	onSelectSong: (DomainSong) -> Unit,
 	onClearSongSelection: () -> Unit,
 	onAddSongStar: () -> Unit,
 	onRemoveSongStar: () -> Unit,
 	onPlaySongNext: (DomainSong) -> Unit,
 	onAddSongToQueue: (DomainSong) -> Unit,
-	onPlaySong: (DomainSong, Int) -> Unit,
+	onPlaySong: (Int) -> Unit,
 	onSetSongRating: (Int) -> Unit,
 	onDownloadSong: (DomainSong) -> Unit,
 	onCancelDownloadSong: (DomainSong) -> Unit,
@@ -112,7 +112,7 @@ fun StarredScreenContent(
 	// artists
 	artistsState: UiState<ImmutableList<DomainArtist>>,
 	selectedArtist: DomainArtist?,
-	selectedArtistAlbums: List<DomainAlbum>?,
+	selectedArtistAlbums: ImmutableList<DomainAlbum>?,
 	selectedArtistIsStarred: Boolean,
 	onSelectArtist: (DomainArtist) -> Unit,
 	onClearArtistSelection: () -> Unit,
@@ -121,7 +121,7 @@ fun StarredScreenContent(
 	onAddArtistToQueue: () -> Unit,
 ) {
 	val gridState = rememberLazyGridState()
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	val albums = albumsState.data.orEmpty()
 	val songs = songsState.data.orEmpty()
@@ -192,7 +192,7 @@ fun StarredScreenContent(
 						style = MaterialTheme.typography.labelLarge,
 						color = MaterialTheme.colorScheme.primary,
 						modifier = Modifier.clickable(onClick = dropUnlessResumed {
-							ctx.clickSound()
+							platformContext.clickSound()
 							backStack.add(
 								Screen.SongList(
 									nested = true,
@@ -224,7 +224,7 @@ fun StarredScreenContent(
 							modifier = Modifier.weight(1f),
 							song = song,
 							selected = selectedSong == song,
-							onClick = { onPlaySong(song, index) },
+							onClick = { onPlaySong(index) },
 							onLongClick = { onSelectSong(song) },
 							onDismissRequest = { onClearSongSelection() },
 							starredState = selectedSongIsStarred,
@@ -347,7 +347,6 @@ fun StarredScreenContent(
 	}
 
 	songsToAddToPlaylist?.let {
-		@Suppress("AssignedValueIsNeverRead")
 		PlaylistUpdateDialog(
 			songs = it,
 			onDismissRequest = { songsToAddToPlaylist = null }

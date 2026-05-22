@@ -17,12 +17,12 @@ import navic.composeapp.generated.resources.sideloading_warning_link_mask
 import navic.composeapp.generated.resources.sideloading_warning_subtitle
 import navic.composeapp.generated.resources.sideloading_warning_title
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 
 @Composable
 fun SideloadingDialog() {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	AlertDialog(
 		title = { Text(stringResource(Res.string.sideloading_warning_title)) },
 		text = {
@@ -44,7 +44,7 @@ fun SideloadingDialog() {
 		onDismissRequest = {},
 		confirmButton = {
 			Button(onClick = {
-				ctx.clickSound()
+				platformContext.clickSound()
 				Settings.shared.showedSideloadingWarning = true
 			}) {
 				Text(stringResource(Res.string.action_ok))

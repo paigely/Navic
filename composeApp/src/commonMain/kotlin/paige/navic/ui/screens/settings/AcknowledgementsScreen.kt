@@ -12,7 +12,7 @@ import com.mikepenz.aboutlibraries.ui.compose.produceLibraries
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_acknowledgements
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.ui.components.layouts.NestedTopBar
 
 @Composable
@@ -20,8 +20,8 @@ fun SettingsAcknowledgementsScreen() {
 	val libraries by produceLibraries {
 		Res.readBytes("files/acknowledgements.json").decodeToString()
 	}
-	val ctx = LocalCtx.current
-	val hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+	val platformContext = LocalPlatformContext.current
+	val hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 	Scaffold(
 		topBar = {
 			NestedTopBar(

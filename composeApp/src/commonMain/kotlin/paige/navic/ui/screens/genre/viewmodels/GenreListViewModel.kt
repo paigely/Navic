@@ -14,7 +14,8 @@ import paige.navic.domain.repositories.GenreRepository
 import paige.navic.utils.UiState
 
 class GenreListViewModel(
-	private val repository: GenreRepository
+	private val repository: GenreRepository,
+	private val sessionManager: SessionManager
 ) : ViewModel() {
 	private val _genresState =
 		MutableStateFlow<UiState<ImmutableList<DomainGenre>>>(UiState.Loading())
@@ -24,7 +25,7 @@ class GenreListViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect { if (it) refreshGenres(false) }
+			sessionManager.isLoggedIn.collect { if (it) refreshGenres(false) }
 		}
 	}
 

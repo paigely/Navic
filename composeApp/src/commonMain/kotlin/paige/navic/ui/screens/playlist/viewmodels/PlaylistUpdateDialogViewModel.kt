@@ -14,7 +14,8 @@ import paige.navic.utils.UiState
 
 class PlaylistUpdateDialogViewModel(
 	private val songs: List<DomainSong>,
-	private val playlistToExclude: String?
+	private val playlistToExclude: String?,
+	private val sessionManager: SessionManager
 ) : ViewModel() {
 	private val _playlistsState = MutableStateFlow<UiState<List<Playlist>>>(UiState.Loading())
 	val playlistsState = _playlistsState.asStateFlow()
@@ -38,7 +39,7 @@ class PlaylistUpdateDialogViewModel(
 			_playlistsState.value = UiState.Loading()
 			try {
 				val results =
-					SessionManager.api.getPlaylists()
+					sessionManager.api.getPlaylists()
 				_playlistsState.value =
 					UiState.Success(results.filter { it.id != playlistToExclude })
 			} catch (e: Exception) {
@@ -60,7 +61,7 @@ class PlaylistUpdateDialogViewModel(
 			_confirmState.value = UiState.Loading()
 			try {
 				_selectedPlaylists.value.forEach { playlist ->
-					SessionManager.api.updatePlaylist(
+					sessionManager.api.updatePlaylist(
 						playlist.id,
 						songIdsToAdd = songs.map { it.id }
 					)

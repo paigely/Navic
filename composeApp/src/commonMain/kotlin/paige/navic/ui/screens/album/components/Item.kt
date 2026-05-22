@@ -13,7 +13,7 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.models.Screen
@@ -39,7 +39,7 @@ fun AlbumListScreenItem(
 	onAddToQueue: () -> Unit,
 	onSetRating: (Int) -> Unit
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	val scope = rememberCoroutineScope()
 
@@ -53,7 +53,7 @@ fun AlbumListScreenItem(
 	Box(modifier) {
 		ArtGridItem(
 			onClick = dropUnlessResumed {
-				ctx.clickSound()
+				platformContext.clickSound()
 				scope.launch {
 					backStack.add(Screen.CollectionDetail(album.id, tab))
 				}
@@ -100,9 +100,8 @@ fun AlbumListScreenItem(
 		}
 
 		if (playlistDialogShown) {
-			@Suppress("AssignedValueIsNeverRead")
 			PlaylistUpdateDialog(
-				songs = album.songs.orEmpty().toPersistentList(),
+				songs = album.songs.toPersistentList(),
 				onDismissRequest = { playlistDialogShown = false }
 			)
 		}

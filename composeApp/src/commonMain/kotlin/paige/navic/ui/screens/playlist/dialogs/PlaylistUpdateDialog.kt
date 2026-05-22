@@ -41,7 +41,7 @@ import navic.composeapp.generated.resources.info_no_playlists
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistAdd
@@ -63,7 +63,7 @@ fun PlaylistUpdateDialog(
 		key = songs.joinToString() + playlistToExclude,
 		parameters = { parametersOf(songs, playlistToExclude) }
 	)
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val state by viewModel.playlistsState.collectAsState()
 	val confirmState by viewModel.confirmState.collectAsState()
 	val selectedPlaylists by viewModel.selectedPlaylists.collectAsState()
@@ -83,7 +83,7 @@ fun PlaylistUpdateDialog(
 						.toggleable(
 							value = isSelected,
 							onValueChange = {
-								ctx.clickSound()
+								platformContext.clickSound()
 								viewModel.togglePlaylistSelection(playlist)
 							},
 							role = Role.Checkbox
@@ -119,7 +119,7 @@ fun PlaylistUpdateDialog(
 		action = {
 			IconButton(
 				onClick = {
-					ctx.clickSound()
+					platformContext.clickSound()
 					viewModel.refreshResults()
 				},
 				enabled = state !is UiState.Loading,
@@ -201,7 +201,6 @@ fun PlaylistUpdateDialog(
 	)
 
 	if (createDialogShown) {
-		@Suppress("AssignedValueIsNeverRead")
 		PlaylistCreateDialog(
 			navigateAfterwards = false,
 			onDismissRequest = { createDialogShown = false },

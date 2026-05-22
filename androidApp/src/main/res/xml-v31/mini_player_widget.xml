@@ -6,4 +6,4 @@
 	android:resizeMode="horizontal"
 	android:targetCellWidth="4"
 	android:targetCellHeight="1"
-	android:updatePeriodMillis="86400000"></appwidget-provider>
+	android:updatePeriodMillis="86400000" />

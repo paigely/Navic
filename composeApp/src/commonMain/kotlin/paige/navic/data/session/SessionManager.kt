@@ -6,7 +6,6 @@ import dev.zt64.subsonic.client.SubsonicClient
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.header
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,8 +13,9 @@ import paige.navic.data.models.User
 import paige.navic.data.models.settings.Settings
 import com.russhwolf.settings.Settings as KmpSettings
 
-object SessionManager {
-	private val settings = KmpSettings()
+class SessionManager(
+	private val settings: KmpSettings
+) {
 	private val _isLoggedIn = MutableStateFlow(false)
 	val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
@@ -63,7 +63,6 @@ object SessionManager {
 			)
 		}
 
-	@OptIn(DelicateCoroutinesApi::class)
 	suspend fun login(
 		instanceUrl: String,
 		username: String,

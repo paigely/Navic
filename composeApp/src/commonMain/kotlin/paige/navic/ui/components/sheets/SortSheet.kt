@@ -30,7 +30,7 @@ import navic.composeapp.generated.resources.option_sort_descending
 import navic.composeapp.generated.resources.title_direction
 import navic.composeapp.generated.resources.title_sort_by
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +43,7 @@ fun <T> SortSheet(
 	onSetReversed: (Boolean) -> Unit,
 	onDismissRequest: () -> Unit
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	ModalBottomSheet(
 		onDismissRequest = onDismissRequest,
 		sheetState = rememberModalBottomSheetState(true)
@@ -68,7 +68,7 @@ fun <T> SortSheet(
 							.selectable(
 								selected = (sorting == selectedSorting),
 								onClick = {
-									ctx.clickSound()
+									platformContext.clickSound()
 									onSetSorting(sorting)
 								},
 								role = Role.RadioButton
@@ -105,7 +105,7 @@ fun <T> SortSheet(
 						count = 2
 					),
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onSetReversed(false)
 					},
 					selected = !selectedReversed,
@@ -117,7 +117,7 @@ fun <T> SortSheet(
 						count = 2
 					),
 					onClick = {
-						ctx.clickSound()
+						platformContext.clickSound()
 						onSetReversed(true)
 					},
 					selected = selectedReversed,

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -22,7 +23,8 @@ import paige.navic.utils.UiState
 class ArtistListViewModel(
 	initialListType: DomainArtistListType = DomainArtistListType.AlphabeticalByName,
 	private val repository: ArtistRepository,
-	private val albumDao: AlbumDao
+	private val albumDao: AlbumDao,
+	private val sessionManager: SessionManager
 ) : ViewModel() {
 	private val _artistsState =
 		MutableStateFlow<UiState<ImmutableList<DomainArtist>>>(UiState.Loading())
@@ -34,7 +36,7 @@ class ArtistListViewModel(
 	private val _selectedArtist = MutableStateFlow<DomainArtist?>(null)
 	val selectedArtist = _selectedArtist.asStateFlow()
 
-	private val _selectedArtistAlbums = MutableStateFlow<List<DomainAlbum>?>(null)
+	private val _selectedArtistAlbums = MutableStateFlow<ImmutableList<DomainAlbum>?>(null)
 	val selectedArtistAlbums = _selectedArtistAlbums.asStateFlow()
 
 	private val _listType = MutableStateFlow(initialListType)
@@ -44,7 +46,7 @@ class ArtistListViewModel(
 
 	init {
 		viewModelScope.launch {
-			SessionManager.isLoggedIn.collect { if (it) refreshArtists(false) }
+			sessionManager.isLoggedIn.collect { if (it) refreshArtists(false) }
 		}
 	}
 
@@ -61,7 +63,7 @@ class ArtistListViewModel(
 			_selectedArtist.value = artist
 			val artistAlbums = 
 				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
-			_selectedArtistAlbums.value = artistAlbums.map { it.toDomainModel() }
+			_selectedArtistAlbums.value = artistAlbums.map { it.toDomainModel() }.toImmutableList()
 			_starred.value = repository.isArtistStarred(artist)
 		}
 	}
@@ -106,6 +108,7 @@ class ArtistListViewModel(
 		}
 	}
 
+	// TODO: implement me
 	fun setListType(listType: DomainArtistListType) {
 		_listType.value = listType
 	}

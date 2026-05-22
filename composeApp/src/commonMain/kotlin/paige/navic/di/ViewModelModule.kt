@@ -44,7 +44,8 @@ val viewModelModule = module {
 	viewModel { (songs: List<DomainSong>, playlistToExclude: String?) ->
 		PlaylistUpdateDialogViewModel(
 			songs = songs,
-			playlistToExclude = playlistToExclude
+			playlistToExclude = playlistToExclude,
+			sessionManager = get()
 		)
 	}
 
@@ -56,6 +57,7 @@ val viewModelModule = module {
 			repository = get(),
 			downloadManager = get(),
 			connectivityManager = get(),
+			sessionManager = get()
 		)
 	}
 	viewModelOf(::ArtistListViewModel)

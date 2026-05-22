@@ -37,7 +37,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.data.models.settings.Settings
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
@@ -114,7 +114,7 @@ fun SelectionDropdownItem(
 	selected: Boolean,
 	onClick: () -> Unit
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val color by animateColorAsState(
 		if (selected && Settings.shared.theme.isMaterialLike())
 			MaterialTheme.colorScheme.primary
@@ -150,7 +150,7 @@ fun SelectionDropdownItem(
 		shape = if (Settings.shared.theme.isMaterialLike()) MaterialTheme.shapes.medium else RectangleShape,
 		shadowElevation = elevation,
 		onClick = {
-			ctx.clickSound()
+			platformContext.clickSound()
 			onClick()
 		}
 	) {

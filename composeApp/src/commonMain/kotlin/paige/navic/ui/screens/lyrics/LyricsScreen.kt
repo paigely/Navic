@@ -282,7 +282,7 @@ fun LyricsScreen(
 								}
 							} else if (activeIndex >= 0) {
 								launch {
-									delay(500)
+									delay(500.milliseconds)
 									val viewportCenter =
 										(layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
 									val scrollOffset = -(viewportCenter / 2)

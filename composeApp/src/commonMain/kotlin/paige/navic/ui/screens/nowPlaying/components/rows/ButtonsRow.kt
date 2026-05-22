@@ -33,7 +33,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Pause
 import paige.navic.icons.filled.Play
@@ -49,7 +49,7 @@ import paige.navic.ui.components.common.playPauseIconPainter
 
 @Composable
 fun NowPlayingButtonsRow() {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val interactionSource = remember { MutableInteractionSource() }
@@ -85,7 +85,7 @@ fun NowPlayingButtonsRow() {
 		IconButton(
 			modifier = Modifier.weight(1f).aspectRatio(1f),
 			onClick = {
-				ctx.clickSound()
+				platformContext.clickSound()
 				player.toggleShuffle()
 			},
 			enabled = enabled,
@@ -101,7 +101,7 @@ fun NowPlayingButtonsRow() {
 		IconButton(
 			modifier = Modifier.weight(1f).aspectRatio(1f),
 			onClick = {
-				ctx.clickSound()
+				platformContext.clickSound()
 				player.previous()
 			},
 			enabled = enabled
@@ -121,7 +121,7 @@ fun NowPlayingButtonsRow() {
 				.indication(interactionSource, ripple(color = Color.Black)),
 			colors = IconButtonDefaults.filledIconButtonColors(),
 			onClick = {
-				ctx.clickSound()
+				platformContext.clickSound()
 				player.togglePlay()
 			},
 			enabled = enabled,
@@ -157,7 +157,7 @@ fun NowPlayingButtonsRow() {
 		IconButton(
 			modifier = Modifier.weight(1f).aspectRatio(1f),
 			onClick = {
-				ctx.clickSound()
+				platformContext.clickSound()
 				player.next()
 			},
 			enabled = enabled,
@@ -171,7 +171,7 @@ fun NowPlayingButtonsRow() {
 		IconButton(
 			modifier = Modifier.weight(1f).aspectRatio(1f),
 			onClick = {
-				ctx.clickSound()
+				platformContext.clickSound()
 				player.toggleRepeat()
 			},
 			enabled = enabled,

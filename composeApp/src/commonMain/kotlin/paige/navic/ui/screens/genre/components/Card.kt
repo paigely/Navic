@@ -24,7 +24,7 @@ import dev.zt64.compose.pipette.HsvColor
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_albums
 import org.jetbrains.compose.resources.pluralStringResource
-import paige.navic.LocalCtx
+import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
@@ -40,7 +40,7 @@ fun GenreListScreenCard(
 	modifier: Modifier = Modifier,
 	genre: DomainGenre
 ) {
-	val ctx = LocalCtx.current
+	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	val inDarkTheme = isSystemInDarkTheme()
 	val isDark = remember(Settings.shared.themeMode) {
@@ -70,7 +70,7 @@ fun GenreListScreenCard(
 		shape = MaterialTheme.shapes.medium,
 		shadowElevation = 2.dp,
 		onClick = dropUnlessResumed {
-			ctx.clickSound()
+			platformContext.clickSound()
 			backStack.add(
 				Screen.AlbumList(
 					nested = true,

@@ -43,10 +43,7 @@ import androidx.navigation3.ui.NavDisplay.popTransitionSpec
 import androidx.navigation3.ui.NavDisplay.predictivePopTransitionSpec
 import androidx.navigation3.ui.NavDisplay.transitionSpec
 import androidx.savedstate.serialization.SavedStateConfiguration
-import coil3.compose.LocalPlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -55,9 +52,9 @@ import paige.navic.data.images.initializeSingletonImageLoader
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
-import paige.navic.shared.Ctx
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.shared.rememberCtx
+import paige.navic.shared.PlatformContext
+import paige.navic.shared.rememberPlatformContext
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
 import paige.navic.ui.scenes.BottomSheetSceneStrategy
@@ -106,9 +103,8 @@ private val config = SavedStateConfiguration {
 	}
 }
 
-val LocalCtx = staticCompositionLocalOf<Ctx> { error("no ctx") }
+val LocalPlatformContext = staticCompositionLocalOf<PlatformContext> { error("no platform context") }
 val LocalNavStack = staticCompositionLocalOf<NavBackStack<NavKey>> { error("no backstack") }
-val LocalImageBuilder = staticCompositionLocalOf<ImageRequest.Builder> { error("no image builder") }
 val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> { error("no snackbar state") }
 val LocalSharedTransitionScope =
 	staticCompositionLocalOf<SharedTransitionScope> { error("no shared transition scope") }
@@ -116,21 +112,20 @@ val LocalSharedTransitionScope =
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun App() {
-	val platformContext = LocalPlatformContext.current
-
+	// TODO: wtf was this for
 	setSingletonImageLoaderFactory { platformContext ->
 		initializeSingletonImageLoader(platformContext)
 	}
 
-	val ctx = rememberCtx()
+	val platformContext = rememberPlatformContext()
+	val sessionManager = koinInject<SessionManager>()
 	val backStack = rememberNavBackStack(
-		config, if (SessionManager.currentUser != null) {
+		config, if (sessionManager.currentUser != null) {
 			Screen.Library()
 		} else {
 			Screen.Login
 		}
 	)
-	val imageBuilder = remember { ImageRequest.Builder(platformContext).crossfade(true) }
 	val snackbarState = remember { SnackbarHostState() }
 	val density = LocalDensity.current
 	val scrollManager = remember {
@@ -139,9 +134,8 @@ fun App() {
 
 	SharedTransitionLayout {
 		CompositionLocalProvider(
-			LocalCtx provides ctx,
+			LocalPlatformContext provides platformContext,
 			LocalNavStack provides backStack,
-			LocalImageBuilder provides imageBuilder,
 			LocalSnackbarState provides snackbarState,
 			LocalSharedTransitionScope provides this@SharedTransitionLayout,
 			LocalBottomBarScrollManager provides scrollManager
@@ -198,13 +192,13 @@ fun App() {
 					)
 				}
 				if (!Settings.shared.showedSideloadingWarning
-					&& ctx.name.lowercase().contains("android")
+					&& platformContext.name.lowercase().contains("android")
 				) {
 					SideloadingDialog()
 				}
 				// version check is annoying to do on ios
 				if (Settings.shared.checkForUpdates
-					&& !listOf("ios", "ipados").contains(ctx.name.lowercase())) {
+					&& !listOf("ios", "ipados").contains(platformContext.name.lowercase())) {
 					ChangelogSheet()
 				}
 			}
@@ -258,10 +252,7 @@ private fun entryProvider(
 			LoginScreen()
 		}
 		entry<Screen.NowPlaying>(
-			metadata = NowPlayingSceneStrategy.bottomSheet(
-				maxWidth = Dp.Unspecified,
-				screenType = "player"
-			)
+			metadata = NowPlayingSceneStrategy.bottomSheet(maxWidth = Dp.Unspecified)
 		) {
 			NowPlayingScreen()
 		}

@@ -114,7 +114,6 @@ fun ShareListScreen() {
 		}
 	}
 
-	@Suppress("AssignedValueIsNeverRead")
 	DeletionDialog(
 		endpoint = DeletionEndpoint.SHARE,
 		id = deletionId,
