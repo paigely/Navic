@@ -33,7 +33,6 @@ import navic.composeapp.generated.resources.action_remove_from_queue
 import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.info_not_available_offline
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.models.settings.Settings
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
@@ -140,7 +139,7 @@ fun QueueScreenItem(
 						CoverArt(
 							modifier = Modifier.size(48.dp),
 							coverArtId = song.coverArtId,
-							shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
+							shape = ContinuousRoundedRectangle(10.dp)
 						)
 					},
 					trailingContent = {

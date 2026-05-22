@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
 import navic.composeapp.generated.resources.action_add_to_queue
@@ -114,7 +113,7 @@ fun CollectionSheet(
 				CoverArt(
 					coverArtId = collection?.coverArtId,
 					modifier = Modifier.size(50.dp),
-					shape = ContinuousRoundedRectangle((Settings.shared.artGridRounding / 1.75f).dp)
+					shape = Settings.shared.coverArtShape.decreasedShape
 				)
 			},
 			headlineContent = { MarqueeText(collection?.name.orEmpty()) },

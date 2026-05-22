@@ -49,10 +49,7 @@ fun AlbumListScreenSortButton(
 			)
 		}
 	} else {
-		TopBarButton({
-			ctx.clickSound()
-			expanded = true
-		}) {
+		TopBarButton({ expanded = true }) {
 			Icon(
 				Icons.Outlined.Sort,
 				contentDescription = null

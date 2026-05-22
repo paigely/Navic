@@ -21,7 +21,6 @@ import coil3.request.SuccessResult
 import coil3.request.allowHardware
 import coil3.toBitmap
 import paige.navic.androidApp.MainActivity
-import androidx.core.net.toUri
 
 /**
  * Base widgets class which widgets will inherit from. Used with `NowPlayingReceiver`
@@ -70,9 +69,8 @@ abstract class NowPlayingWidget : GlanceAppWidget() {
 	 */
 	protected fun createMediaIntent(context: Context, keyCode: Int) =
 		Intent(Intent.ACTION_MEDIA_BUTTON).apply {
-			setPackage(context.packageName)
-			component = ComponentName(context, "androidx.media3.session.MediaButtonReceiver")
 			putExtra(Intent.EXTRA_KEY_EVENT, KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
+			component = ComponentName(context, "androidx.media3.session.MediaButtonReceiver")
 		}
 
 	protected fun launchIntent(context: Context) = Intent(context, MainActivity::class.java).apply {
@@ -83,18 +81,8 @@ abstract class NowPlayingWidget : GlanceAppWidget() {
 
 	private suspend fun fetchBitmap(context: Context, url: String?): Bitmap? {
 		if (url == null) return null
-
-		val uri = url.toUri()
-		val cacheKey = uri.getQueryParameter("cacheKey")
-
 		val request = ImageRequest.Builder(context)
 			.data(url)
-			.apply {
-				cacheKey?.let { key ->
-					memoryCacheKey(key)
-					diskCacheKey(key)
-				}
-			}
 			.size(700)
 			.allowHardware(false)
 			.build()

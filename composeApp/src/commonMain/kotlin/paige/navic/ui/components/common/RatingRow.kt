@@ -1,7 +1,5 @@
 package paige.navic.ui.components.common
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,14 +7,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_rate_stars
@@ -32,11 +24,6 @@ fun RatingRow(
 	setRating: (Int) -> Unit
 ) {
 	val ctx = LocalCtx.current
-	var visible by rememberSaveable { mutableStateOf(false) }
-
-	LaunchedEffect(Unit) {
-		visible = true
-	}
 
 	Row(
 		modifier = Modifier.fillMaxWidth(),
@@ -46,13 +33,6 @@ fun RatingRow(
 		)
 	) {
 		(1..5).forEach { idx ->
-			val progress by animateFloatAsState(
-				if (visible) 1f else 0f,
-				animationSpec = tween(
-					delayMillis = idx * 25
-				)
-			)
-
 			IconButton(
 				onClick = {
 					ctx.clickSound()
@@ -61,11 +41,6 @@ fun RatingRow(
 					} else {
 						setRating(idx)
 					}
-				},
-				modifier = Modifier.graphicsLayer {
-					scaleX = progress
-					scaleY = progress
-					alpha = progress
 				}
 			) {
 				Icon(
