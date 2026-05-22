@@ -51,7 +51,8 @@ actual val platformModule = module {
 			albumDao = get(),
 			downloadManager = get(),
 			connectivityManager = get(),
-			sessionManager = get()
+			sessionManager = get(),
+			platformContext = get()
 		)
 	}
 
