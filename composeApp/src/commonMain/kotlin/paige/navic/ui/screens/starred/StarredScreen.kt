@@ -9,15 +9,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.paging.LoadState
-import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_starred
@@ -62,7 +59,7 @@ fun StarredScreen() {
 		key = "starredAlbums",
 		parameters = { parametersOf(DomainAlbumListType.Starred) }
 	)
-	val pagedAlbums = albumsViewModel.pagedAlbums.collectAsLazyPagingItems()
+	val albumsState by albumsViewModel.albumsState.collectAsStateWithLifecycle()
 	val selectedAlbum by albumsViewModel.selectedAlbum.collectAsStateWithLifecycle()
 	val selectedAlbumIsStarred by albumsViewModel.starred.collectAsStateWithLifecycle()
 	val selectedAlbumRating by albumsViewModel.rating.collectAsStateWithLifecycle()
@@ -81,8 +78,6 @@ fun StarredScreen() {
 
 	val player = koinViewModel<MediaPlayerViewModel>()
 
-	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
 	var songToQueue by remember { mutableStateOf<DomainSong?>(null) }
 
 	val isOnline by songsViewModel.isOnline.collectAsStateWithLifecycle()
@@ -96,8 +91,7 @@ fun StarredScreen() {
 			}
 		}
 	) { innerPadding ->
-		val isAlbumsLoading = pagedAlbums.loadState.refresh is LoadState.Loading
-		val isAnythingLoading = isAlbumsLoading ||
+		val isAnythingLoading = albumsState is UiState.Loading ||
 			artistsState is UiState.Loading || 
 			songsState is UiState.Loading
 		PullToRefreshBox(
@@ -106,14 +100,13 @@ fun StarredScreen() {
 				.background(MaterialTheme.colorScheme.surface),
 			finished = !isAnythingLoading,
 			onRefresh = {
-				pagedAlbums.refresh()
+				albumsViewModel.refreshAlbums(true)
 				artistsViewModel.refreshArtists(true)
 				songsViewModel.refreshSongs(true)
 			},
-			key = listOf(pagedAlbums.itemSnapshotList, artistsState, songsState)
+			key = listOf(albumsState, artistsState, songsState)
 		) {
 			StarredScreenContent(
-				scrollBehavior = scrollBehavior,
 				innerPadding = innerPadding,
 				onSetShareId = { shareId = it },
 				isOnline = isOnline,
@@ -159,7 +152,7 @@ fun StarredScreen() {
 				selectedSongRating = selectedSongRating,
 				onSetSongRating = { songsViewModel.rateSelectedSong(it) },
 
-				pagedAlbums = pagedAlbums,
+				albumsState = albumsState,
 				selectedAlbum = selectedAlbum,
 				selectedAlbumIsStarred = selectedAlbumIsStarred,
 				selectedAlbumRating = selectedAlbumRating,
