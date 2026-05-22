@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.update
 import paige.navic.data.database.SyncManager
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
@@ -213,16 +214,20 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun playNext(collection: DomainSongCollection) {
+		val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(compareBy(
+			{ it.discNumber },
+			{ it.trackNumber }
+		)) else collection.songs
 		_uiState.update { state ->
 			val newQueue =
 				if (state.queue.isEmpty())
-					state.queue + collection.songs
+					state.queue + newCollection
 				else
-					state.queue.slice(0..state.currentIndex) + collection.songs + state.queue.slice(state.currentIndex+1..state.queue.size-1)
+					state.queue.slice(0..state.currentIndex) + newCollection + state.queue.slice(state.currentIndex+1..state.queue.size-1)
 			state.copy(
 				queue = newQueue,
 				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-				currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
+				currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 			)
 		}
 	}
@@ -301,12 +306,16 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun addToQueue(collection: DomainSongCollection) {
+		val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(compareBy(
+			{ it.discNumber },
+			{ it.trackNumber }
+		)) else collection.songs
 		_uiState.update { state ->
-			val newQueue = state.queue + collection.songs
+			val newQueue = state.queue + newCollection
 			state.copy(
 				queue = newQueue,
 				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-				currentSong = if (state.currentIndex == -1) collection.songs.firstOrNull() else state.currentSong
+				currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 			)
 		}
 	}

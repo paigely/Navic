@@ -1,15 +1,14 @@
-package paige.navic.ui.screens.library
+package paige.navic.ui.screens.starred
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,107 +17,140 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.title_library
+import navic.composeapp.generated.resources.title_starred
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import paige.navic.data.models.settings.Settings
+import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtistListType
+import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongListType
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.ui.components.common.ErrorSnackbar
-import paige.navic.ui.components.dialogs.DeletionDialog
-import paige.navic.ui.components.dialogs.DeletionEndpoint
+import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
-import paige.navic.ui.components.layouts.RootTopBar
+import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
-import paige.navic.ui.screens.genre.viewmodels.GenreListViewModel
-import paige.navic.ui.screens.library.components.LibraryScreenContent
-import paige.navic.ui.screens.login.viewmodels.LoginViewModel
-import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
-import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
+import paige.navic.ui.screens.song.viewmodels.SongListViewModel
+import paige.navic.ui.screens.starred.components.StarredScreenContent
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.LoginState
 import paige.navic.utils.UiState
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun LibraryScreen() {
+fun StarredScreen() {
+	val songsViewModel = koinViewModel<SongListViewModel>(
+		key = "starredSongs",
+		parameters = { parametersOf(DomainSongListType.Starred) }
+	)
+	val songsState by songsViewModel.songsState.collectAsStateWithLifecycle()
+	val selectedSong by songsViewModel.selectedSong.collectAsStateWithLifecycle()
+	val selectedSongIsStarred by songsViewModel.starred.collectAsStateWithLifecycle()
+	val selectedSongRating by songsViewModel.selectedSongRating.collectAsStateWithLifecycle()
+	val allDownloads by songsViewModel.allDownloads.collectAsStateWithLifecycle()
+
 	val albumsViewModel = koinViewModel<AlbumListViewModel>(
-		key = "libraryAlbums",
-		parameters = { parametersOf(DomainAlbumListType.Recent) }
+		key = "starredAlbums",
+		parameters = { parametersOf(DomainAlbumListType.Starred) }
 	)
 	val albumsState by albumsViewModel.albumsState.collectAsStateWithLifecycle()
 	val selectedAlbum by albumsViewModel.selectedAlbum.collectAsStateWithLifecycle()
 	val selectedAlbumIsStarred by albumsViewModel.starred.collectAsStateWithLifecycle()
 	val selectedAlbumRating by albumsViewModel.rating.collectAsStateWithLifecycle()
 
-	val playlistsViewModel = koinViewModel<PlaylistListViewModel>()
-	val playlistsState by playlistsViewModel.playlistsState.collectAsStateWithLifecycle()
-	val selectedPlaylist by playlistsViewModel.selectedPlaylist.collectAsStateWithLifecycle()
-
 	val artistsViewModel = koinViewModel<ArtistListViewModel>(
-		key = "libraryArtists",
-		parameters = { parametersOf(DomainArtistListType.AlphabeticalByName) }
+		key = "starredArtists",
+		parameters = { parametersOf(DomainArtistListType.Starred) }
 	)
 	val artistsState by artistsViewModel.artistsState.collectAsStateWithLifecycle()
 	val selectedArtist by artistsViewModel.selectedArtist.collectAsStateWithLifecycle()
 	val selectedArtistAlbums by artistsViewModel.selectedArtistAlbums.collectAsStateWithLifecycle()
 	val selectedArtistIsStarred by artistsViewModel.starred.collectAsStateWithLifecycle()
 
-	val genresViewModel = koinViewModel<GenreListViewModel>()
-	val genresState by genresViewModel.genresState.collectAsStateWithLifecycle()
-
-	val loginViewModel = koinViewModel<LoginViewModel>()
-	val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
-
 	var shareId by rememberSaveable { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
-	var playlistDeletionId by rememberSaveable { mutableStateOf<String?>(null) }
-	var playlistCreateDialogShown by rememberSaveable { mutableStateOf(false) }
 
 	val player = koinViewModel<MediaPlayerViewModel>()
 
-	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+	var songToQueue by remember { mutableStateOf<DomainSong?>(null) }
 
-	LaunchedEffect(loginState is LoginState.Success) {
-		albumsViewModel.refreshAlbums(false)
-		playlistsViewModel.refreshPlaylists(false)
-		artistsViewModel.refreshArtists(false)
-		genresViewModel.refreshGenres(false)
-	}
+	val isOnline by songsViewModel.isOnline.collectAsStateWithLifecycle()
 
 	Scaffold(
-		topBar = { RootTopBar({ Text(stringResource(Res.string.title_library)) }, scrollBehavior) },
+		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_starred)) }) },
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			RootBottomBar(scrolled = scrollManager.isTriggered)
+			if (Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+				RootBottomBar(scrolled = scrollManager.isTriggered)
+			}
 		}
 	) { innerPadding ->
+		val isAnythingLoading = albumsState is UiState.Loading ||
+			artistsState is UiState.Loading || 
+			songsState is UiState.Loading
 		PullToRefreshBox(
 			modifier = Modifier
 				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
-			finished = albumsState !is UiState.Loading &&
-				playlistsState !is UiState.Loading &&
-				artistsState !is UiState.Loading &&
-				genresState !is UiState.Loading,
+			finished = !isAnythingLoading,
 			onRefresh = {
 				albumsViewModel.refreshAlbums(true)
-				playlistsViewModel.refreshPlaylists(true)
 				artistsViewModel.refreshArtists(true)
-				genresViewModel.refreshGenres(true)
+				songsViewModel.refreshSongs(true)
 			},
-			key = listOf(albumsState, playlistsState, artistsState, genresState)
+			key = listOf(albumsState, artistsState, songsState)
 		) {
-			LibraryScreenContent(
-				scrollBehavior = scrollBehavior,
+			StarredScreenContent(
 				innerPadding = innerPadding,
 				onSetShareId = { shareId = it },
+				isOnline = isOnline,
+
+				songsState = songsState,
+				selectedSong = selectedSong,
+				allDownloads = allDownloads,
+				onPlaySong = { song, index ->
+					player.clearQueue()
+					songsState.data.orEmpty().forEach {
+						player.addToQueueSingle(it)
+					}
+					player.playAt(index)
+				},
+				onSelectSong = {
+					songsViewModel.selectSong(it)
+				},
+				onClearSongSelection = { songsViewModel.clearSelection() },
+				selectedSongIsStarred = selectedSongIsStarred,
+				onAddSongStar = { songsViewModel.starSong(true) },
+				onRemoveSongStar = { songsViewModel.starSong(false) },
+				onDownloadSong = { songsViewModel.downloadSong(it) },
+				onCancelDownloadSong = { song -> 
+					songsViewModel.cancelDownload(song.id)
+				},
+				onDeleteDownloadSong = { song -> 
+					songsViewModel.deleteDownload(song.id) 
+				},
+				onPlaySongNext = { song ->
+					if (player.uiState.value.queue.any { it.id == song.id }) {
+						songToQueue = song
+					} else {
+						player.playNextSingle(song)
+					}
+				},
+				onAddSongToQueue = { song ->
+					if (player.uiState.value.queue.any { it.id == song.id }) {
+						songToQueue = song
+					} else {
+						player.addToQueueSingle(song)
+					}
+				},
+				selectedSongRating = selectedSongRating,
+				onSetSongRating = { songsViewModel.rateSelectedSong(it) },
 
 				albumsState = albumsState,
 				selectedAlbum = selectedAlbum,
@@ -140,36 +172,9 @@ fun LibraryScreen() {
 				onStarSelectedArtist = { artistsViewModel.starArtist(it) },
 				onPlayArtistNext = { if (selectedArtist != null) artistsViewModel.playArtistAlbumsNext(player)},
 				onAddArtistToQueue = { if (selectedArtist != null) artistsViewModel.addArtistAlbumsToQueue(player)},
-
-				playlistsState = playlistsState,
-				selectedPlaylist = selectedPlaylist,
-				onSelectPlaylist = { playlistsViewModel.selectPlaylist(it) },
-				onClearPlaylistSelection = { playlistsViewModel.clearSelection() },
-				onDeletePlaylist = { playlistDeletionId = it },
-				onPlayPlaylistNext = { if (selectedPlaylist != null) player.playNext(selectedPlaylist as DomainSongCollection)},
-				onAddPlaylistToQueue = { if (selectedPlaylist != null) player.addToQueue(selectedPlaylist as DomainSongCollection)},
-
-				genresState = genresState
 			)
 		}
 	}
-
-	val flattenedErrors = listOf(
-		(albumsState as? UiState.Error)?.error,
-		(playlistsState as? UiState.Error)?.error,
-		(artistsState as? UiState.Error)?.error,
-		(genresState as? UiState.Error)?.error
-	).mapNotNull { it?.stackTraceToString() }.takeIf { it.isNotEmpty() }?.joinToString("\n\n")
-
-	ErrorSnackbar(
-		error = flattenedErrors?.let { Error(it) },
-		onClearError = {
-			albumsViewModel.clearError()
-			playlistsViewModel.clearError()
-			artistsViewModel.clearError()
-			genresViewModel.clearError()
-		}
-	)
 
 	@Suppress("AssignedValueIsNeverRead")
 	ShareDialog(
@@ -179,19 +184,12 @@ fun LibraryScreen() {
 		onExpiryChange = { shareExpiry = it }
 	)
 
-	@Suppress("AssignedValueIsNeverRead")
-	DeletionDialog(
-		endpoint = DeletionEndpoint.PLAYLIST,
-		id = playlistDeletionId,
-		onIdClear = { playlistDeletionId = null },
-		onRefresh = { playlistsViewModel.refreshPlaylists(false) }
-	)
-
-	if (playlistCreateDialogShown) {
-		@Suppress("AssignedValueIsNeverRead")
-		PlaylistCreateDialog(
-			onDismissRequest = { playlistCreateDialogShown = false },
-			onRefresh = { playlistsViewModel.refreshPlaylists(true) }
+	if (songToQueue != null) {
+		QueueDuplicateDialog(
+			onDismissRequest = { songToQueue = null },
+			onConfirm = {
+				songToQueue?.let { player.addToQueueSingle(it) }
+			}
 		)
 	}
 }

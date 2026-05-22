@@ -45,6 +45,9 @@ class CollectionDetailViewModel(
 	)
 	val collectionState: StateFlow<UiState<DomainSongCollection>> = _collectionState.asStateFlow()
 
+	private val _starred = MutableStateFlow(false)
+	val starred = _starred.asStateFlow()
+
 	val isOnline = connectivityManager.isOnline
 
 	val allDownloads = downloadManager.allDownloads
@@ -74,6 +77,15 @@ class CollectionDetailViewModel(
 	private val _selectedSongRating = MutableStateFlow(0)
 	val selectedSongRating = _selectedSongRating.asStateFlow()
 
+	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
+	val selectedAlbum: StateFlow<DomainAlbum?> = _selectedAlbum.asStateFlow()
+
+	private val _selectedAlbumIsStarred = MutableStateFlow(false)
+	val selectedAlbumIsStarred = _selectedAlbumIsStarred.asStateFlow()
+
+	private val _selectedAlbumRating = MutableStateFlow(0)
+	val selectedAlbumRating = _selectedAlbumRating.asStateFlow()
+
 	private val _rating = MutableStateFlow(0)
 	val rating = _rating.asStateFlow()
 
@@ -90,6 +102,7 @@ class CollectionDetailViewModel(
 			repository.getCollectionFlow(fullRefresh, collectionId).collect {
 				_collectionState.value = it
 				if (it.data is DomainAlbum) {
+					_starred.value = albumRepository.isAlbumStarred(it.data as DomainAlbum)
 					_rating.value = albumRepository.getAlbumRating(it.data as DomainAlbum)
 					try {
 						val albumInfo = repository.getAlbumInfo(collectionId)
@@ -110,8 +123,17 @@ class CollectionDetailViewModel(
 		}
 	}
 
+	fun selectAlbum(album: DomainAlbum) {
+		viewModelScope.launch {
+			_selectedAlbum.value = album
+			_selectedAlbumIsStarred.value = albumRepository.isAlbumStarred(album)
+			_selectedAlbumRating.value = albumRepository.getAlbumRating(album)
+		}
+	}
+
 	fun clearSelection() {
 		_selectedSong.value = null
+		_selectedAlbum.value = null
 	}
 
 	fun clearError() {
@@ -172,6 +194,44 @@ class CollectionDetailViewModel(
 			(_collectionState.value.data as? DomainAlbum)?.let { album ->
 				albumRepository.rateAlbum(album, rating)
 				_rating.value = rating
+			}
+		}
+	}
+
+	fun starAlbum(starred: Boolean) {
+		viewModelScope.launch {
+			runCatching {
+				val collection = _collectionState.value.data ?: return@launch
+				if (collection !is DomainAlbum) return@launch
+				if (starred) {
+					albumRepository.starAlbum(collection)
+				} else {
+					albumRepository.unstarAlbum(collection)
+				}
+				refreshCollection(false)
+			}
+		}
+	}
+
+	fun rateSelectedAlbum(rating: Int) {
+		viewModelScope.launch {
+			_selectedAlbum.value?.let { album ->
+				albumRepository.rateAlbum(album, rating)
+				_selectedAlbumRating.value = rating
+			}
+		}
+	}
+
+	fun starSelectedAlbum(starred: Boolean) {
+		viewModelScope.launch {
+			runCatching {
+				val collection = _selectedAlbum.value ?: return@launch
+				if (starred) {
+					albumRepository.starAlbum(collection)
+				} else {
+					albumRepository.unstarAlbum(collection)
+				}
+				_selectedAlbumIsStarred.value = starred
 			}
 		}
 	}

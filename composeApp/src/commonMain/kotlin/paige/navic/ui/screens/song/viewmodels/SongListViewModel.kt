@@ -13,13 +13,16 @@ import paige.navic.data.session.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
 import paige.navic.domain.repositories.SongRepository
+import paige.navic.managers.ConnectivityManager
 import paige.navic.managers.DownloadManager
 import paige.navic.utils.UiState
 
 class SongListViewModel(
+	initialListType: DomainSongListType = DomainSongListType.FrequentlyPlayed,
 	private val artistId: String? = null,
 	private val repository: SongRepository,
 	private val downloadManager: DownloadManager,
+	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _songsState =
 		MutableStateFlow<UiState<ImmutableList<DomainSong>>>(UiState.Loading())
@@ -40,11 +43,13 @@ class SongListViewModel(
 	private val _selectedSongRating = MutableStateFlow(0)
 	val selectedSongRating = _selectedSongRating.asStateFlow()
 
-	private val _selectedSorting = MutableStateFlow(DomainSongListType.FrequentlyPlayed)
+	private val _selectedSorting = MutableStateFlow(initialListType)
 	val selectedSorting = _selectedSorting.asStateFlow()
 
 	private val _selectedReversed = MutableStateFlow(false)
 	val selectedReversed = _selectedReversed.asStateFlow()
+
+	val isOnline = connectivityManager.isOnline
 
 	init {
 		viewModelScope.launch {
@@ -87,6 +92,7 @@ class SongListViewModel(
 					repository.unstarSong(selection)
 				}
 				_starred.value = starred
+				refreshSongs(false)
 			}
 		}
 	}

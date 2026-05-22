@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.SyncManager
+import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
@@ -18,6 +19,7 @@ import paige.navic.utils.UiState
 import kotlin.time.Clock
 
 class ArtistRepository(
+	private val albumDao: AlbumDao,
 	private val artistDao: ArtistDao,
 	private val syncManager: SyncManager,
 	private val dbRepository: DbRepository
@@ -57,6 +59,7 @@ class ArtistRepository(
 	}.flowOn(Dispatchers.IO)
 
 	suspend fun isArtistStarred(artist: DomainArtist) = artistDao.isArtistStarred(artist.id)
+	suspend fun getAlbumsByArtist(artistId: String) = albumDao.getAlbumsByArtist(artistId)
 
 	suspend fun starArtist(artist: DomainArtist) {
 		val starredEntity = artist.toEntity().copy(

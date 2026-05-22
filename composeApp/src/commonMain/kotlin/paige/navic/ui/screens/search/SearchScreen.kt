@@ -63,6 +63,7 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.domain.models.DomainArtistListType
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
@@ -108,8 +109,11 @@ fun SearchScreen(
 	val selectedSongIsStarred by viewModel.selectedSongIsStarred.collectAsStateWithLifecycle()
 	val selectedSongRating by viewModel.selectedSongRating.collectAsStateWithLifecycle()
 
-	val artistListViewModel = koinViewModel<ArtistListViewModel>()
+	val artistListViewModel = koinViewModel<ArtistListViewModel> {
+		parametersOf(DomainArtistListType.AlphabeticalByName)
+	}
 	val artistListSelection by artistListViewModel.selectedArtist.collectAsState()
+	val artistListSelectionAlbums by artistListViewModel.selectedArtistAlbums.collectAsState()
 	val artistListStarred by artistListViewModel.starred.collectAsState()
 
 	val albumListViewModel = koinViewModel<AlbumListViewModel> {
@@ -366,10 +370,13 @@ fun SearchScreen(
 									tab = "search",
 									artist = artist,
 									selected = artist == artistListSelection,
+									selectedArtistAlbums = artistListSelectionAlbums,
 									starred = artistListStarred,
 									onSelect = { artistListViewModel.selectArtist(artist) },
 									onDeselect = { artistListViewModel.clearSelection() },
-									onSetStarred = { artistListViewModel.starArtist(it) }
+									onSetStarred = { artistListViewModel.starArtist(it) },
+									onPlayNext = { artistListViewModel.playArtistAlbumsNext(player) },
+									onAddToQueue = { artistListViewModel.addArtistAlbumsToQueue(player) }
 								)
 							}
 						} else {

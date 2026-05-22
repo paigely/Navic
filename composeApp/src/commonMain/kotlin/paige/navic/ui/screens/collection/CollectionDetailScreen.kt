@@ -41,6 +41,7 @@ import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Note
@@ -80,7 +81,9 @@ fun CollectionDetailScreen(
 	val collectionState by viewModel.collectionState.collectAsState()
 	val collection = collectionState.data
 	val selection by viewModel.selectedSong.collectAsState()
+	val selectedAlbum by viewModel.selectedAlbum.collectAsState()
 	val isOnline by viewModel.isOnline.collectAsState()
+	val starred by viewModel.starred.collectAsState()
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -88,6 +91,8 @@ fun CollectionDetailScreen(
 	val albumInfoState by viewModel.albumInfoState.collectAsState()
 	val selectedSongIsStarred by viewModel.selectedSongIsStarred.collectAsStateWithLifecycle()
 	val selectedSongRating by viewModel.selectedSongRating.collectAsStateWithLifecycle()
+	val selectedAlbumIsStarred by viewModel.selectedAlbumIsStarred.collectAsStateWithLifecycle()
+	val selectedAlbumRating by viewModel.selectedAlbumRating.collectAsStateWithLifecycle()
 	val otherAlbums by viewModel.otherAlbums.collectAsState()
 	val allDownloads by viewModel.allDownloads.collectAsState()
 	val downloadStatus by viewModel.collectionDownloadStatus()
@@ -122,7 +127,10 @@ fun CollectionDetailScreen(
 				onAddToQueue = { if (collection != null) player.addToQueue(collection) },
 				downloadStatus = downloadStatus,
 				rating = if (collection !is DomainPlaylist) rating else null,
-				onSetRating = if (collection !is DomainPlaylist) { { viewModel.rateAlbum(it) } } else null
+				onSetRating = if (collection !is DomainPlaylist) { { viewModel.rateAlbum(it) } } else null,
+				starred = if (collection !is DomainPlaylist) starred else null,
+				onSetStarred = if (collection !is DomainPlaylist) { { viewModel.starAlbum(it) } } else null,
+				refreshCollection = { viewModel.refreshCollection(false) }
 			)
 		},
 		bottomBar = {
@@ -326,6 +334,16 @@ fun CollectionDetailScreen(
 					collectionDetailScreenMoreByArtistRow(
 						artistName = artistName,
 						artistAlbums = otherAlbums,
+						selectedAlbum = selectedAlbum,
+						onSetShareId = { shareId = it },
+						onPlayNext = if (selectedAlbum != null) { { player.playNext(selectedAlbum as DomainSongCollection) } } else null,
+						onAddToQueue = if (selectedAlbum != null) { { player.addToQueue(selectedAlbum as DomainSongCollection) } } else null,
+						selectedAlbumRating = selectedAlbumRating,
+						selectedAlbumStarred = selectedAlbumIsStarred,
+						onSetAlbumRating = { viewModel.rateSelectedAlbum(it) },
+						onSetAlbumStarred = { viewModel.starSelectedAlbum(it) },
+						onSelect = { viewModel.selectAlbum(it) },
+						onDeselect = { viewModel.clearSelection() },
 						tab = tab
 					)
 				}

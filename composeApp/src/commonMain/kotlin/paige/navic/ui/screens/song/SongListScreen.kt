@@ -29,6 +29,7 @@ import org.koin.core.parameter.parametersOf
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongListType
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -49,11 +50,12 @@ import kotlin.time.Duration
 fun SongListScreen(
 	nested: Boolean,
 	artistId: String? = null,
-	artistName: String? = null
+	artistName: String? = null,
+	listType: DomainSongListType
 ) {
 	val viewModel = koinViewModel<SongListViewModel>(
 		key = artistId,
-		parameters = { parametersOf(artistId) }
+		parameters = { parametersOf(listType, artistId) }
 	)
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val songsState by viewModel.songsState.collectAsStateWithLifecycle()

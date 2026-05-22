@@ -7,15 +7,22 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.session.SessionManager
+import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
 import paige.navic.domain.repositories.ArtistRepository
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.utils.UiState
 
 class ArtistListViewModel(
-	private val repository: ArtistRepository
+	initialListType: DomainArtistListType = DomainArtistListType.AlphabeticalByName,
+	private val repository: ArtistRepository,
+	private val albumDao: AlbumDao
 ) : ViewModel() {
 	private val _artistsState =
 		MutableStateFlow<UiState<ImmutableList<DomainArtist>>>(UiState.Loading())
@@ -27,7 +34,10 @@ class ArtistListViewModel(
 	private val _selectedArtist = MutableStateFlow<DomainArtist?>(null)
 	val selectedArtist = _selectedArtist.asStateFlow()
 
-	private val _listType = MutableStateFlow(DomainArtistListType.AlphabeticalByName)
+	private val _selectedArtistAlbums = MutableStateFlow<List<DomainAlbum>?>(null)
+	val selectedArtistAlbums = _selectedArtistAlbums.asStateFlow()
+
+	private val _listType = MutableStateFlow(initialListType)
 	val listType = _listType.asStateFlow()
 
 	val gridState = LazyGridState()
@@ -49,6 +59,9 @@ class ArtistListViewModel(
 	fun selectArtist(artist: DomainArtist) {
 		viewModelScope.launch {
 			_selectedArtist.value = artist
+			val artistAlbums = 
+				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
+			_selectedArtistAlbums.value = artistAlbums.map { it.toDomainModel() }
 			_starred.value = repository.isArtistStarred(artist)
 		}
 	}
@@ -67,6 +80,28 @@ class ArtistListViewModel(
 					repository.unstarArtist(artist)
 				}
 				_starred.value = starred
+			}
+		}
+	}
+
+	fun addArtistAlbumsToQueue(player: MediaPlayerViewModel) {
+		val artist = _selectedArtist.value ?: return
+		viewModelScope.launch {
+			val artistAlbums = 
+				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
+			artistAlbums.map { it.toDomainModel() }.forEach { album ->
+				player.addToQueue(album)
+			}
+		}
+	}
+
+	fun playArtistAlbumsNext(player: MediaPlayerViewModel) {
+		val artist = _selectedArtist.value ?: return
+		viewModelScope.launch {
+			val artistAlbums = 
+				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
+			artistAlbums.map { it.toDomainModel() }.forEach { album ->
+				player.playNext(album)
 			}
 		}
 	}
