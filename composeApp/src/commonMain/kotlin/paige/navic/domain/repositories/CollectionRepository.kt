@@ -1,6 +1,6 @@
 package paige.navic.domain.repositories
 
-import dev.zt64.subsonic.api.model.AlbumInfo
+import dev.zt64.subsonic.api.model.AlbumInfo as ApiAlbumInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -75,7 +75,7 @@ class CollectionRepository(
 		.getSongById(songId)
 		?.toDomainModel()
 
-	suspend fun getAlbumInfo(albumId: String): AlbumInfo {
+	suspend fun getAlbumInfo(albumId: String): ApiAlbumInfo {
 		return sessionManager.api.getAlbumInfo(albumId)
 	}
 }
