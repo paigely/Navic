@@ -6,10 +6,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainShare
 import paige.navic.domain.repositories.ShareRepository
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class ShareListViewModel(
 	private val repository: ShareRepository,

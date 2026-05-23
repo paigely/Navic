@@ -2,7 +2,7 @@ package paige.navic.ui.components.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
-import paige.navic.data.models.Screen
+import paige.navic.ui.navigation.Screen
 
 @Composable
 expect fun animatedTabIconPainter(destination: Screen): Painter?

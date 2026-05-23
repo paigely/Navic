@@ -59,14 +59,13 @@ import navic.composeapp.generated.resources.info_not_playing
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.data.models.NavbarConfig
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.MiniPlayerProgressStyle
-import paige.navic.data.models.settings.enums.MiniPlayerStyle
-import paige.navic.data.session.SessionManager
+import paige.navic.LocalPlatformContext
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.models.settings.MiniPlayerProgressStyle
+import paige.navic.domain.models.settings.MiniPlayerStyle
+import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Note
 import paige.navic.icons.filled.Pause
@@ -76,8 +75,9 @@ import paige.navic.icons.outlined.Radio
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.playPauseIconPainter
+import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
-import paige.navic.utils.UiState
 import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -88,6 +88,7 @@ fun MiniPlayer(
 ) {
 	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
+	val preferenceManager = koinInject<PreferenceManager>()
 	val navtabsViewModel = koinViewModel<NavtabsViewModel>()
 	val navtabsState by navtabsViewModel.state.collectAsState()
 	val tabs = ((navtabsState as? UiState.Success)?.data ?: NavbarConfig.default)
@@ -113,7 +114,7 @@ fun MiniPlayer(
 			.build()
 	}
 
-	val detached = Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached
+	val detached = preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached
 
 	val outerPadding = if (detached) 12.dp else 0.dp
 	val coverRounding by animateDpAsState(
@@ -309,8 +310,8 @@ fun MiniPlayer(
 				},
 				enabled = enabled
 			)
-			if (Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Visible
-				|| Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
+			if (preferenceManager.miniPlayerProgressStyle == MiniPlayerProgressStyle.Visible
+				|| preferenceManager.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
 			) {
 				var dragging by remember { mutableStateOf(false) }
 				val alpha by animateFloatAsState(
@@ -347,7 +348,7 @@ fun MiniPlayer(
 							.height(14.dp)
 							.then(
 								if (song != null
-									&& Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
+									&& preferenceManager.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
 									&& isInteractive
 								)
 									Modifier.pointerInput(Unit) {

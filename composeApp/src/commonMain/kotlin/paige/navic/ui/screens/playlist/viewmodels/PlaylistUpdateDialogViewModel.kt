@@ -2,28 +2,28 @@ package paige.navic.ui.screens.playlist.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.zt64.subsonic.api.model.Playlist
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainSong
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
+import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 
 class PlaylistUpdateDialogViewModel(
 	private val songs: List<DomainSong>,
 	private val playlistToExclude: String?,
 	private val sessionManager: SessionManager
 ) : ViewModel() {
-	private val _playlistsState = MutableStateFlow<UiState<List<Playlist>>>(UiState.Loading())
+	private val _playlistsState = MutableStateFlow<UiState<List<ApiPlaylist>>>(UiState.Loading())
 	val playlistsState = _playlistsState.asStateFlow()
 
 	private val _confirmState = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
 	val confirmState = _confirmState.asStateFlow()
 
-	private val _selectedPlaylists = MutableStateFlow<Set<Playlist>>(emptySet())
+	private val _selectedPlaylists = MutableStateFlow<Set<ApiPlaylist>>(emptySet())
 	val selectedPlaylists = _selectedPlaylists.asStateFlow()
 
 	private val _events = Channel<Event>()
@@ -48,7 +48,7 @@ class PlaylistUpdateDialogViewModel(
 		}
 	}
 
-	fun togglePlaylistSelection(playlist: Playlist) {
+	fun togglePlaylistSelection(playlist: ApiPlaylist) {
 		_selectedPlaylists.value = if (playlist in _selectedPlaylists.value) {
 			_selectedPlaylists.value - playlist
 		} else {

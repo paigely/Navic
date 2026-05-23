@@ -25,9 +25,10 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_artwork_shape
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.CoverArtShape
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.settings.CoverArtShape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -38,6 +39,7 @@ fun ArtworkShapeDialog(
 	if (!presented) return
 
 	val platformContext = LocalPlatformContext.current
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	AlertDialog(
 		title = {
@@ -57,14 +59,14 @@ fun ArtworkShapeDialog(
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
 								platformContext.clickSound()
-								Settings.shared.coverArtShape = shape
+								preferenceManager.coverArtShape = shape
 								onDismissRequest()
 							},
 						horizontalArrangement = Arrangement.spacedBy(16.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						RadioButton(
-							selected = Settings.shared.coverArtShape == shape,
+							selected = preferenceManager.coverArtShape == shape,
 							onClick = null
 						)
 						Box(

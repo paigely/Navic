@@ -31,7 +31,7 @@ import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.components.sheets.ArtistSheet
 import paige.navic.ui.screens.artist.viewmodels.ArtistState
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 @Composable
 fun ArtistDetailScreenTopBar(

@@ -8,11 +8,11 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainPlaylistListType
 import paige.navic.domain.repositories.PlaylistRepository
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class PlaylistListViewModel(
 	private val repository: PlaylistRepository,

@@ -5,18 +5,20 @@ package paige.navic.shared
 import androidx.lifecycle.viewModelScope
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
-import paige.navic.data.database.SyncManager
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.manager.IOSScrobbleManager
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.manager.SyncManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.DownloadManager
-import paige.navic.managers.IOSScrobbleManager
+import paige.navic.ui.core.PlayerUiState
+import paige.navic.util.core.Logger
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
@@ -70,7 +72,8 @@ class IOSMediaPlayerViewModel(
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
 	syncManager: SyncManager,
-	private val sessionManager: SessionManager
+	private val sessionManager: SessionManager,
+	private val preferenceManager: PreferenceManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
 	downloadManager = downloadManager,
@@ -80,7 +83,7 @@ class IOSMediaPlayerViewModel(
 	private var timeObserver: Any? = null
 	private var playbackEndObserver: Any? = null
 	private val scrobbleManager =
-		IOSScrobbleManager(player, viewModelScope, connectivityManager, syncManager, sessionManager)
+		IOSScrobbleManager(player, viewModelScope, connectivityManager, syncManager, sessionManager, preferenceManager)
 	private var pendingSyncState: PlayerUiState? = null
 	private var isTransitioningBetweenTracks = false
 
@@ -490,7 +493,7 @@ class IOSMediaPlayerViewModel(
 						?.let { NSURL.URLWithString(it) } ?: return@runCatching null
 
 					val request = NSMutableURLRequest.requestWithURL(url).apply {
-						val customHeaders = Settings.shared.customHeadersMap()
+						val customHeaders = preferenceManager.customHeadersMap()
 						if (customHeaders.isNotEmpty()) {
 							customHeaders.forEach { (key, value) ->
 								addValue(key, forHTTPHeaderField = value)
@@ -549,7 +552,7 @@ class IOSMediaPlayerViewModel(
 	}
 
 	private fun createAVPlayerItem(url: NSURL): AVPlayerItem {
-		val headers = Settings.shared.customHeadersMap()
+		val headers = preferenceManager.customHeadersMap()
 		if (headers.isEmpty() || url.isFileURL()) {
 			return AVPlayerItem(url)
 		}
@@ -562,14 +565,14 @@ class IOSMediaPlayerViewModel(
 		when (connectivityManager.isCellular.value) {
 			true -> sessionManager.api.getStreamUrl(
 				id,
-				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateCellular else Settings.shared.streamingQualityCellular.bitrateIos,
-				Settings.shared.streamingQualityCellular.containerIos
+				if(preferenceManager.isAdvancedTranscodingActive) preferenceManager.customMaxBitrateCellular else preferenceManager.streamingQualityCellular.bitrateIos,
+				preferenceManager.streamingQualityCellular.containerIos
 			)
 
 			false -> sessionManager.api.getStreamUrl(
 				id,
-				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateWifi else Settings.shared.streamingQualityWifi.bitrateIos,
-				Settings.shared.streamingQualityWifi.containerIos
+				if(preferenceManager.isAdvancedTranscodingActive) preferenceManager.customMaxBitrateWifi else preferenceManager.streamingQualityWifi.bitrateIos,
+				preferenceManager.streamingQualityWifi.containerIos
 			)
 		} + "&estimateContentLength=true"
 

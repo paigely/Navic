@@ -13,19 +13,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import paige.navic.data.models.User
 import paige.navic.ui.components.common.ErrorBox
-import paige.navic.utils.LoginState
-import paige.navic.utils.UiState
+import paige.navic.ui.core.LoginUiState
+import paige.navic.ui.core.UiState
 
 @Composable
 fun LoginScreenError(
-	loginState: LoginState<User?>
+	loginUiState: LoginUiState
 ) {
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
 	AnimatedContent(
-		(loginState as? LoginState.Error),
+		(loginUiState as? LoginUiState.Error),
 		modifier = Modifier
 			.fillMaxWidth()
 			.padding(horizontal = 16.dp),

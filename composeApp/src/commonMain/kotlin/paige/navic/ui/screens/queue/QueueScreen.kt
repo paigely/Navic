@@ -35,15 +35,15 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.Screen
+import paige.navic.ui.navigation.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.screens.queue.components.QueueScreenItem
 import paige.navic.ui.screens.queue.viewmodels.QueueViewModel
-import paige.navic.utils.draggableItemsIndexed
-import paige.navic.utils.rememberDraggableListState
+import paige.navic.util.ui.draggableItemsIndexed
+import paige.navic.util.ui.rememberDraggableListState
 import kotlin.time.DurationUnit
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

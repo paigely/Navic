@@ -8,16 +8,19 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.ToolbarPosition
+import org.koin.compose.koinInject
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.settings.ToolbarPosition
 
 @Composable
 fun SheetScaffold(
 	toolbar: @Composable (windowInsets: WindowInsets) -> Unit,
-	toolbarPosition: ToolbarPosition = Settings.shared.nowPlayingToolbarPosition,
+	toolbarPosition: ToolbarPosition? = null,
 	floatingActionButton: @Composable () -> Unit = {},
 	content: @Composable (contentPadding: PaddingValues) -> Unit
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
+	val toolbarPosition = toolbarPosition ?: preferenceManager.nowPlayingToolbarPosition
 	Scaffold(
 		topBar = {
 			if (toolbarPosition == ToolbarPosition.Top) {

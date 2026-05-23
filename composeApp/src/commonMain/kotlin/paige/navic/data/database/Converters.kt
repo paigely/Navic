@@ -4,8 +4,8 @@ import androidx.room3.TypeConverter
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainReplayGain
-import paige.navic.domain.repositories.LyricsProvider
-import paige.navic.shared.Logger
+import paige.navic.domain.models.lyrics.LyricsProvider
+import paige.navic.util.core.Logger
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant

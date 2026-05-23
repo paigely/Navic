@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.session.SessionManager
-import paige.navic.utils.UiState
+import paige.navic.domain.manager.SessionManager
+import paige.navic.ui.core.UiState
 import kotlin.time.Clock
 import kotlin.time.Duration
 

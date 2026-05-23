@@ -42,23 +42,26 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import paige.navic.data.database.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.ReplayGainMode
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.AndroidScrobbleManager
+import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.manager.SyncManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.managers.AndroidScrobbleManager
-import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.DownloadManager
 import paige.navic.ui.components.common.CoilBitmapLoader
-import paige.navic.utils.effectiveGain
+import paige.navic.ui.core.PlayerUiState
+import paige.navic.util.core.Logger
+import paige.navic.util.core.ResourceProvider
+import paige.navic.util.core.effectiveGain
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -73,6 +76,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 
 	private val syncManager: SyncManager by inject()
 	private val sessionManager: SessionManager by inject()
+	private val preferenceManager: PreferenceManager by inject()
 
 	@OptIn(UnstableApi::class)
 	override fun onCreate() {
@@ -93,7 +97,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			}
 
 		val httpDataSourceFactory = DefaultHttpDataSource.Factory()
-			.setDefaultRequestProperties(Settings.shared.customHeadersMap())
+			.setDefaultRequestProperties(preferenceManager.customHeadersMap())
 		val dataSourceFactory = DefaultDataSource.Factory(this, httpDataSourceFactory)
 		val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
 
@@ -116,9 +120,9 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 					trackSelectionParameters.buildUpon().setAudioOffloadPreferences(
 						TrackSelectionParameters.AudioOffloadPreferences
 							.Builder()
-							.setIsGaplessSupportRequired(Settings.shared.gaplessPlayback)
+							.setIsGaplessSupportRequired(preferenceManager.gaplessPlayback)
 							.setAudioOffloadMode(
-								if (Settings.shared.audioOffload) {
+								if (preferenceManager.audioOffload) {
 									TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED
 								} else {
 									TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_DISABLED
@@ -129,7 +133,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			}
 
 		scrobbleManager =
-			AndroidScrobbleManager(player, serviceScope, connectivityManager, syncManager, sessionManager)
+			AndroidScrobbleManager(player, serviceScope, connectivityManager, syncManager, sessionManager, preferenceManager)
 
 		val sessionIntent = applicationContext.packageManager
 			.getLaunchIntentForPackage(applicationContext.packageName)
@@ -186,7 +190,8 @@ class AndroidMediaPlayerViewModel(
 	private val albumDao: AlbumDao,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
-	private val sessionManager: SessionManager
+	private val sessionManager: SessionManager,
+	private val preferenceManager: PreferenceManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
 	downloadManager = downloadManager,
@@ -216,12 +221,12 @@ class AndroidMediaPlayerViewModel(
 
 	private fun getStreamUrl(id: String): Uri {
 		val isCellular = connectivityManager.isCellular.value
-		val bitrate = if (Settings.shared.isAdvancedTranscodingActive) {
-			if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
+		val bitrate = if (preferenceManager.isAdvancedTranscodingActive) {
+			if (isCellular) preferenceManager.customMaxBitrateCellular else preferenceManager.customMaxBitrateWifi
 		} else {
-			if (isCellular) Settings.shared.streamingQualityCellular.bitrateAndroid else Settings.shared.streamingQualityWifi.bitrateAndroid
+			if (isCellular) preferenceManager.streamingQualityCellular.bitrateAndroid else preferenceManager.streamingQualityWifi.bitrateAndroid
 		}
-		val container = if (isCellular) Settings.shared.streamingQualityCellular.containerAndroid else Settings.shared.streamingQualityWifi.containerAndroid
+		val container = if (isCellular) preferenceManager.streamingQualityCellular.containerAndroid else preferenceManager.streamingQualityWifi.containerAndroid
 
 		return sessionManager.api.getStreamUrl(id, bitrate, container)
 			.toUri()
@@ -372,9 +377,9 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	private fun applyReplayGain() {
-		if (Settings.shared.replayGainMode != ReplayGainMode.Off) {
+		if (preferenceManager.replayGainMode != ReplayGainMode.Off) {
 			(_uiState.value.currentSong)?.replayGain?.let { replayGain ->
-				controller?.volume = replayGain.effectiveGain(Settings.shared.replayGainMode)
+				controller?.volume = replayGain.effectiveGain(preferenceManager.replayGainMode)
 			}
 		} else {
 			controller?.volume = 1f

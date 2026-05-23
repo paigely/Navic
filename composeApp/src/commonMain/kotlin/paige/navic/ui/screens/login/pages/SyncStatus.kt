@@ -15,20 +15,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_syncing
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.data.models.User
-import paige.navic.utils.LoginState
+import paige.navic.ui.core.LoginUiState
 
 @Composable
 fun LoginScreenSyncStatus(
-	loginState: LoginState<User?>
+	loginUiState: LoginUiState
 ) {
 	AnimatedVisibility(
 		modifier = Modifier.fillMaxWidth(),
-		visible = loginState is LoginState.Syncing,
+		visible = loginUiState is LoginUiState.Syncing,
 		enter = expandVertically() + fadeIn(),
 		exit = shrinkVertically() + fadeOut()
 	) {
-		val syncState = loginState as? LoginState.Syncing
+		val syncState = loginUiState as? LoginUiState.Syncing
 		Text(
 			text = stringResource(syncState?.message ?: Res.string.info_syncing),
 			style = MaterialTheme.typography.bodySmall,

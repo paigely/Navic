@@ -24,14 +24,15 @@ import dev.zt64.compose.pipette.HsvColor
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_albums
 import org.jetbrains.compose.resources.pluralStringResource
-import paige.navic.LocalPlatformContext
+import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.ThemeMode
+import paige.navic.LocalPlatformContext
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainGenre
+import paige.navic.domain.models.settings.ThemeMode
 import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.theme.defaultFont
 import kotlin.math.abs
 
@@ -43,8 +44,9 @@ fun GenreListScreenCard(
 	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	val inDarkTheme = isSystemInDarkTheme()
-	val isDark = remember(Settings.shared.themeMode) {
-		when (Settings.shared.themeMode) {
+	val preferenceManager = koinInject<PreferenceManager>()
+	val isDark = remember(preferenceManager.themeMode) {
+		when (preferenceManager.themeMode) {
 			ThemeMode.System -> inDarkTheme
 			ThemeMode.Dark -> true
 			ThemeMode.Light -> false

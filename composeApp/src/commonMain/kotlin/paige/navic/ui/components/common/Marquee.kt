@@ -30,8 +30,9 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.delay
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.MarqueeSpeed
+import org.koin.compose.koinInject
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.settings.MarqueeSpeed
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -40,7 +41,8 @@ fun MarqueeText(
 	style: TextStyle = LocalTextStyle.current,
 	modifier: Modifier = Modifier
 ) {
-	if (Settings.shared.marqueeSpeed != MarqueeSpeed.Disabled) {
+	val preferenceManager = koinInject<PreferenceManager>()
+	if (preferenceManager.marqueeSpeed != MarqueeSpeed.Disabled) {
 		Marquee(modifier) {
 			Text(text, maxLines = 1, style = style)
 		}
@@ -56,7 +58,8 @@ fun MarqueeText(
 	inlineContent: PersistentMap<String, InlineTextContent> = persistentMapOf(),
 	modifier: Modifier = Modifier
 ) {
-	if (Settings.shared.marqueeSpeed != MarqueeSpeed.Disabled) {
+	val preferenceManager = koinInject<PreferenceManager>()
+	if (preferenceManager.marqueeSpeed != MarqueeSpeed.Disabled) {
 		Marquee(modifier) {
 			Text(text, maxLines = 1, style = style, inlineContent = inlineContent)
 		}
@@ -72,6 +75,7 @@ private fun Marquee(
 	edgeWidth: Dp = 16.dp,
 	content: @Composable () -> Unit
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	val scrollState = rememberScrollState()
 	val edgeWidthPx = with(LocalDensity.current) { edgeWidth.toPx() }
 
@@ -83,14 +87,14 @@ private fun Marquee(
 
 			scrollState.animateScrollTo(
 				value = scrollState.maxValue,
-				animationSpec = tween(Settings.shared.marqueeSpeed.value)
+				animationSpec = tween(preferenceManager.marqueeSpeed.value)
 			)
 
 			delay(1.seconds)
 
 			scrollState.animateScrollTo(
 				value = 0,
-				animationSpec = tween(Settings.shared.marqueeSpeed.value)
+				animationSpec = tween(preferenceManager.marqueeSpeed.value)
 			)
 		}
 	}

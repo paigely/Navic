@@ -31,16 +31,16 @@ import navic.composeapp.generated.resources.option_navigation_bar_tabs
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.NavbarTab
+import paige.navic.domain.models.settings.NavbarTab
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
-import paige.navic.utils.DraggableListState
-import paige.navic.utils.UiState
-import paige.navic.utils.dragHandle
-import paige.navic.utils.draggableItems
-import paige.navic.utils.rememberDraggableListState
+import paige.navic.util.ui.DraggableListState
+import paige.navic.ui.core.UiState
+import paige.navic.util.ui.dragHandle
+import paige.navic.util.ui.draggableItems
+import paige.navic.util.ui.rememberDraggableListState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

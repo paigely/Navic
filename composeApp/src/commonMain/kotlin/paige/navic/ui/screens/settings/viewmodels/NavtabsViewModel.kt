@@ -6,14 +6,15 @@ import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
-import paige.navic.data.models.NavbarConfig
-import paige.navic.data.models.NavbarTab
-import paige.navic.utils.UiState
+import paige.navic.domain.models.settings.NavbarConfig
+import paige.navic.domain.models.settings.NavbarTab
+import paige.navic.ui.core.UiState
 
 class NavtabsViewModel(
-	private val settings: Settings,
-	private val json: Json
+	private val settings: Settings
 ) : ViewModel() {
+	private val json = Json
+
 	private val _state = MutableStateFlow<UiState<NavbarConfig>>(UiState.Loading())
 	val state = _state.asStateFlow()
 

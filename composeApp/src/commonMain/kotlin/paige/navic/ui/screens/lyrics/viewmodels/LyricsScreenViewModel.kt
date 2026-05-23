@@ -7,13 +7,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.models.DomainSong
-import paige.navic.domain.repositories.LyricRepository
-import paige.navic.domain.repositories.LyricsResult
-import paige.navic.utils.UiState
+import paige.navic.domain.models.lyrics.LyricsResult
+import paige.navic.domain.repositories.LyricsRepository
+import paige.navic.ui.core.UiState
 
 class LyricsScreenViewModel(
 	private val song: DomainSong?,
-	private val repository: LyricRepository
+	private val repository: LyricsRepository
 ) : ViewModel() {
 	private val _lyricsState = MutableStateFlow<UiState<LyricsResult?>>(UiState.Loading())
 	val lyricsState = _lyricsState.asStateFlow()

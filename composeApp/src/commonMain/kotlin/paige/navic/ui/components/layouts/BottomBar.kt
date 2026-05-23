@@ -32,15 +32,15 @@ import navic.composeapp.generated.resources.title_search
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.data.models.NavbarConfig
-import paige.navic.data.models.NavbarTab
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.NavigationBarLabelVisibility
-import paige.navic.data.models.settings.enums.NavigationBarStyle
+import paige.navic.LocalPlatformContext
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.settings.NavbarConfig
+import paige.navic.domain.models.settings.NavbarTab
+import paige.navic.domain.models.settings.NavigationBarLabelVisibility
+import paige.navic.domain.models.settings.NavigationBarStyle
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Album
 import paige.navic.icons.filled.Artist
@@ -56,8 +56,9 @@ import paige.navic.icons.outlined.PlaylistPlay
 import paige.navic.icons.outlined.Radio
 import paige.navic.icons.outlined.Search
 import paige.navic.ui.components.common.animatedTabIconPainter
+import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
-import paige.navic.utils.UiState
 
 private enum class NavItem(
 	val destination: Screen,
@@ -128,9 +129,10 @@ fun BottomBar(
 	val containerColor by animateColorAsState(containerColor)
 	val tabs = ((state as? UiState.Success)?.data ?: NavbarConfig.default)
 		.tabs.filter { tab -> tab.visible }
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	AnimatedContent(
-		Settings.shared.navigationBarStyle != NavigationBarStyle.Short
+		preferenceManager.navigationBarStyle != NavigationBarStyle.Short
 			&& platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
 			&& tabs.size > 1
 	) {
@@ -157,7 +159,7 @@ fun BottomBar(
 					NavigationBarItem(
 						selected = selected,
 						enabled = enabled,
-						alwaysShowLabel = Settings.shared.navigationBarLabelVisibility
+						alwaysShowLabel = preferenceManager.navigationBarLabelVisibility
 							== NavigationBarLabelVisibility.Always,
 						onClick = {
 							platformContext.clickSound()

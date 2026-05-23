@@ -32,7 +32,7 @@ import paige.navic.icons.outlined.Radio
 import paige.navic.ui.components.common.FormButton
 import paige.navic.ui.components.dialogs.FormDialog
 import paige.navic.ui.screens.radio.viewmodels.RadioCreateDialogViewModel
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 @Composable
 fun RadioCreateDialog(

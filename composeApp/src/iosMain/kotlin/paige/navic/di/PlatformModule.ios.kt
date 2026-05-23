@@ -8,10 +8,10 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.data.database.DownloadDatabase
+import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.ShareManager
+import paige.navic.domain.manager.StorageManager
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.ShareManager
-import paige.navic.managers.StorageManager
 import paige.navic.shared.IOSMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
 import platform.Foundation.NSDocumentDirectory
@@ -59,14 +59,15 @@ actual val platformModule = module {
 			downloadManager = get(),
 			connectivityManager = get(),
 			syncManager = get(),
-			sessionManager = get()
+			sessionManager = get(),
+			preferenceManager = get()
 		)
 	}
 
 	singleOf(::ShareManager)
 	single<CoilPlatformContext> { CoilPlatformContext.INSTANCE }
-	single<StorageManager> { StorageManager() }
-	single<ConnectivityManager> { ConnectivityManager(get()) }
+	singleOf(::StorageManager)
+	singleOf(::ConnectivityManager)
 }
 
 @OptIn(ExperimentalForeignApi::class)

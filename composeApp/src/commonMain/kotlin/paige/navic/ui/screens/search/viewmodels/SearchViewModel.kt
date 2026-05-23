@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.repositories.SearchRepository
 import paige.navic.domain.repositories.SongRepository
-import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.DownloadManager
-import paige.navic.utils.UiState
+import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.DownloadManager
+import paige.navic.ui.core.UiState
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)

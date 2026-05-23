@@ -36,16 +36,17 @@ import navic.composeapp.generated.resources.info_track_sampling_rate
 import navic.composeapp.generated.resources.info_track_year
 import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.song.viewmodels.SongDetailViewModel
-import paige.navic.utils.effectiveGain
-import paige.navic.utils.toFileSize
-import paige.navic.utils.toHoursMinutesSeconds
+import paige.navic.util.core.effectiveGain
+import paige.navic.util.core.toFileSize
+import paige.navic.util.core.toHoursMinutesSeconds
 
 @Composable
 fun SongDetailScreen(songId: String) {
@@ -57,6 +58,7 @@ fun SongDetailScreen(songId: String) {
 	val songState by viewModel.songState.collectAsStateWithLifecycle()
 	val song = songState.data
 
+	val preferenceManager = koinInject<PreferenceManager>()
 	val info = remember(song) {
 		song?.let {
 			persistentMapOf(
@@ -81,7 +83,7 @@ fun SongDetailScreen(songId: String) {
 
 				Res.string.info_track_replay_gain to song.replayGain?.trackGain?.let { "$it dB" },
 				Res.string.info_album_replay_gain to song.replayGain?.albumGain?.let { "$it dB" },
-				Res.string.info_track_replay_gain_effective to song.replayGain?.effectiveGain(Settings.shared.replayGainMode)
+				Res.string.info_track_replay_gain_effective to song.replayGain?.effectiveGain(preferenceManager.replayGainMode)
 			)
 		}.orEmpty()
 	}

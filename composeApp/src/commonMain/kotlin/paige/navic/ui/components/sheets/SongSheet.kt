@@ -53,11 +53,11 @@ import navic.composeapp.generated.resources.info_download_failed
 import navic.composeapp.generated.resources.option_playback_speed
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
+import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.manager.SleepTimerManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
@@ -79,13 +79,13 @@ import paige.navic.icons.outlined.QueuePlayNext
 import paige.navic.icons.outlined.Share
 import paige.navic.icons.outlined.Speed
 import paige.navic.icons.outlined.Star
-import paige.navic.managers.SleepTimerManager
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.RatingRow
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.theme.positive
-import paige.navic.utils.InlineExplicitIcon
-import paige.navic.utils.label
+import paige.navic.util.core.InlineExplicitIcon
+import paige.navic.util.core.label
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -112,6 +112,8 @@ fun SongSheet(
 	showSleepTimer: Boolean = false,
 	showPlaybackSpeed: Boolean = false
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
+
 	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	var sleepTimerSheetShown by rememberSaveable { mutableStateOf(false) }
@@ -161,7 +163,7 @@ fun SongSheet(
 				CoverArt(
 					coverArtId = song.coverArtId,
 					modifier = Modifier.size(50.dp),
-					shape = Settings.shared.coverArtShape.decreasedShape
+					shape = preferenceManager.coverArtShape.decreasedShape
 				)
 			},
 			colors = colors

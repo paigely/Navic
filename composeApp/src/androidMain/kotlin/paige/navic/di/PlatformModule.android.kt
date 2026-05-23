@@ -3,13 +3,14 @@ package paige.navic.di
 import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import org.koin.android.ext.koin.androidApplication
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.data.database.DownloadDatabase
+import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.ShareManager
+import paige.navic.domain.manager.StorageManager
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.ShareManager
-import paige.navic.managers.StorageManager
 import paige.navic.shared.AndroidMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
 
@@ -51,22 +52,12 @@ actual val platformModule = module {
 			albumDao = get(),
 			downloadManager = get(),
 			connectivityManager = get(),
-			sessionManager = get()
+			sessionManager = get(),
+			preferenceManager = get()
 		)
 	}
 
-	single<ShareManager> {
-		ShareManager(context = get())
-	}
-
-	single<StorageManager> {
-		StorageManager(context = androidApplication())
-	}
-
-	single<ConnectivityManager> {
-		ConnectivityManager(
-			context = androidApplication(),
-			scope = get()
-		)
-	}
+	singleOf(::ShareManager)
+	singleOf(::StorageManager)
+	singleOf(::ConnectivityManager)
 }

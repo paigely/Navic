@@ -48,10 +48,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.data.models.Screen
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.theme.defaultFont
-import paige.navic.utils.LoginState
+import paige.navic.ui.core.LoginUiState
 
 @Composable
 fun LoginScreenContent(innerPadding: PaddingValues) {
@@ -62,7 +62,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 	val usernameState = viewModel.usernameState
 	val passwordState = viewModel.passwordState
 
-	val isBusy = loginState is LoginState.Loading || loginState is LoginState.Syncing
+	val isBusy = loginState is LoginUiState.Loading || loginState is LoginUiState.Syncing
 
 	val linkColor = MaterialTheme.colorScheme.primary
 	val startText = stringResource(Res.string.info_login_description_start)
@@ -101,7 +101,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 	}
 
 	LaunchedEffect(loginState) {
-		if (loginState is LoginState.Success) {
+		if (loginState is LoginUiState.Success) {
 			backStack.clear()
 			backStack.add(Screen.Library())
 		}
@@ -113,7 +113,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 				.align(Alignment.TopCenter)
 				.padding(top = innerPadding.calculateTopPadding()),
 			isBusy = isBusy,
-			loginState = loginState
+			loginUiState = loginState
 		)
 
 		Column(
@@ -146,7 +146,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 
 				Spacer(Modifier.height(8.dp))
 
-				LoginScreenError(loginState = loginState)
+				LoginScreenError(loginUiState = loginState)
 
 				LoginScreenFields(
 					isBusy = isBusy,
@@ -193,7 +193,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 					.padding(horizontal = 16.dp)
 					.padding(bottom = 8.dp)
 			) {
-				LoginScreenSyncStatus(loginState = loginState)
+				LoginScreenSyncStatus(loginUiState = loginState)
 				Button(
 					modifier = Modifier.fillMaxWidth(),
 					onClick = {

@@ -9,12 +9,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import paige.navic.data.database.SyncManager
+import paige.navic.domain.manager.SyncManager
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.domain.repositories.SongRepository
-import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.DownloadManager
+import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.DownloadManager
 
 class SettingsDataStorageViewModel(
 	private val syncManager: SyncManager,

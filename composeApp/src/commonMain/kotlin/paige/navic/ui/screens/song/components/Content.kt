@@ -12,7 +12,7 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Note
 import paige.navic.ui.components.common.ContentUnavailable
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 fun LazyListScope.songListScreenContent(
 	state: UiState<ImmutableList<DomainSong>>,
