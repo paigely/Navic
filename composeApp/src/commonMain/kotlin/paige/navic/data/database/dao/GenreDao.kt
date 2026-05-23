@@ -54,4 +54,14 @@ interface GenreDao {
 		}
 		insertGenres(remoteGenres)
 	}
+
+	@Transaction
+	suspend fun deleteObsoleteGenres(remoteNames: Set<String>) {
+		getAllGenreNames().forEach { localName ->
+			if (localName !in remoteNames) {
+				Logger.w("GenreDao", "genre $localName no longer exists remotely")
+				deleteGenre(localName)
+			}
+		}
+	}
 }

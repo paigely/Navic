@@ -67,4 +67,14 @@ interface ArtistDao {
 		}
 		insertArtists(remoteArtists)
 	}
+
+	@Transaction
+	suspend fun deleteObsoleteArtists(remoteIds: Set<String>) {
+		getAllArtistIds().forEach { localId ->
+			if (localId !in remoteIds) {
+				Logger.w("ArtistDao", "artist $localId no longer exists remotely")
+				deleteArtist(localId)
+			}
+		}
+	}
 }
