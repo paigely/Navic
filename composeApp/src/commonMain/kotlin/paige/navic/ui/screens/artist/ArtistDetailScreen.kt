@@ -69,7 +69,7 @@ import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.shared.MediaPlayerViewModel
@@ -153,7 +153,7 @@ fun ArtistDetailScreen(
 		},
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			if (Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			if (PreferenceManager.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}

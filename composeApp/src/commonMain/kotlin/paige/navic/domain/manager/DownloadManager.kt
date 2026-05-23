@@ -53,7 +53,7 @@ class DownloadManager(
 	private val sessionManager: SessionManager
 ) {
 	private val client = HttpClient {
-		val customHeaders = Settings.shared.customHeadersMap()
+		val customHeaders = PreferenceManager.shared.customHeadersMap()
 		if (customHeaders.isNotEmpty()) {
 			defaultRequest {
 				customHeaders.forEach { (key, value) -> header(key, value) }

@@ -35,7 +35,7 @@ import navic.composeapp.generated.resources.option_custom_headers
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
@@ -59,7 +59,7 @@ fun SettingsCustomHeadersScreen() {
 	val sessionManager = koinInject<SessionManager>()
 
 	val headers = remember {
-		Settings.shared.customHeaders.lines()
+		PreferenceManager.shared.customHeaders.lines()
 			.filter { it.contains(":") }
 			.map {
 				val parts = it.split(":", limit = 2)
@@ -71,7 +71,7 @@ fun SettingsCustomHeadersScreen() {
 	val hiddenHeaders = remember { mutableStateSetOf<Long>() }
 
 	fun updateSettings() {
-		Settings.shared.customHeaders = headers
+		PreferenceManager.shared.customHeaders = headers
 			.filter { !hiddenHeaders.contains(it.id) }
 			.joinToString("\n") { "${it.key}:${it.value}" }
 		sessionManager.refreshClient()

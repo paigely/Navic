@@ -31,7 +31,7 @@ import org.koin.core.parameter.parametersOf
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
@@ -78,7 +78,7 @@ fun ArtistListScreen(
 		},
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			if (!nested || PreferenceManager.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}

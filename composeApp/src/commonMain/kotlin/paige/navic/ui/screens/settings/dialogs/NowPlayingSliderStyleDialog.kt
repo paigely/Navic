@@ -43,7 +43,7 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_now_playing_slider_style
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NowPlayingSliderStyle
 import paige.navic.ui.components.common.SlimSlider
 
@@ -75,9 +75,9 @@ fun NowPlayingSliderStyleDialog(
 					item(key = style.ordinal) {
 						Option(
 							onClick = {
-								Settings.shared.nowPlayingSliderStyle = style
+								PreferenceManager.shared.nowPlayingSliderStyle = style
 							},
-							selected = Settings.shared.nowPlayingSliderStyle == style,
+							selected = PreferenceManager.shared.nowPlayingSliderStyle == style,
 							label = stringResource(style.displayName)
 						) {
 							when (style) {

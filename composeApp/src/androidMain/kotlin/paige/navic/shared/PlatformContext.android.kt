@@ -18,7 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.ThemeMode
 
 @OptIn(
@@ -30,8 +30,8 @@ actual fun rememberPlatformContext(): PlatformContext {
 	val view = LocalView.current
 	val context = LocalContext.current
 	val inDarkTheme = isSystemInDarkTheme()
-	val isDark = remember(Settings.shared.themeMode) {
-		when (Settings.shared.themeMode) {
+	val isDark = remember(PreferenceManager.shared.themeMode) {
+		when (PreferenceManager.shared.themeMode) {
 			ThemeMode.System -> inDarkTheme
 			ThemeMode.Dark -> true
 			ThemeMode.Light -> false

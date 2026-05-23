@@ -32,7 +32,7 @@ import navic.composeapp.generated.resources.title_fonts_inbuilt
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.FontOption
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
@@ -80,9 +80,9 @@ private fun LazyListScope.inbuiltFonts() {
 			index = 0,
 			count = 2,
 			onClick = {
-				Settings.shared.font = FontOption.System
+				PreferenceManager.shared.font = FontOption.System
 			},
-			selected = Settings.shared.font == FontOption.System
+			selected = PreferenceManager.shared.font == FontOption.System
 		)
 	}
 	item {
@@ -92,9 +92,9 @@ private fun LazyListScope.inbuiltFonts() {
 			index = 1,
 			count = 2,
 			onClick = {
-				Settings.shared.font = FontOption.GoogleSans
+				PreferenceManager.shared.font = FontOption.GoogleSans
 			},
-			selected = Settings.shared.font == FontOption.GoogleSans
+			selected = PreferenceManager.shared.font == FontOption.GoogleSans
 		)
 		Spacer(Modifier.height(10.dp))
 	}

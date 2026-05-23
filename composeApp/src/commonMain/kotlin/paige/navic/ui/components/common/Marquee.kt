@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.delay
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.MarqueeSpeed
 import kotlin.time.Duration.Companion.seconds
 
@@ -40,7 +40,7 @@ fun MarqueeText(
 	style: TextStyle = LocalTextStyle.current,
 	modifier: Modifier = Modifier
 ) {
-	if (Settings.shared.marqueeSpeed != MarqueeSpeed.Disabled) {
+	if (PreferenceManager.shared.marqueeSpeed != MarqueeSpeed.Disabled) {
 		Marquee(modifier) {
 			Text(text, maxLines = 1, style = style)
 		}
@@ -56,7 +56,7 @@ fun MarqueeText(
 	inlineContent: PersistentMap<String, InlineTextContent> = persistentMapOf(),
 	modifier: Modifier = Modifier
 ) {
-	if (Settings.shared.marqueeSpeed != MarqueeSpeed.Disabled) {
+	if (PreferenceManager.shared.marqueeSpeed != MarqueeSpeed.Disabled) {
 		Marquee(modifier) {
 			Text(text, maxLines = 1, style = style, inlineContent = inlineContent)
 		}
@@ -83,14 +83,14 @@ private fun Marquee(
 
 			scrollState.animateScrollTo(
 				value = scrollState.maxValue,
-				animationSpec = tween(Settings.shared.marqueeSpeed.value)
+				animationSpec = tween(PreferenceManager.shared.marqueeSpeed.value)
 			)
 
 			delay(1.seconds)
 
 			scrollState.animateScrollTo(
 				value = 0,
-				animationSpec = tween(Settings.shared.marqueeSpeed.value)
+				animationSpec = tween(PreferenceManager.shared.marqueeSpeed.value)
 			)
 		}
 	}

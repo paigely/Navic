@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.update
 import paige.navic.domain.manager.SyncManager
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainExplicitStatus
@@ -490,7 +490,7 @@ class IOSMediaPlayerViewModel(
 						?.let { NSURL.URLWithString(it) } ?: return@runCatching null
 
 					val request = NSMutableURLRequest.requestWithURL(url).apply {
-						val customHeaders = Settings.shared.customHeadersMap()
+						val customHeaders = PreferenceManager.shared.customHeadersMap()
 						if (customHeaders.isNotEmpty()) {
 							customHeaders.forEach { (key, value) ->
 								addValue(key, forHTTPHeaderField = value)
@@ -549,7 +549,7 @@ class IOSMediaPlayerViewModel(
 	}
 
 	private fun createAVPlayerItem(url: NSURL): AVPlayerItem {
-		val headers = Settings.shared.customHeadersMap()
+		val headers = PreferenceManager.shared.customHeadersMap()
 		if (headers.isEmpty() || url.isFileURL()) {
 			return AVPlayerItem(url)
 		}
@@ -562,14 +562,14 @@ class IOSMediaPlayerViewModel(
 		when (connectivityManager.isCellular.value) {
 			true -> sessionManager.api.getStreamUrl(
 				id,
-				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateCellular else Settings.shared.streamingQualityCellular.bitrateIos,
-				Settings.shared.streamingQualityCellular.containerIos
+				if(PreferenceManager.shared.isAdvancedTranscodingActive) PreferenceManager.shared.customMaxBitrateCellular else PreferenceManager.shared.streamingQualityCellular.bitrateIos,
+				PreferenceManager.shared.streamingQualityCellular.containerIos
 			)
 
 			false -> sessionManager.api.getStreamUrl(
 				id,
-				if(Settings.shared.isAdvancedTranscodingActive) Settings.shared.customMaxBitrateWifi else Settings.shared.streamingQualityWifi.bitrateIos,
-				Settings.shared.streamingQualityWifi.containerIos
+				if(PreferenceManager.shared.isAdvancedTranscodingActive) PreferenceManager.shared.customMaxBitrateWifi else PreferenceManager.shared.streamingQualityWifi.bitrateIos,
+				PreferenceManager.shared.streamingQualityWifi.containerIos
 			)
 		} + "&estimateContentLength=true"
 

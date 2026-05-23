@@ -26,7 +26,7 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_artwork_shape
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.CoverArtShape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -57,14 +57,14 @@ fun ArtworkShapeDialog(
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
 								platformContext.clickSound()
-								Settings.shared.coverArtShape = shape
+								PreferenceManager.shared.coverArtShape = shape
 								onDismissRequest()
 							},
 						horizontalArrangement = Arrangement.spacedBy(16.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						RadioButton(
-							selected = Settings.shared.coverArtShape == shape,
+							selected = PreferenceManager.shared.coverArtShape == shape,
 							onClick = null
 						)
 						Box(

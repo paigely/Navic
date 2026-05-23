@@ -62,7 +62,7 @@ class SyncManager(
 
 		scope.launch {
 			if (albumDao.getAlbumCount() == 0
-				|| Settings.shared.lastFullSyncTime <= 0L) {
+				|| PreferenceManager.shared.lastFullSyncTime <= 0L) {
 				Logger.i("SyncManager", "Syncing now because we haven't synced before")
 				runSyncCycle()
 			}
@@ -78,7 +78,7 @@ class SyncManager(
 
 	fun triggerManualSync() {
 		scope.launch {
-			Settings.shared.lastFullSyncTime = 0
+			PreferenceManager.shared.lastFullSyncTime = 0
 			runSyncCycle()
 		}
 	}
@@ -102,7 +102,7 @@ class SyncManager(
 			processQueue()
 
 			val currentTime = Clock.System.now()
-			if (currentTime - Instant.fromEpochMilliseconds(Settings.shared.lastFullSyncTime) > fullSyncThreshold) {
+			if (currentTime - Instant.fromEpochMilliseconds(PreferenceManager.shared.lastFullSyncTime) > fullSyncThreshold) {
 				Logger.i("SyncManager", "Starting full library pull...")
 
 				_syncState.update {
@@ -116,7 +116,7 @@ class SyncManager(
 				}
 
 				if (result.isSuccess) {
-					Settings.shared.lastFullSyncTime = currentTime.toEpochMilliseconds()
+					PreferenceManager.shared.lastFullSyncTime = currentTime.toEpochMilliseconds()
 					Logger.i("SyncManager", "Full library sync complete.")
 				}
 

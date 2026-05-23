@@ -63,7 +63,7 @@ import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.MiniPlayerProgressStyle
 import paige.navic.domain.models.settings.MiniPlayerStyle
 import paige.navic.domain.manager.SessionManager
@@ -113,7 +113,7 @@ fun MiniPlayer(
 			.build()
 	}
 
-	val detached = Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached
+	val detached = PreferenceManager.shared.miniPlayerStyle == MiniPlayerStyle.Detached
 
 	val outerPadding = if (detached) 12.dp else 0.dp
 	val coverRounding by animateDpAsState(
@@ -309,8 +309,8 @@ fun MiniPlayer(
 				},
 				enabled = enabled
 			)
-			if (Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Visible
-				|| Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
+			if (PreferenceManager.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Visible
+				|| PreferenceManager.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
 			) {
 				var dragging by remember { mutableStateOf(false) }
 				val alpha by animateFloatAsState(
@@ -347,7 +347,7 @@ fun MiniPlayer(
 							.height(14.dp)
 							.then(
 								if (song != null
-									&& Settings.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
+									&& PreferenceManager.shared.miniPlayerProgressStyle == MiniPlayerProgressStyle.Seekable
 									&& isInteractive
 								)
 									Modifier.pointerInput(Unit) {

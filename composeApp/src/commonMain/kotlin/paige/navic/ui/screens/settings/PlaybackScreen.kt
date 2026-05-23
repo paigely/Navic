@@ -52,7 +52,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
@@ -108,20 +108,20 @@ fun SettingsPlaybackScreen() {
 							title = { Text(stringResource(Res.string.option_replay_gain)) },
 							items = ReplayGainMode.entries.toImmutableList(),
 							label = { stringResource(it.displayName) },
-							selection = Settings.shared.replayGainMode,
-							onSelect = { Settings.shared.replayGainMode = it }
+							selection = PreferenceManager.shared.replayGainMode,
+							onSelect = { PreferenceManager.shared.replayGainMode = it }
 						)
 						SettingSwitchRow(
 							title = { Text(stringResource(Res.string.option_gapless_playback)) },
 							subtitle = { Text(stringResource(Res.string.subtitle_gapless_playback)) },
-							value = Settings.shared.gaplessPlayback,
-							onSetValue = { Settings.shared.gaplessPlayback = it }
+							value = PreferenceManager.shared.gaplessPlayback,
+							onSetValue = { PreferenceManager.shared.gaplessPlayback = it }
 						)
 						SettingSwitchRow(
 							title = { Text(stringResource(Res.string.option_audio_offload)) },
 							subtitle = { Text(stringResource(Res.string.subtitle_audio_offload)) },
-							value = Settings.shared.audioOffload,
-							onSetValue = { Settings.shared.audioOffload = it }
+							value = PreferenceManager.shared.audioOffload,
+							onSetValue = { PreferenceManager.shared.audioOffload = it }
 						)
 					}
 				}
@@ -130,32 +130,32 @@ fun SettingsPlaybackScreen() {
 				Form {
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_lyrics_autoscroll)) },
-						value = Settings.shared.lyricsAutoscroll,
-						onSetValue = { Settings.shared.lyricsAutoscroll = it }
+						value = PreferenceManager.shared.lyricsAutoscroll,
+						onSetValue = { PreferenceManager.shared.lyricsAutoscroll = it }
 					)
 
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_lyrics_beat_by_beat)) },
-						value = Settings.shared.lyricsBeatByBeat,
-						onSetValue = { Settings.shared.lyricsBeatByBeat = it }
+						value = PreferenceManager.shared.lyricsBeatByBeat,
+						onSetValue = { PreferenceManager.shared.lyricsBeatByBeat = it }
 					)
 
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_lyrics_keep_alive)) },
-						value = Settings.shared.lyricsKeepAlive,
-						onSetValue = { Settings.shared.lyricsKeepAlive = it }
+						value = PreferenceManager.shared.lyricsKeepAlive,
+						onSetValue = { PreferenceManager.shared.lyricsKeepAlive = it }
 					)
 
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_lyrics_blur)) },
-						value = Settings.shared.lyricsBlur,
-						onSetValue = { Settings.shared.lyricsBlur = it }
+						value = PreferenceManager.shared.lyricsBlur,
+						onSetValue = { PreferenceManager.shared.lyricsBlur = it }
 					)
 
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_lyrics_bright_inactive)) },
-						value = Settings.shared.lyricsBrightInactive,
-						onSetValue = { Settings.shared.lyricsBrightInactive = it }
+						value = PreferenceManager.shared.lyricsBrightInactive,
+						onSetValue = { PreferenceManager.shared.lyricsBrightInactive = it }
 					)
 
 					FormRow(
@@ -170,8 +170,8 @@ fun SettingsPlaybackScreen() {
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_enable_scrobbling)) },
 						subtitle = { Text(stringResource(Res.string.subtitle_enable_scrobbling)) },
-						value = Settings.shared.enableScrobbling,
-						onSetValue = { Settings.shared.enableScrobbling = it }
+						value = PreferenceManager.shared.enableScrobbling,
+						onSetValue = { PreferenceManager.shared.enableScrobbling = it }
 					)
 
 					FormRow {
@@ -182,7 +182,7 @@ fun SettingsPlaybackScreen() {
 							) {
 								Text(stringResource(Res.string.option_scrobble_percentage))
 								Text(
-									"${(Settings.shared.scrobblePercentage * 100).roundToInt()}%",
+									"${(PreferenceManager.shared.scrobblePercentage * 100).roundToInt()}%",
 									fontFamily = FontFamily.Monospace,
 									fontWeight = FontWeight(400),
 									fontSize = 13.sp,
@@ -190,9 +190,9 @@ fun SettingsPlaybackScreen() {
 								)
 							}
 							Slider(
-								value = Settings.shared.scrobblePercentage,
+								value = PreferenceManager.shared.scrobblePercentage,
 								onValueChange = {
-									Settings.shared.scrobblePercentage = it
+									PreferenceManager.shared.scrobblePercentage = it
 								},
 								valueRange = 0f..1f,
 							)
@@ -206,7 +206,7 @@ fun SettingsPlaybackScreen() {
 							) {
 								Text(stringResource(Res.string.option_min_duration_to_scrobble))
 								Text(
-									"${Settings.shared.minDurationToScrobble.toInt()}s",
+									"${PreferenceManager.shared.minDurationToScrobble.toInt()}s",
 									fontFamily = FontFamily.Monospace,
 									fontWeight = FontWeight(400),
 									fontSize = 13.sp,
@@ -214,9 +214,9 @@ fun SettingsPlaybackScreen() {
 								)
 							}
 							Slider(
-								value = Settings.shared.minDurationToScrobble,
+								value = PreferenceManager.shared.minDurationToScrobble,
 								onValueChange = {
-									Settings.shared.minDurationToScrobble = it
+									PreferenceManager.shared.minDurationToScrobble = it
 								},
 								valueRange = 0f..400f,
 							)

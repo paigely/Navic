@@ -39,7 +39,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalSnackbarState
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainShare
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
@@ -108,7 +108,7 @@ fun ShareListScreenItem(
 						CoverArt(
 							coverArtId = share.items.firstOrNull()?.coverArtId,
 							modifier = Modifier.size(60.dp),
-							shape = Settings.shared.coverArtShape.decreasedShape
+							shape = PreferenceManager.shared.coverArtShape.decreasedShape
 						)
 					},
 					content = {

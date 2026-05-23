@@ -41,7 +41,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
@@ -152,7 +152,7 @@ fun SongListScreenItem(
 					CoverArt(
 						coverArtId = song.coverArtId,
 						modifier = Modifier.size(50.dp),
-						shape = Settings.shared.coverArtShape.decreasedShape
+						shape = PreferenceManager.shared.coverArtShape.decreasedShape
 					)
 				},
 				trailingContent = {

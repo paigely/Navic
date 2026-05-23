@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import kotlin.math.abs
 
 @Composable
@@ -35,7 +35,7 @@ fun AlphabeticalScroller(
 	state: LazyGridState,
 	headers: ImmutableList<Pair<String, Int>>
 ) {
-	if (!Settings.shared.alphabeticalScroll) return
+	if (!PreferenceManager.shared.alphabeticalScroll) return
 	val haptic = LocalHapticFeedback.current
 	val scope = rememberCoroutineScope()
 	val offsets = remember { mutableStateMapOf<Int, Float>() }

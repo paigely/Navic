@@ -28,7 +28,7 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_choose_theme
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.Theme
 import paige.navic.domain.models.settings.ThemeMode
 
@@ -60,14 +60,14 @@ fun ThemeDialog(
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
 								platformContext.clickSound()
-								Settings.shared.theme = theme
+								PreferenceManager.shared.theme = theme
 								onDismissRequest()
 							},
 						horizontalArrangement = Arrangement.spacedBy(16.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						RadioButton(
-							selected = Settings.shared.theme == theme,
+							selected = PreferenceManager.shared.theme == theme,
 							onClick = null
 						)
 						Column(Modifier.weight(1f)) {
@@ -107,7 +107,7 @@ private fun ThemeModeChooser() {
 		horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
 	) {
 		themes.forEachIndexed { idx, mode ->
-			val checked = Settings.shared.themeMode == mode
+			val checked = PreferenceManager.shared.themeMode == mode
 			val weight by animateFloatAsState(
 				if (checked) 1.25f else 1f
 			)
@@ -115,7 +115,7 @@ private fun ThemeModeChooser() {
 				checked = checked,
 				onCheckedChange = { _ ->
 					platformContext.clickSound()
-					Settings.shared.themeMode = mode
+					PreferenceManager.shared.themeMode = mode
 				},
 				shapes =
 					when (idx) {

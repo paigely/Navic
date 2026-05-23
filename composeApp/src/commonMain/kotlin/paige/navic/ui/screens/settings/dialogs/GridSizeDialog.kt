@@ -27,7 +27,7 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_grid_items_per_row
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.GridSize
 
 @Composable
@@ -57,7 +57,7 @@ fun GridSizeDialog(
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
 								platformContext.clickSound()
-								Settings.shared.gridSize = size
+								PreferenceManager.shared.gridSize = size
 								onDismissRequest()
 							}
 							.padding(8.dp),
@@ -65,7 +65,7 @@ fun GridSizeDialog(
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						RadioButton(
-							selected = Settings.shared.gridSize == size,
+							selected = PreferenceManager.shared.gridSize == size,
 							onClick = null
 						)
 						GridSizePreview(size = size.value)

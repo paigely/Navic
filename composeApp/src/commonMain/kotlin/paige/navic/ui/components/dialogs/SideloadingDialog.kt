@@ -18,7 +18,7 @@ import navic.composeapp.generated.resources.sideloading_warning_subtitle
 import navic.composeapp.generated.resources.sideloading_warning_title
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 
 @Composable
 fun SideloadingDialog() {
@@ -45,7 +45,7 @@ fun SideloadingDialog() {
 		confirmButton = {
 			Button(onClick = {
 				platformContext.clickSound()
-				Settings.shared.showedSideloadingWarning = true
+				PreferenceManager.shared.showedSideloadingWarning = true
 			}) {
 				Text(stringResource(Res.string.action_ok))
 			}

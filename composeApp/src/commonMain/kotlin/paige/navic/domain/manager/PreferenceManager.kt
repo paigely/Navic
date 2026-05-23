@@ -23,7 +23,7 @@ import paige.navic.domain.models.settings.ThemeMode
 import paige.navic.domain.models.settings.ToolbarPosition
 import com.russhwolf.settings.Settings as KmpSettings
 
-class Settings(
+class PreferenceManager(
 	settings: KmpSettings
 ) : BasePreferenceManager(settings) {
 	var font by preference(FontOption.GoogleSans)
@@ -102,6 +102,6 @@ class Settings(
 	var offlineMode by preference(OfflineMode.Auto)
 
 	companion object {
-		val shared = Settings(KmpSettings())
+		val shared = PreferenceManager(KmpSettings())
 	}
 }

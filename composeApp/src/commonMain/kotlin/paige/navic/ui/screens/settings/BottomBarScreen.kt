@@ -32,7 +32,7 @@ import navic.composeapp.generated.resources.title_mini_player
 import navic.composeapp.generated.resources.title_navigation_bar
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.settings.MiniPlayerProgressStyle
@@ -74,23 +74,23 @@ fun BottomBarScreen() {
 				Form {
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_swipe_to_skip)) },
-						value = Settings.shared.swipeToSkip,
-						onSetValue = { Settings.shared.swipeToSkip = it }
+						value = PreferenceManager.shared.swipeToSkip,
+						onSetValue = { PreferenceManager.shared.swipeToSkip = it }
 					)
 
 					SettingSelectionRow(
 						items = BottomBarCollapseMode.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.bottomBarCollapseMode,
-						onSelect = { Settings.shared.bottomBarCollapseMode = it },
+						selection = PreferenceManager.shared.bottomBarCollapseMode,
+						onSelect = { PreferenceManager.shared.bottomBarCollapseMode = it },
 						title = { Text(stringResource(Res.string.option_bottom_bar_collapse_mode)) },
 					)
 
 					SettingSelectionRow(
 						items = BottomBarVisibilityMode.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.bottomBarVisibilityMode,
-						onSelect = { Settings.shared.bottomBarVisibilityMode = it },
+						selection = PreferenceManager.shared.bottomBarVisibilityMode,
+						onSelect = { PreferenceManager.shared.bottomBarVisibilityMode = it },
 						title = { Text(stringResource(Res.string.option_bottom_bar_visibility_mode)) },
 					)
 				}
@@ -100,16 +100,16 @@ fun BottomBarScreen() {
 					SettingSelectionRow(
 						items = NavigationBarStyle.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.navigationBarStyle,
-						onSelect = { Settings.shared.navigationBarStyle = it },
+						selection = PreferenceManager.shared.navigationBarStyle,
+						onSelect = { PreferenceManager.shared.navigationBarStyle = it },
 						title = { Text(stringResource(Res.string.option_navigation_bar_style)) },
 					)
 
 					SettingSelectionRow(
 						items = NavigationBarLabelVisibility.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.navigationBarLabelVisibility,
-						onSelect = { Settings.shared.navigationBarLabelVisibility = it },
+						selection = PreferenceManager.shared.navigationBarLabelVisibility,
+						onSelect = { PreferenceManager.shared.navigationBarLabelVisibility = it },
 						title = { Text(stringResource(Res.string.option_navigation_bar_label_visibility)) },
 					)
 
@@ -126,16 +126,16 @@ fun BottomBarScreen() {
 					SettingSelectionRow(
 						items = MiniPlayerStyle.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.miniPlayerStyle,
-						onSelect = { Settings.shared.miniPlayerStyle = it },
+						selection = PreferenceManager.shared.miniPlayerStyle,
+						onSelect = { PreferenceManager.shared.miniPlayerStyle = it },
 						title = { Text(stringResource(Res.string.option_mini_player_style)) },
 					)
 
 					SettingSelectionRow(
 						items = MiniPlayerProgressStyle.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.miniPlayerProgressStyle,
-						onSelect = { Settings.shared.miniPlayerProgressStyle = it },
+						selection = PreferenceManager.shared.miniPlayerProgressStyle,
+						onSelect = { PreferenceManager.shared.miniPlayerProgressStyle = it },
 						title = { Text(stringResource(Res.string.option_mini_player_progress_style)) },
 					)
 				}

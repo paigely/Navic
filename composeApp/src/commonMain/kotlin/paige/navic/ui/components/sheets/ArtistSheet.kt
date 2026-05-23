@@ -41,7 +41,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainArtist
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
@@ -97,7 +97,7 @@ fun ArtistSheet(
 				CoverArt(
 					coverArtId = artist.coverArtId,
 					modifier = Modifier.size(50.dp),
-					shape = Settings.shared.coverArtShape.decreasedShape
+					shape = PreferenceManager.shared.coverArtShape.decreasedShape
 				)
 			},
 			headlineContent = { MarqueeText(artist.name) },

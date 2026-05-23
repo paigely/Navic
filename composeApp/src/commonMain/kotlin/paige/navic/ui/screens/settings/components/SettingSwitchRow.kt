@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.components.common.FormRow
 
 @Composable
@@ -38,7 +38,7 @@ fun SettingSwitchRow(
 				subtitle()
 			}
 		}
-		if (Settings.shared.theme.isMaterialLike() && isDividerShown) {
+		if (PreferenceManager.shared.theme.isMaterialLike() && isDividerShown) {
 			VerticalDivider(Modifier.height(32.dp).padding(horizontal = 14.dp))
 		}
 		SettingSwitch(

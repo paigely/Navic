@@ -33,7 +33,7 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
 import paige.navic.ui.components.common.Form
@@ -71,8 +71,8 @@ fun SettingsDeveloperScreen() {
 						SettingSwitchRow(
 							title = { Text(stringResource(Res.string.option_check_for_updates)) },
 							subtitle = { Text(stringResource(Res.string.subtitle_check_for_updates)) },
-							value = Settings.shared.checkForUpdates,
-							onSetValue = { Settings.shared.checkForUpdates = it }
+							value = PreferenceManager.shared.checkForUpdates,
+							onSetValue = { PreferenceManager.shared.checkForUpdates = it }
 						)
 					}
 					FormRow(

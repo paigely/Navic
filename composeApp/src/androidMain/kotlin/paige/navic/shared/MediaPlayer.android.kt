@@ -45,7 +45,7 @@ import org.koin.core.component.inject
 import paige.navic.domain.manager.SyncManager
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainAlbum
@@ -94,7 +94,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			}
 
 		val httpDataSourceFactory = DefaultHttpDataSource.Factory()
-			.setDefaultRequestProperties(Settings.shared.customHeadersMap())
+			.setDefaultRequestProperties(PreferenceManager.shared.customHeadersMap())
 		val dataSourceFactory = DefaultDataSource.Factory(this, httpDataSourceFactory)
 		val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
 
@@ -117,9 +117,9 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 					trackSelectionParameters.buildUpon().setAudioOffloadPreferences(
 						TrackSelectionParameters.AudioOffloadPreferences
 							.Builder()
-							.setIsGaplessSupportRequired(Settings.shared.gaplessPlayback)
+							.setIsGaplessSupportRequired(PreferenceManager.shared.gaplessPlayback)
 							.setAudioOffloadMode(
-								if (Settings.shared.audioOffload) {
+								if (PreferenceManager.shared.audioOffload) {
 									TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED
 								} else {
 									TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_DISABLED
@@ -217,12 +217,12 @@ class AndroidMediaPlayerViewModel(
 
 	private fun getStreamUrl(id: String): Uri {
 		val isCellular = connectivityManager.isCellular.value
-		val bitrate = if (Settings.shared.isAdvancedTranscodingActive) {
-			if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
+		val bitrate = if (PreferenceManager.shared.isAdvancedTranscodingActive) {
+			if (isCellular) PreferenceManager.shared.customMaxBitrateCellular else PreferenceManager.shared.customMaxBitrateWifi
 		} else {
-			if (isCellular) Settings.shared.streamingQualityCellular.bitrateAndroid else Settings.shared.streamingQualityWifi.bitrateAndroid
+			if (isCellular) PreferenceManager.shared.streamingQualityCellular.bitrateAndroid else PreferenceManager.shared.streamingQualityWifi.bitrateAndroid
 		}
-		val container = if (isCellular) Settings.shared.streamingQualityCellular.containerAndroid else Settings.shared.streamingQualityWifi.containerAndroid
+		val container = if (isCellular) PreferenceManager.shared.streamingQualityCellular.containerAndroid else PreferenceManager.shared.streamingQualityWifi.containerAndroid
 
 		return sessionManager.api.getStreamUrl(id, bitrate, container)
 			.toUri()
@@ -373,9 +373,9 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	private fun applyReplayGain() {
-		if (Settings.shared.replayGainMode != ReplayGainMode.Off) {
+		if (PreferenceManager.shared.replayGainMode != ReplayGainMode.Off) {
 			(_uiState.value.currentSong)?.replayGain?.let { replayGain ->
-				controller?.volume = replayGain.effectiveGain(Settings.shared.replayGainMode)
+				controller?.volume = replayGain.effectiveGain(PreferenceManager.shared.replayGainMode)
 			}
 		} else {
 			controller?.volume = 1f

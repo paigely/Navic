@@ -34,7 +34,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalNavStack
 import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NowPlayingBackgroundStyle
 import paige.navic.domain.models.settings.ToolbarPosition
 import paige.navic.icons.Icons
@@ -106,7 +106,7 @@ fun NowPlayingScreen() {
 		}
 	) { contentPadding ->
 		Box(Modifier.fillMaxSize()) {
-			if (Settings.shared.nowPlayingBackgroundStyle
+			if (PreferenceManager.shared.nowPlayingBackgroundStyle
 				== NowPlayingBackgroundStyle.Dynamic
 			) {
 				BlendBackground(
@@ -121,7 +121,7 @@ fun NowPlayingScreen() {
 					.fillMaxSize()
 			) {
 				val isLandscape = maxWidth > maxHeight
-				val toolbarPosition = Settings.shared.nowPlayingToolbarPosition
+				val toolbarPosition = PreferenceManager.shared.nowPlayingToolbarPosition
 				val padding = when {
 					isLandscape -> contentPadding
 					toolbarPosition == ToolbarPosition.Top -> contentPadding.plus(

@@ -27,7 +27,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.ThemeMode
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainGenre
@@ -43,8 +43,8 @@ fun GenreListScreenCard(
 	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	val inDarkTheme = isSystemInDarkTheme()
-	val isDark = remember(Settings.shared.themeMode) {
-		when (Settings.shared.themeMode) {
+	val isDark = remember(PreferenceManager.shared.themeMode) {
+		when (PreferenceManager.shared.themeMode) {
 			ThemeMode.System -> inDarkTheme
 			ThemeMode.Dark -> true
 			ThemeMode.Light -> false

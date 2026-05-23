@@ -88,7 +88,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.CoverArtQuality
 import paige.navic.domain.models.settings.OfflineMode
 import paige.navic.icons.Icons
@@ -202,16 +202,16 @@ fun SettingsDataStorageScreen() {
 						items = OfflineMode.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
 						description = stringResource(Res.string.subtitle_offline_mode),
-						selection = Settings.shared.offlineMode,
-						onSelect = { Settings.shared.offlineMode = it }
+						selection = PreferenceManager.shared.offlineMode,
+						onSelect = { PreferenceManager.shared.offlineMode = it }
 					)
 					SettingSelectionRow(
 						title = { Text(stringResource(Res.string.option_cover_art_quality)) },
 						items = CoverArtQuality.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.coverArtQuality,
+						selection = PreferenceManager.shared.coverArtQuality,
 						onSelect = {
-							Settings.shared.coverArtQuality = it
+							PreferenceManager.shared.coverArtQuality = it
 							imageLoader.memoryCache?.clear()
 							scope.launch(Dispatchers.IO) {
 								imageLoader.diskCache?.clear()
@@ -271,11 +271,11 @@ fun SettingsDataStorageScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_last_sync))
 							Text(
-								text = if (Settings.shared.lastFullSyncTime == 0L) {
+								text = if (PreferenceManager.shared.lastFullSyncTime == 0L) {
 									stringResource(Res.string.info_sync_never)
 								} else {
 									Instant.fromEpochMilliseconds(
-										Settings.shared.lastFullSyncTime
+										PreferenceManager.shared.lastFullSyncTime
 									).toRelativeString(
 										justNow = stringResource(Res.string.info_sync_just_now),
 										minsAgo = stringResource(Res.string.info_sync_mins_ago),

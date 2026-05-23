@@ -9,7 +9,7 @@ import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.kyant.capsule.ContinuousRoundedRectangle
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.AnimationStyle
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -18,10 +18,10 @@ fun NavicTheme(
 	colorScheme: ColorScheme? = null,
 	content: @Composable () -> Unit
 ) {
-	val chosenTheme = Settings.shared.theme
+	val chosenTheme = PreferenceManager.shared.theme
 	val chosenScheme = chosenTheme.colorScheme()
-	val motionScheme = remember(Settings.shared.animationStyle) {
-		when (Settings.shared.animationStyle) {
+	val motionScheme = remember(PreferenceManager.shared.animationStyle) {
+		when (PreferenceManager.shared.animationStyle) {
 			AnimationStyle.Expressive -> MotionScheme.expressive()
 			AnimationStyle.Standard -> MotionScheme.standard()
 		}

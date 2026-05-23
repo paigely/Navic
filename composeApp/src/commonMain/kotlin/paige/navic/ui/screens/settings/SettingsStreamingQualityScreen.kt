@@ -53,7 +53,7 @@ import navic.composeapp.generated.resources.title_wifi
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.StreamingQuality
 import paige.navic.domain.models.settings.description
 import paige.navic.icons.Icons
@@ -71,7 +71,7 @@ fun SettingsStreamingQualityScreen() {
 	val isOnline by connectivityManager.isOnline.collectAsStateWithLifecycle()
 	val isCellular by connectivityManager.isCellular.collectAsStateWithLifecycle()
 
-	var isAdvancedActive by remember { mutableStateOf(Settings.shared.isAdvancedTranscodingActive) }
+	var isAdvancedActive by remember { mutableStateOf(PreferenceManager.shared.isAdvancedTranscodingActive) }
 
 	Scaffold(
 		topBar = {
@@ -101,8 +101,8 @@ fun SettingsStreamingQualityScreen() {
 						})
 						Form(Modifier.selectableGroup()) {
 							RadioButtons(
-								value = Settings.shared.streamingQualityWifi,
-								onChangeValue = { Settings.shared.streamingQualityWifi = it }
+								value = PreferenceManager.shared.streamingQualityWifi,
+								onChangeValue = { PreferenceManager.shared.streamingQualityWifi = it }
 							)
 						}
 
@@ -114,8 +114,8 @@ fun SettingsStreamingQualityScreen() {
 						})
 						Form(Modifier.selectableGroup()) {
 							RadioButtons(
-								value = Settings.shared.streamingQualityCellular,
-								onChangeValue = { Settings.shared.streamingQualityCellular = it }
+								value = PreferenceManager.shared.streamingQualityCellular,
+								onChangeValue = { PreferenceManager.shared.streamingQualityCellular = it }
 							)
 						}
 					}
@@ -132,7 +132,7 @@ fun SettingsStreamingQualityScreen() {
 							indication = null,
 							onClick = {
 								isAdvancedActive = !isAdvancedActive
-								Settings.shared.isAdvancedTranscodingActive = isAdvancedActive
+								PreferenceManager.shared.isAdvancedTranscodingActive = isAdvancedActive
 							}
 						),
 						horizontalArrangement = Arrangement.SpaceBetween,
@@ -146,7 +146,7 @@ fun SettingsStreamingQualityScreen() {
 							checked = isAdvancedActive,
 							onCheckedChange = {
 								isAdvancedActive = it
-								Settings.shared.isAdvancedTranscodingActive = it
+								PreferenceManager.shared.isAdvancedTranscodingActive = it
 							}
 						)
 					}
@@ -162,7 +162,7 @@ fun SettingsStreamingQualityScreen() {
 							Spacer(Modifier.height(16.dp))
 
 							var wifiInput by remember {
-								val current = Settings.shared.customMaxBitrateWifi
+								val current = PreferenceManager.shared.customMaxBitrateWifi
 								mutableStateOf(if (current > 0) current.toString() else "")
 							}
 
@@ -171,7 +171,7 @@ fun SettingsStreamingQualityScreen() {
 								onValueChange = { newValue ->
 									if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
 										wifiInput = newValue
-										Settings.shared.customMaxBitrateWifi = newValue.toIntOrNull() ?: 0
+										PreferenceManager.shared.customMaxBitrateWifi = newValue.toIntOrNull() ?: 0
 									}
 								},
 								label = { Text(stringResource(Res.string.option_max_bitrate_wifi)) },
@@ -187,7 +187,7 @@ fun SettingsStreamingQualityScreen() {
 							Spacer(Modifier.height(16.dp))
 
 							var cellularInput by remember {
-								val current = Settings.shared.customMaxBitrateCellular
+								val current = PreferenceManager.shared.customMaxBitrateCellular
 								mutableStateOf(if (current > 0) current.toString() else "")
 							}
 
@@ -196,7 +196,7 @@ fun SettingsStreamingQualityScreen() {
 								onValueChange = { newValue ->
 									if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
 										cellularInput = newValue
-										Settings.shared.customMaxBitrateCellular = newValue.toIntOrNull() ?: 0
+										PreferenceManager.shared.customMaxBitrateCellular = newValue.toIntOrNull() ?: 0
 									}
 								},
 								label = { Text(stringResource(Res.string.option_max_bitrate_cellular)) },

@@ -42,7 +42,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.BottomNavigation
 import paige.navic.icons.filled.Info
@@ -148,9 +148,9 @@ private fun PageRow(
 			}
 		},
 		horizontalArrangement = Arrangement.spacedBy(12.dp),
-		contentPadding = PaddingValues(if (Settings.shared.theme.isMaterialLike()) 16.dp else 12.dp)
+		contentPadding = PaddingValues(if (PreferenceManager.shared.theme.isMaterialLike()) 16.dp else 12.dp)
 	) {
-		if (Settings.shared.theme.isMaterialLike()) {
+		if (PreferenceManager.shared.theme.isMaterialLike()) {
 			Column(
 				modifier = Modifier
 					.size(40.dp)
@@ -194,7 +194,7 @@ private fun PageRow(
 				color = MaterialTheme.colorScheme.onSurfaceVariant
 			)
 		}
-		if (!Settings.shared.theme.isMaterialLike()) {
+		if (!PreferenceManager.shared.theme.isMaterialLike()) {
 			Icon(
 				Icons.Outlined.ChevronForward,
 				null,

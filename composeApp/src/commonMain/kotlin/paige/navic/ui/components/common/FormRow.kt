@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 
 @Composable
 fun FormRow(
@@ -57,7 +57,7 @@ fun FormRow(
 			)
 			.clip(
 				ContinuousRoundedRectangle(
-					if (Settings.shared.theme.isMaterialLike()) rounding else 0.dp
+					if (PreferenceManager.shared.theme.isMaterialLike()) rounding else 0.dp
 				)
 			)
 			.background(color ?: MaterialTheme.colorScheme.surfaceContainer)

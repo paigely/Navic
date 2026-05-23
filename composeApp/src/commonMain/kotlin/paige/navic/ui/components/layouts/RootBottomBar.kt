@@ -14,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.domain.models.settings.MiniPlayerStyle
 import paige.navic.utils.easedVerticalGradient
@@ -28,7 +28,7 @@ fun RootBottomBar(
 	bottomBarWindowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
 ) {
 	val scrolled =
-		scrolled && Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.OnScroll
+		scrolled && PreferenceManager.shared.bottomBarCollapseMode == BottomBarCollapseMode.OnScroll
 	val progress by animateFloatAsState(
 		targetValue = if (scrolled) 0f else 1f,
 		animationSpec = spring(
@@ -42,7 +42,7 @@ fun RootBottomBar(
 	)
 	Column(
 		modifier = modifier.then(
-			if (Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached)
+			if (PreferenceManager.shared.miniPlayerStyle == MiniPlayerStyle.Detached)
 				Modifier.background(
 					Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress))
 				)
@@ -53,20 +53,20 @@ fun RootBottomBar(
 			modifier = Modifier.graphicsLayer {
 				alpha = progress.coerceIn(0f..1f)
 				translationY = ((1f - progress) * (size.height * 2)).coerceAtLeast(
-					if (Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
+					if (PreferenceManager.shared.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
 				)
 			},
 			enabled = !scrolled
 		)
 		BottomBar(
-			containerColor = if (Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached)
+			containerColor = if (PreferenceManager.shared.miniPlayerStyle == MiniPlayerStyle.Detached)
 				NavigationBarDefaults.containerColor.copy(alpha = 0f)
 			else NavigationBarDefaults.containerColor,
 			windowInsets = bottomBarWindowInsets,
 			modifier = Modifier.graphicsLayer {
 				alpha = progress.coerceIn(0f..1f)
 				translationY = ((1f - progress) * size.height).coerceAtLeast(
-					if (Settings.shared.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
+					if (PreferenceManager.shared.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
 				)
 			},
 			enabled = !scrolled

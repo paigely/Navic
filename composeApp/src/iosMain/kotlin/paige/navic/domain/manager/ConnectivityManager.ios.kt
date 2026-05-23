@@ -60,7 +60,7 @@ actual class ConnectivityManager(
 
 	actual val isOnline = networkStatus
 		.mapLatest { status ->
-			when (Settings.shared.offlineMode) {
+			when (PreferenceManager.shared.offlineMode) {
 				OfflineMode.Forced -> false
 				OfflineMode.NoWiFi -> status.isOnline && !status.isCellular
 				else -> status.isOnline

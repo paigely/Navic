@@ -19,7 +19,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingProgressBar
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -57,7 +57,7 @@ fun NowPlayingControlsRow(
 			)
 			NowPlayingProgressBar()
 			NowPlayingDurationsRow()
-			if (Settings.shared.nowPlayingSongInfo) {
+			if (PreferenceManager.shared.nowPlayingSongInfo) {
 				NowPlayingTechnicalInfoRow()
 			}
 		}

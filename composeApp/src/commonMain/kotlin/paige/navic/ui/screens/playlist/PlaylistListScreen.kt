@@ -43,7 +43,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.DomainSongCollection
@@ -123,7 +123,7 @@ fun PlaylistListScreen(
 		floatingActionButton = {
 			AnimatedContent(
 				!scrollManager.isTriggered
-					|| Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.Never,
+					|| PreferenceManager.shared.bottomBarCollapseMode == BottomBarCollapseMode.Never,
 				transitionSpec = {
 					val transformOrigin = TransformOrigin(0f, 1f)
 					(slideInHorizontally(slideSpec) { it / 2 }
@@ -154,7 +154,7 @@ fun PlaylistListScreen(
 			}
 		},
 		bottomBar = {
-			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			if (!nested || PreferenceManager.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}

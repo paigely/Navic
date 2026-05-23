@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.shared.MediaPlayerViewModel
 
@@ -57,10 +57,10 @@ fun NowPlayingTechnicalInfoRow() {
 				} ?: "-- kHz"
 
 				val isCellular = connectivityManager.isCellular.value
-				val requestedBitrate = if (Settings.shared.isAdvancedTranscodingActive) {
-					if (isCellular) Settings.shared.customMaxBitrateCellular else Settings.shared.customMaxBitrateWifi
+				val requestedBitrate = if (PreferenceManager.shared.isAdvancedTranscodingActive) {
+					if (isCellular) PreferenceManager.shared.customMaxBitrateCellular else PreferenceManager.shared.customMaxBitrateWifi
 				} else {
-					if (isCellular) Settings.shared.streamingQualityCellular.bitrateAndroid else Settings.shared.streamingQualityWifi.bitrateAndroid
+					if (isCellular) PreferenceManager.shared.streamingQualityCellular.bitrateAndroid else PreferenceManager.shared.streamingQualityWifi.bitrateAndroid
 				}
 
 				val bitrateFormatted = playerState.playbackBitrate?.let { "${it / 1000} kbps" }

@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.SwitchOff
 import paige.navic.icons.outlined.SwitchOn
@@ -34,7 +34,7 @@ fun SettingSwitch(
 			uncheckedThumbColor = Color.White
 		),
 		thumbContent = {
-			if (Settings.shared.theme.isMaterialLike()) {
+			if (PreferenceManager.shared.theme.isMaterialLike()) {
 				Icon(
 					if (checked) Icons.Outlined.SwitchOn else Icons.Outlined.SwitchOff,
 					contentDescription = null,

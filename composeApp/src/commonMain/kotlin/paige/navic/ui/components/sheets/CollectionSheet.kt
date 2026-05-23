@@ -44,7 +44,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainPlaylist
@@ -113,7 +113,7 @@ fun CollectionSheet(
 				CoverArt(
 					coverArtId = collection?.coverArtId,
 					modifier = Modifier.size(50.dp),
-					shape = Settings.shared.coverArtShape.decreasedShape
+					shape = PreferenceManager.shared.coverArtShape.decreasedShape
 				)
 			},
 			headlineContent = { MarqueeText(collection?.name.orEmpty()) },

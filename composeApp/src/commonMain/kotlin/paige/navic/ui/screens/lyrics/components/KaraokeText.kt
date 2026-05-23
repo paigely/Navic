@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -47,8 +47,8 @@ fun LyricsScreenKaraokeText(
 		animationSpec = spring(stiffness = Spring.StiffnessLow, visibilityThreshold = 0.001f)
 	)
 
-	val lyricsBeatByBeat = Settings.shared.lyricsBeatByBeat
-	val lyricsBrightInactive = Settings.shared.lyricsBrightInactive
+	val lyricsBeatByBeat = PreferenceManager.shared.lyricsBeatByBeat
+	val lyricsBrightInactive = PreferenceManager.shared.lyricsBrightInactive
 
 	val isRtl = textLayoutResult?.let { layout ->
 		(0 until layout.lineCount).any { lineIndex ->

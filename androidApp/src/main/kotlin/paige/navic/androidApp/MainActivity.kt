@@ -5,13 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import paige.navic.App
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		// workaround for some random IllegalStateException that happens in rememberCtx
-		Settings.shared
+		PreferenceManager.shared
 		enableEdgeToEdge()
 		setContent { App() }
 	}

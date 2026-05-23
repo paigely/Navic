@@ -38,7 +38,7 @@ import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -81,7 +81,7 @@ fun SongDetailScreen(songId: String) {
 
 				Res.string.info_track_replay_gain to song.replayGain?.trackGain?.let { "$it dB" },
 				Res.string.info_album_replay_gain to song.replayGain?.albumGain?.let { "$it dB" },
-				Res.string.info_track_replay_gain_effective to song.replayGain?.effectiveGain(Settings.shared.replayGainMode)
+				Res.string.info_track_replay_gain_effective to song.replayGain?.effectiveGain(PreferenceManager.shared.replayGainMode)
 			)
 		}.orEmpty()
 	}

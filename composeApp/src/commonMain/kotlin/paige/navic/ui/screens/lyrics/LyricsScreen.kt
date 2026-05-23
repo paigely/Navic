@@ -62,7 +62,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalNavStack
 import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.ToolbarPosition
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
@@ -101,7 +101,7 @@ fun LyricsScreen(
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val state by viewModel.lyricsState.collectAsState()
 
-	if (Settings.shared.lyricsKeepAlive) {
+	if (PreferenceManager.shared.lyricsKeepAlive) {
 		KeepScreenOn()
 	}
 
@@ -131,7 +131,7 @@ fun LyricsScreen(
 	val density = LocalDensity.current
 	val listState = viewModel.listState
 
-	val lyricsAutoscroll = Settings.shared.lyricsAutoscroll && !isSelectionMode
+	val lyricsAutoscroll = PreferenceManager.shared.lyricsAutoscroll && !isSelectionMode
 
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
@@ -423,7 +423,7 @@ fun LyricsScreen(
 											translationY = animatedOffsetY.toPx()
 										}
 										.then(
-											if (blurRadius > 0.dp && !isSelectionMode && Settings.shared.lyricsBlur) {
+											if (blurRadius > 0.dp && !isSelectionMode && PreferenceManager.shared.lyricsBlur) {
 												Modifier.blur(blurRadius)
 											} else Modifier
 										)

@@ -28,7 +28,7 @@ import navic.composeapp.generated.resources.info_no_shares
 import navic.composeapp.generated.resources.title_shares
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.ShareOff
@@ -58,7 +58,7 @@ fun ShareListScreen() {
 		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_shares)) }) },
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			if (Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			if (PreferenceManager.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}

@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalSharedTransitionScope
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.utils.EmphasizedDecelerateEasing
@@ -52,12 +52,12 @@ fun ArtGrid(
 	content: LazyGridScope.() -> Unit
 ) {
 	val platformContext = LocalPlatformContext.current
-	val artGridItemSize = Settings.shared.artGridItemSize
+	val artGridItemSize = PreferenceManager.shared.artGridItemSize
 	LazyVerticalGrid(
 		modifier = modifier.fillMaxSize(),
 		state = state,
 		columns = if (platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact)
-			GridCells.Fixed(Settings.shared.gridSize.value)
+			GridCells.Fixed(PreferenceManager.shared.gridSize.value)
 		else GridCells.Adaptive(artGridItemSize.dp),
 		contentPadding = contentPadding + PaddingValues(
 			start = 16.dp,

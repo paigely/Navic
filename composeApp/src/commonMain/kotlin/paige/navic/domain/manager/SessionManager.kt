@@ -44,7 +44,7 @@ class SessionManager(
 				agent = "Navic"
 			}
 
-			val customHeaders = paige.navic.domain.manager.Settings.shared.customHeadersMap()
+			val customHeaders = paige.navic.domain.manager.PreferenceManager.shared.customHeadersMap()
 			if (customHeaders.isNotEmpty()) {
 				defaultRequest {
 					customHeaders.forEach { (key, value) -> header(key, value) }
@@ -94,6 +94,6 @@ class SessionManager(
 	fun getCoverArtUrl(coverArtId: String) = api.getCoverArtUrl(
 		coverArtId,
 		auth = true,
-		size = "${paige.navic.domain.manager.Settings.shared.coverArtQuality.value}"
+		size = "${paige.navic.domain.manager.PreferenceManager.shared.coverArtQuality.value}"
 	)
 }

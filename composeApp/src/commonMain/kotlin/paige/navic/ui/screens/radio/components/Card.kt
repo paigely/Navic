@@ -29,7 +29,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.ThemeMode
 import paige.navic.domain.models.DomainRadio
 import paige.navic.icons.Icons
@@ -46,8 +46,8 @@ fun RadioListScreenCard(
 	val platformContext = LocalPlatformContext.current
 	val inDarkTheme = isSystemInDarkTheme()
 
-	val isDark = remember(Settings.shared.themeMode) {
-		when (Settings.shared.themeMode) {
+	val isDark = remember(PreferenceManager.shared.themeMode) {
+		when (PreferenceManager.shared.themeMode) {
 			ThemeMode.System -> inDarkTheme
 			ThemeMode.Dark -> true
 			ThemeMode.Light -> false

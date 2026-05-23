@@ -29,7 +29,7 @@ import navic.composeapp.generated.resources.title_layout
 import navic.composeapp.generated.resources.title_now_playing
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NowPlayingBackgroundStyle
 import paige.navic.domain.models.settings.ToolbarPosition
 import paige.navic.ui.components.common.Form
@@ -64,15 +64,15 @@ fun SettingsNowPlayingScreen() {
 				Form {
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_swipe_to_skip)) },
-						value = Settings.shared.swipeToSkip,
-						onSetValue = { Settings.shared.swipeToSkip = it }
+						value = PreferenceManager.shared.swipeToSkip,
+						onSetValue = { PreferenceManager.shared.swipeToSkip = it }
 					)
 
 					SettingSelectionRow(
 						items = NowPlayingBackgroundStyle.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.nowPlayingBackgroundStyle,
-						onSelect = { Settings.shared.nowPlayingBackgroundStyle = it },
+						selection = PreferenceManager.shared.nowPlayingBackgroundStyle,
+						onSelect = { PreferenceManager.shared.nowPlayingBackgroundStyle = it },
 						description = stringResource(Res.string.subtitle_now_playing_background_style),
 						title = { Text(stringResource(Res.string.option_now_playing_background_style)) }
 					)
@@ -86,7 +86,7 @@ fun SettingsNowPlayingScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_now_playing_slider_style))
 							Text(
-								stringResource(Settings.shared.nowPlayingSliderStyle.displayName),
+								stringResource(PreferenceManager.shared.nowPlayingSliderStyle.displayName),
 								style = MaterialTheme.typography.bodyMedium,
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
@@ -103,15 +103,15 @@ fun SettingsNowPlayingScreen() {
 				Form {
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_now_playing_song_info)) },
-						value = Settings.shared.nowPlayingSongInfo,
-						onSetValue = { Settings.shared.nowPlayingSongInfo = it }
+						value = PreferenceManager.shared.nowPlayingSongInfo,
+						onSetValue = { PreferenceManager.shared.nowPlayingSongInfo = it }
 					)
 
 					SettingSelectionRow(
 						items = ToolbarPosition.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.nowPlayingToolbarPosition,
-						onSelect = { Settings.shared.nowPlayingToolbarPosition = it },
+						selection = PreferenceManager.shared.nowPlayingToolbarPosition,
+						onSelect = { PreferenceManager.shared.nowPlayingToolbarPosition = it },
 						title = { Text(stringResource(Res.string.option_now_playing_toolbar_position)) }
 					)
 				}

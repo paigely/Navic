@@ -21,7 +21,7 @@ import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WaveVelocity
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import org.koin.compose.koinInject
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NowPlayingSliderStyle
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.SlimSlider
@@ -38,7 +38,7 @@ fun NowPlayingProgressBar() {
 		else 0.dp
 	)
 
-	when (Settings.shared.nowPlayingSliderStyle) {
+	when (PreferenceManager.shared.nowPlayingSliderStyle) {
 		NowPlayingSliderStyle.Flat -> {
 			Slider(
 				value = playerState.progress,
@@ -48,7 +48,7 @@ fun NowPlayingProgressBar() {
 			)
 		}
 		NowPlayingSliderStyle.Squiggly, NowPlayingSliderStyle.Yoyo -> {
-			val isYoyo = Settings.shared.nowPlayingSliderStyle == NowPlayingSliderStyle.Yoyo
+			val isYoyo = PreferenceManager.shared.nowPlayingSliderStyle == NowPlayingSliderStyle.Yoyo
 			WavySlider(
 				value = playerState.progress,
 				onValueChange = { player.seek(it) },

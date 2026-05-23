@@ -38,7 +38,7 @@ import paige.navic.LocalNavStack
 import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.domain.models.settings.NavbarTab
 import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NavigationBarLabelVisibility
 import paige.navic.domain.models.settings.NavigationBarStyle
 import paige.navic.icons.Icons
@@ -130,7 +130,7 @@ fun BottomBar(
 		.tabs.filter { tab -> tab.visible }
 
 	AnimatedContent(
-		Settings.shared.navigationBarStyle != NavigationBarStyle.Short
+		PreferenceManager.shared.navigationBarStyle != NavigationBarStyle.Short
 			&& platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
 			&& tabs.size > 1
 	) {
@@ -157,7 +157,7 @@ fun BottomBar(
 					NavigationBarItem(
 						selected = selected,
 						enabled = enabled,
-						alwaysShowLabel = Settings.shared.navigationBarLabelVisibility
+						alwaysShowLabel = PreferenceManager.shared.navigationBarLabelVisibility
 							== NavigationBarLabelVisibility.Always,
 						onClick = {
 							platformContext.clickSound()

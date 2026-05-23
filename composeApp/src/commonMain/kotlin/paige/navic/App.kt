@@ -50,7 +50,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.koinInject
 import paige.navic.domain.manager.SessionManager
-import paige.navic.domain.manager.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.PlatformContext
 import paige.navic.shared.rememberPlatformContext
@@ -193,13 +193,13 @@ fun App() {
 						}
 					)
 				}
-				if (!Settings.shared.showedSideloadingWarning
+				if (!PreferenceManager.shared.showedSideloadingWarning
 					&& platformContext.name.lowercase().contains("android")
 				) {
 					SideloadingDialog()
 				}
 				// version check is annoying to do on ios
-				if (Settings.shared.checkForUpdates
+				if (PreferenceManager.shared.checkForUpdates
 					&& !listOf("ios", "ipados").contains(platformContext.name.lowercase())) {
 					ChangelogSheet()
 				}
