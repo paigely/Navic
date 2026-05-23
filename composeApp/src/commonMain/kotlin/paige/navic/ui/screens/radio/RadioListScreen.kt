@@ -54,8 +54,8 @@ import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.radio.components.radioListScreenContent
 import paige.navic.ui.screens.radio.dialogs.RadioCreateDialog
 import paige.navic.ui.screens.radio.viewmodels.RadioListViewModel
-import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.withoutTop
+import paige.navic.util.ui.LocalBottomBarScrollManager
+import paige.navic.util.ui.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

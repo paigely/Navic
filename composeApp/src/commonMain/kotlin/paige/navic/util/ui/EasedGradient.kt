@@ -2,7 +2,7 @@
 // Copyright 2024, Christopher Banes and the Haze project contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package paige.navic.utils
+package paige.navic.util.ui
 
 import androidx.compose.animation.core.EaseInCirc
 import androidx.compose.animation.core.Easing

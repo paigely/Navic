@@ -15,8 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import paige.navic.utils.SheetHideMotionSpec
-import paige.navic.utils.SheetShowMotionSpec
+import paige.navic.util.ui.SheetHideMotionSpec
+import paige.navic.util.ui.SheetShowMotionSpec
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -44,9 +44,9 @@ import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.song.viewmodels.SongDetailViewModel
-import paige.navic.utils.effectiveGain
-import paige.navic.utils.toFileSize
-import paige.navic.utils.toHoursMinutesSeconds
+import paige.navic.util.core.effectiveGain
+import paige.navic.util.core.toFileSize
+import paige.navic.util.core.toHoursMinutesSeconds
 
 @Composable
 fun SongDetailScreen(songId: String) {

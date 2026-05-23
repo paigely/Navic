@@ -48,7 +48,7 @@ import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
-import paige.navic.utils.toHoursMinutesSeconds
+import paige.navic.util.core.toHoursMinutesSeconds
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 

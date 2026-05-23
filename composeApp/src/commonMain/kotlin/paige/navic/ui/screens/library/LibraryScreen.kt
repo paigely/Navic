@@ -41,7 +41,7 @@ import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
-import paige.navic.utils.LocalBottomBarScrollManager
+import paige.navic.util.ui.LocalBottomBarScrollManager
 import paige.navic.ui.core.LoginUiState
 import paige.navic.ui.core.UiState
 import kotlin.time.Duration

@@ -17,7 +17,7 @@ import paige.navic.data.database.mappers.toEntity
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
 import paige.navic.ui.core.UiState
-import paige.navic.utils.sortedByListType
+import paige.navic.util.core.sortedByListType
 import kotlin.time.Clock
 
 class SongRepository(

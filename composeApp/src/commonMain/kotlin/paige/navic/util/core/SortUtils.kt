@@ -1,4 +1,4 @@
-package paige.navic.utils
+package paige.navic.util.core
 
 import androidx.room3.RoomRawQuery
 import kotlinx.collections.immutable.ImmutableList

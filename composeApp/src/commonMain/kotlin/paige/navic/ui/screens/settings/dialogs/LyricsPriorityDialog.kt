@@ -36,10 +36,10 @@ import paige.navic.icons.outlined.DragHandle
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.settings.viewmodels.LyricsPriorityViewModel
-import paige.navic.utils.DraggableListState
-import paige.navic.utils.dragHandle
-import paige.navic.utils.draggableItems
-import paige.navic.utils.rememberDraggableListState
+import paige.navic.util.ui.DraggableListState
+import paige.navic.util.ui.dragHandle
+import paige.navic.util.ui.draggableItems
+import paige.navic.util.ui.rememberDraggableListState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

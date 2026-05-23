@@ -27,7 +27,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.SleepTimerManager
-import paige.navic.utils.label
+import paige.navic.util.core.label
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 

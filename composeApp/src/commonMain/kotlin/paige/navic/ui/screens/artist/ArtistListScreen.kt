@@ -48,7 +48,7 @@ import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.artist.components.ArtistListScreenContent
 import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import paige.navic.utils.LocalBottomBarScrollManager
+import paige.navic.util.ui.LocalBottomBarScrollManager
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

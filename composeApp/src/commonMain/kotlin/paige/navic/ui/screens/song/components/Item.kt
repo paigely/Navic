@@ -54,7 +54,7 @@ import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import paige.navic.utils.InlineExplicitIcon
+import paige.navic.util.core.InlineExplicitIcon
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

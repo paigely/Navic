@@ -48,7 +48,7 @@ import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import paige.navic.utils.InlineExplicitIcon
+import paige.navic.util.core.InlineExplicitIcon
 
 @Composable
 fun SongRow(

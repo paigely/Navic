@@ -84,8 +84,8 @@ import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.RatingRow
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.theme.positive
-import paige.navic.utils.InlineExplicitIcon
-import paige.navic.utils.label
+import paige.navic.util.core.InlineExplicitIcon
+import paige.navic.util.core.label
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

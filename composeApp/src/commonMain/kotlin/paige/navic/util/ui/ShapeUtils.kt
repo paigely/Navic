@@ -1,4 +1,4 @@
-package paige.navic.utils
+package paige.navic.util.ui
 
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi

@@ -42,8 +42,8 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.screens.queue.components.QueueScreenItem
 import paige.navic.ui.screens.queue.viewmodels.QueueViewModel
-import paige.navic.utils.draggableItemsIndexed
-import paige.navic.utils.rememberDraggableListState
+import paige.navic.util.ui.draggableItemsIndexed
+import paige.navic.util.ui.rememberDraggableListState
 import kotlin.time.DurationUnit
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

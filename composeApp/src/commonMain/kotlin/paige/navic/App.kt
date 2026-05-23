@@ -57,8 +57,8 @@ import paige.navic.shared.rememberPlatformContext
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
 import paige.navic.ui.navigation.Screen
-import paige.navic.ui.scenes.BottomSheetSceneStrategy
-import paige.navic.ui.scenes.NowPlayingSceneStrategy
+import paige.navic.ui.navigation.BottomSheetSceneStrategy
+import paige.navic.ui.navigation.NowPlayingSceneStrategy
 import paige.navic.ui.screens.album.AlbumListScreen
 import paige.navic.ui.screens.artist.ArtistDetailScreen
 import paige.navic.ui.screens.artist.ArtistListScreen
@@ -90,10 +90,10 @@ import paige.navic.ui.screens.song.SongDetailScreen
 import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
-import paige.navic.utils.BottomBarScrollManager
-import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.Material3Transitions
-import paige.navic.utils.initializeSingletonImageLoader
+import paige.navic.util.ui.BottomBarScrollManager
+import paige.navic.util.ui.LocalBottomBarScrollManager
+import paige.navic.util.ui.Material3Transitions
+import paige.navic.util.core.initializeSingletonImageLoader
 
 @OptIn(ExperimentalSerializationApi::class)
 private val config = SavedStateConfiguration {

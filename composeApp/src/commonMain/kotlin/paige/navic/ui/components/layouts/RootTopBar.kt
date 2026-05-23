@@ -48,7 +48,7 @@ import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.ui.theme.positive
 import paige.navic.ui.core.UiState
-import paige.navic.utils.label
+import paige.navic.util.core.label
 
 @OptIn(
 	ExperimentalMaterial3Api::class,

@@ -26,7 +26,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingMoreButton
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingStarButton
-import paige.navic.utils.InlineExplicitIconLarge
+import paige.navic.util.core.InlineExplicitIconLarge
 
 @Composable
 fun NowPlayingInfoRow(

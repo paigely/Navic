@@ -26,8 +26,8 @@ import org.jetbrains.compose.resources.StringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
-import paige.navic.utils.darkIosColorScheme
-import paige.navic.utils.lightIosColorScheme
+import paige.navic.util.ui.darkIosColorScheme
+import paige.navic.util.ui.lightIosColorScheme
 
 /**
  * Theme choices that the user can choose from

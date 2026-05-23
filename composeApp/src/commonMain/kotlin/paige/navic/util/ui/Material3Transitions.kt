@@ -1,4 +1,4 @@
-package paige.navic.utils
+package paige.navic.util.ui
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition

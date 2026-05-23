@@ -1,4 +1,4 @@
-package paige.navic.utils
+package paige.navic.util.core
 
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.Icon

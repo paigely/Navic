@@ -1,4 +1,4 @@
-package paige.navic.utils
+package paige.navic.util.ui
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

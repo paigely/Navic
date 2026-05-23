@@ -91,7 +91,7 @@ import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.ui.screens.search.components.SearchScreenChips
 import paige.navic.ui.screens.search.components.SearchScreenTopBar
 import paige.navic.ui.screens.search.viewmodels.SearchViewModel
-import paige.navic.utils.LocalBottomBarScrollManager
+import paige.navic.util.ui.LocalBottomBarScrollManager
 
 enum class SearchCategory(val res: StringResource) {
 	ALL(Res.string.title_all),

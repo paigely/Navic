@@ -41,9 +41,9 @@ import paige.navic.icons.outlined.Offline
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.Waveform
-import paige.navic.utils.DraggableListState
-import paige.navic.utils.dragHandle
-import paige.navic.utils.segmentedShapes
+import paige.navic.util.ui.DraggableListState
+import paige.navic.util.ui.dragHandle
+import paige.navic.util.ui.segmentedShapes
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

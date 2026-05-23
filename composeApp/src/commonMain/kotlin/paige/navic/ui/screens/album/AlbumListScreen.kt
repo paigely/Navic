@@ -41,8 +41,8 @@ import paige.navic.ui.screens.album.components.AlbumListScreenSortButton
 import paige.navic.ui.screens.album.components.albumListScreenContent
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
-import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.withoutTop
+import paige.navic.util.ui.LocalBottomBarScrollManager
+import paige.navic.util.ui.withoutTop
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)

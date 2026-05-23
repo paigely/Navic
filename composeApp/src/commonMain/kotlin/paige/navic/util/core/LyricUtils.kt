@@ -1,4 +1,4 @@
-package paige.navic.utils
+package paige.navic.util.core
 
 import paige.navic.domain.models.lyrics.LyricsWord
 import kotlin.time.Duration

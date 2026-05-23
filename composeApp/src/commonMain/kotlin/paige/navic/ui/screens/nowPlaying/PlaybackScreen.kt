@@ -27,7 +27,7 @@ import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import org.koin.compose.koinInject
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.utils.rememberDraggableListState
+import paige.navic.util.ui.rememberDraggableListState
 import kotlin.math.round
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

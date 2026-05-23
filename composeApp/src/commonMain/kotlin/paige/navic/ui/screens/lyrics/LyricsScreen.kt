@@ -83,7 +83,7 @@ import paige.navic.ui.screens.lyrics.components.LyricsScreenKaraokeText
 import paige.navic.ui.screens.lyrics.components.LyricsScreenLoadingView
 import paige.navic.ui.screens.lyrics.dialogs.LyricsShareSheet
 import paige.navic.ui.screens.lyrics.viewmodels.LyricsScreenViewModel
-import paige.navic.utils.calculateWordProgress
+import paige.navic.util.core.calculateWordProgress
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 

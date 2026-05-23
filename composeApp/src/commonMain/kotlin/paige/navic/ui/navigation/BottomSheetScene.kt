@@ -1,4 +1,4 @@
-package paige.navic.ui.scenes
+package paige.navic.ui.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -23,7 +23,7 @@ import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import com.kyant.capsule.ContinuousCapsule
 import paige.navic.ui.components.sheets.ModalBottomSheet
-import paige.navic.ui.scenes.BottomSheetSceneStrategy.Companion.bottomSheet
+import paige.navic.ui.navigation.BottomSheetSceneStrategy.Companion.bottomSheet
 
 /** An [OverlayScene] that renders an [entry] within a [ModalBottomSheet]. */
 @OptIn(ExperimentalMaterial3Api::class)

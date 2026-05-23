@@ -1,4 +1,4 @@
-package paige.navic.ui.scenes
+package paige.navic.ui.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -36,7 +36,7 @@ import org.koin.compose.koinInject
 import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.sheets.ModalBottomSheet
-import paige.navic.ui.scenes.NowPlayingSceneStrategy.Companion.bottomSheet
+import paige.navic.ui.navigation.NowPlayingSceneStrategy.Companion.bottomSheet
 import paige.navic.ui.theme.NavicTheme
 
 /** An [OverlayScene] that renders an [entry] within a [ModalBottomSheet]. */
