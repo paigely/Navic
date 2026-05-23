@@ -91,7 +91,7 @@ import paige.navic.ui.screens.song.SongDetailScreen
 import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
-import paige.navic.util.core.initializeSingletonImageLoader
+import paige.navic.di.initializeSingletonImageLoader
 import paige.navic.util.ui.Material3Transitions
 
 @OptIn(ExperimentalSerializationApi::class)
