@@ -42,6 +42,7 @@ import navic.composeapp.generated.resources.title_playlists
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainSongCollection
@@ -64,7 +65,6 @@ import paige.navic.ui.screens.playlist.components.playlistListScreenContent
 import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
-import paige.navic.util.ui.LocalBottomBarScrollManager
 import paige.navic.util.ui.withoutTop
 import kotlin.time.Duration
 

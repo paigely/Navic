@@ -49,6 +49,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.koinInject
+import paige.navic.domain.manager.BottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
@@ -56,9 +57,9 @@ import paige.navic.shared.PlatformContext
 import paige.navic.shared.rememberPlatformContext
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
-import paige.navic.ui.navigation.Screen
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
 import paige.navic.ui.navigation.NowPlayingSceneStrategy
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.album.AlbumListScreen
 import paige.navic.ui.screens.artist.ArtistDetailScreen
 import paige.navic.ui.screens.artist.ArtistListScreen
@@ -90,10 +91,8 @@ import paige.navic.ui.screens.song.SongDetailScreen
 import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
-import paige.navic.util.ui.BottomBarScrollManager
-import paige.navic.util.ui.LocalBottomBarScrollManager
-import paige.navic.util.ui.Material3Transitions
 import paige.navic.util.core.initializeSingletonImageLoader
+import paige.navic.util.ui.Material3Transitions
 
 @OptIn(ExperimentalSerializationApi::class)
 private val config = SavedStateConfiguration {
@@ -109,6 +108,10 @@ val LocalNavStack = staticCompositionLocalOf<NavBackStack<NavKey>> { error("no b
 val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> { error("no snackbar state") }
 val LocalSharedTransitionScope =
 	staticCompositionLocalOf<SharedTransitionScope> { error("no shared transition scope") }
+
+val LocalBottomBarScrollManager = staticCompositionLocalOf<BottomBarScrollManager> {
+	error("No BottomBarScrollManager provided")
+}
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

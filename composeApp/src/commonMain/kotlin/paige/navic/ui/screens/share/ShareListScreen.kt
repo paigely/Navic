@@ -29,6 +29,7 @@ import navic.composeapp.generated.resources.title_shares
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.LocalBottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.icons.Icons
@@ -43,7 +44,6 @@ import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.share.components.ShareListScreenItem
 import paige.navic.ui.screens.share.viewmodels.ShareListViewModel
-import paige.navic.util.ui.LocalBottomBarScrollManager
 import paige.navic.util.ui.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

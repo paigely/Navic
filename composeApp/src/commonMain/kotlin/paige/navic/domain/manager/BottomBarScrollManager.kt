@@ -1,13 +1,13 @@
-package paige.navic.util.ui
+package paige.navic.domain.manager
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 
+// TODO: replace this because it's kind of finnicky
 class BottomBarScrollManager(val thresholdPx: Float) {
 	var isTriggered by mutableStateOf(false)
 	private var accumulator = 0f
@@ -31,8 +31,4 @@ class BottomBarScrollManager(val thresholdPx: Float) {
 			return Offset.Zero
 		}
 	}
-}
-
-val LocalBottomBarScrollManager = staticCompositionLocalOf<BottomBarScrollManager> {
-	error("No BottomBarScrollManager provided")
 }

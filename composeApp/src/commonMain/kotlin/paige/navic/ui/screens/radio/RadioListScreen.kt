@@ -38,6 +38,7 @@ import navic.composeapp.generated.resources.title_radios
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarCollapseMode
@@ -54,7 +55,6 @@ import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.radio.components.radioListScreenContent
 import paige.navic.ui.screens.radio.dialogs.RadioCreateDialog
 import paige.navic.ui.screens.radio.viewmodels.RadioListViewModel
-import paige.navic.util.ui.LocalBottomBarScrollManager
 import paige.navic.util.ui.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

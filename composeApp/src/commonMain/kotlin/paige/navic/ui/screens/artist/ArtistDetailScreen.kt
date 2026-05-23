@@ -65,6 +65,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
@@ -87,7 +88,6 @@ import paige.navic.ui.screens.artist.components.ArtistDetailScreenTopBar
 import paige.navic.ui.screens.artist.viewmodels.ArtistDetailViewModel
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.ui.screens.share.dialogs.ShareDialog
-import paige.navic.util.ui.LocalBottomBarScrollManager
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

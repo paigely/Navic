@@ -56,6 +56,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
@@ -91,7 +92,6 @@ import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.ui.screens.search.components.SearchScreenChips
 import paige.navic.ui.screens.search.components.SearchScreenTopBar
 import paige.navic.ui.screens.search.viewmodels.SearchViewModel
-import paige.navic.util.ui.LocalBottomBarScrollManager
 
 enum class SearchCategory(val res: StringResource) {
 	ALL(Res.string.title_all),

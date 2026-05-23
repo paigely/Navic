@@ -27,6 +27,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import paige.navic.LocalBottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
@@ -42,7 +43,6 @@ import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.screens.song.components.SongListScreenSortButton
 import paige.navic.ui.screens.song.components.songListScreenContent
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
-import paige.navic.util.ui.LocalBottomBarScrollManager
 import paige.navic.util.ui.withoutTop
 import kotlin.time.Duration
 
