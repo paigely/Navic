@@ -10,7 +10,6 @@ import io.ktor.client.request.header
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import paige.navic.domain.models.User
 
 class SessionManager(
 	private val settings: Settings
@@ -24,6 +23,10 @@ class SessionManager(
 		password = settings.getString("password", ""),
 	)
 		private set
+
+	init {
+		_isLoggedIn.value = settings.getStringOrNull("username") != null
+	}
 
 	private fun createClient(
 		instanceUrl: String,
@@ -49,18 +52,6 @@ class SessionManager(
 			}
 		}
 	)
-
-	val currentUser: User?
-		get() {
-			val username = settings.getStringOrNull("username") ?: return null
-
-			_isLoggedIn.value = true
-
-			return User(
-				name = username,
-				avatarUrl = api.getAvatarUrl(username)
-			)
-		}
 
 	suspend fun login(
 		instanceUrl: String,

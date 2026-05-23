@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.manager.SessionManager
-import paige.navic.domain.models.User
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.ui.core.LoginUiState
 
@@ -18,7 +17,7 @@ class LoginViewModel(
 	private val repository: DbRepository,
 	private val sessionManager: SessionManager
 ) : ViewModel() {
-	private val _loginUiState = MutableStateFlow<LoginUiState<User?>>(LoginUiState.Idle)
+	private val _loginUiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
 	val loginState = _loginUiState.asStateFlow()
 
 	val instanceState = TextFieldState()
@@ -57,9 +56,8 @@ class LoginViewModel(
 
 	fun loadUser() {
 		viewModelScope.launch {
-			val user = sessionManager.currentUser
-			if (user != null) {
-				_loginUiState.value = LoginUiState.Success(user)
+			if (sessionManager.isLoggedIn.value) {
+				_loginUiState.value = LoginUiState.Success
 			} else {
 				_loginUiState.value = LoginUiState.Idle
 			}
@@ -83,12 +81,10 @@ class LoginViewModel(
 					passwordState.text.toString()
 				)
 
-				val user = sessionManager.currentUser ?: throw Exception("currentUser is null")
-
 				repository.syncEverything { progress, message ->
 					_loginUiState.value = LoginUiState.Syncing(progress, message)
 				}.onSuccess {
-					_loginUiState.value = LoginUiState.Success(user)
+					_loginUiState.value = LoginUiState.Success
 				}.onFailure { e ->
 					_loginUiState.value = LoginUiState.Error(e as Exception)
 				}

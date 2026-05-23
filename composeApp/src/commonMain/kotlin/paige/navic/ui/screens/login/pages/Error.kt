@@ -13,14 +13,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import paige.navic.domain.models.User
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.core.LoginUiState
 import paige.navic.ui.core.UiState
 
 @Composable
 fun LoginScreenError(
-	loginUiState: LoginUiState<User?>
+	loginUiState: LoginUiState
 ) {
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()

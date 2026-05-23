@@ -15,12 +15,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_syncing
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.domain.models.User
 import paige.navic.ui.core.LoginUiState
 
 @Composable
 fun LoginScreenSyncStatus(
-	loginUiState: LoginUiState<User?>
+	loginUiState: LoginUiState
 ) {
 	AnimatedVisibility(
 		modifier = Modifier.fillMaxWidth(),

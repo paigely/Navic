@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -48,15 +49,14 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.koinInject
-import paige.navic.utils.initializeSingletonImageLoader
-import paige.navic.ui.navigation.Screen
-import paige.navic.domain.manager.Settings
 import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.manager.Settings
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.PlatformContext
 import paige.navic.shared.rememberPlatformContext
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.scenes.BottomSheetSceneStrategy
 import paige.navic.ui.scenes.NowPlayingSceneStrategy
 import paige.navic.ui.screens.album.AlbumListScreen
@@ -93,6 +93,7 @@ import paige.navic.ui.theme.NavicTheme
 import paige.navic.utils.BottomBarScrollManager
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.Material3Transitions
+import paige.navic.utils.initializeSingletonImageLoader
 
 @OptIn(ExperimentalSerializationApi::class)
 private val config = SavedStateConfiguration {
@@ -119,8 +120,9 @@ fun App() {
 
 	val platformContext = rememberPlatformContext()
 	val sessionManager = koinInject<SessionManager>()
+	val isLoggedIn by sessionManager.isLoggedIn.collectAsStateWithLifecycle()
 	val backStack = rememberNavBackStack(
-		config, if (sessionManager.currentUser != null) {
+		config, if (isLoggedIn) {
 			Screen.Library()
 		} else {
 			Screen.Login

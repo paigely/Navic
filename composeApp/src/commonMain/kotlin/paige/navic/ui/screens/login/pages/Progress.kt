@@ -14,7 +14,6 @@ import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import paige.navic.domain.models.User
 import paige.navic.ui.core.LoginUiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -22,7 +21,7 @@ import paige.navic.ui.core.LoginUiState
 fun LoginScreenProgress(
 	modifier: Modifier = Modifier,
 	isBusy: Boolean,
-	loginUiState: LoginUiState<User?>
+	loginUiState: LoginUiState
 ) {
 	val smoothedProgress by animateFloatAsState(
 		((loginUiState as? LoginUiState.Syncing)?.progress ?: 1f).coerceIn(0f..1f),
