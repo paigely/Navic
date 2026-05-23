@@ -48,6 +48,7 @@ actual fun rememberPlatformContext(): PlatformContext {
 	}
 	return remember(isDark, sizeClass) {
 		object : PlatformContext {
+			// TODO: remove this and usages of it as compose will do it by default in alpha03
 			override fun clickSound() {
 				view.playSoundEffect(SoundEffectConstants.CLICK)
 			}
