@@ -31,6 +31,7 @@ import navic.composeapp.generated.resources.title_fonts_external
 import navic.composeapp.generated.resources.title_fonts_inbuilt
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.FontOption
@@ -41,6 +42,7 @@ import paige.navic.ui.theme.googleSans
 
 @Composable
 fun FontsScreen() {
+	val preferenceManager = koinInject<PreferenceManager>()
 	Scaffold(
 		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_choose_font)) }) }
 	) { contentPadding ->
@@ -53,7 +55,10 @@ fun FontsScreen() {
 					top = 16.dp, end = 16.dp, start = 16.dp
 				)
 			) {
-				inbuiltFonts()
+				inbuiltFonts(
+					onSelectFont = { preferenceManager.font = it },
+					selectedFont = preferenceManager.font
+				)
 				externalFonts()
 			}
 		}
@@ -71,7 +76,10 @@ private fun LazyListScope.heading(resource: StringResource) {
 	}
 }
 
-private fun LazyListScope.inbuiltFonts() {
+private fun LazyListScope.inbuiltFonts(
+	onSelectFont: (FontOption) -> Unit,
+	selectedFont: FontOption
+) {
 	heading(Res.string.title_fonts_inbuilt)
 	item {
 		FontRow(
@@ -79,10 +87,8 @@ private fun LazyListScope.inbuiltFonts() {
 			fontFamily = FontFamily.Default,
 			index = 0,
 			count = 2,
-			onClick = {
-				PreferenceManager.shared.font = FontOption.System
-			},
-			selected = PreferenceManager.shared.font == FontOption.System
+			onClick = { onSelectFont(FontOption.System) },
+			selected = selectedFont == FontOption.System
 		)
 	}
 	item {
@@ -91,10 +97,8 @@ private fun LazyListScope.inbuiltFonts() {
 			fontFamily = googleSans(),
 			index = 1,
 			count = 2,
-			onClick = {
-				PreferenceManager.shared.font = FontOption.GoogleSans
-			},
-			selected = PreferenceManager.shared.font == FontOption.GoogleSans
+			onClick = { onSelectFont(FontOption.GoogleSans) },
+			selected = selectedFont == FontOption.GoogleSans
 		)
 		Spacer(Modifier.height(10.dp))
 	}

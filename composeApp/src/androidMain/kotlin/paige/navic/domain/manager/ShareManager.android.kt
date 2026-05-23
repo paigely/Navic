@@ -6,16 +6,16 @@ import android.graphics.Bitmap
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.content.FileProvider
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
 actual class ShareManager(
-	private val context: Context,
-	private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+	private val context: Context
 ) {
+	private val dispatcher = Dispatchers.IO
+
 	actual suspend fun shareImage(bitmap: ImageBitmap, fileName: String) {
 		val androidBitmap = bitmap.asAndroidBitmap()
 

@@ -42,6 +42,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_now_playing_slider_style
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NowPlayingSliderStyle
@@ -57,6 +58,7 @@ fun NowPlayingSliderStyleDialog(
 
 	val platformContext = LocalPlatformContext.current
 	var sliderValue by rememberSaveable { mutableFloatStateOf(0.6767f) }
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	AlertDialog(
 		title = {
@@ -75,9 +77,9 @@ fun NowPlayingSliderStyleDialog(
 					item(key = style.ordinal) {
 						Option(
 							onClick = {
-								PreferenceManager.shared.nowPlayingSliderStyle = style
+								preferenceManager.nowPlayingSliderStyle = style
 							},
-							selected = PreferenceManager.shared.nowPlayingSliderStyle == style,
+							selected = preferenceManager.nowPlayingSliderStyle == style,
 							label = stringResource(style.displayName)
 						) {
 							when (style) {

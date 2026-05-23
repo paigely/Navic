@@ -5,10 +5,10 @@ import android.content.Context
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
@@ -41,9 +41,10 @@ private data class NetworkStatus(
 @OptIn(ExperimentalCoroutinesApi::class)
 actual class ConnectivityManager(
 	context: Context,
-	scope: CoroutineScope,
-	dispatcher: CoroutineDispatcher = Dispatchers.IO
+	private val preferenceManager: PreferenceManager
 ) {
+	private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+	private val dispatcher = Dispatchers.IO
 	private val started = SharingStarted.WhileSubscribed(5000)
 	private val connectivityManager =
 		context.getSystemService(Context.CONNECTIVITY_SERVICE) as AndroidConnectivityManager
@@ -88,7 +89,7 @@ actual class ConnectivityManager(
 
 	actual val isOnline = networkStatus
 		.mapLatest { status ->
-			when (PreferenceManager.shared.offlineMode) {
+			when (preferenceManager.offlineMode) {
 				OfflineMode.Forced -> false
 				OfflineMode.NoWiFi -> status.isOnline && !status.isCellular
 				else -> status.isOnline

@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import org.koin.compose.koinInject
 import paige.navic.domain.manager.PreferenceManager
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -40,6 +41,8 @@ fun LyricsScreenKaraokeText(
 	onClick: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
+
 	var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
 
 	val smoothProgress by animateFloatAsState(
@@ -47,8 +50,8 @@ fun LyricsScreenKaraokeText(
 		animationSpec = spring(stiffness = Spring.StiffnessLow, visibilityThreshold = 0.001f)
 	)
 
-	val lyricsBeatByBeat = PreferenceManager.shared.lyricsBeatByBeat
-	val lyricsBrightInactive = PreferenceManager.shared.lyricsBrightInactive
+	val lyricsBeatByBeat = preferenceManager.lyricsBeatByBeat
+	val lyricsBrightInactive = preferenceManager.lyricsBrightInactive
 
 	val isRtl = textLayoutResult?.let { layout ->
 		(0 until layout.lineCount).any { lineIndex ->

@@ -27,6 +27,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_choose_theme
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.Theme
@@ -41,6 +42,7 @@ fun ThemeDialog(
 	if (!presented) return
 
 	val platformContext = LocalPlatformContext.current
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	AlertDialog(
 		title = {
@@ -60,14 +62,14 @@ fun ThemeDialog(
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
 								platformContext.clickSound()
-								PreferenceManager.shared.theme = theme
+								preferenceManager.theme = theme
 								onDismissRequest()
 							},
 						horizontalArrangement = Arrangement.spacedBy(16.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						RadioButton(
-							selected = PreferenceManager.shared.theme == theme,
+							selected = preferenceManager.theme == theme,
 							onClick = null
 						)
 						Column(Modifier.weight(1f)) {
@@ -101,13 +103,14 @@ fun ThemeDialog(
 @Composable
 private fun ThemeModeChooser() {
 	val platformContext = LocalPlatformContext.current
+	val preferenceManager = koinInject<PreferenceManager>()
 	val themes = ThemeMode.entries
 	Row(
 		modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
 		horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
 	) {
 		themes.forEachIndexed { idx, mode ->
-			val checked = PreferenceManager.shared.themeMode == mode
+			val checked = preferenceManager.themeMode == mode
 			val weight by animateFloatAsState(
 				if (checked) 1.25f else 1f
 			)
@@ -115,7 +118,7 @@ private fun ThemeModeChooser() {
 				checked = checked,
 				onCheckedChange = { _ ->
 					platformContext.clickSound()
-					PreferenceManager.shared.themeMode = mode
+					preferenceManager.themeMode = mode
 				},
 				shapes =
 					when (idx) {

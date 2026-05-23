@@ -33,7 +33,6 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalNavStack
-import paige.navic.ui.navigation.Screen
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NowPlayingBackgroundStyle
 import paige.navic.domain.models.settings.ToolbarPosition
@@ -47,6 +46,7 @@ import paige.navic.ui.components.layouts.SheetScaffold
 import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.components.toolbars.SheetActionButton
 import paige.navic.ui.components.toolbars.SheetToolbar
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingArtworkPager
 import paige.navic.ui.screens.nowPlaying.components.rows.NowPlayingControlsRow
 import paige.navic.ui.screens.nowPlaying.viewmodels.NowPlayingViewModel
@@ -54,6 +54,7 @@ import paige.navic.ui.screens.nowPlaying.viewmodels.NowPlayingViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NowPlayingScreen() {
+	val preferenceManager = koinInject<PreferenceManager>()
 	val player = koinInject<MediaPlayerViewModel>()
 	val backStack = LocalNavStack.current
 
@@ -106,7 +107,7 @@ fun NowPlayingScreen() {
 		}
 	) { contentPadding ->
 		Box(Modifier.fillMaxSize()) {
-			if (PreferenceManager.shared.nowPlayingBackgroundStyle
+			if (preferenceManager.nowPlayingBackgroundStyle
 				== NowPlayingBackgroundStyle.Dynamic
 			) {
 				BlendBackground(
@@ -121,7 +122,7 @@ fun NowPlayingScreen() {
 					.fillMaxSize()
 			) {
 				val isLandscape = maxWidth > maxHeight
-				val toolbarPosition = PreferenceManager.shared.nowPlayingToolbarPosition
+				val toolbarPosition = preferenceManager.nowPlayingToolbarPosition
 				val padding = when {
 					isLandscape -> contentPadding
 					toolbarPosition == ToolbarPosition.Top -> contentPadding.plus(

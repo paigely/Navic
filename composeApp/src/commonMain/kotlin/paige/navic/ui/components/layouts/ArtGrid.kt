@@ -33,13 +33,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
-import paige.navic.utils.EmphasizedDecelerateEasing
 import paige.navic.ui.core.UiState
+import paige.navic.utils.EmphasizedDecelerateEasing
 import paige.navic.utils.shimmerLoading
 
 @Composable
@@ -52,12 +53,13 @@ fun ArtGrid(
 	content: LazyGridScope.() -> Unit
 ) {
 	val platformContext = LocalPlatformContext.current
-	val artGridItemSize = PreferenceManager.shared.artGridItemSize
+	val preferenceManager = koinInject<PreferenceManager>()
+	val artGridItemSize = preferenceManager.artGridItemSize
 	LazyVerticalGrid(
 		modifier = modifier.fillMaxSize(),
 		state = state,
 		columns = if (platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact)
-			GridCells.Fixed(PreferenceManager.shared.gridSize.value)
+			GridCells.Fixed(preferenceManager.gridSize.value)
 		else GridCells.Adaptive(artGridItemSize.dp),
 		contentPadding = contentPadding + PaddingValues(
 			start = 16.dp,

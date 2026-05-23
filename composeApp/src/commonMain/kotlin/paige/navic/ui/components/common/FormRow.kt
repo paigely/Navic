@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousRoundedRectangle
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 
@@ -39,6 +40,7 @@ fun FormRow(
 	content: @Composable RowScope.() -> Unit
 ) {
 	val platformContext = LocalPlatformContext.current
+	val preferenceManager = koinInject<PreferenceManager>()
 	Box(
 		modifier = modifier
 			.then(
@@ -57,7 +59,7 @@ fun FormRow(
 			)
 			.clip(
 				ContinuousRoundedRectangle(
-					if (PreferenceManager.shared.theme.isMaterialLike()) rounding else 0.dp
+					if (preferenceManager.theme.isMaterialLike()) rounding else 0.dp
 				)
 			)
 			.background(color ?: MaterialTheme.colorScheme.surfaceContainer)

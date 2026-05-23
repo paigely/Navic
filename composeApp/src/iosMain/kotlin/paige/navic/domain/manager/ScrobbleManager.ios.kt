@@ -13,7 +13,8 @@ class IOSScrobbleManager(
     scope: CoroutineScope,
     connectivityManager: ConnectivityManager,
     syncManager: SyncManager,
-    sessionManager: SessionManager
+    sessionManager: SessionManager,
+	private val preferenceManager: PreferenceManager
 ) {
 	@OptIn(ExperimentalForeignApi::class)
 	private val playerSource = object : ScrobblePlayerSource {
@@ -30,7 +31,7 @@ class IOSScrobbleManager(
 
 
 	private val scrobbleManager =
-        ScrobbleManager(playerSource, connectivityManager, syncManager, sessionManager, scope)
+        ScrobbleManager(playerSource, connectivityManager, syncManager, sessionManager, scope, preferenceManager)
 
 	fun onMediaChanged(mediaId: String?) {
 		scrobbleManager.onMediaChanged(mediaId)

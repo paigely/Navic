@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import org.koin.compose.koinInject
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.ThemeMode
 
@@ -30,8 +31,9 @@ actual fun rememberPlatformContext(): PlatformContext {
 	val view = LocalView.current
 	val context = LocalContext.current
 	val inDarkTheme = isSystemInDarkTheme()
-	val isDark = remember(PreferenceManager.shared.themeMode) {
-		when (PreferenceManager.shared.themeMode) {
+	val preferenceManager = koinInject<PreferenceManager>()
+	val isDark = remember(preferenceManager.themeMode) {
+		when (preferenceManager.themeMode) {
 			ThemeMode.System -> inDarkTheme
 			ThemeMode.Dark -> true
 			ThemeMode.Light -> false

@@ -21,7 +21,8 @@ class ScrobbleManager(
 	private val connectivityManager: ConnectivityManager,
 	private val syncManager: SyncManager,
 	private val sessionManager: SessionManager,
-	private val scope: CoroutineScope
+	private val scope: CoroutineScope,
+	private val preferenceManager: PreferenceManager
 ) {
 	private var currentMediaId: String? = null
 	private var hasScrobbledCurrent = false
@@ -72,8 +73,8 @@ class ScrobbleManager(
 		if (duration <= 0) return
 
 		val percent = accumulatedPlayTime.toFloat() / duration.toFloat()
-		val playedEnoughPercent = percent >= PreferenceManager.shared.scrobblePercentage
-		val isValidSong = duration >= PreferenceManager.shared.minDurationToScrobble
+		val playedEnoughPercent = percent >= preferenceManager.scrobblePercentage
+		val isValidSong = duration >= preferenceManager.minDurationToScrobble
 
 		if (isValidSong && playedEnoughPercent) {
 			scrobbleSubmission(currentMediaId)
@@ -82,7 +83,7 @@ class ScrobbleManager(
 	}
 
 	private fun scrobbleSubmission(songId: String?) {
-		if (!PreferenceManager.shared.enableScrobbling || songId == null) return
+		if (!preferenceManager.enableScrobbling || songId == null) return
 
 		scope.launch(Dispatchers.IO) {
 			if (connectivityManager.isOnline.value) {
@@ -98,7 +99,7 @@ class ScrobbleManager(
 	}
 
 	private fun scrobbleNowPlaying(songId: String?) {
-		if (!PreferenceManager.shared.enableScrobbling || songId == null) return
+		if (!preferenceManager.enableScrobbling || songId == null) return
 
 		if (!connectivityManager.isOnline.value) return
 

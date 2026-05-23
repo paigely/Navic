@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.SwitchOff
@@ -24,6 +25,7 @@ fun SettingSwitch(
 	onCheckedChange: (Boolean) -> Unit,
 	enabled: Boolean = true
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	Switch(
 		modifier = modifier,
 		checked = checked,
@@ -34,7 +36,7 @@ fun SettingSwitch(
 			uncheckedThumbColor = Color.White
 		),
 		thumbContent = {
-			if (PreferenceManager.shared.theme.isMaterialLike()) {
+			if (preferenceManager.theme.isMaterialLike()) {
 				Icon(
 					if (checked) Icons.Outlined.SwitchOn else Icons.Outlined.SwitchOff,
 					contentDescription = null,

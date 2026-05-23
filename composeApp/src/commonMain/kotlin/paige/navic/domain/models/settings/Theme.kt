@@ -23,8 +23,9 @@ import navic.composeapp.generated.resources.theme_subtitle_ios
 import navic.composeapp.generated.resources.theme_subtitle_seeded
 import navic.composeapp.generated.resources.theme_subtitle_spotify
 import org.jetbrains.compose.resources.StringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.PreferenceManager.Companion.shared
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.utils.darkIosColorScheme
 import paige.navic.utils.lightIosColorScheme
 
@@ -71,8 +72,9 @@ enum class Theme(
 	fun colorScheme(): ColorScheme {
 		val platformContext = LocalPlatformContext.current
 		val inDarkTheme = isSystemInDarkTheme()
-		val isDark = remember(shared.themeMode) {
-			when (shared.themeMode) {
+		val preferenceManager = koinInject<PreferenceManager>()
+		val isDark = remember(preferenceManager.themeMode) {
+			when (preferenceManager.themeMode) {
 				ThemeMode.System -> inDarkTheme
 				ThemeMode.Dark -> true
 				ThemeMode.Light -> false
@@ -87,9 +89,9 @@ enum class Theme(
 
 			Seeded -> rememberDynamicColorScheme(
 				seedColor = HsvColor(
-					shared.accentColourH,
-					shared.accentColourS,
-					shared.accentColourV
+					preferenceManager.accentColourH,
+					preferenceManager.accentColourS,
+					preferenceManager.accentColourV
 				).toColor(),
 				isDark = isDark,
 				specVersion = ColorSpec.SpecVersion.SPEC_2025,

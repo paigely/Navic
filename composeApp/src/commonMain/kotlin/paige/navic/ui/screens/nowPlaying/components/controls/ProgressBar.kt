@@ -29,6 +29,7 @@ import paige.navic.ui.components.common.SlimSlider
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NowPlayingProgressBar() {
+	val preferenceManager = koinInject<PreferenceManager>()
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val enabled = playerState.currentSong != null
@@ -38,7 +39,7 @@ fun NowPlayingProgressBar() {
 		else 0.dp
 	)
 
-	when (PreferenceManager.shared.nowPlayingSliderStyle) {
+	when (preferenceManager.nowPlayingSliderStyle) {
 		NowPlayingSliderStyle.Flat -> {
 			Slider(
 				value = playerState.progress,
@@ -48,7 +49,7 @@ fun NowPlayingProgressBar() {
 			)
 		}
 		NowPlayingSliderStyle.Squiggly, NowPlayingSliderStyle.Yoyo -> {
-			val isYoyo = PreferenceManager.shared.nowPlayingSliderStyle == NowPlayingSliderStyle.Yoyo
+			val isYoyo = preferenceManager.nowPlayingSliderStyle == NowPlayingSliderStyle.Yoyo
 			WavySlider(
 				value = playerState.progress,
 				onValueChange = { player.seek(it) },

@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SessionManager(
-	private val settings: Settings
+	private val settings: Settings,
+	private val preferenceManager: PreferenceManager
 ) {
 	private val _isLoggedIn = MutableStateFlow(false)
 	val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
@@ -44,7 +45,7 @@ class SessionManager(
 				agent = "Navic"
 			}
 
-			val customHeaders = paige.navic.domain.manager.PreferenceManager.shared.customHeadersMap()
+			val customHeaders = preferenceManager.customHeadersMap()
 			if (customHeaders.isNotEmpty()) {
 				defaultRequest {
 					customHeaders.forEach { (key, value) -> header(key, value) }
@@ -94,6 +95,6 @@ class SessionManager(
 	fun getCoverArtUrl(coverArtId: String) = api.getCoverArtUrl(
 		coverArtId,
 		auth = true,
-		size = "${paige.navic.domain.manager.PreferenceManager.shared.coverArtQuality.value}"
+		size = "${preferenceManager.coverArtQuality.value}"
 	)
 }

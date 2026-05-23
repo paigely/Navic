@@ -1,6 +1,5 @@
 package paige.navic.domain.manager
 
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,8 +32,9 @@ private data class NetworkStatus(
 @OptIn(ExperimentalCoroutinesApi::class)
 actual class ConnectivityManager(
 	scope: CoroutineScope,
-	dispatcher: CoroutineDispatcher = Dispatchers.IO
+	private val preferenceManager: PreferenceManager
 ) {
+	private val dispatcher = Dispatchers.IO
 	private val started = SharingStarted.WhileSubscribed(5000)
 
 	private val networkStatus = callbackFlow {
@@ -60,7 +60,7 @@ actual class ConnectivityManager(
 
 	actual val isOnline = networkStatus
 		.mapLatest { status ->
-			when (PreferenceManager.shared.offlineMode) {
+			when (preferenceManager.offlineMode) {
 				OfflineMode.Forced -> false
 				OfflineMode.NoWiFi -> status.isOnline && !status.isCellular
 				else -> status.isOnline

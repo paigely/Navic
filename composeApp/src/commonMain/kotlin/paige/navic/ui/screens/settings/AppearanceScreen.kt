@@ -52,9 +52,9 @@ import navic.composeapp.generated.resources.title_choose_font
 import navic.composeapp.generated.resources.title_layout
 import navic.composeapp.generated.resources.title_miscellaneous
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalPlatformContext
+import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
-import paige.navic.ui.navigation.Screen
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.AnimationStyle
 import paige.navic.domain.models.settings.MarqueeSpeed
@@ -64,6 +64,7 @@ import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.settings.dialogs.ArtworkShapeDialog
@@ -76,6 +77,7 @@ fun SettingsAppearanceScreen() {
 	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	var showArtworkShapeDialog by rememberSaveable { mutableStateOf(false) }
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	Scaffold(
 		topBar = {
@@ -104,7 +106,7 @@ fun SettingsAppearanceScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.title_choose_font))
 							Text(
-								PreferenceManager.shared.font.displayName,
+								preferenceManager.font.displayName,
 								style = MaterialTheme.typography.bodyMedium,
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
@@ -120,7 +122,7 @@ fun SettingsAppearanceScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_choose_theme))
 							Text(
-								stringResource(PreferenceManager.shared.theme.title),
+								stringResource(preferenceManager.theme.title),
 								style = MaterialTheme.typography.bodyMedium,
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
@@ -132,7 +134,7 @@ fun SettingsAppearanceScreen() {
 						onDismissRequest = { showThemeDialog = false }
 					)
 
-					if (PreferenceManager.shared.theme == Theme.Seeded) {
+					if (preferenceManager.theme == Theme.Seeded) {
 						var expanded by remember { mutableStateOf(false) }
 						FormRow {
 							Text(stringResource(Res.string.option_accent_colour))
@@ -142,9 +144,9 @@ fun SettingsAppearanceScreen() {
 										.clip(CircleShape)
 										.background(
 											HsvColor(
-												PreferenceManager.shared.accentColourH,
-												PreferenceManager.shared.accentColourS,
-												PreferenceManager.shared.accentColourV
+												preferenceManager.accentColourH,
+												preferenceManager.accentColourS,
+												preferenceManager.accentColourV
 											).toColor()
 										)
 										.size(40.dp)
@@ -163,13 +165,13 @@ fun SettingsAppearanceScreen() {
 										RingColorPicker(
 											color = {
 												HsvColor(
-													PreferenceManager.shared.accentColourH,
-													PreferenceManager.shared.accentColourS,
-													PreferenceManager.shared.accentColourV
+													preferenceManager.accentColourH,
+													preferenceManager.accentColourS,
+													preferenceManager.accentColourV
 												)
 											},
 											onColorChange = {
-												PreferenceManager.shared.apply {
+												preferenceManager.apply {
 													accentColourH = it.hue
 													accentColourS = it.saturation
 													accentColourV = it.value
@@ -193,13 +195,13 @@ fun SettingsAppearanceScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_artwork_shape))
 							Text(
-								PreferenceManager.shared.coverArtShape.name,
+								preferenceManager.coverArtShape.name,
 								style = MaterialTheme.typography.bodyMedium,
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
 						}
 
-						val shape = PreferenceManager.shared.coverArtShape.decreasedShape
+						val shape = preferenceManager.coverArtShape.decreasedShape
 						Box(
 							modifier = Modifier
 								.size(48.dp)
@@ -221,13 +223,13 @@ fun SettingsAppearanceScreen() {
 							Column(Modifier.weight(1f)) {
 								Text(stringResource(Res.string.option_grid_items_per_row))
 								Text(
-									PreferenceManager.shared.gridSize.label,
+									preferenceManager.gridSize.label,
 									style = MaterialTheme.typography.bodyMedium,
 									color = MaterialTheme.colorScheme.onSurfaceVariant
 								)
 							}
 
-							GridSizePreview(PreferenceManager.shared.gridSize.value)
+							GridSizePreview(preferenceManager.gridSize.value)
 
 							GridSizeDialog(
 								presented = presented,
@@ -241,7 +243,7 @@ fun SettingsAppearanceScreen() {
 								) {
 									Text(stringResource(Res.string.option_cover_art_size))
 									Text(
-										"${PreferenceManager.shared.artGridItemSize}",
+										"${preferenceManager.artGridItemSize}",
 										fontFamily = FontFamily.Monospace,
 										fontWeight = FontWeight(400),
 										fontSize = 13.sp,
@@ -249,9 +251,9 @@ fun SettingsAppearanceScreen() {
 									)
 								}
 								Slider(
-									value = PreferenceManager.shared.artGridItemSize,
+									value = preferenceManager.artGridItemSize,
 									onValueChange = {
-										PreferenceManager.shared.artGridItemSize = it
+										preferenceManager.artGridItemSize = it
 									},
 									valueRange = 50f..500f,
 									steps = 8,
@@ -267,22 +269,22 @@ fun SettingsAppearanceScreen() {
 						title = { Text(stringResource(Res.string.option_use_marquee_text)) },
 						items = MarqueeSpeed.entries.toImmutableList(),
 						label = { it.name },
-						selection = PreferenceManager.shared.marqueeSpeed,
-						onSelect = { PreferenceManager.shared.marqueeSpeed = it }
+						selection = preferenceManager.marqueeSpeed,
+						onSelect = { preferenceManager.marqueeSpeed = it }
 					)
 
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_alphabetical_scroll)) },
-						value = PreferenceManager.shared.alphabeticalScroll,
-						onSetValue = { PreferenceManager.shared.alphabeticalScroll = it }
+						value = preferenceManager.alphabeticalScroll,
+						onSetValue = { preferenceManager.alphabeticalScroll = it }
 					)
 
 					SettingSelectionRow(
 						title = { Text(stringResource(Res.string.option_animation_style)) },
 						items = AnimationStyle.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = PreferenceManager.shared.animationStyle,
-						onSelect = { PreferenceManager.shared.animationStyle = it }
+						selection = preferenceManager.animationStyle,
+						onSelect = { preferenceManager.animationStyle = it }
 					)
 				}
 			}

@@ -57,9 +57,10 @@ private data class Header(
 fun SettingsCustomHeadersScreen() {
 	val platformContext = LocalPlatformContext.current
 	val sessionManager = koinInject<SessionManager>()
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	val headers = remember {
-		PreferenceManager.shared.customHeaders.lines()
+		preferenceManager.customHeaders.lines()
 			.filter { it.contains(":") }
 			.map {
 				val parts = it.split(":", limit = 2)
@@ -71,7 +72,7 @@ fun SettingsCustomHeadersScreen() {
 	val hiddenHeaders = remember { mutableStateSetOf<Long>() }
 
 	fun updateSettings() {
-		PreferenceManager.shared.customHeaders = headers
+		preferenceManager.customHeaders = headers
 			.filter { !hiddenHeaders.contains(it.id) }
 			.joinToString("\n") { "${it.key}:${it.value}" }
 		sessionManager.refreshClient()

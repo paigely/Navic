@@ -49,8 +49,8 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.koinInject
-import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.PlatformContext
 import paige.navic.shared.rememberPlatformContext
@@ -120,6 +120,7 @@ fun App() {
 
 	val platformContext = rememberPlatformContext()
 	val sessionManager = koinInject<SessionManager>()
+	val preferenceManager = koinInject<PreferenceManager>()
 	val isLoggedIn by sessionManager.isLoggedIn.collectAsStateWithLifecycle()
 	val backStack = rememberNavBackStack(
 		config, if (isLoggedIn) {
@@ -193,13 +194,13 @@ fun App() {
 						}
 					)
 				}
-				if (!PreferenceManager.shared.showedSideloadingWarning
+				if (!preferenceManager.showedSideloadingWarning
 					&& platformContext.name.lowercase().contains("android")
 				) {
 					SideloadingDialog()
 				}
 				// version check is annoying to do on ios
-				if (PreferenceManager.shared.checkForUpdates
+				if (preferenceManager.checkForUpdates
 					&& !listOf("ios", "ipados").contains(platformContext.name.lowercase())) {
 					ChangelogSheet()
 				}

@@ -50,11 +50,11 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
+import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.radio.components.radioListScreenContent
 import paige.navic.ui.screens.radio.dialogs.RadioCreateDialog
 import paige.navic.ui.screens.radio.viewmodels.RadioListViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.ui.core.UiState
 import paige.navic.utils.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -71,6 +71,7 @@ fun RadioListScreen(
 	val slideSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
 	val scaleInSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
 	var createDialogShown by rememberSaveable { mutableStateOf(false) }
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	Scaffold(
 		topBar = {
@@ -86,7 +87,7 @@ fun RadioListScreen(
 		floatingActionButton = {
 			AnimatedContent(
 				!scrollManager.isTriggered
-					|| PreferenceManager.shared.bottomBarCollapseMode == BottomBarCollapseMode.Never,
+					|| preferenceManager.bottomBarCollapseMode == BottomBarCollapseMode.Never,
 				transitionSpec = {
 					val transformOrigin = TransformOrigin(0f, 1f)
 					(slideInHorizontally(slideSpec) { it / 2 }

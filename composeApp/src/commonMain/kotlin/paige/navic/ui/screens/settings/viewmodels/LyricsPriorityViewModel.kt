@@ -10,9 +10,10 @@ import paige.navic.domain.models.lyrics.LyricsConfig
 import paige.navic.ui.core.UiState
 
 class LyricsPriorityViewModel(
-	private val settings: Settings = Settings(),
-	private val json: Json = Json.Default
+	private val settings: Settings
 ) : ViewModel() {
+	private val json = Json
+
 	private val _state = MutableStateFlow<UiState<LyricsConfig>>(UiState.Loading())
 	val state = _state.asStateFlow()
 

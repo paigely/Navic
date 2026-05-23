@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,11 +50,12 @@ class DownloadManager(
 	private val storageManager: StorageManager,
 	private val lyricsRepository: LyricsRepository,
 	private val lyricDao: LyricDao,
-	private val scope: CoroutineScope,
-	private val sessionManager: SessionManager
+	private val sessionManager: SessionManager,
+	private val preferenceManager: PreferenceManager
 ) {
+	private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 	private val client = HttpClient {
-		val customHeaders = PreferenceManager.shared.customHeadersMap()
+		val customHeaders = preferenceManager.customHeadersMap()
 		if (customHeaders.isNotEmpty()) {
 			defaultRequest {
 				customHeaders.forEach { (key, value) -> header(key, value) }

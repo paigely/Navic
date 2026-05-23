@@ -33,6 +33,7 @@ fun NowPlayingArtworkPager(
 	modifier: Modifier = Modifier,
 	isLandscape: Boolean
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 
@@ -73,7 +74,7 @@ fun NowPlayingArtworkPager(
 		},
 		state = pagerState,
 		contentPadding = PaddingValues(horizontal = if (isLandscape) 0.dp else 8.dp),
-		userScrollEnabled = PreferenceManager.shared.swipeToSkip,
+		userScrollEnabled = preferenceManager.swipeToSkip,
 		overscrollEffect = null
 	) { page ->
 		val song = playerState.queue[page]

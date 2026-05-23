@@ -9,7 +9,6 @@ import kotlinx.cinterop.Pinned
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.pin
 import kotlinx.cinterop.reinterpret
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
@@ -22,9 +21,9 @@ import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
 import platform.Foundation.outputStreamToFileAtPath
 
-actual class StorageManager(
-	private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) {
+actual class StorageManager {
+	private val dispatcher = Dispatchers.IO
+
 	actual fun getDownloadPath(songId: String, extension: String): String {
 		val manager = NSFileManager.defaultManager
 		val url = manager.URLsForDirectory(NSDocumentDirectory, NSUserDomainMask).first() as NSURL

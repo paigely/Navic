@@ -9,7 +9,8 @@ class AndroidScrobbleManager(
     scope: CoroutineScope,
     connectivityManager: ConnectivityManager,
     syncManager: SyncManager,
-    sessionManager: SessionManager
+    sessionManager: SessionManager,
+	preferenceManager: PreferenceManager
 ) : Player.Listener {
 
 	private val playerSource = object : ScrobblePlayerSource {
@@ -18,7 +19,7 @@ class AndroidScrobbleManager(
 	}
 
 	private val scrobbleManager =
-        ScrobbleManager(playerSource, connectivityManager, syncManager, sessionManager, scope)
+        ScrobbleManager(playerSource, connectivityManager, syncManager, sessionManager, scope, preferenceManager)
 
 	init {
 		player.addListener(this)

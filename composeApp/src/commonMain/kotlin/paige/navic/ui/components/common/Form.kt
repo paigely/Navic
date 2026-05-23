@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
+import org.koin.compose.koinInject
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.Theme
 
@@ -24,18 +25,19 @@ fun Form(
 	bottomPadding: Dp = 24.dp,
 	content: @Composable ColumnScope.() -> Unit
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	Column(
 		modifier = modifier
 			.padding(bottom = bottomPadding)
 			.clip(ContinuousRoundedRectangle(rounding))
 			.background(
-				if (PreferenceManager.shared.theme != Theme.iOS
-					&& PreferenceManager.shared.theme != Theme.Spotify
-					&& PreferenceManager.shared.theme != Theme.AppleMusic
+				if (preferenceManager.theme != Theme.iOS
+					&& preferenceManager.theme != Theme.Spotify
+					&& preferenceManager.theme != Theme.AppleMusic
 				) Color.Unspecified else MaterialTheme.colorScheme.surfaceContainerHighest
 			),
 		verticalArrangement = Arrangement.spacedBy(
-			if (PreferenceManager.shared.theme.isMaterialLike()) spacing else 1.dp
+			if (preferenceManager.theme.isMaterialLike()) spacing else 1.dp
 		)
 	) {
 		content()

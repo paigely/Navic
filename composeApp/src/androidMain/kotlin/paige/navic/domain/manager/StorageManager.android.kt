@@ -3,16 +3,16 @@ package paige.navic.domain.manager
 import android.content.Context
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.jvm.javaio.copyTo
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
 actual class StorageManager(
-	private val context: Context,
-	private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+	private val context: Context
 ) {
+	private val dispatcher = Dispatchers.IO
+
 	actual fun getDownloadPath(songId: String, extension: String): String {
 		val dir = File(context.filesDir, "downloads")
 		if (!dir.exists()) dir.mkdirs()

@@ -44,9 +44,9 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
-import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
 import paige.navic.shared.MediaPlayerViewModel
@@ -58,13 +58,13 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
+import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.playlist.components.PlaylistListScreenSortButton
 import paige.navic.ui.screens.playlist.components.playlistListScreenContent
 import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.ui.core.UiState
 import paige.navic.utils.withoutTop
 import kotlin.time.Duration
 
@@ -73,6 +73,8 @@ import kotlin.time.Duration
 fun PlaylistListScreen(
 	nested: Boolean = false
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
+
 	val viewModel = koinViewModel<PlaylistListViewModel>()
 	val player = koinInject<MediaPlayerViewModel>()
 	val playlistsState by viewModel.playlistsState.collectAsState()
@@ -123,7 +125,7 @@ fun PlaylistListScreen(
 		floatingActionButton = {
 			AnimatedContent(
 				!scrollManager.isTriggered
-					|| PreferenceManager.shared.bottomBarCollapseMode == BottomBarCollapseMode.Never,
+					|| preferenceManager.bottomBarCollapseMode == BottomBarCollapseMode.Never,
 				transitionSpec = {
 					val transformOrigin = TransformOrigin(0f, 1f)
 					(slideInHorizontally(slideSpec) { it / 2 }
@@ -154,7 +156,7 @@ fun PlaylistListScreen(
 			}
 		},
 		bottomBar = {
-			if (!nested || PreferenceManager.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			if (!nested || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}

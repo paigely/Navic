@@ -1,7 +1,10 @@
 package paige.navic.domain.manager
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,8 +39,9 @@ class SyncManager(
 	private val albumDao: AlbumDao,
 	private val connectivityManager: ConnectivityManager,
 	private val sessionManager: SessionManager,
-	private val scope: CoroutineScope
+	private val preferenceManager: PreferenceManager
 ) {
+	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 	private var syncJob: Job? = null
 	private val syncMutex = Mutex()
 
@@ -62,7 +66,7 @@ class SyncManager(
 
 		scope.launch {
 			if (albumDao.getAlbumCount() == 0
-				|| PreferenceManager.shared.lastFullSyncTime <= 0L) {
+				|| preferenceManager.lastFullSyncTime <= 0L) {
 				Logger.i("SyncManager", "Syncing now because we haven't synced before")
 				runSyncCycle()
 			}
@@ -78,7 +82,7 @@ class SyncManager(
 
 	fun triggerManualSync() {
 		scope.launch {
-			PreferenceManager.shared.lastFullSyncTime = 0
+			preferenceManager.lastFullSyncTime = 0
 			runSyncCycle()
 		}
 	}
@@ -102,7 +106,7 @@ class SyncManager(
 			processQueue()
 
 			val currentTime = Clock.System.now()
-			if (currentTime - Instant.fromEpochMilliseconds(PreferenceManager.shared.lastFullSyncTime) > fullSyncThreshold) {
+			if (currentTime - Instant.fromEpochMilliseconds(preferenceManager.lastFullSyncTime) > fullSyncThreshold) {
 				Logger.i("SyncManager", "Starting full library pull...")
 
 				_syncState.update {
@@ -116,7 +120,7 @@ class SyncManager(
 				}
 
 				if (result.isSuccess) {
-					PreferenceManager.shared.lastFullSyncTime = currentTime.toEpochMilliseconds()
+					preferenceManager.lastFullSyncTime = currentTime.toEpochMilliseconds()
 					Logger.i("SyncManager", "Full library sync complete.")
 				}
 

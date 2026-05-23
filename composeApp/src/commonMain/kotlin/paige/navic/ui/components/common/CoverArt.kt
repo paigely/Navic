@@ -54,14 +54,16 @@ fun CoverArt(
 	crossfadeMs: Int = 500,
 	shadowElevation: Dp = 0.dp,
 	interactionSource: MutableInteractionSource? = null,
-	shape: Shape = PreferenceManager.shared.coverArtShape.shape
+	shape: Shape? = null
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
+	val shape = shape ?: preferenceManager.coverArtShape.shape
 	val coilPlatformContext = LocalCoilPlatformContext.current
-	val customHeaders = PreferenceManager.shared.customHeaders
+	val customHeaders = preferenceManager.customHeaders
 	val sessionManager = koinInject<SessionManager>()
 	val model = remember(coverArtId, customHeaders) {
 		val networkHeaders = NetworkHeaders.Builder().apply {
-			PreferenceManager.shared.customHeadersMap().forEach { (key, value) -> add(key, value) }
+			preferenceManager.customHeadersMap().forEach { (key, value) -> add(key, value) }
 		}.build()
 		ImageRequest.Builder(coilPlatformContext)
 			.data(coverArtId?.let { sessionManager.getCoverArtUrl(it) })

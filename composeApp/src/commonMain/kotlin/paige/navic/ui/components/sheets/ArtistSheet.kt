@@ -39,6 +39,7 @@ import navic.composeapp.generated.resources.info_click_to_retry
 import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
@@ -75,6 +76,7 @@ fun ArtistSheet(
 	onCancelDownloadAll: (() -> Unit)? = null,
 	onDeleteDownloadAll: (() -> Unit)? = null,
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	val platformContext = LocalPlatformContext.current
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
@@ -97,7 +99,7 @@ fun ArtistSheet(
 				CoverArt(
 					coverArtId = artist.coverArtId,
 					modifier = Modifier.size(50.dp),
-					shape = PreferenceManager.shared.coverArtShape.decreasedShape
+					shape = preferenceManager.coverArtShape.decreasedShape
 				)
 			},
 			headlineContent = { MarqueeText(artist.name) },

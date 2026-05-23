@@ -100,8 +100,4 @@ class PreferenceManager(
 	}
 
 	var offlineMode by preference(OfflineMode.Auto)
-
-	companion object {
-		val shared = PreferenceManager(KmpSettings())
-	}
 }

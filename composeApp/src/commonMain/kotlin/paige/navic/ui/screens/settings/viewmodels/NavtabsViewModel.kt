@@ -11,9 +11,10 @@ import paige.navic.domain.models.settings.NavbarTab
 import paige.navic.ui.core.UiState
 
 class NavtabsViewModel(
-	private val settings: Settings,
-	private val json: Json
+	private val settings: Settings
 ) : ViewModel() {
+	private val json = Json
+
 	private val _state = MutableStateFlow<UiState<NavbarConfig>>(UiState.Loading())
 	val state = _state.asStateFlow()
 

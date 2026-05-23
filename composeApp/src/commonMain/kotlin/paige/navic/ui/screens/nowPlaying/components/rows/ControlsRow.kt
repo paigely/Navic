@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import org.koin.compose.koinInject
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingProgressBar
 import kotlin.time.Duration.Companion.milliseconds
@@ -32,6 +33,7 @@ fun NowPlayingControlsRow(
 	songRating: Int,
 	onSetSongRating: (Int) -> Unit
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	var visible by rememberSaveable { mutableStateOf(false) }
 	val scale by animateFloatAsState(if (visible) 1f else 0f)
 	val offset by animateDpAsState(if (visible) 0.dp else 200.dp)
@@ -57,7 +59,7 @@ fun NowPlayingControlsRow(
 			)
 			NowPlayingProgressBar()
 			NowPlayingDurationsRow()
-			if (PreferenceManager.shared.nowPlayingSongInfo) {
+			if (preferenceManager.nowPlayingSongInfo) {
 				NowPlayingTechnicalInfoRow()
 			}
 		}

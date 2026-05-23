@@ -43,6 +43,7 @@ import navic.composeapp.generated.resources.action_update_app
 import navic.composeapp.generated.resources.info_update
 import navic.composeapp.generated.resources.title_update
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalPlatformContext
@@ -105,6 +106,7 @@ class ChangelogViewModel(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangelogSheet() {
+	val preferenceManager = koinInject<PreferenceManager>()
 	val platformContext = LocalPlatformContext.current
 	val uriHandler = LocalUriHandler.current
 	val viewModel = koinViewModel<ChangelogViewModel>(
@@ -173,7 +175,7 @@ fun ChangelogSheet() {
 					onClick = {
 						platformContext.clickSound()
 						viewModel.clearRelease()
-						PreferenceManager.shared.checkForUpdates = false
+						preferenceManager.checkForUpdates = false
 					},
 					modifier = Modifier.fillMaxWidth(),
 					shape = ContinuousCapsule
