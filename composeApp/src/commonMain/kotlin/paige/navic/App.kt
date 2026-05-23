@@ -3,8 +3,12 @@ package paige.navic
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.EaseOutQuart
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -49,12 +53,11 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.koinInject
+import paige.navic.di.initializeSingletonImageLoader
 import paige.navic.domain.manager.BottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.util.core.PlatformContext
-import paige.navic.util.core.rememberPlatformContext
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
@@ -91,7 +94,8 @@ import paige.navic.ui.screens.song.SongDetailScreen
 import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
-import paige.navic.di.initializeSingletonImageLoader
+import paige.navic.util.core.PlatformContext
+import paige.navic.util.core.rememberPlatformContext
 import paige.navic.util.ui.Material3Transitions
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -134,6 +138,7 @@ fun App() {
 	)
 	val snackbarState = remember { SnackbarHostState() }
 	val density = LocalDensity.current
+	val layoutDirection = LocalLayoutDirection.current
 	val scrollManager = remember {
 		BottomBarScrollManager(with(density) { 50.dp.toPx() })
 	}
@@ -161,12 +166,10 @@ fun App() {
 					NavDisplay(
 						modifier = Modifier
 							.padding(
-								start = contentPadding.calculateStartPadding(
-									LocalLayoutDirection.current
-								),
-								end = contentPadding.calculateEndPadding(
-									LocalLayoutDirection.current
-								)
+								start = contentPadding
+									.calculateStartPadding(layoutDirection),
+								end = contentPadding
+									.calculateEndPadding(layoutDirection)
 							)
 							.fillMaxSize()
 							.background(MaterialTheme.colorScheme.surface),
@@ -177,23 +180,33 @@ fun App() {
 							rememberListDetailSceneStrategy()
 						),
 						onBack = {
-							if (backStack.size > 1) {
+							if (backStack.isNotEmpty()) {
 								backStack.removeLastOrNull()
 							}
 						},
 						entryProvider = entryProvider(backStack),
 						transitionSpec = {
-							Material3Transitions.SharedXAxisEnterTransition(density) togetherWith Material3Transitions.SharedXAxisExitTransition(
+							Material3Transitions.SharedXAxisEnterTransition(
+								density
+							) togetherWith Material3Transitions.SharedXAxisExitTransition(
 								density
 							)
 						},
 						popTransitionSpec = {
-							Material3Transitions.SharedXAxisPopEnterTransition(density) togetherWith Material3Transitions.SharedXAxisPopExitTransition(
+							Material3Transitions.SharedXAxisPopEnterTransition(
+								density
+							) togetherWith Material3Transitions.SharedXAxisPopExitTransition(
 								density
 							)
 						},
 						predictivePopTransitionSpec = {
-							Material3Transitions.SharedZAxisEnterTransition togetherWith Material3Transitions.SharedZAxisExitTransition
+							slideInHorizontally(
+								animationSpec = tween(300, easing = EaseOutQuart),
+								initialOffsetX = { -it }
+							) togetherWith slideOutHorizontally(
+								animationSpec = tween(300, easing = EaseOutQuart),
+								targetOffsetX = { it }
+							)
 						}
 					)
 				}
