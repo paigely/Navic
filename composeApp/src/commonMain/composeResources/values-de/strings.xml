@@ -146,7 +146,7 @@
     <string name="title_more_by_artist">Mehr von %1$s</string>
     <string name="title_genres">Genres</string>
     <string name="title_navigation_bar">Navigationsleiste</string>
-    <string name="title_data_storage">Dateien &amp; Speicher</string>
+    <string name="title_data_storage">Daten &amp; Speicher</string>
     <string name="title_sync_control">Synchronisation</string>
     <string name="title_cache_management">Cache &amp; Speichermanagement</string>
     <string name="title_danger_zone">Gefahrbereich</string>
@@ -397,4 +397,7 @@
     <string name="action_add_server">Server hinzufügen</string>
     <string name="info_no_radios">Keine Radios</string>
     <string name="info_syncing_radios">Synchronisiere Radios...</string>
+    <string name="title_starred">Favorit</string>
+    <string name="option_cover_art_quality">Cover qualität</string>
+    <string name="info_no_starred">Keine Favoriten</string>
 </resources>
