@@ -23,7 +23,7 @@ import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.domain.repositories.SongRepository
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 import paige.navic.ui.core.UiState
 
 class CollectionDetailViewModel(

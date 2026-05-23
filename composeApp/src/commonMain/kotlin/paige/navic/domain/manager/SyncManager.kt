@@ -21,7 +21,7 @@ import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.SyncActionEntity
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.domain.repositories.DbRepository
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes

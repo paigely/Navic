@@ -5,7 +5,7 @@ import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainReplayGain
 import paige.navic.domain.models.lyrics.LyricsProvider
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant

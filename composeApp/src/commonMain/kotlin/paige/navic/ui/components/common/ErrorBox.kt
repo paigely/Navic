@@ -29,7 +29,7 @@ import paige.navic.LocalPlatformContext
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.KeyboardArrowDown
 import paige.navic.icons.outlined.Refresh
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 import paige.navic.ui.core.UiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

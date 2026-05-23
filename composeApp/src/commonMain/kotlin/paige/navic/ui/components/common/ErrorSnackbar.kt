@@ -16,7 +16,7 @@ import navic.composeapp.generated.resources.info_error_show
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalSnackbarState
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 import paige.navic.ui.components.dialogs.FormDialog
 
 @Composable

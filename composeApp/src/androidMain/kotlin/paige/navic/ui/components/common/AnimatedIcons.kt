@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.painter.Painter
 import org.koin.compose.koinInject
 import paige.navic.ui.navigation.Screen
-import paige.navic.shared.ResourceProvider
+import paige.navic.util.core.ResourceProvider
 
 @Composable
 actual fun animatedTabIconPainter(destination: Screen): Painter? {

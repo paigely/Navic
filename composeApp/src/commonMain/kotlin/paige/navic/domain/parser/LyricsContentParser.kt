@@ -7,7 +7,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import paige.navic.domain.models.lyrics.LyricsLine
 import paige.navic.domain.models.lyrics.LyricsWord
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds

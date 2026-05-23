@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import okio.Path.Companion.toPath
-import paige.navic.shared.synchronized
+import paige.navic.util.core.synchronized
 
 class PlayerStateRepository(
 	private val dataStore: DataStore<Preferences>

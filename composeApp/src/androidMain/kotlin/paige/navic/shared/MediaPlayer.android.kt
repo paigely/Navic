@@ -59,6 +59,8 @@ import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.ui.components.common.CoilBitmapLoader
 import paige.navic.ui.core.PlayerUiState
+import paige.navic.util.core.Logger
+import paige.navic.util.core.ResourceProvider
 import paige.navic.util.core.effectiveGain
 import java.io.File
 import kotlin.time.Duration

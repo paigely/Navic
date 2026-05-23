@@ -1,4 +1,4 @@
-package paige.navic.shared
+package paige.navic.util.core
 
 import android.util.Log
 

@@ -19,7 +19,7 @@ import paige.navic.domain.models.lyrics.LyricsLine
 import paige.navic.domain.models.lyrics.LyricsProvider
 import paige.navic.domain.models.lyrics.LyricsResult
 import paige.navic.domain.parser.LyricsContentParser
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 import kotlin.time.Duration.Companion.milliseconds
 
 class LyricsRepository(

@@ -1,4 +1,4 @@
-package paige.navic.shared
+package paige.navic.util.core
 
 actual object Logger {
 	private fun log(tag: String, msg: String, tr: Throwable?) {

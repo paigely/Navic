@@ -1,4 +1,4 @@
-package paige.navic.shared
+package paige.navic.util.core
 
 // This class is a workaround for not being able to access :androidApp's R class inside :composeApp
 interface ResourceProvider {

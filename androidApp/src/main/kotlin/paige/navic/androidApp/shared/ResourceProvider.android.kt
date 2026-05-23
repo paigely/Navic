@@ -1,6 +1,6 @@
 package paige.navic.androidApp.shared
 
-import paige.navic.shared.ResourceProvider
+import paige.navic.util.core.ResourceProvider
 
 class AndroidResourceProvider(
 	override val icNavic: Int = paige.navic.androidApp.R.drawable.ic_navic,

@@ -40,7 +40,7 @@ import paige.navic.data.database.entities.LyricEntity
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.LyricsRepository
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 import coil3.PlatformContext as CoilPlatformContext
 
 class DownloadManager(

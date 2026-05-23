@@ -10,7 +10,7 @@ import androidx.room3.Transaction
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.relations.AlbumWithSongs
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 
 @Dao
 interface AlbumDao {

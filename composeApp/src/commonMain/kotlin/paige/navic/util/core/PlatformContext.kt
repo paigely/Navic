@@ -1,4 +1,4 @@
-package paige.navic.shared
+package paige.navic.util.core
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.windowsizeclass.WindowSizeClass

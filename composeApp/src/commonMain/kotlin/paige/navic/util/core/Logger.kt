@@ -1,4 +1,4 @@
-package paige.navic.shared
+package paige.navic.util.core
 
 expect object Logger {
 	fun e(tag: String, msg: String, tr: Throwable? = null)
