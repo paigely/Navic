@@ -61,10 +61,9 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalNavStack
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.ToolbarPosition
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.settings.ToolbarPosition
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
 import paige.navic.icons.outlined.Check
@@ -78,12 +77,13 @@ import paige.navic.ui.components.common.KeepScreenOn
 import paige.navic.ui.components.layouts.SheetScaffold
 import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.components.toolbars.SheetToolbar
+import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.lyrics.components.LyricsScreenKaraokeText
 import paige.navic.ui.screens.lyrics.components.LyricsScreenLoadingView
 import paige.navic.ui.screens.lyrics.dialogs.LyricsShareSheet
 import paige.navic.ui.screens.lyrics.viewmodels.LyricsScreenViewModel
-import paige.navic.utils.UiState
-import paige.navic.utils.calculateWordProgress
+import paige.navic.util.core.calculateWordProgress
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -92,6 +92,8 @@ import kotlin.time.Duration.Companion.milliseconds
 fun LyricsScreen(
 	song: DomainSong?
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
+
 	val backStack = LocalNavStack.current
 	val viewModel = koinViewModel<LyricsScreenViewModel>(
 		key = song?.id,
@@ -101,7 +103,7 @@ fun LyricsScreen(
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val state by viewModel.lyricsState.collectAsState()
 
-	if (Settings.shared.lyricsKeepAlive) {
+	if (preferenceManager.lyricsKeepAlive) {
 		KeepScreenOn()
 	}
 
@@ -131,7 +133,7 @@ fun LyricsScreen(
 	val density = LocalDensity.current
 	val listState = viewModel.listState
 
-	val lyricsAutoscroll = Settings.shared.lyricsAutoscroll && !isSelectionMode
+	val lyricsAutoscroll = preferenceManager.lyricsAutoscroll && !isSelectionMode
 
 	val spatialSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
 	val effectSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
@@ -423,7 +425,7 @@ fun LyricsScreen(
 											translationY = animatedOffsetY.toPx()
 										}
 										.then(
-											if (blurRadius > 0.dp && !isSelectionMode && Settings.shared.lyricsBlur) {
+											if (blurRadius > 0.dp && !isSelectionMode && preferenceManager.lyricsBlur) {
 												Modifier.blur(blurRadius)
 											} else Modifier
 										)

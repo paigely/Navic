@@ -33,7 +33,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import paige.navic.data.models.settings.Settings
+import org.koin.compose.koinInject
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.SkipNext
 import paige.navic.icons.filled.SkipPrevious
@@ -51,6 +52,7 @@ fun Swiper(
 	background: @Composable (BoxScope.() -> Unit)? = null,
 	content: @Composable BoxScope.() -> Unit
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	val coroutineScope = rememberCoroutineScope()
 	val haptic = LocalHapticFeedback.current
 
@@ -114,7 +116,7 @@ fun Swiper(
 			modifier = Modifier
 				.offset { IntOffset(offsetX.value.roundToInt(), 0) }
 				.draggable(
-					enabled = enabled && Settings.shared.swipeToSkip,
+					enabled = enabled && preferenceManager.swipeToSkip,
 					orientation = Orientation.Horizontal,
 					state = rememberDraggableState { delta ->
 						coroutineScope.launch {

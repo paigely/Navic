@@ -11,7 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import paige.navic.data.models.settings.Settings
+import org.koin.compose.koinInject
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.components.common.FormRow
 
 @Composable
@@ -24,6 +25,7 @@ fun SettingSwitchRow(
 	contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 18.dp),
 	isDividerShown: Boolean = false
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	FormRow(
 		onClick = { onSetValue(!value) },
 		contentPadding = contentPadding
@@ -38,7 +40,7 @@ fun SettingSwitchRow(
 				subtitle()
 			}
 		}
-		if (Settings.shared.theme.isMaterialLike() && isDividerShown) {
+		if (preferenceManager.theme.isMaterialLike() && isDividerShown) {
 			VerticalDivider(Modifier.height(32.dp).padding(horizontal = 14.dp))
 		}
 		SettingSwitch(

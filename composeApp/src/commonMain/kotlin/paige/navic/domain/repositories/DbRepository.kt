@@ -1,8 +1,8 @@
 package paige.navic.domain.repositories
 
 import androidx.room3.concurrent.AtomicInt
-import dev.zt64.subsonic.api.model.Album
-import dev.zt64.subsonic.api.model.AlbumListType
+import dev.zt64.subsonic.api.model.Album as ApiAlbum
+import dev.zt64.subsonic.api.model.AlbumListType as ApiAlbumListType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
@@ -39,9 +39,9 @@ import paige.navic.data.database.entities.PlaylistSongCrossRef
 import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainArtist
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 import kotlin.coroutines.cancellation.CancellationException
 
 class DbRepository(
@@ -134,11 +134,11 @@ class DbRepository(
 	): Result<Int> = runDbOp {
 		val pageSize = 500
 		var offset = 0
-		val allAlbumSummaries = mutableListOf<Album>()
+		val allAlbumSummaries = mutableListOf<ApiAlbum>()
 
 		onProgress(0.0f, Res.string.info_syncing_albums)
 		while (true) {
-			val batch = sessionManager.api.getAlbums(AlbumListType.AlphabeticalByName, pageSize, offset)
+			val batch = sessionManager.api.getAlbums(ApiAlbumListType.AlphabeticalByName, pageSize, offset)
 			if (batch.isEmpty()) break
 			allAlbumSummaries.addAll(batch)
 			if (batch.size < pageSize) break
@@ -156,7 +156,7 @@ class DbRepository(
 
 		onProgress(0.1f, Res.string.info_syncing_albums)
 
-		val albumChannel = Channel<Album>(capacity = 100)
+		val albumChannel = Channel<ApiAlbum>(capacity = 100)
 
 		coroutineScope {
 			launch(Dispatchers.IO) {

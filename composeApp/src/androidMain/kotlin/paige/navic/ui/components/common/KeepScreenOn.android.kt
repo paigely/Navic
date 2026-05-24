@@ -3,7 +3,7 @@ package paige.navic.ui.components.common
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalView
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 
 @Composable
 actual fun KeepScreenOn() {

@@ -35,8 +35,8 @@ import paige.navic.ui.components.common.AlphabeticalScroller
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.screens.artist.ArtistsScreenItem
-import paige.navic.utils.UiState
-import paige.navic.utils.withoutTop
+import paige.navic.ui.core.UiState
+import paige.navic.util.ui.withoutTop
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)

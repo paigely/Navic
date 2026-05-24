@@ -28,10 +28,11 @@ import dev.zt64.compose.pipette.HsvColor
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.ThemeMode
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainRadio
+import paige.navic.domain.models.settings.ThemeMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Radio
 import paige.navic.ui.theme.defaultFont
@@ -45,9 +46,10 @@ fun RadioListScreenCard(
 ) {
 	val platformContext = LocalPlatformContext.current
 	val inDarkTheme = isSystemInDarkTheme()
+	val preferenceManager = koinInject<PreferenceManager>()
 
-	val isDark = remember(Settings.shared.themeMode) {
-		when (Settings.shared.themeMode) {
+	val isDark = remember(preferenceManager.themeMode) {
+		when (preferenceManager.themeMode) {
 			ThemeMode.System -> inDarkTheme
 			ThemeMode.Dark -> true
 			ThemeMode.Light -> false

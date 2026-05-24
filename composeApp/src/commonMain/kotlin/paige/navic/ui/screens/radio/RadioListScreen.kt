@@ -38,9 +38,10 @@ import navic.composeapp.generated.resources.title_radios
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.BottomBarCollapseMode
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
 import paige.navic.shared.MediaPlayerViewModel
@@ -50,12 +51,11 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
+import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.radio.components.radioListScreenContent
 import paige.navic.ui.screens.radio.dialogs.RadioCreateDialog
 import paige.navic.ui.screens.radio.viewmodels.RadioListViewModel
-import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.UiState
-import paige.navic.utils.withoutTop
+import paige.navic.util.ui.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -71,6 +71,7 @@ fun RadioListScreen(
 	val slideSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
 	val scaleInSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
 	var createDialogShown by rememberSaveable { mutableStateOf(false) }
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	Scaffold(
 		topBar = {
@@ -86,7 +87,7 @@ fun RadioListScreen(
 		floatingActionButton = {
 			AnimatedContent(
 				!scrollManager.isTriggered
-					|| Settings.shared.bottomBarCollapseMode == BottomBarCollapseMode.Never,
+					|| preferenceManager.bottomBarCollapseMode == BottomBarCollapseMode.Never,
 				transitionSpec = {
 					val transformOrigin = TransformOrigin(0f, 1f)
 					(slideInHorizontally(slideSpec) { it / 2 }

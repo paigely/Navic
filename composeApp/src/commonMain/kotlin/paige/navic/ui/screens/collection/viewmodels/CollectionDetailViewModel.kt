@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainSong
@@ -21,10 +21,10 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.domain.repositories.SongRepository
-import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.DownloadManager
-import paige.navic.shared.Logger
-import paige.navic.utils.UiState
+import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.DownloadManager
+import paige.navic.util.core.Logger
+import paige.navic.ui.core.UiState
 
 class CollectionDetailViewModel(
 	private val collectionId: String,

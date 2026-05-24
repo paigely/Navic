@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.dao.RadioDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.models.DomainRadio
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class RadioRepository(
 	private val radioDao: RadioDao,

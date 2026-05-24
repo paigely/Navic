@@ -35,11 +35,11 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_image_failed_to_load
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Error
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 import paige.navic.ui.theme.defaultFont
 import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
@@ -54,14 +54,16 @@ fun CoverArt(
 	crossfadeMs: Int = 500,
 	shadowElevation: Dp = 0.dp,
 	interactionSource: MutableInteractionSource? = null,
-	shape: Shape = Settings.shared.coverArtShape.shape
+	shape: Shape? = null
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
+	val shape = shape ?: preferenceManager.coverArtShape.shape
 	val coilPlatformContext = LocalCoilPlatformContext.current
-	val customHeaders = Settings.shared.customHeaders
+	val customHeaders = preferenceManager.customHeaders
 	val sessionManager = koinInject<SessionManager>()
 	val model = remember(coverArtId, customHeaders) {
 		val networkHeaders = NetworkHeaders.Builder().apply {
-			Settings.shared.customHeadersMap().forEach { (key, value) -> add(key, value) }
+			preferenceManager.customHeadersMap().forEach { (key, value) -> add(key, value) }
 		}.build()
 		ImageRequest.Builder(coilPlatformContext)
 			.data(coverArtId?.let { sessionManager.getCoverArtUrl(it) })

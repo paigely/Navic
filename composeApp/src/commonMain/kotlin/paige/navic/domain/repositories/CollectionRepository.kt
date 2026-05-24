@@ -1,6 +1,6 @@
 package paige.navic.domain.repositories
 
-import dev.zt64.subsonic.api.model.AlbumInfo
+import dev.zt64.subsonic.api.model.AlbumInfo as ApiAlbumInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -12,11 +12,11 @@ import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSongCollection
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class CollectionRepository(
 	private val albumDao: AlbumDao,
@@ -75,7 +75,7 @@ class CollectionRepository(
 		.getSongById(songId)
 		?.toDomainModel()
 
-	suspend fun getAlbumInfo(albumId: String): AlbumInfo {
+	suspend fun getAlbumInfo(albumId: String): ApiAlbumInfo {
 		return sessionManager.api.getAlbumInfo(albumId)
 	}
 }

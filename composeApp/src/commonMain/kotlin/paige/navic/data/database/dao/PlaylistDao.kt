@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.PlaylistEntity
 import paige.navic.data.database.entities.PlaylistSongCrossRef
 import paige.navic.data.database.relations.PlaylistWithSongs
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 
 @Dao
 interface PlaylistDao {

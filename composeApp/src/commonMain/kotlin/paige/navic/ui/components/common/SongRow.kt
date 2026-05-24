@@ -36,8 +36,7 @@ import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
@@ -47,8 +46,9 @@ import paige.navic.icons.outlined.Offline
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.sheets.SongSheet
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import paige.navic.utils.InlineExplicitIcon
+import paige.navic.util.core.InlineExplicitIcon
 
 @Composable
 fun SongRow(
@@ -72,6 +72,7 @@ fun SongRow(
 	rating: Int,
 	onSetRating: (Int) -> Unit
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 
@@ -119,7 +120,7 @@ fun SongRow(
 			CoverArt(
 				coverArtId = song.coverArtId,
 				modifier = Modifier.size(50.dp),
-				shape = Settings.shared.coverArtShape.decreasedShape
+				shape = preferenceManager.coverArtShape.decreasedShape
 			)
 		},
 		trailingContent = {

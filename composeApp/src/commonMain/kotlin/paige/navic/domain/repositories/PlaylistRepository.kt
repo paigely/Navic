@@ -13,7 +13,7 @@ import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainPlaylistListType
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class PlaylistRepository(
 	private val playlistDao: PlaylistDao,

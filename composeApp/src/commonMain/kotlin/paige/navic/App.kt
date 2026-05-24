@@ -3,8 +3,12 @@ package paige.navic
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.EaseOutQuart
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -34,6 +38,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -48,17 +53,16 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.koinInject
-import paige.navic.data.images.initializeSingletonImageLoader
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.session.SessionManager
+import paige.navic.di.initializeSingletonImageLoader
+import paige.navic.domain.manager.BottomBarScrollManager
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.shared.PlatformContext
-import paige.navic.shared.rememberPlatformContext
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
-import paige.navic.ui.scenes.BottomSheetSceneStrategy
-import paige.navic.ui.scenes.NowPlayingSceneStrategy
+import paige.navic.ui.navigation.BottomSheetSceneStrategy
+import paige.navic.ui.navigation.NowPlayingSceneStrategy
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.album.AlbumListScreen
 import paige.navic.ui.screens.artist.ArtistDetailScreen
 import paige.navic.ui.screens.artist.ArtistListScreen
@@ -90,9 +94,9 @@ import paige.navic.ui.screens.song.SongDetailScreen
 import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
-import paige.navic.utils.BottomBarScrollManager
-import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.Material3Transitions
+import paige.navic.util.core.PlatformContext
+import paige.navic.util.core.rememberPlatformContext
+import paige.navic.util.ui.Material3Transitions
 
 @OptIn(ExperimentalSerializationApi::class)
 private val config = SavedStateConfiguration {
@@ -109,6 +113,10 @@ val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> { error("no
 val LocalSharedTransitionScope =
 	staticCompositionLocalOf<SharedTransitionScope> { error("no shared transition scope") }
 
+val LocalBottomBarScrollManager = staticCompositionLocalOf<BottomBarScrollManager> {
+	error("No BottomBarScrollManager provided")
+}
+
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun App() {
@@ -119,8 +127,10 @@ fun App() {
 
 	val platformContext = rememberPlatformContext()
 	val sessionManager = koinInject<SessionManager>()
+	val preferenceManager = koinInject<PreferenceManager>()
+	val isLoggedIn by sessionManager.isLoggedIn.collectAsStateWithLifecycle()
 	val backStack = rememberNavBackStack(
-		config, if (sessionManager.currentUser != null) {
+		config, if (isLoggedIn) {
 			Screen.Library()
 		} else {
 			Screen.Login
@@ -128,6 +138,7 @@ fun App() {
 	)
 	val snackbarState = remember { SnackbarHostState() }
 	val density = LocalDensity.current
+	val layoutDirection = LocalLayoutDirection.current
 	val scrollManager = remember {
 		BottomBarScrollManager(with(density) { 50.dp.toPx() })
 	}
@@ -155,12 +166,10 @@ fun App() {
 					NavDisplay(
 						modifier = Modifier
 							.padding(
-								start = contentPadding.calculateStartPadding(
-									LocalLayoutDirection.current
-								),
-								end = contentPadding.calculateEndPadding(
-									LocalLayoutDirection.current
-								)
+								start = contentPadding
+									.calculateStartPadding(layoutDirection),
+								end = contentPadding
+									.calculateEndPadding(layoutDirection)
 							)
 							.fillMaxSize()
 							.background(MaterialTheme.colorScheme.surface),
@@ -171,33 +180,43 @@ fun App() {
 							rememberListDetailSceneStrategy()
 						),
 						onBack = {
-							if (backStack.size > 1) {
+							if (backStack.isNotEmpty()) {
 								backStack.removeLastOrNull()
 							}
 						},
 						entryProvider = entryProvider(backStack),
 						transitionSpec = {
-							Material3Transitions.SharedXAxisEnterTransition(density) togetherWith Material3Transitions.SharedXAxisExitTransition(
+							Material3Transitions.SharedXAxisEnterTransition(
+								density
+							) togetherWith Material3Transitions.SharedXAxisExitTransition(
 								density
 							)
 						},
 						popTransitionSpec = {
-							Material3Transitions.SharedXAxisPopEnterTransition(density) togetherWith Material3Transitions.SharedXAxisPopExitTransition(
+							Material3Transitions.SharedXAxisPopEnterTransition(
+								density
+							) togetherWith Material3Transitions.SharedXAxisPopExitTransition(
 								density
 							)
 						},
 						predictivePopTransitionSpec = {
-							Material3Transitions.SharedZAxisEnterTransition togetherWith Material3Transitions.SharedZAxisExitTransition
+							slideInHorizontally(
+								animationSpec = tween(300, easing = EaseOutQuart),
+								initialOffsetX = { -it }
+							) togetherWith slideOutHorizontally(
+								animationSpec = tween(300, easing = EaseOutQuart),
+								targetOffsetX = { it }
+							)
 						}
 					)
 				}
-				if (!Settings.shared.showedSideloadingWarning
+				if (!preferenceManager.showedSideloadingWarning
 					&& platformContext.name.lowercase().contains("android")
 				) {
 					SideloadingDialog()
 				}
 				// version check is annoying to do on ios
-				if (Settings.shared.checkForUpdates
+				if (preferenceManager.checkForUpdates
 					&& !listOf("ios", "ipados").contains(platformContext.name.lowercase())) {
 					ChangelogSheet()
 				}

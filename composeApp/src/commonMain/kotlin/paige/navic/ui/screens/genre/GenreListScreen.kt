@@ -19,6 +19,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_genres
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.LocalBottomBarScrollManager
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -27,9 +28,8 @@ import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.screens.genre.components.genreListScreenContent
 import paige.navic.ui.screens.genre.viewmodels.GenreListViewModel
-import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.UiState
-import paige.navic.utils.withoutTop
+import paige.navic.ui.core.UiState
+import paige.navic.util.ui.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

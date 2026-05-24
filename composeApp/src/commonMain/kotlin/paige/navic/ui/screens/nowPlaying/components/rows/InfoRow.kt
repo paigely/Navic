@@ -20,13 +20,13 @@ import navic.composeapp.generated.resources.info_not_playing
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
-import paige.navic.data.models.Screen
+import paige.navic.ui.navigation.Screen
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingMoreButton
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingStarButton
-import paige.navic.utils.InlineExplicitIconLarge
+import paige.navic.util.core.InlineExplicitIconLarge
 
 @Composable
 fun NowPlayingInfoRow(

@@ -37,8 +37,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check
 import paige.navic.ui.theme.defaultFont
@@ -54,6 +55,7 @@ fun <Item> SelectionDropdown(
 	footer: (@Composable () -> Unit)? = null,
 	onDismissRequest: () -> Unit
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	CompositionLocalProvider(
 		LocalTextStyle provides TextStyle(
 			fontFamily = defaultFont(100, round = 100f)
@@ -74,7 +76,7 @@ fun <Item> SelectionDropdown(
 					.padding(top = 4.dp)
 					.padding(bottom = 8.dp)
 					.padding(horizontal = 8.dp),
-				color = if (Settings.shared.theme.isMaterialLike())
+				color = if (preferenceManager.theme.isMaterialLike())
 					MaterialTheme.colorScheme.surfaceContainerHigh
 				else if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surfaceContainer
 				else MaterialTheme.colorScheme.surface,
@@ -93,7 +95,7 @@ fun <Item> SelectionDropdown(
 								onSelect(item)
 							}
 						)
-						if (items.last() != item && !Settings.shared.theme.isMaterialLike()) {
+						if (items.last() != item && !preferenceManager.theme.isMaterialLike()) {
 							HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest)
 						}
 					}
@@ -114,15 +116,16 @@ fun SelectionDropdownItem(
 	selected: Boolean,
 	onClick: () -> Unit
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	val platformContext = LocalPlatformContext.current
 	val color by animateColorAsState(
-		if (selected && Settings.shared.theme.isMaterialLike())
+		if (selected && preferenceManager.theme.isMaterialLike())
 			MaterialTheme.colorScheme.primary
 		else Color.Transparent,
 		animationSpec = MaterialTheme.motionScheme.fastEffectsSpec()
 	)
 	val elevation by animateDpAsState(
-		if (selected && Settings.shared.theme.isMaterialLike()) 2.dp else 0.dp,
+		if (selected && preferenceManager.theme.isMaterialLike()) 2.dp else 0.dp,
 		animationSpec = MaterialTheme.motionScheme.fastEffectsSpec()
 	)
 	val alpha by animateFloatAsState(
@@ -137,17 +140,17 @@ fun SelectionDropdownItem(
 			Icons.Outlined.Check,
 			null,
 			modifier = Modifier.padding(
-				start = if (Settings.shared.theme.isMaterialLike()) 6.dp else 0.dp,
-				end = if (!Settings.shared.theme.isMaterialLike()) 8.dp else 0.dp
+				start = if (preferenceManager.theme.isMaterialLike()) 6.dp else 0.dp,
+				end = if (!preferenceManager.theme.isMaterialLike()) 8.dp else 0.dp
 			).size(20.dp).alpha(alpha)
 		)
 	}
 	Surface(
 		modifier = Modifier
 			.fillMaxWidth()
-			.padding(if (Settings.shared.theme.isMaterialLike()) 6.dp else 0.dp),
+			.padding(if (preferenceManager.theme.isMaterialLike()) 6.dp else 0.dp),
 		color = color,
-		shape = if (Settings.shared.theme.isMaterialLike()) MaterialTheme.shapes.medium else RectangleShape,
+		shape = if (preferenceManager.theme.isMaterialLike()) MaterialTheme.shapes.medium else RectangleShape,
 		shadowElevation = elevation,
 		onClick = {
 			platformContext.clickSound()
@@ -159,7 +162,7 @@ fun SelectionDropdownItem(
 			verticalAlignment = Alignment.CenterVertically,
 			horizontalArrangement = Arrangement.SpaceBetween
 		) {
-			if (Settings.shared.theme.isMaterialLike()) {
+			if (preferenceManager.theme.isMaterialLike()) {
 				label()
 				icon()
 			} else {

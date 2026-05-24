@@ -73,14 +73,14 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalSnackbarState
-import paige.navic.data.session.SessionManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Navic
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Picker
 import paige.navic.icons.outlined.Share
-import paige.navic.managers.ShareManager
+import paige.navic.domain.manager.ShareManager
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.theme.blue

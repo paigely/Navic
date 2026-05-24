@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.dao.GenreDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.models.DomainGenre
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 class GenreRepository(
 	private val genreDao: GenreDao,

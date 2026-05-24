@@ -30,10 +30,10 @@ import navic.composeapp.generated.resources.subtitle_check_for_updates
 import navic.composeapp.generated.resources.title_confirm
 import navic.composeapp.generated.resources.title_developer
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalPlatformContext
+import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
+import paige.navic.LocalPlatformContext
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
 import paige.navic.ui.components.common.Form
@@ -41,6 +41,7 @@ import paige.navic.ui.components.common.FormButton
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.dialogs.FormDialog
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
 
 @Composable
@@ -48,6 +49,7 @@ fun SettingsDeveloperScreen() {
 	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	var exceptionConfirmationShown by rememberSaveable { mutableStateOf(false) }
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	Scaffold(
 		topBar = {
@@ -71,8 +73,8 @@ fun SettingsDeveloperScreen() {
 						SettingSwitchRow(
 							title = { Text(stringResource(Res.string.option_check_for_updates)) },
 							subtitle = { Text(stringResource(Res.string.subtitle_check_for_updates)) },
-							value = Settings.shared.checkForUpdates,
-							onSetValue = { Settings.shared.checkForUpdates = it }
+							value = preferenceManager.checkForUpdates,
+							onSetValue = { preferenceManager.checkForUpdates = it }
 						)
 					}
 					FormRow(

@@ -25,10 +25,11 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
+import paige.navic.LocalBottomBarScrollManager
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorSnackbar
 import paige.navic.ui.components.layouts.ArtGrid
@@ -36,13 +37,12 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
+import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.album.components.AlbumListScreenSortButton
 import paige.navic.ui.screens.album.components.albumListScreenContent
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
-import paige.navic.utils.LocalBottomBarScrollManager
-import paige.navic.utils.UiState
-import paige.navic.utils.withoutTop
+import paige.navic.util.ui.withoutTop
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -51,6 +51,8 @@ fun AlbumListScreen(
 	nested: Boolean = false,
 	listType: DomainAlbumListType
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
+
 	val viewModel = koinViewModel<AlbumListViewModel>(
 		key = listType.toString(),
 		parameters = { parametersOf(listType) }
@@ -90,7 +92,7 @@ fun AlbumListScreen(
 		},
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			if (!nested || Settings.shared.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			if (!nested || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}

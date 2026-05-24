@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.utils.toHoursMinutesSeconds
+import paige.navic.util.core.toHoursMinutesSeconds
 import kotlin.time.Duration.Companion.seconds
 
 @Composable

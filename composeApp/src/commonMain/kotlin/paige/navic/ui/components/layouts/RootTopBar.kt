@@ -30,9 +30,9 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.data.models.NavbarConfig
-import paige.navic.data.models.NavbarTab
-import paige.navic.data.models.Screen
+import paige.navic.domain.models.settings.NavbarConfig
+import paige.navic.domain.models.settings.NavbarTab
+import paige.navic.ui.navigation.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Settings
 import paige.navic.icons.outlined.AccountCircle
@@ -40,15 +40,15 @@ import paige.navic.icons.outlined.Bedtime
 import paige.navic.icons.outlined.Logout
 import paige.navic.icons.outlined.Search
 import paige.navic.icons.outlined.Share
-import paige.navic.managers.SleepTimerManager
+import paige.navic.domain.manager.SleepTimerManager
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.sheets.SleepTimerSheet
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.ui.theme.positive
-import paige.navic.utils.UiState
-import paige.navic.utils.label
+import paige.navic.ui.core.UiState
+import paige.navic.util.core.label
 
 @OptIn(
 	ExperimentalMaterial3Api::class,

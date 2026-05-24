@@ -42,9 +42,10 @@ import navic.composeapp.generated.resources.info_click_to_retry
 import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainPlaylist
@@ -91,6 +92,7 @@ fun CollectionSheet(
 	rating: Int? = null,
 	onSetRating: ((Int) -> Unit)? = null
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
 	val platformContext = LocalPlatformContext.current
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
@@ -113,7 +115,7 @@ fun CollectionSheet(
 				CoverArt(
 					coverArtId = collection?.coverArtId,
 					modifier = Modifier.size(50.dp),
-					shape = Settings.shared.coverArtShape.decreasedShape
+					shape = preferenceManager.coverArtShape.decreasedShape
 				)
 			},
 			headlineContent = { MarqueeText(collection?.name.orEmpty()) },

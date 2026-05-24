@@ -59,7 +59,7 @@
     <string name="option_sort_alphabetical_by_name">В алфавитном порядке по Имени</string>
     <string name="option_sort_alphabetical_by_artist">В алфавитном порядке по Исполнителю</string>
     <string name="option_sort_starred">Избранное</string>
-    <string name="option_sort_by_year">По Году</string>
+    <string name="option_sort_by_year">По году</string>
     <string name="option_sort_by_genre">По жанру</string>
     <string name="option_scrobble_percentage">Процент трека</string>
     <string name="option_min_duration_to_scrobble">Мин. прослушанная часть трека</string>
@@ -153,7 +153,7 @@
     <string name="title_now_playing">Сейчас играет</string>
     <string name="title_bottom_app_bar">Нижняя панель</string>
     <string name="title_playback">Воспроизведение</string>
-    <string name="title_all">Настройки для разработчиков</string>
+    <string name="title_all">Все</string>
     <string name="title_shares">Поделиться</string>
     <string name="title_choose_font">Шрифт приложения</string>
     <string name="title_fonts_inbuilt">Встроенные</string>
@@ -189,7 +189,7 @@
     <string name="option_sort_descending">Нисходящий</string>
     <string name="option_enable_scrobbling">История прослушивания</string>
     <string name="option_choose_theme">Тема приложения</string>
-    <string name="option_replay_gain">Повторное воспроизведение</string>
+    <string name="option_replay_gain">ReplayGain</string>
     <string name="option_gapless_playback">Воспроизведение без пропусков</string>
     <string name="option_audio_offload">Оффлайн аудио</string>
     <string name="option_now_playing_toolbar_position">Положение панели инструментов</string>
@@ -204,7 +204,7 @@
     <string name="option_navigation_bar_style">Стиль панели навигации</string>
     <string name="option_navigation_bar_style_normal">Обычный</string>
     <string name="option_navigation_bar_style_short">Короткий</string>
-    <string name="option_navigation_bar_tabs">Измените порядок вкладок панели навигации</string>
+    <string name="option_navigation_bar_tabs">Изменить порядок вкладок панели навигации</string>
     <string name="option_mini_player_style">Стиль мини-плеера</string>
     <string name="option_mini_player_style_unified">Соединённый</string>
     <string name="option_mini_player_style_detached">Отдельный</string>
@@ -361,4 +361,48 @@
     <string name="option_offline_mode_auto">Автоматически</string>
     <string name="option_offline_mode_forced">Принудительно</string>
     <string name="option_offline_mode_no_wifi">Без Wi-Fi</string>
+    <string name="action_play_next">Воспроизвести следующим</string>
+    <string name="title_disc_number">Диск %1$s</string>
+    <string name="option_sort_rating">Оценка</string>
+    <string name="option_now_playing_slider_style_slim">Тонкий</string>
+    <string name="option_now_playing_slider_style_yoyo">Йо-йо</string>
+    <string name="option_animation_style">Стиль анимаций</string>
+    <string name="option_animation_style_expressive">Expressive</string>
+    <string name="option_animation_style_standard">Стандартный</string>
+    <string name="option_navigation_bar_label_visibility">Отображение подписей</string>
+    <string name="option_navigation_bar_label_visibility_always">Всегда</string>
+    <string name="option_navigation_bar_label_visibility_only_selected">Только под выбранным</string>
+    <plurals name="count_rate_stars">
+        <item quantity="one">Оценка %1$d звезда</item>
+        <item quantity="few">Оценка %1$d звезды</item>
+        <item quantity="many">Оценка %1$d звёзд</item>
+        <item quantity="other">Оценка %1$d звёзд</item>
+    </plurals>
+    <string name="title_streaming_quality">Качество стриминга</string>
+    <string name="title_wifi">Wi-Fi</string>
+    <string name="title_cellular">Сотовая сеть</string>
+    <string name="title_select_lyrics">Выберите строки текста</string>
+    <string name="subtitle_streaming_quality">Выберите качество стриминга музыки</string>
+    <string name="option_now_playing_song_info">Показывать техническую информацию о песне</string>
+    <string name="option_quality_low">Низкое</string>
+    <string name="option_quality_medium">Среднее</string>
+    <string name="option_quality_high">Высокое</string>
+    <string name="option_quality_lossless">Сжатие без потерь (без перекодирования)</string>
+    <string name="info_in_use">(используется сейчас)</string>
+    <string name="info_explicit">Контент для взрослых</string>
+    <plurals name="count_lines">
+        <item quantity="one">%1$d строка выбрана</item>
+        <item quantity="few">%1$d строки выбрано</item>
+        <item quantity="many">%1$d строк выбрано</item>
+        <item quantity="other">%1$d строк выбрано</item>
+    </plurals>
+    <string name="option_playback_speed">Скорость воспроизведения</string>
+    <string name="info_streaming_quality">Более высокие пресеты качества будут использовать больше трафика. Перекодирование треков может значительно повлиять на время загрузки треков и привести к рассинхронизации текстов. Выберите "Сжатие без потерь", если встретились с какими-либо проблемами.</string>
+    <string name="title_advanced">Расширенное транскодирование</string>
+    <string name="subtitle_max_bitrates">Максимальный битрейт</string>
+    <string name="option_off">Выключено</string>
+    <string name="option_enable_custom_bitrates">Включить настраиваемый битрейт</string>
+    <string name="option_max_bitrate_wifi">Максимальный битрейт на WiFi (kbps)</string>
+    <string name="option_max_bitrate_cellular">Максимальный битрейт на мобильной сети (kbps)</string>
+    <string name="info_bitrate_default_zero">Если оставить это поле пустым, по умолчанию будет установлено значение 0. Выбор битрейта остаётся за сервером.</string>
 </resources>

@@ -6,7 +6,7 @@ import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
 import androidx.room3.Transaction
 import paige.navic.data.database.entities.SongEntity
-import paige.navic.shared.Logger
+import paige.navic.util.core.Logger
 
 @Dao
 interface SongDao {

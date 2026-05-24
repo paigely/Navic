@@ -40,7 +40,7 @@ import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.dialogs.FormDialog
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.share.viewmodels.ShareDialogViewModel
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 

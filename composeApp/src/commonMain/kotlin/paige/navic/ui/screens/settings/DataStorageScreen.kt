@@ -86,11 +86,12 @@ import navic.composeapp.generated.resources.title_network
 import navic.composeapp.generated.resources.title_sync_control
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.CoverArtQuality
-import paige.navic.data.models.settings.enums.OfflineMode
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.settings.CoverArtQuality
+import paige.navic.domain.models.settings.OfflineMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Offline
 import paige.navic.ui.components.common.Form
@@ -109,6 +110,7 @@ fun SettingsDataStorageScreen() {
 	val viewModel = koinViewModel<SettingsDataStorageViewModel>()
 
 	val platformContext = LocalPlatformContext.current
+	val preferenceManager = koinInject<PreferenceManager>()
 	val scope = rememberCoroutineScope()
 	val coilPlatformContext = LocalCoilPlatformContext.current
 	val imageLoader = SingletonImageLoader.get(coilPlatformContext)
@@ -202,16 +204,16 @@ fun SettingsDataStorageScreen() {
 						items = OfflineMode.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
 						description = stringResource(Res.string.subtitle_offline_mode),
-						selection = Settings.shared.offlineMode,
-						onSelect = { Settings.shared.offlineMode = it }
+						selection = preferenceManager.offlineMode,
+						onSelect = { preferenceManager.offlineMode = it }
 					)
 					SettingSelectionRow(
 						title = { Text(stringResource(Res.string.option_cover_art_quality)) },
 						items = CoverArtQuality.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.coverArtQuality,
+						selection = preferenceManager.coverArtQuality,
 						onSelect = {
-							Settings.shared.coverArtQuality = it
+							preferenceManager.coverArtQuality = it
 							imageLoader.memoryCache?.clear()
 							scope.launch(Dispatchers.IO) {
 								imageLoader.diskCache?.clear()
@@ -271,11 +273,11 @@ fun SettingsDataStorageScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_last_sync))
 							Text(
-								text = if (Settings.shared.lastFullSyncTime == 0L) {
+								text = if (preferenceManager.lastFullSyncTime == 0L) {
 									stringResource(Res.string.info_sync_never)
 								} else {
 									Instant.fromEpochMilliseconds(
-										Settings.shared.lastFullSyncTime
+										preferenceManager.lastFullSyncTime
 									).toRelativeString(
 										justNow = stringResource(Res.string.info_sync_just_now),
 										minsAgo = stringResource(Res.string.info_sync_mins_ago),

@@ -37,11 +37,11 @@ import navic.composeapp.generated.resources.info_downloaded
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_year
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.data.models.Screen
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
@@ -52,8 +52,9 @@ import paige.navic.icons.outlined.QueuePlayNext
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.sheets.SongSheet
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import paige.navic.utils.InlineExplicitIcon
+import paige.navic.util.core.InlineExplicitIcon
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -80,6 +81,7 @@ fun SongListScreenItem(
 	val dismissState = rememberSwipeToDismissBoxState()
 	val scope = rememberCoroutineScope()
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	SwipeToDismissBox(
 		modifier = modifier,
@@ -152,7 +154,7 @@ fun SongListScreenItem(
 					CoverArt(
 						coverArtId = song.coverArtId,
 						modifier = Modifier.size(50.dp),
-						shape = Settings.shared.coverArtShape.decreasedShape
+						shape = preferenceManager.coverArtShape.decreasedShape
 					)
 				},
 				trailingContent = {

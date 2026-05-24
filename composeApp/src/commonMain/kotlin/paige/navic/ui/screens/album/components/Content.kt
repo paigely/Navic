@@ -12,7 +12,7 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Album
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.layouts.artGridPlaceholder
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 fun LazyGridScope.albumListScreenContent(
 	state: UiState<List<DomainAlbum>>,

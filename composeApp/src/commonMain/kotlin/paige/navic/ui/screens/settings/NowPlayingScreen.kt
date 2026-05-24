@@ -28,10 +28,11 @@ import navic.composeapp.generated.resources.subtitle_now_playing_background_styl
 import navic.composeapp.generated.resources.title_layout
 import navic.composeapp.generated.resources.title_now_playing
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
-import paige.navic.data.models.settings.Settings
-import paige.navic.data.models.settings.enums.NowPlayingBackgroundStyle
-import paige.navic.data.models.settings.enums.ToolbarPosition
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.settings.NowPlayingBackgroundStyle
+import paige.navic.domain.models.settings.ToolbarPosition
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
@@ -43,6 +44,7 @@ import paige.navic.ui.screens.settings.dialogs.NowPlayingSliderStyleDialog
 @Composable
 fun SettingsNowPlayingScreen() {
 	val platformContext = LocalPlatformContext.current
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	Scaffold(
 		topBar = {
@@ -64,15 +66,15 @@ fun SettingsNowPlayingScreen() {
 				Form {
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_swipe_to_skip)) },
-						value = Settings.shared.swipeToSkip,
-						onSetValue = { Settings.shared.swipeToSkip = it }
+						value = preferenceManager.swipeToSkip,
+						onSetValue = { preferenceManager.swipeToSkip = it }
 					)
 
 					SettingSelectionRow(
 						items = NowPlayingBackgroundStyle.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.nowPlayingBackgroundStyle,
-						onSelect = { Settings.shared.nowPlayingBackgroundStyle = it },
+						selection = preferenceManager.nowPlayingBackgroundStyle,
+						onSelect = { preferenceManager.nowPlayingBackgroundStyle = it },
 						description = stringResource(Res.string.subtitle_now_playing_background_style),
 						title = { Text(stringResource(Res.string.option_now_playing_background_style)) }
 					)
@@ -86,7 +88,7 @@ fun SettingsNowPlayingScreen() {
 						Column(Modifier.weight(1f)) {
 							Text(stringResource(Res.string.option_now_playing_slider_style))
 							Text(
-								stringResource(Settings.shared.nowPlayingSliderStyle.displayName),
+								stringResource(preferenceManager.nowPlayingSliderStyle.displayName),
 								style = MaterialTheme.typography.bodyMedium,
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
@@ -103,15 +105,15 @@ fun SettingsNowPlayingScreen() {
 				Form {
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_now_playing_song_info)) },
-						value = Settings.shared.nowPlayingSongInfo,
-						onSetValue = { Settings.shared.nowPlayingSongInfo = it }
+						value = preferenceManager.nowPlayingSongInfo,
+						onSetValue = { preferenceManager.nowPlayingSongInfo = it }
 					)
 
 					SettingSelectionRow(
 						items = ToolbarPosition.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
-						selection = Settings.shared.nowPlayingToolbarPosition,
-						onSelect = { Settings.shared.nowPlayingToolbarPosition = it },
+						selection = preferenceManager.nowPlayingToolbarPosition,
+						onSelect = { preferenceManager.nowPlayingToolbarPosition = it },
 						title = { Text(stringResource(Res.string.option_now_playing_toolbar_position)) }
 					)
 				}

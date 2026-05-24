@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_library">ライブラリ</string>
+    <string name="title_playlists">プレイリスト</string>
+    <string name="title_settings">設定</string>
+    <string name="title_search">検索</string>
+</resources>

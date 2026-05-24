@@ -39,16 +39,16 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalSnackbarState
-import paige.navic.data.models.settings.Settings
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.manager.ShareManager
 import paige.navic.domain.models.DomainShare
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Share
-import paige.navic.managers.ShareManager
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
-import paige.navic.utils.toHoursMinutesSeconds
+import paige.navic.util.core.toHoursMinutesSeconds
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
@@ -66,6 +66,7 @@ fun ShareListScreenItem(
 	var currentTime by remember { mutableStateOf(Clock.System.now()) }
 	val scope = rememberCoroutineScope()
 	val dismissState = rememberSwipeToDismissBoxState()
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	LaunchedEffect(share.expiresAt) {
 		while (true) {
@@ -108,7 +109,7 @@ fun ShareListScreenItem(
 						CoverArt(
 							coverArtId = share.items.firstOrNull()?.coverArtId,
 							modifier = Modifier.size(60.dp),
-							shape = Settings.shared.coverArtShape.decreasedShape
+							shape = preferenceManager.coverArtShape.decreasedShape
 						)
 					},
 					content = {

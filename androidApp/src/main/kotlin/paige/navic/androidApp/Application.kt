@@ -9,7 +9,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.dsl.module
 import paige.navic.androidApp.shared.AndroidResourceProvider
 import paige.navic.di.initKoin
-import paige.navic.shared.ResourceProvider
+import paige.navic.util.core.ResourceProvider
 import kotlin.system.exitProcess
 
 class Application : android.app.Application() {
@@ -20,9 +20,7 @@ class Application : android.app.Application() {
 			return
 		}
 
-		val existingHandler = Thread.getDefaultUncaughtExceptionHandler()
-		Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-			existingHandler?.uncaughtException(thread, throwable)
+		Thread.setDefaultUncaughtExceptionHandler { _, throwable ->
 			try {
 				val intent = Intent(this, CrashActivity::class.java).apply {
 					putExtra("stacktrace", Log.getStackTraceString(throwable))

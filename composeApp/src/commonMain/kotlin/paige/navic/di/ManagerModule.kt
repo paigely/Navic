@@ -1,24 +1,21 @@
 package paige.navic.di
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.SupervisorJob
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import paige.navic.data.database.SyncManager
-import paige.navic.data.session.SessionManager
-import paige.navic.managers.DownloadManager
-import paige.navic.managers.SleepTimerManager
+import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.manager.SleepTimerManager
+import paige.navic.domain.manager.SyncManager
 
 val managerModule = module {
-	single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.IO) }
-	single<DownloadManager> { DownloadManager(get(), get(), get(), get(), get(), get(), get(), get()) }
-	single<SleepTimerManager> { SleepTimerManager(get(), get()) }
+	singleOf(::SleepTimerManager)
 	single(createdAtStart = true) {
 		SyncManager(get(), get(), get(), get(), get(), get()).apply {
 			startPeriodicSync()
 		}
 	}
+	singleOf(::DownloadManager)
 	singleOf(::SessionManager)
+	singleOf(::PreferenceManager)
 }

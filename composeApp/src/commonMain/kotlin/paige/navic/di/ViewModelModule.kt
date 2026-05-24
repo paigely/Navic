@@ -1,7 +1,5 @@
 package paige.navic.di
 
-import com.russhwolf.settings.Settings
-import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -82,16 +80,6 @@ val viewModelModule = module {
 			songRepository = get()
 		)
 	}
-	viewModel {
-		NavtabsViewModel(
-			settings = Settings(),
-			json = Json
-		)
-	}
-	viewModel {
-		LyricsPriorityViewModel(
-			settings = Settings(),
-			json = Json
-		)
-	}
+	viewModelOf(::NavtabsViewModel)
+	viewModelOf(::LyricsPriorityViewModel)
 }

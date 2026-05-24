@@ -42,7 +42,7 @@ import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Shuffle
-import paige.navic.managers.DownloadManager
+import paige.navic.domain.manager.DownloadManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.theme.defaultFont
 

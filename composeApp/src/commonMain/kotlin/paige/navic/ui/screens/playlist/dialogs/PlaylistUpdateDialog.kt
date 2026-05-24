@@ -28,7 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import dev.zt64.subsonic.api.model.Playlist
+import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 import kotlinx.collections.immutable.ImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
@@ -50,7 +50,7 @@ import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.FormButton
 import paige.navic.ui.components.dialogs.FormDialog
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistUpdateDialogViewModel
-import paige.navic.utils.UiState
+import paige.navic.ui.core.UiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -70,7 +70,7 @@ fun PlaylistUpdateDialog(
 
 	var createDialogShown by rememberSaveable { mutableStateOf(false) }
 
-	val list: @Composable (playlists: List<Playlist>) -> Unit = { playlists ->
+	val list: @Composable (playlists: List<ApiPlaylist>) -> Unit = { playlists ->
 		LazyColumn(
 			modifier = Modifier
 				.clip(MaterialTheme.shapes.largeIncreased)
