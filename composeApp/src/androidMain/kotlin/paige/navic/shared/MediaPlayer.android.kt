@@ -794,14 +794,12 @@ class AndroidMediaPlayerViewModel(
 			.setAlbumTitle(albumTitle)
 			.setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
 
-		val artworkData = albumId?.let { albumId ->
+		val artworkData = coverArtId?.let { coverId ->
 			val diskCache = platformContext.imageLoader.diskCache
-			val snapshot = diskCache?.openSnapshot("al-$albumId")
-			println(diskCache?.fileSystem?.list(diskCache.directory))
-			Logger.i("MediaPlayer", "diskCache.size == ${diskCache?.size}")
+			val snapshot = diskCache?.openSnapshot(coverId)
 
 			if (snapshot == null) {
-				Logger.w("MediaPlayer", "snapshot is null")
+				Logger.w("MediaPlayer", "snapshot is null for coverId: $coverId")
 				return@let null
 			} else {
 				Logger.i("MediaPlayer", "ts snapshot isnt null")
