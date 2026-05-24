@@ -45,6 +45,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
+import paige.navic.domain.manager.AndroidScrobbleManager
+import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.SyncManager
@@ -53,11 +56,12 @@ import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.managers.AndroidScrobbleManager
-import paige.navic.managers.ConnectivityManager
-import paige.navic.managers.DownloadManager
-import paige.navic.utils.effectiveGain
+import paige.navic.ui.core.PlayerUiState
+import paige.navic.util.core.Logger
+import paige.navic.util.core.ResourceProvider
+import paige.navic.util.core.effectiveGain
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -186,8 +190,7 @@ class AndroidMediaPlayerViewModel(
 	private val albumDao: AlbumDao,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
-	private val sessionManager: SessionManager,
-	private val platformContext: CoilPlatformContext
+	private val platformContext: CoilPlatformContext,
 	private val sessionManager: SessionManager,
 	private val preferenceManager: PreferenceManager
 ) : MediaPlayerViewModel(
