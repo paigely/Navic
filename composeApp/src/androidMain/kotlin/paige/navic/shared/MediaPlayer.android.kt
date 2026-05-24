@@ -796,14 +796,7 @@ class AndroidMediaPlayerViewModel(
 
 		val artworkData = coverArtId?.let { coverId ->
 			val diskCache = platformContext.imageLoader.diskCache
-			val snapshot = diskCache?.openSnapshot(coverId)
-
-			if (snapshot == null) {
-				Logger.w("MediaPlayer", "snapshot is null for coverId: $coverId")
-				return@let null
-			} else {
-				Logger.i("MediaPlayer", "ts snapshot isnt null")
-			}
+			val snapshot = diskCache?.openSnapshot(coverId) ?: return@let null
 
 			val bytes = try {
 				snapshot.use { it.data.toFile().readBytes() }
