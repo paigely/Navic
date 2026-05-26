@@ -11,7 +11,7 @@ concurrency:
 jobs:
   codeburger:
     name: Mirror to Codeburger
-    if: github.repository == 'paigely/Navic'
+    if: github.repository == 'ssalggnikool/Navic'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

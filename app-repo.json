@@ -1,7 +1,7 @@
 {
   "name": "Navic Repository",
   "identifier": "paige.navic.repo",
-  "website": "https://github.com/paigely/Navic",
+  "website": "https://github.com/ssalggnikool/Navic",
   "iconURL": "https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/icons/ios.png",
   "apps": [
     {
@@ -17,7 +17,7 @@
           "version": "1.0.0-alpha40",
           "date": "2026-05-22T05:41:04Z",
           "size": 19482674,
-          "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha40/Navic.ipa"
+          "downloadURL": "https://github.com/ssalggnikool/Navic/releases/download/v1.0.0-alpha40/Navic.ipa"
         }
       ],
       "appPermissions": {},
@@ -30,7 +30,7 @@
       "version": "1.0.0-alpha40",
       "versionDate": "2026-05-22T05:41:04Z",
       "size": 19482674,
-      "downloadURL": "https://github.com/paigely/Navic/releases/download/v1.0.0-alpha40/Navic.ipa"
+      "downloadURL": "https://github.com/ssalggnikool/Navic/releases/download/v1.0.0-alpha40/Navic.ipa"
     }
   ]
 }

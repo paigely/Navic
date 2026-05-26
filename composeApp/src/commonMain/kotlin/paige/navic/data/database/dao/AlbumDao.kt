@@ -48,6 +48,10 @@ interface AlbumDao {
 	fun getAlbumsByArtist(artistId: String): Flow<List<AlbumWithSongs>>
 
 	@Transaction
+	@Query("SELECT * FROM AlbumEntity WHERE artistName = :artistName ORDER BY year DESC")
+	fun getAlbumsByArtistName(artistName: String): Flow<List<AlbumWithSongs>>
+
+	@Transaction
 	@Query("SELECT * FROM AlbumEntity WHERE artistId = :artistId AND albumId != :albumId ORDER BY year DESC")
 	fun getAlbumsByArtistExcluding(artistId: String, albumId: String): Flow<List<AlbumWithSongs>>
 

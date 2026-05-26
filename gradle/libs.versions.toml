@@ -21,8 +21,8 @@ androidx-media3 = "1.10.1"
 androidx-glance = "1.2.0-rc01"
 
 # Compose/UI
-compose = "1.12.0-alpha01"
-material3 = "1.12.0-alpha01"
+compose = "1.11.0"
+material3 = "1.11.0-alpha07"
 #noinspection NewerVersionAvailable do not update this to alpha05 it makes the detail pane always visible
 material3-adaptive = "1.3.0-alpha04"
 

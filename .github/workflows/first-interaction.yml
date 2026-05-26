@@ -20,6 +20,6 @@ jobs:
       - uses: actions/first-interaction@v3
         with:
           issue_message: |
-            Please make sure you have [checked existing issues](https://github.com/paigely/Navic/issues) for duplicates.
+            Please make sure you have [checked existing issues](https://github.com/ssalggnikool/Navic/issues) for duplicates.
           pr_message: |
-            Thank you for contributing! Please make sure you have read [CONTRIBUTING.md](https://github.com/paigely/Navic/blob/master/CONTRIBUTING.md).
+            Thank you for contributing! Please make sure you have read [CONTRIBUTING.md](https://github.com/ssalggnikool/Navic/blob/master/CONTRIBUTING.md).
