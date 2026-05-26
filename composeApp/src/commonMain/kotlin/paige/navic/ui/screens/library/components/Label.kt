@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_sort_alphabetical_by_artist
 import navic.composeapp.generated.resources.option_sort_alphabetical_by_name
+import navic.composeapp.generated.resources.option_sort_by_year
 import navic.composeapp.generated.resources.option_sort_downloaded
 import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.option_sort_newest
@@ -26,5 +27,6 @@ fun DomainAlbumListType.label() =
 		DomainAlbumListType.Highest -> stringResource(Res.string.option_sort_rating)
 		DomainAlbumListType.Starred -> stringResource(Res.string.option_sort_starred)
 		DomainAlbumListType.Downloaded -> stringResource(Res.string.option_sort_downloaded)
+		DomainAlbumListType.ByYear -> stringResource(Res.string.option_sort_by_year)
 		else -> "$this"
 	}
