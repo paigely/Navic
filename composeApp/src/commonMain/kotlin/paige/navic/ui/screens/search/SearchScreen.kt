@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -190,18 +189,10 @@ fun SearchScreen(
 						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<DomainSong>() else emptyList()
 
 					if (query.text.isNotBlank() && albums.isEmpty() && artists.isEmpty() && songs.isEmpty()) {
-						LazyColumn(
-							modifier = Modifier.fillMaxSize(),
-							horizontalAlignment = Alignment.CenterHorizontally,
-							verticalArrangement = Arrangement.Center
-						) {
-							item {
-								ContentUnavailable(
-									icon = Icons.Outlined.NoSearchResults,
-									label = stringResource(Res.string.info_no_search_results)
-								)
-							}
-						}
+						ContentUnavailable(
+							icon = Icons.Outlined.NoSearchResults,
+							label = stringResource(Res.string.info_no_search_results)
+						)
 					}
 
 					LazyVerticalGrid(
