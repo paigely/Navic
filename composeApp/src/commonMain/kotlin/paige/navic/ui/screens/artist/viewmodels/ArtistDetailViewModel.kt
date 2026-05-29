@@ -192,6 +192,7 @@ class ArtistDetailViewModel(
 			runCatching {
 				_selectedSongIsStarred.value = true
 				songRepository.starSong(selection)
+				loadArtistData()
 			}
 		}
 	}
@@ -202,6 +203,7 @@ class ArtistDetailViewModel(
 			runCatching {
 				_selectedSongIsStarred.value = false
 				songRepository.unstarSong(selection)
+				loadArtistData()
 			}
 		}
 	}
