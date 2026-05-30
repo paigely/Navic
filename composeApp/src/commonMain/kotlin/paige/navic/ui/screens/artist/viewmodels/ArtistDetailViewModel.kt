@@ -96,8 +96,13 @@ class ArtistDetailViewModel(
 					?: throw Exception("Artist not found in database")
 				val domainArtist = artistEntity.toDomainModel()
 
-				val albumsWithSongs =
+				var albumsWithSongs =
 					albumDao.getAlbumsByArtist(artistId).firstOrNull() ?: emptyList()
+
+				if (albumsWithSongs.isEmpty()) {
+					albumsWithSongs = albumDao.getAlbumsByArtistName(domainArtist.name).firstOrNull() ?: emptyList()
+				}
+
 				val domainAlbums = albumsWithSongs.map { it.toDomainModel() }
 
 				val domainSongs = albumsWithSongs.flatMap { it.songs }

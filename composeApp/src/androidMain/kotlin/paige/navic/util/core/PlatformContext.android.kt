@@ -1,6 +1,8 @@
 package paige.navic.util.core
 
+import android.Manifest
 import android.app.Activity
+import android.content.pm.PackageManager
 import android.os.Build
 import android.view.SoundEffectConstants
 import androidx.activity.compose.LocalActivity
@@ -17,6 +19,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.view.WindowCompat
 import org.koin.compose.koinInject
 import paige.navic.domain.manager.PreferenceManager
@@ -51,6 +54,18 @@ actual fun rememberPlatformContext(): PlatformContext {
 			// TODO: remove this and usages of it as compose will do it by default in alpha03
 			override fun clickSound() {
 				view.playSoundEffect(SoundEffectConstants.CLICK)
+			}
+
+			override fun checkLocalNetworkPermission() {
+				if (Build.VERSION.SDK_INT >= 37) {
+					val hasPermission = context.checkSelfPermission(
+						Manifest.permission.ACCESS_LOCAL_NETWORK
+					) == PackageManager.PERMISSION_GRANTED
+
+					if (!hasPermission) {
+						requestPermissions((view.context as? Activity?)!!, arrayOf(Manifest.permission.ACCESS_LOCAL_NETWORK), 500)
+					}
+				}
 			}
 
 			override val name = "Android ${Build.VERSION.SDK_INT}"

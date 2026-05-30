@@ -8,12 +8,15 @@ import paige.navic.domain.models.DomainSong
 import kotlin.time.Duration.Companion.seconds
 import dev.zt64.subsonic.api.model.Song as ApiSong
 
-fun ApiSong.toEntity() = SongEntity(
+fun ApiSong.toEntity(
+	artistIdOverride: String? = null,
+	artistNameOverride: String? = null
+) = SongEntity(
 	songId = this.id,
 	title = this.title,
-	artistName = this.artistName,
+	artistName = artistNameOverride ?: this.artistName,
 	// TODO: figure out why this can be null and how to handle it
-	artistId = this.artistId ?: "unknown artist",
+	artistId = artistIdOverride ?: this.artistId ?: "unknown artist",
 	albumTitle = this.albumTitle,
 	belongsToAlbumId = this.albumId,
 	coverArtId = this.coverArtId,

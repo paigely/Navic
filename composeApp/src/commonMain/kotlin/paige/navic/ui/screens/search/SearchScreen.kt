@@ -46,6 +46,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_remove_from_history
 import navic.composeapp.generated.resources.action_search_history
+import navic.composeapp.generated.resources.info_no_search_results
 import navic.composeapp.generated.resources.info_not_available_offline
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_all
@@ -71,9 +72,11 @@ import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.History
+import paige.navic.icons.outlined.NoSearchResults
 import paige.navic.icons.outlined.Offline
 import paige.navic.icons.outlined.Queue
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.MarqueeText
@@ -184,6 +187,13 @@ fun SearchScreen(
 						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<DomainArtist>() else emptyList()
 					val songs =
 						if (showAll || selectedCategory == SearchCategory.SONGS) results.filterIsInstance<DomainSong>() else emptyList()
+
+					if (query.text.isNotBlank() && albums.isEmpty() && artists.isEmpty() && songs.isEmpty()) {
+						ContentUnavailable(
+							icon = Icons.Outlined.NoSearchResults,
+							label = stringResource(Res.string.info_no_search_results)
+						)
+					}
 
 					LazyVerticalGrid(
 						modifier = Modifier.fillMaxSize(),

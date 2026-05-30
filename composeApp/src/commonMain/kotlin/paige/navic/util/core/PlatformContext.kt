@@ -9,6 +9,7 @@ interface PlatformContext {
 	val appVersion: String
 	val colorScheme: ColorScheme?
 	val sizeClass: WindowSizeClass
+	fun checkLocalNetworkPermission()
 	fun clickSound()
 }
 
