@@ -307,7 +307,7 @@ fun ArtistDetailScreen(
 													viewModel.selectSong(song)
 												},
 												onDismissRequest = { viewModel.clearSelection() },
-												starredState = selectedSongIsStarred,
+												starredState = if (selection == song) selectedSongIsStarred else song.starredAt != null,
 												onAddStar = { viewModel.starSelectedSong() },
 												onRemoveStar = { viewModel.unstarSelectedSong() },
 												download = download,

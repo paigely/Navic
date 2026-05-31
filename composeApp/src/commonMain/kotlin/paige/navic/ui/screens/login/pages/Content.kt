@@ -90,6 +90,8 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 	val passwordFocusRequester = remember { FocusRequester() }
 
 	val login = {
+		platformContext.checkLocalNetworkPermission()
+
 		if (!viewModel.login()) {
 			haptics.performHapticFeedback(HapticFeedbackType.Reject)
 			when {

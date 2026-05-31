@@ -40,7 +40,7 @@ fun LazyListScope.songListScreenContent(
 				modifier = Modifier.animateItem(),
 				song = song,
 				selected = song == selectedSong,
-				starred = if (song == selectedSong) selectedSongIsStarred else false,
+				starred = if (song == selectedSong) selectedSongIsStarred else song.starredAt != null,
 				rating = if (song == selectedSong) selectedSongRating else 0,
 				onSelect = { onUpdateSelection(song) },
 				onDeselect = { onClearSelection() },

@@ -166,6 +166,7 @@ class CollectionDetailViewModel(
 			runCatching {
 				songRepository.starSong(selection)
 				_selectedSongIsStarred.value = true
+				refreshCollection(false)
 			}
 		}
 	}
@@ -176,6 +177,7 @@ class CollectionDetailViewModel(
 			runCatching {
 				songRepository.unstarSong(selection)
 				_selectedSongIsStarred.value = false
+				refreshCollection(false)
 			}
 		}
 	}
