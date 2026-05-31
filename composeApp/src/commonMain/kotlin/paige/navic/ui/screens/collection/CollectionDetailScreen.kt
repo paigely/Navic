@@ -240,6 +240,7 @@ fun CollectionDetailScreen(
 										onAddToQueue = {
 											player.addToQueueSingle(song)
 										},
+										isStarred = if (selection == song) selectedSongIsStarred else song.starredAt != null,
 										download = download,
 										isOffline = !isOnline
 									)
@@ -293,6 +294,7 @@ fun CollectionDetailScreen(
 								onAddToQueue = {
 									player.addToQueueSingle(song)
 								},
+								isStarred = if (selection == song) selectedSongIsStarred else song.starredAt != null,
 								download = download,
 								isOffline = !isOnline
 							)
