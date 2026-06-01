@@ -402,4 +402,5 @@
     <string name="option_navigation_bar_label_visibility">Visibilité du label</string>
     <string name="option_navigation_bar_label_visibility_only_selected">Seulement sélectionné</string>
     <string name="info_no_starred">Vous n'avez rien ajouté en favori</string>
+    <string name="info_no_search_results">Aucun résultat</string>
 </resources>
