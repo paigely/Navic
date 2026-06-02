@@ -300,9 +300,7 @@ fun ArtistDetailScreen(
 												selected = selection == song,
 												onClick = {
 													if (playerState.currentSong?.id != song.id) {
-														player.clearQueue()
-														songs.forEach { song -> player.addToQueueSingle(song) }
-														player.playAt(index)
+														player.playNow(songs, index)
 													} else {
 														player.togglePlay()
 													}

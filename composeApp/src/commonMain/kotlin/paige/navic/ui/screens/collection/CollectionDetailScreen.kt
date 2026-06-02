@@ -224,9 +224,7 @@ fun CollectionDetailScreen(
 										isPlaylist = false,
 										onClick = {
 											if (playerState.currentSong?.id != song.id) {
-												player.clearQueue()
-												player.addToQueue(album)
-												player.playAt(album.songs.indexOfFirst { it.id == song.id })
+												player.playNow(album, album.songs.indexOfFirst { it.id == song.id })
 											} else {
 												player.togglePlay()
 											}
@@ -278,9 +276,7 @@ fun CollectionDetailScreen(
 								isPlaylist = true,
 								onClick = {
 									if (playerState.currentSong?.id != song.id) {
-										player.clearQueue()
-										player.addToQueue(collection)
-										player.playAt(index)
+										player.playNow(collection, index)
 									} else {
 										player.togglePlay()
 									}

@@ -272,9 +272,7 @@ fun SearchScreen(
 												.background(MaterialTheme.colorScheme.surface),
 											onClick = {
 												platformContext.clickSound()
-												player.clearQueue()
-												player.addToQueueSingle(song)
-												player.playAt(0)
+												player.playNow(song)
 											},
 											onLongClick = { viewModel.selectSong(song) },
 											content = { Text(song.title) },

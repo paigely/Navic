@@ -333,7 +333,7 @@ class IOSMediaPlayerViewModel(
 		updateNowPlayingInfo(dummyRadioSong)
 	}
 
-	override fun addToQueueSingle(song: DomainSong) {
+	override fun addToQueueSingle(song: DomainSong, notify: Boolean) {
 		_uiState.update { state ->
 			val newQueue = state.queue + song
 			state.copy(
@@ -342,23 +342,31 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) song else state.currentSong
 			)
 		}
-		notifyAddedToQueue()
+		if (notify) notifyAddedToQueue()
 	}
 
-	override fun addToQueue(collection: DomainSongCollection) {
-		val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(compareBy(
-			{ it.discNumber },
-			{ it.trackNumber }
-		)) else collection.songs
+	override fun addToQueue(collection: DomainSongCollection, notify: Boolean) {
+		addToQueue(
+			if (collection is DomainAlbum) collection.songs.sortedWith(
+				compareBy(
+					{ it.discNumber },
+					{ it.trackNumber }
+				)
+			) else collection.songs,
+			notify
+		)
+	}
+
+	override fun addToQueue(songs: List<DomainSong>, notify: Boolean) {
 		_uiState.update { state ->
-			val newQueue = state.queue + newCollection
+			val newQueue = state.queue + songs
 			state.copy(
 				queue = newQueue,
 				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-				currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
+				currentSong = if (state.currentIndex == -1) songs.firstOrNull() else state.currentSong
 			)
 		}
-		notifyAddedToQueue()
+		if (notify) notifyAddedToQueue()
 	}
 
 	override fun removeFromQueue(index: Int) {

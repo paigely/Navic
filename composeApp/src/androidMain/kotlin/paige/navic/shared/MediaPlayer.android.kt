@@ -496,7 +496,7 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueueSingle(song: DomainSong) {
+	override fun addToQueueSingle(song: DomainSong, notify: Boolean) {
 		viewModelScope.launch {
 			controller?.addMediaItem(song.toMediaItem())
 			_uiState.update { state ->
@@ -507,27 +507,35 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) song else state.currentSong
 				)
 			}
-			notifyAddedToQueue()
+			if (notify) notifyAddedToQueue()
 		}
 	}
 
-	override fun addToQueue(collection: DomainSongCollection) {
+	override fun addToQueue(collection: DomainSongCollection, notify: Boolean) {
+		addToQueue(
+			if (collection is DomainAlbum) collection.songs.sortedWith(
+				compareBy(
+					{ it.discNumber },
+					{ it.trackNumber }
+				)
+			) else collection.songs,
+			notify
+		)
+	}
+
+	override fun addToQueue(songs: List<DomainSong>, notify: Boolean) {
 		viewModelScope.launch {
-			val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(compareBy(
-				{ it.discNumber },
-				{ it.trackNumber }
-			)) else collection.songs
-			val items = newCollection.map { it.toMediaItem() }
+			val items = songs.map { it.toMediaItem() }
 			controller?.addMediaItems(items)
 			_uiState.update { state ->
-				val newQueue = state.queue + newCollection
+				val newQueue = state.queue + songs
 				state.copy(
 					queue = newQueue,
 					currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-					currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
+					currentSong = if (state.currentIndex == -1) songs.firstOrNull() else state.currentSong
 				)
 			}
-			notifyAddedToQueue()
+			if (notify) notifyAddedToQueue()
 		}
 	}
 

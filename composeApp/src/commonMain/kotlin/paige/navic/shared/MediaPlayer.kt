@@ -67,8 +67,9 @@ abstract class MediaPlayerViewModel(
 		}
 	}
 
-	abstract fun addToQueueSingle(song: DomainSong)
-	abstract fun addToQueue(collection: DomainSongCollection)
+	abstract fun addToQueueSingle(song: DomainSong, notify: Boolean = true)
+	abstract fun addToQueue(collection: DomainSongCollection, notify: Boolean = true)
+	abstract fun addToQueue(songs: List<DomainSong>, notify: Boolean = true)
 	abstract fun removeFromQueue(index: Int)
 	abstract fun moveQueueItem(fromIndex: Int, toIndex: Int)
 	abstract fun clearQueue()
@@ -85,6 +86,24 @@ abstract class MediaPlayerViewModel(
 	abstract fun toggleRepeat()
 	abstract fun shufflePlay(collection: DomainSongCollection)
 	abstract fun setPlaybackSpeed(value: Float)
+
+	fun playNow(song: DomainSong) {
+		clearQueue()
+		addToQueueSingle(song, notify = false)
+		playAt(0)
+	}
+
+	fun playNow(collection: DomainSongCollection, startIndex: Int = 0) {
+		clearQueue()
+		addToQueue(collection, notify = false)
+		playAt(startIndex)
+	}
+
+	fun playNow(songs: List<DomainSong>, startIndex: Int = 0) {
+		clearQueue()
+		addToQueue(songs, notify = false)
+		playAt(startIndex)
+	}
 
 	fun togglePlay() {
 		if (!_uiState.value.isPaused) {

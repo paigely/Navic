@@ -254,9 +254,9 @@ class ArtistDetailViewModel(
 		(_artistState.value as? UiState.Success)?.data?.let { state ->
 			player.clearQueue()
 			state.albums.forEach { album ->
-				player.addToQueue(album)
+				player.addToQueue(album, notify = false)
 			}
-			player.togglePlay()
+			player.playAt(0)
 		}
 	}
 
