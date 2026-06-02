@@ -405,4 +405,7 @@
     <string name="option_max_bitrate_wifi">Максимальный битрейт на WiFi (kbps)</string>
     <string name="option_max_bitrate_cellular">Максимальный битрейт на мобильной сети (kbps)</string>
     <string name="info_bitrate_default_zero">Если оставить это поле пустым, по умолчанию будет установлено значение 0. Выбор битрейта остаётся за сервером.</string>
+    <string name="title_starred">Избранное</string>
+    <string name="option_cover_art_quality">Качество обложек</string>
+    <string name="info_no_starred">В избранном ничего нет</string>
 </resources>

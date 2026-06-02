@@ -415,4 +415,8 @@
     <string name="action_save_and_login">Salva &amp; Accedi</string>
     <string name="action_add_server">Aggiungi Server</string>
     <string name="info_selected_server">Selezionato: %1$s</string>
+    <string name="title_starred">Preferiti</string>
+    <string name="option_cover_art_quality">Qualità copertine</string>
+    <string name="info_no_starred">Nessun preferito</string>
+    <string name="info_no_search_results">Nessun risultato</string>
 </resources>

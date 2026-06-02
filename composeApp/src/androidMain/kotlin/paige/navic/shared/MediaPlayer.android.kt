@@ -603,6 +603,35 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
+	override fun playCollection(collection: DomainSongCollection, startSong: DomainSong) {
+		viewModelScope.launch {
+			val (items, newCollection) = withContext(Dispatchers.Default) {
+				val sortedCollection = if (collection is DomainAlbum) {
+					collection.songs.sortedWith(compareBy({ it.discNumber }, { it.trackNumber }))
+				} else {
+					collection.songs
+				}
+				sortedCollection.map { it.toMediaItem() } to sortedCollection
+			}
+
+			val startIndex = newCollection.indexOfFirst { it.id == startSong.id }.coerceAtLeast(0)
+
+			controller?.let { player ->
+				player.setMediaItems(items, startIndex, 0L)
+				player.prepare()
+				player.play()
+			}
+
+			_uiState.update { state ->
+				state.copy(
+					queue = newCollection,
+					currentIndex = startIndex,
+					currentSong = newCollection.getOrNull(startIndex)
+				)
+			}
+		}
+	}
+
 	override fun playNextSingle(song: DomainSong) {
 		viewModelScope.launch {
 			controller?.addMediaItem(

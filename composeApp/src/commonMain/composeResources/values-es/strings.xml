@@ -406,4 +406,7 @@
     <string name="action_cancel_editing">Cancelar Editado</string>
     <string name="action_save_and_login">Guardar e Iniciar Sesión</string>
     <string name="action_add_server">Agregar Servidor</string>
+    <string name="title_starred">Estrellado</string>
+    <string name="option_cover_art_quality">Calidad de la portada</string>
+    <string name="info_no_starred">Nada está marcado con una estrella</string>
 </resources>

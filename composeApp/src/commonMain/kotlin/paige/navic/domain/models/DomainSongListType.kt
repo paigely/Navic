@@ -2,6 +2,7 @@ package paige.navic.domain.models
 
 import androidx.compose.runtime.Immutable
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.option_sort_by_year
 import navic.composeapp.generated.resources.option_sort_downloaded
 import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.option_sort_newest
@@ -17,5 +18,6 @@ enum class DomainSongListType(val displayName: StringResource) {
 	Starred(Res.string.option_sort_starred),
 	Random(Res.string.option_sort_random),
 	Downloaded(Res.string.option_sort_downloaded),
-	Rating(Res.string.option_sort_rating)
+	Rating(Res.string.option_sort_rating),
+	Year(Res.string.option_sort_by_year)
 }

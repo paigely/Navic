@@ -49,6 +49,7 @@ import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
+import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Offline
@@ -73,6 +74,7 @@ fun CollectionDetailScreenSongRow(
 	onLongClick: (() -> Unit),
 	onPlayNext: (() -> Unit),
 	onAddToQueue: (() -> Unit),
+	isStarred: Boolean,
 	download: DownloadEntity? = null,
 	isOffline: Boolean = false
 ) {
@@ -178,6 +180,14 @@ fun CollectionDetailScreenSongRow(
 			},
 			trailingContent = {
 				Row(verticalAlignment = Alignment.CenterVertically) {
+					if(isStarred) {
+						Icon(
+							Icons.Filled.Star,
+							null,
+							modifier = Modifier.size(16.dp)
+						)
+						Spacer(Modifier.width(6.dp))
+					}
 					if (!canPlay) {
 						Icon(
 							Icons.Outlined.Offline,

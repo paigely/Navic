@@ -233,6 +233,27 @@ class IOSMediaPlayerViewModel(
 		}
 	}
 
+	override fun playCollection(collection: DomainSongCollection, startSong: DomainSong) {
+		val newCollection = if (collection is DomainAlbum) {
+			collection.songs.sortedWith(compareBy({ it.discNumber }, { it.trackNumber }))
+		} else {
+			collection.songs
+		}
+
+		val startIndex = newCollection.indexOfFirst { it.id == startSong.id }.coerceAtLeast(0)
+
+		_uiState.update { state ->
+			state.copy(
+				queue = newCollection,
+				currentIndex = startIndex,
+				currentSong = newCollection.getOrNull(startIndex),
+				isLoading = true
+			)
+		}
+
+		playAt(startIndex)
+	}
+
 	override fun playNextSingle(song: DomainSong) {
 		_uiState.update { state ->
 			val newQueue =

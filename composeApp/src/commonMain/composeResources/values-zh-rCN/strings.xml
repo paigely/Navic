@@ -373,4 +373,7 @@
     <string name="info_syncing_artists">正在同步艺术家...</string>
     <string name="info_syncing_radios">正在同步电台...</string>
     <string name="info_login_description_middle">Navidrome</string>
+    <string name="option_cover_art_quality">封面直连</string>
+    <string name="info_no_starred">无收藏</string>
+    <string name="title_starred">收藏</string>
 </resources>

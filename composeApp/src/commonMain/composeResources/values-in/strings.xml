@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_library">Koleksi</string>
+    <string name="title_starred">Berbintang</string>
+    <string name="title_playlists">Daftar Putar</string>
+    <string name="title_settings">Pengaturan</string>
+    <string name="title_search">Cari</string>
+    <string name="title_appearance">Tampilan</string>
+    <string name="title_behaviour">Perilaku</string>
+    <string name="title_now_playing">Sedang Diputar</string>
+    <string name="title_bottom_app_bar">Bilah Bawah</string>
+    <string name="title_playback">Pemutaran</string>
+    <string name="title_data_storage">Data &amp; Penyimpanan</string>
+    <string name="title_sync_control">Kontrol Sinkronisasi</string>
+    <string name="title_cache_management">Manajemen Cache &amp; Penyimpanan</string>
+    <string name="title_danger_zone">Zona Bahaya</string>
+    <string name="title_developer">Opsi Developer</string>
+    <string name="title_about">Tentang</string>
+    <string name="title_acknowledgements">Penghargaan</string>
+    <string name="title_delete_playlist">Hapus daftar putar?</string>
+    <string name="title_delete_share">Hapus tautan berbagi?</string>
+</resources>

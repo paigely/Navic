@@ -3,6 +3,7 @@ package paige.navic.domain.manager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,9 +32,9 @@ private data class NetworkStatus(
 
 @OptIn(ExperimentalCoroutinesApi::class)
 actual class ConnectivityManager(
-	scope: CoroutineScope,
 	private val preferenceManager: PreferenceManager
 ) {
+	private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 	private val dispatcher = Dispatchers.IO
 	private val started = SharingStarted.WhileSubscribed(5000)
 
