@@ -278,7 +278,9 @@ fun CollectionDetailScreen(
 								isPlaylist = true,
 								onClick = {
 									if (playerState.currentSong?.id != song.id) {
-										player.playCollection(collection, song)
+										player.clearQueue()
+										player.addToQueue(collection)
+										player.playAt(index)
 									} else {
 										player.togglePlay()
 									}
