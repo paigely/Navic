@@ -498,7 +498,7 @@ class AndroidMediaPlayerViewModel(
 
 	override fun addToQueueSingle(song: DomainSong) {
 		viewModelScope.launch {
-			controller?.addMediaItem(withContext(Dispatchers.Default) { song.toMediaItem() })
+			controller?.addMediaItem(song.toMediaItem())
 			_uiState.update { state ->
 				val newQueue = state.queue + song
 				state.copy(
@@ -512,13 +512,11 @@ class AndroidMediaPlayerViewModel(
 
 	override fun addToQueue(collection: DomainSongCollection) {
 		viewModelScope.launch {
-			val (items, newCollection) = withContext(Dispatchers.Default) {
-				val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(compareBy(
-					{ it.discNumber },
-					{ it.trackNumber }
-				)) else collection.songs
-				newCollection.map { it.toMediaItem() } to newCollection
-			}
+			val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(compareBy(
+				{ it.discNumber },
+				{ it.trackNumber }
+			)) else collection.songs
+			val items = newCollection.map { it.toMediaItem() }
 			controller?.addMediaItems(items)
 			_uiState.update { state ->
 				val newQueue = state.queue + newCollection
@@ -597,35 +595,6 @@ class AndroidMediaPlayerViewModel(
 					player.seekTo(index, 0L)
 					player.play()
 				}
-			}
-		}
-	}
-
-	override fun playCollection(collection: DomainSongCollection, startSong: DomainSong) {
-		viewModelScope.launch {
-			val (items, newCollection) = withContext(Dispatchers.Default) {
-				val sortedCollection = if (collection is DomainAlbum) {
-					collection.songs.sortedWith(compareBy({ it.discNumber }, { it.trackNumber }))
-				} else {
-					collection.songs
-				}
-				sortedCollection.map { it.toMediaItem() } to sortedCollection
-			}
-
-			val startIndex = newCollection.indexOfFirst { it.id == startSong.id }.coerceAtLeast(0)
-
-			controller?.let { player ->
-				player.setMediaItems(items, startIndex, 0L)
-				player.prepare()
-				player.play()
-			}
-
-			_uiState.update { state ->
-				state.copy(
-					queue = newCollection,
-					currentIndex = startIndex,
-					currentSong = newCollection.getOrNull(startIndex)
-				)
 			}
 		}
 	}
