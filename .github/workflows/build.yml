@@ -30,18 +30,54 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        include:
-          - platform: 'ubuntu-latest'
-            label: 'Android'
-            artifact: 'android-apk'
-          - platform: 'macos-26'
-            label: 'iOS'
-            artifact: 'ios-ipa'
-    runs-on: ${{ matrix.platform }}
-    name: ${{ matrix.label }}
+  build-android:
+    name: Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build with Gradle (release)
+        id: build_release
+        if: github.event_name == 'push' && env.SIGNING_KEY_ALIAS
+        env:
+          SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          SIGNING_STORE_FILE: ${{ github.workspace }}/release.keystore
+          RELEASE: true
+        run: |
+          echo "${{ secrets.KEYSTORE }}" | base64 -d > release.keystore
+          ./gradlew :androidApp:packageRelease --stacktrace
+          rm release.keystore
+
+      - name: Build with Gradle (debug)
+        id: build_debug
+        if: github.event_name == 'pull_request'
+        run: |
+          ./gradlew :androidApp:assembleDebug --stacktrace
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: navic-release-android
+          path: androidApp/build/outputs/apk/**/*.apk
+          compression-level: 0
+          if-no-files-found: ignore
+
+  build-ios:
+    name: iOS
+    runs-on: macos-26
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -58,7 +94,6 @@ jobs:
 
       - name: Cache konan
         uses: actions/cache@v4
-        if: matrix.label == 'iOS'
         with:
           path: ~/.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
@@ -66,12 +101,9 @@ jobs:
             ${{ runner.os }}-konan-
 
       - name: Run Gradle tasks
-        if: matrix.label == 'iOS'
         run: ./gradlew :composeApp:generateValkyrieImageVector
 
       - name: Build IPA
-        id: build_ipa
-        if: matrix.label == 'iOS'
         run: |
           xcodebuild archive \
             -project iosApp/iosApp.xcodeproj \
@@ -91,46 +123,18 @@ jobs:
 
           zip -r "Navic.ipa" Payload
 
-      - name: Build with Gradle (release)
-        id: build_release
-        if: github.event_name == 'push' && env.SIGNING_KEY_ALIAS && matrix.label == 'Android'
-        env:
-          SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          SIGNING_STORE_FILE: ${{ github.workspace }}/release.keystore
-          RELEASE: true
-        run: |
-          echo "${{ secrets.KEYSTORE }}" | base64 -d > release.keystore
-          ./gradlew :androidApp:packageRelease --stacktrace
-          rm release.keystore
-
-      - name: Build with Gradle (debug)
-        id: build_debug
-        if: github.event_name == 'pull_request' && matrix.label == 'Android'
-        run: |
-          ./gradlew :androidApp:assembleDebug --stacktrace
-
-      - name: Upload Android artifact
-        if: matrix.label == 'Android' && (steps.build_release.outcome == 'success' || steps.build_debug.outcome == 'success')
-        uses: actions/upload-artifact@v7
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: Navic-${{ matrix.artifact }}
-          path: androidApp/build/outputs/apk/**/*.apk
-          compression-level: 0
-
-      - name: Upload iOS artifact
-        if: matrix.label == 'iOS' && steps.build_ipa.outcome == 'success'
-        uses: actions/upload-artifact@v7
-        with:
-          name: Navic-${{ matrix.artifact }}
+          name: navic-release-ios
           path: Navic.ipa
           compression-level: 0
+          if-no-files-found: ignore
 
   upload-artifacts-to-discord:
     name: Upload Artifacts to Discord
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    needs: build
+    needs: [ build-android, build-ios ]
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifacts
@@ -162,10 +166,10 @@ jobs:
 
           curl -XPOST "$CI_BUILD_WEBHOOK" -F "payload_json=$payload" "${files[@]}"
 
-  release:
-    name: Create Release
+  create-release:
+    name: Create GitHub Release
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    needs: build
+    needs: [ build-android, build-ios ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
