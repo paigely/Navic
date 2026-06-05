@@ -244,11 +244,9 @@ class AndroidMediaPlayerViewModel(
 					override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 						updatePlaybackState()
 
-						if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
-							mediaItem?.mediaId?.let { id ->
-								if (!isAvailable(id)) {
-									controller?.seekToNextMediaItem()
-								}
+						mediaItem?.mediaId?.let { id ->
+							if (!isAvailable(id)) {
+								controller?.seekToNextMediaItem()
 							}
 						}
 					}
