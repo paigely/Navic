@@ -3,7 +3,6 @@ package paige.navic.ui.screens.collection.viewmodels
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -102,13 +101,7 @@ class CollectionDetailViewModel(
 
 	init {
 		viewModelScope.launch {
-			sessionManager.isLoggedIn.collect {
-				if (it) {
-					refreshCollection(false)
-					delay(500)
-					refreshCollection(true)
-				}
-			}
+			sessionManager.isLoggedIn.collect { if (it) refreshCollection(false) }
 		}
 	}
 
