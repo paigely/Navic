@@ -46,7 +46,7 @@ import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Shuffle
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.theme.defaultFont
 
 @Composable
@@ -55,7 +55,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 ) {
 	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
-	val snackBarViewModel = koinInject<SnackBarViewModel>()
+	val snackBarManager = koinInject<SnackBarManager>()
 	val downloadManager = koinInject<DownloadManager>()
 	val scope = rememberCoroutineScope()
 
@@ -122,14 +122,14 @@ fun CollectionDetailScreenHeadingRowButtons(
 					when (downloadStatus) {
 						DownloadStatus.NOT_DOWNLOADED, DownloadStatus.FAILED -> {
 							downloadManager.downloadCollection(collection)
-							snackBarViewModel.notify(Res.string.notice_download_started)
+							snackBarManager.notify(Res.string.notice_download_started)
 						}
 						DownloadStatus.DOWNLOADING -> {
 							downloadManager.cancelCollectionDownload(collection)
 						}
 						DownloadStatus.DOWNLOADED -> {
 							downloadManager.deleteDownloadedCollection(collection)
-							snackBarViewModel.notify(Res.string.notice_deleted_download)
+							snackBarManager.notify(Res.string.notice_deleted_download)
 						}
 					}
 				}

@@ -12,11 +12,11 @@ import paige.navic.domain.manager.SessionManager
 import paige.navic.ui.core.UiState
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.notice_created_playlist
-import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
+import paige.navic.domain.manager.SnackBarManager
 
 class RadioCreateDialogViewModel(
 	private val sessionManager: SessionManager,
-	private val snackBarViewModel: SnackBarViewModel
+	private val snackBarManager: SnackBarManager
 ) : ViewModel() {
 	private val _creationState = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
 	val creationState = _creationState.asStateFlow()
@@ -39,7 +39,7 @@ class RadioCreateDialogViewModel(
 				)
 				_events.send(Event.Dismiss)
 				_creationState.value = UiState.Success(null)
-				snackBarViewModel.notify(Res.string.notice_created_playlist, name.text.toString())
+				snackBarManager.notify(Res.string.notice_created_playlist, name.text.toString())
 			} catch (e: Exception) {
 				_creationState.value = UiState.Error(e)
 			}

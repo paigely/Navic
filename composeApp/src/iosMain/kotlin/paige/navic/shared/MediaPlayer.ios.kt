@@ -21,7 +21,7 @@ import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import platform.AVFAudio.AVAudioSession
@@ -80,7 +80,7 @@ class IOSMediaPlayerViewModel(
 	syncManager: SyncManager,
 	private val sessionManager: SessionManager,
 	private val preferenceManager: PreferenceManager,
-	private val snackBarViewModel: SnackBarViewModel
+	private val snackBarManager: SnackBarManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
 	downloadManager = downloadManager,
@@ -248,7 +248,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) song else state.currentSong
 			)
 		}
-		snackBarViewModel.notifyPlayNext()
+		snackBarManager.notifyPlayNext()
 	}
 
 	override fun playNext(collection: DomainSongCollection) {
@@ -270,7 +270,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 			)
 		}
-		snackBarViewModel.notifyPlayNext()
+		snackBarManager.notifyPlayNext()
 	}
 
 	override fun playRadio(radio: DomainRadio) {
@@ -344,7 +344,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) song else state.currentSong
 			)
 		}
-		if (notify) snackBarViewModel.notifyAddedToQueue()
+		if (notify) snackBarManager.notifyAddedToQueue()
 	}
 
 	override fun addToQueue(collection: DomainSongCollection, notify: Boolean) {
@@ -368,7 +368,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) songs.firstOrNull() else state.currentSong
 			)
 		}
-		if (notify) snackBarViewModel.notifyAddedToQueue()
+		if (notify) snackBarManager.notifyAddedToQueue()
 	}
 
 	override fun removeFromQueue(index: Int) {

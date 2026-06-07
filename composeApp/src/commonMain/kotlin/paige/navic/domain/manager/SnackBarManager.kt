@@ -1,7 +1,8 @@
-package paige.navic.ui.components.snackbars.viewmodels
+package paige.navic.domain.manager
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -12,12 +13,14 @@ import navic.composeapp.generated.resources.notice_play_next
 import org.jetbrains.compose.resources.StringResource
 import paige.navic.domain.models.snackbars.PlayerEvent
 
-class SnackBarViewModel: ViewModel() {
+class SnackBarManager {
 	private val _events = MutableSharedFlow<PlayerEvent>()
 	val events: SharedFlow<PlayerEvent> = _events.asSharedFlow()
 
+	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
 	fun notify(resource: StringResource, vararg args: Any) {
-		viewModelScope.launch {
+		scope.launch {
 			_events.emit(PlayerEvent(resource, args.toList()))
 		}
 	}

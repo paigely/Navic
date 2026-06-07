@@ -82,7 +82,7 @@ import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.sheets.CollectionSheet
-import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.artist.components.ArtistActionButtons
@@ -127,7 +127,7 @@ fun ArtistDetailScreen(
 	val downloadStatus by viewModel.collectionDownloadStatus()
 		.collectAsState(DownloadStatus.NOT_DOWNLOADED)
 
-	val snackBarViewModel = koinInject<SnackBarViewModel>()
+	val snackBarManager = koinInject<SnackBarManager>()
 
 	val scope = rememberCoroutineScope()
 
@@ -202,7 +202,7 @@ fun ArtistDetailScreen(
 								state.albums.forEach { album ->
 									downloadManager.downloadCollection(album)
 								}
-								snackBarViewModel.notify(Res.string.notice_download_started)
+								snackBarManager.notify(Res.string.notice_download_started)
 							}
 						}
 					)
@@ -235,7 +235,7 @@ fun ArtistDetailScreen(
 								state.albums.forEach { album ->
 									downloadManager.deleteDownloadedCollection(album)
 								}
-								snackBarViewModel.notify(Res.string.notice_deleted_download)
+								snackBarManager.notify(Res.string.notice_deleted_download)
 							},
 							downloadStatus = downloadStatus,
 							playEnabled = state.albums.isNotEmpty(),
@@ -360,7 +360,7 @@ fun ArtistDetailScreen(
 										onDownloadAll = { 
 											scope.launch {
 												downloadManager.downloadCollection(album)
-												snackBarViewModel.notify(Res.string.notice_download_started)
+												snackBarManager.notify(Res.string.notice_download_started)
 											}
 										},
 										onCancelDownloadAll = {
@@ -371,7 +371,7 @@ fun ArtistDetailScreen(
 										onDeleteDownloadAll = {
 											scope.launch {
 												downloadManager.deleteDownloadedCollection(album)
-												snackBarViewModel.notify(Res.string.notice_deleted_download)
+												snackBarManager.notify(Res.string.notice_deleted_download)
 											}
 										},
 										rating = selectedAlbumRating,

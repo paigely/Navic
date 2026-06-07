@@ -60,7 +60,7 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.ui.components.common.CoilBitmapLoader
-import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import paige.navic.util.core.ResourceProvider
@@ -195,7 +195,7 @@ class AndroidMediaPlayerViewModel(
 	connectivityManager: ConnectivityManager,
 	private val sessionManager: SessionManager,
 	private val preferenceManager: PreferenceManager,
-	private val snackBarViewModel: SnackBarViewModel
+	private val snackBarManager: SnackBarManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
 	downloadManager = downloadManager,
@@ -507,7 +507,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) song else state.currentSong
 				)
 			}
-			if (notify) snackBarViewModel.notifyAddedToQueue()
+			if (notify) snackBarManager.notifyAddedToQueue()
 		}
 	}
 
@@ -535,7 +535,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) songs.firstOrNull() else state.currentSong
 				)
 			}
-			if (notify) snackBarViewModel.notifyAddedToQueue()
+			if (notify) snackBarManager.notifyAddedToQueue()
 		}
 	}
 
@@ -627,7 +627,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) song else state.currentSong
 				)
 			}
-			snackBarViewModel.notifyPlayNext()
+			snackBarManager.notifyPlayNext()
 		}
 	}
 
@@ -655,7 +655,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 				)
 			}
-			snackBarViewModel.notifyPlayNext()
+			snackBarManager.notifyPlayNext()
 		}
 	}
 

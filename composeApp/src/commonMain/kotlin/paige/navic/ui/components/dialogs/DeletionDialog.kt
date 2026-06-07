@@ -40,7 +40,7 @@ import paige.navic.domain.manager.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.ui.components.common.FormButton
-import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.UiState
 
 enum class DeletionEndpoint(
@@ -55,7 +55,7 @@ class DeletionViewModel(
 	private val syncManager: SyncManager,
 	private val playlistDao: PlaylistDao,
 	private val sessionManager: SessionManager,
-	private val snackBarViewModel: SnackBarViewModel
+	private val snackBarManager: SnackBarManager
 ) : ViewModel() {
 	private val _state = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
 	val state = _state.asStateFlow()
@@ -80,7 +80,7 @@ class DeletionViewModel(
 					playlistDao.deletePlaylist(id)
 				}
 				_state.value = UiState.Success(null)
-				snackBarViewModel.notify(endpoint.deletedText)
+				snackBarManager.notify(endpoint.deletedText)
 				_events.send(Event.Dismiss)
 			} catch (error: Exception) {
 				_state.value = UiState.Error(error = error)

@@ -63,7 +63,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.snackbars.NavicSnackbar
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
-import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
 import paige.navic.ui.navigation.NowPlayingSceneStrategy
 import paige.navic.ui.navigation.Screen
@@ -141,10 +141,10 @@ fun App() {
 		}
 	)
 	val snackbarState = remember { SnackbarHostState() }
-	val snackBarViewModel = koinInject<SnackBarViewModel>()
+	val snackBarManager = koinInject<SnackBarManager>()
 
 	LaunchedEffect(Unit) {
-		snackBarViewModel.events.collectLatest { event ->
+		snackBarManager.events.collectLatest { event ->
 			snackbarState.showSnackbar(getString(event.resource, *event.args.toTypedArray()))
 		}
 	}

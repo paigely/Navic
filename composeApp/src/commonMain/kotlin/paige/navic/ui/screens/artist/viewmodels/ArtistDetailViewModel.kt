@@ -33,7 +33,7 @@ import paige.navic.ui.core.UiState
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.notice_download_started
 import navic.composeapp.generated.resources.notice_deleted_download
-import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
+import paige.navic.domain.manager.SnackBarManager
 
 @Immutable
 data class ArtistState(
@@ -52,7 +52,7 @@ class ArtistDetailViewModel(
 	private val artistDao: ArtistDao,
 	private val albumDao: AlbumDao,
 	private val downloadManager: DownloadManager,
-	private val snackBarViewModel: SnackBarViewModel,
+	private val snackBarManager: SnackBarManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _artistState = MutableStateFlow<UiState<ArtistState>>(UiState.Loading())
@@ -263,7 +263,7 @@ class ArtistDetailViewModel(
 
 	fun downloadSong(song: DomainSong) {
 		downloadManager.downloadSong(song)
-		snackBarViewModel.notify(Res.string.notice_download_started)
+		snackBarManager.notify(Res.string.notice_download_started)
 	}
 
 	fun cancelDownload(songId: String) {
@@ -272,7 +272,7 @@ class ArtistDetailViewModel(
 
 	fun deleteDownload(songId: String) {
 		downloadManager.deleteDownload(songId)
-		snackBarViewModel.notify(Res.string.notice_deleted_download)
+		snackBarManager.notify(Res.string.notice_deleted_download)
 	}
 
 	@OptIn(ExperimentalCoroutinesApi::class)

@@ -27,7 +27,7 @@ import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import navic.composeapp.generated.resources.notice_deleted_download
 import navic.composeapp.generated.resources.notice_download_started
-import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
+import paige.navic.domain.manager.SnackBarManager
 
 @Composable
 fun PlaylistListScreenItem(
@@ -44,7 +44,7 @@ fun PlaylistListScreenItem(
 ) {
 	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
-	val snackBarViewModel = koinInject<SnackBarViewModel>()
+	val snackBarManager = koinInject<SnackBarManager>()
 	val scope = rememberCoroutineScope()
 
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
@@ -92,7 +92,7 @@ fun PlaylistListScreenItem(
 				onDownloadAll = { 
 					scope.launch {
 						downloadManager.downloadCollection(playlist)
-						snackBarViewModel.notify(Res.string.notice_download_started)
+						snackBarManager.notify(Res.string.notice_download_started)
 					}
 				},
 				onCancelDownloadAll = {
@@ -103,7 +103,7 @@ fun PlaylistListScreenItem(
 				onDeleteDownloadAll = {
 					scope.launch {
 						downloadManager.deleteDownloadedCollection(playlist)
-						snackBarViewModel.notify(Res.string.notice_deleted_download)
+						snackBarManager.notify(Res.string.notice_deleted_download)
 					}
 				}
 			)
