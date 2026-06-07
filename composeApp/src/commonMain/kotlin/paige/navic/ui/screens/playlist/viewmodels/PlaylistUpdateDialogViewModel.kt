@@ -13,14 +13,14 @@ import paige.navic.ui.core.UiState
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.notice_added_to_multiple_playlists
 import navic.composeapp.generated.resources.notice_added_to_playlist
-import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
 import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 
 class PlaylistUpdateDialogViewModel(
 	private val songs: List<DomainSong>,
 	private val playlistToExclude: String?,
 	private val sessionManager: SessionManager,
-	private val player: MediaPlayerViewModel
+	private val snackBarViewModel: SnackBarViewModel
 ) : ViewModel() {
 	private val _playlistsState = MutableStateFlow<UiState<List<ApiPlaylist>>>(UiState.Loading())
 	val playlistsState = _playlistsState.asStateFlow()
@@ -74,9 +74,9 @@ class PlaylistUpdateDialogViewModel(
 				}
 				_confirmState.value = UiState.Success(null)
 				if (selected.size == 1) {
-					player.notify(Res.string.notice_added_to_playlist, selected.first().name)
+					snackBarViewModel.notify(Res.string.notice_added_to_playlist, selected.first().name)
 				} else if (selected.size > 1) {
-					player.notify(Res.string.notice_added_to_multiple_playlists)
+					snackBarViewModel.notify(Res.string.notice_added_to_multiple_playlists)
 				}
 				_events.send(Event.Dismiss)
 			} catch (e: Exception) {

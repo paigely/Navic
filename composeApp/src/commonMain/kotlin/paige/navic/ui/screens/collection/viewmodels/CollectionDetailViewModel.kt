@@ -29,7 +29,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.notice_download_started
 import navic.composeapp.generated.resources.notice_deleted_download
 import navic.composeapp.generated.resources.notice_removed_from_playlist
-import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
 
 class CollectionDetailViewModel(
 	private val collectionId: String,
@@ -38,7 +38,7 @@ class CollectionDetailViewModel(
 	private val albumRepository: AlbumRepository,
 	private val downloadManager: DownloadManager,
 	private val sessionManager: SessionManager,
-	private val player: MediaPlayerViewModel,
+	private val snackBarViewModel: SnackBarViewModel,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _collectionState = MutableStateFlow<UiState<DomainSongCollection>>(
@@ -159,7 +159,7 @@ class CollectionDetailViewModel(
 					id = collectionId,
 					songIndicesToRemove = listOf(songs.indexOf(song))
 				)
-				player.notify(Res.string.notice_removed_from_playlist)
+				snackBarViewModel.notify(Res.string.notice_removed_from_playlist)
 				refreshCollection(true)
 			} catch (e: Exception) {
 				Logger.e("CollectionDetailViewModel", "Failed to remove song from playlist", e)
@@ -249,7 +249,7 @@ class CollectionDetailViewModel(
 
 	fun downloadSong(song: DomainSong) {
 		downloadManager.downloadSong(song)
-		player.notify(Res.string.notice_download_started)
+		snackBarViewModel.notify(Res.string.notice_download_started)
 	}
 
 	fun cancelDownload(songId: String) {
@@ -258,14 +258,14 @@ class CollectionDetailViewModel(
 
 	fun deleteDownload(songId: String) {
 		downloadManager.deleteDownload(songId)
-		player.notify(Res.string.notice_deleted_download)
+		snackBarViewModel.notify(Res.string.notice_deleted_download)
 	}
 
 	fun downloadAll() {
 		val collection = _collectionState.value.data ?: return
 		viewModelScope.launch {
 			downloadManager.downloadCollection(collection)
-			player.notify(Res.string.notice_download_started)
+			snackBarViewModel.notify(Res.string.notice_download_started)
 		}
 	}
 

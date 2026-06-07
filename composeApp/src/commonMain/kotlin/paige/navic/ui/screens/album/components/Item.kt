@@ -19,13 +19,13 @@ import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.ui.navigation.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.manager.DownloadManager
-import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.notice_download_started
 import navic.composeapp.generated.resources.notice_deleted_download
+import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
 
 @Composable
 fun AlbumListScreenItem(
@@ -45,7 +45,7 @@ fun AlbumListScreenItem(
 ) {
 	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
-	val player = koinInject<MediaPlayerViewModel>()
+	val snackBarViewModel = koinInject<SnackBarViewModel>()
 	val scope = rememberCoroutineScope()
 
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
@@ -80,8 +80,8 @@ fun AlbumListScreenItem(
 				downloadStatus = downloadStatus,
 				onDownloadAll = { 
 					scope.launch {
-						downloadManager.downloadCollection(album) 
-						player.notify(Res.string.notice_download_started)
+						downloadManager.downloadCollection(album)
+						snackBarViewModel.notify(Res.string.notice_download_started)
 					}
 				},
 				onCancelDownloadAll = {
@@ -92,7 +92,7 @@ fun AlbumListScreenItem(
 				onDeleteDownloadAll = {
 					scope.launch {
 						downloadManager.deleteDownloadedCollection(album)
-						player.notify(Res.string.notice_deleted_download)
+						snackBarViewModel.notify(Res.string.notice_deleted_download)
 					}
 				},
 				starred = starred,

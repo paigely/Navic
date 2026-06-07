@@ -41,7 +41,7 @@ val viewModelModule = module {
 			artistDao = get(),
 			albumDao = get(),
 			downloadManager = get(),
-			player = get(),
+			snackBarViewModel = get(),
 			connectivityManager = get()
 		)
 	}
@@ -58,7 +58,7 @@ val viewModelModule = module {
 			songs = songs,
 			playlistToExclude = playlistToExclude,
 			sessionManager = get(),
-			player = get()
+			snackBarViewModel = get()
 		)
 	}
 
@@ -80,7 +80,7 @@ val viewModelModule = module {
 	viewModel {
 		RadioCreateDialogViewModel(
 			sessionManager = get(),
-			player = get()
+			snackBarViewModel = get()
 		)
 	}
 	viewModelOf(::PlaylistListViewModel)
@@ -92,7 +92,7 @@ val viewModelModule = module {
 			syncManager = get(),
 			playlistDao = get(),
 			sessionManager = get(),
-			player = get()
+			snackBarViewModel = get()
 		)
 	}
 	viewModelOf(::ShareDialogViewModel)
@@ -101,7 +101,7 @@ val viewModelModule = module {
 			songs = songs,
 			playlistDao = get(),
 			sessionManager = get(),
-			player = get()
+			snackBarViewModel = get()
 		)
 	}
 	viewModel { params ->
@@ -112,7 +112,7 @@ val viewModelModule = module {
 			albumRepository = get(),
 			downloadManager = get(),
 			sessionManager = get(),
-			player = get(),
+			snackBarViewModel = get(),
 			connectivityManager = get()
 		)
 	}
