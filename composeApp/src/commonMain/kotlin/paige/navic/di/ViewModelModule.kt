@@ -76,24 +76,12 @@ val viewModelModule = module {
 	viewModelOf(::SearchViewModel)
 	viewModelOf(::GenreListViewModel)
 	viewModelOf(::RadioListViewModel)
-	viewModel {
-		RadioCreateDialogViewModel(
-			sessionManager = get(),
-			snackBarManager = get()
-		)
-	}
+	viewModelOf(::RadioCreateDialogViewModel)
 	viewModelOf(::PlaylistListViewModel)
 	viewModelOf(::LoginViewModel)
 	viewModelOf(::QueueViewModel)
 	viewModelOf(::ShareListViewModel)
-	viewModel {
-		DeletionViewModel(
-			syncManager = get(),
-			playlistDao = get(),
-			sessionManager = get(),
-			snackBarManager = get()
-		)
-	}
+	viewModelOf(::DeletionViewModel)
 	viewModelOf(::ShareDialogViewModel)
 	viewModel { (songs: List<DomainSong>) ->
 		PlaylistCreateDialogViewModel(

@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 abstract class MediaPlayerViewModel(
 	private val stateRepository: PlayerStateRepository,
 	protected val connectivityManager: ConnectivityManager,
-	protected val downloadManager: DownloadManager,
+	protected val downloadManager: DownloadManager
 ) : ViewModel() {
 
 	@Suppress("PropertyName")
