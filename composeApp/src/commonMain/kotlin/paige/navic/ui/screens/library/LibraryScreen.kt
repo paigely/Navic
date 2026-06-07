@@ -179,7 +179,7 @@ fun LibraryScreen() {
         onExpiryChange = { shareExpiry = it }
     )
 
-    DeletionDialog(
+	DeletionDialog(
         endpoint = DeletionEndpoint.PLAYLIST,
         id = playlistDeletionId,
         onIdClear = { playlistDeletionId = null },
