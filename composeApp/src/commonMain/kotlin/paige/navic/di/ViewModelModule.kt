@@ -6,6 +6,7 @@ import org.koin.dsl.module
 import paige.navic.domain.models.DomainSong
 import paige.navic.ui.components.dialogs.DeletionViewModel
 import paige.navic.ui.components.sheets.ChangelogViewModel
+import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.ui.screens.artist.viewmodels.ArtistDetailViewModel
 import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
@@ -126,4 +127,5 @@ val viewModelModule = module {
 	}
 	viewModelOf(::NavtabsViewModel)
 	viewModelOf(::LyricsPriorityViewModel)
+	viewModelOf(::SnackBarViewModel)
 }

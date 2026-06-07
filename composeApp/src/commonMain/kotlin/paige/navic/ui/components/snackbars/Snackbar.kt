@@ -1,4 +1,4 @@
-package paige.navic.ui.components.common
+package paige.navic.ui.components.snackbars
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar

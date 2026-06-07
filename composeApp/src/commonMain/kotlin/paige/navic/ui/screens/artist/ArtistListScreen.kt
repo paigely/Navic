@@ -37,7 +37,7 @@ import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.ui.components.common.ErrorSnackbar
+import paige.navic.ui.components.snackbars.ErrorSnackbar
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox

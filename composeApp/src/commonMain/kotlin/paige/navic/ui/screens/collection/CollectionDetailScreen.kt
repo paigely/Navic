@@ -49,7 +49,7 @@ import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Note
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
-import paige.navic.ui.components.common.ErrorSnackbar
+import paige.navic.ui.components.snackbars.ErrorSnackbar
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.core.UiState

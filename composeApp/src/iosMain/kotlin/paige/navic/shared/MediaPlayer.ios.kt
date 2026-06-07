@@ -21,6 +21,7 @@ import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.ui.components.snackbars.viewmodels.SnackBarViewModel
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import platform.AVFAudio.AVAudioSession
@@ -78,7 +79,8 @@ class IOSMediaPlayerViewModel(
 	connectivityManager: ConnectivityManager,
 	syncManager: SyncManager,
 	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager
+	private val preferenceManager: PreferenceManager,
+	private val snackBarViewModel: SnackBarViewModel
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
 	downloadManager = downloadManager,
@@ -246,7 +248,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) song else state.currentSong
 			)
 		}
-		notifyPlayNext()
+		snackBarViewModel.notifyPlayNext()
 	}
 
 	override fun playNext(collection: DomainSongCollection) {
@@ -268,7 +270,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 			)
 		}
-		notifyPlayNext()
+		snackBarViewModel.notifyPlayNext()
 	}
 
 	override fun playRadio(radio: DomainRadio) {
@@ -342,7 +344,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) song else state.currentSong
 			)
 		}
-		if (notify) notifyAddedToQueue()
+		if (notify) snackBarViewModel.notifyAddedToQueue()
 	}
 
 	override fun addToQueue(collection: DomainSongCollection, notify: Boolean) {
@@ -366,7 +368,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) songs.firstOrNull() else state.currentSong
 			)
 		}
-		if (notify) notifyAddedToQueue()
+		if (notify) snackBarViewModel.notifyAddedToQueue()
 	}
 
 	override fun removeFromQueue(index: Int) {

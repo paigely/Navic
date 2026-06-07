@@ -19,7 +19,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -61,7 +60,7 @@ import paige.navic.domain.manager.BottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.ui.components.common.NavicSnackbar
+import paige.navic.ui.components.snackbars.NavicSnackbar
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
