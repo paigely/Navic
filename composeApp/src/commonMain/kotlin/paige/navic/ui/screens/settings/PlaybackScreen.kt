@@ -64,6 +64,7 @@ import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.settings.dialogs.LyricsPriorityDialog
+import paige.navic.util.core.PlatformType
 import kotlin.math.roundToInt
 
 @Composable
@@ -105,7 +106,7 @@ fun SettingsPlaybackScreen() {
 						}
 						Icon(Icons.Outlined.ChevronForward, null)
 					}
-					if (!listOf("ipados", "ios").contains(platformContext.name.lowercase())) {
+					if (platformContext.platformType == PlatformType.Android) {
 						SettingSelectionRow(
 							title = { Text(stringResource(Res.string.option_replay_gain)) },
 							items = ReplayGainMode.entries.toImmutableList(),

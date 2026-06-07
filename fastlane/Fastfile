@@ -20,9 +20,14 @@ platform :ios do
       provisioning_profile: profile_path
     )
 
-    pilot(
+    upload_to_testflight(
       ipa: "prepare/Navic.ipa",
-      api_key: api_key
+      api_key: api_key,
+      skip_waiting_for_build_processing: false,
+      distribute_external: true,
+      submit_beta_review: true,
+      groups: ["Public"],
+      changelog: "Bug fixes and performance improvements for proper jamming."
     )
   end
 end

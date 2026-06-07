@@ -20,7 +20,6 @@
     <string name="title_artists">艺术家</string>
     <string name="title_all">全部</string>
     <string name="title_similar_artists">相似艺术家</string>
-    <string name="title_login_dialog">登录 Navidrome</string>
     <string name="title_source">源代码</string>
     <string name="title_chat">交流</string>
     <string name="title_shares">分享</string>
@@ -37,7 +36,6 @@
     <string name="subtitle_playback">音频行为、听歌记录与歌词</string>
     <string name="subtitle_developer">调试</string>
     <string name="subtitle_about">应用信息、版本与许可证</string>
-    <string name="subtitle_system_font">若不可用，则使用 Google Sans。</string>
     <string name="subtitle_playlist">播放列表</string>
     <string name="subtitle_enable_scrobbling">将播放记录同步到 Navidrome 服务器</string>
     <string name="subtitle_gapless_playback">实验性功能。需要重启应用。可能在某些设备上与音频卸载冲突</string>
@@ -163,8 +161,6 @@
     <string name="action_lyrics">歌词</string>
     <string name="action_share_lyrics">分享歌词</string>
     <string name="action_update_app">更新</string>
-    <string name="action_open_in_browser">在浏览器中查看</string>
-    <string name="action_copy_link">复制链接</string>
     <string name="action_remove_from_queue">从队列中删除</string>
     <string name="action_search_history">最近搜索</string>
     <string name="action_remove_from_history">从记录中删除</string>
@@ -179,11 +175,9 @@
     <string name="info_error_show">查看详情</string>
     <string name="info_error_hide">隐藏详情</string>
     <string name="info_unknown_album">未知专辑</string>
-    <string name="info_unknown_artist">未知歌单</string>
     <string name="info_unknown_year">未知年份</string>
     <string name="info_unknown_genre">无流派</string>
     <string name="info_track_genre">流派</string>
-    <string name="info_needs_log_in">请先点击右上角的账户按钮进行登录。</string>
     <string name="info_not_playing">未在播放</string>
     <string name="info_no_playlists">你没有歌单。</string>
     <string name="info_no_other_playlists">你没有其他歌单。</string>
@@ -204,8 +198,6 @@
     <string name="info_track_replay_gain">音轨回放增益</string>
     <string name="info_album_replay_gain">专辑回放增益</string>
     <string name="info_track_replay_gain_effective">回放增益值</string>
-    <string name="info_update_app">当前存在新版本。</string>
-    <string name="info_unknown_share">分享 %1$s</string>
     <string name="info_shared_by">由 %1$s 分享</string>
     <string name="info_share_expires_in">%1$s 后过期</string>
     <string name="info_share_expires_never">永久有效</string>
@@ -214,7 +206,6 @@
     <string name="info_no_lyrics">无歌词</string>
     <string name="info_no_albums">无专辑</string>
     <string name="info_no_artists">无艺术家</string>
-    <string name="info_no_tracks">无音轨</string>
     <string name="info_no_queue">队列为空</string>
     <string name="info_no_genres">无流派</string>
     <string name="info_no_playlists_short">无歌单</string>
@@ -225,9 +216,7 @@
     <string name="sideloading_warning_description">虽然这一变化的具体细节尚未完全明朗，但这可能导致所有侧载行为被阻断——除非应用签名者向 Google 和/或公众公开其真实身份。\n\n如果你具备为设备刷入自定义 ROM 的技术能力，现在就是行动的最佳时机。\n\n请阅读更多关于你能做什么以及如何发出你的声音，详情请点击</string>
     <string name="sideloading_warning_link_mask">此处。</string>
     <string name="title_behaviour">行为</string>
-    <string name="option_sort_highest">最高</string>
     <string name="action_new">新建</string>
-    <string name="action_cast">投射</string>
     <string name="action_queue">队列</string>
     <string name="action_reorder">重新排序</string>
     <string name="info_unknown">未知</string>
@@ -309,9 +298,6 @@
     <string name="title_bulk_download">下载所有专辑</string>
     <string name="title_wifi">Wi-Fi</string>
     <string name="title_advanced">高级转码</string>
-    <string name="title_edit_server">编辑服务器</string>
-    <string name="title_saved_servers">已保存的服务器</string>
-    <string name="title_images">图像</string>
     <string name="subtitle_pending_actions">%1$d 项正在等待网络</string>
     <string name="subtitle_max_bitrates">最大比特率</string>
     <string name="option_off">关闭</string>
@@ -334,9 +320,6 @@
     <string name="option_enable_custom_bitrates">启用自定义比特率</string>
     <string name="option_max_bitrate_wifi">WiFi 最大比特率 (kbps)</string>
     <string name="option_max_bitrate_cellular">移动网络最大比特率 (kbps)</string>
-    <string name="option_server_name_optional">服务器名称（可选）</string>
-    <string name="option_high_quality_covers">高质量专辑封面</string>
-    <string name="subtitle_high_quality_covers">获取原始分辨率图像。会消耗更多数据</string>
     <string name="info_status_idle">空闲</string>
     <string name="info_status_calculating">正在计算...</string>
     <string name="info_status_downloading">正在下载...</string>
@@ -346,8 +329,6 @@
     <string name="info_in_use">（使用中）</string>
     <string name="info_explicit">露骨内容</string>
     <string name="info_bitrate_default_zero">留空则默认为 0，由服务器决定。</string>
-    <string name="info_selected_server">已选择：%1$s</string>
-    <string name="info_default_server_name">服务器 %1$s</string>
     <string name="option_navigation_bar_label_visibility">标签可见性</string>
     <string name="option_navigation_bar_label_visibility_only_selected">仅所选</string>
     <plurals name="count_lines">
@@ -358,9 +339,6 @@
     <string name="action_clear_pending_actions">清除待同步操作</string>
     <string name="action_trigger_sync">触发手动同步</string>
     <string name="action_test_exception_handler">测试异常处理器</string>
-    <string name="action_cancel_editing">取消编辑</string>
-    <string name="action_save_and_login">保存并登录</string>
-    <string name="action_add_server">添加服务器</string>
     <string name="subtitle_rebuild_database">清除所有本地元数据并强制重新同步</string>
     <string name="info_no_radios">无电台</string>
     <string name="info_syncing">正在同步...</string>

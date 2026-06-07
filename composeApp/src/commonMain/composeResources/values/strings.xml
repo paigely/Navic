@@ -55,6 +55,7 @@
 	<string name="title_cellular">Cellular</string>
 	<string name="title_select_lyrics">Select Lyrics</string>
 	<string name="title_advanced">Advanced Transcoding</string>
+	<string name="title_logs">Logs</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>

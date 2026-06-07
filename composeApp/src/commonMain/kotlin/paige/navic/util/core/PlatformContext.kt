@@ -9,8 +9,14 @@ interface PlatformContext {
 	val appVersion: String
 	val colorScheme: ColorScheme?
 	val sizeClass: WindowSizeClass
+	val platformType: PlatformType
 	fun checkLocalNetworkPermission()
 	fun clickSound()
+}
+
+enum class PlatformType {
+	Android,
+	IOS
 }
 
 @Composable

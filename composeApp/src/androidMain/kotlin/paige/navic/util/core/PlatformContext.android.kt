@@ -68,6 +68,7 @@ actual fun rememberPlatformContext(): PlatformContext {
 				}
 			}
 
+			override val platformType = PlatformType.Android
 			override val name = "Android ${Build.VERSION.SDK_INT}"
 			override val appVersion: String =
 				context.packageManager

@@ -1,4 +1,4 @@
-name: Mirror Repo
+name: Mirror
 
 on:
   push:
@@ -9,13 +9,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  codeburger:
-    name: Mirror to Codeburger
+  codeberg:
+    name: Codeberg
     if: github.repository == 'ssalggnikool/Navic'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 

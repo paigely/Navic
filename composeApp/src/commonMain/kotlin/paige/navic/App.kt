@@ -89,6 +89,7 @@ import paige.navic.ui.screens.settings.SettingsAppearanceScreen
 import paige.navic.ui.screens.settings.SettingsCustomHeadersScreen
 import paige.navic.ui.screens.settings.SettingsDataStorageScreen
 import paige.navic.ui.screens.settings.SettingsDeveloperScreen
+import paige.navic.ui.screens.settings.SettingsLogsScreen
 import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
 import paige.navic.ui.screens.settings.SettingsScreen
@@ -99,6 +100,7 @@ import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.util.core.PlatformContext
+import paige.navic.util.core.PlatformType
 import paige.navic.util.core.rememberPlatformContext
 import paige.navic.util.ui.Material3Transitions
 
@@ -224,9 +226,8 @@ fun App() {
 				) {
 					SideloadingDialog()
 				}
-				// version check is annoying to do on ios
-				if (preferenceManager.checkForUpdates
-					&& !listOf("ios", "ipados").contains(platformContext.name.lowercase())) {
+				// version check is annoying to do on iOS
+				if (preferenceManager.checkForUpdates && platformContext.platformType == PlatformType.Android) {
 					ChangelogSheet()
 				}
 			}
@@ -348,6 +349,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Settings.StreamingQuality> {
 			SettingsStreamingQualityScreen()
+		}
+		entry<Screen.Settings.Logs> {
+			SettingsLogsScreen()
 		}
 	}
 }
