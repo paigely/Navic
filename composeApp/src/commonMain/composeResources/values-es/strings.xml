@@ -366,4 +366,10 @@
     <string name="title_starred">Estrellado</string>
     <string name="option_cover_art_quality">Calidad de la portada</string>
     <string name="info_no_starred">Nada está marcado con una estrella</string>
+    <string name="info_no_search_results">Sin resultados</string>
+    <plurals name="count_lines">
+        <item quantity="one">%1$d línea seleccionada</item>
+        <item quantity="many">%1$d líneas seleccionadas</item>
+        <item quantity="other">%1$d líneas seleccionadas</item>
+    </plurals>
 </resources>
