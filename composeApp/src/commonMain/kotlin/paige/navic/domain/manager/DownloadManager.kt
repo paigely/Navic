@@ -25,12 +25,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
+import org.jetbrains.compose.resources.getString
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.dao.LyricDao
@@ -41,6 +43,9 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.LyricsRepository
 import paige.navic.util.core.Logger
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.info_progress
+import navic.composeapp.generated.resources.title_library_download
 import coil3.PlatformContext as CoilPlatformContext
 
 class DownloadManager(
@@ -51,7 +56,8 @@ class DownloadManager(
 	private val lyricsRepository: LyricsRepository,
 	private val lyricDao: LyricDao,
 	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager
+	private val preferenceManager: PreferenceManager,
+	private val notificationManager: NotificationManager
 ) {
 	private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 	private val client = HttpClient {
@@ -130,12 +136,21 @@ class DownloadManager(
 				_isDownloadingLibrary.value = true
 				_libraryDownloadProgress.value = 0f
 
+				notificationManager.showProgressNotification(
+					id = NotificationIds.DOWNLOAD_LIBRARY,
+					title = getString(Res.string.title_library_download),
+					message = getString(Res.string.info_progress),
+					progress = 0f,
+					indeterminate = true
+				)
+
 				val songsToDownload = songs.filter { !isDownloaded(it.id) }
 				val totalToDownload = songsToDownload.size
 
 				if (totalToDownload == 0) {
 					_isDownloadingLibrary.value = false
 					_libraryDownloadProgress.value = 1f
+					notificationManager.cancelNotification(NotificationIds.DOWNLOAD_LIBRARY)
 					return@launch
 				}
 
@@ -153,7 +168,16 @@ class DownloadManager(
 
 							progressMutex.withLock {
 								processedCount++
-								_libraryDownloadProgress.value = processedCount.toFloat() / totalToDownload.toFloat()
+								val progress = processedCount.toFloat() / totalToDownload.toFloat()
+								_libraryDownloadProgress.value = progress
+
+								notificationManager.showProgressNotification(
+									id = NotificationIds.DOWNLOAD_LIBRARY,
+									title = getString(Res.string.title_library_download),
+									message = getString(Res.string.info_progress),
+									progress = progress,
+									indeterminate = false
+								)
 							}
 						}
 					}
@@ -161,10 +185,14 @@ class DownloadManager(
 
 				workers.joinAll()
 				_isDownloadingLibrary.value = false
+				delay(2000)
+				notificationManager.cancelNotification(NotificationIds.DOWNLOAD_LIBRARY)
 
-			} catch (_: CancellationException) {
+			} catch (e: CancellationException) {
 				_isDownloadingLibrary.value = false
 				_libraryDownloadProgress.value = 0f
+				notificationManager.cancelNotification(NotificationIds.DOWNLOAD_LIBRARY)
+				throw e
 			}
 		}
 	}

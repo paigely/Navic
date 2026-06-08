@@ -9,6 +9,7 @@ import paige.navic.data.database.CacheDatabase
 import paige.navic.data.database.DownloadDatabase
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.LogManager
+import paige.navic.domain.manager.NotificationManager
 import paige.navic.domain.manager.ShareManager
 import paige.navic.domain.manager.StorageManager
 import paige.navic.domain.repositories.PlayerStateRepository
@@ -59,6 +60,7 @@ actual val platformModule = module {
 	}
 
 	singleOf(::ShareManager)
+	singleOf(::NotificationManager)
 	singleOf(::StorageManager)
 	singleOf(::ConnectivityManager)
 	singleOf(::LogManager)
