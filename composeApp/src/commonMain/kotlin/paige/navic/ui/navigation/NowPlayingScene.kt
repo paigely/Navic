@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -24,20 +26,22 @@ import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
-import com.kmpalette.loader.rememberNetworkLoader
-import com.kmpalette.rememberDominantColorState
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import com.kmpalette.color
+import com.kmpalette.palette.graphics.Palette
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.http.Url
 import org.koin.compose.koinInject
+import paige.navic.di.getStaticImageLoader
 import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.sheets.ModalBottomSheet
 import paige.navic.ui.navigation.NowPlayingSceneStrategy.Companion.bottomSheet
 import paige.navic.ui.theme.NavicTheme
+import paige.navic.util.color.toComposeImageBitmap
 
 /** An [OverlayScene] that renders an [entry] within a [ModalBottomSheet]. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -146,24 +150,33 @@ private fun colorSchemeForCurrentSong(): ColorScheme {
 	val coverUri = remember(song?.coverArtId) {
 		song?.coverArtId?.let { sessionManager.getCoverArtUrl(it) }
 	}
-	val networkLoader = rememberNetworkLoader(HttpClient().config {
-		install(HttpTimeout) {
-			requestTimeoutMillis = 60_000
-			connectTimeoutMillis = 60_000
-			socketTimeoutMillis = 60_000
-		}
-	})
-	val dominantColorState = rememberDominantColorState(loader = networkLoader)
+
+	val coilContext = LocalPlatformContext.current
+	val imageLoader = remember(coilContext) { getStaticImageLoader(coilContext) }
+
+	var dominantColor by remember { mutableStateOf(Color.Transparent) }
+
 	val scheme = rememberDynamicColorScheme(
-		seedColor = dominantColorState.color,
+		seedColor = dominantColor,
 		isDark = true,
 		style = if (coverUri != null) PaletteStyle.Content else PaletteStyle.Monochrome,
 		specVersion = ColorSpec.SpecVersion.SPEC_2021,
 	)
 
 	LaunchedEffect(coverUri) {
-		coverUri?.let {
-			dominantColorState.updateFrom(Url("$it&size=128"))
+		if (coverUri != null) {
+			val request = ImageRequest.Builder(coilContext)
+				.data("$coverUri&size=128")
+				.build()
+
+			val result = imageLoader.execute(request)
+			if (result is SuccessResult) {
+				val bitmap = result.image.toComposeImageBitmap(coilContext)
+				val palette = Palette.from(bitmap).generate()
+				dominantColor = palette.dominantSwatch?.color ?: Color.Transparent
+			}
+		} else {
+			dominantColor = Color.Transparent
 		}
 	}
 
