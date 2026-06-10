@@ -163,10 +163,12 @@ private fun colorSchemeForCurrentSong(): ColorScheme {
 		specVersion = ColorSpec.SpecVersion.SPEC_2021,
 	)
 
-	LaunchedEffect(coverUri) {
-		if (coverUri != null) {
+	LaunchedEffect(coverUri, song?.coverArtId) {
+		if (coverUri != null && song?.coverArtId != null) {
 			val request = ImageRequest.Builder(coilContext)
-				.data("$coverUri&size=128")
+				.data(coverUri)
+				.diskCacheKey(song.coverArtId)
+				.size(128)
 				.build()
 
 			val result = imageLoader.execute(request)
