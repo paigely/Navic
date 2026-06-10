@@ -52,4 +52,18 @@ actual class NotificationManager {
 	actual fun cancelNotification(id: Int) {
 		notificationCenter.removeDeliveredNotificationsWithIdentifiers(listOf(id.toString()))
 	}
+
+	actual fun requestPermissions() {
+		notificationCenter.requestAuthorizationWithOptions(
+			UNAuthorizationOptionAlert or UNAuthorizationOptionSound
+		) { granted, error ->
+			if (error != null) {
+				Logger.e("NotificationManager", "Failed to request notification authorization", Exception(error.localizedDescription))
+			} else if (!granted) {
+				Logger.w("NotificationManager", "Notification permission was denied by the user", null)
+			} else {
+				Logger.i("NotificationManager", "Notification permission granted", null)
+			}
+		}
+	}
 }

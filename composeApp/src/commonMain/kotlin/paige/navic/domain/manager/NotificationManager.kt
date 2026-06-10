@@ -10,6 +10,8 @@ expect class NotificationManager {
 	)
 
 	fun cancelNotification(id: Int)
+
+	fun requestPermissions()
 }
 
 object NotificationIds {

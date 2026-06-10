@@ -28,6 +28,7 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.C
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -55,6 +56,7 @@ import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.koinInject
 import paige.navic.di.initializeSingletonImageLoader
 import paige.navic.domain.manager.BottomBarScrollManager
+import paige.navic.domain.manager.NotificationManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
@@ -130,6 +132,12 @@ fun App() {
 	val platformContext = rememberPlatformContext()
 	val sessionManager = koinInject<SessionManager>()
 	val preferenceManager = koinInject<PreferenceManager>()
+	val notificationManager = koinInject<NotificationManager>()
+
+	LaunchedEffect(Unit) {
+		notificationManager.requestPermissions()
+	}
+
 	val isLoggedIn by sessionManager.isLoggedIn.collectAsStateWithLifecycle()
 	val backStack = rememberNavBackStack(
 		config, if (isLoggedIn) {

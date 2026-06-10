@@ -150,7 +150,6 @@ class DownloadManager(
 				if (totalToDownload == 0) {
 					_isDownloadingLibrary.value = false
 					_libraryDownloadProgress.value = 1f
-					notificationManager.cancelNotification(NotificationIds.DOWNLOAD_LIBRARY)
 					return@launch
 				}
 
@@ -186,13 +185,13 @@ class DownloadManager(
 				workers.joinAll()
 				_isDownloadingLibrary.value = false
 				delay(2000)
-				notificationManager.cancelNotification(NotificationIds.DOWNLOAD_LIBRARY)
 
 			} catch (e: CancellationException) {
 				_isDownloadingLibrary.value = false
 				_libraryDownloadProgress.value = 0f
-				notificationManager.cancelNotification(NotificationIds.DOWNLOAD_LIBRARY)
 				throw e
+			} finally {
+				notificationManager.cancelNotification(NotificationIds.DOWNLOAD_LIBRARY)
 			}
 		}
 	}

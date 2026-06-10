@@ -103,50 +103,50 @@ class DbRepository(
 						progress = progress,
 						indeterminate = progress <= 0f || progress >= 1f
 					)
-
-					if (progress >= 1f) {
-						delay(2000)
-						notificationManager.cancelNotification(NotificationIds.SYNC_LIBRARY)
-					}
 				}
 			}
 
-			progressCallback(0.0f, Res.string.info_syncing)
+			try {
+				progressCallback(0.0f, Res.string.info_syncing)
 
-			progressCallback(0.01f, Res.string.info_syncing_genres)
-			syncGenres().getOrThrow()
+				progressCallback(0.01f, Res.string.info_syncing_genres)
+				syncGenres().getOrThrow()
 
-			progressCallback(0.02f, Res.string.info_syncing_radios)
-			syncRadios().getOrThrow()
+				progressCallback(0.02f, Res.string.info_syncing_radios)
+				syncRadios().getOrThrow()
 
-			progressCallback(0.04f, Res.string.info_syncing_artists)
-			syncArtists().getOrThrow()
+				progressCallback(0.04f, Res.string.info_syncing_artists)
+				syncArtists().getOrThrow()
 
-			progressCallback(0.07f, Res.string.info_syncing_playlists)
-			val playlists = syncPlaylists().getOrThrow()
+				progressCallback(0.07f, Res.string.info_syncing_playlists)
+				val playlists = syncPlaylists().getOrThrow()
 
-			syncLibrarySongs { localProgress, message ->
-				val globalProgress = 0.10f + (localProgress * 0.65f)
-				progressCallback(globalProgress, message)
-			}.getOrThrow()
+				syncLibrarySongs { localProgress, message ->
+					val globalProgress = 0.10f + (localProgress * 0.65f)
+					progressCallback(globalProgress, message)
+				}.getOrThrow()
 
-			val totalPlaylists = playlists.size
-			if (totalPlaylists > 0) {
-				val completedPlaylists = AtomicInt(0)
+				val totalPlaylists = playlists.size
+				if (totalPlaylists > 0) {
+					val completedPlaylists = AtomicInt(0)
 
-				playlists.map { playlist ->
-					async {
-						concurrentRequestLimit.withPermit {
-							syncPlaylistSongs(playlist.playlistId).getOrThrow()
-							val done = completedPlaylists.incrementAndGet()
-							val globalProgress = 0.75f + (0.25f * (done.toFloat() / totalPlaylists))
-							progressCallback(globalProgress, Res.string.info_syncing_playlists)
+					playlists.map { playlist ->
+						async {
+							concurrentRequestLimit.withPermit {
+								syncPlaylistSongs(playlist.playlistId).getOrThrow()
+								val done = completedPlaylists.incrementAndGet()
+								val globalProgress = 0.75f + (0.25f * (done.toFloat() / totalPlaylists))
+								progressCallback(globalProgress, Res.string.info_syncing_playlists)
+							}
 						}
-					}
-				}.awaitAll()
-			}
+					}.awaitAll()
+				}
 
-			progressCallback(1.0f, Res.string.info_syncing_finished)
+				progressCallback(1.0f, Res.string.info_syncing_finished)
+				delay(2000)
+			} finally {
+				notificationManager.cancelNotification(NotificationIds.SYNC_LIBRARY)
+			}
 		}
 	}
 
