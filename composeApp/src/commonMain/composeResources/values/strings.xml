@@ -58,9 +58,9 @@
 	<string name="title_logs">Logs</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
-	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
+	<string name="subtitle_now_playing">Customise the fullscreen now playing and lyrics views</string>
 	<string name="subtitle_bottom_app_bar">Customise the bottom bar &amp; mini player</string>
-	<string name="subtitle_playback">Audio behaviour, scrobbling, lyrics</string>
+	<string name="subtitle_playback">Audio behaviour and scrobbling</string>
 	<string name="subtitle_data_storage">Manage sync, network usage, and cache</string>
 	<string name="subtitle_trigger_sync">Forces a full library pull immediately</string>
 	<string name="subtitle_pending_actions">%1$d items waiting for network</string>
