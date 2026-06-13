@@ -46,7 +46,7 @@ fun RootBottomBar(
 		modifier = modifier.then(
 			if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
 				Modifier.background(
-					Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress))
+					Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = shadowFadeProgress))
 				)
 			else Modifier
 		)
@@ -62,8 +62,8 @@ fun RootBottomBar(
 		)
 		BottomBar(
 			containerColor = if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
-				NavigationBarDefaults.containerColor.copy(alpha = 0f)
-			else NavigationBarDefaults.containerColor,
+				MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0f)
+			else MaterialTheme.colorScheme.surfaceContainer,
 			windowInsets = bottomBarWindowInsets,
 			modifier = Modifier.graphicsLayer {
 				alpha = progress.coerceIn(0f..1f)

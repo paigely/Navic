@@ -1,8 +1,10 @@
 package paige.navic.ui.screens.collection.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.dropUnlessResumed
@@ -32,6 +35,7 @@ import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.ui.core.UiState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectionDetailScreenTopBar(
 	collection: DomainSongCollection?,
@@ -62,6 +66,10 @@ fun CollectionDetailScreenTopBar(
 				modifier = Modifier.alpha(titleAlpha)
 			)
 		},
+		colors = TopAppBarDefaults.topAppBarColors(
+			containerColor = Color.Transparent,
+			scrolledContainerColor = Color.Transparent
+		),
 		actions = {
 			Box {
 				var expanded by remember { mutableStateOf(false) }

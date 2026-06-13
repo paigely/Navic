@@ -45,6 +45,7 @@ import navic.composeapp.generated.resources.option_animation_style
 import navic.composeapp.generated.resources.option_artwork_shape
 import navic.composeapp.generated.resources.option_choose_theme
 import navic.composeapp.generated.resources.option_cover_art_size
+import navic.composeapp.generated.resources.option_dynamic_themes
 import navic.composeapp.generated.resources.option_grid_items_per_row
 import navic.composeapp.generated.resources.option_use_marquee_text
 import navic.composeapp.generated.resources.title_appearance
@@ -265,6 +266,12 @@ fun SettingsAppearanceScreen() {
 
 				FormTitle(stringResource(Res.string.title_miscellaneous))
 				Form {
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_dynamic_themes)) },
+						value = preferenceManager.dynamicThemes,
+						onSetValue = { preferenceManager.dynamicThemes = it }
+					)
+
 					SettingSelectionRow(
 						title = { Text(stringResource(Res.string.option_use_marquee_text)) },
 						items = MarqueeSpeed.entries.toImmutableList(),

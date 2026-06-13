@@ -1,7 +1,6 @@
 package paige.navic.ui.screens.artist.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -17,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import kotlinx.collections.immutable.toPersistentList
 import navic.composeapp.generated.resources.Res
@@ -42,9 +42,6 @@ fun ArtistDetailScreenTopBar(
 ) {
 	val uriHandler = LocalUriHandler.current
 	val state = (artistState as? UiState.Success)?.data
-	val alpha by animateFloatAsState(
-		if (scrolled) 1f else 0f
-	)
 
 	val player = koinInject<MediaPlayerViewModel>()
 
@@ -53,7 +50,8 @@ fun ArtistDetailScreenTopBar(
 	if (state != null) {
 		NestedTopBar(
 			colors = TopAppBarDefaults.topAppBarColors(
-				containerColor = MaterialTheme.colorScheme.surface.copy(alpha = alpha)
+				containerColor = if (scrolled) MaterialTheme.colorScheme.surface else Color.Transparent,
+				scrolledContainerColor = MaterialTheme.colorScheme.surface
 			),
 			title = {
 				AnimatedVisibility(

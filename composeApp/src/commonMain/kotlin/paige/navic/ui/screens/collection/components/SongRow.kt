@@ -138,7 +138,7 @@ fun CollectionDetailScreenSongRow(
 			onLongClick = onLongClick,
 			shapes = itemShape,
 			colors = ListItemDefaults.segmentedColors(
-				containerColor = MaterialTheme.colorScheme.surfaceContainer
+				containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
 			),
 			leadingContent = {
 				if (isPlaylist) 

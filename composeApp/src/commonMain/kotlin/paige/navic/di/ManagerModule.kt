@@ -7,6 +7,7 @@ import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.SleepTimerManager
 import paige.navic.domain.manager.SyncManager
+import paige.navic.domain.manager.CoverColorManager
 
 val managerModule = module {
 	singleOf(::SleepTimerManager)
@@ -18,4 +19,5 @@ val managerModule = module {
 	singleOf(::DownloadManager)
 	singleOf(::SessionManager)
 	singleOf(::PreferenceManager)
+	singleOf(::CoverColorManager)
 }

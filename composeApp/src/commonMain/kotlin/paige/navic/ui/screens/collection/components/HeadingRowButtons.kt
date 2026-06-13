@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -77,7 +78,10 @@ fun CollectionDetailScreenHeadingRowButtons(
 			},
 			shape = buttonShape,
 			contentPadding = PaddingValues(0.dp),
-			enabled = collection.songs.isNotEmpty()
+			enabled = collection.songs.isNotEmpty(),
+			colors = ButtonDefaults.outlinedButtonColors(
+				contentColor = MaterialTheme.colorScheme.primary
+			)
 		) {
 			Icon(
 				Icons.Outlined.Shuffle,
@@ -94,7 +98,11 @@ fun CollectionDetailScreenHeadingRowButtons(
 				player.playAt(0)
 			},
 			shape = buttonShape,
-			enabled = collection.songs.isNotEmpty()
+			enabled = collection.songs.isNotEmpty(),
+			colors = ButtonDefaults.buttonColors(
+				containerColor = MaterialTheme.colorScheme.primary,
+				contentColor = MaterialTheme.colorScheme.onPrimary
+			)
 		) {
 			Icon(
 				Icons.Filled.Play,
@@ -133,7 +141,10 @@ fun CollectionDetailScreenHeadingRowButtons(
 			shape = buttonShape,
 			enabled = collection.songs.isNotEmpty() ||
 				(downloadStatus == DownloadStatus.DOWNLOADED || downloadStatus == DownloadStatus.DOWNLOADING),
-			contentPadding = PaddingValues(0.dp)
+			contentPadding = PaddingValues(0.dp),
+			colors = ButtonDefaults.outlinedButtonColors(
+				contentColor = MaterialTheme.colorScheme.primary
+			)
 		) {
 			when (downloadStatus) {
 				DownloadStatus.DOWNLOADING -> {
