@@ -47,7 +47,18 @@ fun rememberCoverColorScheme(coverArtId: String?): ColorScheme {
 	val imageLoader = remember(coilContext) { getStaticImageLoader(coilContext) }
 
 	var dominantColor by remember(coverArtId) {
-		mutableStateOf(coverArtId?.let { colorManager.getColor(it) } ?: Color.Transparent)
+		mutableStateOf(Color.Transparent)
+	}
+
+	LaunchedEffect(coverArtId) {
+		if (coverArtId != null) {
+			val cachedColor = colorManager.getColor(coverArtId)
+			if (cachedColor != null) {
+				dominantColor = cachedColor
+			}
+		} else {
+			dominantColor = Color.Transparent
+		}
 	}
 
 	val scheme = rememberDynamicColorScheme(
@@ -83,8 +94,6 @@ fun rememberCoverColorScheme(coverArtId: String?): ColorScheme {
 				dominantColor = color
 				colorManager.putColor(coverArtId, color)
 			}
-		} else if (coverArtId == null) {
-			dominantColor = Color.Transparent
 		}
 	}
 

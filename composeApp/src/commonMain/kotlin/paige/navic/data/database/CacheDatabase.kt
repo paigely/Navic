@@ -7,6 +7,7 @@ import androidx.room3.RoomDatabaseConstructor
 import androidx.room3.TypeConverters
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
+import paige.navic.data.database.dao.CoverColorDao
 import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.dao.GenreDao
 import paige.navic.data.database.dao.LyricDao
@@ -16,6 +17,7 @@ import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.dao.SyncActionDao
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.entities.ArtistEntity
+import paige.navic.data.database.entities.CoverColorEntity
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.GenreEntity
 import paige.navic.data.database.entities.LyricEntity
@@ -26,7 +28,7 @@ import paige.navic.data.database.entities.SongEntity
 import paige.navic.data.database.entities.SyncActionEntity
 
 @Database(
-	version = 15,
+	version = 16,
 	entities = [
 		AlbumEntity::class,
 		GenreEntity::class,
@@ -37,7 +39,8 @@ import paige.navic.data.database.entities.SyncActionEntity
 		RadioEntity::class,
 		LyricEntity::class,
 		SyncActionEntity::class,
-		DownloadEntity::class
+		DownloadEntity::class,
+		CoverColorEntity::class
 	]
 )
 @TypeConverters(Converters::class)
@@ -52,6 +55,7 @@ abstract class CacheDatabase : RoomDatabase() {
 	abstract fun radioDao(): RadioDao
 	abstract fun lyricDao(): LyricDao
 	abstract fun syncActionDao(): SyncActionDao
+	abstract fun coverColorDao(): CoverColorDao
 }
 
 @Suppress("KotlinNoActualForExpect")
