@@ -22,16 +22,17 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import org.koin.compose.koinInject
 import paige.navic.di.getStaticImageLoader
 import paige.navic.domain.manager.SessionManager
 import kotlin.time.TimeSource
-import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
 @Composable
 fun BlendBackground(
@@ -84,6 +85,8 @@ fun BlendBackground(
 			}
 		}
 	}
+
+	val isLight = MaterialTheme.colorScheme.surface.luminance() > 0.5f
 
 	Box(
 		modifier = modifier
@@ -146,7 +149,13 @@ fun BlendBackground(
 				.fillMaxSize()
 				.drawWithContent {
 					drawContent()
-					drawRect(color = Color.Black.copy(alpha = 0.4f))
+					drawRect(
+						color = if (isLight) {
+							Color.White.copy(alpha = 0.5f)
+						} else {
+							Color.Black.copy(alpha = 0.5f)
+						}
+					)
 				}
 		)
 	}

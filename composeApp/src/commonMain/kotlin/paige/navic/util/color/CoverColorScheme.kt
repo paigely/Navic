@@ -66,16 +66,6 @@ fun rememberCoverColorScheme(coverArtId: String?): ColorScheme {
 		isDark = isDark,
 		style = if (coverUri != null) PaletteStyle.Content else PaletteStyle.Monochrome,
 		specVersion = ColorSpec.SpecVersion.SPEC_2021,
-		modifyColorScheme = { baseScheme ->
-			if (dominantColor != Color.Transparent) {
-				baseScheme.copy(
-					surface = baseScheme.surfaceContainer,
-					background = baseScheme.surfaceContainer,
-				)
-			} else {
-				baseScheme
-			}
-		}
 	)
 
 	LaunchedEffect(coverUri, coverArtId) {
