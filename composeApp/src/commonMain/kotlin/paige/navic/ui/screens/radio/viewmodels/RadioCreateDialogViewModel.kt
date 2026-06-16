@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import paige.navic.domain.manager.SessionManager
 import paige.navic.ui.core.UiState
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.notice_created_playlist
+import navic.composeapp.generated.resources.notice_created_radio
 import paige.navic.domain.manager.SnackBarManager
 
 class RadioCreateDialogViewModel(
@@ -39,7 +39,7 @@ class RadioCreateDialogViewModel(
 				)
 				_events.send(Event.Dismiss)
 				_creationState.value = UiState.Success(null)
-				snackBarManager.notify(Res.string.notice_created_playlist, name.text.toString())
+				snackBarManager.notify(Res.string.notice_created_radio, name.text.toString())
 			} catch (e: Exception) {
 				_creationState.value = UiState.Error(e)
 			}

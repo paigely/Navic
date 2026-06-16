@@ -313,6 +313,7 @@
 	<string name="notice_created_playlist">Created playlist %1$s.</string>
 	<string name="notice_deleted_download">Deleted download.</string>
 	<string name="notice_removed_from_playlist">Removed from playlist.</string>
+	<string name="notice_created_radio">Created radio %1$s.</string>
 	<string name="notice_added_to_queue">Added to queue.</string>
 	<string name="notice_play_next">Playing next.</string>
 	<string name="notice_added_to_playlist">Added to %1$s.</string>
