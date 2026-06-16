@@ -53,14 +53,14 @@ fun ErrorSnackbar(
 			onClearError()
 		},
 		buttons = {
-            FormButton(onClick = {
-                visible = false
-                onClearError()
-            }) {
-                Text(stringResource(Res.string.action_ok))
-            }
+			FormButton(onClick = {
+				visible = false
+				onClearError()
+			}) {
+				Text(stringResource(Res.string.action_ok))
+			}
 		}
 	) {
-        ErrorCodeBlock(error)
+		ErrorCodeBlock(error)
 	}
 }
