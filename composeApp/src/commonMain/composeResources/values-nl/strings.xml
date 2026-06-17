@@ -19,7 +19,6 @@
     <string name="title_artists">Artiesten</string>
     <string name="title_all">Alles</string>
     <string name="title_similar_artists">Gelijkaardige artiesten</string>
-    <string name="title_login_dialog">Login bij Navidrome</string>
     <string name="title_source">Broncode</string>
     <string name="title_chat">Chat</string>
     <string name="title_choose_font">Applicatielettertype</string>
@@ -31,16 +30,15 @@
     <string name="title_miscellaneous">Overige</string>
     <string name="title_layout">Layout</string>
     <string name="subtitle_appearance">Thema's, kleuren en layout</string>
-    <string name="subtitle_now_playing">Pas het fullscreen "nu aan het spelen" view aan</string>
+    <string name="subtitle_now_playing">Pas het fullscreen nu aan het spelen view aan</string>
     <string name="subtitle_bottom_app_bar">Pas de onderstaande balk en minispeler aan</string>
     <string name="subtitle_playback">Geluidsgedrag, scrobbling en lyrics</string>
     <string name="subtitle_developer">Debuggen en testen</string>
     <string name="subtitle_about">App informatie, versie en licensies</string>
-    <string name="subtitle_system_font">Zoniet, gebruik Google Sans.</string>
     <string name="subtitle_playlist">Playlist</string>
     <string name="subtitle_enable_scrobbling">Scrobble gespeelde liedjes naar jouw Navidrome server</string>
-    <string name="subtitle_gapless_playback">Experimenteel. Vereist het herstarten van de applicatie. Dit kan conflicteren met "audio offload" op sommige apparaten</string>
-    <string name="subtitle_audio_offload">Experimenteel. Vereist het herstarten van de applicatie. Kan conflicteren met "gapless playback" op sommige apparaten</string>
+    <string name="subtitle_gapless_playback">Experimenteel. Vereist het herstarten van de applicatie. Dit kan conflicteren met audio offload op sommige apparaten</string>
+    <string name="subtitle_audio_offload">Experimenteel. Vereist het herstarten van de applicatie. Kan conflicteren met gapless playback op sommige apparaten</string>
     <string name="subtitle_now_playing_background_style">Kies statisch als je prestatieproblemen ondervindt</string>
     <string name="option_now_playing_background_style">Achtergrondstijl</string>
     <string name="option_now_playing_background_style_static">Statisch</string>
@@ -66,7 +64,6 @@
     <string name="option_lyrics_beat_by_beat">Bij de beat-lyrics</string>
     <string name="option_sort_random">Willekeurig</string>
     <string name="option_sort_newest">Recent toegevoegd</string>
-    <string name="option_sort_highest">Hoogste</string>
     <string name="option_sort_frequent">Vaak afgespeeld</string>
     <string name="option_sort_recent">Overlaatst afgespeeld</string>
     <string name="option_sort_alphabetical_by_name">Alfabetisch op naam</string>
@@ -147,11 +144,8 @@
     <string name="action_view_on_lastfm">Bekijk het op last.fm</string>
     <string name="action_view_on_musicbrainz">Bekijk het op MusicBrainz</string>
     <string name="action_lyrics">Lyrics</string>
-    <string name="action_cast">Cast</string>
     <string name="action_share_lyrics">Deel Lyrics</string>
     <string name="action_update_app">Updaten</string>
-    <string name="action_open_in_browser">Open het in de Browser</string>
-    <string name="action_copy_link">Kopieer link</string>
     <string name="action_queue">Wachtrij</string>
     <string name="action_reorder">Herorden</string>
     <string name="action_remove_from_queue">Haal het uit de wachtrij</string>
@@ -168,10 +162,8 @@
     <string name="info_error_hide">Verberg details</string>
     <string name="info_unknown">Onbekend</string>
     <string name="info_unknown_album">Onbekend Album</string>
-    <string name="info_unknown_artist">Onbekende Artiest</string>
     <string name="info_unknown_year">Onbekend Jaar</string>
     <string name="info_unknown_genre">Onbekend Genre</string>
-    <string name="info_needs_log_in">Je moet eerst inloggen. Klik op het accountknopje in de rechterbovenhoek.</string>
     <string name="info_not_playing">Niets aan het afspelen</string>
     <string name="info_no_playlists">Je hebt geen playlists.</string>
     <string name="info_no_other_playlists">Je hebt geen playlists buiten deze.</string>
@@ -193,8 +185,6 @@
     <string name="info_track_replay_gain">Track ReplayGain</string>
     <string name="info_album_replay_gain">Album ReplayGain</string>
     <string name="info_track_replay_gain_effective">ReplayGain effectieve waarde</string>
-    <string name="info_update_app">Een nieuwe versie van Navic is beschikbaar.</string>
-    <string name="info_unknown_share">Share %1$s</string>
     <string name="info_shared_by">Gedeeld door %1$s</string>
     <string name="info_share_expires_in">Vervalt in %1$s</string>
     <string name="info_share_expires_never">Vervalt nooit</string>
@@ -203,7 +193,6 @@
     <string name="info_no_lyrics">Geen lyrics</string>
     <string name="info_no_albums">Geen albums</string>
     <string name="info_no_artists">Geen artiesten</string>
-    <string name="info_no_tracks">Geen tracks</string>
     <string name="info_no_queue">Niets in de wachtrij</string>
     <string name="info_no_genres">Geen genres</string>
     <string name="info_no_playlists_short">Geen playlists</string>
@@ -239,7 +228,6 @@
     <string name="title_sync_control">Synchronisatiecontrole</string>
     <string name="title_cache_management">Cache en Opslagbeheer</string>
     <string name="title_danger_zone">Gevarenzone</string>
-    <string name="title_home">Home</string>
     <string name="subtitle_data_storage">Beheer synchronisatie, netwerkgebruik en cache</string>
     <string name="subtitle_trigger_sync">Dwingt onmiddellijk een volledige bibliotheekophaling</string>
     <string name="subtitle_pending_actions">%1$d items aan het wachten op het netwerk</string>
@@ -250,7 +238,6 @@
     <string name="option_pending_actions">Nog synchronisatie-acties in de wachtlijst</string>
     <string name="option_downloaded_songs">Gedownloade liedjes</string>
     <string name="option_custom_headers">Aangepaste server headers</string>
-    <string name="option_sleep_timer">Slaaptimer</string>
     <string name="info_status_idle">Ongebruikt</string>
     <string name="info_sync_never">Nooit</string>
     <string name="info_sync_just_now">Zojuist</string>

@@ -45,6 +45,7 @@ import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
+import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Queue
@@ -158,6 +159,13 @@ fun SongListScreenItem(
 					)
 				},
 				trailingContent = {
+					if(starred) {
+						Icon(
+							Icons.Filled.Star,
+							null,
+							modifier = Modifier.size(16.dp)
+						)
+					}
 					if (download != null) {
 						when (download.status) {
 							DownloadStatus.DOWNLOADING -> {

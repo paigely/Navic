@@ -227,7 +227,7 @@ fun StarredScreenContent(
 							onClick = { onPlaySong(index) },
 							onLongClick = { onSelectSong(song) },
 							onDismissRequest = { onClearSongSelection() },
-							starredState = selectedSongIsStarred,
+							starredState = if (selectedSong == song) selectedSongIsStarred else song.starredAt != null,
 							onAddStar = onAddSongStar,
 							onRemoveStar = onRemoveSongStar,
 							download = download,

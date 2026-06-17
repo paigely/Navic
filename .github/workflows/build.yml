@@ -1,4 +1,4 @@
-name: Build Navic
+name: Build
 
 on:
   push:
@@ -30,12 +30,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-apk:
-    name: Build Android APK
+  build-android:
+    name: Android
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup JDK
         uses: actions/setup-java@v5
@@ -68,25 +68,26 @@ jobs:
           ./gradlew :androidApp:assembleDebug --stacktrace
 
       - name: Upload APK artifact
-        if: steps.build_release.outcome == 'success' || steps.build_debug.outcome == 'success'
         uses: actions/upload-artifact@v6
         with:
           name: navic-release-android
           path: androidApp/build/outputs/apk/**/*.apk
           compression-level: 0
+          if-no-files-found: ignore
 
-  build-ipa:
-    name: Build iOS IPA
+  build-ios:
+    name: iOS
     runs-on: macos-26
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup JDK
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
+          cache: gradle
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
@@ -128,14 +129,17 @@ jobs:
           name: navic-release-ios
           path: Navic.ipa
           compression-level: 0
+          if-no-files-found: ignore
 
   upload-artifacts-to-discord:
     name: Upload Artifacts to Discord
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    needs: [ build-apk, build-ipa ]
+    needs: [ build-android, build-ios ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v7
+      - name: Download Artifacts
+        uses: actions/download-artifact@v7
+
       - name: Post artifacts to Discord webhook
         shell: bash
         if: env.CI_BUILD_WEBHOOK
@@ -165,14 +169,16 @@ jobs:
   create-release:
     name: Create GitHub Release
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    needs: [ build-apk, build-ipa ]
+    needs: [ build-android, build-ios ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
     steps:
-      - uses: actions/download-artifact@v7
-      - name: Create GitHub Release
+      - name: Download Artifacts
+        uses: actions/download-artifact@v7
+
+      - name: Create Release
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

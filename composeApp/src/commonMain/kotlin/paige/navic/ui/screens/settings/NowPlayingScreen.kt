@@ -19,6 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_lyrics
+import navic.composeapp.generated.resources.option_lyrics_autoscroll
+import navic.composeapp.generated.resources.option_lyrics_beat_by_beat
+import navic.composeapp.generated.resources.option_lyrics_blur
+import navic.composeapp.generated.resources.option_lyrics_bright_inactive
+import navic.composeapp.generated.resources.option_lyrics_keep_alive
+import navic.composeapp.generated.resources.option_lyrics_priority
 import navic.composeapp.generated.resources.option_now_playing_background_style
 import navic.composeapp.generated.resources.option_now_playing_slider_style
 import navic.composeapp.generated.resources.option_now_playing_song_info
@@ -39,12 +46,14 @@ import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
+import paige.navic.ui.screens.settings.dialogs.LyricsPriorityDialog
 import paige.navic.ui.screens.settings.dialogs.NowPlayingSliderStyleDialog
 
 @Composable
 fun SettingsNowPlayingScreen() {
 	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
+	var showLyricsPriorityDialog by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
 		topBar = {
@@ -101,6 +110,45 @@ fun SettingsNowPlayingScreen() {
 					)
 				}
 
+				FormTitle(stringResource(Res.string.action_lyrics))
+				Form {
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_lyrics_autoscroll)) },
+						value = preferenceManager.lyricsAutoscroll,
+						onSetValue = { preferenceManager.lyricsAutoscroll = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_lyrics_beat_by_beat)) },
+						value = preferenceManager.lyricsBeatByBeat,
+						onSetValue = { preferenceManager.lyricsBeatByBeat = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_lyrics_keep_alive)) },
+						value = preferenceManager.lyricsKeepAlive,
+						onSetValue = { preferenceManager.lyricsKeepAlive = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_lyrics_blur)) },
+						value = preferenceManager.lyricsBlur,
+						onSetValue = { preferenceManager.lyricsBlur = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_lyrics_bright_inactive)) },
+						value = preferenceManager.lyricsBrightInactive,
+						onSetValue = { preferenceManager.lyricsBrightInactive = it }
+					)
+
+					FormRow(
+						onClick = { showLyricsPriorityDialog = true }
+					) {
+						Text(stringResource(Res.string.option_lyrics_priority))
+					}
+				}
+
 				FormTitle(stringResource(Res.string.title_layout))
 				Form {
 					SettingSwitchRow(
@@ -119,5 +167,9 @@ fun SettingsNowPlayingScreen() {
 				}
 			}
 		}
+		LyricsPriorityDialog(
+			presented = showLyricsPriorityDialog,
+			onDismissRequest = { showLyricsPriorityDialog = false }
+		)
 	}
 }

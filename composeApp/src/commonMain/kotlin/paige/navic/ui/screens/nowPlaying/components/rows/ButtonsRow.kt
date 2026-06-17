@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
@@ -56,6 +58,13 @@ fun NowPlayingButtonsRow() {
 	val isPressed by interactionSource.collectIsPressedAsState()
 	val scale = remember { Animatable(1f) }
 	val enabled = playerState.currentSong != null
+	val haptic = LocalHapticFeedback.current
+
+	val hapticType = if (playerState.isPaused) {
+		HapticFeedbackType.ToggleOn
+	} else {
+		HapticFeedbackType.ToggleOff
+	}
 
 	LaunchedEffect(isPressed) {
 		if (!isPressed) {
@@ -121,6 +130,7 @@ fun NowPlayingButtonsRow() {
 				.indication(interactionSource, ripple(color = Color.Black)),
 			colors = IconButtonDefaults.filledIconButtonColors(),
 			onClick = {
+				haptic.performHapticFeedback(hapticType)
 				platformContext.clickSound()
 				player.togglePlay()
 			},

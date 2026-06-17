@@ -36,6 +36,7 @@ import paige.navic.LocalNavStack
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
 import paige.navic.icons.outlined.Close
+import paige.navic.ui.theme.defaultFont
 
 @Composable
 fun SearchScreenTopBar(
@@ -91,7 +92,7 @@ fun SearchScreenTopBar(
 					onSearch(query.text.toString())
 				}
 			},
-			textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
+			textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface, fontFamily = defaultFont()),
 			cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
 			decorator = { innerTextField ->
 				Box(contentAlignment = Alignment.CenterStart) {

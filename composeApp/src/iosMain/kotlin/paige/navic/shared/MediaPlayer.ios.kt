@@ -4,7 +4,11 @@ package paige.navic.shared
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.cinterop.ExperimentalForeignApi
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.IOSScrobbleManager
@@ -17,6 +21,7 @@ import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import platform.AVFAudio.AVAudioSession
@@ -27,6 +32,7 @@ import platform.AVFoundation.AVPlayerItem
 import platform.AVFoundation.AVPlayerItemDidPlayToEndTimeNotification
 import platform.AVFoundation.AVURLAsset
 import platform.AVFoundation.addPeriodicTimeObserverForInterval
+import platform.AVFoundation.asset
 import platform.AVFoundation.currentItem
 import platform.AVFoundation.currentTime
 import platform.AVFoundation.duration
@@ -73,7 +79,8 @@ class IOSMediaPlayerViewModel(
 	connectivityManager: ConnectivityManager,
 	syncManager: SyncManager,
 	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager
+	private val preferenceManager: PreferenceManager,
+	private val snackBarManager: SnackBarManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
 	downloadManager = downloadManager,
@@ -119,6 +126,32 @@ class IOSMediaPlayerViewModel(
 		pendingSyncState?.let { state ->
 			syncPlayerWithState(state)
 			pendingSyncState = null
+		}
+
+		viewModelScope.launch {
+			combine(
+				connectivityManager.isCellular,
+				snapshotFlow { preferenceManager.streamingQualityWifi },
+				snapshotFlow { preferenceManager.streamingQualityCellular },
+				snapshotFlow { preferenceManager.isAdvancedTranscodingActive },
+				snapshotFlow { preferenceManager.customMaxBitrateWifi },
+				snapshotFlow { preferenceManager.customMaxBitrateCellular }
+			) { it }.collectLatest {
+				val song = _uiState.value.currentSong ?: return@collectLatest
+				val url = getSongUrl(song) ?: return@collectLatest
+
+				if (!url.isFileURL()) {
+					val currentAsset = player.currentItem?.asset as? AVURLAsset
+					if (currentAsset?.URL?.absoluteString != url.absoluteString) {
+						val currentTime = player.currentTime()
+						val isPaused = _uiState.value.isPaused
+
+						player.replaceCurrentItemWithPlayerItem(createAVPlayerItem(url))
+						player.seekToTime(currentTime, toleranceBefore = CMTimeMake(0, 1), toleranceAfter = CMTimeMake(0, 1))
+						if (!isPaused) player.play()
+					}
+				}
+			}
 		}
 	}
 
@@ -215,6 +248,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) song else state.currentSong
 			)
 		}
+		snackBarManager.notifyPlayNext()
 	}
 
 	override fun playNext(collection: DomainSongCollection) {
@@ -236,6 +270,7 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 			)
 		}
+		snackBarManager.notifyPlayNext()
 	}
 
 	override fun playRadio(radio: DomainRadio) {
@@ -300,7 +335,7 @@ class IOSMediaPlayerViewModel(
 		updateNowPlayingInfo(dummyRadioSong)
 	}
 
-	override fun addToQueueSingle(song: DomainSong) {
+	override fun addToQueueSingle(song: DomainSong, notify: Boolean) {
 		_uiState.update { state ->
 			val newQueue = state.queue + song
 			state.copy(
@@ -309,21 +344,31 @@ class IOSMediaPlayerViewModel(
 				currentSong = if (state.currentIndex == -1) song else state.currentSong
 			)
 		}
+		if (notify) snackBarManager.notifyAddedToQueue()
 	}
 
-	override fun addToQueue(collection: DomainSongCollection) {
-		val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(compareBy(
-			{ it.discNumber },
-			{ it.trackNumber }
-		)) else collection.songs
+	override fun addToQueue(collection: DomainSongCollection, notify: Boolean) {
+		addToQueue(
+			if (collection is DomainAlbum) collection.songs.sortedWith(
+				compareBy(
+					{ it.discNumber },
+					{ it.trackNumber }
+				)
+			) else collection.songs,
+			notify
+		)
+	}
+
+	override fun addToQueue(songs: List<DomainSong>, notify: Boolean) {
 		_uiState.update { state ->
-			val newQueue = state.queue + newCollection
+			val newQueue = state.queue + songs
 			state.copy(
 				queue = newQueue,
 				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-				currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
+				currentSong = if (state.currentIndex == -1) songs.firstOrNull() else state.currentSong
 			)
 		}
+		if (notify) snackBarManager.notifyAddedToQueue()
 	}
 
 	override fun removeFromQueue(index: Int) {

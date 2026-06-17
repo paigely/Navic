@@ -19,7 +19,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -28,6 +27,7 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.C
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -52,14 +52,18 @@ import coil3.compose.setSingletonImageLoaderFactory
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
+import kotlinx.coroutines.flow.collectLatest
+import org.jetbrains.compose.resources.getString
 import org.koin.compose.koinInject
 import paige.navic.di.initializeSingletonImageLoader
 import paige.navic.domain.manager.BottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.ui.components.snackbars.NavicSnackbar
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
 import paige.navic.ui.navigation.NowPlayingSceneStrategy
 import paige.navic.ui.navigation.Screen
@@ -85,6 +89,7 @@ import paige.navic.ui.screens.settings.SettingsAppearanceScreen
 import paige.navic.ui.screens.settings.SettingsCustomHeadersScreen
 import paige.navic.ui.screens.settings.SettingsDataStorageScreen
 import paige.navic.ui.screens.settings.SettingsDeveloperScreen
+import paige.navic.ui.screens.settings.SettingsLogsScreen
 import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
 import paige.navic.ui.screens.settings.SettingsScreen
@@ -95,6 +100,7 @@ import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.navic.util.core.PlatformContext
+import paige.navic.util.core.PlatformType
 import paige.navic.util.core.rememberPlatformContext
 import paige.navic.util.ui.Material3Transitions
 
@@ -137,6 +143,14 @@ fun App() {
 		}
 	)
 	val snackbarState = remember { SnackbarHostState() }
+	val snackBarManager = koinInject<SnackBarManager>()
+
+	LaunchedEffect(Unit) {
+		snackBarManager.events.collectLatest { event ->
+			snackbarState.showSnackbar(getString(event.resource, *event.args.toTypedArray()))
+		}
+	}
+
 	val density = LocalDensity.current
 	val layoutDirection = LocalLayoutDirection.current
 	val scrollManager = remember {
@@ -156,10 +170,7 @@ fun App() {
 					modifier = Modifier.nestedScroll(scrollManager.connection),
 					snackbarHost = {
 						SnackbarHost(hostState = snackbarState) { snackbarData ->
-							Snackbar(
-								snackbarData = snackbarData,
-								shape = MaterialTheme.shapes.large
-							)
+							NavicSnackbar(snackbarData = snackbarData)
 						}
 					}
 				) { contentPadding ->
@@ -215,9 +226,8 @@ fun App() {
 				) {
 					SideloadingDialog()
 				}
-				// version check is annoying to do on ios
-				if (preferenceManager.checkForUpdates
-					&& !listOf("ios", "ipados").contains(platformContext.name.lowercase())) {
+				// version check is annoying to do on iOS
+				if (preferenceManager.checkForUpdates && platformContext.platformType == PlatformType.Android) {
 					ChangelogSheet()
 				}
 			}
@@ -339,6 +349,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Settings.StreamingQuality> {
 			SettingsStreamingQualityScreen()
+		}
+		entry<Screen.Settings.Logs> {
+			SettingsLogsScreen()
 		}
 	}
 }

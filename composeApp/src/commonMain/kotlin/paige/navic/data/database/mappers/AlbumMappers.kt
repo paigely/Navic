@@ -7,11 +7,14 @@ import paige.navic.domain.models.DomainAlbumInfo
 import dev.zt64.subsonic.api.model.Album as ApiAlbum
 import dev.zt64.subsonic.api.model.AlbumInfo as ApiAlbumInfo
 
-fun ApiAlbum.toEntity() = AlbumEntity(
+fun ApiAlbum.toEntity(
+	artistIdOverride: String? = null,
+	artistNameOverride: String? = null
+) = AlbumEntity(
 	albumId = this.id,
 	name = this.name,
-	artistId = this.artistId,
-	artistName = this.artistName,
+	artistId = artistIdOverride ?: this.artistId,
+	artistName = artistNameOverride ?: this.artistName,
 	coverArtId = this.coverArtId,
 	songCount = this.songCount,
 	duration = this.duration,

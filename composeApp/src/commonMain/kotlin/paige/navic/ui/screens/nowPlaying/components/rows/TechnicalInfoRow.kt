@@ -65,11 +65,11 @@ fun NowPlayingTechnicalInfoRow() {
 				}
 
 				val bitrateFormatted = playerState.playbackBitrate?.let { "${it / 1000} kbps" }
-					?: if (playerState.playbackMimeType?.contains("opus") == true) {
-						"${if (requestedBitrate > 0) requestedBitrate else "--"} kbps"
+					?: if (requestedBitrate > 0) {
+						"$requestedBitrate kbps"
 					} else {
 						song?.bitRate?.let { "$it kbps" }
-					}
+					} ?: "-- kbps"
 
 				val format = playerState.playbackMimeType?.split("/")?.lastOrNull()?.replace("mpeg", "mp3")?.uppercase()
 					?: song?.fileExtension?.uppercase()

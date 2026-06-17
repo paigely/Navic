@@ -187,14 +187,22 @@ class DbRepository(
 			launch(Dispatchers.IO) {
 				val albumBatch = mutableListOf<AlbumEntity>()
 				val songBatch = mutableListOf<SongEntity>()
+				val summariesMap = allAlbumSummaries.associateBy { it.id }
 
 				for (album in albumChannel) {
-					val albumEntity = album.toEntity()
+					val summary = summariesMap[album.id]
+					val albumEntity = album.toEntity(
+						artistIdOverride = summary?.artistId,
+						artistNameOverride = summary?.artistName
+					)
 					albumBatch.add(albumEntity)
 					allValidAlbumIds.add(albumEntity.albumId)
 
 					album.songs.forEach { song ->
-						val songEntity = song.toEntity()
+						val songEntity = song.toEntity(
+							artistIdOverride = albumEntity.artistId,
+							artistNameOverride = albumEntity.artistName
+						)
 						songBatch.add(songEntity)
 						allValidSongIds.add(songEntity.songId)
 					}
@@ -283,8 +291,9 @@ class DbRepository(
 		val entities = remoteGenres.map { it.toEntity() }
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			genreDao.updateAllGenres(chunk)
+			genreDao.insertGenres(chunk)
 		}
+		genreDao.deleteObsoleteGenres(entities.map { it.genreName }.toSet())
 
 		Logger.i("DbRepository", "- Genres Synced: ${entities.size} genres found")
 	}
@@ -297,8 +306,9 @@ class DbRepository(
 		val entities = flatArtists.map { it.toEntity() }
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			artistDao.updateAllArtists(chunk)
+			artistDao.insertArtists(chunk)
 		}
+		artistDao.deleteObsoleteArtists(entities.map { it.artistId }.toSet())
 
 		Logger.i("DbRepository", "- Artists Synced: ${entities.size} artists found")
 	}
@@ -308,8 +318,9 @@ class DbRepository(
 		val entities = remoteRadios.map { it.toEntity() }
 
 		entities.chunked(dbChunkSize).forEach { chunk ->
-			radioDao.updateAllRadios(chunk)
+			radioDao.insertRadios(chunk)
 		}
+		radioDao.deleteObsoleteRadios(entities.map { it.radioId }.toSet())
 
 		Logger.i("DbRepository", "- Radios Synced: ${entities.size} stations found")
 	}

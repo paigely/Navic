@@ -69,7 +69,7 @@ fun SettingsAboutScreen() {
 			}
 			Form {
 				FormRow(onClick = {
-					uriHandler.openUri("https://github.com/paigely/Navic")
+					uriHandler.openUri("https://github.com/ssalggnikool/Navic")
 				}) {
 					Text(stringResource(Res.string.title_source))
 					Icon(Icons.Outlined.ChevronForward, null)

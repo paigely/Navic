@@ -36,7 +36,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import androidx.compose.runtime.snapshotFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -58,6 +60,8 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.ui.components.common.CoilBitmapLoader
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import paige.navic.util.core.ResourceProvider
@@ -192,7 +196,8 @@ class AndroidMediaPlayerViewModel(
 	connectivityManager: ConnectivityManager,
 	private val platformContext: CoilPlatformContext,
 	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager
+	private val preferenceManager: PreferenceManager,
+	private val snackBarManager: SnackBarManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
 	downloadManager = downloadManager,
@@ -305,7 +310,17 @@ class AndroidMediaPlayerViewModel(
 					pendingSyncState = null
 				}
 
-				downloadManager.downloadedSongs.collectLatest { downloadedMap ->
+				combine(
+					downloadManager.downloadedSongs,
+					connectivityManager.isCellular,
+					snapshotFlow { preferenceManager.streamingQualityWifi },
+					snapshotFlow { preferenceManager.streamingQualityCellular },
+					snapshotFlow { preferenceManager.isAdvancedTranscodingActive },
+					snapshotFlow { preferenceManager.customMaxBitrateWifi },
+					snapshotFlow { preferenceManager.customMaxBitrateCellular }
+				) { it }.collectLatest { args ->
+					@Suppress("UNCHECKED_CAST")
+					val downloadedMap = args[0] as Map<String, String>
 					val player = controller ?: return@collectLatest
 
 					for (i in 0 until player.mediaItemCount) {
@@ -315,16 +330,29 @@ class AndroidMediaPlayerViewModel(
 
 						val isCurrentlyLocal = item.localConfiguration?.uri?.scheme == "file"
 
-						if (localPath != null && !isCurrentlyLocal) {
-							val newItem = item.buildUpon()
-								.setUri(File(localPath).toUri())
-								.build()
-							player.replaceMediaItem(i, newItem)
-						} else if (localPath == null && isCurrentlyLocal) {
-							val newItem = item.buildUpon()
-								.setUri(getStreamUrl(id))
-								.build()
-							player.replaceMediaItem(i, newItem)
+						val newItem = if (localPath != null) {
+							if (!isCurrentlyLocal) {
+								item.buildUpon()
+									.setUri(File(localPath).toUri())
+									.build()
+							} else null
+						} else {
+							val newUri = getStreamUrl(id)
+							if (isCurrentlyLocal || item.localConfiguration?.uri != newUri) {
+								item.buildUpon()
+									.setUri(newUri)
+									.build()
+							} else null
+						}
+
+						if (newItem != null) {
+							if (i == player.currentMediaItemIndex) {
+								val currentPosition = player.currentPosition
+								player.replaceMediaItem(i, newItem)
+								player.seekTo(i, currentPosition)
+							} else {
+								player.replaceMediaItem(i, newItem)
+							}
 						}
 					}
 				}
@@ -427,10 +455,12 @@ class AndroidMediaPlayerViewModel(
 		viewModelScope.launch {
 			while (controller?.isPlaying == true) {
 				val player = controller ?: break
-				val duration = player.duration.coerceAtLeast(1)
-				val progress =
-					(player.currentPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
-				_uiState.update { it.copy(progress = progress) }
+				val duration = player.duration
+				if (duration > 0) {
+					val progress =
+						(player.currentPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+					_uiState.update { it.copy(progress = progress) }
+				}
 				delay(200.milliseconds)
 			}
 		}
@@ -438,10 +468,12 @@ class AndroidMediaPlayerViewModel(
 
 	private fun updateProgress() {
 		controller?.let { player ->
-			val duration = player.duration.coerceAtLeast(1)
-			val pos = player.currentPosition
-			val progress = (pos.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
-			_uiState.update { it.copy(progress = progress) }
+			val duration = player.duration
+			if (duration > 0) {
+				val pos = player.currentPosition
+				val progress = (pos.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+				_uiState.update { it.copy(progress = progress) }
+			}
 		}
 	}
 
@@ -466,9 +498,9 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueueSingle(song: DomainSong) {
+	override fun addToQueueSingle(song: DomainSong, notify: Boolean) {
 		viewModelScope.launch {
-			controller?.addMediaItem(withContext(Dispatchers.Default) { song.toMediaItem() })
+			controller?.addMediaItem(song.toMediaItem())
 			_uiState.update { state ->
 				val newQueue = state.queue + song
 				state.copy(
@@ -477,27 +509,35 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) song else state.currentSong
 				)
 			}
+			if (notify) snackBarManager.notifyAddedToQueue()
 		}
 	}
 
-	override fun addToQueue(collection: DomainSongCollection) {
-		viewModelScope.launch {
-			val (items, newCollection) = withContext(Dispatchers.Default) {
-				val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(compareBy(
+	override fun addToQueue(collection: DomainSongCollection, notify: Boolean) {
+		addToQueue(
+			if (collection is DomainAlbum) collection.songs.sortedWith(
+				compareBy(
 					{ it.discNumber },
 					{ it.trackNumber }
-				)) else collection.songs
-				newCollection.map { it.toMediaItem() } to newCollection
-			}
+				)
+			) else collection.songs,
+			notify
+		)
+	}
+
+	override fun addToQueue(songs: List<DomainSong>, notify: Boolean) {
+		viewModelScope.launch {
+			val items = songs.map { it.toMediaItem() }
 			controller?.addMediaItems(items)
 			_uiState.update { state ->
-				val newQueue = state.queue + newCollection
+				val newQueue = state.queue + songs
 				state.copy(
 					queue = newQueue,
 					currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-					currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
+					currentSong = if (state.currentIndex == -1) songs.firstOrNull() else state.currentSong
 				)
 			}
+			if (notify) snackBarManager.notifyAddedToQueue()
 		}
 	}
 
@@ -589,6 +629,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) song else state.currentSong
 				)
 			}
+			snackBarManager.notifyPlayNext()
 		}
 	}
 
@@ -616,6 +657,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 				)
 			}
+			snackBarManager.notifyPlayNext()
 		}
 	}
 

@@ -14,6 +14,7 @@ import kotlin.time.Duration.Companion.seconds
 interface ScrobblePlayerSource {
 	val currentPosition: Long
 	val duration: Long
+	val isPlaying: Boolean
 }
 
 class ScrobbleManager(
@@ -26,6 +27,7 @@ class ScrobbleManager(
 ) {
 	private var currentMediaId: String? = null
 	private var hasScrobbledCurrent = false
+	private var hasSentNowPlaying = false
 	private var progressJob: Job? = null
 	private var accumulatedPlayTime: Long = 0
 
@@ -35,14 +37,20 @@ class ScrobbleManager(
 		accumulatedPlayTime = 0
 
 		progressJob?.cancel()
-		startProgressTracker()
-
-		scrobbleNowPlaying(mediaId)
+		if (playerSource.isPlaying) {
+			startProgressTracker()
+			scrobbleNowPlaying(mediaId)
+			hasSentNowPlaying = true
+		}
 	}
 
 	fun onPlayStateChanged(isPlaying: Boolean) {
 		if (isPlaying) {
 			startProgressTracker()
+			if (!hasSentNowPlaying) {
+				scrobbleNowPlaying(currentMediaId)
+				hasSentNowPlaying = true
+			}
 		} else {
 			progressJob?.cancel()
 		}

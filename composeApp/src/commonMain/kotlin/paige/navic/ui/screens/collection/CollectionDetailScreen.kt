@@ -49,7 +49,7 @@ import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Note
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
-import paige.navic.ui.components.common.ErrorSnackbar
+import paige.navic.ui.components.snackbars.ErrorSnackbar
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.core.UiState
@@ -224,9 +224,7 @@ fun CollectionDetailScreen(
 										isPlaylist = false,
 										onClick = {
 											if (playerState.currentSong?.id != song.id) {
-												player.clearQueue()
-												player.addToQueue(album)
-												player.playAt(album.songs.indexOfFirst { it.id == song.id })
+												player.playNow(album, album.songs.indexOfFirst { it.id == song.id })
 											} else {
 												player.togglePlay()
 											}
@@ -240,6 +238,7 @@ fun CollectionDetailScreen(
 										onAddToQueue = {
 											player.addToQueueSingle(song)
 										},
+										isStarred = if (selection == song) selectedSongIsStarred else song.starredAt != null,
 										download = download,
 										isOffline = !isOnline
 									)
@@ -277,9 +276,7 @@ fun CollectionDetailScreen(
 								isPlaylist = true,
 								onClick = {
 									if (playerState.currentSong?.id != song.id) {
-										player.clearQueue()
-										player.addToQueue(collection)
-										player.playAt(index)
+										player.playNow(collection, index)
 									} else {
 										player.togglePlay()
 									}
@@ -293,6 +290,7 @@ fun CollectionDetailScreen(
 								onAddToQueue = {
 									player.addToQueueSingle(song)
 								},
+								isStarred = if (selection == song) selectedSongIsStarred else song.starredAt != null,
 								download = download,
 								isOffline = !isOnline
 							)

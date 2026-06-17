@@ -25,7 +25,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +52,7 @@ import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
+import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Offline
@@ -58,6 +62,7 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.Waveform
+import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.util.core.InlineExplicitIcon
 import paige.navic.util.ui.segmentedShapes
 import paige.navic.util.core.toHoursMinutesSeconds
@@ -73,6 +78,7 @@ fun CollectionDetailScreenSongRow(
 	onLongClick: (() -> Unit),
 	onPlayNext: (() -> Unit),
 	onAddToQueue: (() -> Unit),
+	isStarred: Boolean,
 	download: DownloadEntity? = null,
 	isOffline: Boolean = false
 ) {
@@ -86,6 +92,8 @@ fun CollectionDetailScreenSongRow(
 	val dismissState = rememberSwipeToDismissBoxState()
 	val scope = rememberCoroutineScope()
 
+	var isPlayNextPending by rememberSaveable { mutableStateOf<Boolean?>(null) }
+
 	val itemShape = segmentedShapes(
 		index = index,
 		count = count,
@@ -96,8 +104,20 @@ fun CollectionDetailScreenSongRow(
 		modifier = Modifier.padding(horizontal = 16.dp, vertical = 1.5.dp),
 		state = dismissState,
 		onDismiss = {
-			if (it == SwipeToDismissBoxValue.StartToEnd) onAddToQueue()
-			if (it == SwipeToDismissBoxValue.EndToStart) onPlayNext()
+			if (it == SwipeToDismissBoxValue.StartToEnd) {
+				if (playerState.queue.any { item -> item.id == song.id }) {
+					isPlayNextPending = false
+				} else {
+					onAddToQueue()
+				}
+			}
+			if (it == SwipeToDismissBoxValue.EndToStart) {
+				if (playerState.queue.any { item -> item.id == song.id }) {
+					isPlayNextPending = true
+				} else {
+					onPlayNext()
+				}
+			}
 			scope.launch { dismissState.reset() }
 		},
 		backgroundContent = {
@@ -139,13 +159,13 @@ fun CollectionDetailScreenSongRow(
 				containerColor = MaterialTheme.colorScheme.surfaceContainer
 			),
 			leadingContent = {
-				if (isPlaylist) 
-						CoverArt(
-							modifier = Modifier.size(48.dp),
-							coverArtId = song.coverArtId,
-							shape = MaterialTheme.shapes.small
-						)
-				else 
+				if (isPlaylist)
+					CoverArt(
+						modifier = Modifier.size(48.dp),
+						coverArtId = song.coverArtId,
+						shape = MaterialTheme.shapes.small
+					)
+				else
 					Text(
 						text = "${index + 1}",
 						modifier = Modifier.width(25.dp),
@@ -178,6 +198,14 @@ fun CollectionDetailScreenSongRow(
 			},
 			trailingContent = {
 				Row(verticalAlignment = Alignment.CenterVertically) {
+					if(isStarred) {
+						Icon(
+							Icons.Filled.Star,
+							null,
+							modifier = Modifier.size(16.dp)
+						)
+						Spacer(Modifier.width(6.dp))
+					}
 					if (!canPlay) {
 						Icon(
 							Icons.Outlined.Offline,
@@ -237,6 +265,16 @@ fun CollectionDetailScreenSongRow(
 						)
 					}
 				}
+			}
+		)
+	}
+
+	if (isPlayNextPending != null) {
+		QueueDuplicateDialog(
+			onDismissRequest = { isPlayNextPending = null },
+			onConfirm = {
+				if (isPlayNextPending == true) onPlayNext() else onAddToQueue()
+				isPlayNextPending = null
 			}
 		)
 	}

@@ -30,6 +30,10 @@ import paige.navic.domain.manager.DownloadManager
 import paige.navic.util.core.Logger
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.core.UiState
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.notice_download_started
+import navic.composeapp.generated.resources.notice_deleted_download
+import paige.navic.domain.manager.SnackBarManager
 
 @Immutable
 data class ArtistState(
@@ -48,6 +52,7 @@ class ArtistDetailViewModel(
 	private val artistDao: ArtistDao,
 	private val albumDao: AlbumDao,
 	private val downloadManager: DownloadManager,
+	private val snackBarManager: SnackBarManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _artistState = MutableStateFlow<UiState<ArtistState>>(UiState.Loading())
@@ -96,8 +101,13 @@ class ArtistDetailViewModel(
 					?: throw Exception("Artist not found in database")
 				val domainArtist = artistEntity.toDomainModel()
 
-				val albumsWithSongs =
+				var albumsWithSongs =
 					albumDao.getAlbumsByArtist(artistId).firstOrNull() ?: emptyList()
+
+				if (albumsWithSongs.isEmpty()) {
+					albumsWithSongs = albumDao.getAlbumsByArtistName(domainArtist.name).firstOrNull() ?: emptyList()
+				}
+
 				val domainAlbums = albumsWithSongs.map { it.toDomainModel() }
 
 				val domainSongs = albumsWithSongs.flatMap { it.songs }
@@ -187,6 +197,7 @@ class ArtistDetailViewModel(
 			runCatching {
 				_selectedSongIsStarred.value = true
 				songRepository.starSong(selection)
+				loadArtistData()
 			}
 		}
 	}
@@ -197,6 +208,7 @@ class ArtistDetailViewModel(
 			runCatching {
 				_selectedSongIsStarred.value = false
 				songRepository.unstarSong(selection)
+				loadArtistData()
 			}
 		}
 	}
@@ -243,14 +255,15 @@ class ArtistDetailViewModel(
 		(_artistState.value as? UiState.Success)?.data?.let { state ->
 			player.clearQueue()
 			state.albums.forEach { album ->
-				player.addToQueue(album)
+				player.addToQueue(album, notify = false)
 			}
-			player.togglePlay()
+			player.playAt(0)
 		}
 	}
 
 	fun downloadSong(song: DomainSong) {
 		downloadManager.downloadSong(song)
+		snackBarManager.notify(Res.string.notice_download_started)
 	}
 
 	fun cancelDownload(songId: String) {
@@ -259,6 +272,7 @@ class ArtistDetailViewModel(
 
 	fun deleteDownload(songId: String) {
 		downloadManager.deleteDownload(songId)
+		snackBarManager.notify(Res.string.notice_deleted_download)
 	}
 
 	@OptIn(ExperimentalCoroutinesApi::class)
