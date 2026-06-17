@@ -60,6 +60,7 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.ui.components.common.CoilBitmapLoader
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import paige.navic.util.core.ResourceProvider
@@ -193,7 +194,8 @@ class AndroidMediaPlayerViewModel(
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
 	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager
+	private val preferenceManager: PreferenceManager,
+	private val snackBarManager: SnackBarManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
 	downloadManager = downloadManager,
@@ -244,11 +246,9 @@ class AndroidMediaPlayerViewModel(
 					override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 						updatePlaybackState()
 
-						if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
-							mediaItem?.mediaId?.let { id ->
-								if (!isAvailable(id)) {
-									controller?.seekToNextMediaItem()
-								}
+						mediaItem?.mediaId?.let { id ->
+							if (!isAvailable(id)) {
+								controller?.seekToNextMediaItem()
 							}
 						}
 					}
@@ -496,9 +496,9 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun addToQueueSingle(song: DomainSong) {
+	override fun addToQueueSingle(song: DomainSong, notify: Boolean) {
 		viewModelScope.launch {
-			controller?.addMediaItem(withContext(Dispatchers.Default) { song.toMediaItem() })
+			controller?.addMediaItem(song.toMediaItem())
 			_uiState.update { state ->
 				val newQueue = state.queue + song
 				state.copy(
@@ -507,27 +507,35 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) song else state.currentSong
 				)
 			}
+			if (notify) snackBarManager.notifyAddedToQueue()
 		}
 	}
 
-	override fun addToQueue(collection: DomainSongCollection) {
-		viewModelScope.launch {
-			val (items, newCollection) = withContext(Dispatchers.Default) {
-				val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(compareBy(
+	override fun addToQueue(collection: DomainSongCollection, notify: Boolean) {
+		addToQueue(
+			if (collection is DomainAlbum) collection.songs.sortedWith(
+				compareBy(
 					{ it.discNumber },
 					{ it.trackNumber }
-				)) else collection.songs
-				newCollection.map { it.toMediaItem() } to newCollection
-			}
+				)
+			) else collection.songs,
+			notify
+		)
+	}
+
+	override fun addToQueue(songs: List<DomainSong>, notify: Boolean) {
+		viewModelScope.launch {
+			val items = songs.map { it.toMediaItem() }
 			controller?.addMediaItems(items)
 			_uiState.update { state ->
-				val newQueue = state.queue + newCollection
+				val newQueue = state.queue + songs
 				state.copy(
 					queue = newQueue,
 					currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
-					currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
+					currentSong = if (state.currentIndex == -1) songs.firstOrNull() else state.currentSong
 				)
 			}
+			if (notify) snackBarManager.notifyAddedToQueue()
 		}
 	}
 
@@ -601,35 +609,6 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	override fun playCollection(collection: DomainSongCollection, startSong: DomainSong) {
-		viewModelScope.launch {
-			val (items, newCollection) = withContext(Dispatchers.Default) {
-				val sortedCollection = if (collection is DomainAlbum) {
-					collection.songs.sortedWith(compareBy({ it.discNumber }, { it.trackNumber }))
-				} else {
-					collection.songs
-				}
-				sortedCollection.map { it.toMediaItem() } to sortedCollection
-			}
-
-			val startIndex = newCollection.indexOfFirst { it.id == startSong.id }.coerceAtLeast(0)
-
-			controller?.let { player ->
-				player.setMediaItems(items, startIndex, 0L)
-				player.prepare()
-				player.play()
-			}
-
-			_uiState.update { state ->
-				state.copy(
-					queue = newCollection,
-					currentIndex = startIndex,
-					currentSong = newCollection.getOrNull(startIndex)
-				)
-			}
-		}
-	}
-
 	override fun playNextSingle(song: DomainSong) {
 		viewModelScope.launch {
 			controller?.addMediaItem(
@@ -648,6 +627,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) song else state.currentSong
 				)
 			}
+			snackBarManager.notifyPlayNext()
 		}
 	}
 
@@ -675,6 +655,7 @@ class AndroidMediaPlayerViewModel(
 					currentSong = if (state.currentIndex == -1) newCollection.firstOrNull() else state.currentSong
 				)
 			}
+			snackBarManager.notifyPlayNext()
 		}
 	}
 

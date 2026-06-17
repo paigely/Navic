@@ -31,6 +31,8 @@ import navic.composeapp.generated.resources.action_delete_download
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.action_shuffle
 import navic.composeapp.generated.resources.info_download_failed
+import navic.composeapp.generated.resources.notice_deleted_download
+import navic.composeapp.generated.resources.notice_download_started
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
@@ -45,6 +47,7 @@ import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Shuffle
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.theme.defaultFont
 
 @Composable
@@ -53,6 +56,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 ) {
 	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
+	val snackBarManager = koinInject<SnackBarManager>()
 	val downloadManager = koinInject<DownloadManager>()
 	val scope = rememberCoroutineScope()
 
@@ -93,9 +97,7 @@ fun CollectionDetailScreenHeadingRowButtons(
 			modifier = Modifier.weight(1f).height(buttonHeight),
 			onClick = {
 				platformContext.clickSound()
-				player.clearQueue()
-				player.addToQueue(collection)
-				player.playAt(0)
+				player.playNow(collection)
 			},
 			shape = buttonShape,
 			enabled = collection.songs.isNotEmpty(),
@@ -128,12 +130,14 @@ fun CollectionDetailScreenHeadingRowButtons(
 					when (downloadStatus) {
 						DownloadStatus.NOT_DOWNLOADED, DownloadStatus.FAILED -> {
 							downloadManager.downloadCollection(collection)
+							snackBarManager.notify(Res.string.notice_download_started)
 						}
 						DownloadStatus.DOWNLOADING -> {
 							downloadManager.cancelCollectionDownload(collection)
 						}
 						DownloadStatus.DOWNLOADED -> {
 							downloadManager.deleteDownloadedCollection(collection)
+							snackBarManager.notify(Res.string.notice_deleted_download)
 						}
 					}
 				}

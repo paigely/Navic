@@ -58,9 +58,9 @@
 	<string name="title_logs">Logs</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
-	<string name="subtitle_now_playing">Customise the fullscreen now playing view</string>
+	<string name="subtitle_now_playing">Customise the fullscreen now playing and lyrics views</string>
 	<string name="subtitle_bottom_app_bar">Customise the bottom bar &amp; mini player</string>
-	<string name="subtitle_playback">Audio behaviour, scrobbling, lyrics</string>
+	<string name="subtitle_playback">Audio behaviour and scrobbling</string>
 	<string name="subtitle_data_storage">Manage sync, network usage, and cache</string>
 	<string name="subtitle_trigger_sync">Forces a full library pull immediately</string>
 	<string name="subtitle_pending_actions">%1$d items waiting for network</string>
@@ -311,6 +311,15 @@
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
 	<string name="notice_deleted_share">Deleted share.</string>
+	<string name="notice_created_playlist">Created playlist %1$s.</string>
+	<string name="notice_deleted_download">Deleted download.</string>
+	<string name="notice_removed_from_playlist">Removed from playlist.</string>
+	<string name="notice_created_radio">Created radio %1$s.</string>
+	<string name="notice_added_to_queue">Added to queue.</string>
+	<string name="notice_play_next">Playing next.</string>
+	<string name="notice_added_to_playlist">Added to %1$s.</string>
+	<string name="notice_added_to_multiple_playlists">Added to multiple playlists.</string>
+	<string name="notice_download_started">Download started.</string>
 	<string name="notice_copied">Copied to clipboard.</string>
 	<string name="notice_expiry">Expires in %1$s.</string>
 	<string name="notice_loading_lyrics">Loading lyrics...\nThis might take a while.</string>

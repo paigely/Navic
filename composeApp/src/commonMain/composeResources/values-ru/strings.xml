@@ -380,4 +380,5 @@
     <string name="info_no_starred">В избранном ничего нет</string>
     <string name="action_clear_queue">Очистить очередь</string>
     <string name="info_no_search_results">Нет результатов</string>
+    <string name="title_logs">Логи</string>
 </resources>

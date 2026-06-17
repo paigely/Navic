@@ -28,16 +28,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.option_audio_offload
 import navic.composeapp.generated.resources.option_enable_scrobbling
 import navic.composeapp.generated.resources.option_gapless_playback
-import navic.composeapp.generated.resources.option_lyrics_autoscroll
-import navic.composeapp.generated.resources.option_lyrics_beat_by_beat
-import navic.composeapp.generated.resources.option_lyrics_blur
-import navic.composeapp.generated.resources.option_lyrics_bright_inactive
-import navic.composeapp.generated.resources.option_lyrics_keep_alive
-import navic.composeapp.generated.resources.option_lyrics_priority
 import navic.composeapp.generated.resources.option_min_duration_to_scrobble
 import navic.composeapp.generated.resources.option_replay_gain
 import navic.composeapp.generated.resources.option_scrobble_percentage
@@ -63,7 +56,6 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
-import paige.navic.ui.screens.settings.dialogs.LyricsPriorityDialog
 import paige.navic.util.core.PlatformType
 import kotlin.math.roundToInt
 
@@ -71,7 +63,6 @@ import kotlin.math.roundToInt
 fun SettingsPlaybackScreen() {
 	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
-	var showLyricsPriorityDialog by rememberSaveable { mutableStateOf(false) }
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	Scaffold(
@@ -126,45 +117,6 @@ fun SettingsPlaybackScreen() {
 							value = preferenceManager.audioOffload,
 							onSetValue = { preferenceManager.audioOffload = it }
 						)
-					}
-				}
-
-				FormTitle(stringResource(Res.string.action_lyrics))
-				Form {
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_lyrics_autoscroll)) },
-						value = preferenceManager.lyricsAutoscroll,
-						onSetValue = { preferenceManager.lyricsAutoscroll = it }
-					)
-
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_lyrics_beat_by_beat)) },
-						value = preferenceManager.lyricsBeatByBeat,
-						onSetValue = { preferenceManager.lyricsBeatByBeat = it }
-					)
-
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_lyrics_keep_alive)) },
-						value = preferenceManager.lyricsKeepAlive,
-						onSetValue = { preferenceManager.lyricsKeepAlive = it }
-					)
-
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_lyrics_blur)) },
-						value = preferenceManager.lyricsBlur,
-						onSetValue = { preferenceManager.lyricsBlur = it }
-					)
-
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_lyrics_bright_inactive)) },
-						value = preferenceManager.lyricsBrightInactive,
-						onSetValue = { preferenceManager.lyricsBrightInactive = it }
-					)
-
-					FormRow(
-						onClick = { showLyricsPriorityDialog = true }
-					) {
-						Text(stringResource(Res.string.option_lyrics_priority))
 					}
 				}
 
@@ -228,9 +180,5 @@ fun SettingsPlaybackScreen() {
 				}
 			}
 		}
-		LyricsPriorityDialog(
-			presented = showLyricsPriorityDialog,
-			onDismissRequest = { showLyricsPriorityDialog = false }
-		)
 	}
 }

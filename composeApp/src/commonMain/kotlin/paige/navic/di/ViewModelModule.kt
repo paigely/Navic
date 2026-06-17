@@ -30,7 +30,20 @@ import paige.navic.ui.screens.song.viewmodels.SongDetailViewModel
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
 
 val viewModelModule = module {
-	viewModelOf(::ArtistDetailViewModel)
+	viewModel { (artistId: String) ->
+		ArtistDetailViewModel(
+			artistId = artistId,
+			repository = get(),
+			artistRepository = get(),
+			songRepository = get(),
+			albumRepository = get(),
+			artistDao = get(),
+			albumDao = get(),
+			downloadManager = get(),
+			snackBarManager = get(),
+			connectivityManager = get()
+		)
+	}
 
 	viewModel { (song: DomainSong?) ->
 		LyricsScreenViewModel(
@@ -43,7 +56,8 @@ val viewModelModule = module {
 		PlaylistUpdateDialogViewModel(
 			songs = songs,
 			playlistToExclude = playlistToExclude,
-			sessionManager = get()
+			sessionManager = get(),
+			snackBarManager = get()
 		)
 	}
 
@@ -69,8 +83,26 @@ val viewModelModule = module {
 	viewModelOf(::ShareListViewModel)
 	viewModelOf(::DeletionViewModel)
 	viewModelOf(::ShareDialogViewModel)
-	viewModelOf(::PlaylistCreateDialogViewModel)
-	viewModelOf(::CollectionDetailViewModel)
+	viewModel { (songs: List<DomainSong>) ->
+		PlaylistCreateDialogViewModel(
+			songs = songs,
+			playlistDao = get(),
+			sessionManager = get(),
+			snackBarManager = get()
+		)
+	}
+	viewModel { params ->
+		CollectionDetailViewModel(
+			collectionId = params.get(),
+			repository = get(),
+			songRepository = get(),
+			albumRepository = get(),
+			downloadManager = get(),
+			sessionManager = get(),
+			snackBarManager = get(),
+			connectivityManager = get()
+		)
+	}
 	viewModelOf(::SongDetailViewModel)
 	viewModelOf(::SettingsDataStorageViewModel)
 	viewModelOf(::ChangelogViewModel)

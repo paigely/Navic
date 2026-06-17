@@ -15,11 +15,15 @@ import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSong
 import paige.navic.ui.core.UiState
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.notice_created_playlist
+import paige.navic.domain.manager.SnackBarManager
 
 class PlaylistCreateDialogViewModel(
 	private val songs: List<DomainSong>,
 	private val playlistDao: PlaylistDao,
-	private val sessionManager: SessionManager
+	private val sessionManager: SessionManager,
+	private val snackBarManager: SnackBarManager
 ) : ViewModel() {
 	private val _creationState = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
 	val creationState = _creationState.asStateFlow()
@@ -44,6 +48,7 @@ class PlaylistCreateDialogViewModel(
 					)
 				)
 				_creationState.value = UiState.Success(null)
+				snackBarManager.notify(Res.string.notice_created_playlist, playlist.name)
 			} catch (e: Exception) {
 				_creationState.value = UiState.Error(e)
 			}

@@ -25,6 +25,11 @@ import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.util.core.Logger
 import paige.navic.ui.core.UiState
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.notice_download_started
+import navic.composeapp.generated.resources.notice_deleted_download
+import navic.composeapp.generated.resources.notice_removed_from_playlist
+import paige.navic.domain.manager.SnackBarManager
 
 class CollectionDetailViewModel(
 	private val collectionId: String,
@@ -33,12 +38,14 @@ class CollectionDetailViewModel(
 	private val albumRepository: AlbumRepository,
 	private val downloadManager: DownloadManager,
 	private val sessionManager: SessionManager,
+	private val snackBarManager: SnackBarManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	private val _collectionState = MutableStateFlow<UiState<DomainSongCollection>>(
 		runBlocking {
 			try {
-				UiState.Loading(repository.getLocalData(collectionId))
+				val data = repository.getLocalData(collectionId)
+				if (data.songs.isEmpty()) UiState.Loading(data) else UiState.Success(data)
 			} catch (_: Exception) {
 				UiState.Loading()
 			}
@@ -152,6 +159,7 @@ class CollectionDetailViewModel(
 					id = collectionId,
 					songIndicesToRemove = listOf(songs.indexOf(song))
 				)
+				snackBarManager.notify(Res.string.notice_removed_from_playlist)
 				refreshCollection(true)
 			} catch (e: Exception) {
 				Logger.e("CollectionDetailViewModel", "Failed to remove song from playlist", e)
@@ -241,6 +249,7 @@ class CollectionDetailViewModel(
 
 	fun downloadSong(song: DomainSong) {
 		downloadManager.downloadSong(song)
+		snackBarManager.notify(Res.string.notice_download_started)
 	}
 
 	fun cancelDownload(songId: String) {
@@ -249,12 +258,14 @@ class CollectionDetailViewModel(
 
 	fun deleteDownload(songId: String) {
 		downloadManager.deleteDownload(songId)
+		snackBarManager.notify(Res.string.notice_deleted_download)
 	}
 
 	fun downloadAll() {
 		val collection = _collectionState.value.data ?: return
 		viewModelScope.launch {
 			downloadManager.downloadCollection(collection)
+			snackBarManager.notify(Res.string.notice_download_started)
 		}
 	}
 
