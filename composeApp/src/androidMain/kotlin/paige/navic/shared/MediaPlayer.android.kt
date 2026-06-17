@@ -60,7 +60,6 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.ui.components.common.CoilBitmapLoader
 import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
