@@ -16,6 +16,7 @@ class AndroidScrobbleManager(
 	private val playerSource = object : ScrobblePlayerSource {
 		override val currentPosition: Long get() = player.currentPosition
 		override val duration: Long get() = player.duration
+		override val isPlaying: Boolean get() = player.isPlaying
 	}
 
 	private val scrobbleManager =

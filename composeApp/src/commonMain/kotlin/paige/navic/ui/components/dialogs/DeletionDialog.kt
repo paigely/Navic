@@ -31,10 +31,8 @@ import navic.composeapp.generated.resources.notice_deleted_share
 import navic.composeapp.generated.resources.title_delete_playlist
 import navic.composeapp.generated.resources.title_delete_share
 import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalSnackbarState
 import paige.navic.domain.manager.SyncManager
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.entities.SyncActionType
@@ -42,6 +40,7 @@ import paige.navic.domain.manager.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.ui.components.common.FormButton
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.UiState
 
 enum class DeletionEndpoint(
@@ -55,7 +54,8 @@ enum class DeletionEndpoint(
 class DeletionViewModel(
 	private val syncManager: SyncManager,
 	private val playlistDao: PlaylistDao,
-	private val sessionManager: SessionManager
+	private val sessionManager: SessionManager,
+	private val snackBarManager: SnackBarManager
 ) : ViewModel() {
 	private val _state = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
 	val state = _state.asStateFlow()
@@ -80,6 +80,7 @@ class DeletionViewModel(
 					playlistDao.deletePlaylist(id)
 				}
 				_state.value = UiState.Success(null)
+				snackBarManager.notify(endpoint.deletedText)
 				_events.send(Event.Dismiss)
 			} catch (error: Exception) {
 				_state.value = UiState.Error(error = error)
@@ -101,7 +102,6 @@ fun DeletionDialog(
 	onRefresh: () -> Unit
 ) {
 	val viewModel = koinViewModel<DeletionViewModel>()
-	val snackbarState = LocalSnackbarState.current
 	val state by viewModel.state.collectAsState()
 
 	LaunchedEffect(Unit) {
@@ -110,7 +110,6 @@ fun DeletionDialog(
 				is DeletionViewModel.Event.Dismiss -> {
 					onIdClear()
 					onRefresh()
-					snackbarState.showSnackbar(getString(endpoint.deletedText))
 				}
 			}
 		}

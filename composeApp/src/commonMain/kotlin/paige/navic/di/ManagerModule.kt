@@ -6,6 +6,7 @@ import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.SleepTimerManager
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.domain.manager.SyncManager
 
 val managerModule = module {
@@ -18,4 +19,5 @@ val managerModule = module {
 	singleOf(::DownloadManager)
 	singleOf(::SessionManager)
 	singleOf(::PreferenceManager)
+	singleOf(::SnackBarManager)
 }

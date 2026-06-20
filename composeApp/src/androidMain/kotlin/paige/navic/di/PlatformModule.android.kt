@@ -57,7 +57,9 @@ actual val platformModule = module {
 			downloadManager = get(),
 			connectivityManager = get(),
 			sessionManager = get(),
-			preferenceManager = get()
+			platformContext = get(),
+			preferenceManager = get(),
+			snackBarManager = get()
 		)
 	}
 

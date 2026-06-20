@@ -372,4 +372,5 @@
     <string name="option_cover_art_quality">Qualità copertine</string>
     <string name="info_no_starred">Nessun preferito</string>
     <string name="info_no_search_results">Nessun risultato</string>
+    <string name="title_logs">Messaggi di log</string>
 </resources>

@@ -354,4 +354,6 @@
     <string name="option_cover_art_quality">封面直连</string>
     <string name="info_no_starred">无收藏</string>
     <string name="title_starred">收藏</string>
+    <string name="info_no_search_results">无搜索结果</string>
+    <string name="title_logs">日志</string>
 </resources>

@@ -10,12 +10,17 @@ import kotlinx.coroutines.launch
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.ui.core.UiState
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.notice_added_to_multiple_playlists
+import navic.composeapp.generated.resources.notice_added_to_playlist
+import paige.navic.domain.manager.SnackBarManager
 import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 
 class PlaylistUpdateDialogViewModel(
 	private val songs: List<DomainSong>,
 	private val playlistToExclude: String?,
-	private val sessionManager: SessionManager
+	private val sessionManager: SessionManager,
+	private val snackBarManager: SnackBarManager
 ) : ViewModel() {
 	private val _playlistsState = MutableStateFlow<UiState<List<ApiPlaylist>>>(UiState.Loading())
 	val playlistsState = _playlistsState.asStateFlow()
@@ -60,13 +65,19 @@ class PlaylistUpdateDialogViewModel(
 		viewModelScope.launch {
 			_confirmState.value = UiState.Loading()
 			try {
-				_selectedPlaylists.value.forEach { playlist ->
+				val selected = _selectedPlaylists.value
+				selected.forEach { playlist ->
 					sessionManager.api.updatePlaylist(
 						playlist.id,
 						songIdsToAdd = songs.map { it.id }
 					)
 				}
 				_confirmState.value = UiState.Success(null)
+				if (selected.size == 1) {
+					snackBarManager.notify(Res.string.notice_added_to_playlist, selected.first().name)
+				} else if (selected.size > 1) {
+					snackBarManager.notify(Res.string.notice_added_to_multiple_playlists)
+				}
 				_events.send(Event.Dismiss)
 			} catch (e: Exception) {
 				_confirmState.value = UiState.Error(e)

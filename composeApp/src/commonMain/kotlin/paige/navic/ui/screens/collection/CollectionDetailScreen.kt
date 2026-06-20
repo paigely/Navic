@@ -49,7 +49,7 @@ import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Note
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
-import paige.navic.ui.components.common.ErrorSnackbar
+import paige.navic.ui.components.snackbars.ErrorSnackbar
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.core.UiState
@@ -224,7 +224,7 @@ fun CollectionDetailScreen(
 										isPlaylist = false,
 										onClick = {
 											if (playerState.currentSong?.id != song.id) {
-												player.playCollection(album, song)
+												player.playNow(album, album.songs.indexOfFirst { it.id == song.id })
 											} else {
 												player.togglePlay()
 											}
@@ -276,7 +276,7 @@ fun CollectionDetailScreen(
 								isPlaylist = true,
 								onClick = {
 									if (playerState.currentSong?.id != song.id) {
-										player.playCollection(collection, song)
+										player.playNow(collection, index)
 									} else {
 										player.togglePlay()
 									}

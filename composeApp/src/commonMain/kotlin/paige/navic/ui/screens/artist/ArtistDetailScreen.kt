@@ -56,6 +56,8 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_see_all
 import navic.composeapp.generated.resources.count_albums
 import navic.composeapp.generated.resources.info_bulk_download_warning
+import navic.composeapp.generated.resources.notice_deleted_download
+import navic.composeapp.generated.resources.notice_download_started
 import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_bulk_download
@@ -80,6 +82,7 @@ import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.sheets.CollectionSheet
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.artist.components.ArtistActionButtons
@@ -123,6 +126,8 @@ fun ArtistDetailScreen(
 	val allDownloads by viewModel.allDownloads.collectAsStateWithLifecycle()
 	val downloadStatus by viewModel.collectionDownloadStatus()
 		.collectAsState(DownloadStatus.NOT_DOWNLOADED)
+
+	val snackBarManager = koinInject<SnackBarManager>()
 
 	val scope = rememberCoroutineScope()
 
@@ -197,6 +202,7 @@ fun ArtistDetailScreen(
 								state.albums.forEach { album ->
 									downloadManager.downloadCollection(album)
 								}
+								snackBarManager.notify(Res.string.notice_download_started)
 							}
 						}
 					)
@@ -229,6 +235,7 @@ fun ArtistDetailScreen(
 								state.albums.forEach { album ->
 									downloadManager.deleteDownloadedCollection(album)
 								}
+								snackBarManager.notify(Res.string.notice_deleted_download)
 							},
 							downloadStatus = downloadStatus,
 							playEnabled = state.albums.isNotEmpty(),
@@ -296,9 +303,7 @@ fun ArtistDetailScreen(
 												selected = selection == song,
 												onClick = {
 													if (playerState.currentSong?.id != song.id) {
-														player.clearQueue()
-														songs.forEach { song -> player.addToQueueSingle(song) }
-														player.playAt(index)
+														player.playNow(songs, index)
 													} else {
 														player.togglePlay()
 													}
@@ -355,6 +360,7 @@ fun ArtistDetailScreen(
 										onDownloadAll = { 
 											scope.launch {
 												downloadManager.downloadCollection(album)
+												snackBarManager.notify(Res.string.notice_download_started)
 											}
 										},
 										onCancelDownloadAll = {
@@ -365,6 +371,7 @@ fun ArtistDetailScreen(
 										onDeleteDownloadAll = {
 											scope.launch {
 												downloadManager.deleteDownloadedCollection(album)
+												snackBarManager.notify(Res.string.notice_deleted_download)
 											}
 										},
 										rating = selectedAlbumRating,
