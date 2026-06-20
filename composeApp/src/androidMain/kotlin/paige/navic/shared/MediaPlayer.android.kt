@@ -29,6 +29,7 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
+import coil3.imageLoader
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.Dispatchers
@@ -59,7 +60,6 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.ui.components.common.CoilBitmapLoader
 import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
@@ -68,6 +68,7 @@ import paige.navic.util.core.effectiveGain
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import coil3.PlatformContext as CoilPlatformContext
 
 class PlaybackService : MediaSessionService(), KoinComponent {
 	private var mediaSession: MediaSession? = null
@@ -154,7 +155,6 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 
 		mediaSession = MediaSession.Builder(this, player)
 			.setSessionActivity(sessionPendingIntent)
-			.setBitmapLoader(CoilBitmapLoader(this))
 			.build()
 	}
 
@@ -193,6 +193,7 @@ class AndroidMediaPlayerViewModel(
 	private val albumDao: AlbumDao,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
+	private val platformContext: CoilPlatformContext,
 	private val sessionManager: SessionManager,
 	private val preferenceManager: PreferenceManager,
 	private val snackBarManager: SnackBarManager
@@ -832,14 +833,38 @@ class AndroidMediaPlayerViewModel(
 	}
 
 	private fun DomainSong.toMediaItem(): MediaItem {
-		val metadata = MediaMetadata.Builder()
+		val metadataBuilder = MediaMetadata.Builder()
 			.setTitle(title)
+			.setSubtitle(artistName)
 			.setArtist(artistName)
 			.setAlbumTitle(albumTitle)
-			.setArtworkUri(
+			.setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
+
+		val artworkData = coverArtId?.let { coverId ->
+			val diskCache = platformContext.imageLoader.diskCache
+			val snapshot = diskCache?.openSnapshot(coverId) ?: return@let null
+
+			val bytes = try {
+				snapshot.use { it.data.toFile().readBytes() }
+			} catch (ex: Exception) {
+				Logger.w("MediaPlayer", "could not read artwork data", ex)
+				null
+			}
+
+			snapshot.close()
+
+			return@let bytes
+		}
+
+		if (artworkData != null) {
+			metadataBuilder.setArtworkData(artworkData, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+		} else {
+			metadataBuilder.setArtworkUri(
 				coverArtId?.let { sessionManager.getCoverArtUrl(it).toUri() }
 			)
-			.build()
+		}
+
+		val metadata = metadataBuilder.build()
 
 		val uri = when {
 			id.startsWith("radio_") && !filePath.isNullOrEmpty() -> {

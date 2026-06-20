@@ -13,7 +13,8 @@ fun ApiAlbum.toEntity(
 ) = AlbumEntity(
 	albumId = this.id,
 	name = this.name,
-	artistId = artistIdOverride ?: this.artistId,
+	// TODO: figure out why this can be null and how to handle it
+	artistId = artistIdOverride ?: this.artistId ?: "unknown artist",
 	artistName = artistNameOverride ?: this.artistName,
 	coverArtId = this.coverArtId,
 	songCount = this.songCount,

@@ -89,7 +89,7 @@ class LyricsRepository(
 									.map { LyricsLine(time = null, text = it.trim()) }
 									.toList()
 							} else {
-								val time = if (subsonicLyrics.synced) line.start.milliseconds else null
+								val time = if (subsonicLyrics.synced) line.start?.milliseconds else null
 								listOf(LyricsLine(time = time, text = line.value))
 							}
 						}
