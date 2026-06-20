@@ -57,6 +57,7 @@ import org.jetbrains.compose.resources.getString
 import org.koin.compose.koinInject
 import paige.navic.di.initializeSingletonImageLoader
 import paige.navic.domain.manager.BottomBarScrollManager
+import paige.navic.domain.manager.NotificationManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.shared.MediaPlayerViewModel
@@ -134,6 +135,12 @@ fun App() {
 	val platformContext = rememberPlatformContext()
 	val sessionManager = koinInject<SessionManager>()
 	val preferenceManager = koinInject<PreferenceManager>()
+	val notificationManager = koinInject<NotificationManager>()
+
+	LaunchedEffect(Unit) {
+		notificationManager.requestPermissions()
+	}
+
 	val isLoggedIn by sessionManager.isLoggedIn.collectAsStateWithLifecycle()
 	val backStack = rememberNavBackStack(
 		config, if (isLoggedIn) {
