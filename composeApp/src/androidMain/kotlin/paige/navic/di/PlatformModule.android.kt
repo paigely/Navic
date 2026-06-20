@@ -15,8 +15,10 @@ import paige.navic.domain.manager.StorageManager
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.shared.AndroidMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.util.android.ActivityProvider
 
 actual val platformModule = module {
+	singleOf(::ActivityProvider)
 	single<CacheDatabase> {
 		val dbPath = androidApplication()
 			.getDatabasePath("cache.db")
