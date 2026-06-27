@@ -10,6 +10,7 @@ import io.ktor.client.request.header
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import io.ktor.client.engine.okhttp.*
 
 class SessionManager(
 	private val settings: Settings,
@@ -33,13 +34,14 @@ class SessionManager(
 		instanceUrl: String,
 		username: String,
 		password: String,
-	) = SubsonicClient.Companion(
+	) = SubsonicClient(
 		baseUrl = instanceUrl,
 		auth = SubsonicAuth.Token(
 			username = username,
 			password = password,
 		),
 		client = "Navic",
+		engine = OkHttp.create(),
 		clientConfig = {
 			install(UserAgent) {
 				agent = "Navic"

@@ -114,4 +114,5 @@ dependencies {
 	implementation(libs.bundles.glance)
 	implementation(libs.bundles.coil)
 	implementation(libs.bundles.media3)
+	implementation("io.ktor:ktor-client-okhttp:3.5.0")
 }
