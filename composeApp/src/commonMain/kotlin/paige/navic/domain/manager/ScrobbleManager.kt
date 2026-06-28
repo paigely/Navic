@@ -58,7 +58,7 @@ class ScrobbleManager(
 
 	private fun startProgressTracker() {
 		progressJob?.cancel()
-		progressJob = scope.launch(Dispatchers.Default) {
+		progressJob = scope.launch(Dispatchers.Main) {
 			var lastTickTime = Clock.System.now().toEpochMilliseconds()
 
 			while (isActive) {
