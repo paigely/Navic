@@ -24,7 +24,6 @@ import paige.navic.domain.repositories.DbRepository
 import paige.navic.util.core.Logger
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 data class SyncState(
@@ -75,7 +74,7 @@ class SyncManager(
 		syncJob = scope.launch {
 			while (isActive) {
 				runSyncCycle()
-				delay(15.minutes)
+				delay(1.hours)
 			}
 		}
 	}

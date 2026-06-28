@@ -6,7 +6,6 @@ import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
 import androidx.room3.Transaction
 import paige.navic.data.database.entities.SongEntity
-import paige.navic.util.core.Logger
 
 @Dao
 interface SongDao {
@@ -50,37 +49,23 @@ interface SongDao {
 	@Query("SELECT * FROM SongEntity WHERE title LIKE '%' || :query || '%' COLLATE NOCASE")
 	suspend fun searchSongsList(query: String): List<SongEntity>
 
+	@Query("DELETE FROM SongEntity WHERE belongsToAlbumId = :albumId AND songId NOT IN (:remoteIds)")
+	suspend fun deleteObsoleteSongsInAlbum(albumId: String, remoteIds: Collection<String>)
+
 	@Transaction
 	suspend fun updateSongsByAlbumId(albumId: String, remoteSongs: List<SongEntity>) {
-		val remoteIds = remoteSongs.map { it.songId }.toSet()
-		getSongsByAlbumId(albumId).forEach { localSong ->
-			if (localSong.songId !in remoteIds) {
-				Logger.w("SongDao", "song ${localSong.songId} no longer belongs to album $albumId")
-				deleteSong(localSong.songId)
-			}
-		}
+		val remoteIds = remoteSongs.map { it.songId }
+		deleteObsoleteSongsInAlbum(albumId, remoteIds)
 		insertSongs(remoteSongs)
 	}
+
+	@Query("DELETE FROM SongEntity WHERE songId NOT IN (:remoteIds)")
+	suspend fun deleteObsoleteSongs(remoteIds: Collection<String>)
 
 	@Transaction
 	suspend fun updateAllSongs(remoteSongs: List<SongEntity>) {
-		val remoteIds = remoteSongs.map { it.songId }.toSet()
-		getAllSongIds().forEach { localId ->
-			if (localId !in remoteIds) {
-				Logger.w("SongDao", "song $localId no longer exists remotely")
-				deleteSong(localId)
-			}
-		}
+		val remoteIds = remoteSongs.map { it.songId }
+		deleteObsoleteSongs(remoteIds)
 		insertSongs(remoteSongs)
-	}
-
-	@Transaction
-	suspend fun deleteObsoleteSongs(remoteIds: Set<String>) {
-		getAllSongIds().forEach { localId ->
-			if (localId !in remoteIds) {
-				Logger.w("SongDao", "song $localId no longer exists remotely")
-				deleteSong(localId)
-			}
-		}
 	}
 }

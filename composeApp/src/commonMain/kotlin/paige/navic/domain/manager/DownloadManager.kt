@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
@@ -71,15 +72,20 @@ class DownloadManager(
 	private val activeDownloadsMutex = Mutex()
 	private val activeDownloads = mutableMapOf<String, Job>()
 	private val downloadSemaphore =
-		Semaphore(10)// idk a good number, maybe u should be able to choose
+		Semaphore(3)// idk a good number, maybe u should be able to choose
 
 	val allDownloads = downloadDao.getAllDownloads().map { it.toImmutableList() }
 	val downloadCount = downloadDao.getDownloadsCount()
-	val downloadSize = allDownloads.map { downloads ->
-		downloads
-			.filter { it.status == DownloadStatus.DOWNLOADED && it.filePath != null }
-			.sumOf { storageManager.getFileSize(it.filePath!!) }
-	}
+	val downloadSize = allDownloads
+		.map { downloads ->
+			downloads
+				.filter { it.status == DownloadStatus.DOWNLOADED && it.filePath != null }
+				.map { it.songId to it.filePath!! }
+		}
+		.distinctUntilChanged()
+		.map { downloads ->
+			downloads.sumOf { storageManager.getFileSize(it.second) }
+		}
 
 	private val _downloadedSongs = MutableStateFlow<Map<String, String>>(emptyMap())
 	val downloadedSongs: StateFlow<Map<String, String>> = _downloadedSongs.asStateFlow()
@@ -92,11 +98,16 @@ class DownloadManager(
 
 	init {
 		scope.launch {
-			allDownloads.collectLatest { downloads ->
-				_downloadedSongs.value = downloads
-					.filter { it.status == DownloadStatus.DOWNLOADED && it.filePath != null }
-					.associate { it.songId to it.filePath!! }
-			}
+			allDownloads
+				.map { downloads ->
+					downloads
+						.filter { it.status == DownloadStatus.DOWNLOADED && it.filePath != null }
+						.associate { it.songId to it.filePath!! }
+				}
+				.distinctUntilChanged()
+				.collectLatest {
+					_downloadedSongs.value = it
+				}
 		}
 	}
 
@@ -160,7 +171,7 @@ class DownloadManager(
 				var processedCount = 0
 				val progressMutex = Mutex()
 
-				val workers = List(10) {
+				val workers = List(3) {
 					launch {
 						for (song in downloadQueue) {
 							downloadSong(song).join()

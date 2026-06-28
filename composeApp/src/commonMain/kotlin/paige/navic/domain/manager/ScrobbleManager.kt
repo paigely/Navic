@@ -69,7 +69,7 @@ class ScrobbleManager(
 				accumulatedPlayTime += timePassed
 
 				checkProgress()
-				delay(2.seconds)
+				delay(10.seconds)
 			}
 		}
 	}

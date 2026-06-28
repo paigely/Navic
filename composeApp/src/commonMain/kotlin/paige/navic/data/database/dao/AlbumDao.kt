@@ -10,7 +10,6 @@ import androidx.room3.Transaction
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.relations.AlbumWithSongs
-import paige.navic.util.core.Logger
 
 @Dao
 interface AlbumDao {
@@ -81,25 +80,13 @@ interface AlbumDao {
 	@Query("SELECT * FROM AlbumEntity WHERE albumId IN (:ids)")
 	suspend fun getAlbumsByIds(ids: List<String>): List<AlbumWithSongs>
 
-	@Transaction
-	suspend fun updateAllAlbums(remoteAlbums: List<AlbumEntity>) {
-		val remoteIds = remoteAlbums.map { it.albumId }.toSet()
-		getAllAlbumIds().forEach { localId ->
-			if (localId !in remoteIds) {
-				Logger.w("AlbumDao", "album $localId no longer exists remotely")
-				deleteAlbum(localId)
-			}
-		}
-		insertAlbums(remoteAlbums)
-	}
+	@Query("DELETE FROM AlbumEntity WHERE albumId NOT IN (:remoteIds)")
+	suspend fun deleteObsoleteAlbums(remoteIds: Collection<String>)
 
 	@Transaction
-	suspend fun deleteObsoleteAlbums(remoteIds: Set<String>) {
-		getAllAlbumIds().forEach { localId ->
-			if (localId !in remoteIds) {
-				Logger.w("AlbumDao", "album $localId no longer exists remotely")
-				deleteAlbum(localId)
-			}
-		}
+	suspend fun updateAllAlbums(remoteAlbums: List<AlbumEntity>) {
+		val remoteIds = remoteAlbums.map { it.albumId }
+		deleteObsoleteAlbums(remoteIds)
+		insertAlbums(remoteAlbums)
 	}
 }

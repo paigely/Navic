@@ -7,7 +7,6 @@ import androidx.room3.Query
 import androidx.room3.Transaction
 import kotlinx.coroutines.flow.Flow
 import paige.navic.data.database.entities.ArtistEntity
-import paige.navic.util.core.Logger
 
 @Dao
 interface ArtistDao {
@@ -56,25 +55,13 @@ interface ArtistDao {
 	@Query("SELECT * FROM ArtistEntity WHERE artistId IN (:ids)")
 	suspend fun getArtistsByIds(ids: List<String>): List<ArtistEntity>
 
-	@Transaction
-	suspend fun updateAllArtists(remoteArtists: List<ArtistEntity>) {
-		val remoteIds = remoteArtists.map { it.artistId }.toSet()
-		getAllArtistIds().forEach { localId ->
-			if (localId !in remoteIds) {
-				Logger.w("ArtistDao", "artist $localId no longer exists remotely")
-				deleteArtist(localId)
-			}
-		}
-		insertArtists(remoteArtists)
-	}
+	@Query("DELETE FROM ArtistEntity WHERE artistId NOT IN (:remoteIds)")
+	suspend fun deleteObsoleteArtists(remoteIds: Collection<String>)
 
 	@Transaction
-	suspend fun deleteObsoleteArtists(remoteIds: Set<String>) {
-		getAllArtistIds().forEach { localId ->
-			if (localId !in remoteIds) {
-				Logger.w("ArtistDao", "artist $localId no longer exists remotely")
-				deleteArtist(localId)
-			}
-		}
+	suspend fun updateAllArtists(remoteArtists: List<ArtistEntity>) {
+		val remoteIds = remoteArtists.map { it.artistId }
+		deleteObsoleteArtists(remoteIds)
+		insertArtists(remoteArtists)
 	}
 }
