@@ -47,6 +47,7 @@ import paige.navic.util.core.Logger
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_progress
 import navic.composeapp.generated.resources.title_library_download
+import kotlin.time.Duration.Companion.milliseconds
 import coil3.PlatformContext as CoilPlatformContext
 
 class DownloadManager(
@@ -195,7 +196,7 @@ class DownloadManager(
 
 				workers.joinAll()
 				_isDownloadingLibrary.value = false
-				delay(2000)
+				delay(2000.milliseconds)
 
 			} catch (e: CancellationException) {
 				_isDownloadingLibrary.value = false
