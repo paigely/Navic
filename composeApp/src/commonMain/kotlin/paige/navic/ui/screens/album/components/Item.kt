@@ -18,6 +18,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.ui.navigation.Screen
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumSummary
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.sheets.CollectionSheet
@@ -31,7 +32,7 @@ import paige.navic.domain.manager.SnackBarManager
 fun AlbumListScreenItem(
 	modifier: Modifier = Modifier,
 	tab: String,
-	album: DomainAlbum,
+	album: DomainAlbumSummary,
 	selected: Boolean,
 	starred: Boolean,
 	rating: Int,
@@ -41,7 +42,8 @@ fun AlbumListScreenItem(
 	onSetShareId: (String) -> Unit,
 	onPlayNext: () -> Unit,
 	onAddToQueue: () -> Unit,
-	onSetRating: (Int) -> Unit
+	onSetRating: (Int) -> Unit,
+	selectedAlbum: DomainAlbum? = null
 ) {
 	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
@@ -51,9 +53,13 @@ fun AlbumListScreenItem(
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
 
 	val downloadManager = koinInject<DownloadManager>()
-	val downloadStatus by downloadManager
-		.getCollectionDownloadStatus(album.songs.map { it.id })
-		.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
+	val downloadStatus by if (selected && selectedAlbum != null) {
+		downloadManager
+			.getCollectionDownloadStatus(selectedAlbum.songs.map { it.id })
+			.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
+	} else {
+		mutableStateOf(DownloadStatus.NOT_DOWNLOADED)
+	}
 
 	Box(modifier) {
 		ArtGridItem(
@@ -70,28 +76,28 @@ fun AlbumListScreenItem(
 			id = album.id,
 			tab = tab
 		)
-		if (selected) {
+		if (selected && selectedAlbum != null) {
 			CollectionSheet(
 				onDismissRequest = onDeselect,
-				collection = album,
-				onShare = { onSetShareId(album.id) },
+				collection = selectedAlbum,
+				onShare = { onSetShareId(selectedAlbum.id) },
 				onPlayNext = onPlayNext,
 				onAddToQueue = onAddToQueue,
 				downloadStatus = downloadStatus,
 				onDownloadAll = { 
 					scope.launch {
-						downloadManager.downloadCollection(album)
+						downloadManager.downloadCollection(selectedAlbum)
 						snackBarManager.notify(Res.string.notice_download_started)
 					}
 				},
 				onCancelDownloadAll = {
 					scope.launch {
-						album.songs.forEach { downloadManager.cancelDownload(it.id) }
+						selectedAlbum.songs.forEach { downloadManager.cancelDownload(it.id) }
 					}
 				},
 				onDeleteDownloadAll = {
 					scope.launch {
-						downloadManager.deleteDownloadedCollection(album)
+						downloadManager.deleteDownloadedCollection(selectedAlbum)
 						snackBarManager.notify(Res.string.notice_deleted_download)
 					}
 				},
@@ -99,16 +105,16 @@ fun AlbumListScreenItem(
 				onSetStarred = onSetStarred,
 				onAddAllToPlaylist = { playlistDialogShown = true },
 				onViewArtist = dropUnlessResumed {
-					backStack.add(Screen.ArtistDetail(album.artistId))
+					backStack.add(Screen.ArtistDetail(selectedAlbum.artistId))
 				},
 				rating = rating,
 				onSetRating = onSetRating
 			)
 		}
 
-		if (playlistDialogShown) {
+		if (playlistDialogShown && selectedAlbum != null) {
 			PlaylistUpdateDialog(
-				songs = album.songs.toPersistentList(),
+				songs = selectedAlbum.songs.toPersistentList(),
 				onDismissRequest = { playlistDialogShown = false }
 			)
 		}

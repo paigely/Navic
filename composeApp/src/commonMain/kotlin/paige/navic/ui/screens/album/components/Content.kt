@@ -8,6 +8,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_albums
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumSummary
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Album
 import paige.navic.ui.components.common.ContentUnavailable
@@ -15,11 +16,11 @@ import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.core.UiState
 
 fun LazyGridScope.albumListScreenContent(
-	state: UiState<List<DomainAlbum>>,
+	state: UiState<List<DomainAlbumSummary>>,
 	starred: Boolean,
 	selectedAlbum: DomainAlbum?,
 	selectedAlbumRating: Int,
-	onUpdateSelection: (DomainAlbum) -> Unit,
+	onUpdateSelection: (DomainAlbumSummary) -> Unit,
 	onClearSelection: () -> Unit,
 	onSetShareId: (String) -> Unit,
 	onSetStarred: (Boolean) -> Unit,
@@ -34,7 +35,8 @@ fun LazyGridScope.albumListScreenContent(
 				modifier = Modifier.animateItem(),
 				tab = "albums",
 				album = album,
-				selected = album == selectedAlbum,
+				selected = album.id == selectedAlbum?.id,
+				selectedAlbum = selectedAlbum,
 				starred = starred,
 				onSelect = { onUpdateSelection(album) },
 				onDeselect = { onClearSelection() },

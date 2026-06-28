@@ -63,6 +63,7 @@ import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumSummary
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
@@ -182,7 +183,7 @@ fun SearchScreen(
 					val results = uiState.data
 					val showAll = selectedCategory == SearchCategory.ALL
 					val albums =
-						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<DomainAlbum>() else emptyList()
+						if (showAll || selectedCategory == SearchCategory.ALBUMS) results.filterIsInstance<DomainAlbumSummary>() else emptyList()
 					val artists =
 						if (showAll || selectedCategory == SearchCategory.ARTISTS) results.filterIsInstance<DomainArtist>() else emptyList()
 					val songs =
@@ -355,14 +356,15 @@ fun SearchScreen(
 										.width(150.dp),
 									tab = "search",
 									album = album,
-									selected = album == albumListSelection,
+									selected = album.id == albumListSelection?.id,
+									selectedAlbum = albumListSelection,
 									starred = albumListStarred,
 									onSelect = { albumListViewModel.selectAlbum(album) },
 									onDeselect = { albumListViewModel.clearSelection() },
 									onSetStarred = { albumListViewModel.starAlbum(it) },
 									onSetShareId = { },
-									onPlayNext = { player.playNext(album as DomainSongCollection)},
-									onAddToQueue = { player.addToQueue(album as DomainSongCollection)},
+									onPlayNext = { albumListSelection?.let { player.playNext(it) } },
+									onAddToQueue = { albumListSelection?.let { player.addToQueue(it) } },
 									rating = selectedAlbumRating,
 									onSetRating = { albumListViewModel.setRating(it) }
 								)

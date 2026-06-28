@@ -3,6 +3,7 @@ package paige.navic.data.database.mappers
 import paige.navic.data.database.entities.AlbumEntity
 import paige.navic.data.database.relations.AlbumWithSongs
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumSummary
 import paige.navic.domain.models.DomainAlbumInfo
 import dev.zt64.subsonic.api.model.Album as ApiAlbum
 import dev.zt64.subsonic.api.model.AlbumInfo as ApiAlbumInfo
@@ -29,6 +30,26 @@ fun ApiAlbum.toEntity(
 	playCount = this.playCount,
 	genres = this.genres,
 	version = this.version
+)
+
+fun AlbumEntity.toSummary() = DomainAlbumSummary(
+	id = albumId,
+	name = name,
+	artistId = artistId,
+	artistName = artistName,
+	coverArtId = coverArtId,
+	songCount = songCount,
+	duration = duration,
+	year = year,
+	genre = genre,
+	starredAt = starredAt,
+	userRating = userRating,
+	musicBrainzId = musicBrainzId,
+	createdAt = createdAt,
+	lastPlayedAt = lastPlayedAt,
+	playCount = playCount,
+	genres = genres,
+	version = version
 )
 
 fun AlbumWithSongs.toDomainModel() = DomainAlbum(

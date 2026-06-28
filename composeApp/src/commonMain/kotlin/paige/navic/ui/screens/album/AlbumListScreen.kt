@@ -28,7 +28,6 @@ import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbumListType
-import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.snackbars.ErrorSnackbar
@@ -120,8 +119,8 @@ fun AlbumListScreen(
 					starred = starred,
 					selectedAlbum = selectedAlbum,
 					selectedAlbumRating = rating,
-					onPlayNext = { if (selectedAlbum != null) player.playNext(selectedAlbum as DomainSongCollection) },
-					onAddToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum as DomainSongCollection) },
+					onPlayNext = { if (selectedAlbum != null) player.playNext(selectedAlbum!!) },
+					onAddToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum!!) },
 					onUpdateSelection = { viewModel.selectAlbum(it) },
 					onClearSelection = { viewModel.clearSelection() },
 					onSetShareId = { newShareId ->

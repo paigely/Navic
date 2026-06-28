@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumSummary
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.ui.core.UiState
@@ -23,7 +24,7 @@ open class AlbumListViewModel(
 	private val sessionManager: SessionManager
 ) : ViewModel(), KoinComponent {
 	private val _albumsState =
-		MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())
+		MutableStateFlow<UiState<ImmutableList<DomainAlbumSummary>>>(UiState.Loading())
 	val albumsState = _albumsState.asStateFlow()
 
 	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
@@ -58,11 +59,12 @@ open class AlbumListViewModel(
 		}
 	}
 
-	fun selectAlbum(album: DomainAlbum) {
+	fun selectAlbum(album: DomainAlbumSummary) {
 		viewModelScope.launch {
-			_selectedAlbum.value = album
-			_starred.value = repository.isAlbumStarred(album)
-			_rating.value = repository.getAlbumRating(album)
+			val fullAlbum = repository.getAlbumById(album.id)
+			_selectedAlbum.value = fullAlbum
+			_starred.value = repository.isAlbumStarred(album.id)
+			_rating.value = repository.getAlbumRating(album.id)
 		}
 	}
 
@@ -75,9 +77,9 @@ open class AlbumListViewModel(
 			val selection = _selectedAlbum.value ?: return@launch
 			runCatching {
 				if (starred) {
-					repository.starAlbum(selection)
+					repository.starAlbum(selection.id)
 				} else {
-					repository.unstarAlbum(selection)
+					repository.unstarAlbum(selection.id)
 				}
 				_starred.value = starred
 			}
@@ -89,7 +91,7 @@ open class AlbumListViewModel(
 			val selection = _selectedAlbum.value ?: return@launch
 			runCatching {
 				_rating.value = rating
-				repository.rateAlbum(selection, rating)
+				repository.rateAlbum(selection.id, rating)
 			}
 		}
 	}

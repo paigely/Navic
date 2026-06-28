@@ -7,6 +7,7 @@ import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
+import paige.navic.data.database.mappers.toSummary
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.util.core.Logger
@@ -35,7 +36,7 @@ class SearchRepository(
 				val songs = songDao.getSongsByIds(data.songs.map { it.id })
 				val localPlaylists = playlistDao.searchPlaylistsList(query)
 
-				(albums.map { it.toDomainModel() }
+				(albums.map { it.album.toSummary() }
 					+ artists.map { it.toDomainModel() }
 					+ songs.map { it.toDomainModel() }
 					+ localPlaylists.map { it.toDomainModel() })
@@ -51,7 +52,7 @@ class SearchRepository(
 	}
 
 	private suspend fun performLocalSearch(query: String): List<Any> {
-		val localAlbums = albumDao.searchAlbumsList(query).map { it.toDomainModel() }
+		val localAlbums = albumDao.searchAlbumsList(query).map { it.album.toSummary() }
 		val localArtists = artistDao.searchArtistsList(query).map { it.toDomainModel() }
 		val localSongs = songDao.searchSongsList(query).map { it.toDomainModel() }
 		val localPlaylists = playlistDao.searchPlaylistsList(query).map { it.toDomainModel() }

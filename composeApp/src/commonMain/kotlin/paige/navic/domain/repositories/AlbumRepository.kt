@@ -15,9 +15,11 @@ import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumSummary
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.ui.core.UiState
 import paige.navic.util.core.toSqlQuery
+import paige.navic.data.database.mappers.toSummary
 import kotlin.time.Clock
 
 class AlbumRepository(
@@ -29,26 +31,32 @@ class AlbumRepository(
 	private suspend fun getLocalData(
 		listType: DomainAlbumListType,
 		reversed: Boolean
-	): ImmutableList<DomainAlbum> {
-		val downloadedSongIds = if (listType == DomainAlbumListType.Downloaded) {
-			downloadDao.getAllDownloadsList()
+	): ImmutableList<DomainAlbumSummary> {
+		if (listType == DomainAlbumListType.Downloaded) {
+			val downloadedSongIds = downloadDao.getAllDownloadsList()
 				.filter { it.status == DownloadStatus.DOWNLOADED }
 				.map { it.songId }
 				.toSet()
-		} else null
+
+			return albumDao
+				.getAlbumsByQuery(listType.toSqlQuery())
+				.filter { it.songs.all { song -> downloadedSongIds.contains(song.songId) } }
+				.map { it.album.toSummary() }
+				.let { if (reversed) it.asReversed() else it }
+				.toImmutableList()
+		}
 
 		return albumDao
-			.getAlbumsByQuery(listType.toSqlQuery())
-			.map { it.toDomainModel() }
+			.getAlbumEntitiesByQuery(listType.toSqlQuery())
+			.map { it.toSummary() }
 			.let { if (reversed) it.asReversed() else it }
-			.filter { album -> downloadedSongIds == null || downloadedSongIds.containsAll(album.songs.map { it.id }) }
 			.toImmutableList()
 	}
 
 	private suspend fun refreshLocalData(
 		listType: DomainAlbumListType,
 		reversed: Boolean
-	): ImmutableList<DomainAlbum> {
+	): ImmutableList<DomainAlbumSummary> {
 		dbRepository.syncLibrarySongs().getOrThrow()
 		return getLocalData(listType, reversed)
 	}
@@ -57,7 +65,7 @@ class AlbumRepository(
 		fullRefresh: Boolean,
 		listType: DomainAlbumListType,
 		reversed: Boolean
-	): Flow<UiState<ImmutableList<DomainAlbum>>> = flow {
+	): Flow<UiState<ImmutableList<DomainAlbumSummary>>> = flow {
 		val localData = getLocalData(listType, reversed)
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))
@@ -71,37 +79,43 @@ class AlbumRepository(
 		}
 	}.flowOn(Dispatchers.IO)
 
-	suspend fun isAlbumStarred(album: DomainAlbum) = albumDao.isAlbumStarred(album.id)
-	suspend fun getAlbumRating(album: DomainAlbum) = albumDao.getAlbumRating(album.id) ?: 0
+	suspend fun getAlbumById(albumId: String): DomainAlbum? =
+		albumDao.getAlbumById(albumId)?.toDomainModel()
 
-	suspend fun starAlbum(album: DomainAlbum) {
-		val starredEntity = album.toEntity().copy(
+	suspend fun isAlbumStarred(albumId: String) = albumDao.isAlbumStarred(albumId)
+	suspend fun getAlbumRating(albumId: String) = albumDao.getAlbumRating(albumId) ?: 0
+
+	suspend fun starAlbum(albumId: String) {
+		val album = albumDao.getAlbumById(albumId)?.album ?: return
+		val starredEntity = album.copy(
 			starredAt = Clock.System.now()
 		)
 		albumDao.insertAlbum(starredEntity)
-		syncManager.enqueueAction(SyncActionType.STAR, album.id)
+		syncManager.enqueueAction(SyncActionType.STAR, albumId)
 	}
 
-	suspend fun unstarAlbum(album: DomainAlbum) {
-		val unstarredEntity = album.toEntity().copy(
+	suspend fun unstarAlbum(albumId: String) {
+		val album = albumDao.getAlbumById(albumId)?.album ?: return
+		val unstarredEntity = album.copy(
 			starredAt = null
 		)
 		albumDao.insertAlbum(unstarredEntity)
-		syncManager.enqueueAction(SyncActionType.UNSTAR, album.id)
+		syncManager.enqueueAction(SyncActionType.UNSTAR, albumId)
 	}
 
-	suspend fun rateAlbum(album: DomainAlbum, rating: Int) {
-		val ratedEntity = album.toEntity().copy(
+	suspend fun rateAlbum(albumId: String, rating: Int) {
+		val album = albumDao.getAlbumById(albumId)?.album ?: return
+		val ratedEntity = album.copy(
 			userRating = rating
 		)
 		albumDao.insertAlbum(ratedEntity)
 		when (rating) {
-			0 -> syncManager.enqueueAction(SyncActionType.STAR_0, album.id)
-			1 -> syncManager.enqueueAction(SyncActionType.STAR_1, album.id)
-			2 -> syncManager.enqueueAction(SyncActionType.STAR_2, album.id)
-			3 -> syncManager.enqueueAction(SyncActionType.STAR_3, album.id)
-			4 -> syncManager.enqueueAction(SyncActionType.STAR_4, album.id)
-			5 -> syncManager.enqueueAction(SyncActionType.STAR_5, album.id)
+			0 -> syncManager.enqueueAction(SyncActionType.STAR_0, albumId)
+			1 -> syncManager.enqueueAction(SyncActionType.STAR_1, albumId)
+			2 -> syncManager.enqueueAction(SyncActionType.STAR_2, albumId)
+			3 -> syncManager.enqueueAction(SyncActionType.STAR_3, albumId)
+			4 -> syncManager.enqueueAction(SyncActionType.STAR_4, albumId)
+			5 -> syncManager.enqueueAction(SyncActionType.STAR_5, albumId)
 		}
 	}
 }
