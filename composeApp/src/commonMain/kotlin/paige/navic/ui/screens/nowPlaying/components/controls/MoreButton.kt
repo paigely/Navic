@@ -29,6 +29,7 @@ import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.theme.NavicTheme
+import paige.navic.util.color.rememberCoverColorScheme
 import kotlin.time.Duration
 
 @Composable
@@ -45,6 +46,7 @@ fun NowPlayingMoreButton(
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
+	val colorScheme = rememberCoverColorScheme(song?.coverArtId)
 
 	IconButton(
 		onClick = {
@@ -62,19 +64,17 @@ fun NowPlayingMoreButton(
 	}
 
 	if (expanded && song != null) {
-		NavicTheme {
+		NavicTheme(colorScheme) {
 			SongSheet(
 				onDismissRequest = { expanded = false },
 				song = song,
 				collection = playerState.currentCollection,
 				onViewAlbum = dropUnlessResumed {
 					playerState.currentCollection?.let { collection ->
-						backStack.remove(Screen.NowPlaying)
 						backStack.add(Screen.CollectionDetail(collection.id, ""))
 					}
 				},
 				onViewArtist = dropUnlessResumed {
-					backStack.remove(Screen.NowPlaying)
 					backStack.add(Screen.ArtistDetail(song.artistId))
 				},
 				onShare = {
@@ -84,7 +84,6 @@ fun NowPlayingMoreButton(
 					playlistDialogShown = true
 				},
 				onTrackInfo = dropUnlessResumed {
-					backStack.remove(Screen.NowPlaying)
 					backStack.add(Screen.SongDetail(song.id))
 				},
 				rating = songRating,
@@ -96,7 +95,7 @@ fun NowPlayingMoreButton(
 	}
 
 	if (playlistDialogShown && song != null) {
-		NavicTheme {
+		NavicTheme(colorScheme) {
             PlaylistUpdateDialog(
                 songs = persistentListOf(song),
                 onDismissRequest = { playlistDialogShown = false }
@@ -104,7 +103,7 @@ fun NowPlayingMoreButton(
 		}
 	}
 
-	NavicTheme {
+	NavicTheme(colorScheme) {
 		ShareDialog(
 			id = shareId,
 			onIdClear = { shareId = null },

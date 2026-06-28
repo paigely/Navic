@@ -55,9 +55,6 @@ fun PlaylistCreateDialog(
 					onDismissRequest()
 					onRefresh()
 					if (navigateAfterwards) {
-						if (backStack.contains(Screen.NowPlaying)) {
-							backStack.remove(Screen.NowPlaying)
-						}
 						backStack.add(Screen.CollectionDetail(event.playlist.id, "playlists"))
 					}
 				}

@@ -26,7 +26,6 @@ import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtistListType
 import paige.navic.domain.models.DomainSong
-import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.DomainSongListType
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
@@ -157,8 +156,8 @@ fun StarredScreen() {
 				onSelectAlbum = { albumsViewModel.selectAlbum(it) },
 				onClearAlbumSelection = { albumsViewModel.clearSelection() },
 				onStarSelectedAlbum = { albumsViewModel.starAlbum(it) },
-				onPlayAlbumNext = { if (selectedAlbum != null) player.playNext(selectedAlbum as DomainSongCollection)},
-				onAddAlbumToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum as DomainSongCollection)},
+				onPlayAlbumNext = { if (selectedAlbum != null) player.playNext(selectedAlbum!!)},
+				onAddAlbumToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum!!)},
 				onRateSelectedAlbum = { albumsViewModel.setRating(it) },
 
 				artistsState = artistsState,
@@ -174,7 +173,7 @@ fun StarredScreen() {
 		}
 	}
 
-    ShareDialog(
+	ShareDialog(
         id = shareId,
         onIdClear = { shareId = null },
         expiry = shareExpiry,

@@ -26,7 +26,6 @@ import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtistListType
-import paige.navic.domain.models.DomainSongCollection
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.snackbars.ErrorSnackbar
 import paige.navic.ui.components.dialogs.DeletionDialog
@@ -128,8 +127,8 @@ fun LibraryScreen() {
 				onSelectAlbum = { albumsViewModel.selectAlbum(it) },
 				onClearAlbumSelection = { albumsViewModel.clearSelection() },
 				onStarSelectedAlbum = { albumsViewModel.starAlbum(it) },
-				onPlayAlbumNext = { if (selectedAlbum != null) player.playNext(selectedAlbum as DomainSongCollection)},
-				onAddAlbumToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum as DomainSongCollection)},
+				onPlayAlbumNext = { if (selectedAlbum != null) player.playNext(selectedAlbum!!)},
+				onAddAlbumToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum!!)},
 				onRateSelectedAlbum = { albumsViewModel.setRating(it) },
 
 				artistsState = artistsState,
@@ -147,8 +146,8 @@ fun LibraryScreen() {
 				onSelectPlaylist = { playlistsViewModel.selectPlaylist(it) },
 				onClearPlaylistSelection = { playlistsViewModel.clearSelection() },
 				onDeletePlaylist = { playlistDeletionId = it },
-				onPlayPlaylistNext = { if (selectedPlaylist != null) player.playNext(selectedPlaylist as DomainSongCollection)},
-				onAddPlaylistToQueue = { if (selectedPlaylist != null) player.addToQueue(selectedPlaylist as DomainSongCollection)},
+				onPlayPlaylistNext = { if (selectedPlaylist != null) player.playNext(selectedPlaylist!!)},
+				onAddPlaylistToQueue = { if (selectedPlaylist != null) player.addToQueue(selectedPlaylist!!)},
 
 				genresState = genresState
 			)
@@ -172,7 +171,7 @@ fun LibraryScreen() {
 		}
 	)
 
-    ShareDialog(
+	ShareDialog(
         id = shareId,
         onIdClear = { shareId = null },
         expiry = shareExpiry,

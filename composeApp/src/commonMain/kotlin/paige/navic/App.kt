@@ -307,7 +307,9 @@ private fun entryProvider(
 		entry<Screen.CollectionDetail>(metadata = detailPane("root")) { key ->
 			CollectionDetailScreen(key.collectionId, key.tab)
 		}
-		entry<Screen.SongDetail>(metadata = detailPane("root")) { key ->
+		entry<Screen.SongDetail>(
+			metadata = NowPlayingSceneStrategy.bottomSheet(maxWidth = Dp.Unspecified)
+		) { key ->
 			SongDetailScreen(key.songId)
 		}
 		entry<Screen.Search>(metadata = navtabMetadata) { key ->

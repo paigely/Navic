@@ -19,8 +19,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -129,7 +130,10 @@ fun SongSheet(
 	ModalBottomSheet(
 		onDismissRequest = onDismissRequest,
 		dragHandle = null,
-		sheetState = rememberModalBottomSheetState(true),
+		sheetState = rememberBottomSheetState(
+			initialValue = SheetValue.Hidden,
+			enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+		),
 		contentWindowInsets = {
 			BottomSheetDefaults.modalWindowInsets.add(
 				WindowInsets(

@@ -17,7 +17,8 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,7 +47,10 @@ fun <T> SortSheet(
 	val platformContext = LocalPlatformContext.current
 	ModalBottomSheet(
 		onDismissRequest = onDismissRequest,
-		sheetState = rememberModalBottomSheetState(true)
+		sheetState = rememberBottomSheetState(
+			initialValue = SheetValue.Hidden,
+			enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+		)
 	) {
 		Column(
 			modifier = Modifier.verticalScroll(rememberScrollState()),

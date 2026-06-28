@@ -59,9 +59,7 @@ fun NowPlayingInfoRow(
 					inlineContent = InlineExplicitIconLarge,
 					modifier = Modifier.clickable(onClick = dropUnlessResumed {
 						song.albumId?.let {
-							backStack.removeLastOrNull()
-
-							val lastScreen = backStack.lastOrNull()
+							val lastScreen = backStack.getOrNull(backStack.size - 2)
 
 							val isSameAlbum = if (lastScreen is Screen.CollectionDetail) {
 								lastScreen.collectionId == song.albumId
@@ -69,13 +67,16 @@ fun NowPlayingInfoRow(
 								false
 							}
 
-							if (!isSameAlbum)
+							if (!isSameAlbum) {
 								backStack.add(
 									Screen.CollectionDetail(
 										playerState.currentCollection?.id ?: return@dropUnlessResumed,
 										""
 									)
 								)
+							} else {
+								backStack.removeLastOrNull()
+							}
 						}
 					}),
 					style = MaterialTheme.typography.bodyLarge
@@ -89,7 +90,6 @@ fun NowPlayingInfoRow(
 					song != null,
 					onClick = dropUnlessResumed {
 						song?.artistId?.let { id ->
-							backStack.remove(Screen.NowPlaying)
 							backStack.add(Screen.ArtistDetail(id))
 						}
 					}

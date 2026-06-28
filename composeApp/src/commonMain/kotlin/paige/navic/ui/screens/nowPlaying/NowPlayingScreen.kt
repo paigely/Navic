@@ -1,5 +1,6 @@
 package paige.navic.ui.screens.nowPlaying
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -70,10 +71,12 @@ fun NowPlayingScreen() {
 	val songIsStarred by viewModel.songIsStarred.collectAsStateWithLifecycle()
 	val songRating by viewModel.songRating.collectAsStateWithLifecycle()
 
+	val contentAlpha by animateFloatAsState(if (isPlayerCurrent) 1f else 0f)
+
 	SheetScaffold(
 		toolbar = { windowInsets ->
 			SheetToolbar(
-				modifier = Modifier.alpha(if (isPlayerCurrent) 1f else 0f),
+				modifier = Modifier.alpha(contentAlpha),
 				windowInsets = windowInsets,
 				title = {
 					Text(stringResource(Res.string.title_now_playing))
@@ -115,11 +118,11 @@ fun NowPlayingScreen() {
 					isPaused = playerState.isPaused
 				)
 			}
-			if (!isPlayerCurrent) return@Box
 			BoxWithConstraints(
 				modifier = Modifier
 					.padding(horizontal = 8.dp)
 					.fillMaxSize()
+					.alpha(contentAlpha)
 			) {
 				val isLandscape = maxWidth > maxHeight
 				val toolbarPosition = preferenceManager.nowPlayingToolbarPosition
