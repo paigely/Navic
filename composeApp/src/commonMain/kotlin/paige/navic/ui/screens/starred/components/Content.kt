@@ -56,6 +56,7 @@ import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.ui.navigation.Screen
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumSummary
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
@@ -98,11 +99,11 @@ fun StarredScreenContent(
 	onDeleteDownloadSong: (DomainSong) -> Unit,
 
 	// albums
-	albumsState: UiState<ImmutableList<DomainAlbum>>,
+	albumsState: UiState<ImmutableList<DomainAlbumSummary>>,
 	selectedAlbum: DomainAlbum?,
 	selectedAlbumIsStarred: Boolean,
 	selectedAlbumRating: Int,
-	onSelectAlbum: (DomainAlbum) -> Unit,
+	onSelectAlbum: (DomainAlbumSummary) -> Unit,
 	onClearAlbumSelection: () -> Unit,
 	onStarSelectedAlbum: (Boolean) -> Unit,
 	onRateSelectedAlbum: (Int) -> Unit,
@@ -249,9 +250,12 @@ fun StarredScreenContent(
 				albums.toImmutableList(),
 				Screen.AlbumList(true, DomainAlbumListType.Starred)
 			) { album ->
-				val albumDownloadStatus by downloadManager
-					.getCollectionDownloadStatus(album.songs.map { it.id })
-					.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
+				val albumDownloadStatus by if (selectedAlbum?.id == album.id) {
+					downloadManager
+						.getCollectionDownloadStatus(selectedAlbum.songs.map { it.id })
+				} else {
+					kotlinx.coroutines.flow.flowOf(DownloadStatus.NOT_DOWNLOADED)
+				}.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
 				ArtCarouselItem(
 					coverArtId = album.coverArtId, 
 					title = album.name, 
@@ -262,10 +266,10 @@ fun StarredScreenContent(
 						backStack.add(Screen.CollectionDetail(album.id, "artist"))
 					}
 				)
-				if (selectedAlbum == album) {
+				if (selectedAlbum?.id == album.id) {
 					CollectionSheet(
 						onDismissRequest = { onClearAlbumSelection() },
-						collection = album,
+						collection = selectedAlbum,
 						starred = selectedAlbumIsStarred,
 						onShare = { onSetShareId(album.id) },
 						onPlayNext = onPlayAlbumNext,
@@ -277,17 +281,17 @@ fun StarredScreenContent(
 						downloadStatus = albumDownloadStatus,
 						onDownloadAll = { 
 							scope.launch {
-								downloadManager.downloadCollection(album)
+								downloadManager.downloadCollection(selectedAlbum)
 							}
 						},
 						onCancelDownloadAll = {
 							scope.launch {
-								album.songs.forEach { downloadManager.cancelDownload(it.id) }
+								selectedAlbum.songs.forEach { downloadManager.cancelDownload(it.id) }
 							}
 						},
 						onDeleteDownloadAll = {
 							scope.launch {
-								downloadManager.deleteDownloadedCollection(album)
+								downloadManager.deleteDownloadedCollection(selectedAlbum)
 							}
 						},
 						rating = selectedAlbumRating,

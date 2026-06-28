@@ -19,6 +19,7 @@ androidx-sqlite = "2.6.2"
 androidx-navigation3 = "1.1.0-beta01"
 androidx-media3 = "1.10.1"
 androidx-glance = "1.2.0-rc01"
+androidx-work = "2.11.2"
 
 # Compose/UI
 compose = "1.11.1"
@@ -64,6 +65,7 @@ androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", versi
 androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "androidx-media3" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidx-glance" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "androidx-glance" }
+androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 
 # Kotlinx
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.8.0" }

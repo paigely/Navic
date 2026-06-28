@@ -110,8 +110,8 @@ class CollectionDetailViewModel(
 			repository.getCollectionFlow(fullRefresh, collectionId).collect {
 				_collectionState.value = it
 				if (it.data is DomainAlbum) {
-					_starred.value = albumRepository.isAlbumStarred(it.data as DomainAlbum)
-					_rating.value = albumRepository.getAlbumRating(it.data as DomainAlbum)
+					_starred.value = albumRepository.isAlbumStarred((it.data as DomainAlbum).id)
+					_rating.value = albumRepository.getAlbumRating((it.data as DomainAlbum).id)
 					try {
 						val albumInfo = repository.getAlbumInfo(collectionId)
 						_albumInfoState.value = UiState.Success(albumInfo.toDomainModel())
@@ -134,8 +134,8 @@ class CollectionDetailViewModel(
 	fun selectAlbum(album: DomainAlbum) {
 		viewModelScope.launch {
 			_selectedAlbum.value = album
-			_selectedAlbumIsStarred.value = albumRepository.isAlbumStarred(album)
-			_selectedAlbumRating.value = albumRepository.getAlbumRating(album)
+			_selectedAlbumIsStarred.value = albumRepository.isAlbumStarred(album.id)
+			_selectedAlbumRating.value = albumRepository.getAlbumRating(album.id)
 		}
 	}
 
@@ -203,7 +203,7 @@ class CollectionDetailViewModel(
 	fun rateAlbum(rating: Int) {
 		viewModelScope.launch {
 			(_collectionState.value.data as? DomainAlbum)?.let { album ->
-				albumRepository.rateAlbum(album, rating)
+				albumRepository.rateAlbum(album.id, rating)
 				_rating.value = rating
 			}
 		}
@@ -215,9 +215,9 @@ class CollectionDetailViewModel(
 				val collection = _collectionState.value.data ?: return@launch
 				if (collection !is DomainAlbum) return@launch
 				if (starred) {
-					albumRepository.starAlbum(collection)
+					albumRepository.starAlbum(collection.id)
 				} else {
-					albumRepository.unstarAlbum(collection)
+					albumRepository.unstarAlbum(collection.id)
 				}
 				refreshCollection(false)
 			}
@@ -227,7 +227,7 @@ class CollectionDetailViewModel(
 	fun rateSelectedAlbum(rating: Int) {
 		viewModelScope.launch {
 			_selectedAlbum.value?.let { album ->
-				albumRepository.rateAlbum(album, rating)
+				albumRepository.rateAlbum(album.id, rating)
 				_selectedAlbumRating.value = rating
 			}
 		}
@@ -238,9 +238,9 @@ class CollectionDetailViewModel(
 			runCatching {
 				val collection = _selectedAlbum.value ?: return@launch
 				if (starred) {
-					albumRepository.starAlbum(collection)
+					albumRepository.starAlbum(collection.id)
 				} else {
-					albumRepository.unstarAlbum(collection)
+					albumRepository.unstarAlbum(collection.id)
 				}
 				_selectedAlbumIsStarred.value = starred
 			}

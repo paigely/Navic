@@ -24,6 +24,7 @@ import navic.composeapp.generated.resources.title_genres
 import navic.composeapp.generated.resources.title_playlists
 import paige.navic.ui.navigation.Screen
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumSummary
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainGenre
@@ -49,11 +50,11 @@ fun LibraryScreenContent(
 	onSetShareId: (String) -> Unit,
 
 	// albums
-	albumsState: UiState<ImmutableList<DomainAlbum>>,
+	albumsState: UiState<ImmutableList<DomainAlbumSummary>>,
 	selectedAlbum: DomainAlbum?,
 	selectedAlbumIsStarred: Boolean,
 	selectedAlbumRating: Int,
-	onSelectAlbum: (DomainAlbum) -> Unit,
+	onSelectAlbum: (DomainAlbumSummary) -> Unit,
 	onClearAlbumSelection: () -> Unit,
 	onStarSelectedAlbum: (Boolean) -> Unit,
 	onRateSelectedAlbum: (Int) -> Unit,
@@ -126,7 +127,7 @@ fun LibraryScreenContent(
 				modifier = Modifier.animateItem().width(150.dp),
 				tab = "library",
 				album = album,
-				selected = album == selectedAlbum,
+				selected = album.id == selectedAlbum?.id,
 				starred = selectedAlbumIsStarred,
 				onSelect = { onSelectAlbum(album) },
 				onDeselect = { onClearAlbumSelection() },
@@ -135,7 +136,8 @@ fun LibraryScreenContent(
 				onPlayNext = onPlayAlbumNext,
 				onAddToQueue = onAddAlbumToQueue,
 				rating = selectedAlbumRating,
-				onSetRating = onRateSelectedAlbum
+				onSetRating = onRateSelectedAlbum,
+				selectedAlbum = selectedAlbum
 			)
 		}
 

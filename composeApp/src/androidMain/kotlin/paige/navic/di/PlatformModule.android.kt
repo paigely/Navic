@@ -7,6 +7,8 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.data.database.DownloadDatabase
+import paige.navic.domain.manager.AndroidBackgroundScheduler
+import paige.navic.domain.manager.BackgroundScheduler
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.LogManager
 import paige.navic.domain.manager.NotificationManager
@@ -19,6 +21,7 @@ import paige.navic.util.android.ActivityProvider
 
 actual val platformModule = module {
 	singleOf(::ActivityProvider)
+	single<BackgroundScheduler> { AndroidBackgroundScheduler(get()) }
 	single<CacheDatabase> {
 		val dbPath = androidApplication()
 			.getDatabasePath("cache.db")

@@ -38,10 +38,10 @@ class SyncManager(
 	private val albumDao: AlbumDao,
 	private val connectivityManager: ConnectivityManager,
 	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager
+	private val preferenceManager: PreferenceManager,
+	private val backgroundScheduler: BackgroundScheduler
 ) {
 	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-	private var syncJob: Job? = null
 	private val syncMutex = Mutex()
 
 	private val fullSyncThreshold = 1.hours
@@ -60,8 +60,7 @@ class SyncManager(
 	}
 
 	fun startPeriodicSync() {
-		Logger.i("SyncManager", "Starting periodic sync cicle.")
-		if (syncJob?.isActive == true) return
+		Logger.i("SyncManager", "Starting periodic sync.")
 
 		scope.launch {
 			if (albumDao.getAlbumCount() == 0
@@ -71,12 +70,7 @@ class SyncManager(
 			}
 		}
 
-		syncJob = scope.launch {
-			while (isActive) {
-				runSyncCycle()
-				delay(1.hours)
-			}
-		}
+		backgroundScheduler.schedulePeriodicSync(1)
 	}
 
 	fun triggerManualSync() {
@@ -87,8 +81,12 @@ class SyncManager(
 	}
 
 	fun stopPeriodicSync() {
-		syncJob?.cancel()
+		backgroundScheduler.cancelPeriodicSync()
 		_syncState.value = SyncState(isSyncing = false)
+	}
+
+	suspend fun runSyncCycleFromWorker() {
+		runSyncCycle()
 	}
 
 	fun enqueueAction(actionType: SyncActionType, itemId: String) {

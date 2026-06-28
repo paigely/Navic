@@ -8,6 +8,8 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import paige.navic.data.database.CacheDatabase
 import paige.navic.data.database.DownloadDatabase
+import paige.navic.domain.manager.BackgroundScheduler
+import paige.navic.domain.manager.IosBackgroundScheduler
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.LogManager
 import paige.navic.domain.manager.NotificationManager
@@ -22,6 +24,7 @@ import platform.Foundation.NSUserDomainMask
 import coil3.PlatformContext as CoilPlatformContext
 
 actual val platformModule = module {
+	single<BackgroundScheduler> { IosBackgroundScheduler() }
 	single<CacheDatabase> {
 		val dbPath = documentDirectory() + "/cache.db"
 		Room

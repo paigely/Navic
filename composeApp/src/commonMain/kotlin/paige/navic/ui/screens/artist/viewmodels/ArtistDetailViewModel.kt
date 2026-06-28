@@ -172,8 +172,8 @@ class ArtistDetailViewModel(
 	fun selectAlbum(album: DomainAlbum) {
 		viewModelScope.launch {
 			_selectedAlbum.value = album
-			_selectedAlbumIsStarred.value = albumRepository.isAlbumStarred(album)
-			_selectedAlbumRating.value = albumRepository.getAlbumRating(album)
+			_selectedAlbumIsStarred.value = albumRepository.isAlbumStarred(album.id)
+			_selectedAlbumRating.value = albumRepository.getAlbumRating(album.id)
 		}
 	}
 
@@ -182,7 +182,7 @@ class ArtistDetailViewModel(
 			val selection = _selectedAlbum.value ?: return@launch
 			runCatching {
 				_selectedAlbumRating.value = rating
-				albumRepository.rateAlbum(selection, rating)
+				albumRepository.rateAlbum(selection.id, rating)
 			}
 		}
 	}
@@ -242,9 +242,9 @@ class ArtistDetailViewModel(
 			val selection = _selectedAlbum.value ?: return@launch
 			runCatching {
 				if (starred) {
-					albumRepository.starAlbum(selection)
+					albumRepository.starAlbum(selection.id)
 				} else {
-					albumRepository.unstarAlbum(selection)
+					albumRepository.unstarAlbum(selection.id)
 				}
 				_selectedAlbumIsStarred.value = starred
 			}
