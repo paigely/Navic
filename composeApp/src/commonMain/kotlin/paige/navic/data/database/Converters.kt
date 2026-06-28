@@ -1,6 +1,6 @@
 package paige.navic.data.database
 
-import androidx.room3.TypeConverter
+import androidx.room3.ColumnTypeConverter
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainReplayGain
@@ -13,47 +13,47 @@ import kotlin.time.Instant
 @Suppress("unused")
 class Converters {
 	// Duration
-	@TypeConverter
+	@ColumnTypeConverter
 	fun fromDuration(duration: Duration?): Long? {
 		return duration?.inWholeMilliseconds
 	}
 
-	@TypeConverter
+	@ColumnTypeConverter
 	fun toDuration(millis: Long?): Duration? {
 		return millis?.milliseconds
 	}
 
 	// Instant
-	@TypeConverter
+	@ColumnTypeConverter
 	fun fromInstant(instant: Instant?): Long? {
 		return instant?.toEpochMilliseconds()
 	}
 
-	@TypeConverter
+	@ColumnTypeConverter
 	fun toInstant(millis: Long?): Instant? {
 		return millis?.let { Instant.fromEpochMilliseconds(it) }
 	}
 
 	// List<String>
-	@TypeConverter
+	@ColumnTypeConverter
 	fun fromStringList(list: List<String>?): String? {
 		return list?.joinToString(separator = "||")
 	}
 
-	@TypeConverter
+	@ColumnTypeConverter
 	fun toStringList(data: String?): List<String>? {
 		return data?.split("||")?.filter { it.isNotEmpty() }
 	}
 
 	// List<Contributor>
-	@TypeConverter
+	@ColumnTypeConverter
 	fun fromContributorList(list: List<DomainContributor>?): String? {
 		return list?.joinToString(separator = ";") { c ->
 			"${c.role}^${c.subRole ?: ""}^${c.artistId}^${c.artistName}"
 		}
 	}
 
-	@TypeConverter
+	@ColumnTypeConverter
 	fun toContributorList(data: String?): List<DomainContributor>? {
 		if (data.isNullOrEmpty()) return if (data == null) null else emptyList()
 
@@ -69,13 +69,13 @@ class Converters {
 	}
 
 	// ReplayGain
-	@TypeConverter
+	@ColumnTypeConverter
 	fun fromReplayGain(rg: DomainReplayGain?): String? {
 		if (rg == null) return null
 		return "${rg.albumGain ?: ""},${rg.albumPeak ?: ""},${rg.trackGain ?: ""},${rg.trackPeak ?: ""},${rg.baseGain ?: ""},${rg.fallbackGain ?: ""}"
 	}
 
-	@TypeConverter
+	@ColumnTypeConverter
 	fun toReplayGain(data: String?): DomainReplayGain? {
 		if (data.isNullOrEmpty()) return null
 		val parts = data.split(",")
@@ -92,12 +92,12 @@ class Converters {
 	}
 
 	//Lyrics
-	@TypeConverter
+	@ColumnTypeConverter
 	fun fromLyricsProvider(provider: LyricsProvider): String {
 		return provider.name
 	}
 
-	@TypeConverter
+	@ColumnTypeConverter
 	fun toLyricsProvider(name: String): LyricsProvider {
 		return try {
 			LyricsProvider.valueOf(name)
@@ -108,10 +108,10 @@ class Converters {
 	}
 
 	// DomainExplicitStatus
-	@TypeConverter
+	@ColumnTypeConverter
 	fun fromExplicitStatus(explicitStatus: DomainExplicitStatus)
 		= explicitStatus.ordinal
-	@TypeConverter
+	@ColumnTypeConverter
 	fun toExplicitStatus(ordinal: Int)
 		= DomainExplicitStatus.entries.getOrNull(ordinal) ?: DomainExplicitStatus.Unknown
 }
