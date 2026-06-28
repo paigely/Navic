@@ -8,16 +8,14 @@ import paige.navic.data.database.entities.CoverColorEntity
 class CoverColorManager(
 	private val coverColorDao: CoverColorDao
 ) {
-	private val colorCache = mutableMapOf<String, Color>()
+	private val colorCache = mutableMapOf<String, Color?>()
 
 	suspend fun getColor(coverArtId: String): Color? {
-		colorCache[coverArtId]?.let { return it }
+		if (colorCache.containsKey(coverArtId)) return colorCache[coverArtId]
 
-		return coverColorDao.getColor(coverArtId)?.let {
-			val color = Color(it.color)
-			colorCache[coverArtId] = color
-			color
-		}
+		val color = coverColorDao.getColor(coverArtId)?.let { Color(it.color) }
+		colorCache[coverArtId] = color
+		return color
 	}
 
 	suspend fun putColor(coverArtId: String, color: Color) {

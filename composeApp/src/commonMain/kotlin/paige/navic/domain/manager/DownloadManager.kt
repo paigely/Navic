@@ -302,8 +302,9 @@ class DownloadManager(
 			Logger.i("DownloadManager", "beginning download for ${song.id}")
 			downloadDao.insertDownload(DownloadEntity(song.id, DownloadStatus.DOWNLOADING, 0f))
 
-			cacheCoverArt(song.coverArtId)
-			cacheAlbumCoverArt(song.albumId)
+			// Deduplicate artwork caching
+			song.coverArtId?.let { cacheCoverArt(it) }
+			
 			cacheLyrics(song)
 			downloadAudioFile(song)
 
@@ -375,32 +376,8 @@ class DownloadManager(
 	}
 
 	private suspend fun downloadAudioFile(song: DomainSong) {
-		var lastProgress = 0f
-		var progressJob: Job? = null
-
 		val request = client.prepareRequest(sessionManager.api.getStreamUrl(song.id)) {
 			method = HttpMethod.Get
-			onDownload { bytesSentTotal, contentLength ->
-				if (contentLength != null && contentLength > 0L) {
-					val progress = (bytesSentTotal.toDouble() / contentLength).toFloat()
-					if (progress - lastProgress >= 0.01f || progress == 1f) {
-						lastProgress = progress
-						Logger.i("DownloadManager", "downloading ${song.id} $progress")
-
-						progressJob?.cancel()
-
-						progressJob = scope.launch {
-							downloadDao.updateProgress(
-								song.id,
-								DownloadStatus.DOWNLOADING,
-								progress
-							)
-						}
-					}
-				} else {
-					Logger.i("DownloadManager", "downloaded ${song.id}")
-				}
-			}
 		}
 
 		request.execute { response ->
@@ -408,8 +385,6 @@ class DownloadManager(
 			val path = storageManager.getDownloadPath(song.id, song.fileExtension)
 			storageManager.saveFile(path, response.bodyAsChannel())
 			Logger.i("DownloadManager", "wrote download for ${song.id}")
-
-			progressJob?.cancel()
 
 			downloadDao.insertDownload(
 				DownloadEntity(

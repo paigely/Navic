@@ -12,8 +12,10 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
+import paige.navic.data.database.mappers.toSummary
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainAlbum
+import paige.navic.domain.models.DomainAlbumSummary
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
 import paige.navic.domain.repositories.ArtistRepository
@@ -36,7 +38,7 @@ class ArtistListViewModel(
 	private val _selectedArtist = MutableStateFlow<DomainArtist?>(null)
 	val selectedArtist = _selectedArtist.asStateFlow()
 
-	private val _selectedArtistAlbums = MutableStateFlow<ImmutableList<DomainAlbum>?>(null)
+	private val _selectedArtistAlbums = MutableStateFlow<ImmutableList<DomainAlbumSummary>?>(null)
 	val selectedArtistAlbums = _selectedArtistAlbums.asStateFlow()
 
 	private val _listType = MutableStateFlow(initialListType)
@@ -63,7 +65,7 @@ class ArtistListViewModel(
 			_selectedArtist.value = artist
 			val artistAlbums = 
 				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
-			_selectedArtistAlbums.value = artistAlbums.map { it.toDomainModel() }.toImmutableList()
+			_selectedArtistAlbums.value = artistAlbums.map { it.album.toSummary() }.toImmutableList()
 			_starred.value = repository.isArtistStarred(artist)
 		}
 	}
@@ -91,8 +93,8 @@ class ArtistListViewModel(
 		viewModelScope.launch {
 			val artistAlbums = 
 				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
-			artistAlbums.map { it.toDomainModel() }.forEach { album ->
-				player.addToQueue(album)
+			artistAlbums.forEach { albumWithSongs ->
+				player.addToQueue(albumWithSongs.toDomainModel())
 			}
 		}
 	}
@@ -102,8 +104,8 @@ class ArtistListViewModel(
 		viewModelScope.launch {
 			val artistAlbums = 
 				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
-			artistAlbums.map { it.toDomainModel() }.forEach { album ->
-				player.playNext(album)
+			artistAlbums.forEach { albumWithSongs ->
+				player.playNext(albumWithSongs.toDomainModel())
 			}
 		}
 	}
