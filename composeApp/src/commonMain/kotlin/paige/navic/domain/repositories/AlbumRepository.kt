@@ -13,7 +13,6 @@ import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
-import paige.navic.data.database.mappers.toEntity
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumSummary
 import paige.navic.domain.models.DomainAlbumListType
