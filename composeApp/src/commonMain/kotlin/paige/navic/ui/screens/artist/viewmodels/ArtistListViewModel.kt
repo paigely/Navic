@@ -14,7 +14,6 @@ import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toSummary
 import paige.navic.domain.manager.SessionManager
-import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumSummary
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType

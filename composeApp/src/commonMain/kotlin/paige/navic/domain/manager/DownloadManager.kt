@@ -6,7 +6,6 @@ import coil3.request.ImageRequest
 import coil3.size.Size
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.header
 import io.ktor.client.request.prepareRequest
 import io.ktor.client.statement.bodyAsChannel
