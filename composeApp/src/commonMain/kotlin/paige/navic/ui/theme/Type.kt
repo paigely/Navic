@@ -1,10 +1,8 @@
 package paige.navic.ui.theme
 
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontVariation
 import navic.composeapp.generated.resources.Res
@@ -33,7 +31,6 @@ fun googleSans(
 	return remember { FontFamily(font) }
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun defaultFont(
 	grade: Int = 0,
@@ -51,7 +48,6 @@ fun defaultFont(
 	}
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun typography(): Typography {
 	val fontFamily = defaultFont()

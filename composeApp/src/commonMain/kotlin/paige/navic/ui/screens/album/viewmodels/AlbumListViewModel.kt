@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -16,8 +15,7 @@ import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.ui.core.UiState
 
-@OptIn(ExperimentalCoroutinesApi::class)
-open class AlbumListViewModel(
+class AlbumListViewModel(
 	initialListType: DomainAlbumListType = DomainAlbumListType.AlphabeticalByArtist,
 	private val repository: AlbumRepository,
 	private val sessionManager: SessionManager
