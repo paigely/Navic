@@ -23,7 +23,6 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_navigate_back
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
@@ -77,11 +76,9 @@ fun TopBarButton(
 	enabled: Boolean = true,
 	content: @Composable () -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
-	Surface(
+    Surface(
 		modifier = modifier.size(40.dp),
 		onClick = {
-			platformContext.clickSound()
 			onClick()
 		},
 		enabled = enabled,

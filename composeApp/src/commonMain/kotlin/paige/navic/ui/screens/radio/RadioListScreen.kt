@@ -39,7 +39,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalBottomBarScrollManager
-import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.icons.Icons
@@ -62,8 +61,7 @@ import paige.navic.util.ui.withoutTop
 fun RadioListScreen(
 	nested: Boolean
 ) {
-	val platformContext = LocalPlatformContext.current
-	val scrollManager = LocalBottomBarScrollManager.current
+    val scrollManager = LocalBottomBarScrollManager.current
 	val viewModel = koinViewModel<RadioListViewModel>()
 	val player = koinInject<MediaPlayerViewModel>()
 	val radiosState by viewModel.radiosState.collectAsState()
@@ -104,7 +102,6 @@ fun RadioListScreen(
 						shape = MaterialTheme.shapes.large,
 						containerColor = MaterialTheme.colorScheme.primary,
 						onClick = {
-							platformContext.clickSound()
 							createDialogShown = true
 						}
 					) {

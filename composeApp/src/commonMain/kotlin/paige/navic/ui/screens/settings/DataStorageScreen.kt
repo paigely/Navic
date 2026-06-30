@@ -369,7 +369,6 @@ fun SettingsDataStorageScreen() {
 										Row(verticalAlignment = Alignment.CenterVertically) {
 											TextButton(
 												onClick = {
-													platformContext.clickSound()
 													viewModel.cancelLibraryDownload()
 												},
 												contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),

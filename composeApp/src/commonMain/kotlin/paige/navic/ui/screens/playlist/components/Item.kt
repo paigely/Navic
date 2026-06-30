@@ -16,7 +16,6 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_songs
 import org.jetbrains.compose.resources.pluralStringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.ui.navigation.Screen
@@ -42,8 +41,7 @@ fun PlaylistListScreenItem(
 	onSetShareId: (String) -> Unit,
 	onSetDeletionId: (String) -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
-	val backStack = LocalNavStack.current
+    val backStack = LocalNavStack.current
 	val snackBarManager = koinInject<SnackBarManager>()
 	val scope = rememberCoroutineScope()
 
@@ -56,7 +54,6 @@ fun PlaylistListScreenItem(
 	Box(modifier) {
 		ArtGridItem(
 			onClick = dropUnlessResumed {
-				platformContext.clickSound()
 				scope.launch {
 					backStack.add(Screen.CollectionDetail(playlist.id, tab))
 				}

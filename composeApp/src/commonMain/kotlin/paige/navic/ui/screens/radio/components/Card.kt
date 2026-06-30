@@ -29,7 +29,6 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_unknown
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.settings.ThemeMode
@@ -44,8 +43,7 @@ fun RadioListScreenCard(
 	radio: DomainRadio,
 	onPlayClick: () -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
-	val inDarkTheme = isSystemInDarkTheme()
+    val inDarkTheme = isSystemInDarkTheme()
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	val isDark = remember(preferenceManager.themeMode) {
@@ -76,7 +74,6 @@ fun RadioListScreenCard(
 		shape = MaterialTheme.shapes.medium,
 		shadowElevation = 2.dp,
 		onClick = {
-			platformContext.clickSound()
 			onPlayClick()
 		}
 	) {

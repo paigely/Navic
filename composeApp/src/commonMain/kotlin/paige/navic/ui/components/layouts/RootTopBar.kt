@@ -28,7 +28,6 @@ import navic.composeapp.generated.resources.action_view_shares
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.domain.models.settings.NavbarTab
@@ -101,8 +100,7 @@ private fun Actions(
 	onLogOut: () -> Unit,
 	config: NavbarConfig?,
 ) {
-	val platformContext = LocalPlatformContext.current
-	val backStack = LocalNavStack.current
+    val backStack = LocalNavStack.current
 
 	val isSearchEnabled = config?.tabs?.any {
 		it.id == NavbarTab.Id.SEARCH && it.visible
@@ -111,7 +109,6 @@ private fun Actions(
 	if (!isSearchEnabled) {
 		IconButton(
 			onClick = dropUnlessResumed {
-				platformContext.clickSound()
 				backStack.add(Screen.Search(nested = true))
 			}
 		) {
@@ -123,7 +120,6 @@ private fun Actions(
 	}
 
 	IconButton(onClick = dropUnlessResumed {
-		platformContext.clickSound()
 		backStack.add(Screen.Settings.Root)
 	}) {
 		Icon(
@@ -139,7 +135,6 @@ private fun Actions(
 
 	Box {
 		IconButton(onClick = {
-			platformContext.clickSound()
 			expanded = true
 		}) {
 			Icon(

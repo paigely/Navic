@@ -13,7 +13,6 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_star
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Star
@@ -24,12 +23,10 @@ fun NowPlayingStarButton(
 	songIsStarred: Boolean,
 	onSetSongIsStarred: (Boolean) -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
-	val player = koinInject<MediaPlayerViewModel>()
+    val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	IconButton(
 		onClick = {
-			platformContext.clickSound()
 			onSetSongIsStarred(!songIsStarred)
 		},
 		colors = IconButtonDefaults.filledTonalIconButtonColors(),

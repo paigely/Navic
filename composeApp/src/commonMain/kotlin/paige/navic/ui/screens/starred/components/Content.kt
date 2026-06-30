@@ -50,7 +50,6 @@ import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
@@ -121,8 +120,7 @@ fun StarredScreenContent(
 	onAddArtistToQueue: () -> Unit,
 ) {
 	val gridState = rememberLazyGridState()
-	val platformContext = LocalPlatformContext.current
-	val backStack = LocalNavStack.current
+    val backStack = LocalNavStack.current
 	val albums = albumsState.data.orEmpty()
 	val songs = songsState.data.orEmpty()
 	val artists = artistsState.data.orEmpty()
@@ -192,7 +190,6 @@ fun StarredScreenContent(
 						style = MaterialTheme.typography.labelLarge,
 						color = MaterialTheme.colorScheme.primary,
 						modifier = Modifier.clickable(onClick = dropUnlessResumed {
-							platformContext.clickSound()
 							backStack.add(
 								Screen.SongList(
 									nested = true,

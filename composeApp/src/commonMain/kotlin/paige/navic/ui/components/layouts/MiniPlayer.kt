@@ -60,7 +60,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
-import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.settings.MiniPlayerProgressStyle
@@ -86,8 +85,7 @@ fun MiniPlayer(
 	modifier: Modifier = Modifier,
 	enabled: Boolean = true
 ) {
-	val platformContext = LocalPlatformContext.current
-	val player = koinInject<MediaPlayerViewModel>()
+    val player = koinInject<MediaPlayerViewModel>()
 	val preferenceManager = koinInject<PreferenceManager>()
 	val navtabsViewModel = koinViewModel<NavtabsViewModel>()
 	val navtabsState by navtabsViewModel.state.collectAsState()
@@ -201,7 +199,6 @@ fun MiniPlayer(
 					draggedShape = shape
 				),
 				onClick = {
-					platformContext.clickSound()
 					onClick()
 				},
 				onLongClick = {
@@ -253,7 +250,6 @@ fun MiniPlayer(
 						val colors = IconButtonDefaults.iconButtonVibrantColors()
 						IconButton(
 							onClick = {
-								platformContext.clickSound()
 								if (playerState.isPaused) {
 									player.resume()
 								} else {
@@ -282,7 +278,6 @@ fun MiniPlayer(
 						}
 						IconButton(
 							onClick = {
-								platformContext.clickSound()
 								player.next()
 							},
 							enabled = isInteractive,

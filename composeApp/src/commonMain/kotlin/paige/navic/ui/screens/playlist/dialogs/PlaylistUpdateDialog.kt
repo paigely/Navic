@@ -41,7 +41,6 @@ import navic.composeapp.generated.resources.info_no_playlists
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalPlatformContext
 import paige.navic.domain.models.DomainSong
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistAdd
@@ -63,8 +62,7 @@ fun PlaylistUpdateDialog(
 		key = songs.joinToString() + playlistToExclude,
 		parameters = { parametersOf(songs, playlistToExclude) }
 	)
-	val platformContext = LocalPlatformContext.current
-	val state by viewModel.playlistsState.collectAsState()
+    val state by viewModel.playlistsState.collectAsState()
 	val confirmState by viewModel.confirmState.collectAsState()
 	val selectedPlaylists by viewModel.selectedPlaylists.collectAsState()
 
@@ -83,7 +81,6 @@ fun PlaylistUpdateDialog(
 						.toggleable(
 							value = isSelected,
 							onValueChange = {
-								platformContext.clickSound()
 								viewModel.togglePlaylistSelection(playlist)
 							},
 							role = Role.Checkbox
@@ -119,7 +116,6 @@ fun PlaylistUpdateDialog(
 		action = {
 			IconButton(
 				onClick = {
-					platformContext.clickSound()
 					viewModel.refreshResults()
 				},
 				enabled = state !is UiState.Loading,

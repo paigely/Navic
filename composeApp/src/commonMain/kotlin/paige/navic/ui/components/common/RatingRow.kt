@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_rate_stars
 import org.jetbrains.compose.resources.pluralStringResource
-import paige.navic.LocalPlatformContext
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Star
@@ -23,8 +22,6 @@ fun RatingRow(
 	rating: Int,
 	setRating: (Int) -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
-
 	Row(
 		modifier = Modifier.fillMaxWidth(),
 		horizontalArrangement = Arrangement.spacedBy(
@@ -35,7 +32,6 @@ fun RatingRow(
 		(1..5).forEach { idx ->
 			IconButton(
 				onClick = {
-					platformContext.clickSound()
 					if (rating == idx) {
 						setRating(0)
 					} else {

@@ -13,7 +13,6 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.ui.navigation.Screen
@@ -43,8 +42,7 @@ fun AlbumListScreenItem(
 	onAddToQueue: () -> Unit,
 	onSetRating: (Int) -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
-	val backStack = LocalNavStack.current
+    val backStack = LocalNavStack.current
 	val snackBarManager = koinInject<SnackBarManager>()
 	val scope = rememberCoroutineScope()
 
@@ -58,7 +56,6 @@ fun AlbumListScreenItem(
 	Box(modifier) {
 		ArtGridItem(
 			onClick = dropUnlessResumed {
-				platformContext.clickSound()
 				scope.launch {
 					backStack.add(Screen.CollectionDetail(album.id, tab))
 				}

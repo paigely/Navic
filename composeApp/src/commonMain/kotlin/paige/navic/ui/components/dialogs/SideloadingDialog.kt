@@ -18,13 +18,11 @@ import navic.composeapp.generated.resources.sideloading_warning_subtitle
 import navic.composeapp.generated.resources.sideloading_warning_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 
 @Composable
 fun SideloadingDialog() {
-	val platformContext = LocalPlatformContext.current
-	val preferenceManager = koinInject<PreferenceManager>()
+    val preferenceManager = koinInject<PreferenceManager>()
 	AlertDialog(
 		title = { Text(stringResource(Res.string.sideloading_warning_title)) },
 		text = {
@@ -46,7 +44,6 @@ fun SideloadingDialog() {
 		onDismissRequest = {},
 		confirmButton = {
 			Button(onClick = {
-				platformContext.clickSound()
 				preferenceManager.showedSideloadingWarning = true
 			}) {
 				Text(stringResource(Res.string.action_ok))

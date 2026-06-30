@@ -162,7 +162,6 @@ fun BottomBar(
 						alwaysShowLabel = preferenceManager.navigationBarLabelVisibility
 							== NavigationBarLabelVisibility.Always,
 						onClick = {
-							platformContext.clickSound()
 							backStack.apply {
 								clear()
 								add(item.destination)
@@ -218,7 +217,6 @@ fun BottomBar(
 						selected = backStack.last() == item.destination,
 						enabled = enabled,
 						onClick = {
-							platformContext.clickSound()
 							backStack.apply {
 								clear()
 								add(item.destination)

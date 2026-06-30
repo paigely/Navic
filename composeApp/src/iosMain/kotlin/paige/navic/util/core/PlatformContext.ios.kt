@@ -17,10 +17,6 @@ actual fun rememberPlatformContext(): PlatformContext {
 	val sizeClass = calculateWindowSizeClass()
 	return remember {
 		object : PlatformContext {
-			override fun clickSound() {
-				// none for iOS
-			}
-
 			override fun checkLocalNetworkPermission() {
 				// none for iOS
 			}

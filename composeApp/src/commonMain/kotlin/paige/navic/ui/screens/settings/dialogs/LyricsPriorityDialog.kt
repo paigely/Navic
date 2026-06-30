@@ -29,7 +29,6 @@ import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.option_lyrics_priority
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalPlatformContext
 import paige.navic.domain.models.lyrics.LyricsProvider
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle
@@ -51,8 +50,7 @@ fun LyricsPriorityDialog(
 
 	val viewModel = koinViewModel<LyricsPriorityViewModel>()
 
-	val platformContext = LocalPlatformContext.current
-	val haptic = LocalHapticFeedback.current
+    val haptic = LocalHapticFeedback.current
 	val state by viewModel.state.collectAsState()
 
 	val draggableState = rememberDraggableListState { from, to ->
@@ -93,7 +91,6 @@ fun LyricsPriorityDialog(
 				onDismissRequest = onDismissRequest,
 				confirmButton = {
 					Button(onClick = {
-						platformContext.clickSound()
 						onDismissRequest()
 					}) {
 						Text(stringResource(Res.string.action_ok))

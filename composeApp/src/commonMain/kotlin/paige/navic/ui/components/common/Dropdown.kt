@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import paige.navic.LocalPlatformContext
 import paige.navic.ui.theme.defaultFont
 
 @Composable
@@ -57,7 +56,6 @@ fun DropdownItem(
 	leadingIcon: @Composable () -> Unit = {},
 	enabled: Boolean = true
 ) {
-	val platformContext = LocalPlatformContext.current
 	val color by animateColorAsState(
 		if (enabled) {
 			MaterialTheme.colorScheme.onSurface.copy(alpha = .95f)
@@ -86,7 +84,6 @@ fun DropdownItem(
 				}
 			},
 			onClick = {
-				platformContext.clickSound()
 				onClick()
 			},
 			leadingIcon = {

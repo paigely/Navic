@@ -32,7 +32,6 @@ import navic.composeapp.generated.resources.action_delete_download
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Play
@@ -52,8 +51,6 @@ fun ArtistActionButtons(
 	playEnabled: Boolean,
 	modifier: Modifier = Modifier
 ) {
-	val platformContext = LocalPlatformContext.current
-
 	Row(
 		modifier = modifier
 			.fillMaxWidth()
@@ -71,7 +68,6 @@ fun ArtistActionButtons(
 					else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
 				)
 				.clickable(enabled = playEnabled) {
-					platformContext.clickSound()
 					onPlay()
 				}
 				.semantics { role = Role.Button },
@@ -101,7 +97,6 @@ fun ArtistActionButtons(
 		OutlinedButton(
 			modifier = Modifier.size(width = 52.dp, height = 44.dp),
 			onClick = {
-				platformContext.clickSound()
 				when (downloadStatus) {
 					DownloadStatus.NOT_DOWNLOADED, DownloadStatus.FAILED -> onDownload()
 					DownloadStatus.DOWNLOADING -> onCancelDownload()

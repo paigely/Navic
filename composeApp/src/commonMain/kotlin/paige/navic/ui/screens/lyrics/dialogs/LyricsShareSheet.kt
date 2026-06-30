@@ -71,7 +71,6 @@ import navic.composeapp.generated.resources.action_share_lyrics
 import navic.composeapp.generated.resources.app_name
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalSnackbarState
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainSong
@@ -99,7 +98,6 @@ fun LyricsShareSheet(
 	onDismiss: () -> Unit,
 	onShare: () -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
 	val shareManager = koinInject<ShareManager>()
 	val snackbarState = LocalSnackbarState.current
 	val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -255,7 +253,6 @@ fun LyricsShareSheet(
 						color = color,
 						isSelected = color == selectedColor,
 						onClick = {
-							platformContext.clickSound()
 							selectedColor = color
 						},
 						isPicker = false
@@ -268,7 +265,6 @@ fun LyricsShareSheet(
 							color = customHsv.toColor(),
 							isSelected = selectedColor == customHsv.toColor(),
 							onClick = {
-								platformContext.clickSound()
 								selectedColor = customHsv.toColor()
 								expanded = true
 							},
@@ -300,7 +296,6 @@ fun LyricsShareSheet(
 
 			Button(
 				onClick = {
-					platformContext.clickSound()
 					scope.launch {
 						try {
 							val bmp = graphicsLayer.toImageBitmap()

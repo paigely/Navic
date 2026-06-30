@@ -28,7 +28,6 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_choose_theme
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.Theme
 import paige.navic.domain.models.settings.ThemeMode
@@ -41,7 +40,6 @@ fun ThemeDialog(
 ) {
 	if (!presented) return
 
-	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	AlertDialog(
@@ -61,7 +59,6 @@ fun ThemeDialog(
 							.fillMaxWidth()
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
-								platformContext.clickSound()
 								preferenceManager.theme = theme
 								onDismissRequest()
 							},
@@ -90,7 +87,6 @@ fun ThemeDialog(
 		onDismissRequest = onDismissRequest,
 		confirmButton = {
 			Button(onClick = {
-				platformContext.clickSound()
 				onDismissRequest()
 			}) {
 				Text(stringResource(Res.string.action_ok))
@@ -102,8 +98,7 @@ fun ThemeDialog(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ThemeModeChooser() {
-	val platformContext = LocalPlatformContext.current
-	val preferenceManager = koinInject<PreferenceManager>()
+    val preferenceManager = koinInject<PreferenceManager>()
 	val themes = ThemeMode.entries
 	Row(
 		modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
@@ -117,7 +112,6 @@ private fun ThemeModeChooser() {
 			ToggleButton(
 				checked = checked,
 				onCheckedChange = { _ ->
-					platformContext.clickSound()
 					preferenceManager.themeMode = mode
 				},
 				shapes =
