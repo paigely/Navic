@@ -43,10 +43,10 @@ class NavtabsViewModel(
 		val config = (_state.value as UiState.Success).data
 		setConfig(
 			config.copy(
-			tabs = config.tabs.toMutableList().apply {
-				add(to, removeAt(from))
-			}
-		))
+				tabs = config.tabs.toMutableList().apply {
+					add(to, removeAt(from))
+				}
+			))
 	}
 
 	fun toggleVisibility(id: NavbarTab.Id) {

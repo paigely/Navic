@@ -35,7 +35,7 @@ fun ErrorCodeBlock(error: Throwable) {
 
 	@Suppress("DEPRECATION")
 	val clipboard = LocalClipboardManager.current
-    var copied by remember { mutableStateOf(false) }
+	var copied by remember { mutableStateOf(false) }
 
 	LaunchedEffect(copied) {
 		if (copied) {

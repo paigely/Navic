@@ -98,7 +98,7 @@ fun ThemeDialog(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ThemeModeChooser() {
-    val preferenceManager = koinInject<PreferenceManager>()
+	val preferenceManager = koinInject<PreferenceManager>()
 	val themes = ThemeMode.entries
 	Row(
 		modifier = Modifier.fillMaxWidth().padding(top = 8.dp),

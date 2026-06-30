@@ -64,8 +64,8 @@ class PreferenceManager(
 	var bottomBarVisibilityMode by preference(BottomBarVisibilityMode.AllScreens)
 	var navigationBarStyle by preference(NavigationBarStyle.Normal)
 	var navigationBarLabelVisibility by preference(
-        NavigationBarLabelVisibility.Always
-    )
+		NavigationBarLabelVisibility.Always
+	)
 	var miniPlayerStyle by preference(MiniPlayerStyle.Detached)
 	var miniPlayerProgressStyle by preference(MiniPlayerProgressStyle.Seekable)
 

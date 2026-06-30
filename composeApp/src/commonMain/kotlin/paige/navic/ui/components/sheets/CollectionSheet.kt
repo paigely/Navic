@@ -92,7 +92,7 @@ fun CollectionSheet(
 	onSetRating: ((Int) -> Unit)? = null
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
-    val contentPadding = PaddingValues(horizontal = 16.dp)
+	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
 		containerColor = Color.Transparent,
 		trailingIconColor = MaterialTheme.colorScheme.onSurface,
@@ -101,10 +101,14 @@ fun CollectionSheet(
 	ModalBottomSheet(
 		onDismissRequest = onDismissRequest,
 		dragHandle = null,
-		contentWindowInsets = { BottomSheetDefaults.modalWindowInsets.add(WindowInsets(
-			left = 8.dp,
-			right = 8.dp
-		)) }
+		contentWindowInsets = {
+			BottomSheetDefaults.modalWindowInsets.add(
+				WindowInsets(
+					left = 8.dp,
+					right = 8.dp
+				)
+			)
+		}
 	) {
 		Spacer(Modifier.height(16.dp))
 

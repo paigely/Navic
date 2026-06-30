@@ -8,16 +8,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.notice_created_playlist
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSong
 import paige.navic.ui.core.UiState
-import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.notice_created_playlist
-import paige.navic.domain.manager.SnackBarManager
 
 class PlaylistCreateDialogViewModel(
 	private val songs: List<DomainSong>,

@@ -34,7 +34,7 @@ fun LoginScreenSuggestionChips(
 		!instanceState.text.startsWith("https://") &&
 		(instanceState.text.contains(".") || instanceState.text.contains(":"))
 ) {
-    AnimatedVisibility(
+	AnimatedVisibility(
 		modifier = Modifier.fillMaxWidth(),
 		visible = showSuggestions,
 		enter = expandVertically() + fadeIn(),

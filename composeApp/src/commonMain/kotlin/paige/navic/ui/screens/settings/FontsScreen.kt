@@ -118,7 +118,7 @@ private fun FontRow(
 	count: Int,
 	onClick: () -> Unit
 ) {
-    val color = MaterialTheme.colorScheme.surfaceContainer
+	val color = MaterialTheme.colorScheme.surfaceContainer
 	SegmentedListItem(
 		onClick = {
 			onClick()

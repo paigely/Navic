@@ -172,7 +172,8 @@ fun SettingsStreamingQualityScreen() {
 								onValueChange = { newValue ->
 									if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
 										wifiInput = newValue
-										preferenceManager.customMaxBitrateWifi = newValue.toIntOrNull() ?: 0
+										preferenceManager.customMaxBitrateWifi =
+											newValue.toIntOrNull() ?: 0
 									}
 								},
 								label = { Text(stringResource(Res.string.option_max_bitrate_wifi)) },
@@ -197,7 +198,8 @@ fun SettingsStreamingQualityScreen() {
 								onValueChange = { newValue ->
 									if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
 										cellularInput = newValue
-										preferenceManager.customMaxBitrateCellular = newValue.toIntOrNull() ?: 0
+										preferenceManager.customMaxBitrateCellular =
+											newValue.toIntOrNull() ?: 0
 									}
 								},
 								label = { Text(stringResource(Res.string.option_max_bitrate_cellular)) },

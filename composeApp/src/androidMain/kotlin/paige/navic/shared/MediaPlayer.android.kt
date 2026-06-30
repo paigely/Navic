@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.OptIn
+import androidx.compose.runtime.snapshotFlow
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.AudioAttributes
@@ -36,7 +37,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import androidx.compose.runtime.snapshotFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -52,6 +52,7 @@ import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.domain.manager.SyncManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainExplicitStatus
@@ -60,7 +61,6 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import paige.navic.util.core.ResourceProvider
@@ -137,7 +137,14 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			}
 
 		scrobbleManager =
-			AndroidScrobbleManager(player, serviceScope, connectivityManager, syncManager, sessionManager, preferenceManager)
+			AndroidScrobbleManager(
+				player,
+				serviceScope,
+				connectivityManager,
+				syncManager,
+				sessionManager,
+				preferenceManager
+			)
 
 		val sessionIntent = applicationContext.packageManager
 			.getLaunchIntentForPackage(applicationContext.packageName)
@@ -231,7 +238,8 @@ class AndroidMediaPlayerViewModel(
 		} else {
 			if (isCellular) preferenceManager.streamingQualityCellular.bitrateAndroid else preferenceManager.streamingQualityWifi.bitrateAndroid
 		}
-		val container = if (isCellular) preferenceManager.streamingQualityCellular.containerAndroid else preferenceManager.streamingQualityWifi.containerAndroid
+		val container =
+			if (isCellular) preferenceManager.streamingQualityCellular.containerAndroid else preferenceManager.streamingQualityWifi.containerAndroid
 
 		return sessionManager.api.getStreamUrl(id, bitrate, container)
 			.toUri()
@@ -478,7 +486,8 @@ class AndroidMediaPlayerViewModel(
 
 	@OptIn(UnstableApi::class)
 	private fun updatePlaybackProperties(tracks: Tracks) {
-		val audioGroup = tracks.groups.firstOrNull { it.type == C.TRACK_TYPE_AUDIO && it.isSelected }
+		val audioGroup =
+			tracks.groups.firstOrNull { it.type == C.TRACK_TYPE_AUDIO && it.isSelected }
 		if (audioGroup != null) {
 			for (i in 0 until audioGroup.length) {
 				if (audioGroup.isTrackSelected(i)) {
@@ -621,7 +630,7 @@ class AndroidMediaPlayerViewModel(
 					if (state.queue.isEmpty())
 						state.queue + song
 					else
-						state.queue.slice(0..state.currentIndex) + song + state.queue.slice(state.currentIndex+1..<state.queue.size)
+						state.queue.slice(0..state.currentIndex) + song + state.queue.slice(state.currentIndex + 1..<state.queue.size)
 				state.copy(
 					queue = newQueue,
 					currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
@@ -635,20 +644,22 @@ class AndroidMediaPlayerViewModel(
 	override fun playNext(collection: DomainSongCollection) {
 		viewModelScope.launch {
 			val (items, newCollection) = withContext(Dispatchers.Default) {
-				val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(compareBy(
-					{ it.discNumber },
-					{ it.trackNumber }
-				)) else collection.songs
+				val newCollection =
+					if (collection is DomainAlbum) collection.songs.sortedWith(
+						compareBy(
+						{ it.discNumber },
+						{ it.trackNumber }
+					)) else collection.songs
 				newCollection.map { it.toMediaItem() } to newCollection
 			}
 			controller?.addMediaItems(_uiState.value.currentIndex + 1, items)
 			_uiState.update { state ->
-				val newQueue = 
-					if (state.queue.isEmpty()) 
+				val newQueue =
+					if (state.queue.isEmpty())
 						state.queue + newCollection
 					else
 						state.queue.slice(0..state.currentIndex) + newCollection + state.queue.slice(
-							state.currentIndex+1..<state.queue.size
+							state.currentIndex + 1..<state.queue.size
 						)
 				state.copy(
 					queue = newQueue,

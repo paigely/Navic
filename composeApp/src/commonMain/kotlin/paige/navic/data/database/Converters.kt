@@ -109,9 +109,9 @@ class Converters {
 
 	// DomainExplicitStatus
 	@ColumnTypeConverter
-	fun fromExplicitStatus(explicitStatus: DomainExplicitStatus)
-		= explicitStatus.ordinal
+	fun fromExplicitStatus(explicitStatus: DomainExplicitStatus) = explicitStatus.ordinal
+
 	@ColumnTypeConverter
-	fun toExplicitStatus(ordinal: Int)
-		= DomainExplicitStatus.entries.getOrNull(ordinal) ?: DomainExplicitStatus.Unknown
+	fun toExplicitStatus(ordinal: Int) =
+		DomainExplicitStatus.entries.getOrNull(ordinal) ?: DomainExplicitStatus.Unknown
 }

@@ -164,7 +164,7 @@ private fun Option(
 	label: String,
 	content: @Composable () -> Unit
 ) {
-    Card(
+	Card(
 		border = BorderStroke(
 			width = 1.dp,
 			color = if (selected)

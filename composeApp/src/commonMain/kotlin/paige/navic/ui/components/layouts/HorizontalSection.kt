@@ -95,8 +95,8 @@ fun LazyGridScope.header(
 						interactionSource = null,
 						indication = null,
 						onClick = dropUnlessResumed {
-					    	backStack.add(destination)
-					    }
+							backStack.add(destination)
+						}
 					)
 			)
 		}

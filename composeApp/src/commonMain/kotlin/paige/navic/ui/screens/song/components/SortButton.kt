@@ -23,7 +23,7 @@ fun SongListScreenSortButton(
 	selectedReversed: Boolean,
 	onSetReversed: (Boolean) -> Unit
 ) {
-    val entries = remember { DomainSongListType.entries.toImmutableList() }
+	val entries = remember { DomainSongListType.entries.toImmutableList() }
 	var expanded by remember { mutableStateOf(false) }
 	if (!nested) {
 		IconButton(onClick = {

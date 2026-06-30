@@ -58,7 +58,7 @@ fun ShareListScreenItem(
 	share: DomainShare,
 	onSetDeletionId: (newDeletionId: String) -> Unit
 ) {
-    val shareManager = koinInject<ShareManager>()
+	val shareManager = koinInject<ShareManager>()
 	val snackbarState = LocalSnackbarState.current
 	var expanded by remember { mutableStateOf(false) }
 	var currentTime by remember { mutableStateOf(Clock.System.now()) }
@@ -91,10 +91,12 @@ fun ShareListScreenItem(
 					imageVector = Icons.Outlined.Delete,
 					contentDescription = null,
 					tint = MaterialTheme.colorScheme.onErrorContainer,
-					modifier = Modifier.align(when (dismissState.dismissDirection) {
-						SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
-						else -> Alignment.CenterEnd
-					})
+					modifier = Modifier.align(
+						when (dismissState.dismissDirection) {
+							SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+							else -> Alignment.CenterEnd
+						}
+					)
 				)
 			}
 		}

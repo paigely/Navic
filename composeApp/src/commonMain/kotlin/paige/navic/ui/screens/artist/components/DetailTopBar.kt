@@ -29,9 +29,9 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.components.sheets.ArtistSheet
+import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.artist.viewmodels.ArtistState
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import paige.navic.ui.core.UiState
 
 @Composable
 fun ArtistDetailScreenTopBar(
@@ -92,13 +92,13 @@ fun ArtistDetailScreenTopBar(
 							onAddAllToPlaylist = {
 								playlistDialogShown = true
 							},
-							onViewOnLastFm = { 
+							onViewOnLastFm = {
 								expanded = false
 								state.artist.lastFmUrl?.let { url ->
 									uriHandler.openUri(url)
 								}
 							},
-							onViewOnMusicBrainz = { 								
+							onViewOnMusicBrainz = {
 								expanded = false
 								state.artist.musicBrainzId?.let { id ->
 									uriHandler.openUri(

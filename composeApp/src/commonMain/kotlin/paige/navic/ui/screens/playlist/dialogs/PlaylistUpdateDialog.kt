@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 import kotlinx.collections.immutable.ImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_playlist
@@ -48,8 +47,9 @@ import paige.navic.icons.outlined.Refresh
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.FormButton
 import paige.navic.ui.components.dialogs.FormDialog
-import paige.navic.ui.screens.playlist.viewmodels.PlaylistUpdateDialogViewModel
 import paige.navic.ui.core.UiState
+import paige.navic.ui.screens.playlist.viewmodels.PlaylistUpdateDialogViewModel
+import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -62,7 +62,7 @@ fun PlaylistUpdateDialog(
 		key = songs.joinToString() + playlistToExclude,
 		parameters = { parametersOf(songs, playlistToExclude) }
 	)
-    val state by viewModel.playlistsState.collectAsState()
+	val state by viewModel.playlistsState.collectAsState()
 	val confirmState by viewModel.confirmState.collectAsState()
 	val selectedPlaylists by viewModel.selectedPlaylists.collectAsState()
 

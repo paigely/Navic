@@ -30,8 +30,8 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Radio
 import paige.navic.ui.components.common.FormButton
 import paige.navic.ui.components.dialogs.FormDialog
-import paige.navic.ui.screens.radio.viewmodels.RadioCreateDialogViewModel
 import paige.navic.ui.core.UiState
+import paige.navic.ui.screens.radio.viewmodels.RadioCreateDialogViewModel
 
 @Composable
 fun RadioCreateDialog(
@@ -39,7 +39,7 @@ fun RadioCreateDialog(
 	onRefresh: () -> Unit
 ) {
 	val viewModel = koinViewModel<RadioCreateDialogViewModel>()
-    val state by viewModel.creationState.collectAsState()
+	val state by viewModel.creationState.collectAsState()
 
 	LaunchedEffect(Unit) {
 		viewModel.events.collect { event ->

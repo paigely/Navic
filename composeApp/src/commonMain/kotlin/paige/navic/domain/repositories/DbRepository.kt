@@ -1,8 +1,6 @@
 package paige.navic.domain.repositories
 
 import androidx.room3.concurrent.AtomicInt
-import dev.zt64.subsonic.api.model.Album as ApiAlbum
-import dev.zt64.subsonic.api.model.AlbumListType as ApiAlbumListType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
@@ -43,6 +41,8 @@ import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainArtist
 import paige.navic.util.core.Logger
 import kotlin.coroutines.cancellation.CancellationException
+import dev.zt64.subsonic.api.model.Album as ApiAlbum
+import dev.zt64.subsonic.api.model.AlbumListType as ApiAlbumListType
 
 class DbRepository(
 	private val albumDao: AlbumDao,
@@ -138,7 +138,8 @@ class DbRepository(
 
 		onProgress(0.0f, Res.string.info_syncing_albums)
 		while (true) {
-			val batch = sessionManager.api.getAlbums(ApiAlbumListType.AlphabeticalByName, pageSize, offset)
+			val batch =
+				sessionManager.api.getAlbums(ApiAlbumListType.AlphabeticalByName, pageSize, offset)
 			if (batch.isEmpty()) break
 			allAlbumSummaries.addAll(batch)
 			if (batch.size < pageSize) break
@@ -173,7 +174,11 @@ class DbRepository(
 								albumChannel.send(album)
 							} catch (e: Exception) {
 								if (e is SerializationException) {
-									Logger.e("DbRepository", "could not deserialize album ${summary.id} (${summary.name}); skipping it", e)
+									Logger.e(
+										"DbRepository",
+										"could not deserialize album ${summary.id} (${summary.name}); skipping it",
+										e
+									)
 								} else {
 									throw e
 								}
@@ -258,7 +263,11 @@ class DbRepository(
 			sessionManager.api.getPlaylist(playlistId)
 		} catch (e: Exception) {
 			if (e is SerializationException) {
-				Logger.e("DbRepository", "could not deserialize playlist $playlistId; skipping it", e)
+				Logger.e(
+					"DbRepository",
+					"could not deserialize playlist $playlistId; skipping it",
+					e
+				)
 				return@runDbOp 0
 			} else {
 				throw e

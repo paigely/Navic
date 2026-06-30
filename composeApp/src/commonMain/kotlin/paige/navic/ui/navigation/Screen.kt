@@ -59,6 +59,7 @@ sealed interface Screen : NavKey {
 		val artistName: String? = null,
 		val listType: DomainSongListType = DomainSongListType.FrequentlyPlayed
 	) : Screen
+
 	@Immutable
 	@Serializable
 	data class RadioList(
@@ -69,18 +70,23 @@ sealed interface Screen : NavKey {
 	@Immutable
 	@Serializable
 	data object Login : Screen
+
 	@Immutable
 	@Serializable
 	data object NowPlaying : Screen
+
 	@Immutable
 	@Serializable
 	data object Lyrics : Screen
+
 	@Immutable
 	@Serializable
 	data object Queue : Screen
+
 	@Immutable
 	@Serializable
 	data object PlaybackSpeed : Screen
+
 	@Immutable
 	@Serializable
 	data class CollectionDetail(
@@ -91,6 +97,7 @@ sealed interface Screen : NavKey {
 	@Immutable
 	@Serializable
 	data class SongDetail(val songId: String) : Screen
+
 	@Immutable
 	@Serializable
 	data class Search(
@@ -100,6 +107,7 @@ sealed interface Screen : NavKey {
 	@Immutable
 	@Serializable
 	data object ShareList : Screen
+
 	@Immutable
 	@Serializable
 	data class ArtistDetail(val artist: String) : Screen
@@ -111,39 +119,51 @@ sealed interface Screen : NavKey {
 		@Immutable
 		@Serializable
 		data object Root : Settings
+
 		@Immutable
 		@Serializable
 		data object Appearance : Settings
+
 		@Immutable
 		@Serializable
 		data object Playback : Settings
+
 		@Immutable
 		@Serializable
 		data object Developer : Settings
+
 		@Immutable
 		@Serializable
 		data object BottomAppBar : Settings
+
 		@Immutable
 		@Serializable
 		data object NowPlaying : Settings
+
 		@Immutable
 		@Serializable
 		data object About : Settings
+
 		@Immutable
 		@Serializable
 		data object Acknowledgements : Settings
+
 		@Immutable
 		@Serializable
 		data object DataStorage : Settings
+
 		@Immutable
 		@Serializable
 		data object Fonts : Settings
+
 		@Immutable
 		@Serializable
 		data object CustomHeaders : Settings
+
 		@Immutable
 		@Serializable
 		data object StreamingQuality : Settings
+
 		@Immutable
 		@Serializable
 		data object Logs : Settings

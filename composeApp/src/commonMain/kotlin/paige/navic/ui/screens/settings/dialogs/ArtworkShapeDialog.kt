@@ -69,8 +69,15 @@ fun ArtworkShapeDialog(
 						Box(
 							modifier = Modifier
 								.size(48.dp)
-								.background(MaterialTheme.colorScheme.primaryContainer, shape.decreasedShape)
-								.border(2.dp, MaterialTheme.colorScheme.primary, shape.decreasedShape)
+								.background(
+									MaterialTheme.colorScheme.primaryContainer,
+									shape.decreasedShape
+								)
+								.border(
+									2.dp,
+									MaterialTheme.colorScheme.primary,
+									shape.decreasedShape
+								)
 						)
 						Text(text = shape.name)
 					}

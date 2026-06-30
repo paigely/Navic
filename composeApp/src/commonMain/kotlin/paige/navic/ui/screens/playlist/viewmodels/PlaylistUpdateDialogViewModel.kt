@@ -7,13 +7,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import paige.navic.domain.manager.SessionManager
-import paige.navic.domain.models.DomainSong
-import paige.navic.ui.core.UiState
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.notice_added_to_multiple_playlists
 import navic.composeapp.generated.resources.notice_added_to_playlist
+import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.SnackBarManager
+import paige.navic.domain.models.DomainSong
+import paige.navic.ui.core.UiState
 import dev.zt64.subsonic.api.model.Playlist as ApiPlaylist
 
 class PlaylistUpdateDialogViewModel(
@@ -74,7 +74,10 @@ class PlaylistUpdateDialogViewModel(
 				}
 				_confirmState.value = UiState.Success(null)
 				if (selected.size == 1) {
-					snackBarManager.notify(Res.string.notice_added_to_playlist, selected.first().name)
+					snackBarManager.notify(
+						Res.string.notice_added_to_playlist,
+						selected.first().name
+					)
 				} else if (selected.size > 1) {
 					snackBarManager.notify(Res.string.notice_added_to_multiple_playlists)
 				}

@@ -26,7 +26,7 @@ fun SearchScreenChips(
 	selectedCategory: SearchCategory,
 	onCategorySelect: (SearchCategory) -> Unit
 ) {
-    Row(
+	Row(
 		modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
 		horizontalArrangement = Arrangement.spacedBy(8.dp)
 	) {

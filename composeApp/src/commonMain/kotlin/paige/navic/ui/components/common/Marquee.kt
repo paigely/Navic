@@ -64,7 +64,13 @@ fun MarqueeText(
 			Text(text, maxLines = 1, style = style, inlineContent = inlineContent)
 		}
 	} else {
-		Text(text, maxLines = 1, style = style, overflow = TextOverflow.Ellipsis, inlineContent = inlineContent)
+		Text(
+			text,
+			maxLines = 1,
+			style = style,
+			overflow = TextOverflow.Ellipsis,
+			inlineContent = inlineContent
+		)
 	}
 }
 

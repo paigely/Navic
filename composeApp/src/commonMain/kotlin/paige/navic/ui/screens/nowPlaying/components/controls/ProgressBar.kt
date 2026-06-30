@@ -48,6 +48,7 @@ fun NowPlayingProgressBar() {
 				enabled = enabled
 			)
 		}
+
 		NowPlayingSliderStyle.Squiggly, NowPlayingSliderStyle.Yoyo -> {
 			val isYoyo = preferenceManager.nowPlayingSliderStyle == NowPlayingSliderStyle.Yoyo
 			WavySlider(
@@ -83,6 +84,7 @@ fun NowPlayingProgressBar() {
 				enabled = enabled
 			)
 		}
+
 		NowPlayingSliderStyle.Slim -> {
 			SlimSlider(
 				value = playerState.progress,

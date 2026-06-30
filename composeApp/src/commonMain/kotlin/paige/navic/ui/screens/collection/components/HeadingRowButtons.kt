@@ -35,6 +35,8 @@ import navic.composeapp.generated.resources.notice_download_started
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.data.database.entities.DownloadStatus
+import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Play
@@ -43,16 +45,14 @@ import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.DownloadOff
 import paige.navic.icons.outlined.Shuffle
-import paige.navic.domain.manager.DownloadManager
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.theme.defaultFont
 
 @Composable
 fun CollectionDetailScreenHeadingRowButtons(
 	collection: DomainSongCollection
 ) {
-    val player = koinInject<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val snackBarManager = koinInject<SnackBarManager>()
 	val downloadManager = koinInject<DownloadManager>()
 	val scope = rememberCoroutineScope()
@@ -119,9 +119,11 @@ fun CollectionDetailScreenHeadingRowButtons(
 							downloadManager.downloadCollection(collection)
 							snackBarManager.notify(Res.string.notice_download_started)
 						}
+
 						DownloadStatus.DOWNLOADING -> {
 							downloadManager.cancelCollectionDownload(collection)
 						}
+
 						DownloadStatus.DOWNLOADED -> {
 							downloadManager.deleteDownloadedCollection(collection)
 							snackBarManager.notify(Res.string.notice_deleted_download)

@@ -22,7 +22,7 @@ import paige.navic.domain.manager.PreferenceManager
 
 @Composable
 fun SideloadingDialog() {
-    val preferenceManager = koinInject<PreferenceManager>()
+	val preferenceManager = koinInject<PreferenceManager>()
 	AlertDialog(
 		title = { Text(stringResource(Res.string.sideloading_warning_title)) },
 		text = {

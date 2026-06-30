@@ -43,7 +43,7 @@ fun RadioListScreenCard(
 	radio: DomainRadio,
 	onPlayClick: () -> Unit
 ) {
-    val inDarkTheme = isSystemInDarkTheme()
+	val inDarkTheme = isSystemInDarkTheme()
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	val isDark = remember(preferenceManager.themeMode) {
@@ -107,7 +107,8 @@ fun RadioListScreenCard(
 				)
 
 				Text(
-					text = radio.homepageUrl?.removePrefix("http://")?.removePrefix("https://")?.trimEnd('/')
+					text = radio.homepageUrl?.removePrefix("http://")?.removePrefix("https://")
+						?.trimEnd('/')
 						?: stringResource(Res.string.info_unknown),
 					style = MaterialTheme.typography.labelMedium,
 					maxLines = 1,

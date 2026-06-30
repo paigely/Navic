@@ -37,7 +37,7 @@ fun GridSizeDialog(
 ) {
 	if (!presented) return
 
-    val preferenceManager = koinInject<PreferenceManager>()
+	val preferenceManager = koinInject<PreferenceManager>()
 
 	AlertDialog(
 		title = {

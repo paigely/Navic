@@ -23,7 +23,7 @@ fun NowPlayingStarButton(
 	songIsStarred: Boolean,
 	onSetSongIsStarred: (Boolean) -> Unit
 ) {
-    val player = koinInject<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	IconButton(
 		onClick = {

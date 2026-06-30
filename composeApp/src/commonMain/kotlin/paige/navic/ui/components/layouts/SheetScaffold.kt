@@ -24,16 +24,20 @@ fun SheetScaffold(
 	Scaffold(
 		topBar = {
 			if (toolbarPosition == ToolbarPosition.Top) {
-				toolbar(WindowInsets.systemBars.only(
-					WindowInsetsSides.Horizontal + WindowInsetsSides.Top
-				))
+				toolbar(
+					WindowInsets.systemBars.only(
+						WindowInsetsSides.Horizontal + WindowInsetsSides.Top
+					)
+				)
 			}
 		},
 		bottomBar = {
 			if (toolbarPosition == ToolbarPosition.Bottom) {
-				toolbar(WindowInsets.systemBars.only(
-					WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
-				))
+				toolbar(
+					WindowInsets.systemBars.only(
+						WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
+					)
+				)
 			}
 		},
 		floatingActionButton = floatingActionButton,

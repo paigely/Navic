@@ -34,11 +34,11 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
-import paige.navic.ui.navigation.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.queue.components.QueueScreenItem
 import paige.navic.ui.screens.queue.viewmodels.QueueViewModel
 import paige.navic.util.ui.draggableItemsIndexed
@@ -49,7 +49,7 @@ import kotlin.time.DurationUnit
 @Composable
 fun QueueScreen() {
 	val viewModel = koinViewModel<QueueViewModel>()
-    val backStack = LocalNavStack.current
+	val backStack = LocalNavStack.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()

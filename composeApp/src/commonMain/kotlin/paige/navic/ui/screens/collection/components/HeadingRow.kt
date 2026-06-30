@@ -24,11 +24,11 @@ import navic.composeapp.generated.resources.subtitle_playlist
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.LocalSharedTransitionScope
-import paige.navic.ui.navigation.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.theme.defaultFont
 import paige.navic.util.ui.EmphasizedDecelerateEasing
 
@@ -38,7 +38,7 @@ fun CollectionDetailScreenHeadingRow(
 	tab: String,
 	titleAlpha: Float
 ) {
-    val backStack = LocalNavStack.current
+	val backStack = LocalNavStack.current
 	with(LocalSharedTransitionScope.current) {
 		CoverArt(
 			coverArtId = collection.coverArtId,
@@ -81,11 +81,13 @@ fun CollectionDetailScreenHeadingRow(
 				Text(
 					subtitle,
 					color = MaterialTheme.colorScheme.primary,
-					modifier = Modifier.clickable(collection is DomainAlbum, onClick = dropUnlessResumed {
-						(collection as? DomainAlbum)?.artistId?.let { id ->
-							backStack.add(Screen.ArtistDetail(id))
-						}
-					}),
+					modifier = Modifier.clickable(
+						collection is DomainAlbum,
+						onClick = dropUnlessResumed {
+							(collection as? DomainAlbum)?.artistId?.let { id ->
+								backStack.add(Screen.ArtistDetail(id))
+							}
+						}),
 					style = MaterialTheme.typography.bodyMedium,
 					fontFamily = defaultFont(grade = 100, round = 100f)
 				)

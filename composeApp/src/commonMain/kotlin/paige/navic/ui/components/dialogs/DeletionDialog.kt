@@ -33,14 +33,14 @@ import navic.composeapp.generated.resources.title_delete_share
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.domain.manager.SyncManager
 import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.manager.SnackBarManager
+import paige.navic.domain.manager.SyncManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.ui.components.common.FormButton
-import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.UiState
 
 enum class DeletionEndpoint(

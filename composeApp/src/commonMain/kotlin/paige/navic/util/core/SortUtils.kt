@@ -23,6 +23,7 @@ fun ImmutableList<DomainSong>.sortedByListType(
 				.firstOrNull { album -> album.id == it.albumId }
 				?.createdAt
 		}
+
 		DomainSongListType.Starred -> filter { it.starredAt != null }.sortedBy { it.starredAt }
 		DomainSongListType.Random -> shuffled()
 		DomainSongListType.Downloaded -> filter { song ->
@@ -30,6 +31,7 @@ fun ImmutableList<DomainSong>.sortedByListType(
 				.filter { it.status == DownloadStatus.DOWNLOADED }
 				.any { it.songId == song.id }
 		}
+
 		DomainSongListType.Rating -> sortedByDescending { it.userRating ?: 0 }
 		DomainSongListType.Year -> sortedByDescending { it.year }
 	}.toImmutableList()
@@ -47,20 +49,24 @@ fun DomainAlbumListType.toSqlQuery(): RoomRawQuery {
 			where = "playCount != 0"
 			orderBy = "playCount DESC"
 		}
+
 		DomainAlbumListType.Highest -> orderBy = "userRating DESC"
 		DomainAlbumListType.Newest -> orderBy = "createdAt DESC"
 		DomainAlbumListType.Random -> orderBy = "RANDOM()"
 		DomainAlbumListType.Downloaded,
 		DomainAlbumListType.Recent -> orderBy = "lastPlayedAt DESC"
+
 		DomainAlbumListType.Starred -> {
 			where = "starredAt IS NOT NULL"
 			orderBy = "starredAt ASC"
 		}
+
 		is DomainAlbumListType.ByGenre -> {
 			where = "genre = ?"
 			orderBy = "LOWER(name) ASC"
 			args.add(genre)
 		}
+
 		is DomainAlbumListType.ByYear -> {
 			if (fromYear != null && toYear != null) {
 				where = "COALESCE(year, 0) BETWEEN ? AND ?"

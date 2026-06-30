@@ -108,10 +108,12 @@ fun QueueScreenItem(
 					imageVector = Icons.Outlined.Delete,
 					contentDescription = stringResource(Res.string.action_remove_from_queue),
 					tint = MaterialTheme.colorScheme.onErrorContainer,
-					modifier = Modifier.align(when (dismissState.dismissDirection) {
-						SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
-						else -> Alignment.CenterEnd
-					})
+					modifier = Modifier.align(
+						when (dismissState.dismissDirection) {
+							SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+							else -> Alignment.CenterEnd
+						}
+					)
 				)
 			}
 		},

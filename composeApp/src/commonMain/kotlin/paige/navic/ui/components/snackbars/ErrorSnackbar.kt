@@ -18,8 +18,8 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalSnackbarState
 import paige.navic.ui.components.common.ErrorCodeBlock
 import paige.navic.ui.components.common.FormButton
-import paige.navic.util.core.Logger
 import paige.navic.ui.components.dialogs.FormDialog
+import paige.navic.util.core.Logger
 
 @Composable
 fun ErrorSnackbar(

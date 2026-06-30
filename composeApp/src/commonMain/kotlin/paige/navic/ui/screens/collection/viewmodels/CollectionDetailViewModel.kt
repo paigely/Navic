@@ -11,9 +11,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.notice_deleted_download
+import navic.composeapp.generated.resources.notice_download_started
+import navic.composeapp.generated.resources.notice_removed_from_playlist
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.mappers.toDomainModel
+import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumInfo
 import paige.navic.domain.models.DomainSong
@@ -21,15 +28,8 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.domain.repositories.CollectionRepository
 import paige.navic.domain.repositories.SongRepository
-import paige.navic.domain.manager.ConnectivityManager
-import paige.navic.domain.manager.DownloadManager
-import paige.navic.util.core.Logger
 import paige.navic.ui.core.UiState
-import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.notice_download_started
-import navic.composeapp.generated.resources.notice_deleted_download
-import navic.composeapp.generated.resources.notice_removed_from_playlist
-import paige.navic.domain.manager.SnackBarManager
+import paige.navic.util.core.Logger
 
 class CollectionDetailViewModel(
 	private val collectionId: String,

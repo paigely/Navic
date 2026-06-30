@@ -100,7 +100,8 @@ class DownloadManager(
 
 	fun downloadSong(song: DomainSong): Job {
 		val job = scope.launch(Dispatchers.IO) {
-			val alreadyActive = activeDownloadsMutex.withLock { activeDownloads.containsKey(song.id) }
+			val alreadyActive =
+				activeDownloadsMutex.withLock { activeDownloads.containsKey(song.id) }
 			if (alreadyActive) return@launch
 
 			try {
@@ -153,7 +154,8 @@ class DownloadManager(
 
 							progressMutex.withLock {
 								processedCount++
-								_libraryDownloadProgress.value = processedCount.toFloat() / totalToDownload.toFloat()
+								_libraryDownloadProgress.value =
+									processedCount.toFloat() / totalToDownload.toFloat()
 							}
 						}
 					}

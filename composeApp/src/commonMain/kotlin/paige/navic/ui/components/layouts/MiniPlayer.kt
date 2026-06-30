@@ -85,7 +85,7 @@ fun MiniPlayer(
 	modifier: Modifier = Modifier,
 	enabled: Boolean = true
 ) {
-    val player = koinInject<MediaPlayerViewModel>()
+	val player = koinInject<MediaPlayerViewModel>()
 	val preferenceManager = koinInject<PreferenceManager>()
 	val navtabsViewModel = koinViewModel<NavtabsViewModel>()
 	val navtabsState by navtabsViewModel.state.collectAsState()

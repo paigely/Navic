@@ -16,9 +16,17 @@ fun Duration.label(): String {
 
 	return when {
 		hours > 0 && minutes > 0 ->
-			"${pluralStringResource(Res.plurals.count_hours, hours, hours)} ${pluralStringResource(Res.plurals.count_minutes, minutes, minutes)}"
+			"${pluralStringResource(Res.plurals.count_hours, hours, hours)} ${
+				pluralStringResource(
+					Res.plurals.count_minutes,
+					minutes,
+					minutes
+				)
+			}"
+
 		hours > 0 ->
 			pluralStringResource(Res.plurals.count_hours, hours, hours)
+
 		else ->
 			pluralStringResource(Res.plurals.count_minutes, max(1, minutes), max(1, minutes))
 	}

@@ -76,7 +76,7 @@ fun TopBarButton(
 	enabled: Boolean = true,
 	content: @Composable () -> Unit
 ) {
-    Surface(
+	Surface(
 		modifier = modifier.size(40.dp),
 		onClick = {
 			onClick()

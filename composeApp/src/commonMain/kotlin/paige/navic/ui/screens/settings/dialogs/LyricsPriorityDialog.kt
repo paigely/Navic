@@ -50,7 +50,7 @@ fun LyricsPriorityDialog(
 
 	val viewModel = koinViewModel<LyricsPriorityViewModel>()
 
-    val haptic = LocalHapticFeedback.current
+	val haptic = LocalHapticFeedback.current
 	val state by viewModel.state.collectAsState()
 
 	val draggableState = rememberDraggableListState { from, to ->

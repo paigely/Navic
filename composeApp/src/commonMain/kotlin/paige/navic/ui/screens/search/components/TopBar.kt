@@ -43,7 +43,7 @@ fun SearchScreenTopBar(
 	nested: Boolean,
 	onSearch: (String) -> Unit
 ) {
-    val backStack = LocalNavStack.current
+	val backStack = LocalNavStack.current
 
 	val focusManager = LocalFocusManager.current
 	val focusRequester = remember { FocusRequester() }
@@ -89,7 +89,10 @@ fun SearchScreenTopBar(
 					onSearch(query.text.toString())
 				}
 			},
-			textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface, fontFamily = defaultFont()),
+			textStyle = TextStyle(
+				color = MaterialTheme.colorScheme.onSurface,
+				fontFamily = defaultFont()
+			),
 			cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
 			decorator = { innerTextField ->
 				Box(contentAlignment = Alignment.CenterStart) {

@@ -53,7 +53,7 @@ import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.ui.navigation.Screen
+import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtist
@@ -62,15 +62,15 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistRemove
-import paige.navic.domain.manager.DownloadManager
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.common.SongRow
 import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
 import paige.navic.ui.components.sheets.ArtistSheet
 import paige.navic.ui.components.sheets.CollectionSheet
-import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.Screen
+import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,7 +120,7 @@ fun StarredScreenContent(
 	onAddArtistToQueue: () -> Unit,
 ) {
 	val gridState = rememberLazyGridState()
-    val backStack = LocalNavStack.current
+	val backStack = LocalNavStack.current
 	val albums = albumsState.data.orEmpty()
 	val songs = songsState.data.orEmpty()
 	val artists = artistsState.data.orEmpty()
@@ -135,7 +135,7 @@ fun StarredScreenContent(
 
 	val scrollState = rememberScrollState()
 
-	Column( 
+	Column(
 		modifier = Modifier
 			.fillMaxSize()
 			.verticalScroll(state = scrollState),
@@ -250,8 +250,8 @@ fun StarredScreenContent(
 					.getCollectionDownloadStatus(album.songs.map { it.id })
 					.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
 				ArtCarouselItem(
-					coverArtId = album.coverArtId, 
-					title = album.name, 
+					coverArtId = album.coverArtId,
+					title = album.name,
 					subtitle = album.artistName,
 					contentDescription = null,
 					onSelect = { onSelectAlbum(album) },
@@ -268,11 +268,11 @@ fun StarredScreenContent(
 						onPlayNext = onPlayAlbumNext,
 						onAddToQueue = onAddAlbumToQueue,
 						onSetStarred = { onStarSelectedAlbum(!selectedAlbumIsStarred) },
-						onAddAllToPlaylist = { 
+						onAddAllToPlaylist = {
 							songsToAddToPlaylist = selectedAlbum.songs.toImmutableList()
 						},
 						downloadStatus = albumDownloadStatus,
-						onDownloadAll = { 
+						onDownloadAll = {
 							scope.launch {
 								downloadManager.downloadCollection(album)
 							}
@@ -299,8 +299,8 @@ fun StarredScreenContent(
 				Screen.ArtistList(true, DomainArtistListType.Starred)
 			) { artist ->
 				ArtCarouselItem(
-					coverArtId = artist.coverArtId, 
-					title = artist.name, 
+					coverArtId = artist.coverArtId,
+					title = artist.name,
 					subtitle = pluralStringResource(
 						Res.plurals.count_albums,
 						artist.albumCount,
@@ -318,16 +318,18 @@ fun StarredScreenContent(
 						artist = artist,
 						onPlayNext = onPlayArtistNext,
 						onAddToQueue = onAddArtistToQueue,
-						onAddAllToPlaylist = { 
-							songsToAddToPlaylist = selectedArtistAlbums?.flatMap { it.songs }.orEmpty().toImmutableList()
+						onAddAllToPlaylist = {
+							songsToAddToPlaylist =
+								selectedArtistAlbums?.flatMap { it.songs }.orEmpty()
+									.toImmutableList()
 						},
-						onViewOnLastFm = { 
+						onViewOnLastFm = {
 							onClearArtistSelection()
 							artist.lastFmUrl?.let { url ->
 								uriHandler.openUri(url)
 							}
 						},
-						onViewOnMusicBrainz = { 								
+						onViewOnMusicBrainz = {
 							onClearArtistSelection()
 							artist.musicBrainzId?.let { id ->
 								uriHandler.openUri(

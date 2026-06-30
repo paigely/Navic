@@ -44,7 +44,7 @@ val durations = listOf(
 fun SleepTimerSheet(
 	onDismissRequest: (confirmed: Boolean) -> Unit
 ) {
-    val contentPadding = PaddingValues(horizontal = 16.dp)
+	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
 		containerColor = Color.Transparent,
 		trailingIconColor = MaterialTheme.colorScheme.onSurface,
@@ -55,10 +55,14 @@ fun SleepTimerSheet(
 	ModalBottomSheet(
 		onDismissRequest = { onDismissRequest(false) },
 		sheetState = rememberModalBottomSheetState(true),
-		contentWindowInsets = { BottomSheetDefaults.modalWindowInsets.add(WindowInsets(
-			left = 8.dp,
-			right = 8.dp
-		)) }
+		contentWindowInsets = {
+			BottomSheetDefaults.modalWindowInsets.add(
+				WindowInsets(
+					left = 8.dp,
+					right = 8.dp
+				)
+			)
+		}
 	) {
 		Column(
 			modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -84,7 +88,12 @@ fun SleepTimerSheet(
 
 			sleepTimerManager.endTimeStamp?.let {
 				ListItem(
-					content = { Text(stringResource(Res.string.action_disable_sleep_timer), color = MaterialTheme.colorScheme.error) },
+					content = {
+						Text(
+							stringResource(Res.string.action_disable_sleep_timer),
+							color = MaterialTheme.colorScheme.error
+						)
+					},
 					onClick = {
 						sleepTimerManager.stopTimer()
 						onDismissRequest(true)

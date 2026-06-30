@@ -49,21 +49,21 @@ import androidx.navigation3.ui.NavDisplay.predictivePopTransitionSpec
 import androidx.navigation3.ui.NavDisplay.transitionSpec
 import androidx.savedstate.serialization.SavedStateConfiguration
 import coil3.compose.setSingletonImageLoaderFactory
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.resources.getString
 import org.koin.compose.koinInject
 import paige.navic.di.initializeSingletonImageLoader
 import paige.navic.domain.manager.BottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.ui.components.snackbars.NavicSnackbar
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
-import paige.navic.domain.manager.SnackBarManager
+import paige.navic.ui.components.snackbars.NavicSnackbar
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
 import paige.navic.ui.navigation.NowPlayingSceneStrategy
 import paige.navic.ui.navigation.Screen
@@ -113,7 +113,8 @@ private val config = SavedStateConfiguration {
 	}
 }
 
-val LocalPlatformContext = staticCompositionLocalOf<PlatformContext> { error("no platform context") }
+val LocalPlatformContext =
+	staticCompositionLocalOf<PlatformContext> { error("no platform context") }
 val LocalNavStack = staticCompositionLocalOf<NavBackStack<NavKey>> { error("no backstack") }
 val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> { error("no snackbar state") }
 val LocalSharedTransitionScope =

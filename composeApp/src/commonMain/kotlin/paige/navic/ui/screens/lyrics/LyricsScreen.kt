@@ -207,11 +207,13 @@ fun LyricsScreen(
 								stringResource(Res.string.title_select_lyrics),
 								fontWeight = FontWeight.SemiBold
 							)
-							Text(pluralStringResource(
-								Res.plurals.count_lines,
-								selectedIndices.count(),
-								selectedIndices.count()
-							))
+							Text(
+								pluralStringResource(
+									Res.plurals.count_lines,
+									selectedIndices.count(),
+									selectedIndices.count()
+								)
+							)
 						}
 					}
 				}

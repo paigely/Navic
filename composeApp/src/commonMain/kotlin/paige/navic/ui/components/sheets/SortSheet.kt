@@ -42,7 +42,7 @@ fun <T> SortSheet(
 	onSetReversed: (Boolean) -> Unit,
 	onDismissRequest: () -> Unit
 ) {
-    ModalBottomSheet(
+	ModalBottomSheet(
 		onDismissRequest = onDismissRequest,
 		sheetState = rememberModalBottomSheetState(true)
 	) {

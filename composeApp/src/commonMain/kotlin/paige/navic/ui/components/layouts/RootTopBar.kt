@@ -29,9 +29,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
+import paige.navic.domain.manager.SleepTimerManager
 import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.domain.models.settings.NavbarTab
-import paige.navic.ui.navigation.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Settings
 import paige.navic.icons.outlined.AccountCircle
@@ -39,14 +39,14 @@ import paige.navic.icons.outlined.Bedtime
 import paige.navic.icons.outlined.Logout
 import paige.navic.icons.outlined.Search
 import paige.navic.icons.outlined.Share
-import paige.navic.domain.manager.SleepTimerManager
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.sheets.SleepTimerSheet
+import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.ui.theme.positive
-import paige.navic.ui.core.UiState
 import paige.navic.util.core.label
 
 @OptIn(
@@ -100,7 +100,7 @@ private fun Actions(
 	onLogOut: () -> Unit,
 	config: NavbarConfig?,
 ) {
-    val backStack = LocalNavStack.current
+	val backStack = LocalNavStack.current
 
 	val isSearchEnabled = config?.tabs?.any {
 		it.id == NavbarTab.Id.SEARCH && it.visible
@@ -157,12 +157,25 @@ private fun Actions(
 
 			if (sleepTimerLeft != null) {
 				DropdownItem(
-					text = { Text(stringResource(Res.string.action_sleep_timer_enabled, sleepTimerLeft.label()), color = MaterialTheme.colorScheme.positive) },
+					text = {
+						Text(
+							stringResource(
+								Res.string.action_sleep_timer_enabled,
+								sleepTimerLeft.label()
+							), color = MaterialTheme.colorScheme.positive
+						)
+					},
 					onClick = {
 						expanded = false
 						sleepTimerSheetOpen = true
 					},
-					leadingIcon = { Icon(Icons.Outlined.Bedtime, null, tint = MaterialTheme.colorScheme.positive) }
+					leadingIcon = {
+						Icon(
+							Icons.Outlined.Bedtime,
+							null,
+							tint = MaterialTheme.colorScheme.positive
+						)
+					}
 				)
 			} else {
 				DropdownItem(

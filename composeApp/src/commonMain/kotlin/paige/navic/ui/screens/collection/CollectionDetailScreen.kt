@@ -49,9 +49,9 @@ import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Note
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
-import paige.navic.ui.components.snackbars.ErrorSnackbar
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
+import paige.navic.ui.components.snackbars.ErrorSnackbar
 import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.collection.components.CollectionDetailScreenFooterRow
 import paige.navic.ui.screens.collection.components.CollectionDetailScreenHeadingRow
@@ -106,10 +106,15 @@ fun CollectionDetailScreen(
 	val titleAlpha by remember {
 		derivedStateOf {
 			if (viewModel.listState.firstVisibleItemIndex >= 1) return@derivedStateOf 1f
-			val height = viewModel.listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == 0 }?.size?.toFloat() ?: 0f
+			val height =
+				viewModel.listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == 0 }?.size?.toFloat()
+					?: 0f
 			if (height > 0f) {
 				val threshold = height * 0.4f
-				((viewModel.listState.firstVisibleItemScrollOffset.toFloat() - threshold) / (height - threshold)).coerceIn(0f, 1f)
+				((viewModel.listState.firstVisibleItemScrollOffset.toFloat() - threshold) / (height - threshold)).coerceIn(
+					0f,
+					1f
+				)
 			} else {
 				0f
 			}
@@ -129,9 +134,13 @@ fun CollectionDetailScreen(
 				onAddToQueue = { if (collection != null) player.addToQueue(collection) },
 				downloadStatus = downloadStatus,
 				rating = if (collection !is DomainPlaylist) rating else null,
-				onSetRating = if (collection !is DomainPlaylist) { { viewModel.rateAlbum(it) } } else null,
+				onSetRating = if (collection !is DomainPlaylist) {
+					{ viewModel.rateAlbum(it) }
+				} else null,
 				starred = if (collection !is DomainPlaylist) starred else null,
-				onSetStarred = if (collection !is DomainPlaylist) { { viewModel.starAlbum(it) } } else null,
+				onSetStarred = if (collection !is DomainPlaylist) {
+					{ viewModel.starAlbum(it) }
+				} else null,
 				refreshCollection = { viewModel.refreshCollection(false) }
 			)
 		},
@@ -176,12 +185,13 @@ fun CollectionDetailScreen(
 
 				if (collection is DomainAlbum) {
 					collection.copy(
-						songs = collection.songs.sortedWith(compareBy(
+						songs = collection.songs.sortedWith(
+							compareBy(
 							{ it.discNumber },
 							{ it.trackNumber }
 						))
 					).let { album ->
-						album.songs.groupBy {it.discNumber}.forEach { group ->
+						album.songs.groupBy { it.discNumber }.forEach { group ->
 							val multipleDiscs = album.songs.groupBy { it.discNumber }.size > 1
 							if (group.key != null && multipleDiscs) {
 								item {
@@ -189,7 +199,10 @@ fun CollectionDetailScreen(
 										modifier = Modifier
 											.fillMaxWidth()
 											.padding(horizontal = 16.dp)
-											.padding(top = if (group.key == 1) 0.dp else 12.dp, bottom = 4.dp)
+											.padding(
+												top = if (group.key == 1) 0.dp else 12.dp,
+												bottom = 4.dp
+											)
 											.heightIn(min = 32.dp),
 										verticalAlignment = Alignment.CenterVertically
 									) {
@@ -224,7 +237,9 @@ fun CollectionDetailScreen(
 										isPlaylist = false,
 										onClick = {
 											if (playerState.currentSong?.id != song.id) {
-												player.playNow(album, album.songs.indexOfFirst { it.id == song.id })
+												player.playNow(
+													album,
+													album.songs.indexOfFirst { it.id == song.id })
 											} else {
 												player.togglePlay()
 											}
@@ -232,8 +247,8 @@ fun CollectionDetailScreen(
 										onLongClick = {
 											viewModel.selectSong(song)
 										},
-										onPlayNext = { 
-											player.playNextSingle(song) 
+										onPlayNext = {
+											player.playNextSingle(song)
 										},
 										onAddToQueue = {
 											player.addToQueueSingle(song)
@@ -284,8 +299,8 @@ fun CollectionDetailScreen(
 								onLongClick = {
 									viewModel.selectSong(song)
 								},
-								onPlayNext = { 
-									player.playNextSingle(song) 
+								onPlayNext = {
+									player.playNextSingle(song)
 								},
 								onAddToQueue = {
 									player.addToQueueSingle(song)
@@ -334,8 +349,12 @@ fun CollectionDetailScreen(
 						artistAlbums = otherAlbums,
 						selectedAlbum = selectedAlbum,
 						onSetShareId = { shareId = it },
-						onPlayNext = if (selectedAlbum != null) { { player.playNext(selectedAlbum as DomainSongCollection) } } else null,
-						onAddToQueue = if (selectedAlbum != null) { { player.addToQueue(selectedAlbum as DomainSongCollection) } } else null,
+						onPlayNext = if (selectedAlbum != null) {
+							{ player.playNext(selectedAlbum as DomainSongCollection) }
+						} else null,
+						onAddToQueue = if (selectedAlbum != null) {
+							{ player.addToQueue(selectedAlbum as DomainSongCollection) }
+						} else null,
 						selectedAlbumRating = selectedAlbumRating,
 						selectedAlbumStarred = selectedAlbumIsStarred,
 						onSetAlbumRating = { viewModel.rateSelectedAlbum(it) },

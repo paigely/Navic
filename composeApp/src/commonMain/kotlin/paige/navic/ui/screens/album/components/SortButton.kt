@@ -23,7 +23,7 @@ fun AlbumListScreenSortButton(
 	selectedReversed: Boolean,
 	onSetReversed: (Boolean) -> Unit
 ) {
-    val entries = remember {
+	val entries = remember {
 		persistentListOf(
 			DomainAlbumListType.AlphabeticalByArtist,
 			DomainAlbumListType.Frequent,

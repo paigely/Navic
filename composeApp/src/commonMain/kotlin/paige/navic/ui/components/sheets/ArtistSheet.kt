@@ -85,10 +85,14 @@ fun ArtistSheet(
 	ModalBottomSheet(
 		onDismissRequest = onDismissRequest,
 		dragHandle = null,
-		contentWindowInsets = { BottomSheetDefaults.modalWindowInsets.add(WindowInsets(
-			left = 8.dp,
-			right = 8.dp
-		)) }
+		contentWindowInsets = {
+			BottomSheetDefaults.modalWindowInsets.add(
+				WindowInsets(
+					left = 8.dp,
+					right = 8.dp
+				)
+			)
+		}
 	) {
 		Spacer(Modifier.height(16.dp))
 

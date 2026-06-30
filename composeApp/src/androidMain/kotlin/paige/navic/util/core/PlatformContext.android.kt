@@ -57,7 +57,11 @@ actual fun rememberPlatformContext(): PlatformContext {
 					) == PackageManager.PERMISSION_GRANTED
 
 					if (!hasPermission) {
-						requestPermissions((view.context as? Activity?)!!, arrayOf(Manifest.permission.ACCESS_LOCAL_NETWORK), 500)
+						requestPermissions(
+							(view.context as? Activity?)!!,
+							arrayOf(Manifest.permission.ACCESS_LOCAL_NETWORK),
+							500
+						)
 					}
 				}
 			}

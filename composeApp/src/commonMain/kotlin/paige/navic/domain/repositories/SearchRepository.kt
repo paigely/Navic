@@ -7,8 +7,8 @@ import paige.navic.data.database.dao.PlaylistDao
 import paige.navic.data.database.dao.SongDao
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
-import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.ConnectivityManager
+import paige.navic.domain.manager.SessionManager
 import paige.navic.util.core.Logger
 
 class SearchRepository(
@@ -41,7 +41,11 @@ class SearchRepository(
 					+ localPlaylists.map { it.toDomainModel() })
 			} catch (e: Exception) {
 				if (e is CancellationException) throw e
-				Logger.e("SearchRepository", "Online search failed despite network connection, falling back to local DB", e)
+				Logger.e(
+					"SearchRepository",
+					"Online search failed despite network connection, falling back to local DB",
+					e
+				)
 				performLocalSearch(query)
 			}
 		} else {

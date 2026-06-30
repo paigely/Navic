@@ -50,7 +50,6 @@ import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
 import paige.navic.shared.MediaPlayerViewModel
-import paige.navic.ui.components.snackbars.ErrorSnackbar
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.layouts.ArtGrid
@@ -58,6 +57,7 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
+import paige.navic.ui.components.snackbars.ErrorSnackbar
 import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.playlist.components.PlaylistListScreenSortButton
 import paige.navic.ui.screens.playlist.components.playlistListScreenContent
@@ -81,7 +81,7 @@ fun PlaylistListScreen(
 	val selectedSorting by viewModel.selectedSorting.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
 
-    val scrollManager = LocalBottomBarScrollManager.current
+	val scrollManager = LocalBottomBarScrollManager.current
 
 	var shareId by remember { mutableStateOf<String?>(null) }
 	var shareExpiry by remember { mutableStateOf<Duration?>(null) }
@@ -187,8 +187,12 @@ fun PlaylistListScreen(
 					onSetDeletionId = { newDeletionId ->
 						deletionId = newDeletionId
 					},
-					onPlayNext = { if (selectedPlaylist != null) player.playNext(selectedPlaylist as DomainSongCollection)},
-					onAddToQueue = { if (selectedPlaylist != null) player.addToQueue(selectedPlaylist as DomainSongCollection)}
+					onPlayNext = { if (selectedPlaylist != null) player.playNext(selectedPlaylist as DomainSongCollection) },
+					onAddToQueue = {
+						if (selectedPlaylist != null) player.addToQueue(
+							selectedPlaylist as DomainSongCollection
+						)
+					}
 				)
 			}
 		}

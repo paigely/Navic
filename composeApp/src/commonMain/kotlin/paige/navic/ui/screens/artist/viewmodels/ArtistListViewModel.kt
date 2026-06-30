@@ -61,7 +61,7 @@ class ArtistListViewModel(
 	fun selectArtist(artist: DomainArtist) {
 		viewModelScope.launch {
 			_selectedArtist.value = artist
-			val artistAlbums = 
+			val artistAlbums =
 				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
 			_selectedArtistAlbums.value = artistAlbums.map { it.toDomainModel() }.toImmutableList()
 			_starred.value = repository.isArtistStarred(artist)
@@ -89,7 +89,7 @@ class ArtistListViewModel(
 	fun addArtistAlbumsToQueue(player: MediaPlayerViewModel) {
 		val artist = _selectedArtist.value ?: return
 		viewModelScope.launch {
-			val artistAlbums = 
+			val artistAlbums =
 				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
 			artistAlbums.map { it.toDomainModel() }.forEach { album ->
 				player.addToQueue(album)
@@ -100,7 +100,7 @@ class ArtistListViewModel(
 	fun playArtistAlbumsNext(player: MediaPlayerViewModel) {
 		val artist = _selectedArtist.value ?: return
 		viewModelScope.launch {
-			val artistAlbums = 
+			val artistAlbums =
 				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
 			artistAlbums.map { it.toDomainModel() }.forEach { album ->
 				player.playNext(album)

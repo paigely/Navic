@@ -83,7 +83,9 @@ fun SongDetailScreen(songId: String) {
 
 				Res.string.info_track_replay_gain to song.replayGain?.trackGain?.let { "$it dB" },
 				Res.string.info_album_replay_gain to song.replayGain?.albumGain?.let { "$it dB" },
-				Res.string.info_track_replay_gain_effective to song.replayGain?.effectiveGain(preferenceManager.replayGainMode)
+				Res.string.info_track_replay_gain_effective to song.replayGain?.effectiveGain(
+					preferenceManager.replayGainMode
+				)
 			)
 		}.orEmpty()
 	}

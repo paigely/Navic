@@ -64,8 +64,8 @@ import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.Waveform
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.util.core.InlineExplicitIcon
-import paige.navic.util.ui.segmentedShapes
 import paige.navic.util.core.toHoursMinutesSeconds
+import paige.navic.util.ui.segmentedShapes
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -137,6 +137,7 @@ fun CollectionDetailScreenSongRow(
 							modifier = Modifier.align(Alignment.CenterStart)
 						)
 					}
+
 					SwipeToDismissBoxValue.EndToStart -> {
 						Icon(
 							imageVector = Icons.Outlined.QueuePlayNext,
@@ -145,6 +146,7 @@ fun CollectionDetailScreenSongRow(
 							modifier = Modifier.align(Alignment.CenterEnd)
 						)
 					}
+
 					else -> {}
 				}
 			}
@@ -198,7 +200,7 @@ fun CollectionDetailScreenSongRow(
 			},
 			trailingContent = {
 				Row(verticalAlignment = Alignment.CenterVertically) {
-					if(isStarred) {
+					if (isStarred) {
 						Icon(
 							Icons.Filled.Star,
 							null,
