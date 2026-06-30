@@ -6,9 +6,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
@@ -19,25 +18,24 @@ class AlbumListViewModel(
 	initialListType: DomainAlbumListType = DomainAlbumListType.AlphabeticalByArtist,
 	private val repository: AlbumRepository,
 	private val sessionManager: SessionManager
-) : ViewModel(), KoinComponent {
-	private val _albumsState =
-		MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())
-	val albumsState = _albumsState.asStateFlow()
+) : ViewModel() {
+	val albumsState: StateFlow<UiState<ImmutableList<DomainAlbum>>>
+		field = MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())
 
-	private val _selectedAlbum = MutableStateFlow<DomainAlbum?>(null)
-	val selectedAlbum = _selectedAlbum.asStateFlow()
+	val selectedAlbum: StateFlow<DomainAlbum?>
+		field = MutableStateFlow(null)
 
-	private val _starred = MutableStateFlow(false)
-	val starred = _starred.asStateFlow()
+	val starred: StateFlow<Boolean>
+		field = MutableStateFlow(false)
 
-	private val _rating = MutableStateFlow(0)
-	val rating = _rating.asStateFlow()
+	val rating: StateFlow<Int>
+		field = MutableStateFlow(0)
 
-	private val _listType = MutableStateFlow(initialListType)
-	val listType = _listType.asStateFlow()
+	val listType: StateFlow<DomainAlbumListType>
+		field = MutableStateFlow(initialListType)
 
-	private val _selectedReversed = MutableStateFlow(false)
-	val selectedReversed = _selectedReversed.asStateFlow()
+	val selectedReversed: StateFlow<Boolean>
+		field = MutableStateFlow(false)
 
 	val gridState = LazyGridState()
 
@@ -49,60 +47,60 @@ class AlbumListViewModel(
 
 	fun refreshAlbums(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			repository.getAlbumsFlow(fullRefresh, _listType.value, _selectedReversed.value)
+			repository.getAlbumsFlow(fullRefresh, listType.value, selectedReversed.value)
 				.collect {
-					_albumsState.value = it
+					albumsState.value = it
 				}
 		}
 	}
 
 	fun selectAlbum(album: DomainAlbum) {
 		viewModelScope.launch {
-			_selectedAlbum.value = album
-			_starred.value = repository.isAlbumStarred(album)
-			_rating.value = repository.getAlbumRating(album)
+			selectedAlbum.value = album
+			starred.value = repository.isAlbumStarred(album)
+			rating.value = repository.getAlbumRating(album)
 		}
 	}
 
 	fun clearSelection() {
-		_selectedAlbum.value = null
+		selectedAlbum.value = null
 	}
 
-	fun starAlbum(starred: Boolean) {
+	fun starAlbum(isStarred: Boolean) {
 		viewModelScope.launch {
-			val selection = _selectedAlbum.value ?: return@launch
+			val selection = selectedAlbum.value ?: return@launch
 			runCatching {
-				if (starred) {
+				if (isStarred) {
 					repository.starAlbum(selection)
 				} else {
 					repository.unstarAlbum(selection)
 				}
-				_starred.value = starred
+				starred.value = isStarred
 			}
 		}
 	}
 
-	fun setRating(rating: Int) {
+	fun setRating(newRating: Int) {
 		viewModelScope.launch {
-			val selection = _selectedAlbum.value ?: return@launch
+			val selection = selectedAlbum.value ?: return@launch
 			runCatching {
-				_rating.value = rating
-				repository.rateAlbum(selection, rating)
+				rating.value = newRating
+				repository.rateAlbum(selection, newRating)
 			}
 		}
 	}
 
-	fun setListType(listType: DomainAlbumListType) {
-		_listType.value = listType
+	fun setListType(newListType: DomainAlbumListType) {
+		listType.value = newListType
 		refreshAlbums(false)
 	}
 
 	fun setReversed(reversed: Boolean) {
-		_selectedReversed.value = reversed
+		selectedReversed.value = reversed
 		refreshAlbums(false)
 	}
 
 	fun clearError() {
-		_albumsState.value = UiState.Success(_albumsState.value.data ?: persistentListOf())
+		albumsState.value = UiState.Success(albumsState.value.data ?: persistentListOf())
 	}
 }

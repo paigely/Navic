@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
@@ -57,8 +57,8 @@ class DeletionViewModel(
 	private val sessionManager: SessionManager,
 	private val snackBarManager: SnackBarManager
 ) : ViewModel() {
-	private val _state = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
-	val state = _state.asStateFlow()
+	val state: StateFlow<UiState<Nothing?>>
+		field = MutableStateFlow<UiState<Nothing?>>(UiState.Success(null))
 
 	private val _events = Channel<Event>()
 	val events = _events.receiveAsFlow()
@@ -68,7 +68,7 @@ class DeletionViewModel(
 		id: String
 	) {
 		viewModelScope.launch {
-			_state.value = UiState.Loading()
+			state.value = UiState.Loading()
 			try {
 				if (endpoint == DeletionEndpoint.SHARE) {
 					sessionManager.api.deleteShare(id)
@@ -79,11 +79,11 @@ class DeletionViewModel(
 					)
 					playlistDao.deletePlaylist(id)
 				}
-				_state.value = UiState.Success(null)
+				state.value = UiState.Success(null)
 				snackBarManager.notify(endpoint.deletedText)
 				_events.send(Event.Dismiss)
 			} catch (error: Exception) {
-				_state.value = UiState.Error(error = error)
+				state.value = UiState.Error(error = error)
 			}
 		}
 	}

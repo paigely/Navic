@@ -6,7 +6,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import paige.navic.domain.manager.ConnectivityManager
@@ -25,9 +25,9 @@ class SongListViewModel(
 	private val sessionManager: SessionManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
-	private val _songsState =
-		MutableStateFlow<UiState<ImmutableList<DomainSong>>>(UiState.Loading())
-	val songsState = _songsState.asStateFlow()
+	val songsState: StateFlow<UiState<ImmutableList<DomainSong>>>
+		field = MutableStateFlow<UiState<ImmutableList<DomainSong>>>(UiState.Loading())
+
 	val allDownloads = downloadManager.allDownloads
 		.stateIn(
 			scope = viewModelScope,
@@ -35,20 +35,20 @@ class SongListViewModel(
 			initialValue = persistentListOf()
 		)
 
-	private val _selectedSong = MutableStateFlow<DomainSong?>(null)
-	val selectedSong = _selectedSong.asStateFlow()
+	val selectedSong: StateFlow<DomainSong?>
+		field = MutableStateFlow(null)
 
-	private val _starred = MutableStateFlow(false)
-	val starred = _starred.asStateFlow()
+	val starred: StateFlow<Boolean>
+		field = MutableStateFlow(false)
 
-	private val _selectedSongRating = MutableStateFlow(0)
-	val selectedSongRating = _selectedSongRating.asStateFlow()
+	val selectedSongRating: StateFlow<Int>
+		field = MutableStateFlow(0)
 
-	private val _selectedSorting = MutableStateFlow(initialListType)
-	val selectedSorting = _selectedSorting.asStateFlow()
+	val selectedSorting: StateFlow<DomainSongListType>
+		field = MutableStateFlow(initialListType)
 
-	private val _selectedReversed = MutableStateFlow(false)
-	val selectedReversed = _selectedReversed.asStateFlow()
+	val selectedReversed: StateFlow<Boolean>
+		field = MutableStateFlow(false)
 
 	val isOnline = connectivityManager.isOnline
 
@@ -60,39 +60,39 @@ class SongListViewModel(
 
 	fun selectSong(song: DomainSong) {
 		viewModelScope.launch {
-			_selectedSong.value = song
-			_starred.value = repository.isSongStarred(song)
-			_selectedSongRating.value = repository.getSongRating(song)
+			selectedSong.value = song
+			starred.value = repository.isSongStarred(song)
+			selectedSongRating.value = repository.getSongRating(song)
 		}
 	}
 
 	fun clearSelection() {
-		_selectedSong.value = null
+		selectedSong.value = null
 	}
 
 	fun refreshSongs(fullRefresh: Boolean) {
 		viewModelScope.launch {
 			repository.getSongsFlow(
 				fullRefresh,
-				_selectedSorting.value,
-				_selectedReversed.value,
+				selectedSorting.value,
+				selectedReversed.value,
 				artistId
 			).collect {
-				_songsState.value = it
+				songsState.value = it
 			}
 		}
 	}
 
-	fun starSong(starred: Boolean) {
+	fun starSong(isStarred: Boolean) {
 		viewModelScope.launch {
-			val selection = _selectedSong.value ?: return@launch
+			val selection = selectedSong.value ?: return@launch
 			runCatching {
-				if (starred) {
+				if (isStarred) {
 					repository.starSong(selection)
 				} else {
 					repository.unstarSong(selection)
 				}
-				_starred.value = starred
+				starred.value = isStarred
 				refreshSongs(false)
 			}
 		}
@@ -100,26 +100,26 @@ class SongListViewModel(
 
 	fun rateSelectedSong(rating: Int) {
 		viewModelScope.launch {
-			val selection = _selectedSong.value ?: return@launch
+			val selection = selectedSong.value ?: return@launch
 			runCatching {
 				repository.rateSong(selection, rating)
-				_selectedSongRating.value = rating
+				selectedSongRating.value = rating
 			}
 		}
 	}
 
 	fun setSorting(sorting: DomainSongListType) {
-		_selectedSorting.value = sorting
+		selectedSorting.value = sorting
 		refreshSongs(false)
 	}
 
 	fun setReversed(reversed: Boolean) {
-		_selectedReversed.value = reversed
+		selectedReversed.value = reversed
 		refreshSongs(false)
 	}
 
 	fun clearError() {
-		_songsState.value = UiState.Success(_songsState.value.data ?: persistentListOf())
+		songsState.value = UiState.Success(songsState.value.data ?: persistentListOf())
 	}
 
 	fun downloadSong(song: DomainSong) {

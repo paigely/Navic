@@ -4,7 +4,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.lyrics.LyricsResult
@@ -15,8 +15,8 @@ class LyricsScreenViewModel(
 	private val song: DomainSong?,
 	private val repository: LyricsRepository
 ) : ViewModel() {
-	private val _lyricsState = MutableStateFlow<UiState<LyricsResult?>>(UiState.Loading())
-	val lyricsState = _lyricsState.asStateFlow()
+	val lyricsState: StateFlow<UiState<LyricsResult?>>
+		field = MutableStateFlow<UiState<LyricsResult?>>(UiState.Loading())
 
 	val listState = LazyListState()
 
@@ -27,16 +27,16 @@ class LyricsScreenViewModel(
 	fun refreshResults() {
 		viewModelScope.launch {
 			if (song == null) {
-				_lyricsState.value = UiState.Success(null)
+				lyricsState.value = UiState.Success(null)
 				return@launch
 			}
-			_lyricsState.value = UiState.Loading()
+			lyricsState.value = UiState.Loading()
 			try {
-				_lyricsState.value = UiState.Success(
+				lyricsState.value = UiState.Success(
 					repository.fetchLyrics(song)
 				)
 			} catch (e: Exception) {
-				_lyricsState.value = UiState.Error(e)
+				lyricsState.value = UiState.Error(e)
 			}
 		}
 	}

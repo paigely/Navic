@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.repositories.DbRepository
@@ -17,8 +17,8 @@ class LoginViewModel(
 	private val repository: DbRepository,
 	private val sessionManager: SessionManager
 ) : ViewModel() {
-	private val _loginUiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
-	val loginState = _loginUiState.asStateFlow()
+	val loginState: StateFlow<LoginUiState>
+		field = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
 
 	val instanceState = TextFieldState()
 	val usernameState = TextFieldState()
@@ -57,9 +57,9 @@ class LoginViewModel(
 	fun loadUser() {
 		viewModelScope.launch {
 			if (sessionManager.isLoggedIn.value) {
-				_loginUiState.value = LoginUiState.Success
+				loginState.value = LoginUiState.Success
 			} else {
-				_loginUiState.value = LoginUiState.Idle
+				loginState.value = LoginUiState.Idle
 			}
 		}
 	}
@@ -68,7 +68,7 @@ class LoginViewModel(
 		if (!validateStuff()) return false
 
 		viewModelScope.launch {
-			_loginUiState.value = LoginUiState.Loading
+			loginState.value = LoginUiState.Loading
 
 			try {
 				val url = instanceState.text.toString().let {
@@ -82,15 +82,15 @@ class LoginViewModel(
 				)
 
 				repository.syncEverything { progress, message ->
-					_loginUiState.value = LoginUiState.Syncing(progress, message)
+					loginState.value = LoginUiState.Syncing(progress, message)
 				}.onSuccess {
-					_loginUiState.value = LoginUiState.Success
+					loginState.value = LoginUiState.Success
 				}.onFailure { e ->
-					_loginUiState.value = LoginUiState.Error(e as Exception)
+					loginState.value = LoginUiState.Error(e as Exception)
 				}
 
 			} catch (e: Exception) {
-				_loginUiState.value = LoginUiState.Error(e)
+				loginState.value = LoginUiState.Error(e)
 			}
 		}
 
@@ -98,7 +98,7 @@ class LoginViewModel(
 	}
 
 	fun logout() {
-		_loginUiState.value = LoginUiState.Idle
+		loginState.value = LoginUiState.Idle
 		sessionManager.logout()
 		viewModelScope.launch {
 			repository.removeEverything()

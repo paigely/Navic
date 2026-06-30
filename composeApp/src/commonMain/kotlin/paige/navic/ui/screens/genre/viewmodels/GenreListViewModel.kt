@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainGenre
@@ -17,9 +17,8 @@ class GenreListViewModel(
 	private val repository: GenreRepository,
 	private val sessionManager: SessionManager
 ) : ViewModel() {
-	private val _genresState =
-		MutableStateFlow<UiState<ImmutableList<DomainGenre>>>(UiState.Loading())
-	val genresState = _genresState.asStateFlow()
+	val genresState: StateFlow<UiState<ImmutableList<DomainGenre>>>
+		field = MutableStateFlow<UiState<ImmutableList<DomainGenre>>>(UiState.Loading())
 
 	val gridState = LazyGridState()
 
@@ -32,12 +31,12 @@ class GenreListViewModel(
 	fun refreshGenres(fullRefresh: Boolean) {
 		viewModelScope.launch {
 			repository.getGenresFlow(fullRefresh).collect {
-				_genresState.value = it
+				genresState.value = it
 			}
 		}
 	}
 
 	fun clearError() {
-		_genresState.value = UiState.Success(_genresState.value.data ?: persistentListOf())
+		genresState.value = UiState.Success(genresState.value.data ?: persistentListOf())
 	}
 }

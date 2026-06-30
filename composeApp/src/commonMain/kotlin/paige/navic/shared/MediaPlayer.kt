@@ -82,7 +82,7 @@ abstract class MediaPlayerViewModel(
 	}
 
 	fun togglePlay() {
-		if (!_uiState.value.isPaused) {
+		if (!uiState.value.isPaused) {
 			pause()
 		} else {
 			resume()
@@ -114,7 +114,7 @@ abstract class MediaPlayerViewModel(
 	@OptIn(FlowPreview::class)
 	private fun observeAndSaveState() {
 		viewModelScope.launch {
-			_uiState
+			uiState
 				.debounce(1.seconds)
 				.collect { state ->
 					try {
