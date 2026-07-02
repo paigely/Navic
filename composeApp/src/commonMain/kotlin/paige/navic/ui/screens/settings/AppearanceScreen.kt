@@ -39,6 +39,7 @@ import navic.composeapp.generated.resources.option_alphabetical_scroll
 import navic.composeapp.generated.resources.option_animation_style
 import navic.composeapp.generated.resources.option_artist_image_shape
 import navic.composeapp.generated.resources.option_artwork_shape
+import navic.composeapp.generated.resources.option_choose_app_icon
 import navic.composeapp.generated.resources.option_choose_theme
 import navic.composeapp.generated.resources.option_cover_art_size
 import navic.composeapp.generated.resources.option_grid_items_per_row
@@ -64,6 +65,7 @@ import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.settings.dialogs.ArtworkShapeDialog
 import paige.navic.ui.screens.settings.dialogs.GridSizeDialog
 import paige.navic.ui.screens.settings.dialogs.GridSizePreview
+import paige.navic.util.core.PlatformType
 
 @Composable
 fun SettingsAppearanceScreen() {
@@ -119,6 +121,22 @@ fun SettingsAppearanceScreen() {
 								style = MaterialTheme.typography.bodyMedium,
 								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
+						}
+					}
+					if (platformContext.platformType == PlatformType.Android) {
+						FormRow(
+							onClick = dropUnlessResumed {
+								backStack.add(Screen.Settings.AppIcon)
+							}
+						) {
+							Column(Modifier.weight(1f)) {
+								Text(stringResource(Res.string.option_choose_app_icon))
+								Text(
+									preferenceManager.appIconVariant.name,
+									style = MaterialTheme.typography.bodyMedium,
+									color = MaterialTheme.colorScheme.onSurfaceVariant
+								)
+							}
 						}
 					}
 				}
