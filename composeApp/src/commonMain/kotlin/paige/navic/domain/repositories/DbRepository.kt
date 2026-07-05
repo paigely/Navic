@@ -9,7 +9,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
@@ -143,7 +142,6 @@ class DbRepository(
 				}
 
 				progressCallback(1.0f, Res.string.info_syncing_finished)
-				delay(2000)
 			} finally {
 				notificationManager.cancelNotification(NotificationIds.SYNC_LIBRARY)
 			}

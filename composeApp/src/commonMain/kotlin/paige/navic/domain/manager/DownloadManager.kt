@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -184,7 +183,6 @@ class DownloadManager(
 
 				workers.joinAll()
 				_isDownloadingLibrary.value = false
-				delay(2000)
 
 			} catch (e: CancellationException) {
 				_isDownloadingLibrary.value = false
