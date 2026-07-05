@@ -31,19 +31,19 @@
 		tools:targetApi="33">
 
 		<activity
-			android:name=".MainActivity"
+			android:name="paige.navic.androidApp.MainActivity"
 			android:exported="true"
 			android:theme="@style/Theme.Navic" />
 
 		<!-- app icon activities -->
 		<activity-alias
-			android:name=".MainActivityDefault"
+			android:name="paige.navic.androidApp.MainActivityDefault"
 			android:enabled="true"
 			android:exported="true"
 			android:icon="@mipmap/ic_launcher"
 			android:label="@string/app_name"
 			android:roundIcon="@mipmap/ic_launcher_round"
-			android:targetActivity=".MainActivity">
+			android:targetActivity="paige.navic.androidApp.MainActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -51,13 +51,13 @@
 		</activity-alias>
 
 		<activity-alias
-			android:name=".MainActivityInverted"
+			android:name="paige.navic.androidApp.MainActivityInverted"
 			android:enabled="false"
 			android:exported="true"
 			android:icon="@mipmap/ic_launcher_inverted"
 			android:label="@string/app_name"
 			android:roundIcon="@mipmap/ic_launcher_inverted_round"
-			android:targetActivity=".MainActivity">
+			android:targetActivity="paige.navic.androidApp.MainActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -66,7 +66,7 @@
 
 		<!-- misc activities -->
 		<activity
-			android:name=".CrashActivity"
+			android:name="paige.navic.androidApp.CrashActivity"
 			android:exported="false"
 			android:process=":crash"
 			android:theme="@style/Theme.Navic" />
@@ -84,7 +84,7 @@
 
 		<!-- miniplayer receiver -->
 		<receiver
-			android:name=".widgets.miniplayer.MiniPlayerReceiver"
+			android:name="paige.navic.androidApp.widgets.miniplayer.MiniPlayerReceiver"
 			android:exported="false"
 			android:label="Mini Player">
 			<intent-filter>
@@ -98,7 +98,7 @@
 
 		<!-- turn table receiver -->
 		<receiver
-			android:name=".widgets.turntable.TurnTableReceiver"
+			android:name="paige.navic.androidApp.widgets.turntable.TurnTableReceiver"
 			android:exported="false"
 			android:label="Turn Table">
 			<intent-filter>

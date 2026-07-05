@@ -7,15 +7,15 @@ import paige.navic.domain.models.settings.AppIconVariant
 
 actual class AppIconManager(
 	private val context: Context,
-	private val preferenceManager: PreferenceManager
+	private val preferenceManager: PreferenceManager,
 ) {
 	actual fun setVariant(newVariant: AppIconVariant) {
 		preferenceManager.appIconVariant = newVariant
 		AppIconVariant.entries.forEach { variant ->
 			context.packageManager.setComponentEnabledSetting(
 				ComponentName(
-					context.applicationContext,
-					"${context.packageName}.${variant.activityName}"
+					context.packageName,
+					"paige.navic.androidApp.${variant.activityName}"
 				),
 				if (variant == newVariant) {
 					PackageManager.COMPONENT_ENABLED_STATE_ENABLED
