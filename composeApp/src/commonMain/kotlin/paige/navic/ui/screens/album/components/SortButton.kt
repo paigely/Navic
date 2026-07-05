@@ -14,7 +14,7 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
 import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.components.sheets.SortSheet
-import paige.navic.ui.screens.library.components.label
+import paige.navic.util.core.label
 
 @Composable
 fun AlbumListScreenSortButton(
@@ -34,7 +34,7 @@ fun AlbumListScreenSortButton(
 			DomainAlbumListType.Highest,
 			DomainAlbumListType.Starred,
 			DomainAlbumListType.Random,
-			DomainAlbumListType.ByYear(),
+			DomainAlbumListType.Year,
 			DomainAlbumListType.Downloaded
 		)
 	}
