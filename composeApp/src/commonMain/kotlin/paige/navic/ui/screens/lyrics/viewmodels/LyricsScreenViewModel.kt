@@ -1,6 +1,5 @@
 package paige.navic.ui.screens.lyrics.viewmodels
 
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,8 +16,6 @@ class LyricsScreenViewModel(
 ) : ViewModel() {
 	val lyricsState: StateFlow<UiState<LyricsResult?>>
 		field = MutableStateFlow<UiState<LyricsResult?>>(UiState.Loading())
-
-	val listState = LazyListState()
 
 	init {
 		refreshResults()

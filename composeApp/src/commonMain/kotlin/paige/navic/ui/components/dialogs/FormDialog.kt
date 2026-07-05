@@ -51,7 +51,8 @@ fun FormDialog(
 		Surface(
 			modifier = Modifier
 				.fillMaxWidth()
-				.wrapContentHeight(),
+				.wrapContentHeight()
+				.verticalScroll(rememberScrollState()),
 			shape = MaterialTheme.shapes.extraLarge,
 			tonalElevation = AlertDialogDefaults.TonalElevation,
 		) {

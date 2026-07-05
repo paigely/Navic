@@ -30,7 +30,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -60,6 +63,7 @@ import paige.navic.domain.manager.BottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.SnackBarManager
+import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
@@ -71,6 +75,7 @@ import paige.navic.ui.screens.album.AlbumListScreen
 import paige.navic.ui.screens.artist.ArtistDetailScreen
 import paige.navic.ui.screens.artist.ArtistListScreen
 import paige.navic.ui.screens.collection.CollectionDetailScreen
+import paige.navic.ui.screens.genre.GenreDetailScreen
 import paige.navic.ui.screens.genre.GenreListScreen
 import paige.navic.ui.screens.library.LibraryScreen
 import paige.navic.ui.screens.login.LoginScreen
@@ -158,6 +163,17 @@ fun App() {
 	val layoutDirection = LocalLayoutDirection.current
 	val scrollManager = remember {
 		BottomBarScrollManager(with(density) { 50.dp.toPx() })
+	}
+
+	var appStarted by rememberSaveable { mutableStateOf(false) }
+
+	LaunchedEffect(Unit) {
+		if (!appStarted) {
+			appStarted = true
+			if (preferenceManager.explicitContentPlayback == ExplicitContentPlayback.SkipForThisSession) {
+				preferenceManager.explicitContentPlayback = ExplicitContentPlayback.Allowed
+			}
+		}
 	}
 
 	SharedTransitionLayout {
@@ -271,8 +287,11 @@ private fun entryProvider(
 		entry<Screen.GenreList>(metadata = navtabMetadata) { key ->
 			GenreListScreen(key.nested)
 		}
+		entry<Screen.GenreDetail> { key ->
+			GenreDetailScreen(key.genreName)
+		}
 		entry<Screen.SongList>(metadata = navtabMetadata) { key ->
-			SongListScreen(key.nested, key.artistId, key.artistName, key.listType)
+			SongListScreen(key.nested, key.listType)
 		}
 
 		entry<Screen.RadioList>(metadata = navtabMetadata) { key ->
@@ -338,7 +357,7 @@ private fun entryProvider(
 		entry<Screen.Settings.About>(metadata = detailPane("settings")) {
 			SettingsAboutScreen()
 		}
-		entry<Screen.Settings.Acknowledgements>(metadata = detailPane("settings")) {
+		entry<Screen.Settings.Acknowledgements> {
 			SettingsAcknowledgementsScreen()
 		}
 		entry<Screen.Settings.DataStorage>(metadata = detailPane("settings")) {

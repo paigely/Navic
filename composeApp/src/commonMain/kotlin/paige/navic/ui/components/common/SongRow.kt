@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,6 +29,7 @@ import kotlinx.collections.immutable.persistentListOf
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_download_failed
 import navic.composeapp.generated.resources.info_downloaded
+import navic.composeapp.generated.resources.info_explicit
 import navic.composeapp.generated.resources.info_not_available_offline
 import navic.composeapp.generated.resources.info_unknown_album
 import navic.composeapp.generated.resources.info_unknown_year
@@ -39,10 +41,12 @@ import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.DownloadOff
+import paige.navic.icons.outlined.Lock
 import paige.navic.icons.outlined.Offline
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
@@ -84,14 +88,18 @@ fun SongRow(
 
 	val isDownloaded = download?.status == DownloadStatus.DOWNLOADED
 	val isCurrentTrack = playerState.currentSong?.id == song.id
-	val canPlay = isOnline || isDownloaded
+	val isExplicit = song.explicitStatus == DomainExplicitStatus.Explicit
+		&& preferenceManager.explicitContentPlayback != ExplicitContentPlayback.Allowed
+	val maybeUnavailable = !isOnline && !isDownloaded
 
 	ListItem(
 		modifier = modifier
 			.width(400.dp)
+			.alpha(if (isExplicit) .5f else 1f)
 			.combinedClickable(
 				onClick = onClick,
-				onLongClick = onLongClick
+				onLongClick = onLongClick,
+				enabled = !isExplicit
 			),
 		headlineContent = {
 			Text(
@@ -134,7 +142,15 @@ fun SongRow(
 					)
 					Spacer(Modifier.width(8.dp))
 				}
-				if (!canPlay) {
+				if (isExplicit) {
+					Icon(
+						Icons.Outlined.Lock,
+						stringResource(Res.string.info_explicit),
+						modifier = Modifier.size(20.dp)
+					)
+					Spacer(Modifier.width(6.dp))
+				}
+				if (maybeUnavailable) {
 					Icon(
 						Icons.Outlined.Offline,
 						stringResource(Res.string.info_not_available_offline),

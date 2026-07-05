@@ -50,13 +50,11 @@ import kotlin.time.Duration
 @Composable
 fun SongListScreen(
 	nested: Boolean,
-	artistId: String? = null,
-	artistName: String? = null,
 	listType: DomainSongListType
 ) {
 	val viewModel = koinViewModel<SongListViewModel>(
-		key = artistId,
-		parameters = { parametersOf(listType, artistId) }
+		key = listType.toString(),
+		parameters = { parametersOf(listType) }
 	)
 	val preferenceManager = koinInject<PreferenceManager>()
 	val player = koinInject<MediaPlayerViewModel>()
@@ -87,13 +85,13 @@ fun SongListScreen(
 		topBar = {
 			if (!nested) {
 				RootTopBar(
-					title = { Text(artistName ?: stringResource(Res.string.title_songs)) },
+					title = { Text(stringResource(Res.string.title_songs)) },
 					scrollBehavior = scrollBehavior,
 					actions = actions
 				)
 			} else {
 				NestedTopBar(
-					title = { Text(artistName ?: stringResource(Res.string.title_songs)) },
+					title = { Text(stringResource(Res.string.title_songs)) },
 					actions = actions
 				)
 			}

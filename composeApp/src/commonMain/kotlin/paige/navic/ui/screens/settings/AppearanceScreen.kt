@@ -42,8 +42,12 @@ import navic.composeapp.generated.resources.option_artwork_shape
 import navic.composeapp.generated.resources.option_choose_app_icon
 import navic.composeapp.generated.resources.option_choose_theme
 import navic.composeapp.generated.resources.option_cover_art_size
+import navic.composeapp.generated.resources.option_dynamic_album_view_theme
+import navic.composeapp.generated.resources.option_dynamic_artist_view_theme
 import navic.composeapp.generated.resources.option_grid_items_per_row
 import navic.composeapp.generated.resources.option_use_marquee_text
+import navic.composeapp.generated.resources.subtitle_dynamic_album_view_theme
+import navic.composeapp.generated.resources.subtitle_dynamic_artist_view_theme
 import navic.composeapp.generated.resources.title_appearance
 import navic.composeapp.generated.resources.title_choose_font
 import navic.composeapp.generated.resources.title_layout
@@ -245,18 +249,32 @@ fun SettingsAppearanceScreen() {
 
 				FormTitle(stringResource(Res.string.title_miscellaneous))
 				Form {
-					SettingSelectionRow(
-						title = { Text(stringResource(Res.string.option_use_marquee_text)) },
-						items = MarqueeSpeed.entries.toImmutableList(),
-						label = { it.name },
-						selection = preferenceManager.marqueeSpeed,
-						onSelect = { preferenceManager.marqueeSpeed = it }
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_dynamic_album_view_theme)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_dynamic_album_view_theme)) },
+						value = preferenceManager.dynamicAlbumViewTheme,
+						onSetValue = { preferenceManager.dynamicAlbumViewTheme = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_dynamic_artist_view_theme)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_dynamic_artist_view_theme)) },
+						value = preferenceManager.dynamicArtistViewTheme,
+						onSetValue = { preferenceManager.dynamicArtistViewTheme = it }
 					)
 
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_alphabetical_scroll)) },
 						value = preferenceManager.alphabeticalScroll,
 						onSetValue = { preferenceManager.alphabeticalScroll = it }
+					)
+
+					SettingSelectionRow(
+						title = { Text(stringResource(Res.string.option_use_marquee_text)) },
+						items = MarqueeSpeed.entries.toImmutableList(),
+						label = { it.name },
+						selection = preferenceManager.marqueeSpeed,
+						onSelect = { preferenceManager.marqueeSpeed = it }
 					)
 
 					SettingSelectionRow(

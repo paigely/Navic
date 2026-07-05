@@ -12,9 +12,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
@@ -23,17 +26,17 @@ import kotlin.time.Duration.Companion.seconds
 abstract class MediaPlayerViewModel(
 	private val stateRepository: PlayerStateRepository,
 	protected val connectivityManager: ConnectivityManager,
-	protected val downloadManager: DownloadManager
+	protected val downloadManager: DownloadManager,
+	protected val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
 	@Suppress("PropertyName")
 	protected val _uiState = MutableStateFlow(PlayerUiState())
 	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
-	protected fun isAvailable(songId: String): Boolean {
-		val isOnline = connectivityManager.isOnline.value
-		val isDownloaded = downloadManager.downloadedSongs.value.containsKey(songId)
-		return isOnline || isDownloaded
+	protected fun isExplicit(song: DomainSong): Boolean {
+		return song.explicitStatus == DomainExplicitStatus.Explicit
+			&& preferenceManager.explicitContentPlayback != ExplicitContentPlayback.Allowed
 	}
 
 	init {

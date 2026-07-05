@@ -9,6 +9,10 @@ import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.isSuccess
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.entities.LyricEntity
@@ -58,7 +62,8 @@ class LyricsRepository(
 					cached.rawContent
 				)
 			}
-		} catch (_: Exception) {
+		} catch (ex: Exception) {
+			Logger.w("LyricsRepository", "failed getting cached lyrics", ex)
 		}
 
 		val currentConfig = getConfig()
@@ -143,29 +148,52 @@ class LyricsRepository(
 				parameter("duration", song.duration)
 				accept(ContentType.Application.Json)
 			}
-			if (response.status.isSuccess()) response.bodyAsText() else null
-		} catch (_: Exception) {
+			if (response.status.isSuccess()) {
+				response.bodyAsText()
+			} else {
+				throw Exception("unsuccessful status code ${response.status.value}")
+			}
+		} catch (ex: Exception) {
+			Logger.w(
+				"LyricsRepository",
+				"failed fetching from lrclib",
+				ex
+			)
 			null
 		}
 	}
 
-	private suspend fun fetchRawLyricsPlus(song: DomainSong, config: LyricsConfig): String? {
-		for (baseUrl in config.lyricsPlusMirrors) {
-			try {
-				val response = client.get("$baseUrl/v2/lyrics/get") {
-					parameter("title", song.title)
-					parameter("artist", song.artistName)
-					parameter("album", song.albumTitle)
-					parameter("duration", song.duration)
-					accept(ContentType.Application.Json)
+	private suspend fun fetchRawLyricsPlus(song: DomainSong, config: LyricsConfig): String? =
+		coroutineScope {
+			val resultChannel = Channel<String>(Channel.UNLIMITED)
+			val jobs = config.lyricsPlusMirrors.map { baseUrl ->
+				launch {
+					try {
+						val response = client.get("$baseUrl/v2/lyrics/get") {
+							parameter("title", song.title)
+							parameter("artist", song.artistName)
+							parameter("album", song.albumTitle)
+							parameter("duration", song.duration)
+							accept(ContentType.Application.Json)
+						}
+						if (response.status.isSuccess()) {
+							resultChannel.send(response.bodyAsText())
+						} else {
+							throw Exception("unsuccessful status code ${response.status.value}")
+						}
+					} catch (ex: Exception) {
+						Logger.w("LyricsRepository", "failed fetching from provider $baseUrl", ex)
+					}
 				}
-				if (response.status.isSuccess()) {
-					return response.bodyAsText()
-				}
-			} catch (_: Exception) {
-				continue
 			}
+
+			launch {
+				jobs.joinAll()
+				resultChannel.close()
+			}
+
+			val result = resultChannel.receiveCatching().getOrNull()
+			jobs.forEach { it.cancel() }
+			result
 		}
-		return null
-	}
 }

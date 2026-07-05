@@ -19,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateSetOf
@@ -79,12 +78,7 @@ fun SettingsCustomHeadersScreen() {
 	}
 
 	Scaffold(
-		topBar = {
-			NestedTopBar(
-				{ Text(stringResource(Res.string.option_custom_headers)) },
-				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
-			)
-		}
+		topBar = { NestedTopBar({ Text(stringResource(Res.string.option_custom_headers)) }) }
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp

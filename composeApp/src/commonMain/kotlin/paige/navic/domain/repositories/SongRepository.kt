@@ -33,21 +33,18 @@ class SongRepository(
 
 	private suspend fun getLocalData(
 		listType: DomainSongListType,
-		reversed: Boolean,
-		artistId: String? = null
+		reversed: Boolean
 	): ImmutableList<DomainSong> {
 		val songs = songDao
 			.getAllSongs()
 			.map { it.toDomainModel() }
-		val filtered = if (artistId != null) {
-			songs.filter { it.artistId == artistId }
-		} else {
-			songs
-		}.toImmutableList().sortedByListType(
-			listType,
-			downloads = downloadDao.getAllDownloadsList(),
-			albums = albumDao.getAllAlbumsList().map { it.toDomainModel() }
-		)
+		val filtered = songs
+			.toImmutableList()
+			.sortedByListType(
+				listType,
+				downloads = downloadDao.getAllDownloadsList(),
+				albums = albumDao.getAllAlbumsList().map { it.toDomainModel() }
+			)
 
 		return if (reversed) {
 			filtered.reversed().toImmutableList()
@@ -58,24 +55,22 @@ class SongRepository(
 
 	private suspend fun refreshLocalData(
 		listType: DomainSongListType,
-		reversed: Boolean,
-		artistId: String? = null
+		reversed: Boolean
 	): ImmutableList<DomainSong> {
 		dbRepository.syncLibrarySongs().getOrThrow()
-		return getLocalData(listType, reversed, artistId)
+		return getLocalData(listType, reversed)
 	}
 
 	fun getSongsFlow(
 		fullRefresh: Boolean,
 		listType: DomainSongListType,
-		reversed: Boolean,
-		artistId: String? = null
+		reversed: Boolean
 	): Flow<UiState<ImmutableList<DomainSong>>> = flow {
-		val localData = getLocalData(listType, reversed, artistId)
+		val localData = getLocalData(listType, reversed)
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))
 			try {
-				emit(UiState.Success(data = refreshLocalData(listType, reversed, artistId)))
+				emit(UiState.Success(data = refreshLocalData(listType, reversed)))
 			} catch (error: Exception) {
 				emit(UiState.Error(error = error, data = localData))
 			}

@@ -46,6 +46,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_remove_from_history
 import navic.composeapp.generated.resources.action_search_history
+import navic.composeapp.generated.resources.info_explicit
 import navic.composeapp.generated.resources.info_no_search_results
 import navic.composeapp.generated.resources.info_not_available_offline
 import navic.composeapp.generated.resources.title_albums
@@ -66,12 +67,15 @@ import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
+import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
+import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.History
+import paige.navic.icons.outlined.Lock
 import paige.navic.icons.outlined.NoSearchResults
 import paige.navic.icons.outlined.Offline
 import paige.navic.icons.outlined.Queue
@@ -219,7 +223,10 @@ fun SearchScreen(
 									span = { GridItemSpan(maxLineSpan) }) { index ->
 									val song = songs[index]
 									val isDownloaded = downloadedSongs.containsKey(song.id)
-									val canPlay = isOnline || isDownloaded
+
+									val isExplicit = song.explicitStatus == DomainExplicitStatus.Explicit
+										&& preferenceManager.explicitContentPlayback != ExplicitContentPlayback.Allowed
+									val maybeUnavailable = !isOnline && !isDownloaded
 
 									val dismissState = rememberSwipeToDismissBoxState()
 
@@ -289,7 +296,14 @@ fun SearchScreen(
 												)
 											},
 											trailingContent = {
-												if (!canPlay) {
+												if (isExplicit) {
+													Icon(
+														Icons.Outlined.Lock,
+														stringResource(Res.string.info_explicit),
+														modifier = Modifier.size(20.dp)
+													)
+												}
+												if (maybeUnavailable) {
 													Icon(
 														Icons.Outlined.Offline,
 														stringResource(Res.string.info_not_available_offline),

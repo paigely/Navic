@@ -52,7 +52,7 @@ fun SettingsAboutScreen() {
 			Modifier
 				.padding(innerPadding)
 				.verticalScroll(rememberScrollState())
-				.padding(top = 12.dp, end = 12.dp, start = 12.dp)
+				.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 		) {
 			Form {
 				SelectionContainer {

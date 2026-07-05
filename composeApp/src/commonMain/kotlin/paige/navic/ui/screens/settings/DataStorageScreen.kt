@@ -195,7 +195,7 @@ fun SettingsDataStorageScreen() {
 				Modifier
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
-					.padding(top = 16.dp, end = 16.dp, start = 16.dp, bottom = 32.dp)
+					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				FormTitle(stringResource(Res.string.title_network))
 				Form {

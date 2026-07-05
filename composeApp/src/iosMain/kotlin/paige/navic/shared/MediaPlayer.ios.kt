@@ -77,14 +77,15 @@ class IOSMediaPlayerViewModel(
 	stateRepository: PlayerStateRepository,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
+	preferenceManager: PreferenceManager,
 	syncManager: SyncManager,
 	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager,
 	private val snackBarManager: SnackBarManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
+	connectivityManager = connectivityManager,
 	downloadManager = downloadManager,
-	connectivityManager = connectivityManager
+	preferenceManager = preferenceManager
 ) {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
@@ -144,7 +145,9 @@ class IOSMediaPlayerViewModel(
 				snapshotFlow { preferenceManager.streamingQualityCellular },
 				snapshotFlow { preferenceManager.isAdvancedTranscodingActive },
 				snapshotFlow { preferenceManager.customMaxBitrateWifi },
-				snapshotFlow { preferenceManager.customMaxBitrateCellular }
+				snapshotFlow { preferenceManager.customMaxBitrateCellular },
+				snapshotFlow { preferenceManager.customFormatWifi },
+				snapshotFlow { preferenceManager.customFormatCellular }
 			) { it }.collectLatest {
 				val song = _uiState.value.currentSong ?: return@collectLatest
 				val url = getSongUrl(song) ?: return@collectLatest
@@ -216,12 +219,6 @@ class IOSMediaPlayerViewModel(
 		if (isTransitioningBetweenTracks) return
 
 		val songToPlay = _uiState.value.queue.getOrNull(index) ?: return
-
-		if (!songToPlay.id.startsWith("radio_") && !isAvailable(songToPlay.id)) {
-			next()
-			return
-		}
-
 		val url = getSongUrl(songToPlay) ?: return
 
 		isTransitioningBetweenTracks = true
@@ -627,20 +624,24 @@ class IOSMediaPlayerViewModel(
 		return AVPlayerItem(AVURLAsset(uRL = url, options = options))
 	}
 
-	private fun getStreamUrl(id: String) =
-		when (connectivityManager.isCellular.value) {
-			true -> sessionManager.api.getStreamUrl(
-				id,
-				if (preferenceManager.isAdvancedTranscodingActive) preferenceManager.customMaxBitrateCellular else preferenceManager.streamingQualityCellular.bitrateIos,
-				preferenceManager.streamingQualityCellular.containerIos
-			)
-
-			false -> sessionManager.api.getStreamUrl(
-				id,
-				if (preferenceManager.isAdvancedTranscodingActive) preferenceManager.customMaxBitrateWifi else preferenceManager.streamingQualityWifi.bitrateIos,
-				preferenceManager.streamingQualityWifi.containerIos
-			)
-		} + "&estimateContentLength=true"
+	private fun getStreamUrl(id: String): String {
+		val isCellular = connectivityManager.isCellular.value
+		val bitrate = if (preferenceManager.isAdvancedTranscodingActive) {
+			if (isCellular) preferenceManager.customMaxBitrateCellular else preferenceManager.customMaxBitrateWifi
+		} else {
+			if (isCellular) preferenceManager.streamingQualityCellular.bitrateIos else preferenceManager.streamingQualityWifi.bitrateIos
+		}
+		val container = if (preferenceManager.isAdvancedTranscodingActive) {
+			if (isCellular) preferenceManager.customFormatCellular else preferenceManager.customFormatWifi
+		} else {
+			if (isCellular) preferenceManager.streamingQualityCellular.containerIos else preferenceManager.streamingQualityWifi.containerIos
+		}
+		return sessionManager.api.getStreamUrl(
+			id = id,
+			maxBitRate = bitrate,
+			format = container?.takeIf { it.isNotBlank() }
+		) + "&estimateContentLength=true"
+	}
 
 	private fun getSongUrl(song: DomainSong): NSURL? {
 		return when {

@@ -19,7 +19,6 @@ import paige.navic.ui.core.UiState
 
 class SongListViewModel(
 	initialListType: DomainSongListType = DomainSongListType.FrequentlyPlayed,
-	private val artistId: String? = null,
 	private val repository: SongRepository,
 	private val downloadManager: DownloadManager,
 	private val sessionManager: SessionManager,
@@ -75,8 +74,7 @@ class SongListViewModel(
 			repository.getSongsFlow(
 				fullRefresh,
 				selectedSorting.value,
-				selectedReversed.value,
-				artistId
+				selectedReversed.value
 			).collect {
 				songsState.value = it
 			}
