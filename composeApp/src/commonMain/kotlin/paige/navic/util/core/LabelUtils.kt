@@ -6,6 +6,8 @@ import com.materialkolor.dynamiccolor.ColorSpec
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_hours
 import navic.composeapp.generated.resources.count_minutes
+import navic.composeapp.generated.resources.option_sort_alphabetical_by_artist
+import navic.composeapp.generated.resources.option_sort_alphabetical_by_name
 import navic.composeapp.generated.resources.option_sort_by_genre
 import navic.composeapp.generated.resources.option_sort_by_year
 import navic.composeapp.generated.resources.option_sort_downloaded
@@ -13,9 +15,12 @@ import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.option_sort_newest
 import navic.composeapp.generated.resources.option_sort_random
 import navic.composeapp.generated.resources.option_sort_rating
+import navic.composeapp.generated.resources.option_sort_recent
 import navic.composeapp.generated.resources.option_sort_starred
+import navic.composeapp.generated.resources.option_sort_year
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSongListType
 import kotlin.math.max
 import kotlin.time.Duration
@@ -42,6 +47,22 @@ fun Duration.label(): String {
 		else ->
 			pluralStringResource(Res.plurals.count_minutes, max(1, minutes), max(1, minutes))
 	}
+}
+
+@Composable
+fun DomainAlbumListType.label() = when (this) {
+	DomainAlbumListType.Random -> stringResource(Res.string.option_sort_random)
+	DomainAlbumListType.Newest -> stringResource(Res.string.option_sort_newest)
+	DomainAlbumListType.Frequent -> stringResource(Res.string.option_sort_frequent)
+	DomainAlbumListType.Recent -> stringResource(Res.string.option_sort_recent)
+	DomainAlbumListType.AlphabeticalByName -> stringResource(Res.string.option_sort_alphabetical_by_name)
+	DomainAlbumListType.AlphabeticalByArtist -> stringResource(Res.string.option_sort_alphabetical_by_artist)
+	DomainAlbumListType.Highest -> stringResource(Res.string.option_sort_rating)
+	DomainAlbumListType.Starred -> stringResource(Res.string.option_sort_starred)
+	DomainAlbumListType.Downloaded -> stringResource(Res.string.option_sort_downloaded)
+	DomainAlbumListType.Year -> stringResource(Res.string.option_sort_year)
+	is DomainAlbumListType.ByGenre -> stringResource(Res.string.option_sort_by_genre)
+	is DomainAlbumListType.ByYear -> stringResource(Res.string.option_sort_by_year)
 }
 
 @Composable
