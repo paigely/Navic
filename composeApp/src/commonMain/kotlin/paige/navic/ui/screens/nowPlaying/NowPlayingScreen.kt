@@ -65,6 +65,9 @@ fun NowPlayingScreen() {
 	val isPlayerCurrent = currentScreen is Screen.NowPlaying
 		|| currentScreen is Screen.Queue
 		|| currentScreen is Screen.PlaybackSpeed
+		|| currentScreen is Screen.SongDetail
+
+	val showPlayerElements = isPlayerCurrent
 
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val song = playerState.currentSong
@@ -88,7 +91,7 @@ fun NowPlayingScreen() {
 	SheetScaffold(
 		toolbar = { windowInsets ->
 			SheetToolbar(
-				modifier = Modifier.alpha(if (isPlayerCurrent) 1f else 0f),
+				modifier = Modifier.alpha(if (showPlayerElements) 1f else 0f),
 				windowInsets = windowInsets,
 				title = {
 					Text(stringResource(Res.string.title_now_playing))
@@ -130,7 +133,7 @@ fun NowPlayingScreen() {
 					isPaused = playerState.isPaused
 				)
 			}
-			if (!isPlayerCurrent) return@Box
+			if (!showPlayerElements) return@Box
 			BoxWithConstraints(
 				modifier = Modifier
 					.padding(horizontal = 8.dp)

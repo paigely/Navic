@@ -74,13 +74,13 @@ fun rememberColorSchemeFromCoverArt(
 }
 
 @Composable
-fun rememberColorSchemeForCurrentSong(): ColorScheme {
+fun rememberColorSchemeForCurrentSong(forceDark: Boolean = true): ColorScheme {
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val coverArtId = playerState.currentSong?.coverArtId
 	return rememberColorSchemeFromCoverArt(
 		coverArtId = coverArtId,
-		forceDark = true,
+		forceDark = forceDark,
 		style = if (coverArtId != null) PaletteStyle.Content else PaletteStyle.Monochrome
 	)
 }

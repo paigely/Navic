@@ -2,11 +2,19 @@ package paige.navic.ui.screens.queue
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
@@ -139,7 +147,10 @@ fun QueueScreen() {
 					onClick = {
 						haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 						player.clearQueue()
-					}
+					},
+					colors = ButtonDefaults.filledTonalButtonColors(),
+					contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+					modifier = Modifier.height(36.dp)
 				) {
 					Text(stringResource(Res.string.action_clear_queue))
 				}
@@ -151,6 +162,9 @@ fun QueueScreen() {
 				.padding(horizontal = 12.dp)
 				.fillMaxSize(),
 			state = draggableState.listState,
+			contentPadding = WindowInsets.systemBars
+				.only(WindowInsetsSides.Bottom)
+				.asPaddingValues(),
 			verticalArrangement = if (queue.isNotEmpty())
 				Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
 			else Arrangement.Center

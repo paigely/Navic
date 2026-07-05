@@ -4,8 +4,12 @@
 package paige.navic.ui.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheetProperties
@@ -27,8 +31,15 @@ import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import com.kyant.capsule.ContinuousCapsule
+import paige.navic.LocalNavStack
 import paige.navic.ui.components.sheets.ModalBottomSheet
+import paige.navic.ui.theme.NavicTheme
 import paige.navic.util.ui.LocalSheetState
+import paige.navic.util.ui.rememberColorSchemeForCurrentSong
+import paige.navic.util.ui.rememberColorSchemeFromCoverArt
+
+private object PropertiesKey : NavMetadataKey<ModalBottomSheetProperties>
+private object CoverArtIdKey : NavMetadataKey<String>
 
 class BottomSheetScene<T : Any>(
 	override val key: Any,
@@ -42,28 +53,43 @@ class BottomSheetScene<T : Any>(
 
 	lateinit var sheetState: SheetState
 
+
 	override val content = @Composable {
 		sheetState = rememberModalBottomSheetState()
 		val lifecycleOwner = rememberLifecycleOwner()
-		ModalBottomSheet(
-			onDismissRequest = onBack,
-			sheetState = sheetState,
-			properties = properties,
-			dragHandle = {
-				Surface(
-					modifier = Modifier.padding(vertical = 5.dp),
-					color = MaterialTheme.colorScheme.onSurfaceVariant,
-					shape = ContinuousCapsule,
-				) {
-					Box(Modifier.size(width = 32.dp, height = 4.dp))
+		val backStack = LocalNavStack.current
+		val coverArtId = entry.metadata[CoverArtIdKey]
+		val isPlayerOpen = backStack.any { it is Screen.NowPlaying }
+		val colorScheme = when {
+			coverArtId != null -> rememberColorSchemeFromCoverArt(coverArtId, forceDark = false)
+			isPlayerOpen -> rememberColorSchemeForCurrentSong(forceDark = false)
+			else -> null
+		}
+
+		NavicTheme(colorScheme) {
+			val currentColorScheme = MaterialTheme.colorScheme
+			ModalBottomSheet(
+				onDismissRequest = onBack,
+				sheetState = sheetState,
+				properties = properties,
+				containerColor = currentColorScheme.surface,
+				contentWindowInsets = { WindowInsets.systemBars.only(WindowInsetsSides.Top) },
+				dragHandle = {
+					Surface(
+						modifier = Modifier.padding(vertical = 5.dp),
+						color = currentColorScheme.primary,
+						shape = ContinuousCapsule,
+					) {
+						Box(Modifier.size(width = 32.dp, height = 4.dp))
+					}
 				}
-			}
-		) {
-			CompositionLocalProvider(
-				LocalLifecycleOwner provides lifecycleOwner,
-				LocalSheetState provides sheetState
 			) {
-				entry.Content()
+				CompositionLocalProvider(
+					LocalLifecycleOwner provides lifecycleOwner,
+					LocalSheetState provides sheetState
+				) {
+					entry.Content()
+				}
 			}
 		}
 	}
@@ -104,10 +130,12 @@ class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 	}
 
 	companion object {
-		object PropertiesKey : NavMetadataKey<ModalBottomSheetProperties>
-
 		fun bottomSheet(
-			sheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties()
-		) = metadata { put(PropertiesKey, sheetProperties) }
+			sheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
+			coverArtId: String? = null,
+		) = metadata {
+			put(PropertiesKey, sheetProperties)
+			coverArtId?.let { put(CoverArtIdKey, it) }
+		}
 	}
 }

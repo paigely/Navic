@@ -202,6 +202,7 @@ fun SongListScreenItem(
 				}
 			)
 			if (selected) {
+				val isPlayerCurrent = backStack.any { it is Screen.NowPlaying }
 				SongSheet(
 					onDismissRequest = onDeselect,
 					song = song,
@@ -232,6 +233,7 @@ fun SongListScreenItem(
 					onDownload = onDownload,
 					onCancelDownload = onCancelDownload,
 					onDeleteDownload = onDeleteDownload,
+					useSongTheme = isPlayerCurrent
 				)
 			}
 		}

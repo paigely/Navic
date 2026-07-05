@@ -4,14 +4,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,11 +63,14 @@ fun PlaybackSpeedScreen() {
 			.padding(horizontal = 12.dp, vertical = 4.dp)
 			.fillMaxWidth()
 			.clip(ContinuousRoundedRectangle(topStart = 16.dp, topEnd = 16.dp)),
-		state = draggableState.listState
+		state = draggableState.listState,
+		contentPadding = WindowInsets.systemBars
+			.only(WindowInsetsSides.Bottom)
+			.asPaddingValues()
 	) {
 		item {
 			Row(
-				modifier = Modifier.fillMaxWidth(),
+				modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
 				verticalAlignment = Alignment.CenterVertically
 			) {
 				Slider(
@@ -71,7 +80,12 @@ fun PlaybackSpeedScreen() {
 						player.setPlaybackSpeed(snappedValue)
 					},
 					valueRange = 0.5f..2.0f,
-					modifier = Modifier.weight(1f)
+					modifier = Modifier.weight(1f),
+					colors = SliderDefaults.colors(
+						thumbColor = MaterialTheme.colorScheme.primary,
+						activeTrackColor = MaterialTheme.colorScheme.primary,
+						inactiveTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.24f)
+					)
 				)
 			}
 
@@ -84,18 +98,24 @@ fun PlaybackSpeedScreen() {
 				horizontalAlignment = Alignment.CenterHorizontally,
 				verticalArrangement = Arrangement.Center
 			) {
-				Text("${selectedSpeed}x")
+				Text(
+					text = "${selectedSpeed}x",
+					style = MaterialTheme.typography.titleMedium,
+					color = MaterialTheme.colorScheme.primary
+				)
 
 				Row(
-					modifier = Modifier.fillMaxWidth(),
+					modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.Center
 				) {
 					playbackSpeeds.forEach { speed ->
+						val isSelected = speed == selectedSpeed
 						SurfaceButton(
 							modifier = Modifier.weight(1f),
 							onClick = { player.setPlaybackSpeed(speed) },
-							text = "$speed"
+							text = "$speed",
+							isSelected = isSelected
 						)
 					}
 				}
@@ -108,14 +128,15 @@ fun PlaybackSpeedScreen() {
 fun SurfaceButton(
 	modifier: Modifier,
 	onClick: () -> Unit,
-	text: String
+	text: String,
+	isSelected: Boolean = false
 ) {
 	Surface(
 		modifier = modifier.padding(4.dp),
 		shape = ContinuousCapsule,
 		onClick = onClick,
-		color = MaterialTheme.colorScheme.surfaceContainerHigh,
-		contentColor = MaterialTheme.colorScheme.onSurface
+		color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+		contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
 	) {
 		Column(
 			modifier = Modifier.padding(8.dp),

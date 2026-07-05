@@ -321,7 +321,7 @@ private fun entryProvider(
 		entry<Screen.CollectionDetail>(metadata = detailPane("root")) { key ->
 			CollectionDetailScreen(key.collectionId, key.tab)
 		}
-		entry<Screen.SongDetail>(metadata = detailPane("root")) { key ->
+		entry<Screen.SongDetail>(metadata = BottomSheetSceneStrategy.bottomSheet(coverArtId = "")) { key ->
 			SongDetailScreen(key.songId)
 		}
 		entry<Screen.Search>(metadata = navtabMetadata) { key ->
