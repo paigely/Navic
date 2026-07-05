@@ -31,12 +31,18 @@ import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_from_queue
 import navic.composeapp.generated.resources.action_reorder
+import navic.composeapp.generated.resources.info_explicit
 import navic.composeapp.generated.resources.info_not_available_offline
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Delete
 import paige.navic.icons.outlined.DragHandle
+import paige.navic.icons.outlined.Lock
 import paige.navic.icons.outlined.Offline
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
@@ -60,7 +66,10 @@ fun QueueScreenItem(
 	isOffline: Boolean = false,
 	isDownloaded: Boolean = false
 ) {
-	val canPlay = !isOffline || isDownloaded
+	val preferenceManager = koinInject<PreferenceManager>()
+	val isExplicit = song.explicitStatus == DomainExplicitStatus.Explicit
+		&& preferenceManager.explicitContentPlayback != ExplicitContentPlayback.Allowed
+	val maybeUnavailable = isOffline && !isDownloaded
 
 	val elevation by animateDpAsState(
 		targetValue = if (isDragging) 8.dp else 0.dp,
@@ -108,10 +117,12 @@ fun QueueScreenItem(
 					imageVector = Icons.Outlined.Delete,
 					contentDescription = stringResource(Res.string.action_remove_from_queue),
 					tint = MaterialTheme.colorScheme.onErrorContainer,
-					modifier = Modifier.align(when (dismissState.dismissDirection) {
-						SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
-						else -> Alignment.CenterEnd
-					})
+					modifier = Modifier.align(
+						when (dismissState.dismissDirection) {
+							SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+							else -> Alignment.CenterEnd
+						}
+					)
 				)
 			}
 		},
@@ -122,7 +133,7 @@ fun QueueScreenItem(
 			) {
 				SegmentedListItem(
 					onClick = onClick,
-					enabled = canPlay,
+					enabled = !isExplicit,
 					colors = ListItemDefaults.colors(
 						containerColor = color,
 						selectedContainerColor = color,
@@ -147,7 +158,14 @@ fun QueueScreenItem(
 							horizontalArrangement = Arrangement.spacedBy(8.dp),
 							verticalAlignment = Alignment.CenterVertically
 						) {
-							if (!canPlay) {
+							if (isExplicit) {
+								Icon(
+									Icons.Outlined.Lock,
+									stringResource(Res.string.info_explicit),
+									modifier = Modifier.size(20.dp)
+								)
+							}
+							if (maybeUnavailable) {
 								Icon(
 									Icons.Outlined.Offline,
 									stringResource(Res.string.info_not_available_offline),

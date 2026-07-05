@@ -21,7 +21,7 @@ class SleepTimerManager(
 		private set
 
 	val timeLeft: Duration?
-		get() = endTimeStamp?.let{ it - Clock.System.now() }
+		get() = endTimeStamp?.let { it - Clock.System.now() }
 
 	fun startTimer(duration: Duration) {
 		job?.cancel()

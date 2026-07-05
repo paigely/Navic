@@ -14,7 +14,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_no_shares
 import navic.composeapp.generated.resources.title_shares
@@ -52,7 +50,6 @@ fun ShareListScreen() {
 	val viewModel = koinViewModel<ShareListViewModel>()
 	val sharesState by viewModel.sharesState.collectAsState()
 	val isRefreshingFlow by viewModel.isRefreshing.collectAsState()
-	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 	var deletionId by remember { mutableStateOf<String?>(null) }
 	val preferenceManager = koinInject<PreferenceManager>()
 
@@ -75,9 +72,7 @@ fun ShareListScreen() {
 		) {
 			Crossfade(sharesState) { stateValue ->
 				LazyVerticalGrid(
-					modifier = Modifier
-						.fillMaxSize()
-						.nestedScroll(scrollBehavior.nestedScrollConnection),
+					modifier = Modifier.fillMaxSize(),
 					columns = GridCells.Fixed(1),
 					contentPadding = contentPadding.withoutTop(),
 					state = viewModel.gridState,

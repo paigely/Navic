@@ -9,14 +9,13 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.header
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 class SessionManager(
 	private val settings: Settings,
 	private val preferenceManager: PreferenceManager
 ) {
-	private val _isLoggedIn = MutableStateFlow(false)
-	val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
+	val isLoggedIn: StateFlow<Boolean>
+		field = MutableStateFlow(false)
 
 	var api: SubsonicClient = createClient(
 		instanceUrl = settings.getString("instanceUrl", ""),
@@ -26,7 +25,7 @@ class SessionManager(
 		private set
 
 	init {
-		_isLoggedIn.value = settings.getStringOrNull("username") != null
+		isLoggedIn.value = settings.getStringOrNull("username") != null
 	}
 
 	private fun createClient(
@@ -75,13 +74,13 @@ class SessionManager(
 		settings["password"] = password
 
 		api = client
-		_isLoggedIn.value = true
+		isLoggedIn.value = true
 	}
 
 	fun logout() {
 		settings["username"] = null
 		settings["password"] = null
-		_isLoggedIn.value = false
+		isLoggedIn.value = false
 	}
 
 	fun refreshClient() {

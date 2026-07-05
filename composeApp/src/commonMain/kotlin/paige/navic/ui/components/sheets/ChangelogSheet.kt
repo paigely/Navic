@@ -32,7 +32,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -48,10 +48,10 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
-import paige.navic.util.core.Logger
-import paige.navic.util.core.PlatformContext
 import paige.navic.ui.components.common.Markdown
 import paige.navic.ui.theme.defaultFont
+import paige.navic.util.core.Logger
+import paige.navic.util.core.PlatformContext
 
 @Serializable
 data class GitHubRelease(
@@ -63,8 +63,8 @@ data class GitHubRelease(
 class ChangelogViewModel(
 	platformContext: PlatformContext
 ) : ViewModel() {
-	private val _release = MutableStateFlow<GitHubRelease?>(null)
-	val release = _release.asStateFlow()
+	val release: StateFlow<GitHubRelease?>
+		field = MutableStateFlow(null)
 
 	private val updateClient = HttpClient {
 		install(ContentNegotiation) {
@@ -78,7 +78,7 @@ class ChangelogViewModel(
 
 	fun checkForUpdates(currentVersion: String) {
 		viewModelScope.launch {
-			_release.value = try {
+			release.value = try {
 				val release: GitHubRelease =
 					updateClient.get("https://api.github.com/repos/ssalggnikool/Navic/releases/latest")
 						.body()
@@ -99,7 +99,7 @@ class ChangelogViewModel(
 	}
 
 	fun clearRelease() {
-		_release.value = null
+		release.value = null
 	}
 }
 

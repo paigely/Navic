@@ -6,15 +6,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import paige.navic.domain.manager.SyncManager
 import paige.navic.data.database.dao.SyncActionDao
-import paige.navic.domain.repositories.DbRepository
-import paige.navic.domain.repositories.SongRepository
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.manager.SyncManager
+import paige.navic.domain.repositories.DbRepository
+import paige.navic.domain.repositories.SongRepository
 
 class SettingsDataStorageViewModel(
 	private val syncManager: SyncManager,
@@ -32,8 +32,8 @@ class SettingsDataStorageViewModel(
 			initialValue = syncManager.syncState.value
 		)
 
-	private val _pendingActionCount = MutableStateFlow(0)
-	val pendingActionCount = _pendingActionCount.asStateFlow()
+	val pendingActionCount: StateFlow<Int>
+		field = MutableStateFlow(0)
 
 	val downloadCount = downloadManager.downloadCount.stateIn(
 		viewModelScope, SharingStarted.WhileSubscribed(5000), 0
@@ -52,7 +52,7 @@ class SettingsDataStorageViewModel(
 
 	private fun loadPendingActions() {
 		viewModelScope.launch(Dispatchers.IO) {
-			_pendingActionCount.value = syncDao.getPendingActions().size
+			pendingActionCount.value = syncDao.getPendingActions().size
 		}
 	}
 
@@ -64,7 +64,7 @@ class SettingsDataStorageViewModel(
 		viewModelScope.launch(Dispatchers.IO) {
 			dbRepository.removeEverything()
 			syncManager.stopPeriodicSync()
-			_pendingActionCount.value = 0
+			pendingActionCount.value = 0
 		}
 		triggerManualSync()
 	}
@@ -72,7 +72,7 @@ class SettingsDataStorageViewModel(
 	fun removeAllActions() {
 		viewModelScope.launch(Dispatchers.IO) {
 			syncDao.clearAllActions()
-			_pendingActionCount.value = 0
+			pendingActionCount.value = 0
 		}
 	}
 

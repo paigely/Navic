@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -29,7 +30,10 @@ fun SearchScreenChips(
 ) {
 	val platformContext = LocalPlatformContext.current
 	Row(
-		modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(horizontal = 16.dp)
+			.selectableGroup(),
 		horizontalArrangement = Arrangement.spacedBy(8.dp)
 	) {
 		SearchCategory.entries.forEach { category ->

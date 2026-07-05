@@ -17,12 +17,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_lyrics
 import navic.composeapp.generated.resources.action_navigate_back
@@ -50,6 +52,7 @@ import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingArtworkPager
 import paige.navic.ui.screens.nowPlaying.components.rows.NowPlayingControlsRow
 import paige.navic.ui.screens.nowPlaying.viewmodels.NowPlayingViewModel
+import paige.navic.util.ui.LocalSheetState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -70,6 +73,18 @@ fun NowPlayingScreen() {
 	val songIsStarred by viewModel.songIsStarred.collectAsStateWithLifecycle()
 	val songRating by viewModel.songRating.collectAsStateWithLifecycle()
 
+	val sheetState = LocalSheetState.current
+	val closeScope = rememberCoroutineScope()
+	val animateToDismiss = dropUnlessResumed {
+		closeScope.launch {
+			sheetState.hide()
+		}.invokeOnCompletion {
+			if (!sheetState.isVisible) {
+				backStack.remove(Screen.NowPlaying)
+			}
+		}
+	}
+
 	SheetScaffold(
 		toolbar = { windowInsets ->
 			SheetToolbar(
@@ -80,7 +95,7 @@ fun NowPlayingScreen() {
 				},
 				navigationIcon = {
 					TopBarButton(
-						onClick = { backStack.remove(Screen.NowPlaying) },
+						onClick = animateToDismiss,
 						content = {
 							Icon(
 								imageVector = Icons.Outlined.KeyboardArrowDown,

@@ -1,23 +1,44 @@
 package paige.navic.domain.models
 
 import androidx.compose.runtime.Immutable
-import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.option_sort_by_year
-import navic.composeapp.generated.resources.option_sort_downloaded
-import navic.composeapp.generated.resources.option_sort_frequent
-import navic.composeapp.generated.resources.option_sort_newest
-import navic.composeapp.generated.resources.option_sort_random
-import navic.composeapp.generated.resources.option_sort_rating
-import navic.composeapp.generated.resources.option_sort_starred
-import org.jetbrains.compose.resources.StringResource
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Immutable
-enum class DomainSongListType(val displayName: StringResource) {
-	FrequentlyPlayed(Res.string.option_sort_frequent),
-	Newest(Res.string.option_sort_newest),
-	Starred(Res.string.option_sort_starred),
-	Random(Res.string.option_sort_random),
-	Downloaded(Res.string.option_sort_downloaded),
-	Rating(Res.string.option_sort_rating),
-	Year(Res.string.option_sort_by_year)
+sealed class DomainSongListType() {
+	@Serializable
+	@Immutable
+	data object FrequentlyPlayed : DomainSongListType()
+
+	@Serializable
+	@Immutable
+	data object Newest : DomainSongListType()
+
+	@Serializable
+	@Immutable
+	data object Starred : DomainSongListType()
+
+	@Serializable
+	@Immutable
+	data object Random : DomainSongListType()
+
+	@Serializable
+	@Immutable
+	data object Downloaded : DomainSongListType()
+
+	@Serializable
+	@Immutable
+	data object Rating : DomainSongListType()
+
+	@Serializable
+	@Immutable
+	data object Year : DomainSongListType()
+
+	@Serializable
+	@Immutable
+	data class ByGenre(val genre: String) : DomainSongListType()
+
+	@Serializable
+	@Immutable
+	data class ByArtist(val artistId: String) : DomainSongListType()
 }

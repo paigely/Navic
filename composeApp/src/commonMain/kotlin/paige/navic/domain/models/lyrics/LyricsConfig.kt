@@ -11,6 +11,9 @@ data class LyricsConfig(
 	),
 	val lyricsPlusMirrors: List<String> = listOf(
 		"https://lyricsplus.atomix.one",
+		"https://lyricsplus.binimum.org",
+		"https://lyricsplus.prjktla.my.id",
+		"https://lyrics-plus-backend.vercel.app",
 		"https://lyricsplus-seven.vercel.app",
 		"https://lyricsplus.prjktla.workers.dev"
 	),

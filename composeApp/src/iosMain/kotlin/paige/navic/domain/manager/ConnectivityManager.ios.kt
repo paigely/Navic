@@ -3,8 +3,8 @@ package paige.navic.domain.manager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
@@ -42,10 +42,12 @@ actual class ConnectivityManager(
 		val monitor = nw_path_monitor_create()
 
 		nw_path_monitor_set_update_handler(monitor) { path ->
-			trySend(NetworkStatus(
-				isOnline = nw_path_get_status(path) == nw_path_status_satisfied,
-				isCellular = nw_path_uses_interface_type(path, nw_interface_type_cellular)
-			))
+			trySend(
+				NetworkStatus(
+					isOnline = nw_path_get_status(path) == nw_path_status_satisfied,
+					isCellular = nw_path_uses_interface_type(path, nw_interface_type_cellular)
+				)
+			)
 		}
 		nw_path_monitor_set_queue(monitor, dispatch_get_main_queue())
 		nw_path_monitor_start(monitor)

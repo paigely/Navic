@@ -1,6 +1,7 @@
 package paige.navic.ui.screens.settings.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -22,8 +23,9 @@ import paige.navic.icons.outlined.SwitchOn
 fun SettingSwitch(
 	modifier: Modifier = Modifier,
 	checked: Boolean,
-	onCheckedChange: (Boolean) -> Unit,
-	enabled: Boolean = true
+	onCheckedChange: ((Boolean) -> Unit)?,
+	enabled: Boolean = true,
+	interactionSource: MutableInteractionSource? = null
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
 	Switch(
@@ -31,6 +33,7 @@ fun SettingSwitch(
 		checked = checked,
 		onCheckedChange = onCheckedChange,
 		enabled = enabled,
+		interactionSource = interactionSource,
 		colors = SwitchDefaults.colors(
 			uncheckedBorderColor = Color.Transparent,
 			uncheckedThumbColor = Color.White

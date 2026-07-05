@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainRadio
@@ -17,9 +17,8 @@ class RadioListViewModel(
 	private val repository: RadioRepository,
 	private val sessionManager: SessionManager
 ) : ViewModel() {
-	private val _radiosState =
-		MutableStateFlow<UiState<ImmutableList<DomainRadio>>>(UiState.Loading())
-	val radiosState = _radiosState.asStateFlow()
+	val radiosState: StateFlow<UiState<ImmutableList<DomainRadio>>>
+		field = MutableStateFlow<UiState<ImmutableList<DomainRadio>>>(UiState.Loading())
 
 	val gridState = LazyGridState()
 
@@ -32,12 +31,12 @@ class RadioListViewModel(
 	fun refreshRadios(fullRefresh: Boolean) {
 		viewModelScope.launch {
 			repository.getRadiosFlow(fullRefresh).collect {
-				_radiosState.value = it
+				radiosState.value = it
 			}
 		}
 	}
 
 	fun clearError() {
-		_radiosState.value = UiState.Success(_radiosState.value.data ?: persistentListOf())
+		radiosState.value = UiState.Success(radiosState.value.data ?: persistentListOf())
 	}
 }

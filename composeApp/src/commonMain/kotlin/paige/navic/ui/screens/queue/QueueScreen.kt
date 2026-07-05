@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,7 +26,9 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousRoundedRectangle
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_clear_queue
 import navic.composeapp.generated.resources.count_songs
@@ -35,18 +39,19 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
-import paige.navic.ui.navigation.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ContentUnavailable
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.queue.components.QueueScreenItem
 import paige.navic.ui.screens.queue.viewmodels.QueueViewModel
+import paige.navic.util.ui.LocalSheetState
 import paige.navic.util.ui.draggableItemsIndexed
 import paige.navic.util.ui.rememberDraggableListState
 import kotlin.time.DurationUnit
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun QueueScreen() {
 	val viewModel = koinViewModel<QueueViewModel>()
@@ -100,6 +105,18 @@ fun QueueScreen() {
 		queue.size
 	)
 
+	val sheetState = LocalSheetState.current
+	val closeScope = rememberCoroutineScope()
+	val animateToDismiss = {
+		closeScope.launch {
+			sheetState.hide()
+		}.invokeOnCompletion {
+			if (!sheetState.isVisible) {
+				backStack.remove(Screen.Queue)
+			}
+		}
+	}
+
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
@@ -152,11 +169,11 @@ fun QueueScreen() {
 					isSelected = playerState.currentIndex == index,
 					isDragging = isDragging,
 					draggableState = draggableState,
-					onClick = {
+					onClick = dropUnlessResumed {
 						platformContext.clickSound()
 						if (playerState.currentIndex != index) {
 							player.playAt(index)
-							backStack.remove(Screen.Queue)
+							animateToDismiss()
 						}
 					},
 					onRemove = {

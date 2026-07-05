@@ -22,7 +22,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.joinAll
@@ -72,6 +71,8 @@ class DownloadManager(
 	private val downloadSemaphore =
 		Semaphore(10)// idk a good number, maybe u should be able to choose
 
+	private var libraryDownloadJob: Job? = null
+
 	val allDownloads = downloadDao.getAllDownloads().map { it.toImmutableList() }
 	val downloadCount = downloadDao.getDownloadsCount()
 	val downloadSize = allDownloads.map { downloads ->
@@ -80,19 +81,19 @@ class DownloadManager(
 			.sumOf { storageManager.getFileSize(it.filePath!!) }
 	}
 
-	private val _downloadedSongs = MutableStateFlow<Map<String, String>>(emptyMap())
-	val downloadedSongs: StateFlow<Map<String, String>> = _downloadedSongs.asStateFlow()
+	val downloadedSongs: StateFlow<Map<String, String>>
+		field = MutableStateFlow(emptyMap())
 
-	private var libraryDownloadJob: Job? = null
-	private val _isDownloadingLibrary = MutableStateFlow(false)
-	val isDownloadingLibrary: StateFlow<Boolean> = _isDownloadingLibrary.asStateFlow()
-	private val _libraryDownloadProgress = MutableStateFlow(0f)
-	val libraryDownloadProgress: StateFlow<Float> = _libraryDownloadProgress.asStateFlow()
+	val isDownloadingLibrary: StateFlow<Boolean>
+		field = MutableStateFlow(false)
+
+	val libraryDownloadProgress: StateFlow<Float>
+		field = MutableStateFlow(0f)
 
 	init {
 		scope.launch {
 			allDownloads.collectLatest { downloads ->
-				_downloadedSongs.value = downloads
+				downloadedSongs.value = downloads
 					.filter { it.status == DownloadStatus.DOWNLOADED && it.filePath != null }
 					.associate { it.songId to it.filePath!! }
 			}
@@ -100,12 +101,13 @@ class DownloadManager(
 	}
 
 	fun getDownloadedFilePath(songId: String): String? {
-		return _downloadedSongs.value[songId]
+		return downloadedSongs.value[songId]
 	}
 
 	fun downloadSong(song: DomainSong): Job {
 		val job = scope.launch(Dispatchers.IO) {
-			val alreadyActive = activeDownloadsMutex.withLock { activeDownloads.containsKey(song.id) }
+			val alreadyActive =
+				activeDownloadsMutex.withLock { activeDownloads.containsKey(song.id) }
 			if (alreadyActive) return@launch
 
 			try {
@@ -128,12 +130,12 @@ class DownloadManager(
 	}
 
 	fun downloadEntireLibrary(songs: List<DomainSong>) {
-		if (_isDownloadingLibrary.value) return
+		if (isDownloadingLibrary.value) return
 
 		libraryDownloadJob = scope.launch(Dispatchers.IO) {
 			try {
-				_isDownloadingLibrary.value = true
-				_libraryDownloadProgress.value = 0f
+				isDownloadingLibrary.value = true
+				libraryDownloadProgress.value = 0f
 
 				notificationManager.showProgressNotification(
 					id = NotificationIds.DOWNLOAD_LIBRARY,
@@ -147,8 +149,8 @@ class DownloadManager(
 				val totalToDownload = songsToDownload.size
 
 				if (totalToDownload == 0) {
-					_isDownloadingLibrary.value = false
-					_libraryDownloadProgress.value = 1f
+					isDownloadingLibrary.value = false
+					libraryDownloadProgress.value = 1f
 					return@launch
 				}
 
@@ -167,7 +169,7 @@ class DownloadManager(
 							progressMutex.withLock {
 								processedCount++
 								val progress = processedCount.toFloat() / totalToDownload.toFloat()
-								_libraryDownloadProgress.value = progress
+								libraryDownloadProgress.value = progress
 
 								notificationManager.showProgressNotification(
 									id = NotificationIds.DOWNLOAD_LIBRARY,
@@ -182,12 +184,11 @@ class DownloadManager(
 				}
 
 				workers.joinAll()
-				_isDownloadingLibrary.value = false
+				isDownloadingLibrary.value = false
 
-			} catch (e: CancellationException) {
-				_isDownloadingLibrary.value = false
-				_libraryDownloadProgress.value = 0f
-				throw e
+			} catch (_: CancellationException) {
+				isDownloadingLibrary.value = false
+				libraryDownloadProgress.value = 0f
 			} finally {
 				notificationManager.cancelNotification(NotificationIds.DOWNLOAD_LIBRARY)
 			}
@@ -197,8 +198,8 @@ class DownloadManager(
 	fun cancelAllActiveDownloads() {
 		libraryDownloadJob?.cancel()
 		libraryDownloadJob = null
-		_isDownloadingLibrary.value = false
-		_libraryDownloadProgress.value = 0f
+		isDownloadingLibrary.value = false
+		libraryDownloadProgress.value = 0f
 
 		scope.launch(Dispatchers.IO) {
 			val jobsToCancel = activeDownloadsMutex.withLock {

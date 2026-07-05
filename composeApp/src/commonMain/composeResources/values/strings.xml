@@ -56,6 +56,9 @@
 	<string name="title_select_lyrics">Select Lyrics</string>
 	<string name="title_advanced">Advanced Transcoding</string>
 	<string name="title_logs">Logs</string>
+	<string name="title_palette">Palette</string>
+	<string name="title_theme_mode">Theme mode</string>
+	<string name="title_account">Account</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing and lyrics views</string>
@@ -74,13 +77,14 @@
 	<string name="subtitle_check_for_updates">It is recommended to leave this on, as some updates provide important bug fixes</string>
 	<string name="subtitle_offline_mode">Dictates when the app should go in an offline mode. Requires application restart</string>
 	<string name="subtitle_streaming_quality">Adjust the quality of streamed music</string>
-	<string name="subtitle_max_bitrates">Max Bitrates</string>
+	<string name="subtitle_dynamic_album_view_theme">Dynamically theme the album view based on the album's cover artwork</string>
+	<string name="subtitle_dynamic_artist_view_theme">Dynamically theme the artist view based on the artist's image</string>
 
 	<string name="option_off">Off</string>
 	<string name="option_now_playing_background_style">Background style</string>
 	<string name="option_now_playing_background_style_static">Static</string>
 	<string name="option_now_playing_background_style_dynamic">Dynamic</string>
-	<string name="option_accent_colour">Accent colour</string>
+	<string name="option_accent_colour">Palette accent</string>
 	<string name="option_now_playing_song_info">Show technical song info</string>
 	<string name="option_now_playing_slider_style">Slider style</string>
 	<string name="option_now_playing_slider_style_flat">Flat</string>
@@ -89,6 +93,7 @@
 	<string name="option_now_playing_slider_style_yoyo">Yoyo</string>
 	<string name="option_swipe_to_skip">Swipe to change songs</string>
 	<string name="option_artwork_shape">Artwork shape</string>
+	<string name="option_artist_image_shape">Artist image shape</string>
 	<string name="option_cover_art_size">Cover artwork size</string>
 	<string name="option_use_marquee_text">Text auto-scroll speed</string>
 	<string name="option_alphabetical_scroll">Alphabetical scrolling</string>
@@ -149,10 +154,20 @@
 	<string name="option_quality_medium">Medium</string>
 	<string name="option_quality_high">High</string>
 	<string name="option_quality_lossless">Lossless (no transcoding)</string>
-	<string name="option_enable_custom_bitrates">Enable Custom Bitrates</string>
-	<string name="option_max_bitrate_wifi">Max Bitrate WiFi (kbps)</string>
+	<string name="option_stream_custom_quality">Use custom streaming quality</string>
+	<string name="option_max_bitrate_wifi">Max Bitrate Wi-Fi (kbps)</string>
 	<string name="option_max_bitrate_cellular">Max Bitrate Cellular (kbps)</string>
+	<string name="option_stream_format_wifi">Stream Format Wi-Fi</string>
+	<string name="option_stream_format_cellular">Stream Format Cellular</string>
 	<string name="option_cover_art_quality">Cover art quality</string>
+	<string name="option_palette_style">Palette style</string>
+	<string name="option_palette_specification">Palette specification</string>
+	<string name="option_explicit_playback">Explicit content playback</string>
+	<string name="option_explicit_playback_allowed">Allowed</string>
+	<string name="option_explicit_playback_skip">Skip explicit songs</string>
+	<string name="option_explicit_playback_skip_session">Skip explicit songs for this session</string>
+	<string name="option_dynamic_album_view_theme">Dynamic album view theme</string>
+	<string name="option_dynamic_artist_view_theme">Dynamic artist view theme</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>
@@ -168,7 +183,7 @@
 	<string name="info_progress">Progress</string>
 	<string name="info_in_use">(in use)</string>
 	<string name="info_explicit">Explicit</string>
-	<string name="info_bitrate_default_zero">Leaving this empty defaults to 0. Letting the server pick.</string>
+	<string name="info_transcoding_defaults">Leaving any of these empty will omit them and allow the server to decide.</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>
@@ -188,6 +203,7 @@
 	<string name="option_navigation_bar_label_visibility">Label visibility</string>
 	<string name="option_navigation_bar_label_visibility_always">Always</string>
 	<string name="option_navigation_bar_label_visibility_only_selected">Only selected</string>
+	<string name="option_navigation_bar_label_visibility_never">Never</string>
 	<string name="option_navigation_bar_tabs">Reorder navigation bar tabs</string>
 
 	<string name="option_mini_player_style">Mini player style</string>
@@ -199,15 +215,10 @@
 	<string name="option_mini_player_progress_style_seekable">Seekable</string>
 
 	<string name="theme_dynamic">Dynamic</string>
-	<string name="theme_subtitle_dynamic">Available on Android 12 and above</string>
 	<string name="theme_seeded">Tinted</string>
-	<string name="theme_subtitle_seeded">One colour for all</string>
 	<string name="theme_ios">Cupertino</string>
-	<string name="theme_subtitle_ios">A city in California</string>
 	<string name="theme_apple_music">Music.app</string>
-	<string name="theme_subtitle_apple_music">A theme with red/pink highlights</string>
 	<string name="theme_spotify">Spotlight</string>
-	<string name="theme_subtitle_spotify">A theme with green highlights</string>
 
 	<string name="theme_mode_system">System</string>
 	<string name="theme_mode_dark">Dark</string>
@@ -255,6 +266,9 @@
 
 	<string name="action_ok">OK</string>
 	<string name="action_play">Play</string>
+	<string name="action_next_song">Next song</string>
+	<string name="action_previous_song">Previous song</string>
+	<string name="action_pause">Pause</string>
 	<string name="action_new">New</string>
 	<string name="action_shuffle">Shuffle</string>
 	<string name="action_repeat">Repeat</string>
@@ -275,7 +289,7 @@
 	<string name="action_sleep_timer_enabled">Sleep timer - %1$s left </string>
 	<string name="action_disable_sleep_timer">Turn off timer</string>
 	<string name="option_playback_speed">Playback speed</string>
-	<string name="action_navigate_back">Back</string>
+	<string name="action_navigate_back">Navigate up</string>
 	<string name="action_log_out">Logout</string>
 	<string name="action_log_in">Log in</string>
 	<string name="action_view_shares">Shares</string>
@@ -391,6 +405,9 @@
 	<string name="info_login_description_end">instance.</string>
 	<string name="info_exception_handler">This will immediately crash the application. Are you sure?</string>
 	<string name="info_streaming_quality">Higher quality presets will use more data. Transcoding can severely impact load times and cause lyrics to become unsynced. Select Lossless if you encounter any issues.</string>
+	<string name="info_repeat_off">Repeat off</string>
+	<string name="info_repeat_one">Repeat one</string>
+	<string name="info_repeat_all">Repeat all</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>

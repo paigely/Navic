@@ -114,7 +114,8 @@ class ScrobbleManager(
 		scope.launch(Dispatchers.IO) {
 			try {
 				sessionManager.api.scrobble(songId, submission = false)
-			} catch (_: Exception) { }
+			} catch (_: Exception) {
+			}
 		}
 	}
 }

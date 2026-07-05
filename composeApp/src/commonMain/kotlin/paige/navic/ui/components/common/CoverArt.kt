@@ -22,6 +22,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,8 +41,8 @@ import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Error
-import paige.navic.util.core.Logger
 import paige.navic.ui.theme.defaultFont
+import paige.navic.util.core.Logger
 import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 
 @Composable
@@ -57,7 +59,11 @@ fun CoverArt(
 	shape: Shape? = null
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
-	val shape = shape ?: preferenceManager.coverArtShape.shape
+	val shape = shape ?: if (!coverArtId.orEmpty().startsWith("ar-")) {
+		preferenceManager.coverArtShape.shape
+	} else {
+		preferenceManager.artistImageShape.shape
+	}
 	val coilPlatformContext = LocalCoilPlatformContext.current
 	val customHeaders = preferenceManager.customHeaders
 	val sessionManager = koinInject<SessionManager>()
@@ -81,16 +87,20 @@ fun CoverArt(
 		.shadow(shadowElevation, shape)
 		.clip(shape)
 		.background(MaterialTheme.colorScheme.surfaceContainer)
-		.then(if (onClick != null)
-			Modifier.combinedClickable(
-				onClick = onClick,
-				onLongClick = onLongClick,
-				interactionSource = interactionSource
-			)
-		else Modifier)
-		.then(if (interactionSource != null)
-			Modifier.indication(interactionSource, ripple())
-		else Modifier)
+		.then(
+			if (onClick != null)
+				Modifier.combinedClickable(
+					onClick = onClick,
+					onLongClick = onLongClick,
+					interactionSource = interactionSource
+				)
+			else Modifier
+		)
+		.then(
+			if (interactionSource != null)
+				Modifier.indication(interactionSource, ripple())
+			else Modifier
+		)
 
 	if (coverArtId.isNullOrBlank()) return Box(commonModifier)
 	SubcomposeAsyncImage(
@@ -119,7 +129,8 @@ fun CoverArt(
 							minFontSize = 1.sp,
 							maxFontSize = 14.sp
 						),
-						fontFamily = defaultFont(grade = 10, round = 100f)
+						fontFamily = defaultFont(grade = 10, round = 100f),
+						modifier = Modifier.semantics { hideFromAccessibility() }
 					)
 				}
 			}

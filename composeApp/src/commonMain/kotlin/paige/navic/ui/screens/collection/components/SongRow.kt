@@ -44,17 +44,21 @@ import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_play_next
 import navic.composeapp.generated.resources.info_download_failed
 import navic.composeapp.generated.resources.info_downloaded
+import navic.composeapp.generated.resources.info_explicit
 import navic.composeapp.generated.resources.info_not_available_offline
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Star
 import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.DownloadOff
+import paige.navic.icons.outlined.Lock
 import paige.navic.icons.outlined.Offline
 import paige.navic.icons.outlined.Queue
 import paige.navic.icons.outlined.QueuePlayNext
@@ -64,8 +68,8 @@ import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.Waveform
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.util.core.InlineExplicitIcon
-import paige.navic.util.ui.segmentedShapes
 import paige.navic.util.core.toHoursMinutesSeconds
+import paige.navic.util.ui.segmentedShapes
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -82,12 +86,16 @@ fun CollectionDetailScreenSongRow(
 	download: DownloadEntity? = null,
 	isOffline: Boolean = false
 ) {
+	val preferenceManager = koinInject<PreferenceManager>()
+
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsStateWithLifecycle()
 
 	val isDownloaded = download?.status == DownloadStatus.DOWNLOADED
 	val isCurrentTrack = playerState.currentSong?.id == song.id
-	val canPlay = !isOffline || isDownloaded
+	val isExplicit = song.explicitStatus == DomainExplicitStatus.Explicit
+		&& preferenceManager.explicitContentPlayback != ExplicitContentPlayback.Allowed
+	val maybeUnavailable = isOffline && !isDownloaded
 
 	val dismissState = rememberSwipeToDismissBoxState()
 	val scope = rememberCoroutineScope()
@@ -103,6 +111,7 @@ fun CollectionDetailScreenSongRow(
 	SwipeToDismissBox(
 		modifier = Modifier.padding(horizontal = 16.dp, vertical = 1.5.dp),
 		state = dismissState,
+		gesturesEnabled = !isExplicit,
 		onDismiss = {
 			if (it == SwipeToDismissBoxValue.StartToEnd) {
 				if (playerState.queue.any { item -> item.id == song.id }) {
@@ -137,6 +146,7 @@ fun CollectionDetailScreenSongRow(
 							modifier = Modifier.align(Alignment.CenterStart)
 						)
 					}
+
 					SwipeToDismissBoxValue.EndToStart -> {
 						Icon(
 							imageVector = Icons.Outlined.QueuePlayNext,
@@ -145,12 +155,14 @@ fun CollectionDetailScreenSongRow(
 							modifier = Modifier.align(Alignment.CenterEnd)
 						)
 					}
+
 					else -> {}
 				}
 			}
 		}
 	) {
 		SegmentedListItem(
+			enabled = !isExplicit,
 			contentPadding = PaddingValues(14.dp),
 			onClick = onClick,
 			onLongClick = onLongClick,
@@ -198,7 +210,7 @@ fun CollectionDetailScreenSongRow(
 			},
 			trailingContent = {
 				Row(verticalAlignment = Alignment.CenterVertically) {
-					if(isStarred) {
+					if (isStarred) {
 						Icon(
 							Icons.Filled.Star,
 							null,
@@ -206,7 +218,15 @@ fun CollectionDetailScreenSongRow(
 						)
 						Spacer(Modifier.width(6.dp))
 					}
-					if (!canPlay) {
+					if (isExplicit) {
+						Icon(
+							Icons.Outlined.Lock,
+							stringResource(Res.string.info_explicit),
+							modifier = Modifier.size(20.dp)
+						)
+						Spacer(Modifier.width(6.dp))
+					}
+					if (maybeUnavailable) {
 						Icon(
 							Icons.Outlined.Offline,
 							stringResource(Res.string.info_not_available_offline),

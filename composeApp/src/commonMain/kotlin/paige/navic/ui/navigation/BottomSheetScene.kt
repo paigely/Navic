@@ -1,3 +1,6 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+@file:Suppress("UNCHECKED_CAST")
+
 package paige.navic.ui.navigation
 
 import androidx.compose.foundation.layout.Box
@@ -6,7 +9,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -23,26 +28,27 @@ import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import com.kyant.capsule.ContinuousCapsule
 import paige.navic.ui.components.sheets.ModalBottomSheet
-import paige.navic.ui.navigation.BottomSheetSceneStrategy.Companion.bottomSheet
+import paige.navic.util.ui.LocalSheetState
 
-/** An [OverlayScene] that renders an [entry] within a [ModalBottomSheet]. */
-@OptIn(ExperimentalMaterial3Api::class)
-internal data class BottomSheetScene<T : Any>(
-	override val key: T,
+class BottomSheetScene<T : Any>(
+	override val key: Any,
+	private val entry: NavEntry<T>,
 	override val previousEntries: List<NavEntry<T>>,
 	override val overlaidEntries: List<NavEntry<T>>,
-	private val entry: NavEntry<T>,
-	private val modalBottomSheetProperties: ModalBottomSheetProperties,
-	private val onBack: () -> Unit,
+	private val properties: ModalBottomSheetProperties,
+	private val onBack: () -> Unit
 ) : OverlayScene<T> {
+	override val entries = listOf(entry)
 
-	override val entries: List<NavEntry<T>> = listOf(entry)
+	lateinit var sheetState: SheetState
 
-	override val content: @Composable (() -> Unit) = {
+	override val content = @Composable {
+		sheetState = rememberModalBottomSheetState()
 		val lifecycleOwner = rememberLifecycleOwner()
 		ModalBottomSheet(
 			onDismissRequest = onBack,
-			properties = modalBottomSheetProperties,
+			sheetState = sheetState,
+			properties = properties,
 			dragHandle = {
 				Surface(
 					modifier = Modifier.padding(vertical = 5.dp),
@@ -53,52 +59,55 @@ internal data class BottomSheetScene<T : Any>(
 				}
 			}
 		) {
-			CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
+			CompositionLocalProvider(
+				LocalLifecycleOwner provides lifecycleOwner,
+				LocalSheetState provides sheetState
+			) {
 				entry.Content()
 			}
 		}
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other == null || this::class != other::class) return false
+
+		other as BottomSheetScene<*>
+
+		return key == other.key
+			&& entry == other.entry
+			&& properties == other.properties
+	}
+
+	override fun hashCode() = key.hashCode() * 31 +
+		entry.hashCode() * 31 +
+		properties.hashCode() * 31
+
+	// onRemove is intentionally not used, see the comment
+	// on LocalSheetState
 }
 
-/**
- * A [SceneStrategy] that displays entries that have added [bottomSheet] to their [NavEntry.metadata]
- * within a [ModalBottomSheet] instance.
- *
- * This strategy should always be added before any non-overlay scene strategies.
- */
-@OptIn(ExperimentalMaterial3Api::class)
 class BottomSheetSceneStrategy<T : Any> : SceneStrategy<T> {
 
 	override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
-		val lastEntry = entries.lastOrNull() ?: return null
-		val bottomSheetProperties = lastEntry.metadata[BottomSheetKey] ?: return null
-		return bottomSheetProperties.let { properties ->
-			@Suppress("UNCHECKED_CAST")
-			BottomSheetScene(
-				key = lastEntry.contentKey as T,
-				previousEntries = entries.dropLast(1),
-				overlaidEntries = entries.dropLast(1),
-				entry = lastEntry,
-				modalBottomSheetProperties = properties,
-				onBack = onBack
-			)
-		}
+		val entry = entries.lastOrNull() ?: return null
+		val properties = entry.metadata[PropertiesKey] ?: return null
+
+		return BottomSheetScene(
+			key = entry.contentKey as T,
+			entry = entry,
+			previousEntries = entries.dropLast(1),
+			overlaidEntries = entries.dropLast(1),
+			properties = properties,
+			onBack = onBack
+		)
 	}
 
 	companion object {
-		/**
-		 * Function to be called on the [NavEntry.metadata] to mark this entry as something that
-		 * should be displayed within a [ModalBottomSheet].
-		 *
-		 * @param modalBottomSheetProperties properties that should be passed to the containing
-		 * [ModalBottomSheet].
-		 */
-		fun bottomSheet(modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties()) =
-			metadata {
-				put(BottomSheetKey, modalBottomSheetProperties)
-			}
+		object PropertiesKey : NavMetadataKey<ModalBottomSheetProperties>
 
-		object BottomSheetKey : NavMetadataKey<ModalBottomSheetProperties>
+		fun bottomSheet(
+			sheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties()
+		) = metadata { put(PropertiesKey, sheetProperties) }
 	}
-
 }

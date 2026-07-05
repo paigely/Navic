@@ -7,14 +7,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import kotlinx.collections.immutable.toImmutableList
-import org.jetbrains.compose.resources.stringResource
+import kotlinx.collections.immutable.persistentListOf
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.models.DomainSongListType
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
 import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.components.sheets.SortSheet
+import paige.navic.util.core.label
 
 @Composable
 fun SongListScreenSortButton(
@@ -25,7 +25,17 @@ fun SongListScreenSortButton(
 	onSetReversed: (Boolean) -> Unit
 ) {
 	val platformContext = LocalPlatformContext.current
-	val entries = remember { DomainSongListType.entries.toImmutableList() }
+	val entries = remember {
+		persistentListOf(
+			DomainSongListType.FrequentlyPlayed,
+			DomainSongListType.Newest,
+			DomainSongListType.Starred,
+			DomainSongListType.Random,
+			DomainSongListType.Downloaded,
+			DomainSongListType.Rating,
+			DomainSongListType.Year
+		)
+	}
 	var expanded by remember { mutableStateOf(false) }
 	if (!nested) {
 		IconButton(onClick = {
@@ -52,7 +62,7 @@ fun SongListScreenSortButton(
 			selectedSorting = selectedSorting,
 			onSetSorting = onSetSorting,
 			selectedReversed = selectedReversed,
-			label = { stringResource(it.displayName) },
+			label = { it.label() },
 			onSetReversed = onSetReversed
 		)
 	}

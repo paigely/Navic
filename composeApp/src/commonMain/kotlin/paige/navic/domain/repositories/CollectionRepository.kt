@@ -1,6 +1,5 @@
 package paige.navic.domain.repositories
 
-import dev.zt64.subsonic.api.model.AlbumInfo as ApiAlbumInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +16,7 @@ import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.ui.core.UiState
+import dev.zt64.subsonic.api.model.AlbumInfo as ApiAlbumInfo
 
 class CollectionRepository(
 	private val albumDao: AlbumDao,

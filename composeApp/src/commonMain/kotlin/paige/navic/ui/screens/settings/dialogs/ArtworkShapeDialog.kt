@@ -23,28 +23,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
-import navic.composeapp.generated.resources.option_artwork_shape
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.CoverArtShape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ArtworkShapeDialog(
+	title: @Composable () -> Unit,
+	selection: CoverArtShape,
+	onSelect: (CoverArtShape) -> Unit,
 	presented: Boolean,
 	onDismissRequest: () -> Unit
 ) {
 	if (!presented) return
 
 	val platformContext = LocalPlatformContext.current
-	val preferenceManager = koinInject<PreferenceManager>()
 
 	AlertDialog(
-		title = {
-			Text(stringResource(Res.string.option_artwork_shape))
-		},
+		title = title,
 		text = {
 			Column(
 				modifier = Modifier
@@ -59,21 +56,28 @@ fun ArtworkShapeDialog(
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
 								platformContext.clickSound()
-								preferenceManager.coverArtShape = shape
+								onSelect(shape)
 								onDismissRequest()
 							},
 						horizontalArrangement = Arrangement.spacedBy(16.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						RadioButton(
-							selected = preferenceManager.coverArtShape == shape,
+							selected = selection == shape,
 							onClick = null
 						)
 						Box(
 							modifier = Modifier
 								.size(48.dp)
-								.background(MaterialTheme.colorScheme.primaryContainer, shape.decreasedShape)
-								.border(2.dp, MaterialTheme.colorScheme.primary, shape.decreasedShape)
+								.background(
+									MaterialTheme.colorScheme.primaryContainer,
+									shape.decreasedShape
+								)
+								.border(
+									2.dp,
+									MaterialTheme.colorScheme.primary,
+									shape.decreasedShape
+								)
 						)
 						Text(text = shape.name)
 					}

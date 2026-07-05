@@ -7,7 +7,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -47,8 +47,8 @@ class SyncManager(
 
 	private val fullSyncThreshold = 1.hours
 
-	private val _syncState = MutableStateFlow(SyncState())
-	val syncState = _syncState.asStateFlow()
+	val syncState: StateFlow<SyncState>
+		field = MutableStateFlow(SyncState())
 
 	init {
 		scope.launch {
@@ -66,7 +66,8 @@ class SyncManager(
 
 		scope.launch {
 			if (albumDao.getAlbumCount() == 0
-				|| preferenceManager.lastFullSyncTime <= 0L) {
+				|| preferenceManager.lastFullSyncTime <= 0L
+			) {
 				Logger.i("SyncManager", "Syncing now because we haven't synced before")
 				runSyncCycle()
 			}
@@ -89,7 +90,7 @@ class SyncManager(
 
 	fun stopPeriodicSync() {
 		syncJob?.cancel()
-		_syncState.value = SyncState(isSyncing = false)
+		syncState.value = SyncState(isSyncing = false)
 	}
 
 	fun enqueueAction(actionType: SyncActionType, itemId: String) {
@@ -109,12 +110,12 @@ class SyncManager(
 			if (currentTime - Instant.fromEpochMilliseconds(preferenceManager.lastFullSyncTime) > fullSyncThreshold) {
 				Logger.i("SyncManager", "Starting full library pull...")
 
-				_syncState.update {
+				syncState.update {
 					it.copy(isSyncing = true)
 				}
 
 				val result = repository.syncEverything { progress, message ->
-					_syncState.update {
+					syncState.update {
 						it.copy(isSyncing = true, progress = progress, message = message)
 					}
 				}
@@ -124,7 +125,7 @@ class SyncManager(
 					Logger.i("SyncManager", "Full library sync complete.")
 				}
 
-				_syncState.update {
+				syncState.update {
 					it.copy(isSyncing = false, message = Res.string.info_status_idle)
 				}
 			}
@@ -141,7 +142,11 @@ class SyncManager(
 					SyncActionType.STAR -> sessionManager.api.star(action.itemId)
 					SyncActionType.UNSTAR -> sessionManager.api.unstar(action.itemId)
 					SyncActionType.DELETE_PLAYLIST -> sessionManager.api.deletePlaylist(action.itemId)
-					SyncActionType.SCROBBLE -> sessionManager.api.scrobble(action.itemId, submission = true)
+					SyncActionType.SCROBBLE -> sessionManager.api.scrobble(
+						action.itemId,
+						submission = true
+					)
+
 					SyncActionType.STAR_0 -> sessionManager.api.setRating(action.itemId, 0)
 					SyncActionType.STAR_1 -> sessionManager.api.setRating(action.itemId, 1)
 					SyncActionType.STAR_2 -> sessionManager.api.setRating(action.itemId, 2)

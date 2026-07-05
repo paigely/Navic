@@ -17,6 +17,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,8 +29,8 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_see_all
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
+import paige.navic.LocalPlatformContext
 import paige.navic.ui.core.UiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -78,7 +80,10 @@ fun LazyGridScope.header(
 			stringResource(title, formatArgs),
 			style = MaterialTheme.typography.titleMediumEmphasized,
 			fontWeight = FontWeight(600),
-			modifier = Modifier.heightIn(min = 32.dp).padding(top = 12.dp, start = 16.dp)
+			modifier = Modifier
+				.heightIn(min = 32.dp)
+				.padding(top = 12.dp, start = 16.dp)
+				.semantics { heading() }
 		)
 	}
 	if (active) {

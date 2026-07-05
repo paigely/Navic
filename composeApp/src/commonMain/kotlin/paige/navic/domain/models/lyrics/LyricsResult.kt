@@ -1,5 +1,8 @@
 package paige.navic.domain.models.lyrics
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class LyricsResult(
 	val lines: List<LyricsLine>,
 	val provider: LyricsProvider,

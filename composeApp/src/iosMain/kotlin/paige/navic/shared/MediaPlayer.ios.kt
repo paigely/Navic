@@ -2,11 +2,11 @@
 
 package paige.navic.shared
 
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import kotlinx.cinterop.ExperimentalForeignApi
-import androidx.compose.runtime.snapshotFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import paige.navic.domain.manager.ConnectivityManager
@@ -14,6 +14,7 @@ import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.IOSScrobbleManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.manager.SnackBarManager
 import paige.navic.domain.manager.SyncManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainExplicitStatus
@@ -21,7 +22,6 @@ import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.PlayerStateRepository
-import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import platform.AVFAudio.AVAudioSession
@@ -77,20 +77,28 @@ class IOSMediaPlayerViewModel(
 	stateRepository: PlayerStateRepository,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
+	preferenceManager: PreferenceManager,
 	syncManager: SyncManager,
 	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager,
 	private val snackBarManager: SnackBarManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
+	connectivityManager = connectivityManager,
 	downloadManager = downloadManager,
-	connectivityManager = connectivityManager
+	preferenceManager = preferenceManager
 ) {
 	private val player = AVPlayer()
 	private var timeObserver: Any? = null
 	private var playbackEndObserver: Any? = null
 	private val scrobbleManager =
-		IOSScrobbleManager(player, viewModelScope, connectivityManager, syncManager, sessionManager, preferenceManager)
+		IOSScrobbleManager(
+			player,
+			viewModelScope,
+			connectivityManager,
+			syncManager,
+			sessionManager,
+			preferenceManager
+		)
 	private var pendingSyncState: PlayerUiState? = null
 	private var isTransitioningBetweenTracks = false
 
@@ -112,11 +120,13 @@ class IOSMediaPlayerViewModel(
 				val currentSeconds = CMTimeGetSeconds(currentTime)
 
 				if (!durationSeconds.isNaN() && !currentSeconds.isNaN() &&
-					(durationSeconds - currentSeconds) < 1.0) {
+					(durationSeconds - currentSeconds) < 1.0
+				) {
 					when (_uiState.value.repeatMode) {
 						1 -> {
 							seek(0f); resume()
 						}
+
 						else -> next()
 					}
 				}
@@ -135,7 +145,9 @@ class IOSMediaPlayerViewModel(
 				snapshotFlow { preferenceManager.streamingQualityCellular },
 				snapshotFlow { preferenceManager.isAdvancedTranscodingActive },
 				snapshotFlow { preferenceManager.customMaxBitrateWifi },
-				snapshotFlow { preferenceManager.customMaxBitrateCellular }
+				snapshotFlow { preferenceManager.customMaxBitrateCellular },
+				snapshotFlow { preferenceManager.customFormatWifi },
+				snapshotFlow { preferenceManager.customFormatCellular }
 			) { it }.collectLatest {
 				val song = _uiState.value.currentSong ?: return@collectLatest
 				val url = getSongUrl(song) ?: return@collectLatest
@@ -147,7 +159,11 @@ class IOSMediaPlayerViewModel(
 						val isPaused = _uiState.value.isPaused
 
 						player.replaceCurrentItemWithPlayerItem(createAVPlayerItem(url))
-						player.seekToTime(currentTime, toleranceBefore = CMTimeMake(0, 1), toleranceAfter = CMTimeMake(0, 1))
+						player.seekToTime(
+							currentTime,
+							toleranceBefore = CMTimeMake(0, 1),
+							toleranceAfter = CMTimeMake(0, 1)
+						)
 						if (!isPaused) player.play()
 					}
 				}
@@ -203,12 +219,6 @@ class IOSMediaPlayerViewModel(
 		if (isTransitioningBetweenTracks) return
 
 		val songToPlay = _uiState.value.queue.getOrNull(index) ?: return
-
-		if (!songToPlay.id.startsWith("radio_") && !isAvailable(songToPlay.id)) {
-			next()
-			return
-		}
-
 		val url = getSongUrl(songToPlay) ?: return
 
 		isTransitioningBetweenTracks = true
@@ -241,7 +251,7 @@ class IOSMediaPlayerViewModel(
 				if (state.queue.isEmpty())
 					state.queue + song
 				else
-					state.queue.slice(0..state.currentIndex) + song + state.queue.slice(state.currentIndex+1..<state.queue.size)
+					state.queue.slice(0..state.currentIndex) + song + state.queue.slice(state.currentIndex + 1..<state.queue.size)
 			state.copy(
 				queue = newQueue,
 				currentIndex = if (state.currentIndex == -1) 0 else state.currentIndex,
@@ -252,7 +262,8 @@ class IOSMediaPlayerViewModel(
 	}
 
 	override fun playNext(collection: DomainSongCollection) {
-		val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(compareBy(
+		val newCollection = if (collection is DomainAlbum) collection.songs.sortedWith(
+			compareBy(
 			{ it.discNumber },
 			{ it.trackNumber }
 		)) else collection.songs
@@ -262,7 +273,7 @@ class IOSMediaPlayerViewModel(
 					state.queue + newCollection
 				else
 					state.queue.slice(0..state.currentIndex) + newCollection + state.queue.slice(
-						state.currentIndex+1..<state.queue.size
+						state.currentIndex + 1..<state.queue.size
 					)
 			state.copy(
 				queue = newQueue,
@@ -418,7 +429,13 @@ class IOSMediaPlayerViewModel(
 		player.pause()
 		player.replaceCurrentItemWithPlayerItem(null)
 		_uiState.update {
-			it.copy(queue = emptyList(), currentSong = null, currentIndex = -1, progress = 0f, isPaused = true)
+			it.copy(
+				queue = emptyList(),
+				currentSong = null,
+				currentIndex = -1,
+				progress = 0f,
+				isPaused = true
+			)
 		}
 		scrobbleManager.onIsPlayingChanged(false)
 		updateNowPlayingInfo(null)
@@ -549,10 +566,11 @@ class IOSMediaPlayerViewModel(
 					var fetchedData: NSData? = null
 					val semaphore = dispatch_semaphore_create(0)
 
-					val task = NSURLSession.sharedSession.dataTaskWithRequest(request) { data, _, _ ->
-						fetchedData = data
-						dispatch_semaphore_signal(semaphore)
-					}
+					val task =
+						NSURLSession.sharedSession.dataTaskWithRequest(request) { data, _, _ ->
+							fetchedData = data
+							dispatch_semaphore_signal(semaphore)
+						}
 					task.resume()
 
 					dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
@@ -606,20 +624,24 @@ class IOSMediaPlayerViewModel(
 		return AVPlayerItem(AVURLAsset(uRL = url, options = options))
 	}
 
-	private fun getStreamUrl(id: String) =
-		when (connectivityManager.isCellular.value) {
-			true -> sessionManager.api.getStreamUrl(
-				id,
-				if(preferenceManager.isAdvancedTranscodingActive) preferenceManager.customMaxBitrateCellular else preferenceManager.streamingQualityCellular.bitrateIos,
-				preferenceManager.streamingQualityCellular.containerIos
-			)
-
-			false -> sessionManager.api.getStreamUrl(
-				id,
-				if(preferenceManager.isAdvancedTranscodingActive) preferenceManager.customMaxBitrateWifi else preferenceManager.streamingQualityWifi.bitrateIos,
-				preferenceManager.streamingQualityWifi.containerIos
-			)
-		} + "&estimateContentLength=true"
+	private fun getStreamUrl(id: String): String {
+		val isCellular = connectivityManager.isCellular.value
+		val bitrate = if (preferenceManager.isAdvancedTranscodingActive) {
+			if (isCellular) preferenceManager.customMaxBitrateCellular else preferenceManager.customMaxBitrateWifi
+		} else {
+			if (isCellular) preferenceManager.streamingQualityCellular.bitrateIos else preferenceManager.streamingQualityWifi.bitrateIos
+		}
+		val container = if (preferenceManager.isAdvancedTranscodingActive) {
+			if (isCellular) preferenceManager.customFormatCellular else preferenceManager.customFormatWifi
+		} else {
+			if (isCellular) preferenceManager.streamingQualityCellular.containerIos else preferenceManager.streamingQualityWifi.containerIos
+		}
+		return sessionManager.api.getStreamUrl(
+			id = id,
+			maxBitRate = bitrate,
+			format = container?.takeIf { it.isNotBlank() }
+		) + "&estimateContentLength=true"
+	}
 
 	private fun getSongUrl(song: DomainSong): NSURL? {
 		return when {

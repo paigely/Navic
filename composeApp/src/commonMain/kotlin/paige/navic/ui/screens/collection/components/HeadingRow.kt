@@ -25,11 +25,11 @@ import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.LocalSharedTransitionScope
-import paige.navic.ui.navigation.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.theme.defaultFont
 import paige.navic.util.ui.EmphasizedDecelerateEasing
 
@@ -83,12 +83,14 @@ fun CollectionDetailScreenHeadingRow(
 				Text(
 					subtitle,
 					color = MaterialTheme.colorScheme.primary,
-					modifier = Modifier.clickable(collection is DomainAlbum, onClick = dropUnlessResumed {
-						platformContext.clickSound()
-						(collection as? DomainAlbum)?.artistId?.let { id ->
-							backStack.add(Screen.ArtistDetail(id))
-						}
-					}),
+					modifier = Modifier.clickable(
+						collection is DomainAlbum,
+						onClick = dropUnlessResumed {
+							platformContext.clickSound()
+							(collection as? DomainAlbum)?.artistId?.let { id ->
+								backStack.add(Screen.ArtistDetail(id))
+							}
+						}),
 					style = MaterialTheme.typography.bodyMedium,
 					fontFamily = defaultFont(grade = 100, round = 100f)
 				)

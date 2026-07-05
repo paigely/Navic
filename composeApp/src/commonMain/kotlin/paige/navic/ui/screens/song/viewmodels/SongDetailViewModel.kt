@@ -3,7 +3,7 @@ package paige.navic.ui.screens.song.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.repositories.CollectionRepository
@@ -13,16 +13,16 @@ class SongDetailViewModel(
 	songId: String,
 	private val repository: CollectionRepository
 ) : ViewModel() {
-	private val _songState = MutableStateFlow<UiState<DomainSong>>(UiState.Loading())
-	val songState = _songState.asStateFlow()
+	val songState: StateFlow<UiState<DomainSong>>
+		field = MutableStateFlow<UiState<DomainSong>>(UiState.Loading())
 
 	init {
 		viewModelScope.launch {
 			val song = repository.getSongById(songId)
 			if (song != null) {
-				_songState.value = UiState.Success(song)
+				songState.value = UiState.Success(song)
 			} else {
-				_songState.value = UiState.Error(Exception("Unknown song"))
+				songState.value = UiState.Error(Exception("Unknown song"))
 			}
 		}
 	}

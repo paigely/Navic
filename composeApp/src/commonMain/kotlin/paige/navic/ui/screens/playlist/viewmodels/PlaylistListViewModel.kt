@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainPlaylist
@@ -18,18 +18,17 @@ class PlaylistListViewModel(
 	private val repository: PlaylistRepository,
 	private val sessionManager: SessionManager
 ) : ViewModel() {
-	private val _playlistsState =
-		MutableStateFlow<UiState<ImmutableList<DomainPlaylist>>>(UiState.Loading())
-	val playlistsState = _playlistsState.asStateFlow()
+	val playlistsState: StateFlow<UiState<ImmutableList<DomainPlaylist>>>
+		field = MutableStateFlow<UiState<ImmutableList<DomainPlaylist>>>(UiState.Loading())
 
-	private val _selectedPlaylist = MutableStateFlow<DomainPlaylist?>(null)
-	val selectedPlaylist = _selectedPlaylist.asStateFlow()
+	val selectedPlaylist: StateFlow<DomainPlaylist?>
+		field = MutableStateFlow(null)
 
-	private val _selectedSorting = MutableStateFlow(DomainPlaylistListType.DateAdded)
-	val selectedSorting = _selectedSorting.asStateFlow()
+	val selectedSorting: StateFlow<DomainPlaylistListType>
+		field = MutableStateFlow(DomainPlaylistListType.DateAdded)
 
-	private val _selectedReversed = MutableStateFlow(false)
-	val selectedReversed = _selectedReversed.asStateFlow()
+	val selectedReversed: StateFlow<Boolean>
+		field = MutableStateFlow(false)
 
 	val gridState = LazyGridState()
 
@@ -40,36 +39,36 @@ class PlaylistListViewModel(
 	}
 
 	fun selectPlaylist(playlist: DomainPlaylist) {
-		_selectedPlaylist.value = playlist
+		selectedPlaylist.value = playlist
 	}
 
 	fun clearSelection() {
-		_selectedPlaylist.value = null
+		selectedPlaylist.value = null
 	}
 
 	fun refreshPlaylists(fullRefresh: Boolean) {
 		viewModelScope.launch {
 			repository.getPlaylistsFlow(
 				fullRefresh,
-				_selectedSorting.value,
-				_selectedReversed.value
+				selectedSorting.value,
+				selectedReversed.value
 			).collect {
-				_playlistsState.value = it
+				playlistsState.value = it
 			}
 		}
 	}
 
 	fun setSorting(sorting: DomainPlaylistListType) {
-		_selectedSorting.value = sorting
+		selectedSorting.value = sorting
 		refreshPlaylists(false)
 	}
 
 	fun setReversed(reversed: Boolean) {
-		_selectedReversed.value = reversed
+		selectedReversed.value = reversed
 		refreshPlaylists(false)
 	}
 
 	fun clearError() {
-		_playlistsState.value = UiState.Success(_playlistsState.value.data ?: persistentListOf())
+		playlistsState.value = UiState.Success(playlistsState.value.data ?: persistentListOf())
 	}
 }

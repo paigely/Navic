@@ -17,12 +17,12 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.ui.navigation.Screen
-import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.models.DomainAlbum
 import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
 import paige.navic.ui.components.sheets.CollectionSheet
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 
 fun LazyListScope.collectionDetailScreenMoreByArtistRow(
@@ -68,7 +68,7 @@ fun LazyListScope.collectionDetailScreenMoreByArtistRow(
 				CollectionSheet(
 					onDismissRequest = onDeselect,
 					collection = album,
-					onDownloadAll = { 
+					onDownloadAll = {
 						scope.launch {
 							downloadManager.downloadCollection(album)
 						}
@@ -92,7 +92,7 @@ fun LazyListScope.collectionDetailScreenMoreByArtistRow(
 					rating = selectedAlbumRating,
 					onSetRating = onSetAlbumRating,
 					starred = selectedAlbumStarred,
-					onSetStarred =  { onSetAlbumStarred(!selectedAlbumStarred) }
+					onSetStarred = { onSetAlbumStarred(!selectedAlbumStarred) }
 				)
 			}
 		}

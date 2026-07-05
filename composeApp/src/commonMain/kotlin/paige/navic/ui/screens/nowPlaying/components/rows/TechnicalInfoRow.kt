@@ -53,9 +53,10 @@ fun NowPlayingTechnicalInfoRow() {
 				modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
 				verticalAlignment = Alignment.CenterVertically
 			) {
-				val sampleRateFormatted = (playerState.playbackSampleRate ?: song?.sampleRate)?.let {
-					if (it >= 1000) "${it / 1000.0} kHz" else "$it Hz"
-				} ?: "-- kHz"
+				val sampleRateFormatted =
+					(playerState.playbackSampleRate ?: song?.sampleRate)?.let {
+						if (it >= 1000) "${it / 1000.0} kHz" else "$it Hz"
+					} ?: "-- kHz"
 
 				val isCellular = connectivityManager.isCellular.value
 				val requestedBitrate = if (preferenceManager.isAdvancedTranscodingActive) {
@@ -71,9 +72,11 @@ fun NowPlayingTechnicalInfoRow() {
 						song?.bitRate?.let { "$it kbps" }
 					} ?: "-- kbps"
 
-				val format = playerState.playbackMimeType?.split("/")?.lastOrNull()?.replace("mpeg", "mp3")?.uppercase()
-					?: song?.fileExtension?.uppercase()
-					?: "--"
+				val format =
+					playerState.playbackMimeType?.split("/")?.lastOrNull()?.replace("mpeg", "mp3")
+						?.uppercase()
+						?: song?.fileExtension?.uppercase()
+						?: "--"
 
 				Text(
 					text = "$format • $sampleRateFormatted • $bitrateFormatted",

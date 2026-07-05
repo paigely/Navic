@@ -16,10 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +26,7 @@ import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_audio_offload
 import navic.composeapp.generated.resources.option_enable_scrobbling
+import navic.composeapp.generated.resources.option_explicit_playback
 import navic.composeapp.generated.resources.option_gapless_playback
 import navic.composeapp.generated.resources.option_min_duration_to_scrobble
 import navic.composeapp.generated.resources.option_replay_gain
@@ -46,6 +43,7 @@ import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
@@ -118,6 +116,13 @@ fun SettingsPlaybackScreen() {
 							onSetValue = { preferenceManager.audioOffload = it }
 						)
 					}
+					SettingSelectionRow(
+						title = { Text(stringResource(Res.string.option_explicit_playback)) },
+						label = { stringResource(it.displayName) },
+						items = ExplicitContentPlayback.entries.toImmutableList(),
+						selection = preferenceManager.explicitContentPlayback,
+						onSelect = { preferenceManager.explicitContentPlayback = it }
+					)
 				}
 
 				FormTitle(stringResource(Res.string.title_behaviour))

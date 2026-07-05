@@ -110,7 +110,8 @@ fun RadioListScreenCard(
 				)
 
 				Text(
-					text = radio.homepageUrl?.removePrefix("http://")?.removePrefix("https://")?.trimEnd('/')
+					text = radio.homepageUrl?.removePrefix("http://")?.removePrefix("https://")
+						?.trimEnd('/')
 						?: stringResource(Res.string.info_unknown),
 					style = MaterialTheme.typography.labelMedium,
 					maxLines = 1,

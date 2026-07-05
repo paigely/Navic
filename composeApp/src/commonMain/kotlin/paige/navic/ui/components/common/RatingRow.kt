@@ -3,12 +3,15 @@ package paige.navic.ui.components.common
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.count_rate_stars
@@ -26,7 +29,9 @@ fun RatingRow(
 	val platformContext = LocalPlatformContext.current
 
 	Row(
-		modifier = Modifier.fillMaxWidth(),
+		modifier = Modifier
+			.fillMaxWidth()
+			.selectableGroup(),
 		horizontalArrangement = Arrangement.spacedBy(
 			4.dp,
 			Alignment.CenterHorizontally
@@ -34,6 +39,9 @@ fun RatingRow(
 	) {
 		(1..5).forEach { idx ->
 			IconButton(
+				modifier = Modifier.semantics {
+					selected = rating == idx
+				},
 				onClick = {
 					platformContext.clickSound()
 					if (rating == idx) {

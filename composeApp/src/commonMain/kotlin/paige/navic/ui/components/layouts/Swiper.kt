@@ -30,6 +30,9 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -45,6 +48,8 @@ import kotlin.math.roundToInt
 fun Swiper(
 	onSwipeLeft: () -> Unit,
 	onSwipeRight: () -> Unit,
+	swipeLeftAccessibilityLabel: String,
+	swipeRightAccessibilityLabel: String,
 	modifier: Modifier = Modifier,
 	swipeThreshold: Float = 200f,
 	enabled: Boolean = true,
@@ -127,6 +132,26 @@ fun Swiper(
 						handleSwipeRelease()
 					}
 				)
+				.then(if (enabled) {
+					Modifier.semantics {
+						customActions = listOf(
+							CustomAccessibilityAction(
+								label = swipeLeftAccessibilityLabel,
+								action = {
+									onSwipeLeft()
+									true
+								}
+							),
+							CustomAccessibilityAction(
+								label = swipeRightAccessibilityLabel,
+								action = {
+									onSwipeRight()
+									true
+								}
+							)
+						)
+					}
+				} else Modifier)
 		) {
 			content()
 		}

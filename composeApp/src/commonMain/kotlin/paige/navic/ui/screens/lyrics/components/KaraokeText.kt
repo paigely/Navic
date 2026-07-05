@@ -74,7 +74,7 @@ fun LyricsScreenKaraokeText(
 			textAlign = if (isRtl) TextAlign.End else TextAlign.Start,
 			style = MaterialTheme.typography.headlineLargeEmphasized,
 			color = if (lyricsBrightInactive) Color.White.copy(alpha = alphaTransition * 0.4f)
-					else MaterialTheme.colorScheme.onSurface.copy(alpha = alphaTransition * 0.4f),
+			else MaterialTheme.colorScheme.onSurface.copy(alpha = alphaTransition * 0.4f),
 			onTextLayout = { textLayoutResult = it },
 			modifier = Modifier.fillMaxWidth()
 		)
@@ -105,7 +105,8 @@ fun LyricsScreenKaraokeText(
 
 										val feather = 50f
 										val adjustedTotalWidth = totalWidth + (feather * 2)
-										val currentPixelTarget = (adjustedTotalWidth * smoothProgress) - feather
+										val currentPixelTarget =
+											(adjustedTotalWidth * smoothProgress) - feather
 
 										var accumulatedWidth = 0f
 
@@ -117,18 +118,27 @@ fun LyricsScreenKaraokeText(
 
 											val lineTop = layout.getLineTop(i)
 											val lineBottom = layout.getLineBottom(i)
-											val isRtl = layout.getBidiRunDirection(layout.getLineStart(i)) == ResolvedTextDirection.Rtl
+											val isRtl =
+												layout.getBidiRunDirection(layout.getLineStart(i)) == ResolvedTextDirection.Rtl
 
-											val startOffFadeIn = currentPixelTarget - accumulatedWidth - feather
-											val endOfFadeIn = currentPixelTarget - accumulatedWidth + feather
+											val startOffFadeIn =
+												currentPixelTarget - accumulatedWidth - feather
+											val endOfFadeIn =
+												currentPixelTarget - accumulatedWidth + feather
 
 											val startX = if (isRtl) lineRight else lineLeft
 											val endX = if (isRtl) lineLeft else lineRight
 
 											val brush = Brush.linearGradient(
 												0.0f to Color.White,
-												(startOffFadeIn / lineWidth).coerceIn(0f, 1f) to Color.White,
-												(endOfFadeIn / lineWidth).coerceIn(0f, 1f) to Color.Transparent,
+												(startOffFadeIn / lineWidth).coerceIn(
+													0f,
+													1f
+												) to Color.White,
+												(endOfFadeIn / lineWidth).coerceIn(
+													0f,
+													1f
+												) to Color.Transparent,
 												1.0f to Color.Transparent,
 												start = Offset(startX, 0f),
 												end = Offset(endX, 0f)

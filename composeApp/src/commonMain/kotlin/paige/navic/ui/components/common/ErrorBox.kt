@@ -29,8 +29,8 @@ import paige.navic.LocalPlatformContext
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.KeyboardArrowDown
 import paige.navic.icons.outlined.Refresh
-import paige.navic.util.core.Logger
 import paige.navic.ui.core.UiState
+import paige.navic.util.core.Logger
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

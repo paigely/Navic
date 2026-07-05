@@ -12,20 +12,20 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.notice_deleted_download
+import navic.composeapp.generated.resources.notice_download_started
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.ui.navigation.Screen
-import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.manager.SnackBarManager
+import paige.navic.domain.models.DomainAlbum
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.sheets.CollectionSheet
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.notice_download_started
-import navic.composeapp.generated.resources.notice_deleted_download
-import paige.navic.domain.manager.SnackBarManager
 
 @Composable
 fun AlbumListScreenItem(
@@ -78,7 +78,7 @@ fun AlbumListScreenItem(
 				onPlayNext = onPlayNext,
 				onAddToQueue = onAddToQueue,
 				downloadStatus = downloadStatus,
-				onDownloadAll = { 
+				onDownloadAll = {
 					scope.launch {
 						downloadManager.downloadCollection(album)
 						snackBarManager.notify(Res.string.notice_download_started)

@@ -92,7 +92,10 @@ fun SearchScreenTopBar(
 					onSearch(query.text.toString())
 				}
 			},
-			textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface, fontFamily = defaultFont()),
+			textStyle = TextStyle(
+				color = MaterialTheme.colorScheme.onSurface,
+				fontFamily = defaultFont()
+			),
 			cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
 			decorator = { innerTextField ->
 				Box(contentAlignment = Alignment.CenterStart) {

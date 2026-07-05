@@ -23,14 +23,14 @@ import navic.composeapp.generated.resources.title_acknowledgements
 import navic.composeapp.generated.resources.title_chat
 import navic.composeapp.generated.resources.title_source
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.ui.navigation.Screen
+import paige.navic.LocalPlatformContext
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.navigation.Screen
 
 @Composable
 fun SettingsAboutScreen() {
@@ -52,13 +52,18 @@ fun SettingsAboutScreen() {
 			Modifier
 				.padding(innerPadding)
 				.verticalScroll(rememberScrollState())
-				.padding(top = 12.dp, end = 12.dp, start = 12.dp)
+				.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 		) {
 			Form {
 				SelectionContainer {
 					val text = buildString {
 						append(platformContext.name + "\n")
-						append(stringResource(Res.string.info_app_version, platformContext.appVersion))
+						append(
+							stringResource(
+								Res.string.info_app_version,
+								platformContext.appVersion
+							)
+						)
 					}
 					FormRow(onClick = {
 						clipboard.setText(AnnotatedString(text))

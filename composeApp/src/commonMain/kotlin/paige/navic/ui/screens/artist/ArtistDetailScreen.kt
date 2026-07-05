@@ -49,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
+import com.materialkolor.dynamiccolor.ColorSpec
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
@@ -73,6 +74,8 @@ import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.manager.SnackBarManager
+import paige.navic.domain.models.DomainSongListType
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorBox
@@ -82,7 +85,6 @@ import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.sheets.CollectionSheet
-import paige.navic.domain.manager.SnackBarManager
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.artist.components.ArtistActionButtons
@@ -91,6 +93,8 @@ import paige.navic.ui.screens.artist.components.ArtistDetailScreenTopBar
 import paige.navic.ui.screens.artist.viewmodels.ArtistDetailViewModel
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.ui.screens.share.dialogs.ShareDialog
+import paige.navic.ui.theme.NavicTheme
+import paige.navic.util.ui.rememberColorSchemeFromCoverArt
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -149,275 +153,306 @@ fun ArtistDetailScreen(
 
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
 
-	Scaffold(
-		topBar = {
-			ArtistDetailScreenTopBar(
-				scrolled = scrolled,
-				artistState = artistState,
-				starred = starred,
-				onSetStarred = { viewModel.starArtist(it) },
-			)
-		},
-		bottomBar = {
-			val scrollManager = LocalBottomBarScrollManager.current
-			if (preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
-				RootBottomBar(scrolled = scrollManager.isTriggered)
-			}
-		}
-	) { contentPadding ->
-		AnimatedContent(
-			targetState = artistState,
-			transitionSpec = {
-				(fadeIn(
-					animationSpec = effectSpec
-				) + scaleIn(
-					initialScale = 0.8f,
-					animationSpec = spatialSpec
-				)) togetherWith (fadeOut(
-					animationSpec = effectSpec
-				) + scaleOut(
-					animationSpec = spatialSpec
-				))
+	val colorScheme = if (preferenceManager.dynamicArtistViewTheme) {
+		rememberColorSchemeFromCoverArt(
+			coverArtId = artistState.data?.artist?.coverArtId,
+			specVersion = ColorSpec.SpecVersion.SPEC_2025
+		)
+	} else {
+		null
+	}
+
+	NavicTheme(colorScheme) {
+		Scaffold(
+			topBar = {
+				ArtistDetailScreenTopBar(
+					scrolled = scrolled,
+					artistState = artistState,
+					starred = starred,
+					onSetStarred = { viewModel.starArtist(it) },
+				)
 			},
-			modifier = Modifier.fillMaxSize()
-		) { artistState ->
-			when (artistState) {
-				is UiState.Error -> Box(Modifier.fillMaxSize().padding(contentPadding)) {
-					ErrorBox(artistState)
+			bottomBar = {
+				val scrollManager = LocalBottomBarScrollManager.current
+				if (preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+					RootBottomBar(scrolled = scrollManager.isTriggered)
 				}
+			}
+		) { contentPadding ->
+			AnimatedContent(
+				targetState = artistState,
+				transitionSpec = {
+					(fadeIn(
+						animationSpec = effectSpec
+					) + scaleIn(
+						initialScale = 0.8f,
+						animationSpec = spatialSpec
+					)) togetherWith (fadeOut(
+						animationSpec = effectSpec
+					) + scaleOut(
+						animationSpec = spatialSpec
+					))
+				},
+				modifier = Modifier.fillMaxSize()
+			) { artistState ->
+				when (artistState) {
+					is UiState.Error -> Box(Modifier.fillMaxSize().padding(contentPadding)) {
+						ErrorBox(artistState)
+					}
 
-				is UiState.Loading -> Box(Modifier.fillMaxSize()) {
-					ContainedLoadingIndicator(Modifier.size(80.dp).align(Alignment.Center))
-				}
+					is UiState.Loading -> Box(Modifier.fillMaxSize()) {
+						ContainedLoadingIndicator(Modifier.size(80.dp).align(Alignment.Center))
+					}
 
-				is UiState.Success -> {
-					val state = artistState.data
-					BulkDownloadDialog(
-						title = stringResource(Res.string.title_bulk_download),
-						message = stringResource(Res.string.info_bulk_download_warning, state.artist.name),
-						showDialog = showDownloadDialog,
-						onDismissRequest = { showDownloadDialog = false },
-						onConfirm = {
-							scope.launch {
-								state.albums.forEach { album ->
-									downloadManager.downloadCollection(album)
+					is UiState.Success -> {
+						val state = artistState.data
+						BulkDownloadDialog(
+							title = stringResource(Res.string.title_bulk_download),
+							message = stringResource(
+								Res.string.info_bulk_download_warning,
+								state.artist.name
+							),
+							showDialog = showDownloadDialog,
+							onDismissRequest = { showDownloadDialog = false },
+							onConfirm = {
+								scope.launch {
+									state.albums.forEach { album ->
+										downloadManager.downloadCollection(album)
+									}
+									snackBarManager.notify(Res.string.notice_download_started)
 								}
-								snackBarManager.notify(Res.string.notice_download_started)
 							}
-						}
-					)
-					Column(
-						modifier = Modifier
-							.fillMaxSize()
-							.verticalScroll(viewModel.scrollState),
-						verticalArrangement = Arrangement.spacedBy(12.dp),
-						horizontalAlignment = Alignment.CenterHorizontally
-					) {
-						ArtistDetailScreenHeading(
-							artistName = state.artist.name,
-							coverArtId = state.artist.coverArtId,
-							subtitle = state.artist.biography,
-							lastfm = state.artist.lastFmUrl,
-							innerPadding = contentPadding,
-							scrolled = scrolled
-						)
-						ArtistActionButtons(
-							onPlay = { viewModel.playArtistAlbums(player) },
-							onDownload = {
-								showDownloadDialog = true
-							},
-							onCancelDownload = {
-								state.albums.forEach { album ->
-									downloadManager.cancelCollectionDownload(album)
-								}
-							},
-							onDeleteDownload = {
-								state.albums.forEach { album ->
-									downloadManager.deleteDownloadedCollection(album)
-								}
-								snackBarManager.notify(Res.string.notice_deleted_download)
-							},
-							downloadStatus = downloadStatus,
-							playEnabled = state.albums.isNotEmpty(),
-							modifier = Modifier.padding(top = 8.dp)
 						)
 						Column(
 							modifier = Modifier
-								.fillMaxWidth()
-								.padding(
-									start = contentPadding.calculateStartPadding(
-										layoutDirection
-									)
-								)
-								.padding(
-									end = contentPadding.calculateEndPadding(
-										layoutDirection
-									)
-								),
+								.fillMaxSize()
+								.verticalScroll(viewModel.scrollState),
 							verticalArrangement = Arrangement.spacedBy(12.dp),
 							horizontalAlignment = Alignment.CenterHorizontally
 						) {
-							state.topSongs.takeIf { state.topSongs.isNotEmpty() }
-								?.let { songs ->
-									Row(
-										modifier = Modifier
-											.heightIn(min = 32.dp)
-											.padding(top = 8.dp)
-											.padding(horizontal = 16.dp)
-											.fillMaxWidth(),
-										verticalAlignment = Alignment.CenterVertically,
-										horizontalArrangement = Arrangement.SpaceBetween
-									) {
-										Text(
-											stringResource(Res.string.option_sort_frequent),
-											style = MaterialTheme.typography.titleMediumEmphasized,
-											fontWeight = FontWeight(600)
-										)
-										Text(
-											stringResource(Res.string.action_see_all),
-											style = MaterialTheme.typography.labelLarge,
-											color = MaterialTheme.colorScheme.primary,
-											modifier = Modifier.clickable(onClick = dropUnlessResumed {
-												platformContext.clickSound()
-												backStack.add(
-													Screen.SongList(
-														nested = true,
-														artistId = state.artist.id,
-														artistName = state.artist.name
-													)
-												)
-											})
-										)
+							ArtistDetailScreenHeading(
+								artistName = state.artist.name,
+								coverArtId = state.artist.coverArtId,
+								subtitle = state.artist.biography,
+								lastfm = state.artist.lastFmUrl,
+								innerPadding = contentPadding,
+								scrolled = scrolled
+							)
+							ArtistActionButtons(
+								onPlay = { viewModel.playArtistAlbums(player) },
+								onDownload = {
+									showDownloadDialog = true
+								},
+								onCancelDownload = {
+									state.albums.forEach { album ->
+										downloadManager.cancelCollectionDownload(album)
 									}
-									LazyHorizontalGrid(
-										rows = GridCells.Fixed(3),
-										state = gridState,
-										flingBehavior = rememberSnapFlingBehavior(lazyGridState = gridState),
-										modifier = Modifier.fillMaxWidth().height(250.dp)
-									) {
-										itemsIndexed(songs) { index, song ->
-											val download = allDownloads.find { it.songId == song.id }
-											SongRow(
-												modifier = Modifier.weight(1f),
-												song = song,
-												selected = selection == song,
-												onClick = {
-													if (playerState.currentSong?.id != song.id) {
-														player.playNow(songs, index)
-													} else {
-														player.togglePlay()
-													}
-												},
-												onLongClick = {
-													viewModel.selectSong(song)
-												},
-												onDismissRequest = { viewModel.clearSelection() },
-												starredState = if (selection == song) selectedSongIsStarred else song.starredAt != null,
-												onAddStar = { viewModel.starSelectedSong() },
-												onRemoveStar = { viewModel.unstarSelectedSong() },
-												download = download,
-												onDownload = { viewModel.downloadSong(song) },
-												onCancelDownload = { viewModel.cancelDownload(song.id) },
-												onDeleteDownload = { viewModel.deleteDownload(song.id) },
-												onPlayNext = { player.playNextSingle(song) },
-												onAddToQueue = { player.addToQueueSingle(song) },
-												onShare = { shareId = song.id },
-												isOnline = isOnline,
-												rating = selectedSongRating,
-												onSetRating = { viewModel.rateSelectedSong(it) }
+								},
+								onDeleteDownload = {
+									state.albums.forEach { album ->
+										downloadManager.deleteDownloadedCollection(album)
+									}
+									snackBarManager.notify(Res.string.notice_deleted_download)
+								},
+								downloadStatus = downloadStatus,
+								playEnabled = state.albums.isNotEmpty(),
+								modifier = Modifier.padding(top = 8.dp)
+							)
+							Column(
+								modifier = Modifier
+									.fillMaxWidth()
+									.padding(
+										start = contentPadding.calculateStartPadding(
+											layoutDirection
+										)
+									)
+									.padding(
+										end = contentPadding.calculateEndPadding(
+											layoutDirection
+										)
+									),
+								verticalArrangement = Arrangement.spacedBy(12.dp),
+								horizontalAlignment = Alignment.CenterHorizontally
+							) {
+								state.topSongs.takeIf { state.topSongs.isNotEmpty() }
+									?.let { songs ->
+										Row(
+											modifier = Modifier
+												.heightIn(min = 32.dp)
+												.padding(top = 8.dp)
+												.padding(horizontal = 16.dp)
+												.fillMaxWidth(),
+											verticalAlignment = Alignment.CenterVertically,
+											horizontalArrangement = Arrangement.SpaceBetween
+										) {
+											Text(
+												stringResource(Res.string.option_sort_frequent),
+												style = MaterialTheme.typography.titleMediumEmphasized,
+												fontWeight = FontWeight(600)
+											)
+											Text(
+												stringResource(Res.string.action_see_all),
+												style = MaterialTheme.typography.labelLarge,
+												color = MaterialTheme.colorScheme.primary,
+												modifier = Modifier.clickable(onClick = dropUnlessResumed {
+													platformContext.clickSound()
+													backStack.add(
+														Screen.SongList(
+															nested = true,
+															listType = DomainSongListType.ByArtist(state.artist.id)
+														)
+													)
+												})
 											)
 										}
+										LazyHorizontalGrid(
+											rows = GridCells.Fixed(3),
+											state = gridState,
+											flingBehavior = rememberSnapFlingBehavior(lazyGridState = gridState),
+											modifier = Modifier.fillMaxWidth().height(250.dp)
+										) {
+											itemsIndexed(songs) { index, song ->
+												val download =
+													allDownloads.find { it.songId == song.id }
+												SongRow(
+													modifier = Modifier.weight(1f),
+													song = song,
+													selected = selection == song,
+													onClick = {
+														if (playerState.currentSong?.id != song.id) {
+															player.playNow(songs, index)
+														} else {
+															player.togglePlay()
+														}
+													},
+													onLongClick = {
+														viewModel.selectSong(song)
+													},
+													onDismissRequest = { viewModel.clearSelection() },
+													starredState = if (selection == song) selectedSongIsStarred else song.starredAt != null,
+													onAddStar = { viewModel.starSelectedSong() },
+													onRemoveStar = { viewModel.unstarSelectedSong() },
+													download = download,
+													onDownload = { viewModel.downloadSong(song) },
+													onCancelDownload = {
+														viewModel.cancelDownload(
+															song.id
+														)
+													},
+													onDeleteDownload = {
+														viewModel.deleteDownload(
+															song.id
+														)
+													},
+													onPlayNext = { player.playNextSingle(song) },
+													onAddToQueue = { player.addToQueueSingle(song) },
+													onShare = { shareId = song.id },
+													isOnline = isOnline,
+													rating = selectedSongRating,
+													onSetRating = { viewModel.rateSelectedSong(it) }
+												)
+											}
+										}
+									}
+								ArtCarousel(
+									stringResource(Res.string.title_albums),
+									state.albums.sortedByDescending { album -> album.playCount }
+										.toImmutableList()
+								) { album ->
+									val albumDownloadStatus by downloadManager
+										.getCollectionDownloadStatus(album.songs.map { it.id })
+										.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
+									ArtCarouselItem(
+										coverArtId = album.coverArtId,
+										title = album.name,
+										contentDescription = null,
+										onSelect = { viewModel.selectAlbum(album) },
+										onClick = dropUnlessResumed {
+											backStack.add(
+												Screen.CollectionDetail(
+													album.id,
+													"artist"
+												)
+											)
+										}
+									)
+									if (selectedAlbum == album) {
+										CollectionSheet(
+											onDismissRequest = { viewModel.clearAlbumSelection() },
+											collection = album,
+											starred = selectedAlbumIsStarred,
+											onShare = { shareId = album.id },
+											onPlayNext = { player.playNext(album) },
+											onAddToQueue = { player.addToQueue(album) },
+											onSetStarred = { viewModel.starAlbum(!selectedAlbumIsStarred) },
+											onAddAllToPlaylist = { playlistDialogShown = true },
+											downloadStatus = albumDownloadStatus,
+											onDownloadAll = {
+												scope.launch {
+													downloadManager.downloadCollection(album)
+													snackBarManager.notify(Res.string.notice_download_started)
+												}
+											},
+											onCancelDownloadAll = {
+												scope.launch {
+													album.songs.forEach {
+														downloadManager.cancelDownload(
+															it.id
+														)
+													}
+												}
+											},
+											onDeleteDownloadAll = {
+												scope.launch {
+													downloadManager.deleteDownloadedCollection(album)
+													snackBarManager.notify(Res.string.notice_deleted_download)
+												}
+											},
+											rating = selectedAlbumRating,
+											onSetRating = { viewModel.rateSelectedAlbum(it) }
+										)
 									}
 								}
-							ArtCarousel(
-								stringResource(Res.string.title_albums),
-								state.albums.sortedByDescending { album -> album.playCount }
-									.toImmutableList()
-							) { album ->
-								val albumDownloadStatus by downloadManager
-									.getCollectionDownloadStatus(album.songs.map { it.id })
-									.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
-								ArtCarouselItem(
-									coverArtId = album.coverArtId, 
-									title = album.name, 
-									contentDescription = null,
-									onSelect = { viewModel.selectAlbum(album) },
-									onClick = dropUnlessResumed {
-										backStack.add(Screen.CollectionDetail(album.id, "artist"))
-									}
-								)
-								if (selectedAlbum == album) {
-									CollectionSheet(
-										onDismissRequest = { viewModel.clearAlbumSelection() },
-										collection = album,
-										starred = selectedAlbumIsStarred,
-										onShare = { shareId = album.id },
-										onPlayNext = { player.playNext(album) },
-										onAddToQueue = { player.addToQueue(album) },
-										onSetStarred = { viewModel.starAlbum(!selectedAlbumIsStarred) },
-										onAddAllToPlaylist = { playlistDialogShown = true },
-										downloadStatus = albumDownloadStatus,
-										onDownloadAll = { 
-											scope.launch {
-												downloadManager.downloadCollection(album)
-												snackBarManager.notify(Res.string.notice_download_started)
-											}
-										},
-										onCancelDownloadAll = {
-											scope.launch {
-												album.songs.forEach { downloadManager.cancelDownload(it.id) }
-											}
-										},
-										onDeleteDownloadAll = {
-											scope.launch {
-												downloadManager.deleteDownloadedCollection(album)
-												snackBarManager.notify(Res.string.notice_deleted_download)
-											}
-										},
-										rating = selectedAlbumRating,
-										onSetRating = { viewModel.rateSelectedAlbum(it) }
+								if (state.similarArtists.isEmpty()) return@Column
+								ArtCarousel(
+									stringResource(Res.string.title_similar_artists),
+									state.similarArtists.toImmutableList()
+								) { artist ->
+									ArtCarouselItem(
+										coverArtId = artist.coverArtId,
+										title = artist.name,
+										subtitle = pluralStringResource(
+											Res.plurals.count_albums,
+											artist.albumCount,
+											artist.albumCount
+										),
+										contentDescription = null,
+										onClick = dropUnlessResumed {
+											backStack.add(Screen.ArtistDetail(artist.id))
+										}
 									)
 								}
 							}
-							if (state.similarArtists.isEmpty()) return@Column
-							ArtCarousel(
-								stringResource(Res.string.title_similar_artists),
-								state.similarArtists.toImmutableList()
-							) { artist ->
-								ArtCarouselItem(
-									coverArtId = artist.coverArtId, 
-									title = artist.name, 
-									subtitle = pluralStringResource(
-										Res.plurals.count_albums,
-										artist.albumCount,
-										artist.albumCount
-									),
-									contentDescription = null,
-									onClick = dropUnlessResumed {
-										backStack.add(Screen.ArtistDetail(artist.id))
-									}
-								)
-							}
+							Spacer(Modifier.height(contentPadding.calculateBottomPadding()))
 						}
-						Spacer(Modifier.height(contentPadding.calculateBottomPadding()))
 					}
 				}
 			}
 		}
-	}
 
-	ShareDialog(
-		id = shareId,
-		onIdClear = { shareId = null; viewModel.clearSelection() },
-		expiry = shareExpiry,
-		onExpiryChange = { shareExpiry = it }
-	)
-
-	if (playlistDialogShown) {
-		PlaylistUpdateDialog(
-			songs = selectedAlbum?.songs.orEmpty().toPersistentList(),
-			onDismissRequest = { playlistDialogShown = false }
+		ShareDialog(
+			id = shareId,
+			onIdClear = { shareId = null; viewModel.clearSelection() },
+			expiry = shareExpiry,
+			onExpiryChange = { shareExpiry = it }
 		)
+
+		if (playlistDialogShown) {
+			PlaylistUpdateDialog(
+				songs = selectedAlbum?.songs.orEmpty().toPersistentList(),
+				onDismissRequest = { playlistDialogShown = false }
+			)
+		}
 	}
 }
 

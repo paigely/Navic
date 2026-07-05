@@ -35,9 +35,9 @@ import paige.navic.domain.models.settings.NavbarTab
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle
 import paige.navic.ui.components.common.ErrorBox
+import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.util.ui.DraggableListState
-import paige.navic.ui.core.UiState
 import paige.navic.util.ui.dragHandle
 import paige.navic.util.ui.draggableItems
 import paige.navic.util.ui.rememberDraggableListState

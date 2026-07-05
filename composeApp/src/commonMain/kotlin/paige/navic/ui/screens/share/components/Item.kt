@@ -93,10 +93,12 @@ fun ShareListScreenItem(
 					imageVector = Icons.Outlined.Delete,
 					contentDescription = null,
 					tint = MaterialTheme.colorScheme.onErrorContainer,
-					modifier = Modifier.align(when (dismissState.dismissDirection) {
-						SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
-						else -> Alignment.CenterEnd
-					})
+					modifier = Modifier.align(
+						when (dismissState.dismissDirection) {
+							SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+							else -> Alignment.CenterEnd
+						}
+					)
 				)
 			}
 		}

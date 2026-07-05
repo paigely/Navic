@@ -1,7 +1,6 @@
 package paige.navic.ui.screens.settings
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,9 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -39,20 +36,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.info_bitrate_default_zero
 import navic.composeapp.generated.resources.info_in_use
 import navic.composeapp.generated.resources.info_streaming_quality
-import navic.composeapp.generated.resources.option_enable_custom_bitrates
+import navic.composeapp.generated.resources.info_transcoding_defaults
 import navic.composeapp.generated.resources.option_max_bitrate_cellular
 import navic.composeapp.generated.resources.option_max_bitrate_wifi
-import navic.composeapp.generated.resources.subtitle_max_bitrates
+import navic.composeapp.generated.resources.option_stream_custom_quality
+import navic.composeapp.generated.resources.option_stream_format_cellular
+import navic.composeapp.generated.resources.option_stream_format_wifi
 import navic.composeapp.generated.resources.title_advanced
 import navic.composeapp.generated.resources.title_cellular
 import navic.composeapp.generated.resources.title_streaming_quality
 import navic.composeapp.generated.resources.title_wifi
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.StreamingQuality
@@ -63,24 +60,17 @@ import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.screens.settings.components.SettingSwitchRow
 
 @Composable
 fun SettingsStreamingQualityScreen() {
 	val preferenceManager = koinInject<PreferenceManager>()
-	val platformContext = LocalPlatformContext.current
 	val connectivityManager = koinInject<ConnectivityManager>()
 	val isOnline by connectivityManager.isOnline.collectAsStateWithLifecycle()
 	val isCellular by connectivityManager.isCellular.collectAsStateWithLifecycle()
 
-	var isAdvancedActive by remember { mutableStateOf(preferenceManager.isAdvancedTranscodingActive) }
-
 	Scaffold(
-		topBar = {
-			NestedTopBar(
-				{ Text(stringResource(Res.string.title_streaming_quality)) },
-				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
-			)
-		},
+		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_streaming_quality)) }) },
 		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
 		CompositionLocalProvider(
@@ -90,9 +80,9 @@ fun SettingsStreamingQualityScreen() {
 				Modifier
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
-					.padding(top = 16.dp, end = 16.dp, start = 16.dp, bottom = 32.dp)
+					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
-				AnimatedVisibility(visible = !isAdvancedActive) {
+				AnimatedVisibility(visible = !preferenceManager.isAdvancedTranscodingActive) {
 					Column {
 						FormTitle(buildString {
 							append(stringResource(Res.string.title_wifi))
@@ -122,95 +112,18 @@ fun SettingsStreamingQualityScreen() {
 					}
 				}
 
-				Spacer(Modifier.height(16.dp))
 				FormTitle(stringResource(Res.string.title_advanced))
 
-				Form {
-					val interactionSource = remember { MutableInteractionSource() }
-					FormRow(
-						modifier = Modifier.clickable(
-							interactionSource = interactionSource,
-							indication = null,
-							onClick = {
-								isAdvancedActive = !isAdvancedActive
-								preferenceManager.isAdvancedTranscodingActive = isAdvancedActive
-							}
-						),
-						horizontalArrangement = Arrangement.SpaceBetween,
-						contentPadding = PaddingValues(16.dp)
-					) {
-						Text(
-							text = stringResource(Res.string.option_enable_custom_bitrates),
-							style = MaterialTheme.typography.bodyLarge
-						)
-						Switch(
-							checked = isAdvancedActive,
-							onCheckedChange = {
-								isAdvancedActive = it
-								preferenceManager.isAdvancedTranscodingActive = it
-							}
-						)
-					}
+				Form(bottomPadding = 0.dp) {
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_stream_custom_quality)) },
+						value = preferenceManager.isAdvancedTranscodingActive,
+						onSetValue = { preferenceManager.isAdvancedTranscodingActive = it }
+					)
+				}
 
-					AnimatedVisibility(visible = isAdvancedActive) {
-						Column(Modifier.padding(16.dp)) {
-							Text(
-								text = stringResource(Res.string.subtitle_max_bitrates),
-								style = MaterialTheme.typography.bodyMedium,
-								color = MaterialTheme.colorScheme.onSurfaceVariant
-							)
-
-							Spacer(Modifier.height(16.dp))
-
-							var wifiInput by remember {
-								val current = preferenceManager.customMaxBitrateWifi
-								mutableStateOf(if (current > 0) current.toString() else "")
-							}
-
-							OutlinedTextField(
-								value = wifiInput,
-								onValueChange = { newValue ->
-									if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
-										wifiInput = newValue
-										preferenceManager.customMaxBitrateWifi = newValue.toIntOrNull() ?: 0
-									}
-								},
-								label = { Text(stringResource(Res.string.option_max_bitrate_wifi)) },
-								placeholder = { Text("0") },
-								supportingText = {
-									Text(stringResource(Res.string.info_bitrate_default_zero))
-								},
-								keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-								modifier = Modifier.fillMaxWidth(),
-								singleLine = true
-							)
-
-							Spacer(Modifier.height(16.dp))
-
-							var cellularInput by remember {
-								val current = preferenceManager.customMaxBitrateCellular
-								mutableStateOf(if (current > 0) current.toString() else "")
-							}
-
-							OutlinedTextField(
-								value = cellularInput,
-								onValueChange = { newValue ->
-									if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
-										cellularInput = newValue
-										preferenceManager.customMaxBitrateCellular = newValue.toIntOrNull() ?: 0
-									}
-								},
-								label = { Text(stringResource(Res.string.option_max_bitrate_cellular)) },
-								placeholder = { Text("0") },
-								supportingText = {
-									Text(stringResource(Res.string.info_bitrate_default_zero))
-								},
-								keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-								modifier = Modifier.fillMaxWidth(),
-								singleLine = true
-							)
-						}
-					}
+				AnimatedVisibility(visible = preferenceManager.isAdvancedTranscodingActive) {
+					CustomOptions()
 				}
 
 				Spacer(Modifier.height(24.dp))
@@ -274,5 +187,72 @@ private fun RadioButtons(
 				}
 			}
 		}
+	}
+}
+
+@Composable
+private fun CustomOptions() {
+	val preferenceManager = koinInject<PreferenceManager>()
+	var wifiInput by remember {
+		val current = preferenceManager.customMaxBitrateWifi
+		mutableStateOf(if (current > 0) current.toString() else "")
+	}
+	var cellularInput by remember {
+		val current = preferenceManager.customMaxBitrateCellular
+		mutableStateOf(if (current > 0) current.toString() else "")
+	}
+
+	Column(
+		modifier = Modifier.padding(16.dp),
+		verticalArrangement = Arrangement.spacedBy(8.dp)
+	) {
+		OutlinedTextField(
+			value = wifiInput,
+			onValueChange = { newValue ->
+				if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+					wifiInput = newValue
+					preferenceManager.customMaxBitrateWifi =
+						newValue.toIntOrNull() ?: 0
+				}
+			},
+			label = { Text(stringResource(Res.string.option_max_bitrate_wifi)) },
+			placeholder = { Text("0") },
+			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+			modifier = Modifier.fillMaxWidth(),
+			singleLine = true
+		)
+
+		OutlinedTextField(
+			value = cellularInput,
+			onValueChange = { newValue ->
+				if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+					cellularInput = newValue
+					preferenceManager.customMaxBitrateCellular =
+						newValue.toIntOrNull() ?: 0
+				}
+			},
+			label = { Text(stringResource(Res.string.option_max_bitrate_cellular)) },
+			placeholder = { Text("0") },
+			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+			modifier = Modifier.fillMaxWidth(),
+			singleLine = true
+		)
+
+		OutlinedTextField(
+			value = preferenceManager.customFormatWifi,
+			onValueChange = { preferenceManager.customFormatWifi = it },
+			label = { Text(stringResource(Res.string.option_stream_format_wifi)) },
+			modifier = Modifier.fillMaxWidth(),
+			singleLine = true
+		)
+
+		OutlinedTextField(
+			value = preferenceManager.customFormatCellular,
+			onValueChange = { preferenceManager.customFormatCellular = it },
+			label = { Text(stringResource(Res.string.option_stream_format_cellular)) },
+			supportingText = { Text(stringResource(Res.string.info_transcoding_defaults)) },
+			modifier = Modifier.fillMaxWidth(),
+			singleLine = true
+		)
 	}
 }

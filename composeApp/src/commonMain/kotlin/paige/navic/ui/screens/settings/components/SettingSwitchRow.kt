@@ -1,5 +1,6 @@
 package paige.navic.ui.screens.settings.components
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
@@ -9,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
@@ -26,9 +28,11 @@ fun SettingSwitchRow(
 	isDividerShown: Boolean = false
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
+	val interactionSource = remember { MutableInteractionSource() }
 	FormRow(
 		onClick = { onSetValue(!value) },
-		contentPadding = contentPadding
+		contentPadding = contentPadding,
+		interactionSource = interactionSource
 	) {
 		Column(Modifier.weight(1f)) {
 			title()
@@ -46,8 +50,9 @@ fun SettingSwitchRow(
 		SettingSwitch(
 			modifier = Modifier.padding(start = 4.dp),
 			checked = value,
-			onCheckedChange = { onSetValue(it) },
-			enabled = enabled
+			onCheckedChange = null,
+			enabled = enabled,
+			interactionSource = interactionSource
 		)
 	}
 }

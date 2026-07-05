@@ -55,6 +55,10 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_next_song
+import navic.composeapp.generated.resources.action_pause
+import navic.composeapp.generated.resources.action_play
+import navic.composeapp.generated.resources.action_previous_song
 import navic.composeapp.generated.resources.info_not_playing
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -145,6 +149,8 @@ fun MiniPlayer(
 		onSwipeRight = {
 			if (isInteractive) player.previous()
 		},
+		swipeLeftAccessibilityLabel = stringResource(Res.string.action_previous_song),
+		swipeRightAccessibilityLabel = stringResource(Res.string.action_next_song),
 		modifier = modifier,
 		enabled = isInteractive
 	) {
@@ -264,10 +270,15 @@ fun MiniPlayer(
 							colors = colors
 						) {
 							val painter = playPauseIconPainter(playerState.isPaused)
+							val description = stringResource(
+								if (playerState.isPaused)
+									Res.string.action_play
+								else Res.string.action_pause
+							)
 							if (painter != null) {
 								Icon(
 									painter = painter,
-									contentDescription = null,
+									contentDescription = description,
 									modifier = Modifier.size(iconSize)
 								)
 							} else {
@@ -275,7 +286,7 @@ fun MiniPlayer(
 									imageVector = if (playerState.isPaused)
 										Icons.Filled.Play
 									else Icons.Filled.Pause,
-									contentDescription = null,
+									contentDescription = description,
 									modifier = Modifier.size(iconSize)
 								)
 							}
@@ -290,7 +301,7 @@ fun MiniPlayer(
 						) {
 							Icon(
 								imageVector = Icons.Filled.SkipNext,
-								contentDescription = null,
+								contentDescription = stringResource(Res.string.action_next_song),
 								modifier = Modifier.size(iconSize)
 							)
 						}

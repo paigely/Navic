@@ -6,6 +6,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import paige.navic.ui.theme.defaultFont
 
@@ -17,6 +19,9 @@ fun FormTitle(text: String) {
 		style = MaterialTheme.typography.titleSmallEmphasized,
 		fontFamily = defaultFont(grade = 100, round = 100f),
 		color = MaterialTheme.colorScheme.primary,
-		modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 6.dp)
+		modifier = Modifier
+			.padding(horizontal = 12.dp)
+			.padding(bottom = 6.dp)
+			.semantics { heading() }
 	)
 }

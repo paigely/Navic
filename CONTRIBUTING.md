@@ -68,5 +68,4 @@ On macOS, you will also need:
 
 ### Questions or assistance
 
-Ask in the [Discord](https://discord.gg/TBcnNX66PH)
-or [Matrix](https://matrix.to/#/#navic:maize.moe) server.
+Ask in the [Discord](https://discord.gg/TBcnNX66PH) server

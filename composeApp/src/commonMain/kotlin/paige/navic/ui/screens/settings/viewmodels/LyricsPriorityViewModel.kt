@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
 import paige.navic.domain.models.lyrics.LyricsConfig
 import paige.navic.ui.core.UiState
@@ -14,8 +14,8 @@ class LyricsPriorityViewModel(
 ) : ViewModel() {
 	private val json = Json
 
-	private val _state = MutableStateFlow<UiState<LyricsConfig>>(UiState.Loading())
-	val state = _state.asStateFlow()
+	val state: StateFlow<UiState<LyricsConfig>>
+		field = MutableStateFlow<UiState<LyricsConfig>>(UiState.Loading())
 
 	companion object {
 		const val KEY = "lyrics_config_prefs"
@@ -33,19 +33,19 @@ class LyricsPriorityViewModel(
 			} else {
 				LyricsConfig()
 			}
-			_state.value = UiState.Success(config)
+			state.value = UiState.Success(config)
 		} catch (e: Exception) {
-			_state.value = UiState.Error(e)
+			state.value = UiState.Error(e)
 		}
 	}
 
 	private fun setConfig(newConfig: LyricsConfig) {
-		_state.value = UiState.Success(newConfig)
+		state.value = UiState.Success(newConfig)
 		settings[KEY] = json.encodeToString(newConfig)
 	}
 
 	fun move(from: Int, to: Int) {
-		val currentState = _state.value
+		val currentState = state.value
 		if (currentState is UiState.Success) {
 			val config = currentState.data
 			setConfig(

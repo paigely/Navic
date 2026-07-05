@@ -7,7 +7,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import paige.navic.data.database.dao.AlbumDao
@@ -26,21 +26,20 @@ class ArtistListViewModel(
 	private val albumDao: AlbumDao,
 	private val sessionManager: SessionManager
 ) : ViewModel() {
-	private val _artistsState =
-		MutableStateFlow<UiState<ImmutableList<DomainArtist>>>(UiState.Loading())
-	val artistsState = _artistsState.asStateFlow()
+	val artistsState: StateFlow<UiState<ImmutableList<DomainArtist>>>
+		field = MutableStateFlow<UiState<ImmutableList<DomainArtist>>>(UiState.Loading())
 
-	private val _starred = MutableStateFlow(false)
-	val starred = _starred.asStateFlow()
+	val starred: StateFlow<Boolean>
+		field = MutableStateFlow(false)
 
-	private val _selectedArtist = MutableStateFlow<DomainArtist?>(null)
-	val selectedArtist = _selectedArtist.asStateFlow()
+	val selectedArtist: StateFlow<DomainArtist?>
+		field = MutableStateFlow(null)
 
-	private val _selectedArtistAlbums = MutableStateFlow<ImmutableList<DomainAlbum>?>(null)
-	val selectedArtistAlbums = _selectedArtistAlbums.asStateFlow()
+	val selectedArtistAlbums: StateFlow<ImmutableList<DomainAlbum>?>
+		field = MutableStateFlow(null)
 
-	private val _listType = MutableStateFlow(initialListType)
-	val listType = _listType.asStateFlow()
+	val listType: StateFlow<DomainArtistListType>
+		field = MutableStateFlow(initialListType)
 
 	val gridState = LazyGridState()
 
@@ -52,44 +51,44 @@ class ArtistListViewModel(
 
 	fun refreshArtists(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			repository.getArtistsFlow(fullRefresh, _listType.value).collect {
-				_artistsState.value = it
+			repository.getArtistsFlow(fullRefresh, listType.value).collect {
+				artistsState.value = it
 			}
 		}
 	}
 
 	fun selectArtist(artist: DomainArtist) {
 		viewModelScope.launch {
-			_selectedArtist.value = artist
-			val artistAlbums = 
+			selectedArtist.value = artist
+			val artistAlbums =
 				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
-			_selectedArtistAlbums.value = artistAlbums.map { it.toDomainModel() }.toImmutableList()
-			_starred.value = repository.isArtistStarred(artist)
+			selectedArtistAlbums.value = artistAlbums.map { it.toDomainModel() }.toImmutableList()
+			starred.value = repository.isArtistStarred(artist)
 		}
 	}
 
 	fun clearSelection() {
-		_selectedArtist.value = null
+		selectedArtist.value = null
 	}
 
-	fun starArtist(starred: Boolean) {
-		val artist = _selectedArtist.value ?: return
+	fun starArtist(isStarred: Boolean) {
+		val artist = selectedArtist.value ?: return
 		viewModelScope.launch {
 			runCatching {
-				if (starred) {
+				if (isStarred) {
 					repository.starArtist(artist)
 				} else {
 					repository.unstarArtist(artist)
 				}
-				_starred.value = starred
+				starred.value = isStarred
 			}
 		}
 	}
 
 	fun addArtistAlbumsToQueue(player: MediaPlayerViewModel) {
-		val artist = _selectedArtist.value ?: return
+		val artist = selectedArtist.value ?: return
 		viewModelScope.launch {
-			val artistAlbums = 
+			val artistAlbums =
 				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
 			artistAlbums.map { it.toDomainModel() }.forEach { album ->
 				player.addToQueue(album)
@@ -98,9 +97,9 @@ class ArtistListViewModel(
 	}
 
 	fun playArtistAlbumsNext(player: MediaPlayerViewModel) {
-		val artist = _selectedArtist.value ?: return
+		val artist = selectedArtist.value ?: return
 		viewModelScope.launch {
-			val artistAlbums = 
+			val artistAlbums =
 				albumDao.getAlbumsByArtist(artist.id).firstOrNull() ?: emptyList()
 			artistAlbums.map { it.toDomainModel() }.forEach { album ->
 				player.playNext(album)
@@ -109,11 +108,11 @@ class ArtistListViewModel(
 	}
 
 	// TODO: implement me
-	fun setListType(listType: DomainArtistListType) {
-		_listType.value = listType
+	fun setListType(newListType: DomainArtistListType) {
+		listType.value = newListType
 	}
 
 	fun clearError() {
-		_artistsState.value = UiState.Success(_artistsState.value.data ?: persistentListOf())
+		artistsState.value = UiState.Success(artistsState.value.data ?: persistentListOf())
 	}
 }

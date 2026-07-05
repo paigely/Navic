@@ -1,11 +1,14 @@
 package paige.navic.domain.manager
 
+import com.materialkolor.PaletteStyle
+import com.materialkolor.dynamiccolor.ColorSpec
 import paige.navic.domain.manager.base.BasePreferenceManager
 import paige.navic.domain.models.settings.AnimationStyle
 import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.settings.CoverArtQuality
 import paige.navic.domain.models.settings.CoverArtShape
+import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.domain.models.settings.FontOption
 import paige.navic.domain.models.settings.GridSize
 import paige.navic.domain.models.settings.MarqueeSpeed
@@ -33,6 +36,7 @@ class PreferenceManager(
 	var swipeToSkip by preference(true)
 	var gridSize by preference(GridSize.TwoByTwo)
 	var coverArtShape by preference(CoverArtShape.Soft)
+	var artistImageShape by preference(CoverArtShape.Soft)
 	var coverArtQuality by preference(CoverArtQuality.High)
 	var artGridItemSize by preference(150f)
 	var marqueeSpeed by preference(MarqueeSpeed.Slow)
@@ -48,24 +52,30 @@ class PreferenceManager(
 	var replayGainMode by preference(ReplayGainMode.Off)
 	var gaplessPlayback by preference(true)
 	var audioOffload by preference(false)
+
+	// TODO: better names and strings for these transcoding settings
 	var streamingQualityWifi by preference(StreamingQuality.Lossless)
 	var streamingQualityCellular by preference(StreamingQuality.Lossless)
 	var isAdvancedTranscodingActive by preference(false)
 	var customMaxBitrateWifi by preference(0)
 	var customMaxBitrateCellular by preference(0)
+	var customFormatWifi by preference("")
+	var customFormatCellular by preference("")
+
 	var nowPlayingToolbarPosition by preference(ToolbarPosition.Bottom)
 	var nowPlayingSongInfo by preference(true)
 	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)
 	var customHeaders by preference("")
 	var checkForUpdates by preference(true)
+	var explicitContentPlayback by preference(ExplicitContentPlayback.Allowed)
 
 	// navigation bar settings
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)
 	var bottomBarVisibilityMode by preference(BottomBarVisibilityMode.AllScreens)
 	var navigationBarStyle by preference(NavigationBarStyle.Normal)
 	var navigationBarLabelVisibility by preference(
-        NavigationBarLabelVisibility.Always
-    )
+		NavigationBarLabelVisibility.Always
+	)
 	var miniPlayerStyle by preference(MiniPlayerStyle.Detached)
 	var miniPlayerProgressStyle by preference(MiniPlayerProgressStyle.Seekable)
 
@@ -78,9 +88,11 @@ class PreferenceManager(
 	// theme related settings
 	var theme by preference(Theme.Dynamic)
 	var themeMode by preference(ThemeMode.System)
-	var accentColourH by preference(0f)
-	var accentColourS by preference(0f)
-	var accentColourV by preference(1f)
+	var dynamicAlbumViewTheme by preference(false)
+	var dynamicArtistViewTheme by preference(false)
+	var paletteStyle by preference(PaletteStyle.TonalSpot)
+	var paletteSpec by preference(ColorSpec.SpecVersion.SPEC_2025)
+	var paletteAccentH by preference(0f)
 
 	// sync related settings
 	var lastFullSyncTime by preference(0L)

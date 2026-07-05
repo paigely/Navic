@@ -10,7 +10,6 @@ import kotlinx.collections.immutable.persistentListOf
 import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
-import paige.navic.ui.navigation.Screen
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainSong
@@ -18,6 +17,7 @@ import paige.navic.domain.models.DomainSongCollection
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.sheets.SongSheet
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 
 @Composable

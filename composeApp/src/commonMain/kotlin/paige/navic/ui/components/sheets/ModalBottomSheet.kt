@@ -13,6 +13,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import paige.navic.util.ui.SheetHideMotionSpec
@@ -34,11 +36,16 @@ fun ModalBottomSheet(
 	dragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
 	contentWindowInsets: @Composable () -> WindowInsets = { BottomSheetDefaults.modalWindowInsets },
 	properties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
+	sheetTitle: String? = null,
 	content: @Composable ColumnScope.() -> Unit,
 ) {
 	androidx.compose.material3.ModalBottomSheet(
 		onDismissRequest = onDismissRequest,
-		modifier = modifier,
+		modifier = modifier.semantics {
+			sheetTitle?.let { sheetTitle ->
+				paneTitle = sheetTitle
+			}
+		},
 		sheetState = sheetState,
 		sheetMaxWidth = sheetMaxWidth,
 		sheetGesturesEnabled = sheetGesturesEnabled,

@@ -21,11 +21,11 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
-import paige.navic.ui.navigation.Screen
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.MoreHoriz
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.sheets.SongSheet
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.theme.NavicTheme
@@ -97,10 +97,10 @@ fun NowPlayingMoreButton(
 
 	if (playlistDialogShown && song != null) {
 		NavicTheme {
-            PlaylistUpdateDialog(
-                songs = persistentListOf(song),
-                onDismissRequest = { playlistDialogShown = false }
-            )
+			PlaylistUpdateDialog(
+				songs = persistentListOf(song),
+				onDismissRequest = { playlistDialogShown = false }
+			)
 		}
 	}
 

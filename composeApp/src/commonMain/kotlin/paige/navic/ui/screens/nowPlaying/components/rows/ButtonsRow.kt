@@ -33,7 +33,21 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
+import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_next_song
+import navic.composeapp.generated.resources.action_pause
+import navic.composeapp.generated.resources.action_play
+import navic.composeapp.generated.resources.action_previous_song
+import navic.composeapp.generated.resources.action_shuffle
+import navic.composeapp.generated.resources.info_repeat_all
+import navic.composeapp.generated.resources.info_repeat_off
+import navic.composeapp.generated.resources.info_repeat_one
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.icons.Icons
@@ -66,6 +80,12 @@ fun NowPlayingButtonsRow() {
 		HapticFeedbackType.ToggleOff
 	}
 
+	val repeatStateDescription = stringResource(when (playerState.repeatMode) {
+		1 -> Res.string.info_repeat_one
+		2 -> Res.string.info_repeat_all
+		else -> Res.string.info_repeat_off
+	})
+
 	LaunchedEffect(isPressed) {
 		if (!isPressed) {
 			if (scale.value != 1f) {
@@ -92,7 +112,12 @@ fun NowPlayingButtonsRow() {
 		verticalAlignment = Alignment.CenterVertically
 	) {
 		IconButton(
-			modifier = Modifier.weight(1f).aspectRatio(1f),
+			modifier = Modifier
+				.weight(1f)
+				.aspectRatio(1f)
+				.semantics {
+					toggleableState = ToggleableState(playerState.isShuffleEnabled)
+				},
 			onClick = {
 				platformContext.clickSound()
 				player.toggleShuffle()
@@ -103,7 +128,7 @@ fun NowPlayingButtonsRow() {
 				imageVector = if (playerState.isShuffleEnabled)
 					Icons.Filled.ShuffleOn
 				else Icons.Outlined.Shuffle,
-				contentDescription = null,
+				contentDescription = stringResource(Res.string.action_shuffle),
 				modifier = Modifier.size(24.dp)
 			)
 		}
@@ -117,7 +142,7 @@ fun NowPlayingButtonsRow() {
 		) {
 			Icon(
 				imageVector = Icons.Filled.SkipPrevious,
-				contentDescription = null,
+				contentDescription = stringResource(Res.string.action_previous_song),
 				modifier = Modifier.size(32.dp)
 			)
 		}
@@ -138,12 +163,17 @@ fun NowPlayingButtonsRow() {
 			interactionSource = interactionSource
 		) {
 			val painter = playPauseIconPainter(playerState.isPaused)
+			val description = stringResource(
+				if (playerState.isPaused)
+					Res.string.action_play
+				else Res.string.action_pause
+			)
 			AnimatedContent(playerState.isLoading) { isBuffering ->
 				if (!isBuffering) {
 					if (painter != null) {
 						Icon(
 							painter = painter,
-							contentDescription = null,
+							contentDescription = description,
 							modifier = Modifier.size(40.dp)
 						)
 					} else {
@@ -151,7 +181,7 @@ fun NowPlayingButtonsRow() {
 							imageVector = if (playerState.isPaused)
 								Icons.Filled.Play
 							else Icons.Filled.Pause,
-							contentDescription = null,
+							contentDescription = description,
 							modifier = Modifier.size(40.dp)
 						)
 					}
@@ -174,12 +204,17 @@ fun NowPlayingButtonsRow() {
 		) {
 			Icon(
 				imageVector = Icons.Filled.SkipNext,
-				contentDescription = null,
+				contentDescription = stringResource(Res.string.action_next_song),
 				modifier = Modifier.size(32.dp)
 			)
 		}
 		IconButton(
-			modifier = Modifier.weight(1f).aspectRatio(1f),
+			modifier = Modifier
+				.weight(1f)
+				.aspectRatio(1f)
+				.semantics {
+					stateDescription = repeatStateDescription
+				},
 			onClick = {
 				platformContext.clickSound()
 				player.toggleRepeat()

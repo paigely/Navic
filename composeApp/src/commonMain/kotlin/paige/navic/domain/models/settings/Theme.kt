@@ -17,11 +17,6 @@ import navic.composeapp.generated.resources.theme_dynamic
 import navic.composeapp.generated.resources.theme_ios
 import navic.composeapp.generated.resources.theme_seeded
 import navic.composeapp.generated.resources.theme_spotify
-import navic.composeapp.generated.resources.theme_subtitle_apple_music
-import navic.composeapp.generated.resources.theme_subtitle_dynamic
-import navic.composeapp.generated.resources.theme_subtitle_ios
-import navic.composeapp.generated.resources.theme_subtitle_seeded
-import navic.composeapp.generated.resources.theme_subtitle_spotify
 import org.jetbrains.compose.resources.StringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
@@ -32,15 +27,7 @@ import paige.navic.util.ui.lightIosColorScheme
 /**
  * Theme choices that the user can choose from
  */
-enum class Theme(
-	val title: StringResource, val subtitle: StringResource
-) {
-
-	/**
-	 * The app will be themed based on whatever the user
-	 * chose in system settings. Android only.
-	 */
-	Dynamic(Res.string.theme_dynamic, Res.string.theme_subtitle_dynamic),
+enum class Theme(val title: StringResource) {
 
 	/**
 	 * The app will be themed based on a "seed" colour.
@@ -48,24 +35,30 @@ enum class Theme(
 	 * When this is selected, `accentColor(H/S/V)` settings
 	 * will be exposed in the UI as a colour picker.
 	 */
-	Seeded(Res.string.theme_seeded, Res.string.theme_subtitle_seeded),
+	Seeded(Res.string.theme_seeded),
+
+	/**
+	 * The app will be themed based on whatever the user
+	 * chose in system settings. Android only.
+	 */
+	Dynamic(Res.string.theme_dynamic),
 
 	/**
 	 * The app will be themed according to Apple's HIG.
 	 * TODO: this should pull from UIColor
 	 */
 	@Suppress("EnumEntryName")
-	iOS(Res.string.theme_ios, Res.string.theme_subtitle_ios),
+	iOS(Res.string.theme_ios),
 
 	/**
 	 * The same as iOS, but with a pink-ish accent.
 	 */
-	AppleMusic(Res.string.theme_apple_music, Res.string.theme_subtitle_apple_music),
+	AppleMusic(Res.string.theme_apple_music),
 
 	/**
 	 * The same as iOS, but with a green accent.
 	 */
-	Spotify(Res.string.theme_spotify, Res.string.theme_subtitle_spotify);
+	Spotify(Res.string.theme_spotify);
 
 	@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 	@Composable
@@ -89,12 +82,13 @@ enum class Theme(
 
 			Seeded -> rememberDynamicColorScheme(
 				seedColor = HsvColor(
-					preferenceManager.accentColourH,
-					preferenceManager.accentColourS,
-					preferenceManager.accentColourV
+					hue = preferenceManager.paletteAccentH,
+					saturation = 1f,
+					value = 1f
 				).toColor(),
 				isDark = isDark,
 				specVersion = ColorSpec.SpecVersion.SPEC_2025,
+				style = preferenceManager.paletteStyle
 			)
 
 			iOS -> if (isDark)

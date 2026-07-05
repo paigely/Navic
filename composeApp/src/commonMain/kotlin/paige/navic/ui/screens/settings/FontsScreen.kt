@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -23,6 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
@@ -50,6 +54,7 @@ fun FontsScreen() {
 			LocalMinimumInteractiveComponentSize provides 0.dp
 		) {
 			LazyColumn(
+				modifier = Modifier.selectableGroup(),
 				verticalArrangement = Arrangement.spacedBy(3.dp),
 				contentPadding = contentPadding + PaddingValues(
 					top = 16.dp, end = 16.dp, start = 16.dp
@@ -71,7 +76,9 @@ private fun LazyListScope.heading(resource: StringResource) {
 		Text(
 			stringResource(resource),
 			style = MaterialTheme.typography.titleSmallEmphasized,
-			modifier = Modifier.padding(horizontal = 12.dp)
+			modifier = Modifier.padding(horizontal = 12.dp).semantics {
+				heading()
+			}
 		)
 	}
 }
@@ -140,7 +147,8 @@ private fun FontRow(
 		supportingContent = {
 			Text(
 				"The quick brown fox jumps over the lazy dog",
-				fontFamily = fontFamily
+				fontFamily = fontFamily,
+				modifier = Modifier.semantics { hideFromAccessibility() }
 			)
 		},
 		trailingContent = {

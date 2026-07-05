@@ -195,7 +195,7 @@ fun SettingsDataStorageScreen() {
 				Modifier
 					.padding(innerPadding)
 					.verticalScroll(rememberScrollState())
-					.padding(top = 16.dp, end = 16.dp, start = 16.dp, bottom = 32.dp)
+					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				FormTitle(stringResource(Res.string.title_network))
 				Form {
@@ -372,7 +372,10 @@ fun SettingsDataStorageScreen() {
 													platformContext.clickSound()
 													viewModel.cancelLibraryDownload()
 												},
-												contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+												contentPadding = PaddingValues(
+													horizontal = 8.dp,
+													vertical = 0.dp
+												),
 												modifier = Modifier.padding(end = 8.dp)
 											) {
 												Text(
