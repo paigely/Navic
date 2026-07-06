@@ -101,7 +101,7 @@ import paige.navic.ui.screens.settings.SettingsScreen
 import paige.navic.ui.screens.settings.SettingsStreamingQualityScreen
 import paige.navic.ui.screens.settings.SettingsThemesScreen
 import paige.navic.ui.screens.share.ShareListScreen
-import paige.navic.ui.screens.song.SongDetailScreen
+import paige.navic.ui.components.sheets.SongDetailSheet
 import paige.navic.ui.screens.song.SongListScreen
 import paige.navic.ui.screens.starred.StarredScreen
 import paige.navic.ui.theme.NavicTheme
@@ -321,8 +321,15 @@ private fun entryProvider(
 		entry<Screen.CollectionDetail>(metadata = detailPane("root")) { key ->
 			CollectionDetailScreen(key.collectionId, key.tab)
 		}
-		entry<Screen.SongDetail>(metadata = BottomSheetSceneStrategy.bottomSheet(coverArtId = "")) { key ->
-			SongDetailScreen(key.songId)
+		entry<Screen.SongDetail>(
+			metadata = { key ->
+				BottomSheetSceneStrategy.bottomSheet(coverArtId = key.coverArtId ?: "")
+			}
+		) { key ->
+			SongDetailSheet(
+				songId = key.songId,
+				initialCoverArtId = key.coverArtId
+			)
 		}
 		entry<Screen.Search>(metadata = navtabMetadata) { key ->
 			SearchScreen(key.nested)

@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.song
+package paige.navic.ui.components.sheets
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentMapOf
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.info_album_replay_gain
 import navic.composeapp.generated.resources.info_track_album
 import navic.composeapp.generated.resources.info_track_artist
@@ -45,6 +46,7 @@ import navic.composeapp.generated.resources.info_track_replay_gain_effective
 import navic.composeapp.generated.resources.info_track_sampling_rate
 import navic.composeapp.generated.resources.info_track_year
 import navic.composeapp.generated.resources.info_unknown
+import navic.composeapp.generated.resources.track_info_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -56,9 +58,15 @@ import paige.navic.ui.screens.song.viewmodels.SongDetailViewModel
 import paige.navic.util.core.effectiveGain
 import paige.navic.util.core.toFileSize
 import paige.navic.util.core.toHoursMinutesSeconds
+import paige.navic.util.ui.rememberColorSchemeFromCoverArt
+import paige.navic.ui.theme.NavicTheme
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SongDetailScreen(songId: String) {
+fun SongDetailSheet(
+	songId: String,
+	initialCoverArtId: String? = null
+) {
 	val viewModel = koinViewModel<SongDetailViewModel>(
 		key = songId,
 		parameters = { parametersOf(songId) }
@@ -68,6 +76,9 @@ fun SongDetailScreen(songId: String) {
 	val song = songState.data
 
 	val preferenceManager = koinInject<PreferenceManager>()
+	val activeCoverArtId = if (initialCoverArtId.isNullOrEmpty()) song?.coverArtId else initialCoverArtId
+	val colorScheme = rememberColorSchemeFromCoverArt(activeCoverArtId)
+
 	val info = remember(song) {
 		song?.let {
 			persistentMapOf(
@@ -99,54 +110,55 @@ fun SongDetailScreen(songId: String) {
 		}.orEmpty()
 	}
 
-	val currentColorScheme = MaterialTheme.colorScheme
-	Surface(
-		modifier = Modifier.fillMaxSize(),
-		color = currentColorScheme.surface
-	) {
-		Column(
-			modifier = Modifier
-				.fillMaxSize()
-				.verticalScroll(rememberScrollState())
-				.padding(horizontal = 16.dp)
+	NavicTheme(colorScheme) {
+		Surface(
+			modifier = Modifier.fillMaxSize(),
+			color = MaterialTheme.colorScheme.surface
 		) {
-			Text(
-				text = stringResource(Res.string.action_track_info),
-				style = MaterialTheme.typography.titleLarge,
-				fontWeight = FontWeight.SemiBold,
-				color = currentColorScheme.onSurface,
-				modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp)
-			)
+			Column(
+				modifier = Modifier
+					.fillMaxSize()
+					.verticalScroll(rememberScrollState())
+					.padding(horizontal = 16.dp)
+			) {
+				Text(
+					text = stringResource(Res.string.track_info_title),
+					style = MaterialTheme.typography.titleLarge,
+					fontWeight = FontWeight.SemiBold,
+					color = MaterialTheme.colorScheme.onSurface,
+					modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp)
+				)
 
-			Form {
-				info.forEach { (key, value) ->
-					FormRow {
-						Column(Modifier.padding(vertical = 4.dp)) {
-							Text(
-								text = stringResource(key),
-								style = MaterialTheme.typography.labelMedium,
-								color = currentColorScheme.primary
-							)
-							SelectionContainer {
+				Form {
+					info.forEach { (key, value) ->
+						FormRow {
+							Column(Modifier.padding(vertical = 4.dp)) {
 								Text(
-									text = value ?: stringResource(Res.string.info_unknown),
-									style = MaterialTheme.typography.bodyLarge,
-									color = currentColorScheme.onSurface
+									text = stringResource(key),
+									style = MaterialTheme.typography.labelMedium,
+									color = MaterialTheme.colorScheme.primary
 								)
+								SelectionContainer {
+									Text(
+										text = value ?: stringResource(Res.string.info_unknown),
+										style = MaterialTheme.typography.bodyLarge,
+										color = MaterialTheme.colorScheme.onSurface
+									)
+								}
 							}
 						}
 					}
 				}
-			}
 
-			Spacer(
-				Modifier.padding(
-					WindowInsets.systemBars
-						.only(WindowInsetsSides.Bottom)
-						.asPaddingValues()
+				Spacer(
+					Modifier.padding(
+						WindowInsets.systemBars
+							.only(WindowInsetsSides.Bottom)
+							.asPaddingValues()
+					)
 				)
-			)
-			Spacer(Modifier.height(16.dp))
+				Spacer(Modifier.height(16.dp))
+			}
 		}
 	}
 }
