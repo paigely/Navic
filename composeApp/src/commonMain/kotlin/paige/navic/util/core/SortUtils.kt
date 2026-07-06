@@ -70,6 +70,10 @@ fun DomainAlbumListType.toSqlQuery(): RoomRawQuery {
 			orderBy = "starredAt ASC"
 		}
 
+		DomainAlbumListType.Year -> {
+			orderBy = "year DESC"
+		}
+
 		is DomainAlbumListType.ByGenre -> {
 			where = "genre = ?"
 			orderBy = "LOWER(name) ASC"
@@ -77,14 +81,10 @@ fun DomainAlbumListType.toSqlQuery(): RoomRawQuery {
 		}
 
 		is DomainAlbumListType.ByYear -> {
-			if (fromYear != null && toYear != null) {
-				where = "COALESCE(year, 0) BETWEEN ? AND ?"
-				orderBy = "LOWER(name) ASC"
-				args.add(fromYear)
-				args.add(toYear)
-			} else {
-				orderBy = "year DESC"
-			}
+			where = "COALESCE(year, 0) BETWEEN ? AND ?"
+			orderBy = "LOWER(name) ASC"
+			args.add(fromYear)
+			args.add(toYear)
 		}
 	}
 
