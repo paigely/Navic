@@ -72,7 +72,6 @@
     <string name="subtitle_check_for_updates">Recomenda-se manter esta opção ativada, pois algumas atualizações fornecem correções de bugs importantes</string>
     <string name="subtitle_offline_mode">Define quando o aplicativo deve entrar no modo offline. Requer a reinicialização do aplicativo</string>
     <string name="subtitle_streaming_quality">Ajuste a qualidade da música transmitida</string>
-    <string name="subtitle_max_bitrates">Taxas máximas de bits</string>
     <string name="option_off">Desativado</string>
     <string name="option_now_playing_background_style">Estilo do plano de fundo</string>
     <string name="option_now_playing_background_style_static">Estático</string>

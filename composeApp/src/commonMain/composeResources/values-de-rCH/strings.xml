@@ -58,15 +58,10 @@
     <string name="option_enable_scrobbling">Scrobbling aktivieren</string>
     <string name="option_choose_theme">Design auswählen</string>
     <string name="theme_dynamic">Dynamisch</string>
-    <string name="theme_subtitle_dynamic">Auf Android 12 oder neuer verfügbar</string>
     <string name="theme_seeded">Getönt</string>
-    <string name="theme_subtitle_seeded">Eine Farbe für alles</string>
     <string name="theme_ios">Cupertino</string>
-    <string name="theme_subtitle_ios">Eine Stadt in Kalifornien</string>
     <string name="theme_apple_music">Music.app</string>
-    <string name="theme_subtitle_apple_music">Ein Design mit roten/pinken Akzenten.</string>
     <string name="theme_spotify">Spotlight</string>
-    <string name="theme_subtitle_spotify">Ein Design mit grünen Akzenten.</string>
     <plurals name="count_songs">
         <item quantity="one">%1$d Titel</item>
         <item quantity="other">%1$d Titel</item>

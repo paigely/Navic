@@ -103,15 +103,10 @@
     <string name="option_mini_player_progress_style_visible">Zichtbaar</string>
     <string name="option_mini_player_progress_style_seekable">Zoekbaar</string>
     <string name="theme_dynamic">Dynamisch</string>
-    <string name="theme_subtitle_dynamic">Beschikbaar vanaf Android 12</string>
     <string name="theme_seeded">Getint</string>
-    <string name="theme_subtitle_seeded">Één kleur voor alles</string>
     <string name="theme_ios">Cupertino</string>
-    <string name="theme_subtitle_ios">Een stad in Californië</string>
     <string name="theme_apple_music">Music.app</string>
-    <string name="theme_subtitle_apple_music">Een thema met rode en roze accenten</string>
     <string name="theme_spotify">In de kijker</string>
-    <string name="theme_subtitle_spotify">Een thema met groene accenten</string>
     <string name="theme_mode_system">Systeem</string>
     <string name="theme_mode_dark">Donker</string>
     <string name="theme_mode_light">Licht</string>

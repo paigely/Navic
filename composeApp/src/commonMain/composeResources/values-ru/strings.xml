@@ -143,7 +143,7 @@
     <string name="title_layout">Расположение</string>
     <string name="subtitle_now_playing">Настройки полноэкранного плеера</string>
     <string name="subtitle_bottom_app_bar">Настройка нижней панели и мини-плеера</string>
-    <string name="subtitle_playback">Параметры звука, история воспроизведения, тексты песен</string>
+    <string name="subtitle_playback">Параметры звука, история воспроизведения</string>
     <string name="subtitle_developer">Отладка, тестирование</string>
     <string name="subtitle_enable_scrobbling">Отправлять историю прослушивания на ваш сервер Navidrome</string>
     <string name="subtitle_gapless_playback">Экспериментальная функция. Требуется перезапуск приложения. На некоторых устройствах может возникать конфликт при выносе аудиообработки</string>
@@ -190,14 +190,9 @@
     <string name="option_mini_player_progress_style_visible">Видимый</string>
     <string name="option_mini_player_progress_style_seekable">Перематываемый</string>
     <string name="theme_dynamic">Динамическая</string>
-    <string name="theme_subtitle_dynamic">Доступно на Android 12 и выше</string>
     <string name="theme_seeded">Тонированный</string>
-    <string name="theme_subtitle_seeded">Один цвет для всех</string>
     <string name="theme_ios">Купертино</string>
-    <string name="theme_subtitle_ios">Город в Калифорнии</string>
     <string name="theme_apple_music">Music.app</string>
-    <string name="theme_subtitle_apple_music">Тема с красными/розовыми акцентами</string>
-    <string name="theme_subtitle_spotify">Тема с зеленым акцентом</string>
     <string name="theme_mode_system">Система</string>
     <string name="theme_mode_dark">Тёмная</string>
     <string name="theme_mode_light">Светлая</string>
@@ -369,12 +364,9 @@
     <string name="option_playback_speed">Скорость воспроизведения</string>
     <string name="info_streaming_quality">Более высокие пресеты качества будут использовать больше трафика. Перекодирование треков может значительно повлиять на время загрузки треков и привести к рассинхронизации текстов. Выберите Сжатие без потерь, если встретились с какими-либо проблемами.</string>
     <string name="title_advanced">Расширенное транскодирование</string>
-    <string name="subtitle_max_bitrates">Максимальный битрейт</string>
     <string name="option_off">Выключено</string>
-    <string name="option_enable_custom_bitrates">Включить настраиваемый битрейт</string>
     <string name="option_max_bitrate_wifi">Максимальный битрейт на WiFi (kbps)</string>
     <string name="option_max_bitrate_cellular">Максимальный битрейт на мобильной сети (kbps)</string>
-    <string name="info_bitrate_default_zero">Если оставить это поле пустым, по умолчанию будет установлено значение 0. Выбор битрейта остаётся за сервером.</string>
     <string name="title_starred">Избранное</string>
     <string name="option_cover_art_quality">Качество обложек</string>
     <string name="info_no_starred">В избранном ничего нет</string>

@@ -198,15 +198,10 @@
     <string name="option_mini_player_progress_style_visible">Sichtbar</string>
     <string name="option_mini_player_progress_style_seekable">Suchbar</string>
     <string name="theme_dynamic">Dynamisch</string>
-    <string name="theme_subtitle_dynamic">Verfügbar auf Android 12 und höher</string>
     <string name="theme_seeded">Getönt</string>
-    <string name="theme_subtitle_seeded">Eine Farbe für alles</string>
     <string name="theme_ios">Cupertino</string>
-    <string name="theme_subtitle_ios">Eine Stadt in Kalifornien</string>
     <string name="theme_apple_music">Music.app</string>
-    <string name="theme_subtitle_apple_music">Theme mit rot/pinken hervorstechungen</string>
     <string name="theme_spotify">Spotlight</string>
-    <string name="theme_subtitle_spotify">Themen mit grünen hervorstechungen</string>
     <string name="theme_mode_system">System</string>
     <string name="theme_mode_dark">Dunkel</string>
     <string name="theme_mode_light">Hell</string>
@@ -301,7 +296,6 @@
     <string name="title_advanced">Fortgeschrittenes Transcoding</string>
     <string name="subtitle_offline_mode">Bewirkt dass die App in den offline Modus geht. Benötigt einen App Neustart</string>
     <string name="subtitle_streaming_quality">Streaming Qualität bearbeiten</string>
-    <string name="subtitle_max_bitrates">Maximale Bitrate</string>
     <string name="option_off">Aus</string>
     <string name="option_now_playing_song_info">Erweiterte Lied Information</string>
     <string name="option_now_playing_slider_style_slim">Schmal</string>
@@ -319,7 +313,6 @@
     <string name="option_quality_medium">Mittel</string>
     <string name="option_quality_high">Hoch</string>
     <string name="option_quality_lossless">Lossless (kein transcoding)</string>
-    <string name="option_enable_custom_bitrates">Benutzerdefinierte Bitrate</string>
     <string name="option_offline_mode">Offline Modus</string>
     <string name="option_offline_mode_auto">Automatisch</string>
     <string name="option_offline_mode_forced">Erzwungen</string>
@@ -335,7 +328,6 @@
     <string name="info_progress">Fortschritt</string>
     <string name="info_in_use">(in Benutzung)</string>
     <string name="info_explicit">Explizit</string>
-    <string name="info_bitrate_default_zero">Das leer lassen erzeugt den Wert 0. Was den Server entscheiden lässt.</string>
     <plurals name="count_minutes">
         <item quantity="one">%1$d Minute</item>
         <item quantity="other">%1$d Minutes</item>

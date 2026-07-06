@@ -72,15 +72,10 @@
     <string name="option_position_top">Üst</string>
     <string name="option_position_bottom">Alt</string>
     <string name="theme_dynamic">Dinamik</string>
-    <string name="theme_subtitle_dynamic">Android 12 ve üzeri sürümlerde mevcuttur</string>
     <string name="theme_seeded">Renklendirilmiş</string>
-    <string name="theme_subtitle_seeded">Her şey için tek renk</string>
     <string name="theme_ios">Cupertino</string>
-    <string name="theme_subtitle_ios">Kaliforniya\\'da bir şehir</string>
     <string name="theme_apple_music">Music.app</string>
-    <string name="theme_subtitle_apple_music">Kırmızı/pembe vurgulu bir tema</string>
     <string name="theme_spotify">Spotlight</string>
-    <string name="theme_subtitle_spotify">Yeşil vurgulu bir tema</string>
     <string name="theme_mode_system">Sistem</string>
     <string name="theme_mode_dark">Karanlık</string>
     <string name="theme_mode_light">Aydınlık</string>
