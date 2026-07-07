@@ -116,18 +116,19 @@ fun SongSheet(
 	val sleepTimerManager = koinInject<SleepTimerManager>()
 	val sleepTimerLeft = sleepTimerManager.timeLeft
 	val contentPadding = PaddingValues(horizontal = 16.dp)
-	val colors = ListItemDefaults.colors(
-		containerColor = Color.Transparent,
-		trailingIconColor = MaterialTheme.colorScheme.onSurface,
-		headlineColor = MaterialTheme.colorScheme.onSurface
-	)
 
 	val colorScheme = if (useSongTheme) rememberColorSchemeFromCoverArt(song.coverArtId) else null
 
 	NavicTheme(colorScheme) {
+		val colors = ListItemDefaults.colors(
+			containerColor = Color.Transparent,
+			trailingIconColor = MaterialTheme.colorScheme.onSurface,
+			headlineColor = MaterialTheme.colorScheme.onSurface
+		)
 		ModalBottomSheet(
 			onDismissRequest = onDismissRequest,
 			dragHandle = null,
+			containerColor = MaterialTheme.colorScheme.surface,
 			sheetState = rememberBottomSheetState(
 				initialValue = SheetValue.Hidden,
 				enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)

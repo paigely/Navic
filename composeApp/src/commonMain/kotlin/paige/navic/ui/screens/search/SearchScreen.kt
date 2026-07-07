@@ -311,7 +311,6 @@ fun SearchScreen(
 											}
 										)
 										if (selectedSong == song) {
-											val isPlayerCurrent = backStack.any { it is Screen.NowPlaying }
 											SongSheet(
 												onDismissRequest = { viewModel.clearSelectedSong() },
 												song = song,
@@ -349,8 +348,7 @@ fun SearchScreen(
 												starred = selectedSongIsStarred,
 												onSetStarred = { viewModel.starSelectedSong(it) },
 												rating = selectedSongRating,
-												onSetRating = { viewModel.rateSelectedSong(it) },
-												useSongTheme = isPlayerCurrent
+												onSetRating = { viewModel.rateSelectedSong(it) }
 											)
 										}
 									}
