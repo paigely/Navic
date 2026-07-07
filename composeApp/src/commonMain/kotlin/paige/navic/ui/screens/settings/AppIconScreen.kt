@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_app_icon
 import navic.composeapp.generated.resources.option_choose_app_icon
+import navic.composeapp.generated.resources.subtitle_app_icon_designer
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.domain.manager.AppIconManager
@@ -81,7 +82,17 @@ fun SettingsAppIconScreen() {
 								selected = preferenceManager.appIconVariant == variant,
 								onClick = null
 							)
-							Text(variant.name, Modifier.weight(1f))
+							Column(Modifier.weight(1f)) {
+								Text(variant.name)
+								Text(
+									text = stringResource(
+										Res.string.subtitle_app_icon_designer,
+										variant.designer
+									),
+									style = MaterialTheme.typography.bodyMedium,
+									color = MaterialTheme.colorScheme.onSurfaceVariant
+								)
+							}
 							AppIconItemPreview(variant)
 						}
 					}

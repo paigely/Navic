@@ -79,6 +79,7 @@
 	<string name="subtitle_streaming_quality">Adjust the quality of streamed music</string>
 	<string name="subtitle_dynamic_album_view_theme">Dynamically theme the album view based on the album's cover artwork</string>
 	<string name="subtitle_dynamic_artist_view_theme">Dynamically theme the artist view based on the artist's image</string>
+	<string name="subtitle_app_icon_designer">Designed by: %1$s</string>
 
 	<string name="option_off">Off</string>
 	<string name="option_now_playing_background_style">Background style</string>
