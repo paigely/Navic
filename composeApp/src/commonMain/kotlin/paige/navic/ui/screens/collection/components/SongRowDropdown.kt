@@ -71,7 +71,7 @@ fun CollectionDetailScreenSongRowDropdown(
 				}
 			},
 			onTrackInfo = dropUnlessResumed {
-				backStack.add(Screen.SongDetail(song.id, song.coverArtId))
+				backStack.add(Screen.SongDetailInfo(song.id, song.coverArtId))
 			},
 			onViewAlbum = if (collection !is DomainAlbum && song.albumId != null) {
 				dropUnlessResumed {

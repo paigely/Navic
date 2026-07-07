@@ -212,7 +212,7 @@ fun SongListScreenItem(
 					onPlayNext = onPlayNext,
 					onAddToQueue = onAddToQueue,
 					onTrackInfo = dropUnlessResumed {
-						backStack.add(Screen.SongDetail(song.id, song.coverArtId))
+						backStack.add(Screen.SongDetailInfo(song.id, song.coverArtId))
 					},
 					onViewAlbum = song.albumId?.let { albumId ->
 						dropUnlessResumed {

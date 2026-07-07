@@ -104,6 +104,10 @@ sealed interface Screen : NavKey {
 
 	@Immutable
 	@Serializable
+	data class SongDetailInfo(val songId: String, val coverArtId: String? = null) : Screen
+
+	@Immutable
+	@Serializable
 	data class Search(
 		val nested: Boolean = false
 	) : Screen
