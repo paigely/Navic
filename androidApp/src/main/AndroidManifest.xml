@@ -33,13 +33,38 @@
 		<activity
 			android:name=".MainActivity"
 			android:exported="true"
-			android:theme="@style/Theme.Navic">
+			android:theme="@style/Theme.Navic" />
+
+		<!-- app icon activities -->
+		<activity-alias
+			android:name="${applicationId}.MainActivityDefault"
+			android:enabled="true"
+			android:exported="true"
+			android:icon="@mipmap/ic_launcher"
+			android:label="@string/app_name"
+			android:roundIcon="@mipmap/ic_launcher_round"
+			android:targetActivity=".MainActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
-		</activity>
+		</activity-alias>
 
+		<activity-alias
+			android:name="${applicationId}.MainActivityInverted"
+			android:enabled="false"
+			android:exported="true"
+			android:icon="@mipmap/ic_launcher_inverted"
+			android:label="@string/app_name"
+			android:roundIcon="@mipmap/ic_launcher_inverted_round"
+			android:targetActivity=".MainActivity">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity-alias>
+
+		<!-- misc activities -->
 		<activity
 			android:name=".CrashActivity"
 			android:exported="false"

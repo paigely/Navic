@@ -4,6 +4,7 @@ import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import paige.navic.domain.manager.base.BasePreferenceManager
 import paige.navic.domain.models.settings.AnimationStyle
+import paige.navic.domain.models.settings.AppIconVariant
 import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.settings.CoverArtQuality
@@ -29,6 +30,7 @@ import com.russhwolf.settings.Settings as KmpSettings
 class PreferenceManager(
 	settings: KmpSettings
 ) : BasePreferenceManager(settings) {
+	var appIconVariant by preference(AppIconVariant.Default)
 	var font by preference(FontOption.GoogleSans)
 	var fontPath by preference("")
 	var animationStyle by preference(AnimationStyle.Expressive)

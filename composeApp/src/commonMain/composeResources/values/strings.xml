@@ -61,7 +61,7 @@
 	<string name="title_account">Account</string>
 	<string name="title_track_info">Track info</string>
 
-	<string name="subtitle_appearance">Themes, colours, layout</string>
+	<string name="subtitle_appearance">Themes, colours, layout, app icon</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing and lyrics views</string>
 	<string name="subtitle_bottom_app_bar">Customise the bottom bar &amp; mini player</string>
 	<string name="subtitle_playback">Audio behaviour and scrobbling</string>
@@ -80,6 +80,7 @@
 	<string name="subtitle_streaming_quality">Adjust the quality of streamed music</string>
 	<string name="subtitle_dynamic_album_view_theme">Dynamically theme the album view based on the album's cover artwork</string>
 	<string name="subtitle_dynamic_artist_view_theme">Dynamically theme the artist view based on the artist's image</string>
+	<string name="subtitle_app_icon_designer">Designed by: %1$s</string>
 
 	<string name="option_off">Off</string>
 	<string name="option_now_playing_background_style">Background style</string>
@@ -132,6 +133,7 @@
 	<string name="option_playlist_songs">Songs</string>
 	<string name="option_enable_scrobbling">Enable scrobbling</string>
 	<string name="option_choose_theme">Application theme</string>
+	<string name="option_choose_app_icon">Application icon</string>
 	<string name="option_replay_gain">ReplayGain</string>
 	<string name="option_gapless_playback">Gapless playback</string>
 	<string name="option_audio_offload">Audio offload</string>
@@ -410,6 +412,7 @@
 	<string name="info_repeat_off">Repeat off</string>
 	<string name="info_repeat_one">Repeat one</string>
 	<string name="info_repeat_all">Repeat all</string>
+	<string name="info_app_icon">Changing the app icon will close Navic as Android requires this. Some icons may look identical on your home screen if your launcher dynamically themes the icon colours.</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>
