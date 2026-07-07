@@ -46,7 +46,7 @@ import navic.composeapp.generated.resources.info_track_replay_gain_effective
 import navic.composeapp.generated.resources.info_track_sampling_rate
 import navic.composeapp.generated.resources.info_track_year
 import navic.composeapp.generated.resources.info_unknown
-import navic.composeapp.generated.resources.track_info_title
+import navic.composeapp.generated.resources.title_track_info
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -122,7 +122,7 @@ fun SongDetailSheet(
 					.padding(horizontal = 16.dp)
 			) {
 				Text(
-					text = stringResource(Res.string.track_info_title),
+					text = stringResource(Res.string.title_track_info),
 					style = MaterialTheme.typography.titleLarge,
 					fontWeight = FontWeight.SemiBold,
 					color = MaterialTheme.colorScheme.onSurface,

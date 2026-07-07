@@ -59,6 +59,7 @@
 	<string name="title_palette">Palette</string>
 	<string name="title_theme_mode">Theme mode</string>
 	<string name="title_account">Account</string>
+	<string name="title_track_info">Track info</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout</string>
 	<string name="subtitle_now_playing">Customise the fullscreen now playing and lyrics views</string>
@@ -278,7 +279,6 @@
 	<string name="action_refresh">Refresh</string>
 	<string name="action_share">Share</string>
 	<string name="action_track_info">View track info</string>
-	<string name="track_info_title">Track info</string>
 	<string name="action_view_album">View album</string>
 	<string name="action_view_playlist">View playlist</string>
 	<string name="action_view_artist">View artist</string>
