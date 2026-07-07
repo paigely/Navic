@@ -3,6 +3,7 @@ package paige.navic.domain.manager
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
+import android.widget.Toast
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -15,6 +16,11 @@ actual class AppIconManager(
 	private val resourceProvider: ResourceProvider
 ) {
 	actual fun setVariant(newVariant: AppIconVariant) {
+		Toast.makeText(
+			context,
+			"App icon changed, closing app!!",
+			Toast.LENGTH_SHORT
+		).show()
 		preferenceManager.appIconVariant = newVariant
 		AppIconVariant.entries.forEach { variant ->
 			context.packageManager.setComponentEnabledSetting(
