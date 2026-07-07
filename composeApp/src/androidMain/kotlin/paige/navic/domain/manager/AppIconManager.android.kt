@@ -26,7 +26,7 @@ actual class AppIconManager(
 			context.packageManager.setComponentEnabledSetting(
 				ComponentName(
 					context.packageName,
-					"paige.navic.androidApp.${variant.activityName}"
+					"${context.packageName}.${variant.activityName}"
 				),
 				if (variant == newVariant) {
 					PackageManager.COMPONENT_ENABLED_STATE_ENABLED
