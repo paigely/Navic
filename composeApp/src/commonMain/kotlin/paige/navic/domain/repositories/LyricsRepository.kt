@@ -145,7 +145,7 @@ class LyricsRepository(
 				parameter("track_name", song.title)
 				parameter("artist_name", song.artistName)
 				parameter("album_name", song.albumTitle)
-				parameter("duration", song.duration)
+				parameter("duration", song.duration.inWholeSeconds)
 				accept(ContentType.Application.Json)
 			}
 			if (response.status.isSuccess()) {
