@@ -108,15 +108,10 @@
     <string name="option_mini_player_progress_style_visible">ظاهر</string>
     <string name="option_mini_player_progress_style_seekable">قابل للتحريك</string>
     <string name="theme_dynamic">ديناميكي</string>
-    <string name="theme_subtitle_dynamic">شغال على أندرويد 12 وفوق</string>
     <string name="theme_seeded">ملون</string>
-    <string name="theme_subtitle_seeded">لون واحد للتطبيق كله</string>
     <string name="theme_ios">كوبرتينو</string>
-    <string name="theme_subtitle_ios">مدينة في كاليفورنيا</string>
     <string name="theme_apple_music">Music.app</string>
-    <string name="theme_subtitle_apple_music">ثيم بتفاصيل حمرا وبينك</string>
     <string name="theme_spotify">سبوتلايت</string>
-    <string name="theme_subtitle_spotify">ثيم بتفاصيل خضرا</string>
     <string name="theme_mode_system">حسب الجهاز</string>
     <string name="theme_mode_dark">داكن</string>
     <string name="theme_mode_light">فاتح</string>

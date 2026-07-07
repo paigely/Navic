@@ -57,15 +57,10 @@
     <string name="option_enable_scrobbling">Ativar scrobbling</string>
     <string name="option_choose_theme">Escolher tema</string>
     <string name="theme_dynamic">Dinâmico</string>
-    <string name="theme_subtitle_dynamic">Disponível no Android 12 ou mais recente</string>
     <string name="theme_seeded">Tonalizado</string>
-    <string name="theme_subtitle_seeded">Uma cor para tudo</string>
     <string name="theme_ios">Cupertino</string>
-    <string name="theme_subtitle_ios">Uma cidade na Califórnia</string>
     <string name="theme_apple_music">Music.app</string>
-    <string name="theme_subtitle_apple_music">Um tema com destaques em vermelho/rosa</string>
     <string name="theme_spotify">Spotlight</string>
-    <string name="theme_subtitle_spotify">Um tema com destaques em verde</string>
     <plurals name="count_songs">
         <item quantity="one">%1$d música</item>
         <item quantity="many">%1$d músicas</item>
@@ -336,6 +331,5 @@
     <string name="option_quality_medium">Média</string>
     <string name="option_quality_high">Alta</string>
     <string name="title_advanced">Transcodificação avançada</string>
-    <string name="subtitle_max_bitrates">Bitrates máximos</string>
     <string name="option_off">Desligado</string>
 </resources>

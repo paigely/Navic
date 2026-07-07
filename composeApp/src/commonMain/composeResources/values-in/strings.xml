@@ -96,7 +96,6 @@
     <string name="info_status_calculating">Menghitung...</string>
     <string name="action_cancel_download">Batalkan unduhan</string>
     <string name="subtitle_check_for_updates">Disarankan untuk tetap mengaktifkannya, karena beberapa pembaruan menyediakan perbaikan bug penting</string>
-    <string name="theme_subtitle_dynamic">Tersedia di Android 12 dan versi yang lebih baru</string>
     <string name="option_playback_speed">Kecepatan pemutaran</string>
     <string name="action_repeat">Mengulang</string>
     <string name="option_sort_rating">Peringkat</string>
@@ -168,7 +167,6 @@
     <string name="notice_deleted_playlist">Daftar putar dihapus.</string>
     <string name="subtitle_developer">Debugging, pengujian</string>
     <string name="action_share_lyrics">Bagikan Lirik</string>
-    <string name="subtitle_max_bitrates">Kecepatan Bit Maksimum</string>
     <string name="option_bottom_bar_visibility_mode">Mode visibilitas</string>
     <string name="option_now_playing_toolbar_position">Posisi bilah alat</string>
     <string name="option_account_password">Kata sandi</string>
@@ -192,7 +190,6 @@
     <string name="info_no_albums">Tidak ada album</string>
     <string name="action_disable_sleep_timer">Matikan pengatur waktu</string>
     <string name="action_play">Putar</string>
-    <string name="theme_subtitle_apple_music">Tema dengan aksen merah/merah muda</string>
     <string name="action_remove_from_playlist">Hapus dari Daftar Putar</string>
     <string name="notice_deleted_share">Berbagi telah dihapus.</string>
     <string name="option_bottom_bar_visibility_mode_all_screens">Semua layar</string>
@@ -224,7 +221,6 @@
     <string name="info_album_replay_gain">Album ReplayGain</string>
     <string name="info_no_shares">Tidak ada saham</string>
     <string name="title_create_radio">Buat radio</string>
-    <string name="option_enable_custom_bitrates">Aktifkan Bitrate Kustom</string>
     <string name="title_create_playlist">Buat daftar putar</string>
     <string name="action_clear_search">Jernih</string>
     <string name="option_sort_ascending">Naik</string>
@@ -261,11 +257,9 @@
     <string name="info_unknown_year">Tahun Tidak Diketahui</string>
     <string name="title_miscellaneous">Aneka ragam</string>
     <string name="info_track_name">Nama</string>
-    <string name="info_bitrate_default_zero">Jika dibiarkan kosong, nilai defaultnya adalah 0. Biarkan server yang memilih.</string>
     <string name="info_syncing_artists">Menyinkronkan artis...</string>
     <string name="info_track_disc_number">Nomor cakram</string>
     <string name="title_update">Pembaruan tersedia</string>
-    <string name="theme_subtitle_seeded">Satu warna untuk semua</string>
     <string name="option_sort_newest">Baru ditambahkan</string>
     <string name="option_scrobble_percentage">Persentase scrobble</string>
     <string name="info_error_hide">Sembunyikan detail</string>
@@ -282,7 +276,6 @@
     <string name="info_unknown_album">Album Tidak Dikenal</string>
     <string name="option_mini_player_progress_style_seekable">Dapat dicari</string>
     <string name="option_sort_by_year">Per tahun</string>
-    <string name="theme_subtitle_ios">Sebuah kota di California</string>
     <string name="theme_seeded">Berwarna</string>
     <string name="option_off">Mati</string>
     <string name="option_accent_colour">Warna aksen</string>
@@ -330,7 +323,6 @@
     <string name="title_layout">Tata Letak</string>
     <string name="option_sort_by_genre">Berdasarkan genre</string>
     <string name="notice_expiry">Berakhir dalam %1$s.</string>
-    <string name="theme_subtitle_spotify">Tema dengan aksen hijau</string>
     <string name="option_animation_style_standard">Standar</string>
     <string name="info_no_playlists">Anda tidak memiliki daftar putar.</string>
     <string name="action_test_exception_handler">Penanganan pengecualian pengujian</string>

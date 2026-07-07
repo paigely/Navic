@@ -22,7 +22,7 @@
     <string name="title_source">Código fuente</string>
     <string name="title_chat">Charla</string>
     <string name="subtitle_appearance">Temas, colores, disposición</string>
-    <string name="subtitle_now_playing">Personalice la vista de reproducción a pantalla completa</string>
+    <string name="subtitle_now_playing">Personalice la vista de reproducción a pantalla completa y vistas de letras</string>
     <string name="subtitle_bottom_app_bar">Personalice la barra inferior y el mini‐reproductor</string>
     <string name="subtitle_about">Información, versión, licencias</string>
     <string name="subtitle_playlist">Lista de reproducción</string>
@@ -141,7 +141,7 @@
     <string name="title_navigation_bar">Barra de navegación</string>
     <string name="title_mini_player">Mini‐reproductor</string>
     <string name="title_layout">Disposición</string>
-    <string name="subtitle_playback">Comportamiento de audio, scrobbling, letras</string>
+    <string name="subtitle_playback">Comportamiento de sonido graznando</string>
     <string name="subtitle_developer">Depuración, pruebas</string>
     <string name="option_now_playing_background_style">Estilo de fondo</string>
     <string name="option_now_playing_background_style_static">Estático</string>
@@ -174,14 +174,9 @@
     <string name="option_mini_player_progress_style_hidden">Oculto</string>
     <string name="option_mini_player_progress_style_visible">Visible</string>
     <string name="theme_dynamic">Dinámico</string>
-    <string name="theme_subtitle_dynamic">Disponible a partir de Android 12</string>
     <string name="theme_seeded">Teñido</string>
-    <string name="theme_subtitle_seeded">Un color para todo</string>
     <string name="theme_ios">Cupertino</string>
-    <string name="theme_subtitle_ios">Una ciudad californiana</string>
-    <string name="theme_subtitle_apple_music">Un tema con resaltes rojos y rosados</string>
     <string name="theme_spotify">Spotlight</string>
-    <string name="theme_subtitle_spotify">Un tema con resaltes verdes</string>
     <string name="theme_mode_dark">Oscuro</string>
     <string name="theme_mode_light">Claro</string>
     <string name="theme_apple_music">Music.app</string>
@@ -357,11 +352,8 @@
     <string name="title_select_lyrics">Seleccionar letras</string>
     <string name="title_advanced">Transcodificación Avanzada</string>
     <string name="option_off">Apagado</string>
-    <string name="option_enable_custom_bitrates">Habilitar Tasa de Bit Personalizada</string>
     <string name="option_max_bitrate_wifi">WiFi de Tasa de Bit Máx (kbps)</string>
     <string name="option_max_bitrate_cellular">Móvil con Tasa Bit Máx (kbps)</string>
-    <string name="info_bitrate_default_zero">Si se deja este campo vacío, el valor predeterminado es 0. Dejando que el servidor elija.</string>
-    <string name="subtitle_max_bitrates">Tasas de bits máximas</string>
     <string name="action_clear_queue">Vaciar cola</string>
     <string name="title_starred">Estrellado</string>
     <string name="option_cover_art_quality">Calidad de la portada</string>
@@ -372,4 +364,14 @@
         <item quantity="many">%1$d líneas seleccionadas</item>
         <item quantity="other">%1$d líneas seleccionadas</item>
     </plurals>
+    <string name="title_logs">Bitácoras</string>
+    <string name="notice_created_playlist">Listado de reproducción %1$s creado.</string>
+    <string name="notice_deleted_download">Descarga eliminada.</string>
+    <string name="notice_removed_from_playlist">Retirado de la lista de reproducción.</string>
+    <string name="notice_created_radio">Creado por radio %1$s.</string>
+    <string name="notice_added_to_queue">Agregado a cola.</string>
+    <string name="notice_play_next">Siguiente reproducción.</string>
+    <string name="notice_added_to_playlist">Añadido a %1$s.</string>
+    <string name="notice_added_to_multiple_playlists">Añadido a múltiples listados de reproducción.</string>
+    <string name="notice_download_started">Descarga iniciada.</string>
 </resources>
