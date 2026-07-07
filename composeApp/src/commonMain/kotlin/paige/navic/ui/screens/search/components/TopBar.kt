@@ -31,7 +31,7 @@ import navic.composeapp.generated.resources.action_clear_search
 import navic.composeapp.generated.resources.action_navigate_back
 import navic.composeapp.generated.resources.title_search
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalPlatformContext
+
 import paige.navic.LocalNavStack
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack
@@ -44,7 +44,6 @@ fun SearchScreenTopBar(
 	nested: Boolean,
 	onSearch: (String) -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 
 	val focusManager = LocalFocusManager.current
@@ -64,7 +63,6 @@ fun SearchScreenTopBar(
 			) {
 				IconButton(
 					onClick = {
-						platformContext.clickSound()
 						focusManager.clearFocus(true)
 						if (backStack.size > 1) backStack.removeLastOrNull()
 					}
@@ -117,7 +115,6 @@ fun SearchScreenTopBar(
 				IconButton(
 					modifier = Modifier.padding(horizontal = 8.dp),
 					onClick = {
-						platformContext.clickSound()
 						query.clearText()
 					}
 				) {

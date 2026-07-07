@@ -36,6 +36,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
+
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.domain.models.settings.NavbarTab
@@ -162,7 +163,6 @@ fun BottomBar(
 						alwaysShowLabel = preferenceManager.navigationBarLabelVisibility
 							== NavigationBarLabelVisibility.Always,
 						onClick = {
-							platformContext.clickSound()
 							backStack.apply {
 								clear()
 								add(item.destination)
@@ -223,7 +223,6 @@ fun BottomBar(
 						selected = backStack.last() == item.destination,
 						enabled = enabled,
 						onClick = {
-							platformContext.clickSound()
 							backStack.apply {
 								clear()
 								add(item.destination)

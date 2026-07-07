@@ -43,7 +43,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalBottomBarScrollManager
-import paige.navic.LocalPlatformContext
+
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.BottomBarCollapseMode
@@ -82,7 +82,6 @@ fun PlaylistListScreen(
 	val selectedSorting by viewModel.selectedSorting.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
 
-	val platformContext = LocalPlatformContext.current
 	val scrollManager = LocalBottomBarScrollManager.current
 
 	var shareId by remember { mutableStateOf<String?>(null) }
@@ -142,7 +141,6 @@ fun PlaylistListScreen(
 						shape = MaterialTheme.shapes.large,
 						containerColor = MaterialTheme.colorScheme.primary,
 						onClick = {
-							platformContext.clickSound()
 							createDialogShown = true
 						}
 					) {

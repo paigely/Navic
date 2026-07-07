@@ -25,7 +25,7 @@ import com.materialkolor.ktx.darken
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_error
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalPlatformContext
+
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.KeyboardArrowDown
 import paige.navic.icons.outlined.Refresh
@@ -41,7 +41,6 @@ fun <T> ErrorBox(
 	onRetry: (() -> Unit)? = null,
 	modifier: Modifier = Modifier
 ) {
-	val platformContext = LocalPlatformContext.current
 	var expanded by remember { mutableStateOf(false) }
 	val iconScale by animateFloatAsState(
 		if (expanded)
@@ -69,7 +68,6 @@ fun <T> ErrorBox(
 			onRetry?.let { onRetry ->
 				IconButton(
 					onClick = {
-						platformContext.clickSound()
 						onRetry()
 					},
 					content = {
@@ -82,7 +80,6 @@ fun <T> ErrorBox(
 			}
 			IconButton(
 				onClick = {
-					platformContext.clickSound()
 					expanded = !expanded
 				},
 				content = {

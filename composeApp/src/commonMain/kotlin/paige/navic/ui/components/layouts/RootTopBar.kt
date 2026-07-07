@@ -25,7 +25,7 @@ import navic.composeapp.generated.resources.title_settings
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
-import paige.navic.LocalPlatformContext
+
 import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.domain.models.settings.NavbarTab
 import paige.navic.icons.Icons
@@ -78,7 +78,6 @@ fun RootTopBar(
 private fun Actions(
 	navConfig: NavbarConfig?,
 ) {
-	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 
 	val isSearchEnabled = navConfig?.tabs?.any {
@@ -91,7 +90,6 @@ private fun Actions(
 		TooltipBox(stringResource(Res.string.title_search)) {
 			IconButton(
 				onClick = dropUnlessResumed {
-					platformContext.clickSound()
 					backStack.add(Screen.Search(nested = true))
 				}
 			) {
@@ -105,7 +103,6 @@ private fun Actions(
 
 	TooltipBox(stringResource(Res.string.title_settings)) {
 		IconButton(onClick = dropUnlessResumed {
-			platformContext.clickSound()
 			backStack.add(Screen.Settings.Root)
 		}) {
 			Icon(
@@ -117,7 +114,6 @@ private fun Actions(
 
 	TooltipBox(stringResource(Res.string.title_account)) {
 		IconButton(onClick = {
-			platformContext.clickSound()
 			accountSheetOpen = true
 		}) {
 			Icon(

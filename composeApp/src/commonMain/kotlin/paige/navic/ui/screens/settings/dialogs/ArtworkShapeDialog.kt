@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalPlatformContext
+
 import paige.navic.domain.models.settings.CoverArtShape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -37,8 +37,6 @@ fun ArtworkShapeDialog(
 	onDismissRequest: () -> Unit
 ) {
 	if (!presented) return
-
-	val platformContext = LocalPlatformContext.current
 
 	AlertDialog(
 		title = title,
@@ -55,7 +53,6 @@ fun ArtworkShapeDialog(
 							.fillMaxWidth()
 							.clip(MaterialTheme.shapes.small)
 							.clickable {
-								platformContext.clickSound()
 								onSelect(shape)
 								onDismissRequest()
 							},
@@ -87,7 +84,6 @@ fun ArtworkShapeDialog(
 		onDismissRequest = onDismissRequest,
 		confirmButton = {
 			Button(onClick = {
-				platformContext.clickSound()
 				onDismissRequest()
 			}) {
 				Text(stringResource(Res.string.action_ok))

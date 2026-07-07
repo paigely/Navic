@@ -13,7 +13,6 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_refresh
 import navic.composeapp.generated.resources.info_no_lyrics
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalPlatformContext
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Lyrics
 import paige.navic.ui.components.common.ContentUnavailable
@@ -22,7 +21,6 @@ import paige.navic.ui.components.common.ContentUnavailable
 fun LyricsScreenPlaceholder(
 	onRefresh: () -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
 
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -35,7 +33,6 @@ fun LyricsScreenPlaceholder(
 		)
 
 		TextButton(onClick = dropUnlessResumed {
-			platformContext.clickSound()
 			onRefresh()
 		}) {
 			Text(stringResource(Res.string.action_refresh))

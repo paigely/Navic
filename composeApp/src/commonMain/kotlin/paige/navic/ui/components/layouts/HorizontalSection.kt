@@ -30,7 +30,7 @@ import navic.composeapp.generated.resources.action_see_all
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
-import paige.navic.LocalPlatformContext
+
 import paige.navic.ui.core.UiState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -88,7 +88,6 @@ fun LazyGridScope.header(
 	}
 	if (active) {
 		item(span = { GridItemSpan(1) }) {
-			val platformContext = LocalPlatformContext.current
 			val backStack = LocalNavStack.current
 			Text(
 				stringResource(Res.string.action_see_all),
@@ -102,7 +101,6 @@ fun LazyGridScope.header(
 						interactionSource = null,
 						indication = null,
 						onClick = dropUnlessResumed {
-					    	platformContext.clickSound()
 					    	backStack.add(destination)
 					    }
 					)

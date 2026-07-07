@@ -48,6 +48,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
+
 import paige.navic.ui.core.LoginUiState
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.login.viewmodels.LoginViewModel
@@ -178,7 +179,6 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 						.clickable(onClick = dropUnlessResumed {
 							backStack.lastOrNull()?.let {
 								if (it is Screen.Login) {
-									platformContext.clickSound()
 									backStack.add(Screen.Settings.CustomHeaders)
 									focusManager.clearFocus(true)
 								}
@@ -199,7 +199,7 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 				Button(
 					modifier = Modifier.fillMaxWidth(),
 					onClick = {
-						platformContext.clickSound()
+						
 						login()
 					},
 					enabled = !isBusy,

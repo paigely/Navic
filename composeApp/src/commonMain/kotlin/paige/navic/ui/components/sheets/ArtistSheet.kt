@@ -40,7 +40,7 @@ import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
+
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainArtist
@@ -77,7 +77,6 @@ fun ArtistSheet(
 	onDeleteDownloadAll: (() -> Unit)? = null,
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
-	val platformContext = LocalPlatformContext.current
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
 		containerColor = Color.Transparent,
@@ -125,7 +124,6 @@ fun ArtistSheet(
 					content = { Text(stringResource(Res.string.action_view_on_lastfm)) },
 					leadingContent = { Icon(Icons.Brand.Lastfm, null) },
 					onClick = {
-						platformContext.clickSound()
 						onViewOnLastFm(artist.lastFmUrl)
 						onDismissRequest()
 					},
@@ -139,7 +137,6 @@ fun ArtistSheet(
 					content = { Text(stringResource(Res.string.action_view_on_musicbrainz)) },
 					leadingContent = { Icon(Icons.Brand.Musicbrainz, null) },
 					onClick = {
-						platformContext.clickSound()
 						onViewOnMusicBrainz(artist.musicBrainzId)
 						onDismissRequest()
 					},
@@ -153,7 +150,6 @@ fun ArtistSheet(
 					content = { Text(stringResource(Res.string.action_play_next)) },
 					leadingContent = { Icon(Icons.Outlined.QueuePlayNext, null) },
 					onClick = {
-						platformContext.clickSound()
 						onPlayNext()
 						onDismissRequest()
 					},
@@ -167,7 +163,6 @@ fun ArtistSheet(
 					content = { Text(stringResource(Res.string.action_add_to_queue)) },
 					leadingContent = { Icon(Icons.Outlined.Queue, null) },
 					onClick = {
-						platformContext.clickSound()
 						onAddToQueue()
 						onDismissRequest()
 					},
@@ -181,7 +176,6 @@ fun ArtistSheet(
 					content = { Text(stringResource(Res.string.action_add_to_playlist)) },
 					leadingContent = { Icon(Icons.Outlined.PlaylistAdd, null) },
 					onClick = {
-						platformContext.clickSound()
 						onAddAllToPlaylist()
 						onDismissRequest()
 					},
@@ -199,7 +193,6 @@ fun ArtistSheet(
 						Icon(if (starred) Icons.Filled.Star else Icons.Outlined.Star, null)
 					},
 					onClick = {
-						platformContext.clickSound()
 						onSetStarred(!starred)
 						onDismissRequest()
 					},
@@ -215,7 +208,6 @@ fun ArtistSheet(
 							content = { Text(stringResource(Res.string.action_cancel_download)) },
 							leadingContent = { Icon(Icons.Outlined.Close, null) },
 							onClick = {
-								platformContext.clickSound()
 								onCancelDownloadAll?.invoke()
 								onDismissRequest()
 							},
@@ -229,7 +221,6 @@ fun ArtistSheet(
 							content = { Text(stringResource(Res.string.action_delete_download)) },
 							leadingContent = { Icon(Icons.Outlined.Delete, null) },
 							onClick = {
-								platformContext.clickSound()
 								onDeleteDownloadAll?.invoke()
 								onDismissRequest()
 							},
@@ -261,7 +252,6 @@ fun ArtistSheet(
 								)
 							},
 							onClick = {
-								platformContext.clickSound()
 								onDownloadAll?.invoke()
 								onDismissRequest()
 							},
@@ -275,7 +265,6 @@ fun ArtistSheet(
 							content = { Text(stringResource(Res.string.action_download)) },
 							leadingContent = { Icon(Icons.Outlined.Download, null) },
 							onClick = {
-								platformContext.clickSound()
 								onDownloadAll?.invoke()
 								onDismissRequest()
 							},
@@ -289,7 +278,6 @@ fun ArtistSheet(
 					content = { Text(stringResource(Res.string.action_download)) },
 					leadingContent = { Icon(Icons.Outlined.Download, null) },
 					onClick = {
-						platformContext.clickSound()
 						onDownloadAll()
 						onDismissRequest()
 					},

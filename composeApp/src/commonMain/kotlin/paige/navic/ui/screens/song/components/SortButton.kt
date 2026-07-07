@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.collections.immutable.persistentListOf
-import paige.navic.LocalPlatformContext
 import paige.navic.domain.models.DomainSongListType
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
@@ -24,7 +23,6 @@ fun SongListScreenSortButton(
 	selectedReversed: Boolean,
 	onSetReversed: (Boolean) -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
 	val entries = remember {
 		persistentListOf(
 			DomainSongListType.FrequentlyPlayed,
@@ -39,7 +37,6 @@ fun SongListScreenSortButton(
 	var expanded by remember { mutableStateOf(false) }
 	if (!nested) {
 		IconButton(onClick = {
-			platformContext.clickSound()
 			expanded = true
 		}) {
 			Icon(

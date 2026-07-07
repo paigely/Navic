@@ -26,7 +26,7 @@ import navic.composeapp.generated.resources.option_radio_stream_url
 import navic.composeapp.generated.resources.title_create_radio
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalPlatformContext
+
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Radio
 import paige.navic.ui.components.common.FormButton
@@ -40,7 +40,6 @@ fun RadioCreateDialog(
 	onRefresh: () -> Unit
 ) {
 	val viewModel = koinViewModel<RadioCreateDialogViewModel>()
-	val platformContext = LocalPlatformContext.current
 	val state by viewModel.creationState.collectAsState()
 
 	LaunchedEffect(Unit) {
@@ -61,7 +60,6 @@ fun RadioCreateDialog(
 		buttons = {
 			FormButton(
 				onClick = {
-					platformContext.clickSound()
 					viewModel.create()
 				},
 				enabled = state !is UiState.Loading
@@ -79,7 +77,6 @@ fun RadioCreateDialog(
 			}
 			FormButton(
 				onClick = {
-					platformContext.clickSound()
 					onDismissRequest()
 				},
 				enabled = state !is UiState.Loading,

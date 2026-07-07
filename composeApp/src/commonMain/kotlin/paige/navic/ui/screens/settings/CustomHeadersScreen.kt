@@ -33,7 +33,7 @@ import navic.composeapp.generated.resources.action_new
 import navic.composeapp.generated.resources.option_custom_headers
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
+
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.icons.Icons
@@ -54,7 +54,6 @@ private data class Header(
 
 @Composable
 fun SettingsCustomHeadersScreen() {
-	val platformContext = LocalPlatformContext.current
 	val sessionManager = koinInject<SessionManager>()
 	val preferenceManager = koinInject<PreferenceManager>()
 
@@ -120,7 +119,6 @@ fun SettingsCustomHeadersScreen() {
 				}
 				FilledTonalButton(
 					onClick = {
-						platformContext.clickSound()
 						headers.add(Header(key = "", value = ""))
 						updateSettings()
 					},

@@ -16,7 +16,6 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.notice_deleted_download
 import navic.composeapp.generated.resources.notice_download_started
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.DownloadManager
@@ -43,7 +42,6 @@ fun AlbumListScreenItem(
 	onAddToQueue: () -> Unit,
 	onSetRating: (Int) -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
 	val backStack = LocalNavStack.current
 	val snackBarManager = koinInject<SnackBarManager>()
 	val scope = rememberCoroutineScope()
@@ -58,7 +56,6 @@ fun AlbumListScreenItem(
 	Box(modifier) {
 		ArtGridItem(
 			onClick = dropUnlessResumed {
-				platformContext.clickSound()
 				scope.launch {
 					backStack.add(Screen.CollectionDetail(album.id, tab))
 				}

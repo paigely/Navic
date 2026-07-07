@@ -65,7 +65,7 @@ import navic.composeapp.generated.resources.title_palette
 import navic.composeapp.generated.resources.title_theme_mode
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
+
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.Theme
 import paige.navic.domain.models.settings.ThemeMode
@@ -174,7 +174,6 @@ private fun BaseCard(
 	content: @Composable ColumnScope.() -> Unit
 ) {
 	val haptics = LocalHapticFeedback.current
-	val platformContext = LocalPlatformContext.current
 	val interactionSource = remember { MutableInteractionSource() }
 	val isPressed by interactionSource.collectIsPressedAsState()
 
@@ -201,7 +200,6 @@ private fun BaseCard(
 				role = Role.ValuePicker,
 				onClick = dropUnlessResumed {
 					haptics.performHapticFeedback(HapticFeedbackType.ToggleOn)
-					platformContext.clickSound()
 					onSelect()
 				}
 			),
