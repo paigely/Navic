@@ -19,7 +19,6 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-
 import paige.navic.LocalNavStack
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.MoreHoriz
