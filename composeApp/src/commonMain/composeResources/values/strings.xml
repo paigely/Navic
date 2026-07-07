@@ -78,8 +78,7 @@
 	<string name="subtitle_check_for_updates">It is recommended to leave this on, as some updates provide important bug fixes</string>
 	<string name="subtitle_offline_mode">Dictates when the app should go in an offline mode. Requires application restart</string>
 	<string name="subtitle_streaming_quality">Adjust the quality of streamed music</string>
-	<string name="subtitle_dynamic_album_view_theme">Dynamically theme the album view based on the album's cover artwork</string>
-	<string name="subtitle_dynamic_artist_view_theme">Dynamically theme the artist view based on the artist's image</string>
+	<string name="subtitle_dynamic_theming">Dynamically theme the album and artist view based on cover art</string>
 	<string name="subtitle_app_icon_designer">Designed by: %1$s</string>
 
 	<string name="option_off">Off</string>
@@ -170,8 +169,7 @@
 	<string name="option_explicit_playback_allowed">Allowed</string>
 	<string name="option_explicit_playback_skip">Skip explicit songs</string>
 	<string name="option_explicit_playback_skip_session">Skip explicit songs for this session</string>
-	<string name="option_dynamic_album_view_theme">Dynamic album view theme</string>
-	<string name="option_dynamic_artist_view_theme">Dynamic artist view theme</string>
+	<string name="option_dynamic_theming">Dynamic theming</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>

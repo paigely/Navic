@@ -90,8 +90,7 @@ class PreferenceManager(
 	// theme related settings
 	var theme by preference(Theme.Dynamic)
 	var themeMode by preference(ThemeMode.System)
-	var dynamicAlbumViewTheme by preference(false)
-	var dynamicArtistViewTheme by preference(false)
+	var dynamicTheming by preference(false)
 	var paletteStyle by preference(PaletteStyle.TonalSpot)
 	var paletteSpec by preference(ColorSpec.SpecVersion.SPEC_2025)
 	var paletteAccentH by preference(0f)

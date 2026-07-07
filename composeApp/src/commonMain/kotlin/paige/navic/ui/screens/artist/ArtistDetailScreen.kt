@@ -152,7 +152,7 @@ fun ArtistDetailScreen(
 
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
 
-	val colorScheme = if (preferenceManager.dynamicArtistViewTheme) {
+	val colorScheme = if (preferenceManager.dynamicTheming) {
 		rememberColorSchemeFromCoverArt(
 			coverArtId = artistState.data?.artist?.coverArtId,
 			specVersion = ColorSpec.SpecVersion.SPEC_2025

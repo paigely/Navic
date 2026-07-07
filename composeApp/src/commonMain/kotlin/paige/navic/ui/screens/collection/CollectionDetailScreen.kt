@@ -123,7 +123,7 @@ fun CollectionDetailScreen(
 			}
 		}
 	}
-	val colorScheme = if (preferenceManager.dynamicAlbumViewTheme) {
+	val colorScheme = if (preferenceManager.dynamicTheming) {
 		rememberColorSchemeFromCoverArt(
 			coverArtId = collection?.coverArtId,
 			specVersion = ColorSpec.SpecVersion.SPEC_2025
