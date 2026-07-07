@@ -34,7 +34,6 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import androidx.media3.session.SessionToken
-import coil3.request.ImageRequest
 import coil3.imageLoader
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
@@ -349,7 +348,6 @@ class AndroidMediaPlayerViewModel(
 					override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 						updatePlaybackState()
 						skipUnavailableSong()
-						preloadNextArtwork()
 					}
 
 					override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -980,22 +978,6 @@ class AndroidMediaPlayerViewModel(
 			controller?.setPlaybackSpeed(value)
 		}
 		_uiState.update { it.copy(playbackSpeed = value) }
-	}
-
-	private fun preloadNextArtwork() {
-		val player = controller ?: return
-		val nextIndex = player.currentMediaItemIndex + 1
-		if (nextIndex < player.mediaItemCount) {
-			val nextSong = _uiState.value.queue.getOrNull(nextIndex)
-			val coverId = nextSong?.coverArtId ?: return
-			val url = sessionManager.getCoverArtUrl(coverId)
-
-			val request = ImageRequest.Builder(application)
-				.data(url)
-				.diskCacheKey(coverId) // Ensure it matches the key used in toMediaItem
-				.build()
-			application.imageLoader.enqueue(request)
-		}
 	}
 
 	private fun DomainSong.toMediaItem(): MediaItem {
