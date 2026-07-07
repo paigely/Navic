@@ -323,7 +323,7 @@ private fun entryProvider(
 		}
 		entry<Screen.SongDetail>(
 			metadata = { key ->
-				BottomSheetSceneStrategy.bottomSheet(coverArtId = key.coverArtId ?: "")
+				BottomSheetSceneStrategy.bottomSheet(coverArtId = key.coverArtId)
 			}
 		) { key ->
 			SongDetailSheet(

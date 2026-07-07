@@ -14,8 +14,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -55,7 +56,7 @@ class BottomSheetScene<T : Any>(
 
 
 	override val content = @Composable {
-		sheetState = rememberModalBottomSheetState()
+		sheetState = rememberBottomSheetState(SheetValue.Hidden)
 		val lifecycleOwner = rememberLifecycleOwner()
 		val backStack = LocalNavStack.current
 		val coverArtId = entry.metadata[CoverArtIdKey]

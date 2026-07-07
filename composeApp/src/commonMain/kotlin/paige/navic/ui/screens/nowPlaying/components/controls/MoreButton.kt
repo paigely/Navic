@@ -19,7 +19,7 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
+
 import paige.navic.LocalNavStack
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.MoreHoriz
@@ -39,7 +39,6 @@ fun NowPlayingMoreButton(
 	onSetSongRating: (Int) -> Unit
 ) {
 	val backStack = LocalNavStack.current
-	val platformContext = LocalPlatformContext.current
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
 	val song = playerState.currentSong
@@ -52,7 +51,6 @@ fun NowPlayingMoreButton(
 
 	IconButton(
 		onClick = {
-			platformContext.clickSound()
 			expanded = true
 		},
 		colors = IconButtonDefaults.filledTonalIconButtonColors(),
@@ -102,8 +100,7 @@ fun NowPlayingMoreButton(
 				onPlaybackSpeed = {
 					expanded = false
 					backStack.add(Screen.PlaybackSpeed)
-				},
-				useSongTheme = true
+				}
 			)
 		}
 	}

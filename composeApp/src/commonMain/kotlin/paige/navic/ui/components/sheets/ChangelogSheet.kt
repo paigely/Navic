@@ -13,8 +13,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,6 +48,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalPlatformContext
+
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.components.common.Markdown
 import paige.navic.ui.theme.defaultFont
@@ -117,7 +119,10 @@ fun ChangelogSheet() {
 	release?.let { release ->
 		ModalBottomSheet(
 			onDismissRequest = { viewModel.clearRelease() },
-			sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+			sheetState = rememberBottomSheetState(
+				initialValue = SheetValue.Hidden,
+				enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+			)
 		) {
 			Column(
 				modifier = Modifier
@@ -158,7 +163,6 @@ fun ChangelogSheet() {
 
 				Button(
 					onClick = {
-						platformContext.clickSound()
 						viewModel.clearRelease()
 						uriHandler.openUri(release.url)
 					},
@@ -173,7 +177,6 @@ fun ChangelogSheet() {
 
 				OutlinedButton(
 					onClick = {
-						platformContext.clickSound()
 						viewModel.clearRelease()
 						preferenceManager.checkForUpdates = false
 					},

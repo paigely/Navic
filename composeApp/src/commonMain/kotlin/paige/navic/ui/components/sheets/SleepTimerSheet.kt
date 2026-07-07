@@ -14,8 +14,9 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +26,7 @@ import navic.composeapp.generated.resources.action_disable_sleep_timer
 import navic.composeapp.generated.resources.action_sleep_timer
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import paige.navic.LocalPlatformContext
+
 import paige.navic.domain.manager.SleepTimerManager
 import paige.navic.util.core.label
 import kotlin.time.Duration.Companion.hours
@@ -45,7 +46,6 @@ val durations = listOf(
 fun SleepTimerSheet(
 	onDismissRequest: (confirmed: Boolean) -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 	val colors = ListItemDefaults.colors(
 		containerColor = Color.Transparent,
@@ -56,7 +56,10 @@ fun SleepTimerSheet(
 
 	ModalBottomSheet(
 		onDismissRequest = { onDismissRequest(false) },
-		sheetState = rememberModalBottomSheetState(true),
+		sheetState = rememberBottomSheetState(
+			initialValue = SheetValue.Hidden,
+			enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+		),
 		contentWindowInsets = {
 			BottomSheetDefaults.modalWindowInsets.add(
 				WindowInsets(
@@ -80,7 +83,6 @@ fun SleepTimerSheet(
 				ListItem(
 					content = { Text(it.label()) },
 					onClick = {
-						platformContext.clickSound()
 						sleepTimerManager.startTimer(it)
 						onDismissRequest(true)
 					},
@@ -98,7 +100,6 @@ fun SleepTimerSheet(
 						)
 					},
 					onClick = {
-						platformContext.clickSound()
 						sleepTimerManager.stopTimer()
 						onDismissRequest(true)
 					},

@@ -15,9 +15,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +31,7 @@ import navic.composeapp.generated.resources.option_sort_descending
 import navic.composeapp.generated.resources.title_direction
 import navic.composeapp.generated.resources.title_sort_by
 import org.jetbrains.compose.resources.stringResource
-import paige.navic.LocalPlatformContext
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,10 +44,12 @@ fun <T> SortSheet(
 	onSetReversed: (Boolean) -> Unit,
 	onDismissRequest: () -> Unit
 ) {
-	val platformContext = LocalPlatformContext.current
 	ModalBottomSheet(
 		onDismissRequest = onDismissRequest,
-		sheetState = rememberModalBottomSheetState(true)
+		sheetState = rememberBottomSheetState(
+			initialValue = SheetValue.Hidden,
+			enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+		)
 	) {
 		Column(
 			modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -68,7 +71,6 @@ fun <T> SortSheet(
 							.selectable(
 								selected = (sorting == selectedSorting),
 								onClick = {
-									platformContext.clickSound()
 									onSetSorting(sorting)
 								},
 								role = Role.RadioButton
@@ -105,7 +107,6 @@ fun <T> SortSheet(
 						count = 2
 					),
 					onClick = {
-						platformContext.clickSound()
 						onSetReversed(false)
 					},
 					selected = !selectedReversed,
@@ -117,7 +118,6 @@ fun <T> SortSheet(
 						count = 2
 					),
 					onClick = {
-						platformContext.clickSound()
 						onSetReversed(true)
 					},
 					selected = selectedReversed,

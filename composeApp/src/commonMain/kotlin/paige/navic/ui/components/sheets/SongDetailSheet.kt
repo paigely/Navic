@@ -65,7 +65,8 @@ import paige.navic.ui.theme.NavicTheme
 @Composable
 fun SongDetailSheet(
 	songId: String,
-	initialCoverArtId: String? = null
+	initialCoverArtId: String? = null,
+	useSongTheme: Boolean = true
 ) {
 	val viewModel = koinViewModel<SongDetailViewModel>(
 		key = songId,
@@ -77,7 +78,7 @@ fun SongDetailSheet(
 
 	val preferenceManager = koinInject<PreferenceManager>()
 	val activeCoverArtId = if (initialCoverArtId.isNullOrEmpty()) song?.coverArtId else initialCoverArtId
-	val colorScheme = rememberColorSchemeFromCoverArt(activeCoverArtId)
+	val colorScheme = if (useSongTheme) rememberColorSchemeFromCoverArt(activeCoverArtId) else null
 
 	val info = remember(song) {
 		song?.let {

@@ -203,7 +203,6 @@ fun SongRow(
 	)
 
 	if (selected) {
-		val isPlayerCurrent = backStack.any { it is Screen.NowPlaying }
 		SongSheet(
 			onDismissRequest = onDismissRequest,
 			song = song,
@@ -230,7 +229,7 @@ fun SongRow(
 				}
 			},
 			onTrackInfo = dropUnlessResumed {
-				backStack.add(Screen.SongDetail(song.id))
+				backStack.add(Screen.SongDetail(song.id, song.coverArtId))
 			},
 			onViewAlbum = dropUnlessResumed {
 				backStack.add(
@@ -247,8 +246,7 @@ fun SongRow(
 			onDownload = onDownload,
 			onCancelDownload = onCancelDownload,
 			onDeleteDownload = onDeleteDownload,
-			onSetRating = onSetRating,
-			useSongTheme = isPlayerCurrent
+			onSetRating = onSetRating
 		)
 	}
 

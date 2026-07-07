@@ -47,7 +47,6 @@ fun CollectionDetailScreenSongRowDropdown(
 	var isPlayNextPending by rememberSaveable { mutableStateOf<Boolean?>(null) }
 
 	if (expanded) {
-		val isPlayerCurrent = backStack.any { it is Screen.NowPlaying }
 		SongSheet(
 			onDismissRequest = onDismissRequest,
 			song = song,
@@ -72,7 +71,7 @@ fun CollectionDetailScreenSongRowDropdown(
 				}
 			},
 			onTrackInfo = dropUnlessResumed {
-				backStack.add(Screen.SongDetail(song.id))
+				backStack.add(Screen.SongDetail(song.id, song.coverArtId))
 			},
 			onViewAlbum = if (collection !is DomainAlbum && song.albumId != null) {
 				dropUnlessResumed {
@@ -96,8 +95,7 @@ fun CollectionDetailScreenSongRowDropdown(
 			onCancelDownload = onCancelDownload,
 			onDeleteDownload = onDeleteDownload,
 			rating = rating,
-			onSetRating = onSetRating,
-			useSongTheme = isPlayerCurrent
+			onSetRating = onSetRating
 		)
 	}
 

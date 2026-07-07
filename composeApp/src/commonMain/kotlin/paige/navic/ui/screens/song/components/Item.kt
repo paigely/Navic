@@ -202,7 +202,6 @@ fun SongListScreenItem(
 				}
 			)
 			if (selected) {
-				val isPlayerCurrent = backStack.any { it is Screen.NowPlaying }
 				SongSheet(
 					onDismissRequest = onDeselect,
 					song = song,
@@ -213,7 +212,7 @@ fun SongListScreenItem(
 					onPlayNext = onPlayNext,
 					onAddToQueue = onAddToQueue,
 					onTrackInfo = dropUnlessResumed {
-						backStack.add(Screen.SongDetail(song.id))
+						backStack.add(Screen.SongDetail(song.id, song.coverArtId))
 					},
 					onViewAlbum = song.albumId?.let { albumId ->
 						dropUnlessResumed {
@@ -232,8 +231,7 @@ fun SongListScreenItem(
 					downloadStatus = download?.status ?: DownloadStatus.NOT_DOWNLOADED,
 					onDownload = onDownload,
 					onCancelDownload = onCancelDownload,
-					onDeleteDownload = onDeleteDownload,
-					useSongTheme = isPlayerCurrent
+					onDeleteDownload = onDeleteDownload
 				)
 			}
 		}
