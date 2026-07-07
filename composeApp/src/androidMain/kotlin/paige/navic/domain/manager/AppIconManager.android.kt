@@ -7,10 +7,12 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import paige.navic.domain.models.settings.AppIconVariant
+import paige.navic.util.core.ResourceProvider
 
 actual class AppIconManager(
 	private val context: Context,
 	private val preferenceManager: PreferenceManager,
+	private val resourceProvider: ResourceProvider
 ) {
 	actual fun setVariant(newVariant: AppIconVariant) {
 		preferenceManager.appIconVariant = newVariant
@@ -32,16 +34,16 @@ actual class AppIconManager(
 
 	actual fun getIcon(variant: AppIconVariant): Any? {
 		val resources = context.resources
-		val iconName = when (variant) {
-			AppIconVariant.Default -> "ic_launcher"
-			AppIconVariant.Inverted -> "ic_launcher_inverted"
+
+		val iconRes = when (variant) {
+			AppIconVariant.Default -> resourceProvider.appIconDefault
+			AppIconVariant.Inverted -> resourceProvider.appIconInverted
 		}
 
-		val iconRes = resources.getIdentifier(iconName, "mipmap", context.packageName)
 		val drawable = if (iconRes != 0) {
 			ResourcesCompat.getDrawable(resources, iconRes, null)
 		} else {
-			val activityName = "paige.navic.androidApp.${variant.activityName}"
+			val activityName = "${context.packageName}.${variant.activityName}"
 			val componentName = ComponentName(context.packageName, activityName)
 			try {
 				val info = context.packageManager.getActivityInfo(
