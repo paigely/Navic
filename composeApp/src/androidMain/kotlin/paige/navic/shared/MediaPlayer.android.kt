@@ -351,7 +351,6 @@ class AndroidMediaPlayerViewModel(
 					}
 
 					override fun onIsPlayingChanged(isPlaying: Boolean) {
-						_uiState.update { it.copy(isPaused = !isPlaying) }
 						if (isPlaying) startProgressLoop()
 						val intent =
 							Intent("${application.packageName}.NOW_PLAYING_UPDATED").apply {
@@ -373,6 +372,7 @@ class AndroidMediaPlayerViewModel(
 							}
 
 						application.sendBroadcast(intent)
+						updatePlaybackState()
 					}
 
 					override fun onPlaybackStateChanged(playbackState: Int) {
@@ -419,8 +419,11 @@ class AndroidMediaPlayerViewModel(
 					@Suppress("UNCHECKED_CAST")
 					val downloadedMap = args[0] as Map<String, String>
 					val player = controller ?: return@collectLatest
+					val currentIndex = player.currentMediaItemIndex
 
 					for (i in 0 until player.mediaItemCount) {
+						if (i == currentIndex) continue
+
 						val item = player.getMediaItemAt(i)
 						val id = item.mediaId
 						val localPath = downloadedMap[id]
@@ -443,13 +446,7 @@ class AndroidMediaPlayerViewModel(
 						}
 
 						if (newItem != null) {
-							if (i == player.currentMediaItemIndex) {
-								val currentPosition = player.currentPosition
-								player.replaceMediaItem(i, newItem)
-								player.seekTo(i, currentPosition)
-							} else {
-								player.replaceMediaItem(i, newItem)
-							}
+							player.replaceMediaItem(i, newItem)
 						}
 					}
 				}
@@ -517,6 +514,8 @@ class AndroidMediaPlayerViewModel(
 	private fun updatePlaybackState() {
 		val controller = controller ?: return
 		val index = controller.currentMediaItemIndex
+		if (index == C.INDEX_UNSET) return
+
 		val currentSong = _uiState.value.queue.getOrNull(index)
 
 		val derivedCollection = currentSong?.let { song ->
@@ -535,7 +534,7 @@ class AndroidMediaPlayerViewModel(
 				currentIndex = index,
 				currentSong = currentSong,
 				currentCollection = derivedCollection ?: state.currentCollection,
-				isPaused = !controller.isPlaying,
+				isPaused = !controller.playWhenReady,
 				isShuffleEnabled = controller.shuffleModeEnabled,
 				repeatMode = controller.repeatMode
 			)
@@ -563,7 +562,10 @@ class AndroidMediaPlayerViewModel(
 				return@launch
 			}
 
-			if (state.queue.isEmpty() || player.mediaItemCount > 0) return@launch
+			if (state.queue.isEmpty() || player.mediaItemCount > 0) {
+				updatePlaybackState()
+				return@launch
+			}
 
 			val mediaItems = withContext(Dispatchers.Default) {
 				state.queue.map { it.toMediaItem() }
@@ -587,6 +589,9 @@ class AndroidMediaPlayerViewModel(
 
 			player.seekTo(index, position)
 			player.prepare()
+			if (!state.isPaused) {
+				player.play()
+			}
 		}
 	}
 
@@ -981,6 +986,7 @@ class AndroidMediaPlayerViewModel(
 			.setSubtitle(artistName)
 			.setArtist(artistName)
 			.setAlbumTitle(albumTitle)
+			.setDurationMs(duration.inWholeMilliseconds)
 			.setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
 
 		val artworkData = coverArtId?.let { coverId ->

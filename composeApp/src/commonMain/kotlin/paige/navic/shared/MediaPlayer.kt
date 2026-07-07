@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -118,15 +119,33 @@ abstract class MediaPlayerViewModel(
 	private fun observeAndSaveState() {
 		viewModelScope.launch {
 			uiState
-				.debounce(1.seconds)
-				.collect { state ->
-					try {
-						val jsonString = Json.encodeToString(state)
-						stateRepository.saveState(jsonString)
-					} catch (e: Exception) {
-						Logger.e("MediaPlayerViewModel", "Failed to save state!", e)
-					}
+				.distinctUntilChanged { old, new ->
+					old.currentIndex == new.currentIndex &&
+						old.queue == new.queue &&
+						old.isPaused == new.isPaused &&
+						old.repeatMode == new.repeatMode &&
+						old.isShuffleEnabled == new.isShuffleEnabled
 				}
+				.collect { state ->
+					saveStateInternal(state)
+				}
+		}
+
+		viewModelScope.launch {
+			uiState
+				.debounce(2.seconds)
+				.collect { state ->
+					saveStateInternal(state)
+				}
+		}
+	}
+
+	private suspend fun saveStateInternal(state: PlayerUiState) {
+		try {
+			val jsonString = Json.encodeToString(state)
+			stateRepository.saveState(jsonString)
+		} catch (e: Exception) {
+			Logger.e("MediaPlayerViewModel", "Failed to save state!", e)
 		}
 	}
 }
