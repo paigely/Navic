@@ -25,7 +25,6 @@ import com.materialkolor.ktx.darken
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_error
 import org.jetbrains.compose.resources.stringResource
-
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.KeyboardArrowDown
 import paige.navic.icons.outlined.Refresh

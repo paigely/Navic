@@ -29,7 +29,6 @@ import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.option_lyrics_priority
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-
 import paige.navic.domain.models.lyrics.LyricsProvider
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle

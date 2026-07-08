@@ -32,7 +32,6 @@ import navic.composeapp.generated.resources.action_delete_download
 import navic.composeapp.generated.resources.action_play
 import navic.composeapp.generated.resources.info_download_failed
 import org.jetbrains.compose.resources.stringResource
-
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.icons.Icons
 import paige.navic.icons.filled.Play
@@ -110,7 +109,6 @@ fun ArtistActionButtons(
 				DownloadStatus.DOWNLOADING,
 				DownloadStatus.DOWNLOADED,
 				DownloadStatus.FAILED -> true
-
 				DownloadStatus.NOT_DOWNLOADED -> playEnabled
 			},
 			contentPadding = PaddingValues(0.dp)

@@ -23,7 +23,6 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_navigate_back
 import org.jetbrains.compose.resources.stringResource
-
 import paige.navic.LocalNavStack
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ArrowBack

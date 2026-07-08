@@ -30,7 +30,6 @@ import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.option_navigation_bar_tabs
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-
 import paige.navic.domain.models.settings.NavbarTab
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle

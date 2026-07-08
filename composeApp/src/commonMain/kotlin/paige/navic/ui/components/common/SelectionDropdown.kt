@@ -41,7 +41,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.compose.koinInject
-
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Check

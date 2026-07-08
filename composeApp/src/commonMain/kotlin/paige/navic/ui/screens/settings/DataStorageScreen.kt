@@ -89,7 +89,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalPlatformContext
-
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.CoverArtQuality
 import paige.navic.domain.models.settings.OfflineMode

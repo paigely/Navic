@@ -27,7 +27,6 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_grid_items_per_row
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.GridSize
 

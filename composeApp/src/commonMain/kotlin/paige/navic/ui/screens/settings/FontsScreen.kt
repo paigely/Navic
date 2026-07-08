@@ -36,7 +36,6 @@ import navic.composeapp.generated.resources.title_fonts_inbuilt
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.FontOption
 import paige.navic.icons.Icons

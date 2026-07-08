@@ -25,7 +25,6 @@ import navic.composeapp.generated.resources.title_settings
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
-
 import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.domain.models.settings.NavbarTab
 import paige.navic.icons.Icons

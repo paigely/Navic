@@ -50,7 +50,6 @@ import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus

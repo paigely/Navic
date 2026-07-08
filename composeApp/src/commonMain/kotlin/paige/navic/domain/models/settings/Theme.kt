@@ -20,7 +20,6 @@ import navic.composeapp.generated.resources.theme_spotify
 import org.jetbrains.compose.resources.StringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
-
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.util.ui.darkIosColorScheme
 import paige.navic.util.ui.lightIosColorScheme

@@ -29,7 +29,6 @@ import androidx.navigation3.runtime.NavKey
 import kotlinx.collections.immutable.ImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_see_all
-
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalNavStack
 import paige.navic.ui.components.common.CoverArt
@@ -121,7 +120,6 @@ fun CarouselItemScope.ArtCarouselItem(
 				.maskClip(MaterialTheme.shapes.large),
 			shape = RectangleShape,
 			onClick = {
-				
 				focusManager.clearFocus(true)
 				onClick()
 			},

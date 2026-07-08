@@ -43,7 +43,6 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.option_now_playing_slider_style
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NowPlayingSliderStyle
 import paige.navic.ui.components.common.SlimSlider

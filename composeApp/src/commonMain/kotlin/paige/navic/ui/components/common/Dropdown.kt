@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-
 import paige.navic.ui.theme.defaultFont
 
 @Composable

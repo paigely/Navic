@@ -46,7 +46,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
-
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.shared.MediaPlayerViewModel

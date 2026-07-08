@@ -36,7 +36,6 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
-
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.domain.models.settings.NavbarTab

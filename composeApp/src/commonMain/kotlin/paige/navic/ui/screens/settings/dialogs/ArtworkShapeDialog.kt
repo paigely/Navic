@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_ok
 import org.jetbrains.compose.resources.stringResource
-
 import paige.navic.domain.models.settings.CoverArtShape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

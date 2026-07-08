@@ -26,7 +26,6 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.notice_login_suggestion
 import org.jetbrains.compose.resources.stringResource
 
-
 @Composable
 fun LoginScreenSuggestionChips(
 	instanceState: TextFieldState,

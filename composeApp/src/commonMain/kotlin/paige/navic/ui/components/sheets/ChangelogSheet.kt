@@ -48,7 +48,6 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalPlatformContext
-
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.components.common.Markdown
 import paige.navic.ui.theme.defaultFont

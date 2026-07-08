@@ -22,7 +22,6 @@ import navic.composeapp.generated.resources.info_unknown_genre
 import navic.composeapp.generated.resources.info_unknown_year
 import navic.composeapp.generated.resources.subtitle_playlist
 import org.jetbrains.compose.resources.stringResource
-
 import paige.navic.LocalNavStack
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.domain.models.DomainAlbum
@@ -85,7 +84,6 @@ fun CollectionDetailScreenHeadingRow(
 					modifier = Modifier.clickable(
 						collection is DomainAlbum,
 						onClick = dropUnlessResumed {
-							
 							(collection as? DomainAlbum)?.artistId?.let { id ->
 								backStack.add(Screen.ArtistDetail(id))
 							}
