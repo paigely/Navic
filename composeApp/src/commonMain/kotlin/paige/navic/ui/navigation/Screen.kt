@@ -174,6 +174,10 @@ sealed interface Screen : NavKey {
 
 		@Immutable
 		@Serializable
+		data object DownloadQuality : Settings
+
+		@Immutable
+		@Serializable
 		data object Logs : Settings
 
 		@Immutable

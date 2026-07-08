@@ -40,6 +40,7 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.LyricsRepository
 import paige.navic.util.core.Logger
+import paige.navic.util.core.PlatformType
 import coil3.PlatformContext as CoilPlatformContext
 
 class DownloadManager(
@@ -50,7 +51,9 @@ class DownloadManager(
 	private val lyricsRepository: LyricsRepository,
 	private val lyricDao: LyricDao,
 	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager
+	private val preferenceManager: PreferenceManager,
+	private val connectivityManager: ConnectivityManager,
+	private val platformType: PlatformType
 ) {
 	private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 	private val client = HttpClient {
@@ -342,7 +345,29 @@ class DownloadManager(
 		var lastProgress = 0f
 		var progressJob: Job? = null
 
-		val request = client.prepareRequest(sessionManager.api.getStreamUrl(song.id)) {
+		val isCellular = connectivityManager.isCellular.value
+		val bitrate = if (preferenceManager.isAdvancedDownloadTranscodingActive) {
+			if (isCellular) preferenceManager.customDownloadMaxBitrateCellular else preferenceManager.customDownloadMaxBitrateWifi
+		} else {
+			val quality = if (isCellular) preferenceManager.downloadQualityCellular else preferenceManager.downloadQualityWifi
+			if (platformType == PlatformType.Android) quality.bitrateAndroid else quality.bitrateIos
+		}
+		val container = if (preferenceManager.isAdvancedDownloadTranscodingActive) {
+			if (isCellular) preferenceManager.customDownloadFormatCellular else preferenceManager.customDownloadFormatWifi
+		} else {
+			val quality = if (isCellular) preferenceManager.downloadQualityCellular else preferenceManager.downloadQualityWifi
+			if (platformType == PlatformType.Android) quality.containerAndroid else quality.containerIos
+		}
+
+		val extension = container?.takeIf { it.isNotBlank() } ?: song.fileExtension
+
+		val request = client.prepareRequest(
+			sessionManager.api.getStreamUrl(
+				id = song.id,
+				maxBitRate = bitrate,
+				format = container?.takeIf { it.isNotBlank() }
+			) + "&estimateContentLength=true"
+		) {
 			method = HttpMethod.Get
 			onDownload { bytesSentTotal, contentLength ->
 				if (contentLength != null && contentLength > 0L) {
@@ -369,7 +394,7 @@ class DownloadManager(
 
 		request.execute { response ->
 			Logger.i("DownloadManager", "writing download for ${song.id}")
-			val path = storageManager.getDownloadPath(song.id, song.fileExtension)
+			val path = storageManager.getDownloadPath(song.id, extension)
 			storageManager.saveFile(path, response.bodyAsChannel())
 			Logger.i("DownloadManager", "wrote download for ${song.id}")
 

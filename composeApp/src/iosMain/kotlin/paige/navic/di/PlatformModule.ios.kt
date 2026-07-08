@@ -16,12 +16,14 @@ import paige.navic.domain.manager.StorageManager
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.shared.IOSMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.util.core.PlatformType
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 import coil3.PlatformContext as CoilPlatformContext
 
 actual val platformModule = module {
+	single { PlatformType.IOS }
 	single<CacheDatabase> {
 		val dbPath = documentDirectory() + "/cache.db"
 		Room

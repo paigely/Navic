@@ -98,6 +98,7 @@ import paige.navic.ui.screens.settings.SettingsAppearanceScreen
 import paige.navic.ui.screens.settings.SettingsCustomHeadersScreen
 import paige.navic.ui.screens.settings.SettingsDataStorageScreen
 import paige.navic.ui.screens.settings.SettingsDeveloperScreen
+import paige.navic.ui.screens.settings.SettingsDownloadQualityScreen
 import paige.navic.ui.screens.settings.SettingsLogsScreen
 import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
@@ -394,6 +395,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Settings.StreamingQuality> {
 			SettingsStreamingQualityScreen()
+		}
+		entry<Screen.Settings.DownloadQuality> {
+			SettingsDownloadQualityScreen()
 		}
 		entry<Screen.Settings.Logs> {
 			SettingsLogsScreen()
