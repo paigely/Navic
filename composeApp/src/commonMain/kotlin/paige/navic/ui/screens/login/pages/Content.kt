@@ -16,12 +16,17 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -38,24 +43,33 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import com.kyant.capsule.ContinuousCapsule
+import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_log_in
+import navic.composeapp.generated.resources.action_open_settings
 import navic.composeapp.generated.resources.info_login_description_end
 import navic.composeapp.generated.resources.info_login_description_middle
 import navic.composeapp.generated.resources.info_login_description_start
+import navic.composeapp.generated.resources.notice_local_network_denied
 import navic.composeapp.generated.resources.option_custom_headers
+import navic.composeapp.generated.resources.subtitle_local_network_denied
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
+import paige.navic.domain.manager.LoginManager
+import paige.navic.domain.manager.PermissionManager
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.Error
+import paige.navic.ui.components.common.FormButton
+import paige.navic.ui.components.dialogs.FormDialog
 import paige.navic.ui.core.LoginUiState
 import paige.navic.ui.navigation.Screen
-import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.theme.defaultFont
 
 @Composable
 fun LoginScreenContent(innerPadding: PaddingValues) {
-	val viewModel = koinViewModel<LoginViewModel>()
+	val viewModel = koinInject<LoginManager>()
 	val loginState by viewModel.loginState.collectAsStateWithLifecycle()
 
 	val instanceState = viewModel.instanceState
@@ -89,15 +103,23 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 	val usernameFocusRequester = remember { FocusRequester() }
 	val passwordFocusRequester = remember { FocusRequester() }
 
-	val login = {
-		platformContext.checkLocalNetworkPermission()
+	val permissionManager = koinInject<PermissionManager>()
+	val loginScope = rememberCoroutineScope()
+	var localNetworkDenied by rememberSaveable { mutableStateOf(false) }
+	val login: () -> Unit = {
+		loginScope.launch {
+			if (!permissionManager.requestLocalNetworkPermission()) {
+				localNetworkDenied = true
+				return@launch
+			}
 
-		if (!viewModel.login()) {
-			haptics.performHapticFeedback(HapticFeedbackType.Reject)
-			when {
-				viewModel.instanceError -> instanceFocusRequester.requestFocus()
-				viewModel.usernameError -> usernameFocusRequester.requestFocus()
-				viewModel.passwordError -> passwordFocusRequester.requestFocus()
+			if (!viewModel.login()) {
+				haptics.performHapticFeedback(HapticFeedbackType.Reject)
+				when {
+					viewModel.instanceError -> instanceFocusRequester.requestFocus()
+					viewModel.usernameError -> usernameFocusRequester.requestFocus()
+					viewModel.passwordError -> passwordFocusRequester.requestFocus()
+				}
 			}
 		}
 	}
@@ -210,5 +232,24 @@ fun LoginScreenContent(innerPadding: PaddingValues) {
 				}
 			}
 		}
+	}
+
+	if (localNetworkDenied) {
+		FormDialog(
+			onDismissRequest = { localNetworkDenied = false },
+			icon = { Icon(Icons.Outlined.Error, null) },
+			title = { Text(stringResource(Res.string.notice_local_network_denied)) },
+			content = { Text(stringResource(Res.string.subtitle_local_network_denied)) },
+			buttons = {
+				FormButton(
+					onClick = {
+						localNetworkDenied = false
+						permissionManager.openPermissionsSettings()
+					}
+				) {
+					Text(stringResource(Res.string.action_open_settings))
+				}
+			}
+		)
 	}
 }

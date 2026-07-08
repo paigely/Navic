@@ -81,6 +81,7 @@ import navic.composeapp.generated.resources.subtitle_trigger_sync
 import navic.composeapp.generated.resources.title_cache_management
 import navic.composeapp.generated.resources.title_danger_zone
 import navic.composeapp.generated.resources.title_data_storage
+import navic.composeapp.generated.resources.title_download_quality
 import navic.composeapp.generated.resources.title_library_download
 import navic.composeapp.generated.resources.title_network
 import navic.composeapp.generated.resources.title_sync_control
@@ -88,19 +89,24 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.CoverArtQuality
 import paige.navic.domain.models.settings.OfflineMode
 import paige.navic.icons.Icons
+import paige.navic.icons.outlined.ChevronForward
 import paige.navic.icons.outlined.Offline
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.dialogs.BulkDownloadDialog
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.viewmodels.SettingsDataStorageViewModel
+import androidx.lifecycle.compose.dropUnlessResumed
+import navic.composeapp.generated.resources.subtitle_download_quality
 import kotlin.time.Clock
 import kotlin.time.Instant
 import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
@@ -110,6 +116,7 @@ fun SettingsDataStorageScreen() {
 	val viewModel = koinViewModel<SettingsDataStorageViewModel>()
 
 	val platformContext = LocalPlatformContext.current
+	val backStack = LocalNavStack.current
 	val preferenceManager = koinInject<PreferenceManager>()
 	val scope = rememberCoroutineScope()
 	val coilPlatformContext = LocalCoilPlatformContext.current
@@ -199,6 +206,20 @@ fun SettingsDataStorageScreen() {
 			) {
 				FormTitle(stringResource(Res.string.title_network))
 				Form {
+					FormRow(
+						onClick = dropUnlessResumed { backStack.add(Screen.Settings.DownloadQuality) },
+						horizontalArrangement = Arrangement.Start
+					) {
+						Column(Modifier.weight(1f)) {
+							Text(stringResource(Res.string.title_download_quality))
+							Text(
+								text = stringResource(Res.string.subtitle_download_quality),
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						}
+						Icon(Icons.Outlined.ChevronForward, null)
+					}
 					SettingSelectionRow(
 						title = { Text(stringResource(Res.string.option_offline_mode)) },
 						items = OfflineMode.entries.toImmutableList(),

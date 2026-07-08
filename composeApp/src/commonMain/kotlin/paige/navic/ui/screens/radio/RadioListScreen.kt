@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_create_playlist
 import navic.composeapp.generated.resources.title_radios
@@ -51,6 +52,7 @@ import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.snackbars.ErrorSnackbar
 import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.screens.radio.components.radioListScreenContent
 import paige.navic.ui.screens.radio.dialogs.RadioCreateDialog
 import paige.navic.ui.screens.radio.viewmodels.RadioListViewModel
@@ -62,7 +64,13 @@ fun RadioListScreen(
 	nested: Boolean
 ) {
 	val scrollManager = LocalBottomBarScrollManager.current
-	val viewModel = koinViewModel<RadioListViewModel>()
+	val viewModel = koinViewModel<RadioListViewModel>(
+		viewModelStoreOwner = if (nested) {
+			LocalViewModelStoreOwner.current!!
+		} else {
+			koinInject<PersistentViewModelStoreOwner>()
+		}
+	)
 	val player = koinInject<MediaPlayerViewModel>()
 	val radiosState by viewModel.radiosState.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()

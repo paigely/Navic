@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.stringResource
@@ -39,6 +40,7 @@ import paige.navic.ui.components.layouts.PullToRefreshBox
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.screens.song.components.SongListScreenSortButton
 import paige.navic.ui.screens.song.components.songListScreenContent
@@ -54,7 +56,12 @@ fun SongListScreen(
 ) {
 	val viewModel = koinViewModel<SongListViewModel>(
 		key = listType.toString(),
-		parameters = { parametersOf(listType) }
+		parameters = { parametersOf(listType) },
+		viewModelStoreOwner = if (nested) {
+			LocalViewModelStoreOwner.current!!
+		} else {
+			koinInject<PersistentViewModelStoreOwner>()
+		}
 	)
 	val preferenceManager = koinInject<PreferenceManager>()
 	val player = koinInject<MediaPlayerViewModel>()

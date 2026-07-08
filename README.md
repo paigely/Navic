@@ -16,7 +16,7 @@ A modern Navidrome client for Android and iOS.
 ## Features
 
 * Customisable: large selection of settings and tweaks
-* Secure & private: zero permissions, telemetry, or analytics
+* Secure & private: minimal permissions, zero telemetry, and zero analytics
 * Integrated: shows up on the lock screen + quick settings
 * Lightweight & fast: zero bloat
 * Feature rich: covers almost the entirety of the Subsonic API
@@ -32,7 +32,7 @@ A modern Navidrome client for Android and iOS.
 
 You can help translate Navic by contributing on [Weblate](https://hosted.weblate.org/engage/navic/).
 
-[![Translation status](https://hosted.weblate.org/widget/navic/navic/svg-badge.svg?threshold=0)](https://hosted.weblate.org/engage/navic/)
+![Weblate translation status](https://hosted.weblate.org/widget/navic/navic/horizontal-auto.svg)
 
 ## Star History
 

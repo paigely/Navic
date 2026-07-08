@@ -1,22 +1,25 @@
-package paige.navic.ui.screens.login.viewmodels
+package paige.navic.domain.manager
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.repositories.DbRepository
 import paige.navic.ui.core.LoginUiState
 
-class LoginViewModel(
-	private val repository: DbRepository,
-	private val sessionManager: SessionManager
-) : ViewModel() {
+class LoginManager(
+    private val repository: DbRepository,
+    private val sessionManager: SessionManager
+) {
+	val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
 	val loginState: StateFlow<LoginUiState>
 		field = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
 
@@ -55,7 +58,7 @@ class LoginViewModel(
 	}
 
 	fun loadUser() {
-		viewModelScope.launch {
+		scope.launch {
 			if (sessionManager.isLoggedIn.value) {
 				loginState.value = LoginUiState.Success
 			} else {
@@ -67,7 +70,7 @@ class LoginViewModel(
 	fun login(): Boolean {
 		if (!validateStuff()) return false
 
-		viewModelScope.launch {
+		scope.launch {
 			loginState.value = LoginUiState.Loading
 
 			try {
@@ -103,7 +106,7 @@ class LoginViewModel(
 	fun logout() {
 		loginState.value = LoginUiState.Idle
 		sessionManager.logout()
-		viewModelScope.launch {
+		scope.launch {
 			repository.removeEverything()
 		}
 	}

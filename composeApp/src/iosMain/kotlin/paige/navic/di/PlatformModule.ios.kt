@@ -11,17 +11,20 @@ import paige.navic.data.database.DownloadDatabase
 import paige.navic.domain.manager.AppIconManager
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.LogManager
+import paige.navic.domain.manager.PermissionManager
 import paige.navic.domain.manager.ShareManager
 import paige.navic.domain.manager.StorageManager
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.shared.IOSMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.util.core.PlatformType
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 import coil3.PlatformContext as CoilPlatformContext
 
 actual val platformModule = module {
+	single { PlatformType.IOS }
 	single<CacheDatabase> {
 		val dbPath = documentDirectory() + "/cache.db"
 		Room
@@ -73,6 +76,7 @@ actual val platformModule = module {
 	singleOf(::ConnectivityManager)
 	singleOf(::LogManager)
 	singleOf(::AppIconManager)
+	singleOf(::PermissionManager)
 }
 
 @OptIn(ExperimentalForeignApi::class)

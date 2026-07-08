@@ -64,6 +64,14 @@ class PreferenceManager(
 	var customFormatWifi by preference("")
 	var customFormatCellular by preference("")
 
+	var downloadQualityWifi by preference(StreamingQuality.Lossless)
+	var downloadQualityCellular by preference(StreamingQuality.Lossless)
+	var isAdvancedDownloadTranscodingActive by preference(false)
+	var customDownloadMaxBitrateWifi by preference(0)
+	var customDownloadMaxBitrateCellular by preference(0)
+	var customDownloadFormatWifi by preference("")
+	var customDownloadFormatCellular by preference("")
+
 	var nowPlayingToolbarPosition by preference(ToolbarPosition.Bottom)
 	var nowPlayingSongInfo by preference(true)
 	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)

@@ -1,7 +1,6 @@
 package paige.navic.util.core
 
 import android.Manifest
-import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import android.view.SoundEffectConstants
@@ -33,6 +32,7 @@ import paige.navic.domain.models.settings.ThemeMode
 actual fun rememberPlatformContext(): PlatformContext {
 	val view = LocalView.current
 	val context = LocalContext.current
+	val activity = LocalActivity.current!!
 	val inDarkTheme = isSystemInDarkTheme()
 	val preferenceManager = koinInject<PreferenceManager>()
 	val isDark = remember(preferenceManager.themeMode) {
@@ -42,9 +42,9 @@ actual fun rememberPlatformContext(): PlatformContext {
 			ThemeMode.Light -> false
 		}
 	}
-	val sizeClass = calculateWindowSizeClass(LocalActivity.current!!)
+	val sizeClass = calculateWindowSizeClass(activity)
 	SideEffect {
-		(view.context as? Activity)?.window?.let { window ->
+		activity.window?.let { window ->
 			WindowCompat.getInsetsController(window, view)
 				.isAppearanceLightStatusBars = !isDark
 		}
@@ -54,22 +54,6 @@ actual fun rememberPlatformContext(): PlatformContext {
 			// TODO: remove this and usages of it as compose will do it by default in alpha03
 			override fun clickSound() {
 				view.playSoundEffect(SoundEffectConstants.CLICK)
-			}
-
-			override fun checkLocalNetworkPermission() {
-				if (Build.VERSION.SDK_INT >= 37) {
-					val hasPermission = context.checkSelfPermission(
-						Manifest.permission.ACCESS_LOCAL_NETWORK
-					) == PackageManager.PERMISSION_GRANTED
-
-					if (!hasPermission) {
-						requestPermissions(
-							(view.context as? Activity?)!!,
-							arrayOf(Manifest.permission.ACCESS_LOCAL_NETWORK),
-							500
-						)
-					}
-				}
 			}
 
 			override val platformType = PlatformType.Android

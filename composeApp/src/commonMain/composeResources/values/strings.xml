@@ -51,6 +51,7 @@
 	<string name="title_changelog">Release notes</string>
 	<string name="title_network">Network</string>
 	<string name="title_streaming_quality">Streaming quality</string>
+	<string name="title_download_quality">Download quality</string>
 	<string name="title_wifi">Wi-Fi</string>
 	<string name="title_cellular">Cellular</string>
 	<string name="title_select_lyrics">Select Lyrics</string>
@@ -78,8 +79,10 @@
 	<string name="subtitle_check_for_updates">It is recommended to leave this on, as some updates provide important bug fixes</string>
 	<string name="subtitle_offline_mode">Dictates when the app should go in an offline mode. Requires application restart</string>
 	<string name="subtitle_streaming_quality">Adjust the quality of streamed music</string>
+	<string name="subtitle_download_quality">Adjust the quality of downloaded music</string>
 	<string name="subtitle_dynamic_theming">Dynamically theme the album and artist view based on cover art</string>
 	<string name="subtitle_app_icon_designer">Designed by: %1$s</string>
+	<string name="subtitle_local_network_denied">You need to grant Navic access to your local network in order for your server to be reachable.</string>
 
 	<string name="option_off">Off</string>
 	<string name="option_now_playing_background_style">Background style</string>
@@ -158,10 +161,13 @@
 	<string name="option_quality_high">High</string>
 	<string name="option_quality_lossless">Lossless (no transcoding)</string>
 	<string name="option_stream_custom_quality">Use custom streaming quality</string>
+	<string name="option_download_custom_quality">Use custom download quality</string>
 	<string name="option_max_bitrate_wifi">Max Bitrate Wi-Fi (kbps)</string>
 	<string name="option_max_bitrate_cellular">Max Bitrate Cellular (kbps)</string>
 	<string name="option_stream_format_wifi">Stream Format Wi-Fi</string>
 	<string name="option_stream_format_cellular">Stream Format Cellular</string>
+	<string name="option_download_format_wifi">Download Format Wi-Fi</string>
+	<string name="option_download_format_cellular">Download Format Cellular</string>
 	<string name="option_cover_art_quality">Cover art quality</string>
 	<string name="option_palette_style">Palette style</string>
 	<string name="option_palette_specification">Palette specification</string>
@@ -323,6 +329,7 @@
 	<string name="action_trigger_sync">Trigger manual sync</string>
 	<string name="action_test_exception_handler">Test exception handler</string>
 	<string name="action_dont_show_again">Don't show again</string>
+	<string name="action_open_settings">Open settings</string>
 	<string name="subtitle_rebuild_database">Wipes all local metadata and forces a fresh sync</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
@@ -341,6 +348,7 @@
 	<string name="notice_loading_lyrics">Loading lyrics...\nThis might take a while.</string>
 	<string name="notice_login_suggestion">Did you mean...</string>
 	<string name="notice_queue_duplicate">This song is already in the queue. Do you really want to add it again?</string>
+	<string name="notice_local_network_denied">Permission denied</string>
 
 	<string name="info_app_version">Navic %1$s</string>
 	<string name="info_action_is_permanent">This action cannot be undone</string>
@@ -408,6 +416,7 @@
 	<string name="info_login_description_end">instance.</string>
 	<string name="info_exception_handler">This will immediately crash the application. Are you sure?</string>
 	<string name="info_streaming_quality">Higher quality presets will use more data. Transcoding can severely impact load times and cause lyrics to become unsynced. Select Lossless if you encounter any issues.</string>
+	<string name="info_download_quality">Higher quality presets will use more storage and data. Transcoding can increase download times. Select Lossless if you encounter any issues.</string>
 	<string name="info_repeat_off">Repeat off</string>
 	<string name="info_repeat_one">Repeat one</string>
 	<string name="info_repeat_all">Repeat all</string>

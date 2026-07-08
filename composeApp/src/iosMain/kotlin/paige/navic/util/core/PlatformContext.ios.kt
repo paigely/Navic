@@ -21,10 +21,6 @@ actual fun rememberPlatformContext(): PlatformContext {
 				// none for iOS
 			}
 
-			override fun checkLocalNetworkPermission() {
-				// none for iOS
-			}
-
 			override val platformType = PlatformType.IOS
 			override val name = (UIDevice.currentDevice.systemName()
 				+ " " + UIDevice.currentDevice.systemVersion)

@@ -34,6 +34,7 @@ import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.KeepScreenOn
 import paige.navic.ui.components.layouts.SheetScaffold
 import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.lyrics.components.LyricsScreenContent
 import paige.navic.ui.screens.lyrics.components.LyricsScreenLoadingView
@@ -55,7 +56,8 @@ fun LyricsScreen(
 
 	val viewModel = koinViewModel<LyricsScreenViewModel>(
 		key = song?.id,
-		parameters = { parametersOf(song) }
+		parameters = { parametersOf(song) },
+		viewModelStoreOwner = koinInject<PersistentViewModelStoreOwner>()
 	)
 	val lyricsState by viewModel.lyricsState.collectAsStateWithLifecycle()
 

@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_queue
 import navic.composeapp.generated.resources.action_remove_from_history
@@ -90,6 +91,7 @@ import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.components.layouts.horizontalSection
 import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.album.components.AlbumListScreenItem
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
@@ -113,7 +115,13 @@ fun SearchScreen(
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
 
-	val viewModel = koinViewModel<SearchViewModel>()
+	val viewModel = koinViewModel<SearchViewModel>(
+		viewModelStoreOwner = if (nested) {
+			LocalViewModelStoreOwner.current!!
+		} else {
+			koinInject<PersistentViewModelStoreOwner>()
+		}
+	)
 	val selectedSong by viewModel.selectedSong.collectAsStateWithLifecycle()
 	val selectedSongIsStarred by viewModel.selectedSongIsStarred.collectAsStateWithLifecycle()
 	val selectedSongRating by viewModel.selectedSongRating.collectAsStateWithLifecycle()

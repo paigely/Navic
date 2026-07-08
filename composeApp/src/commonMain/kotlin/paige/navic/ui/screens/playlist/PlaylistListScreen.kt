@@ -36,6 +36,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_create_playlist
 import navic.composeapp.generated.resources.title_playlists
@@ -59,6 +60,7 @@ import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.snackbars.ErrorSnackbar
 import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.screens.playlist.components.PlaylistListScreenSortButton
 import paige.navic.ui.screens.playlist.components.playlistListScreenContent
 import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
@@ -74,7 +76,13 @@ fun PlaylistListScreen(
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
 
-	val viewModel = koinViewModel<PlaylistListViewModel>()
+	val viewModel = koinViewModel<PlaylistListViewModel>(
+		viewModelStoreOwner = if (nested) {
+			LocalViewModelStoreOwner.current!!
+		} else {
+			koinInject<PersistentViewModelStoreOwner>()
+		}
+	)
 	val player = koinInject<MediaPlayerViewModel>()
 	val playlistsState by viewModel.playlistsState.collectAsState()
 	val selectedPlaylist by viewModel.selectedPlaylist.collectAsState()

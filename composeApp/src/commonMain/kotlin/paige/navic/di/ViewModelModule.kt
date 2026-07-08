@@ -11,7 +11,6 @@ import paige.navic.ui.screens.artist.viewmodels.ArtistDetailViewModel
 import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.ui.screens.collection.viewmodels.CollectionDetailViewModel
 import paige.navic.ui.screens.genre.viewmodels.GenreListViewModel
-import paige.navic.ui.screens.login.viewmodels.LoginViewModel
 import paige.navic.ui.screens.lyrics.viewmodels.LyricsScreenViewModel
 import paige.navic.ui.screens.nowPlaying.viewmodels.NowPlayingViewModel
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistCreateDialogViewModel
@@ -69,7 +68,6 @@ val viewModelModule = module {
 	viewModelOf(::RadioListViewModel)
 	viewModelOf(::RadioCreateDialogViewModel)
 	viewModelOf(::PlaylistListViewModel)
-	viewModelOf(::LoginViewModel)
 	viewModelOf(::QueueViewModel)
 	viewModelOf(::ShareListViewModel)
 	viewModelOf(::DeletionViewModel)

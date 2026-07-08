@@ -10,13 +10,16 @@ import paige.navic.data.database.DownloadDatabase
 import paige.navic.domain.manager.AppIconManager
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.LogManager
+import paige.navic.domain.manager.PermissionManager
 import paige.navic.domain.manager.ShareManager
 import paige.navic.domain.manager.StorageManager
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.shared.AndroidMediaPlayerViewModel
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.util.core.PlatformType
 
 actual val platformModule = module {
+	single { PlatformType.Android }
 	single<CacheDatabase> {
 		val dbPath = androidApplication()
 			.getDatabasePath("cache.db")
@@ -66,4 +69,5 @@ actual val platformModule = module {
 	singleOf(::ConnectivityManager)
 	singleOf(::LogManager)
 	singleOf(::AppIconManager)
+	singleOf(::PermissionManager)
 }

@@ -10,7 +10,6 @@ interface PlatformContext {
 	val colorScheme: ColorScheme?
 	val sizeClass: WindowSizeClass
 	val platformType: PlatformType
-	fun checkLocalNetworkPermission()
 	fun clickSound()
 }
 
