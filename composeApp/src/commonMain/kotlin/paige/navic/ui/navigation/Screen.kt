@@ -100,11 +100,11 @@ sealed interface Screen : NavKey {
 
 	@Immutable
 	@Serializable
-	data class SongDetail(val songId: String, val coverArtId: String? = null) : Screen
+	data class SongDetailSheet(val songId: String, val coverArtId: String? = null) : Screen
 
 	@Immutable
 	@Serializable
-	data class SongDetailInfo(val songId: String, val coverArtId: String? = null) : Screen
+	data class SongDetailScreen(val songId: String, val coverArtId: String? = null) : Screen
 
 	@Immutable
 	@Serializable

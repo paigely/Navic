@@ -340,7 +340,7 @@ fun SearchScreen(
 													)
 												) DownloadStatus.DOWNLOADED else null,
 												onTrackInfo = dropUnlessResumed {
-													backStack.add(Screen.SongDetailInfo(song.id, song.coverArtId))
+													backStack.add(Screen.SongDetailScreen(song.id, song.coverArtId))
 												},
 												onViewAlbum = song.albumId?.let { albumId ->
 													dropUnlessResumed {
