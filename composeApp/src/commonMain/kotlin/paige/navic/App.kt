@@ -69,7 +69,7 @@ import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.SideloadingDialog
 import paige.navic.ui.components.sheets.ChangelogSheet
-import paige.navic.ui.components.sheets.SongDetailSheet
+import paige.navic.ui.screens.song.SongDetailSheet
 import paige.navic.ui.components.snackbars.NavicSnackbar
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
 import paige.navic.ui.navigation.NowPlayingSceneStrategy
