@@ -17,7 +17,7 @@ data class LyricsConfig(
 		"https://lyricsplus-seven.vercel.app",
 		"https://lyricsplus.prjktla.workers.dev"
 	),
-	val lrcLibBaseUrl: String = "https://lrclib.net/api/get"
+	val lrcLibBaseUrl: String = "https://lrclib.net/api/search"
 ) {
 	companion object {
 		const val KEY = "lyrics_config_prefs"
