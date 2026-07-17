@@ -75,10 +75,12 @@
 			android:name="paige.navic.shared.PlaybackService"
 			android:enabled="true"
 			android:exported="true"
-			android:foregroundServiceType="mediaPlayback"
-			android:permission="${applicationId}.permission.PLAYBACK_SERVICE">
+			android:foregroundServiceType="mediaPlayback">
+<!--			android:permission="${applicationId}.permission.PLAYBACK_SERVICE">   : Blocks android auto from seeing the app at all? -->
 			<intent-filter>
+
 				<action android:name="androidx.media3.session.MediaSessionService" />
+				<action android:name="android.media.browse.MediaBrowserService" />
 			</intent-filter>
 		</service>
 
@@ -129,5 +131,11 @@
 				android:resource="@xml/file_paths" />
 		</provider>
 
+		<!-- Android Auto -->
+		<meta-data android:name="com.google.android.gms.car.application"
+			android:resource="@xml/automotive_app_desc"/>
+		<meta-data
+			android:name="androidx.car.app.TintableAttributionIcon"
+			android:resource="@drawable/ic_navic" />
 	</application>
 </manifest>
