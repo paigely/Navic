@@ -67,7 +67,7 @@
     <string name="notice_deleted_share">Condivisione eliminata.</string>
     <string name="notice_expiry">Scade tra %1$s.</string>
     <string name="notice_loading_lyrics">Caricamento testi...\nPotrebbe richiedere qualche istante.</string>
-    <string name="option_accent_colour">Colore di accento</string>
+    <string name="option_accent_colour">Colore di accento palette</string>
     <string name="option_account_navidrome_instance">Istanza</string>
     <string name="option_account_password">Password</string>
     <string name="option_account_username">Nome utente</string>
@@ -357,7 +357,7 @@
     <string name="option_playback_speed">Velocità di riproduzione</string>
     <string name="title_advanced">Transcoding avanzato</string>
     <string name="option_off">Off</string>
-    <string name="option_max_bitrate_wifi">Bitrate Massimo WiFi (kbps)</string>
+    <string name="option_max_bitrate_wifi">Bitrate Massimo Wi-Fi (kbps)</string>
     <string name="option_max_bitrate_cellular">Bitrate Massimo Dati mobili (kbps)</string>
     <string name="action_clear_queue">Svuota coda</string>
     <string name="title_starred">Preferiti</string>
@@ -377,8 +377,6 @@
     <string name="title_palette">Palette</string>
     <string name="title_theme_mode">Tema</string>
     <string name="title_account">Account</string>
-    <string name="subtitle_dynamic_album_view_theme">Applica dinamicamente un tema alla visualizzazione dell'album in base alla copertina dell'album stesso.</string>
-    <string name="subtitle_dynamic_artist_view_theme">Applica dinamicamente un tema alla visualizzazione dell'artista in base alla sua immagine.</string>
     <string name="option_artist_image_shape">Forma della copertina degli artisti</string>
     <string name="option_stream_custom_quality">Usa una qualità per lo stream personalizzate</string>
     <string name="option_stream_format_wifi">Formato Stream Wi-Fi</string>
@@ -389,8 +387,6 @@
     <string name="option_explicit_playback_allowed">Consentito</string>
     <string name="option_explicit_playback_skip">Salta brani espliciti</string>
     <string name="option_explicit_playback_skip_session">Salta brani espliciti per questa sessione</string>
-    <string name="option_dynamic_album_view_theme">Tema dinamico per la visualizzazione dell'album</string>
-    <string name="option_dynamic_artist_view_theme">Tema con visualizzazione dinamica dell'artista</string>
     <string name="info_transcoding_defaults">Lasciare vuoti questi campi farà sì che vengano omessi, lasciando al server la decisione.</string>
     <string name="option_navigation_bar_label_visibility_never">Mai</string>
     <string name="action_next_song">Prossimo brano</string>
@@ -399,4 +395,10 @@
     <string name="info_repeat_off">Ripetizione disattivata</string>
     <string name="info_repeat_one">Ripeti un brano</string>
     <string name="info_repeat_all">Ripeti tutto</string>
+    <string name="option_sort_year">Anno</string>
+    <string name="subtitle_dynamic_theming">Applica un tema dinamico nella pagina degli Album e Artisti basandolo sulla copertina</string>
+    <string name="subtitle_app_icon_designer">Disegnato da: %1$s</string>
+    <string name="option_choose_app_icon">Icona dell'app</string>
+    <string name="option_dynamic_theming">Tema dinamico</string>
+    <string name="info_app_icon">Cambiare icona, chiuderà Navic come richiesto da Android. Alcune icone potrebbero sembrare identiche nella home se il launcher applica un tema dinamico ai colori dell'icona.</string>
 </resources>
