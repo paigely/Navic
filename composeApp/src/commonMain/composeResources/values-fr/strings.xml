@@ -23,7 +23,7 @@
     <string name="title_source">Code source</string>
     <string name="title_chat">Discuter</string>
     <string name="title_shares">Partages</string>
-    <string name="subtitle_appearance">Thèmes, couleurs, mise en page</string>
+    <string name="subtitle_appearance">Thèmes, couleurs, mise en page, icône de l'application</string>
     <string name="subtitle_now_playing">Personnalisez l'affichage de la lecture en cours et des paroles</string>
     <string name="subtitle_bottom_app_bar">Personnalisez la barre de navigation et le lecteur</string>
     <string name="subtitle_about">Version, licences</string>
@@ -91,7 +91,7 @@
     <string name="action_cancel">Annuler</string>
     <string name="action_refresh">Actualiser</string>
     <string name="action_share">Partager</string>
-    <string name="action_track_info">Voir infos du morceau</string>
+    <string name="action_track_info">Voir les infos du morceau</string>
     <string name="action_view_album">Voir l'album</string>
     <string name="action_view_playlist">Voir la liste de lecture</string>
     <string name="action_view_artist">Voir l'artiste</string>
@@ -178,7 +178,7 @@
     <string name="option_sort_descending">Descendant</string>
     <string name="option_replay_gain">ReplayGain</string>
     <string name="option_gapless_playback">Lecture continue</string>
-    <string name="option_audio_offload">Audio offload</string>
+    <string name="option_audio_offload">Déchargement audio</string>
     <string name="option_now_playing_toolbar_position">Position de la barre d'outils</string>
     <string name="option_position_top">Haut</string>
     <string name="option_position_bottom">Bas</string>
@@ -365,11 +365,9 @@
     <string name="info_no_starred">Vous n'avez rien ajouté en favori</string>
     <string name="info_no_search_results">Aucun résultat</string>
     <string name="title_logs">Journal</string>
-    <string name="title_palette">Palette</string>
+    <string name="title_palette">Palettes de couleurs</string>
     <string name="title_theme_mode">Thème</string>
     <string name="title_account">Compte</string>
-    <string name="subtitle_dynamic_album_view_theme">Adapter le thème de la page d'un album en fonction de la pochette de celui-ci</string>
-    <string name="subtitle_dynamic_artist_view_theme">Adapter le thème de la page d'un artist en fonction de l'image de celui-ci</string>
     <string name="option_artist_image_shape">Forme de l'image de l'artiste</string>
     <string name="option_stream_custom_quality">Utiliser une qualité de diffusion personnalisée</string>
     <string name="option_stream_format_wifi">Format du flux Wi-Fi</string>
@@ -380,8 +378,6 @@
     <string name="option_explicit_playback_allowed">Autorisée</string>
     <string name="option_explicit_playback_skip">Passer le contenus pour adultes</string>
     <string name="option_explicit_playback_skip_session">Passer le contenu pour adulte pour cette session uniquement</string>
-    <string name="option_dynamic_album_view_theme">Thème d'affichage dynamique des albums</string>
-    <string name="option_dynamic_artist_view_theme">Thème d'affichage dynamique des artistes</string>
     <string name="info_transcoding_defaults">Si vous laissez l'un de ces champs vide, il sera ignoré et le serveur décidera à votre place.</string>
     <string name="option_navigation_bar_label_visibility_never">Jamais</string>
     <string name="action_next_song">Morceau suivant</string>
@@ -399,4 +395,20 @@
     <string name="info_repeat_off">Répétition désactivée</string>
     <string name="info_repeat_one">Répétition cette fois uniquement</string>
     <string name="info_repeat_all">Répétition de tous</string>
+    <string name="title_download_quality">Qualité des téléchargements</string>
+    <string name="title_track_info">Informations sur la piste</string>
+    <string name="subtitle_download_quality">Ajuster la qualité des morceaux téléchargés</string>
+    <string name="subtitle_dynamic_theming">Appliquer dynamiquement un thème pour l'affichage des albums et des artistes, en fonction de l'illustration de couverture</string>
+    <string name="subtitle_app_icon_designer">Conçu par : %1$s</string>
+    <string name="subtitle_local_network_denied">Vous devez autoriser Navic à accéder à votre réseau local pour que votre serveur soit accessible.</string>
+    <string name="option_sort_year">Année</string>
+    <string name="option_choose_app_icon">Icône de l'application</string>
+    <string name="option_download_custom_quality">Utiliser une qualité de téléchargement personnalisée</string>
+    <string name="option_download_format_wifi">Format des téléchargement - Wi-Fi</string>
+    <string name="option_download_format_cellular">Format des téléchargement - Données mobiles</string>
+    <string name="option_dynamic_theming">Thème dynamique</string>
+    <string name="action_open_settings">Ouvrir les paramètres</string>
+    <string name="notice_local_network_denied">Permission refusée</string>
+    <string name="info_download_quality">Les préréglages de meilleure qualité occupent davantage d'espace de stockage et de données. Le transcodage peut allonger les délais de téléchargement. Sélectionnez « Sans perte » si vous rencontrez des problèmes.</string>
+    <string name="info_app_icon">Android requiert de fermer Navic afin de changer l'icône de l'application . Certaines icônes peuvent sembler identique sur votre écran d'accueil si votre lanceur d'application modifie dynamiquement la couleur des icônes.</string>
 </resources>
