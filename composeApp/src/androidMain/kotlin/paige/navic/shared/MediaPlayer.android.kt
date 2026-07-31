@@ -51,6 +51,7 @@ import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import paige.navic.data.database.dao.AlbumDao
+import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.manager.AndroidScrobbleManager
 import paige.navic.domain.manager.ConnectivityManager
@@ -284,6 +285,10 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 		fun newSessionToken(context: Context): SessionToken {
 			return SessionToken(context, ComponentName(context, PlaybackService::class.java))
 		}
+
+		private const val EXTRA_REQUESTED_BITRATE = "requested_bitrate"
+		private const val EXTRA_REQUESTED_MIME_TYPE = "requested_mime_type"
+
 	private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
 		val height: Int = options.outHeight
 		val width: Int = options.outWidth
@@ -337,7 +342,7 @@ class AndroidMediaPlayerViewModel(
 		}
 	}
 
-	private fun getStreamUrl(id: String): Uri {
+	private fun getStreamInfo(id: String): Triple<Uri, Int, String?> {
 		val isCellular = connectivityManager.isCellular.value
 		val bitrate = if (preferenceManager.isAdvancedTranscodingActive) {
 			if (isCellular) preferenceManager.customMaxBitrateCellular else preferenceManager.customMaxBitrateWifi
@@ -349,11 +354,12 @@ class AndroidMediaPlayerViewModel(
 		} else {
 			if (isCellular) preferenceManager.streamingQualityCellular.containerAndroid else preferenceManager.streamingQualityWifi.containerAndroid
 		}
-		return sessionManager.api.getStreamUrl(id, bitrate, container?.takeIf { it.isNotBlank() })
+		val uri = sessionManager.api.getStreamUrl(id, bitrate, container?.takeIf { it.isNotBlank() })
 			.toUri()
 			.buildUpon()
 			.appendQueryParameter("estimateContentLength", "true")
 			.build()
+		return Triple(uri, bitrate, container)
 	}
 
 	private fun setupController() {
@@ -432,36 +438,47 @@ class AndroidMediaPlayerViewModel(
 					snapshotFlow { preferenceManager.customFormatCellular }
 				) { it }.collectLatest { args ->
 					@Suppress("UNCHECKED_CAST")
-					val downloadedMap = args[0] as Map<String, String>
+					val downloadedMap = args[0] as Map<String, DownloadEntity>
 					val player = controller ?: return@collectLatest
 					val currentIndex = player.currentMediaItemIndex
 
 					for (i in 0 until player.mediaItemCount) {
-						if (i == currentIndex) continue
-
 						val item = player.getMediaItemAt(i)
 						val id = item.mediaId
-						val localPath = downloadedMap[id]
+						val download = downloadedMap[id]
+						val localPath = download?.filePath
 
 						val isCurrentlyLocal = item.localConfiguration?.uri?.scheme == "file"
 
 						val newItem = if (localPath != null) {
 							if (!isCurrentlyLocal) {
-								item.buildUpon()
-									.setUri(File(localPath).toUri())
-									.build()
+								item.toMediaItem() // This will pick up the local path
 							} else null
 						} else {
-							val newUri = getStreamUrl(id)
+							val (newUri, _, _) = getStreamInfo(id)
 							if (isCurrentlyLocal || item.localConfiguration?.uri != newUri) {
-								item.buildUpon()
-									.setUri(newUri)
-									.build()
+								item.toMediaItem() // This will pick up the new stream URL
 							} else null
 						}
 
 						if (newItem != null) {
-							player.replaceMediaItem(i, newItem)
+							if (i == currentIndex) {
+								val position = player.currentPosition
+								val wasPlaying = player.isPlaying
+								player.replaceMediaItem(i, newItem)
+								player.seekTo(i, position)
+								if (wasPlaying) player.play()
+								_uiState.update {
+									it.copy(
+										playbackBitrate = null,
+										playbackSampleRate = null,
+										playbackMimeType = null
+									)
+								}
+								updatePlaybackState()
+							} else {
+								player.replaceMediaItem(i, newItem)
+							}
 						}
 					}
 				}
@@ -544,6 +561,10 @@ class AndroidMediaPlayerViewModel(
 			}
 		}
 
+		val metadata = controller.currentMediaItem?.mediaMetadata
+		val requestedBitrate = metadata?.extras?.getInt(EXTRA_REQUESTED_BITRATE, -1)?.takeIf { it != -1 }
+		val requestedMimeType = metadata?.extras?.getString(EXTRA_REQUESTED_MIME_TYPE)
+
 		_uiState.update { state ->
 			state.copy(
 				currentIndex = index,
@@ -551,7 +572,9 @@ class AndroidMediaPlayerViewModel(
 				currentCollection = derivedCollection ?: state.currentCollection,
 				isPaused = !controller.playWhenReady,
 				isShuffleEnabled = controller.shuffleModeEnabled,
-				repeatMode = controller.repeatMode
+				repeatMode = controller.repeatMode,
+				requestedBitrate = requestedBitrate,
+				requestedMimeType = requestedMimeType
 			)
 		}
 		applyReplayGain()
@@ -654,6 +677,14 @@ class AndroidMediaPlayerViewModel(
 					}
 					break
 				}
+			}
+		} else {
+			_uiState.update { state ->
+				state.copy(
+					playbackBitrate = null,
+					playbackSampleRate = null,
+					playbackMimeType = null
+				)
 			}
 		}
 	}
@@ -995,6 +1026,17 @@ class AndroidMediaPlayerViewModel(
 		_uiState.update { it.copy(playbackSpeed = value) }
 	}
 
+	private data class MediaItemTag(
+		val requestedBitrate: Int?,
+		val requestedMimeType: String?
+	)
+
+	private fun MediaItem.toMediaItem(): MediaItem {
+		val id = this.mediaId
+		val song = _uiState.value.queue.find { it.id == id } ?: return this
+		return song.toMediaItem()
+	}
+
 	private fun DomainSong.toMediaItem(): MediaItem {
 		val metadataBuilder = MediaMetadata.Builder()
 			.setTitle(title)
@@ -1040,7 +1082,8 @@ class AndroidMediaPlayerViewModel(
 			coverArtId?.let { sessionManager.getCoverArtUrl(it).toUri() }
 		)
 
-		val metadata = metadataBuilder.build()
+		var requestedBitrate: Int? = null
+		var requestedMimeType: String? = null
 
 		val uri = when {
 			id.startsWith("radio_") && !filePath.isNullOrEmpty() -> {
@@ -1048,14 +1091,28 @@ class AndroidMediaPlayerViewModel(
 			}
 
 			else -> {
-				val localPath = downloadManager.getDownloadedFilePath(id)
-				if (localPath != null) {
-					File(localPath).toUri()
+				val download = downloadManager.downloadedSongs.value[id]
+				if (download != null) {
+					requestedBitrate = download.bitrate
+					requestedMimeType = download.format
+					File(download.filePath!!).toUri()
 				} else {
-					getStreamUrl(id)
+					val (streamUri, bitrate, container) = getStreamInfo(id)
+					requestedBitrate = bitrate
+					requestedMimeType = container
+					streamUri
 				}
 			}
 		}
+
+		val extras = Bundle().apply {
+			requestedBitrate?.let { putInt(EXTRA_REQUESTED_BITRATE, it) }
+			requestedMimeType?.let { putString(EXTRA_REQUESTED_MIME_TYPE, it) }
+		}
+
+		val metadata = metadataBuilder
+			.setExtras(extras)
+			.build()
 
 		val builder = MediaItem.Builder()
 			.setUri(uri)

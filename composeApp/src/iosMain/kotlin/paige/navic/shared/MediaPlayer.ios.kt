@@ -140,6 +140,7 @@ class IOSMediaPlayerViewModel(
 
 		viewModelScope.launch {
 			combine(
+				downloadManager.downloadedSongs,
 				connectivityManager.isCellular,
 				snapshotFlow { preferenceManager.streamingQualityWifi },
 				snapshotFlow { preferenceManager.streamingQualityCellular },
@@ -150,22 +151,31 @@ class IOSMediaPlayerViewModel(
 				snapshotFlow { preferenceManager.customFormatCellular }
 			) { it }.collectLatest {
 				val song = _uiState.value.currentSong ?: return@collectLatest
-				val url = getSongUrl(song) ?: return@collectLatest
+				val (url, bitrate, format) = getSongUrlInfo(song) ?: return@collectLatest
 
-				if (!url.isFileURL()) {
-					val currentAsset = player.currentItem?.asset as? AVURLAsset
-					if (currentAsset?.URL?.absoluteString != url.absoluteString) {
-						val currentTime = player.currentTime()
-						val isPaused = _uiState.value.isPaused
+				val currentAsset = player.currentItem?.asset as? AVURLAsset
+				if (currentAsset?.URL?.absoluteString != url.absoluteString) {
+					val currentTime = player.currentTime()
+					val isPaused = _uiState.value.isPaused
 
-						player.replaceCurrentItemWithPlayerItem(createAVPlayerItem(url))
-						player.seekToTime(
-							currentTime,
-							toleranceBefore = CMTimeMake(0, 1),
-							toleranceAfter = CMTimeMake(0, 1)
+					player.replaceCurrentItemWithPlayerItem(createAVPlayerItem(url))
+					player.seekToTime(
+						currentTime,
+						toleranceBefore = CMTimeMake(0, 1),
+						toleranceAfter = CMTimeMake(0, 1)
+					)
+					if (!isPaused) player.play()
+
+					_uiState.update {
+						it.copy(
+							requestedBitrate = bitrate,
+							requestedMimeType = format,
+							playbackBitrate = null,
+							playbackSampleRate = null,
+							playbackMimeType = null
 						)
-						if (!isPaused) player.play()
 					}
+					updateNowPlayingInfo(song)
 				}
 			}
 		}
@@ -219,7 +229,7 @@ class IOSMediaPlayerViewModel(
 		if (isTransitioningBetweenTracks) return
 
 		val songToPlay = _uiState.value.queue.getOrNull(index) ?: return
-		val url = getSongUrl(songToPlay) ?: return
+		val (url, bitrate, format) = getSongUrlInfo(songToPlay) ?: return
 
 		isTransitioningBetweenTracks = true
 		try {
@@ -233,7 +243,9 @@ class IOSMediaPlayerViewModel(
 					currentIndex = index,
 					currentSong = songToPlay,
 					isPaused = false,
-					isLoading = false
+					isLoading = false,
+					requestedBitrate = bitrate,
+					requestedMimeType = format
 				)
 			}
 
@@ -596,12 +608,19 @@ class IOSMediaPlayerViewModel(
 		val index = if (state.currentIndex in state.queue.indices) state.currentIndex else 0
 		val song = state.queue.getOrNull(index) ?: return
 
-		val url = getSongUrl(song) ?: return
+		val (url, bitrate, format) = getSongUrlInfo(song) ?: return
 
 		player.setRate(state.playbackSpeed)
 		player.pause()
 		player.replaceCurrentItemWithPlayerItem(null)
 		player.replaceCurrentItemWithPlayerItem(createAVPlayerItem(url))
+
+		_uiState.update {
+			it.copy(
+				requestedBitrate = bitrate,
+				requestedMimeType = format
+			)
+		}
 
 		if (!song.id.startsWith("radio_")) {
 			val durationMs = song.duration.inWholeMilliseconds
@@ -624,7 +643,7 @@ class IOSMediaPlayerViewModel(
 		return AVPlayerItem(AVURLAsset(uRL = url, options = options))
 	}
 
-	private fun getStreamUrl(id: String): String {
+	private fun getStreamUrlInfo(id: String): Triple<String, Int, String?> {
 		val isCellular = connectivityManager.isCellular.value
 		val bitrate = if (preferenceManager.isAdvancedTranscodingActive) {
 			if (isCellular) preferenceManager.customMaxBitrateCellular else preferenceManager.customMaxBitrateWifi
@@ -636,25 +655,27 @@ class IOSMediaPlayerViewModel(
 		} else {
 			if (isCellular) preferenceManager.streamingQualityCellular.containerIos else preferenceManager.streamingQualityWifi.containerIos
 		}
-		return sessionManager.api.getStreamUrl(
+		val url = sessionManager.api.getStreamUrl(
 			id = id,
 			maxBitRate = bitrate,
 			format = container?.takeIf { it.isNotBlank() }
 		) + "&estimateContentLength=true"
+		return Triple(url, bitrate, container)
 	}
 
-	private fun getSongUrl(song: DomainSong): NSURL? {
+	private fun getSongUrlInfo(song: DomainSong): Triple<NSURL, Int?, String?>? {
 		return when {
 			song.id.startsWith("radio_") && !song.filePath.isNullOrEmpty() -> {
-				NSURL.URLWithString(song.filePath)
+				Triple(NSURL.URLWithString(song.filePath)!!, null, null)
 			}
 
 			else -> {
-				val localPath = downloadManager.getDownloadedFilePath(song.id)
-				if (localPath != null) {
-					NSURL.fileURLWithPath(localPath)
+				val download = downloadManager.downloadedSongs.value[song.id]
+				if (download != null) {
+					Triple(NSURL.fileURLWithPath(download.filePath!!), download.bitrate, download.format)
 				} else {
-					NSURL.URLWithString(getStreamUrl(song.id))
+					val (streamUrl, bitrate, container) = getStreamUrlInfo(song.id)
+					Triple(NSURL.URLWithString(streamUrl)!!, bitrate, container)
 				}
 			}
 		}
