@@ -70,6 +70,9 @@ import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import paige.navic.util.core.ResourceProvider
 import paige.navic.util.core.effectiveGain
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -281,6 +284,18 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 		fun newSessionToken(context: Context): SessionToken {
 			return SessionToken(context, ComponentName(context, PlaybackService::class.java))
 		}
+	private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+		val height: Int = options.outHeight
+		val width: Int = options.outWidth
+		var inSampleSize = 1
+		if (height > reqHeight || width > reqWidth) {
+			val halfHeight: Int = height / 2
+			val halfWidth: Int = width / 2
+			while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+				inSampleSize *= 2
+			}
+		}
+		return inSampleSize
 	}
 }
 
@@ -313,7 +328,7 @@ class AndroidMediaPlayerViewModel(
 
 	private fun connectToService() {
 		viewModelScope.launch {
-			val sessionToken = PlaybackService.newSessionToken(application)
+			val sessionToken = newSessionToken(application)
 			controllerFuture = MediaController.Builder(application, sessionToken).buildAsync()
 			controllerFuture?.addListener({
 				controller = controllerFuture?.get()
@@ -993,25 +1008,37 @@ class AndroidMediaPlayerViewModel(
 			val diskCache = platformContext.imageLoader.diskCache
 			val snapshot = diskCache?.openSnapshot(coverId) ?: return@let null
 
-			val bytes = try {
-				snapshot.use { it.data.toFile().readBytes() }
+			try {
+				val file = snapshot.data.toFile()
+				val options = BitmapFactory.Options().apply {
+					inJustDecodeBounds = true
+				}
+				BitmapFactory.decodeFile(file.absolutePath, options)
+				options.inSampleSize = calculateInSampleSize(options, 256, 256)
+				options.inJustDecodeBounds = false
+				val bitmap = BitmapFactory.decodeFile(file.absolutePath, options)
+				if (bitmap != null) {
+					val stream = ByteArrayOutputStream()
+					bitmap.compress(Bitmap.CompressFormat.JPEG, 75, stream)
+					val result = stream.toByteArray()
+					bitmap.recycle()
+					result
+				} else null
 			} catch (ex: Exception) {
 				Logger.w("MediaPlayer", "could not read artwork data", ex)
 				null
+			} finally {
+				snapshot.close()
 			}
-
-			snapshot.close()
-
-			return@let bytes
 		}
 
 		if (artworkData != null) {
 			metadataBuilder.setArtworkData(artworkData, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
-		} else {
-			metadataBuilder.setArtworkUri(
-				coverArtId?.let { sessionManager.getCoverArtUrl(it).toUri() }
-			)
 		}
+
+		metadataBuilder.setArtworkUri(
+			coverArtId?.let { sessionManager.getCoverArtUrl(it).toUri() }
+		)
 
 		val metadata = metadataBuilder.build()
 
@@ -1041,4 +1068,19 @@ class AndroidMediaPlayerViewModel(
 
 		return builder.build()
 	}
+
+	private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+		val height: Int = options.outHeight
+		val width: Int = options.outWidth
+		var inSampleSize = 1
+		if (height > reqHeight || width > reqWidth) {
+			val halfHeight: Int = height / 2
+			val halfWidth: Int = width / 2
+			while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+				inSampleSize *= 2
+			}
+		}
+		return inSampleSize
+	}
+}
 }
