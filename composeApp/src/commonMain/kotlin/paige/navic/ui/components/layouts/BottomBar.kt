@@ -3,6 +3,7 @@ package paige.navic.ui.components.layouts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -60,6 +61,7 @@ import paige.navic.icons.outlined.Search
 import paige.navic.ui.components.common.animatedTabIconPainter
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.Screen
+import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 
 private enum class NavItem(
@@ -124,7 +126,10 @@ fun BottomBar(
 	windowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
 	enabled: Boolean = true
 ) {
-	val viewModel = koinViewModel<NavtabsViewModel>()
+	val persistentViewModelStoreOwner = koinInject<PersistentViewModelStoreOwner>()
+	val viewModel = koinViewModel<NavtabsViewModel>(
+		viewModelStoreOwner = persistentViewModelStoreOwner
+	)
 	val backStack = LocalNavStack.current
 	val platformContext = LocalPlatformContext.current
 	val state by viewModel.state.collectAsState()
@@ -133,7 +138,8 @@ fun BottomBar(
 		.tabs.filter { tab -> tab.visible }
 	val preferenceManager = koinInject<PreferenceManager>()
 
-	val selectedTabId = remember(backStack.size, tabs) {
+	val selectedTabId = remember(backStack.size, backStack.lastOrNull(), tabs) {
+		val lastKey = backStack.lastOrNull() ?: return@remember tabs.firstOrNull()?.id
 		tabs.findLast { tab ->
 			val item = when (tab.id) {
 				NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
@@ -145,19 +151,20 @@ fun BottomBar(
 				NavbarTab.Id.SONGS -> NavItem.SONGS
 				NavbarTab.Id.RADIOS -> NavItem.RADIOS
 			}
-			backStack.any { it::class == item.destination::class }
+			// Exact match or sub-class for Settings
+			lastKey::class == item.destination::class || 
+				(lastKey is Screen.Settings && item.destination is Screen.Settings)
 		}?.id
 	}
 
 	AnimatedContent(
 		preferenceManager.navigationBarStyle != NavigationBarStyle.Short
-			&& platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
-			&& tabs.size > 1
-	) {
+			|| platformContext.sizeClass.widthSizeClass > WindowWidthSizeClass.Compact
+	) { isNormalBar ->
 		if (tabs.size < 2) return@AnimatedContent
-		if (it) {
+		if (isNormalBar) {
 			NavigationBar(
-				modifier = modifier,
+				modifier = modifier.fillMaxWidth(),
 				containerColor = containerColor,
 				windowInsets = windowInsets
 			) {

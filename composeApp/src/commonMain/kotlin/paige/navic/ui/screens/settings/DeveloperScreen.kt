@@ -1,6 +1,7 @@
 package paige.navic.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -69,8 +70,9 @@ fun SettingsDeveloperScreen() {
 		) {
 			Column(
 				Modifier
-					.padding(innerPadding)
+					.fillMaxSize()
 					.verticalScroll(rememberScrollState())
+					.padding(innerPadding)
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -203,8 +204,9 @@ fun SettingsDataStorageScreen() {
 		CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
 			Column(
 				Modifier
-					.padding(innerPadding)
+					.fillMaxSize()
 					.verticalScroll(rememberScrollState())
+					.padding(innerPadding)
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				FormTitle(stringResource(Res.string.title_network))

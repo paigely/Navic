@@ -3,6 +3,7 @@ package paige.navic.ui.screens.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -79,8 +80,9 @@ fun SettingsPlaybackScreen() {
 		) {
 			Column(
 				Modifier
-					.padding(innerPadding)
+					.fillMaxSize()
 					.verticalScroll(rememberScrollState())
+					.padding(innerPadding)
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {

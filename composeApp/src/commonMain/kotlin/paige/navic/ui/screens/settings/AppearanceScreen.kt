@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -94,8 +95,9 @@ fun SettingsAppearanceScreen() {
 		) {
 			Column(
 				Modifier
-					.padding(innerPadding)
+					.fillMaxSize()
 					.verticalScroll(rememberScrollState())
+					.padding(innerPadding)
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {

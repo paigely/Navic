@@ -20,7 +20,6 @@ import org.koin.compose.koinInject
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.domain.models.settings.MiniPlayerStyle
-import paige.navic.util.ui.easedVerticalGradient
 
 @Composable
 fun RootBottomBar(
@@ -49,8 +48,10 @@ fun RootBottomBar(
 			.fillMaxWidth()
 			.background(
 				if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
-					Brush.easedVerticalGradient(
-						color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress)
+					Brush.verticalGradient(
+						0f to Color.Transparent,
+						0.4f to MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress * 0.7f),
+						1f to MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress)
 					)
 				else Brush.linearGradient(listOf(Color.Transparent, Color.Transparent))
 			)

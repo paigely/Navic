@@ -4,6 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -58,8 +61,6 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.theme.defaultFont
 import paige.navic.LocalGlobalBottomBarHeight
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 
 @Composable
 fun SettingsScreen() {
@@ -68,8 +69,9 @@ fun SettingsScreen() {
 	) { innerPadding ->
 		Column(
 			modifier = Modifier
-				.padding(innerPadding)
+				.fillMaxSize()
 				.verticalScroll(rememberScrollState())
+				.padding(innerPadding)
 				.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 		) {
 			Form {

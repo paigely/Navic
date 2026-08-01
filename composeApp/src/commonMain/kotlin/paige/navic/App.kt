@@ -309,7 +309,7 @@ fun App() {
 								RootBottomBar(scrolled = scrollManager.isTriggered)
 							}
 						} else {
-							LaunchedEffect(Unit) {
+							LaunchedEffect(showBottomBar) {
 								bottomBarHeight = 0.dp
 							}
 						}
