@@ -31,6 +31,9 @@ import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.navigation.Screen
+import paige.navic.LocalGlobalBottomBarHeight
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun SettingsAboutScreen() {
@@ -92,6 +95,7 @@ fun SettingsAboutScreen() {
 					Icon(Icons.Outlined.ChevronForward, null)
 				}
 			}
+			Spacer(Modifier.height(LocalGlobalBottomBarHeight.current))
 		}
 	}
 }

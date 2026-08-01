@@ -68,6 +68,9 @@ import paige.navic.ui.screens.settings.dialogs.ArtworkShapeDialog
 import paige.navic.ui.screens.settings.dialogs.GridSizeDialog
 import paige.navic.ui.screens.settings.dialogs.GridSizePreview
 import paige.navic.util.core.PlatformType
+import paige.navic.LocalGlobalBottomBarHeight
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun SettingsAppearanceScreen() {
@@ -276,6 +279,7 @@ fun SettingsAppearanceScreen() {
 						onSelect = { preferenceManager.animationStyle = it }
 					)
 				}
+				Spacer(Modifier.height(LocalGlobalBottomBarHeight.current))
 			}
 		}
 		ArtworkShapeDialog(

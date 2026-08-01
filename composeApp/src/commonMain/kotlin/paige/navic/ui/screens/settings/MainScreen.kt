@@ -57,6 +57,9 @@ import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.theme.defaultFont
+import paige.navic.LocalGlobalBottomBarHeight
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun SettingsScreen() {
@@ -121,6 +124,7 @@ fun SettingsScreen() {
 					subtitle = Res.string.subtitle_about
 				)
 			}
+			Spacer(Modifier.height(LocalGlobalBottomBarHeight.current))
 		}
 	}
 }

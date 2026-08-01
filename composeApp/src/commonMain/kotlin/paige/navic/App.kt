@@ -230,7 +230,8 @@ fun App() {
 					val isRoot = if (platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
 						rootKeys.any { it.isInstance(backStack.lastOrNull()) }
 					} else {
-						backStack.any { key -> rootKeys.any { it.isInstance(key) } }
+						backStack.any { key -> rootKeys.any { it.isInstance(key) } } ||
+							backStack.any { it is Screen.Settings }
 					}
 					isRoot || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
 				} && isLoggedIn

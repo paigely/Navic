@@ -17,6 +17,8 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -131,6 +133,22 @@ fun BottomBar(
 		.tabs.filter { tab -> tab.visible }
 	val preferenceManager = koinInject<PreferenceManager>()
 
+	val selectedTabId = remember(backStack.size, tabs) {
+		tabs.findLast { tab ->
+			val item = when (tab.id) {
+				NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
+				NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
+				NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
+				NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
+				NavbarTab.Id.SEARCH -> NavItem.SEARCH
+				NavbarTab.Id.GENRES -> NavItem.GENRES
+				NavbarTab.Id.SONGS -> NavItem.SONGS
+				NavbarTab.Id.RADIOS -> NavItem.RADIOS
+			}
+			backStack.any { it::class == item.destination::class }
+		}?.id
+	}
+
 	AnimatedContent(
 		preferenceManager.navigationBarStyle != NavigationBarStyle.Short
 			&& platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
@@ -144,57 +162,59 @@ fun BottomBar(
 				windowInsets = windowInsets
 			) {
 				tabs.forEach { tab ->
-					val item = when (tab.id) {
-						NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
-						NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
-						NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
-						NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
-						NavbarTab.Id.SEARCH -> NavItem.SEARCH
-						NavbarTab.Id.GENRES -> NavItem.GENRES
-						NavbarTab.Id.SONGS -> NavItem.SONGS
-						NavbarTab.Id.RADIOS -> NavItem.RADIOS
-					}
-					val selected = backStack.any { it::class == item.destination::class }
+					key(tab.id) {
+						val item = when (tab.id) {
+							NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
+							NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
+							NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
+							NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
+							NavbarTab.Id.SEARCH -> NavItem.SEARCH
+							NavbarTab.Id.GENRES -> NavItem.GENRES
+							NavbarTab.Id.SONGS -> NavItem.SONGS
+							NavbarTab.Id.RADIOS -> NavItem.RADIOS
+						}
+						val selected = selectedTabId == tab.id
 
-					NavigationBarItem(
-						selected = selected,
-						enabled = enabled,
-						alwaysShowLabel = preferenceManager.navigationBarLabelVisibility
-							== NavigationBarLabelVisibility.Always,
-						onClick = {
-							backStack.apply {
-								clear()
-								add(item.destination)
-							}
-						},
-						icon = {
-							if (selected) {
-								val painter = animatedTabIconPainter(item.destination)
-								if (painter != null) {
-									Icon(painter = painter, null)
+						NavigationBarItem(
+							selected = selected,
+							enabled = enabled,
+							alwaysShowLabel = preferenceManager.navigationBarLabelVisibility
+								== NavigationBarLabelVisibility.Always,
+							onClick = {
+								backStack.apply {
+									clear()
+									add(item.destination)
+								}
+							},
+							icon = {
+								if (selected) {
+									val painter = animatedTabIconPainter(item.destination)
+									if (painter != null) {
+										Icon(painter = painter, null)
+									} else {
+										Icon(item.icon, null)
+									}
 								} else {
-									Icon(item.icon, null)
+									Icon(item.iconUnselected, null)
+								}
+							},
+							label = if (preferenceManager.navigationBarLabelVisibility
+								!== NavigationBarLabelVisibility.Never) {
+								{
+									Text(
+										stringResource(item.label),
+										maxLines = 1,
+										autoSize = TextAutoSize.StepBased(
+											minFontSize = 1.sp,
+											maxFontSize = MaterialTheme.typography.labelMedium.fontSize
+										)
+									)
 								}
 							} else {
-								Icon(item.iconUnselected, null)
+								null
 							}
-						},
-						label = if (preferenceManager.navigationBarLabelVisibility
-							!== NavigationBarLabelVisibility.Never) {
-							{
-								Text(
-									stringResource(item.label),
-									maxLines = 1,
-									autoSize = TextAutoSize.StepBased(
-										minFontSize = 1.sp,
-										maxFontSize = MaterialTheme.typography.labelMedium.fontSize
-									)
-								)
-							}
-						} else {
-							null
-						}
-					)
+						)
+					}
 				}
 			}
 		} else {
@@ -203,51 +223,53 @@ fun BottomBar(
 				containerColor = containerColor
 			) {
 				tabs.forEach { tab ->
-					val item = when (tab.id) {
-						NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
-						NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
-						NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
-						NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
-						NavbarTab.Id.SEARCH -> NavItem.SEARCH
-						NavbarTab.Id.GENRES -> NavItem.GENRES
-						NavbarTab.Id.SONGS -> NavItem.SONGS
-						NavbarTab.Id.RADIOS -> NavItem.RADIOS
-					}
-					val selected = backStack.any { it::class == item.destination::class }
+					key(tab.id) {
+						val item = when (tab.id) {
+							NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
+							NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
+							NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
+							NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
+							NavbarTab.Id.SEARCH -> NavItem.SEARCH
+							NavbarTab.Id.GENRES -> NavItem.GENRES
+							NavbarTab.Id.SONGS -> NavItem.SONGS
+							NavbarTab.Id.RADIOS -> NavItem.RADIOS
+						}
+						val selected = selectedTabId == tab.id
 
-					ShortNavigationBarItem(
-						iconPosition = if (platformContext.sizeClass.widthSizeClass > WindowWidthSizeClass.Compact)
-							NavigationItemIconPosition.Start
-						else NavigationItemIconPosition.Top,
-						selected = selected,
-						enabled = enabled,
-						onClick = {
-							backStack.apply {
-								clear()
-								add(item.destination)
-							}
-						},
-						icon = {
-							if (selected) {
-								val painter = animatedTabIconPainter(item.destination)
-								if (painter != null) {
-									Icon(painter = painter, null)
-								} else {
-									Icon(item.icon, null)
+						ShortNavigationBarItem(
+							iconPosition = if (platformContext.sizeClass.widthSizeClass > WindowWidthSizeClass.Compact)
+								NavigationItemIconPosition.Start
+							else NavigationItemIconPosition.Top,
+							selected = selected,
+							enabled = enabled,
+							onClick = {
+								backStack.apply {
+									clear()
+									add(item.destination)
 								}
+							},
+							icon = {
+								if (selected) {
+									val painter = animatedTabIconPainter(item.destination)
+									if (painter != null) {
+										Icon(painter = painter, null)
+									} else {
+										Icon(item.icon, null)
+									}
+								} else {
+									Icon(item.iconUnselected, null)
+								}
+							},
+							label = if (
+								preferenceManager.navigationBarLabelVisibility == NavigationBarLabelVisibility.Always ||
+								(preferenceManager.navigationBarLabelVisibility == NavigationBarLabelVisibility.OnlySelected && selected)
+							) {
+								{ Text(stringResource(item.label)) }
 							} else {
-								Icon(item.iconUnselected, null)
-							}
-						},
-						label = if (
-							preferenceManager.navigationBarLabelVisibility == NavigationBarLabelVisibility.Always ||
-							(preferenceManager.navigationBarLabelVisibility == NavigationBarLabelVisibility.OnlySelected && selected)
-						) {
-							{ Text(stringResource(item.label)) }
-						} else {
-							null
-						},
-					)
+								null
+							},
+						)
+					}
 				}
 			}
 		}

@@ -49,6 +49,9 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.settings.dialogs.LyricsPriorityDialog
+import paige.navic.LocalGlobalBottomBarHeight
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import paige.navic.ui.screens.settings.dialogs.NowPlayingSliderStyleDialog
 
 @Composable
@@ -175,6 +178,7 @@ fun SettingsNowPlayingScreen() {
 						title = { Text(stringResource(Res.string.option_now_playing_toolbar_position)) }
 					)
 				}
+				Spacer(Modifier.height(LocalGlobalBottomBarHeight.current))
 			}
 		}
 		LyricsPriorityDialog(

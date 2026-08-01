@@ -49,6 +49,9 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.settings.dialogs.NavtabsDialog
+import paige.navic.LocalGlobalBottomBarHeight
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun BottomBarScreen() {
@@ -141,6 +144,7 @@ fun BottomBarScreen() {
 						title = { Text(stringResource(Res.string.option_mini_player_progress_style)) },
 					)
 				}
+				Spacer(Modifier.height(LocalGlobalBottomBarHeight.current))
 			}
 		}
 		NavtabsDialog(

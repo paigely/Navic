@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import org.koin.compose.koinInject
 import paige.navic.domain.manager.PreferenceManager
@@ -46,14 +47,12 @@ fun RootBottomBar(
 	Column(
 		modifier = modifier
 			.fillMaxWidth()
-			.then(
+			.background(
 				if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
-					Modifier.background(
-						Brush.easedVerticalGradient(
-							color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress)
-						)
+					Brush.easedVerticalGradient(
+						color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress)
 					)
-				else Modifier
+				else Brush.linearGradient(listOf(Color.Transparent, Color.Transparent))
 			)
 	) {
 		if (!hideMiniPlayer) MiniPlayer(
@@ -67,7 +66,7 @@ fun RootBottomBar(
 		)
 		BottomBar(
 			containerColor = if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
-				MaterialTheme.colorScheme.surface.copy(alpha = 0.95f * shadowFadeProgress)
+				Color.Transparent
 			else NavigationBarDefaults.containerColor,
 			windowInsets = bottomBarWindowInsets,
 			modifier = Modifier
