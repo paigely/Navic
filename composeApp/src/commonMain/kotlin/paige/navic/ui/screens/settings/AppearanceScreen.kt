@@ -97,7 +97,7 @@ fun SettingsAppearanceScreen() {
 				Modifier
 					.fillMaxSize()
 					.verticalScroll(rememberScrollState())
-					.padding(innerPadding)
+					.padding(top = innerPadding.calculateTopPadding())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
