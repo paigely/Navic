@@ -59,7 +59,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
@@ -70,7 +69,6 @@ import paige.navic.domain.models.DomainArtistListType
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
-import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Close
@@ -86,7 +84,6 @@ import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.layouts.ArtGrid
-import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.components.layouts.horizontalSection
 import paige.navic.ui.components.sheets.SongSheet
@@ -100,6 +97,7 @@ import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.ui.screens.search.components.SearchScreenChips
 import paige.navic.ui.screens.search.components.SearchScreenTopBar
 import paige.navic.ui.screens.search.viewmodels.SearchViewModel
+import paige.navic.util.ui.withGlobalBottomBar
 
 enum class SearchCategory(val res: StringResource) {
 	ALL(Res.string.title_all),
@@ -173,21 +171,16 @@ fun SearchScreen(
 					onCategorySelect = { selectedCategory = it }
 				)
 			}
-		},
-		bottomBar = {
-			val scrollManager = LocalBottomBarScrollManager.current
-			if (!nested || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
-				RootBottomBar(scrolled = scrollManager.isTriggered)
-			}
 		}
-	) { contentPadding ->
+	) { innerPadding ->
+		val combinedPadding = innerPadding.withGlobalBottomBar()
 		AnimatedContent(
 			state,
 			modifier = Modifier.fillMaxSize()
 		) { uiState ->
 			when (uiState) {
-				is UiState.Loading -> ArtGrid(contentPadding = contentPadding) { artGridPlaceholder() }
-				is UiState.Error -> ErrorBox(uiState, padding = contentPadding)
+				is UiState.Loading -> ArtGrid(contentPadding = combinedPadding) { artGridPlaceholder() }
+				is UiState.Error -> ErrorBox(uiState, padding = combinedPadding)
 				is UiState.Success -> {
 					val results = uiState.data
 					val showAll = selectedCategory == SearchCategory.ALL
@@ -208,7 +201,7 @@ fun SearchScreen(
 					LazyVerticalGrid(
 						modifier = Modifier.fillMaxSize(),
 						columns = GridCells.Fixed(2),
-						contentPadding = contentPadding,
+						contentPadding = combinedPadding,
 						state = viewModel.gridState,
 						verticalArrangement = Arrangement.spacedBy(8.dp)
 					) {

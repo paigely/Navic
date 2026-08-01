@@ -26,16 +26,12 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalBottomBarScrollManager
-import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSongCollection
-import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
-import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.snackbars.ErrorSnackBar
 import paige.navic.ui.core.UiState
@@ -44,6 +40,7 @@ import paige.navic.ui.screens.album.components.AlbumListScreenSortButton
 import paige.navic.ui.screens.album.components.albumListScreenContent
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
+import paige.navic.util.ui.withGlobalBottomBar
 import paige.navic.util.ui.withoutTop
 import kotlin.time.Duration
 
@@ -53,8 +50,6 @@ fun AlbumListScreen(
 	nested: Boolean = false,
 	listType: DomainAlbumListType
 ) {
-	val preferenceManager = koinInject<PreferenceManager>()
-
 	val viewModel = koinViewModel<AlbumListViewModel>(
 		key = listType.toString(),
 		parameters = { parametersOf(listType) },
@@ -96,17 +91,12 @@ fun AlbumListScreen(
 			} else {
 				NestedTopBar({ Text(stringResource(Res.string.title_albums)) }, actions)
 			}
-		},
-		bottomBar = {
-			val scrollManager = LocalBottomBarScrollManager.current
-			if (!nested || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
-				RootBottomBar(scrolled = scrollManager.isTriggered)
-			}
 		}
 	) { innerPadding ->
+		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = innerPadding.calculateTopPadding())
+				.padding(top = combinedPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = albumsState !is UiState.Loading,
 			onRefresh = { viewModel.refreshAlbums(true) },
@@ -117,7 +107,7 @@ fun AlbumListScreen(
 					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier,
 				state = viewModel.gridState,
-				contentPadding = innerPadding.withoutTop(),
+				contentPadding = combinedPadding.withoutTop(),
 				verticalArrangement = if ((albumsState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center
 				else Arrangement.spacedBy(12.dp)

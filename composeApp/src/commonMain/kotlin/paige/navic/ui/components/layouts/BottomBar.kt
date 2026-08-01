@@ -154,7 +154,7 @@ fun BottomBar(
 						NavbarTab.Id.SONGS -> NavItem.SONGS
 						NavbarTab.Id.RADIOS -> NavItem.RADIOS
 					}
-					val selected = backStack.lastOrNull() == item.destination
+					val selected = backStack.any { it::class == item.destination::class }
 
 					NavigationBarItem(
 						selected = selected,
@@ -213,13 +213,13 @@ fun BottomBar(
 						NavbarTab.Id.SONGS -> NavItem.SONGS
 						NavbarTab.Id.RADIOS -> NavItem.RADIOS
 					}
-					val selected = backStack.last() == item.destination
+					val selected = backStack.any { it::class == item.destination::class }
 
 					ShortNavigationBarItem(
 						iconPosition = if (platformContext.sizeClass.widthSizeClass > WindowWidthSizeClass.Compact)
 							NavigationItemIconPosition.Start
 						else NavigationItemIconPosition.Top,
-						selected = backStack.last() == item.destination,
+						selected = selected,
 						enabled = enabled,
 						onClick = {
 							backStack.apply {

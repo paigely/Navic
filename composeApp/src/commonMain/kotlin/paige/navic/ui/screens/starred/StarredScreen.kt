@@ -21,19 +21,15 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalBottomBarScrollManager
-import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtistListType
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.DomainSongListType
-import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
-import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
@@ -41,13 +37,13 @@ import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
 import paige.navic.ui.screens.starred.components.StarredScreenContent
+import paige.navic.util.ui.withGlobalBottomBar
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun StarredScreen() {
 	val persistentViewModelStoreOwner = koinInject<PersistentViewModelStoreOwner>()
-	val preferenceManager = koinInject<PreferenceManager>()
 
 	val songsViewModel = koinViewModel<SongListViewModel>(
 		key = "starredSongs",
@@ -90,20 +86,15 @@ fun StarredScreen() {
 	val isOnline by songsViewModel.isOnline.collectAsStateWithLifecycle()
 
 	Scaffold(
-		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_starred)) }) },
-		bottomBar = {
-			val scrollManager = LocalBottomBarScrollManager.current
-			if (preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
-				RootBottomBar(scrolled = scrollManager.isTriggered)
-			}
-		}
+		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_starred)) }) }
 	) { innerPadding ->
+		val combinedPadding = innerPadding.withGlobalBottomBar()
 		val isAnythingLoading = albumsState is UiState.Loading ||
 			artistsState is UiState.Loading ||
 			songsState is UiState.Loading
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = innerPadding.calculateTopPadding())
+				.padding(top = combinedPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = !isAnythingLoading,
 			onRefresh = {
@@ -114,7 +105,7 @@ fun StarredScreen() {
 			key = listOf(albumsState, artistsState, songsState)
 		) {
 			StarredScreenContent(
-				innerPadding = innerPadding,
+				innerPadding = combinedPadding,
 				onSetShareId = { shareId = it },
 				isOnline = isOnline,
 

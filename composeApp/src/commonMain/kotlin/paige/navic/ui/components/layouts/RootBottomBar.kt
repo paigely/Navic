@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.runtime.Composable
@@ -43,13 +44,17 @@ fun RootBottomBar(
 		animationSpec = tween(durationMillis = 600)
 	)
 	Column(
-		modifier = modifier.then(
-			if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
-				Modifier.background(
-					Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress))
-				)
-			else Modifier
-		)
+		modifier = modifier
+			.fillMaxWidth()
+			.then(
+				if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
+					Modifier.background(
+						Brush.easedVerticalGradient(
+							color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress)
+						)
+					)
+				else Modifier
+			)
 	) {
 		if (!hideMiniPlayer) MiniPlayer(
 			modifier = Modifier.graphicsLayer {
@@ -62,15 +67,17 @@ fun RootBottomBar(
 		)
 		BottomBar(
 			containerColor = if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
-				NavigationBarDefaults.containerColor.copy(alpha = 0f)
+				MaterialTheme.colorScheme.surface.copy(alpha = 0.95f * shadowFadeProgress)
 			else NavigationBarDefaults.containerColor,
 			windowInsets = bottomBarWindowInsets,
-			modifier = Modifier.graphicsLayer {
-				alpha = progress.coerceIn(0f..1f)
-				translationY = ((1f - progress) * size.height).coerceAtLeast(
-					if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
-				)
-			},
+			modifier = Modifier
+				.fillMaxWidth()
+				.graphicsLayer {
+					alpha = progress.coerceIn(0f..1f)
+					translationY = ((1f - progress) * size.height).coerceAtLeast(
+						if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
+					)
+				},
 			enabled = !scrolled
 		)
 	}

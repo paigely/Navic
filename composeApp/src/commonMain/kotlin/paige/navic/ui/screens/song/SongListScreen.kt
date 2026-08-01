@@ -28,16 +28,12 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalBottomBarScrollManager
-import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
-import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
-import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.PersistentViewModelStoreOwner
@@ -45,6 +41,7 @@ import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.screens.song.components.SongListScreenSortButton
 import paige.navic.ui.screens.song.components.songListScreenContent
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
+import paige.navic.util.ui.withGlobalBottomBar
 import paige.navic.util.ui.withoutTop
 import kotlin.time.Duration
 
@@ -63,7 +60,6 @@ fun SongListScreen(
 			koinInject<PersistentViewModelStoreOwner>()
 		}
 	)
-	val preferenceManager = koinInject<PreferenceManager>()
 	val player = koinInject<MediaPlayerViewModel>()
 	val songsState by viewModel.songsState.collectAsStateWithLifecycle()
 	val selectedSong by viewModel.selectedSong.collectAsStateWithLifecycle()
@@ -102,17 +98,12 @@ fun SongListScreen(
 					actions = actions
 				)
 			}
-		},
-		bottomBar = {
-			val scrollManager = LocalBottomBarScrollManager.current
-			if (!nested || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
-				RootBottomBar(scrolled = scrollManager.isTriggered)
-			}
 		}
 	) { innerPadding ->
+		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = innerPadding.calculateTopPadding())
+				.padding(top = combinedPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = songsState !is UiState.Loading,
 			onRefresh = { viewModel.refreshSongs(true) },
@@ -122,7 +113,7 @@ fun SongListScreen(
 				modifier = if (!nested)
 					Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier.fillMaxSize(),
-				contentPadding = innerPadding.withoutTop(),
+				contentPadding = combinedPadding.withoutTop(),
 				verticalArrangement = if ((songsState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center
 				else Arrangement.spacedBy(12.dp)

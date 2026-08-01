@@ -48,7 +48,6 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
-import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.snackbars.ErrorSnackBar
 import paige.navic.ui.core.UiState
@@ -56,6 +55,7 @@ import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.screens.radio.components.radioListScreenContent
 import paige.navic.ui.screens.radio.dialogs.RadioCreateDialog
 import paige.navic.ui.screens.radio.viewmodels.RadioListViewModel
+import paige.navic.util.ui.withGlobalBottomBar
 import paige.navic.util.ui.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -121,16 +121,12 @@ fun RadioListScreen(
 					}
 				}
 			}
-		},
-		bottomBar = {
-			if (!nested) {
-				RootBottomBar(scrolled = scrollManager.isTriggered)
-			}
 		}
 	) { innerPadding ->
+		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = innerPadding.calculateTopPadding())
+				.padding(top = combinedPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = radiosState !is UiState.Loading,
 			onRefresh = { viewModel.refreshRadios(true) },
@@ -140,7 +136,7 @@ fun RadioListScreen(
 				modifier = if (!nested)
 					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier,
-				contentPadding = innerPadding.withoutTop(),
+				contentPadding = combinedPadding.withoutTop(),
 				state = viewModel.gridState,
 				verticalArrangement = if ((radiosState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center

@@ -68,21 +68,18 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SnackBarManager
 import paige.navic.domain.models.DomainSongListType
-import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.common.SongRow
 import paige.navic.ui.components.dialogs.BulkDownloadDialog
 import paige.navic.ui.components.layouts.ArtCarousel
 import paige.navic.ui.components.layouts.ArtCarouselItem
-import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.Screen
@@ -93,6 +90,7 @@ import paige.navic.ui.screens.artist.viewmodels.ArtistDetailViewModel
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.theme.NavicTheme
+import paige.navic.util.ui.withGlobalBottomBar
 import paige.navic.util.ui.rememberColorSchemeFromCoverArt
 import kotlin.time.Duration
 
@@ -169,14 +167,9 @@ fun ArtistDetailScreen(
 					starred = starred,
 					onSetStarred = { viewModel.starArtist(it) },
 				)
-			},
-			bottomBar = {
-				val scrollManager = LocalBottomBarScrollManager.current
-				if (preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
-					RootBottomBar(scrolled = scrollManager.isTriggered)
-				}
 			}
-		) { contentPadding ->
+		) { innerPadding ->
+			val combinedPadding = innerPadding.withGlobalBottomBar()
 			AnimatedContent(
 				targetState = artistState,
 				transitionSpec = {
@@ -194,7 +187,7 @@ fun ArtistDetailScreen(
 				modifier = Modifier.fillMaxSize()
 			) { artistState ->
 				when (artistState) {
-					is UiState.Error -> Box(Modifier.fillMaxSize().padding(contentPadding)) {
+					is UiState.Error -> Box(Modifier.fillMaxSize().padding(combinedPadding)) {
 						ErrorBox(artistState)
 					}
 
@@ -233,7 +226,7 @@ fun ArtistDetailScreen(
 								coverArtId = state.artist.coverArtId,
 								subtitle = state.artist.biography,
 								lastfm = state.artist.lastFmUrl,
-								innerPadding = contentPadding,
+								innerPadding = combinedPadding,
 								scrolled = scrolled
 							)
 							ArtistActionButtons(
@@ -260,12 +253,12 @@ fun ArtistDetailScreen(
 								modifier = Modifier
 									.fillMaxWidth()
 									.padding(
-										start = contentPadding.calculateStartPadding(
+										start = combinedPadding.calculateStartPadding(
 											layoutDirection
 										)
 									)
 									.padding(
-										end = contentPadding.calculateEndPadding(
+										end = combinedPadding.calculateEndPadding(
 											layoutDirection
 										)
 									),
@@ -430,7 +423,7 @@ fun ArtistDetailScreen(
 									)
 								}
 							}
-							Spacer(Modifier.height(contentPadding.calculateBottomPadding()))
+							Spacer(Modifier.height(combinedPadding.calculateBottomPadding()))
 						}
 					}
 				}

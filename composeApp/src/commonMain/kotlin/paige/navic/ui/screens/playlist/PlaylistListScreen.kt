@@ -47,7 +47,6 @@ import paige.navic.LocalBottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.BottomBarCollapseMode
-import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
 import paige.navic.shared.MediaPlayerViewModel
@@ -56,7 +55,6 @@ import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
-import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.snackbars.ErrorSnackBar
 import paige.navic.ui.core.UiState
@@ -66,6 +64,7 @@ import paige.navic.ui.screens.playlist.components.playlistListScreenContent
 import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
+import paige.navic.util.ui.withGlobalBottomBar
 import paige.navic.util.ui.withoutTop
 import kotlin.time.Duration
 
@@ -159,16 +158,12 @@ fun PlaylistListScreen(
 					}
 				}
 			}
-		},
-		bottomBar = {
-			if (!nested || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
-				RootBottomBar(scrolled = scrollManager.isTriggered)
-			}
 		}
 	) { innerPadding ->
+		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = innerPadding.calculateTopPadding())
+				.padding(top = combinedPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = playlistsState !is UiState.Loading,
 			onRefresh = { viewModel.refreshPlaylists(true) },
@@ -179,7 +174,7 @@ fun PlaylistListScreen(
 					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier,
 				state = gridState,
-				contentPadding = innerPadding.withoutTop(),
+				contentPadding = combinedPadding.withoutTop(),
 				verticalArrangement = if ((playlistsState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center
 				else Arrangement.spacedBy(12.dp)
