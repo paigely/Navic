@@ -213,7 +213,8 @@ fun App() {
 			LocalGlobalBottomBarHeight provides bottomBarHeight
 		) {
 			NavicTheme {
-				val showBottomBar = remember(backStack.size, preferenceManager.bottomBarVisibilityMode, platformContext.sizeClass.widthSizeClass) {
+				val showBottomBar = remember(backStack.size, backStack.lastOrNull(), preferenceManager.bottomBarVisibilityMode, platformContext.sizeClass.widthSizeClass) {
+					if (backStack.lastOrNull() is Screen.Login) return@remember false
 					val rootKeys = listOf(
 						Screen.Library::class,
 						Screen.Starred::class,
