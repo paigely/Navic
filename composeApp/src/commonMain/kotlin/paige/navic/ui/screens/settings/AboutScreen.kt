@@ -1,10 +1,12 @@
 package paige.navic.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -34,9 +36,6 @@ import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.navigation.Screen
-import paige.navic.LocalGlobalBottomBarHeight
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 
 @Composable
 fun SettingsAboutScreen() {
@@ -53,7 +52,7 @@ fun SettingsAboutScreen() {
 				hideBack = hideBack
 			)
 		},
-		contentWindowInsets = WindowInsets.statusBars
+		contentWindowInsets = WindowInsets(0, 0, 0, 0)
 	) { innerPadding ->
 		Column(
 			Modifier
@@ -100,7 +99,7 @@ fun SettingsAboutScreen() {
 					Icon(Icons.Outlined.ChevronForward, null)
 				}
 			}
-			Spacer(Modifier.height(LocalGlobalBottomBarHeight.current))
+			Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
 		}
 	}
 }

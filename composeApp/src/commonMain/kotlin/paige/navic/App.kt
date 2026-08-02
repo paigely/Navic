@@ -214,7 +214,7 @@ fun App() {
 		) {
 			NavicTheme {
 				val showBottomBar = remember(backStack.size, backStack.lastOrNull(), preferenceManager.bottomBarVisibilityMode, platformContext.sizeClass.widthSizeClass) {
-					if (backStack.lastOrNull() is Screen.Login) return@remember false
+					if (backStack.lastOrNull() is Screen.Login || backStack.any { it is Screen.Settings }) return@remember false
 					val rootKeys = listOf(
 						Screen.Library::class,
 						Screen.Starred::class,
@@ -225,14 +225,12 @@ fun App() {
 						Screen.SongList::class,
 						Screen.RadioList::class,
 						Screen.Search::class,
-						Screen.ShareList::class,
-						Screen.Settings.Root::class
+						Screen.ShareList::class
 					)
 					val isRoot = if (platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
 						rootKeys.any { it.isInstance(backStack.lastOrNull()) }
 					} else {
-						backStack.any { key -> rootKeys.any { it.isInstance(key) } } ||
-							backStack.any { it is Screen.Settings }
+						backStack.any { key -> rootKeys.any { it.isInstance(key) } }
 					}
 					isRoot || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
 				} && isLoggedIn

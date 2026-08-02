@@ -1,10 +1,12 @@
 package paige.navic.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -52,9 +54,6 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.settings.dialogs.NavtabsDialog
-import paige.navic.LocalGlobalBottomBarHeight
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 
 @Composable
 fun BottomBarScreen() {
@@ -69,7 +68,7 @@ fun BottomBarScreen() {
 				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
 		},
-		contentWindowInsets = WindowInsets.statusBars
+		contentWindowInsets = WindowInsets(0, 0, 0, 0)
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp
@@ -149,7 +148,7 @@ fun BottomBarScreen() {
 						title = { Text(stringResource(Res.string.option_mini_player_progress_style)) },
 					)
 				}
-				Spacer(Modifier.height(LocalGlobalBottomBarHeight.current))
+				Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
 			}
 		}
 		NavtabsDialog(

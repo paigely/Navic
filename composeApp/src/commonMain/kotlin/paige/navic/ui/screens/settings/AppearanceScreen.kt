@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
@@ -69,9 +71,6 @@ import paige.navic.ui.screens.settings.dialogs.ArtworkShapeDialog
 import paige.navic.ui.screens.settings.dialogs.GridSizeDialog
 import paige.navic.ui.screens.settings.dialogs.GridSizePreview
 import paige.navic.util.core.PlatformType
-import paige.navic.LocalGlobalBottomBarHeight
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 
 @Composable
 fun SettingsAppearanceScreen() {
@@ -88,7 +87,7 @@ fun SettingsAppearanceScreen() {
 				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
 		},
-		contentWindowInsets = WindowInsets.statusBars
+		contentWindowInsets = WindowInsets(0, 0, 0, 0)
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp
@@ -281,7 +280,7 @@ fun SettingsAppearanceScreen() {
 						onSelect = { preferenceManager.animationStyle = it }
 					)
 				}
-				Spacer(Modifier.height(LocalGlobalBottomBarHeight.current))
+				Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
 			}
 		}
 		ArtworkShapeDialog(
