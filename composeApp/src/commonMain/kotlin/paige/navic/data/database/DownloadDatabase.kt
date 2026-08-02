@@ -8,7 +8,7 @@ import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.entities.DownloadEntity
 
 @Database(
-	version = 3,
+	version = 4,
 	entities = [DownloadEntity::class]
 )
 @ConstructedBy(DownloadDatabaseConstructor::class)
