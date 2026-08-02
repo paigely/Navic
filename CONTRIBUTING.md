@@ -13,7 +13,6 @@
 * Include a screenshot for UI changes
 * Keep PRs focused, create separate PRs for unrelated changes
 * Use [conventional commits](https://conventionalcommits.org/)
-* Use [conventional branch names](https://conventional-branch.github.io/)
 
 ## Contributing
 
