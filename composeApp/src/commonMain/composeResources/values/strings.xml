@@ -98,6 +98,8 @@
 	<string name="option_swipe_to_skip">Swipe to change songs</string>
 	<string name="option_artwork_shape">Artwork shape</string>
 	<string name="option_artist_image_shape">Artist image shape</string>
+	<string name="option_auto_fill_queue">Auto-fill queue</string>
+	<string name="subtitle_auto_fill_queue">Automatically add a random song when only one is left in the queue</string>
 	<string name="option_cover_art_size">Cover artwork size</string>
 	<string name="option_use_marquee_text">Text auto-scroll speed</string>
 	<string name="option_alphabetical_scroll">Alphabetical scrolling</string>

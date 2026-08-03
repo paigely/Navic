@@ -66,6 +66,7 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.domain.repositories.SongRepository
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import paige.navic.util.core.ResourceProvider
@@ -286,6 +287,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 
 class AndroidMediaPlayerViewModel(
 	stateRepository: PlayerStateRepository,
+	songRepository: SongRepository,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
 	preferenceManager: PreferenceManager,
@@ -296,6 +298,7 @@ class AndroidMediaPlayerViewModel(
 	private val snackBarManager: SnackBarManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
+	songRepository = songRepository,
 	connectivityManager = connectivityManager,
 	downloadManager = downloadManager,
 	preferenceManager = preferenceManager
@@ -348,6 +351,7 @@ class AndroidMediaPlayerViewModel(
 					override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 						updatePlaybackState()
 						skipUnavailableSong()
+						checkAndAutoFillQueue()
 					}
 
 					override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -404,6 +408,7 @@ class AndroidMediaPlayerViewModel(
 					syncPlayerWithState(state)
 					pendingSyncState = null
 				}
+				checkAndAutoFillQueue()
 
 				combine(
 					downloadManager.downloadedSongs,

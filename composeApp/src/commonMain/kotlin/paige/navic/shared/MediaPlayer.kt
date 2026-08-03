@@ -20,12 +20,14 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.domain.repositories.SongRepository
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import kotlin.time.Duration.Companion.seconds
 
 abstract class MediaPlayerViewModel(
 	private val stateRepository: PlayerStateRepository,
+	protected val songRepository: SongRepository,
 	protected val connectivityManager: ConnectivityManager,
 	protected val downloadManager: DownloadManager,
 	protected val preferenceManager: PreferenceManager
@@ -71,18 +73,21 @@ abstract class MediaPlayerViewModel(
 		clearQueue()
 		addToQueueSingle(song, notify = false)
 		playAt(0)
+		checkAndAutoFillQueue()
 	}
 
 	fun playNow(collection: DomainSongCollection, startIndex: Int = 0) {
 		clearQueue()
 		addToQueue(collection, notify = false)
 		playAt(startIndex)
+		checkAndAutoFillQueue()
 	}
 
 	fun playNow(songs: List<DomainSong>, startIndex: Int = 0) {
 		clearQueue()
 		addToQueue(songs, notify = false)
 		playAt(startIndex)
+		checkAndAutoFillQueue()
 	}
 
 	fun togglePlay() {
@@ -94,6 +99,22 @@ abstract class MediaPlayerViewModel(
 	}
 
 	abstract fun syncPlayerWithState(state: PlayerUiState)
+
+	protected fun checkAndAutoFillQueue() {
+		if (!preferenceManager.autoFillQueue) return
+
+		val state = uiState.value
+		if (state.queue.isEmpty()) return
+
+		val remainingCount = state.queue.size - state.currentIndex
+
+		if (remainingCount <= 1) {
+			viewModelScope.launch {
+				val randomSongs = songRepository.getRandomSongs(1)
+				addToQueue(randomSongs, notify = false)
+			}
+		}
+	}
 
 	private suspend fun restoreState() {
 		val savedJson = stateRepository.loadState()
@@ -107,6 +128,7 @@ abstract class MediaPlayerViewModel(
 				_uiState.value = stateToApply
 
 				syncPlayerWithState(stateToApply)
+				checkAndAutoFillQueue()
 
 			} catch (e: Exception) {
 				Logger.e("MediaPlayerViewModel", "Failed to restore state!", e)

@@ -31,6 +31,10 @@ class SongRepository(
 		return songDao.getAllSongs().map { it.toDomainModel() }
 	}
 
+	suspend fun getRandomSongs(count: Int): List<DomainSong> {
+		return songDao.getRandomSongs(count).map { it.toDomainModel() }
+	}
+
 	private suspend fun getLocalData(
 		listType: DomainSongListType,
 		reversed: Boolean

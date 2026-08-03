@@ -48,6 +48,9 @@ interface SongDao {
 	@Query("SELECT * FROM SongEntity WHERE songId IN (:ids)")
 	suspend fun getSongsByIds(ids: List<String>): List<SongEntity>
 
+	@Query("SELECT * FROM SongEntity ORDER BY RANDOM() LIMIT :count")
+	suspend fun getRandomSongs(count: Int): List<SongEntity>
+
 	@Query("SELECT * FROM SongEntity WHERE title LIKE '%' || :query || '%' COLLATE NOCASE")
 	suspend fun searchSongsList(query: String): List<SongEntity>
 
