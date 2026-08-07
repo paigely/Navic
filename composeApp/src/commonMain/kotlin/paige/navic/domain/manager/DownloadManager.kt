@@ -79,7 +79,7 @@ class DownloadManager(
 			.sumOf { storageManager.getFileSize(it.filePath!!) }
 	}
 
-	val downloadedSongs: StateFlow<Map<String, String>>
+	val downloadedSongs: StateFlow<Map<String, DownloadEntity>>
 		field = MutableStateFlow(emptyMap())
 
 	val isDownloadingLibrary: StateFlow<Boolean>
@@ -93,13 +93,13 @@ class DownloadManager(
 			allDownloads.collectLatest { downloads ->
 				downloadedSongs.value = downloads
 					.filter { it.status == DownloadStatus.DOWNLOADED && it.filePath != null }
-					.associate { it.songId to it.filePath!! }
+					.associateBy { it.songId }
 			}
 		}
 	}
 
 	fun getDownloadedFilePath(songId: String): String? {
-		return downloadedSongs.value[songId]
+		return downloadedSongs.value[songId]?.filePath
 	}
 
 	fun downloadSong(song: DomainSong): Job {
@@ -402,10 +402,12 @@ class DownloadManager(
 
 			downloadDao.insertDownload(
 				DownloadEntity(
-					song.id,
-					DownloadStatus.DOWNLOADED,
-					1f,
-					path
+					songId = song.id,
+					status = DownloadStatus.DOWNLOADED,
+					progress = 1f,
+					filePath = path,
+					bitrate = bitrate,
+					format = container
 				)
 			)
 		}

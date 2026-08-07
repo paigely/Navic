@@ -18,5 +18,7 @@ data class PlayerUiState(
 	val playbackSpeed: Float = 1.0f,
 	val playbackBitrate: Int? = null,
 	val playbackSampleRate: Int? = null,
-	val playbackMimeType: String? = null
+	val playbackMimeType: String? = null,
+	val requestedBitrate: Int? = null,
+	val requestedMimeType: String? = null
 )
