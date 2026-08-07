@@ -125,12 +125,14 @@ fun SettingsPlaybackScreen() {
 						selection = preferenceManager.explicitContentPlayback,
 						onSelect = { preferenceManager.explicitContentPlayback = it }
 					)
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_auto_fill_queue)) },
-						subtitle = { Text(stringResource(Res.string.subtitle_auto_fill_queue)) },
-						value = preferenceManager.autoFillQueue,
-						onSetValue = { preferenceManager.autoFillQueue = it }
-					)
+					if (platformContext.platformType == PlatformType.Android) {
+						SettingSwitchRow(
+							title = { Text(stringResource(Res.string.option_auto_fill_queue)) },
+							subtitle = { Text(stringResource(Res.string.subtitle_auto_fill_queue)) },
+							value = preferenceManager.autoFillQueue,
+							onSetValue = { preferenceManager.autoFillQueue = it }
+						)
+					}
 				}
 
 				FormTitle(stringResource(Res.string.title_behaviour))
