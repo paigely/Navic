@@ -66,6 +66,7 @@ import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.models.settings.EqualiserMode
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
 import paige.navic.domain.repositories.SongRepository
@@ -96,6 +97,8 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 
 	private var equaliser: Equalizer? = null
 	private var audioEffectSessionId: Int = C.AUDIO_SESSION_ID_UNSET
+	private var currentAudioSessionId: Int = C.AUDIO_SESSION_ID_UNSET
+	private var equaliserMode: EqualiserMode = EqualiserMode.Disabled
 
 	override fun onCreate() {
 		super.onCreate()
@@ -180,8 +183,9 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			.setCustomLayout(makeButtons(player))
 			.build()
 
-		makeEqualiser(player.audioSessionId)
-		openAudioEffectSession(player.audioSessionId)
+		currentAudioSessionId = player.audioSessionId
+		equaliserMode = equaliserManager.config.value.mode
+		applyEqualiserMode(equaliserMode, currentAudioSessionId)
 
 		player.addListener(object : Player.Listener {
 			override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
@@ -193,15 +197,19 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			}
 
 			override fun onAudioSessionIdChanged(audioSessionId: Int) {
-				closeAudioEffectSession(audioEffectSessionId)
-				makeEqualiser(audioSessionId)
-				openAudioEffectSession(audioSessionId)
+				currentAudioSessionId = audioSessionId
+				applyEqualiserMode(equaliserMode, audioSessionId)
 			}
 		})
 
 		scope.launch(Dispatchers.Main) {
-			equaliserManager.config.collect {
-				updateEqualiser()
+			equaliserManager.config.collect { config ->
+				if (config.mode != equaliserMode) {
+					equaliserMode = config.mode
+					applyEqualiserMode(equaliserMode, currentAudioSessionId)
+				} else {
+					updateEqualiser()
+				}
 			}
 		}
 	}
@@ -216,8 +224,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 
 	override fun onDestroy() {
 		closeAudioEffectSession(audioEffectSessionId)
-		equaliser?.release()
-		equaliser = null
+		releaseEqualiser()
 		scrobbleManager?.release()
 		serviceScope.cancel()
 		stopForeground(STOP_FOREGROUND_REMOVE)
@@ -272,6 +279,23 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 		}
 	}
 
+	// Applies the chosen equaliser mode
+	private fun applyEqualiserMode(mode: EqualiserMode, sessionId: Int) {
+		closeAudioEffectSession(audioEffectSessionId)
+		releaseEqualiser()
+
+		when (mode) {
+			EqualiserMode.BuiltIn -> makeEqualiser(sessionId)
+			EqualiserMode.External -> openAudioEffectSession(sessionId)
+			EqualiserMode.Disabled -> Unit
+		}
+	}
+
+	private fun releaseEqualiser() {
+		equaliser?.release()
+		equaliser = null
+	}
+
 	// Announces our audio session to the system so external equalizer apps can attach effects to it
 	private fun openAudioEffectSession(sessionId: Int) {
 		if (sessionId == C.AUDIO_SESSION_ID_UNSET) return
@@ -298,7 +322,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 	}
 
 	private fun makeEqualiser(sessionId: Int) {
-		equaliser?.release()
+		releaseEqualiser()
 		try {
 			val equaliser = Equalizer(0, sessionId).apply {
 				enabled = true

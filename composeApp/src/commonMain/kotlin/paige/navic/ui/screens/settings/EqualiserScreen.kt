@@ -25,19 +25,25 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_reset
+import navic.composeapp.generated.resources.info_equaliser_mode_not_builtin
 import navic.composeapp.generated.resources.info_equaliser_unsupported
 import navic.composeapp.generated.resources.option_equaliser
+import navic.composeapp.generated.resources.option_equaliser_mode
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.domain.manager.EqualiserManager
+import paige.navic.domain.models.settings.EqualiserMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Refresh
+import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.VerticalSlider
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.TopBarButton
+import paige.navic.ui.screens.settings.components.SettingSelectionRow
 
 @Composable
 fun SettingsEqualiserScreen() {
@@ -58,7 +64,7 @@ fun SettingsEqualiserScreen() {
 								)
 							}
 						},
-						enabled = config.bandLevels.isNotEmpty()
+						enabled = config.bandLevels.isNotEmpty() && config.mode == EqualiserMode.BuiltIn
 					) {
 						Icon(
 							imageVector = Icons.Outlined.Refresh,
@@ -80,6 +86,24 @@ fun SettingsEqualiserScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp),
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
+				Form(modifier = Modifier.widthIn(max = 600.dp)) {
+					SettingSelectionRow(
+						title = { Text(stringResource(Res.string.option_equaliser_mode)) },
+						items = EqualiserMode.entries.toImmutableList(),
+						label = { stringResource(it.displayName) },
+						selection = config.mode,
+						onSelect = { mode ->
+							scope.launch {
+								equaliserManager.setConfig(config.copy(mode = mode))
+							}
+						}
+					)
+				}
+
+				if (config.mode != EqualiserMode.BuiltIn) {
+					Text(stringResource(Res.string.info_equaliser_mode_not_builtin))
+					return@Column
+				}
 				if (config.bandCount == 0) {
 					Text(stringResource(Res.string.info_equaliser_unsupported))
 					return@Column

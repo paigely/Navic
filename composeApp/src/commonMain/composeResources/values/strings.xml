@@ -187,6 +187,10 @@
 	<string name="option_cover_art_action_disabled">Disabled</string>
 	<string name="option_cover_art_action_show_lyrics">Show lyrics</string>
 	<string name="option_equaliser">Equaliser</string>
+	<string name="option_equaliser_mode">Equaliser mode</string>
+	<string name="option_equaliser_mode_disabled">Disabled</string>
+	<string name="option_equaliser_mode_builtin">Built-in</string>
+	<string name="option_equaliser_mode_external">External</string>
 	<string name="option_list_view_mode">View mode</string>
 	<string name="option_list_view_mode_grid">Grid</string>
 	<string name="option_list_view_mode_list">List</string>
@@ -453,6 +457,7 @@
 	<string name="info_repeat_all">Repeat all</string>
 	<string name="info_app_icon">Changing the app icon will close Navic as Android requires this. Some icons may look identical on your home screen if your launcher dynamically themes the icon colours.</string>
 	<string name="info_equaliser_unsupported">Your device does not support this feature.</string>
+	<string name="info_equaliser_mode_not_builtin">Controls are only available in Built-in mode.</string>
 	<string name="info_lyric_provider_disclaimer">Enabling LRCLIB and/or LyricsPlus will make requests to external and unaffiliated web services.</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
