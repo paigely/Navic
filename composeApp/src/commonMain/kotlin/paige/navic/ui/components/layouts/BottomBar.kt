@@ -159,7 +159,7 @@ fun BottomBar(
 		if (tabs.size < 2) return@AnimatedContent
 		if (!short) {
 			NavigationBar(
-				modifier = modifier.fillMaxWidth(),
+				modifier = modifier,
 				containerColor = containerColor,
 				windowInsets = windowInsets
 			) {

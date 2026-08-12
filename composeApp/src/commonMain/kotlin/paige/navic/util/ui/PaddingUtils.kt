@@ -11,12 +11,5 @@ import paige.navic.LocalGlobalBottomBarHeight
 fun PaddingValues.withoutTop() = this.minus(PaddingValues(top = this.calculateTopPadding()))
 
 @Composable
-fun PaddingValues.withGlobalBottomBar(): PaddingValues {
-	val direction = LocalLayoutDirection.current
-	return PaddingValues(
-		start = this.calculateStartPadding(direction),
-		top = this.calculateTopPadding(),
-		end = this.calculateEndPadding(direction),
-		bottom = this.calculateBottomPadding() + LocalGlobalBottomBarHeight.current
-	)
-}
+fun PaddingValues.withGlobalBottomBar()
+	= this.plus(PaddingValues(bottom = LocalGlobalBottomBarHeight.current))

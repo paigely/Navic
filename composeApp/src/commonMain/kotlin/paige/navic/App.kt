@@ -242,7 +242,7 @@ fun App() {
 							NavicSnackBar(snackBarData = snackBarData)
 						}
 					},
-					contentWindowInsets = WindowInsets(0, 0, 0, 0)
+					contentWindowInsets = WindowInsets()
 				) { _ ->
 					Box(Modifier.fillMaxSize()) {
 						NavDisplay(
