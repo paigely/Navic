@@ -300,6 +300,7 @@
 		<item quantity="other">%1$d lines selected</item>
 	</plurals>
 
+	<string name="action_start">Start</string>
 	<string name="action_ok">OK</string>
 	<string name="action_play">Play</string>
 	<string name="action_next_song">Next song</string>
@@ -323,7 +324,13 @@
 	<string name="action_cancel_download">Cancel download</string>
 	<string name="action_sleep_timer">Sleep timer</string>
 	<string name="action_sleep_timer_enabled">Sleep timer - %1$s left </string>
+	<string name="action_sleep_timer_songs_enabled">Sleep timer - %1$d songs left</string>
+	<string name="action_sleep_timer_queue_enabled">Sleep timer - end of queue</string>
+	<string name="action_sleep_timer_songs">Stop after %1$d songs</string>
+	<string name="action_sleep_timer_queue">Stop at end of current queue</string>
 	<string name="action_disable_sleep_timer">Turn off timer</string>
+	<string name="title_sleep_timer_time">Time</string>
+	<string name="title_sleep_timer_songs">Songs</string>
 	<string name="option_playback_speed">Playback speed</string>
 	<string name="action_navigate_back">Navigate up</string>
 	<string name="action_log_out">Logout</string>

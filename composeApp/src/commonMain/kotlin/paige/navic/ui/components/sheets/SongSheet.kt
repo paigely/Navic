@@ -23,6 +23,8 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
@@ -41,6 +43,8 @@ import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_sleep_timer
 import navic.composeapp.generated.resources.action_sleep_timer_enabled
+import navic.composeapp.generated.resources.action_sleep_timer_queue_enabled
+import navic.composeapp.generated.resources.action_sleep_timer_songs_enabled
 import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.action_view_album
@@ -54,6 +58,7 @@ import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SleepTimerManager
+import paige.navic.domain.manager.SleepTimerMode
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
@@ -117,7 +122,7 @@ fun SongSheet(
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	val sleepTimerManager = koinInject<SleepTimerManager>()
-	val sleepTimerLeft = sleepTimerManager.timeLeft
+	val sleepTimerMode by sleepTimerManager.mode.collectAsState()
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 
 	val colorScheme = if (useSongTheme) rememberColorSchemeFromCoverArt(song.coverArtId) else null
@@ -397,50 +402,43 @@ fun SongSheet(
 				}
 
 				if (showSleepTimer) {
-					if (sleepTimerLeft != null) {
-						ListItem(
-							content = {
-								Text(
-									stringResource(
+					val isEnabled = sleepTimerMode !is SleepTimerMode.Disabled
+					ListItem(
+						content = {
+							Text(
+								text = when (val mode = sleepTimerMode) {
+									is SleepTimerMode.Time -> stringResource(
 										Res.string.action_sleep_timer_enabled,
-										sleepTimerLeft.label()
-									),
-									color = MaterialTheme.colorScheme.positive
-								)
-							},
-							leadingContent = {
-								Icon(
-									Icons.Outlined.Bedtime,
-									null,
-									tint = MaterialTheme.colorScheme.positive
-								)
-							},
-							onClick = {
-								onSleepTimer?.invoke()
-							},
-							colors = colors,
-							contentPadding = contentPadding
-						)
-					} else {
-						ListItem(
-							content = {
-								Text(
-									stringResource(Res.string.action_sleep_timer)
-								)
-							},
-							leadingContent = {
-								Icon(
-									Icons.Outlined.Bedtime,
-									null
-								)
-							},
-							onClick = {
-								onSleepTimer?.invoke()
-							},
-							colors = colors,
-							contentPadding = contentPadding
-						)
-					}
+										sleepTimerManager.timeLeft?.label() ?: ""
+									)
+
+									is SleepTimerMode.Songs -> stringResource(
+										Res.string.action_sleep_timer_songs_enabled,
+										mode.remaining
+									)
+
+									is SleepTimerMode.EndOfQueue -> stringResource(
+										Res.string.action_sleep_timer_queue_enabled
+									)
+
+									else -> stringResource(Res.string.action_sleep_timer)
+								},
+								color = if (isEnabled) MaterialTheme.colorScheme.positive else Color.Unspecified
+							)
+						},
+						leadingContent = {
+							Icon(
+								Icons.Outlined.Bedtime,
+								null,
+								tint = if (isEnabled) MaterialTheme.colorScheme.positive else MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						},
+						onClick = {
+							onSleepTimer?.invoke()
+						},
+						colors = colors,
+						contentPadding = contentPadding
+					)
 				}
 
 				if (showPlaybackSpeed) {
