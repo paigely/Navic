@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.media.audiofx.AudioEffect
 import android.media.audiofx.Equalizer
 import android.net.Uri
 import android.os.Bundle
@@ -94,6 +95,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 	private val equaliserManager: EqualiserManager by inject()
 
 	private var equaliser: Equalizer? = null
+	private var audioEffectSessionId: Int = C.AUDIO_SESSION_ID_UNSET
 
 	override fun onCreate() {
 		super.onCreate()
@@ -179,6 +181,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			.build()
 
 		makeEqualiser(player.audioSessionId)
+		openAudioEffectSession(player.audioSessionId)
 
 		player.addListener(object : Player.Listener {
 			override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
@@ -190,7 +193,9 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			}
 
 			override fun onAudioSessionIdChanged(audioSessionId: Int) {
-				makeEqualiser(player.audioSessionId)
+				closeAudioEffectSession(audioEffectSessionId)
+				makeEqualiser(audioSessionId)
+				openAudioEffectSession(audioSessionId)
 			}
 		})
 
@@ -210,6 +215,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 	}
 
 	override fun onDestroy() {
+		closeAudioEffectSession(audioEffectSessionId)
 		equaliser?.release()
 		equaliser = null
 		scrobbleManager?.release()
@@ -264,6 +270,31 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 
 			return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
 		}
+	}
+
+	// Announces our audio session to the system so external equalizer apps can attach effects to it
+	private fun openAudioEffectSession(sessionId: Int) {
+		if (sessionId == C.AUDIO_SESSION_ID_UNSET) return
+		audioEffectSessionId = sessionId
+		sendBroadcast(
+			Intent(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION).apply {
+				putExtra(AudioEffect.EXTRA_AUDIO_SESSION, sessionId)
+				putExtra(AudioEffect.EXTRA_PACKAGE_NAME, packageName)
+				putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
+			}
+		)
+	}
+
+	// Tells external equalizer apps our audio session is going away so they can release their effects
+	private fun closeAudioEffectSession(sessionId: Int) {
+		if (sessionId == C.AUDIO_SESSION_ID_UNSET) return
+		sendBroadcast(
+			Intent(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION).apply {
+				putExtra(AudioEffect.EXTRA_AUDIO_SESSION, sessionId)
+				putExtra(AudioEffect.EXTRA_PACKAGE_NAME, packageName)
+			}
+		)
+		audioEffectSessionId = C.AUDIO_SESSION_ID_UNSET
 	}
 
 	private fun makeEqualiser(sessionId: Int) {
