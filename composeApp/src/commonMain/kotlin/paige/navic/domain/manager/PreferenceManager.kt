@@ -79,7 +79,7 @@ class PreferenceManager(
 	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)
 	var nowPlayingCoverArtAction by preference(CoverArtTapAction.ShowLyrics)
 	var customHeaders by preference("")
-	var checkForUpdates by preference(true)
+	var checkForUpdates by preference(false)
 	var explicitContentPlayback by preference(ExplicitContentPlayback.Allowed)
 	var autoFillQueue by preference(false)
 
