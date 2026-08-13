@@ -428,8 +428,8 @@ fun SongSheet(
 						},
 						leadingContent = {
 							Icon(
-								Icons.Outlined.Bedtime,
-								null,
+								imageVector = Icons.Outlined.Bedtime,
+								contentDescription = null,
 								tint = if (isEnabled) MaterialTheme.colorScheme.positive else MaterialTheme.colorScheme.onSurfaceVariant
 							)
 						},
