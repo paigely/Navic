@@ -18,21 +18,22 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_disable_sleep_timer
 import navic.composeapp.generated.resources.action_sleep_timer
@@ -54,6 +55,11 @@ import paige.navic.util.core.label
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
+enum class SleepTimerTab {
+	TIME,
+	SONGS
+}
+
 val durations = listOf(
 	5.minutes,
 	10.minutes,
@@ -71,13 +77,13 @@ fun SleepTimerSheet(
 	onDismissRequest: (confirmed: Boolean) -> Unit
 ) {
 	val sleepTimerManager = koinInject<SleepTimerManager>()
-	val currentMode by sleepTimerManager.mode.collectAsState()
+	val currentMode by sleepTimerManager.mode.collectAsStateWithLifecycle()
 
-	var selectedTab by remember(currentMode) {
-		mutableIntStateOf(
+	var selectedTab by rememberSaveable(currentMode) {
+		mutableStateOf(
 			when (currentMode) {
-				is SleepTimerMode.Songs, SleepTimerMode.EndOfQueue -> 1
-				else -> 0
+				is SleepTimerMode.Songs, SleepTimerMode.EndOfQueue -> SleepTimerTab.SONGS
+				else -> SleepTimerTab.TIME
 			}
 		)
 	}
@@ -110,73 +116,76 @@ fun SleepTimerSheet(
 			)
 
 			PrimaryTabRow(
-				selectedTabIndex = selectedTab,
+				selectedTabIndex = selectedTab.ordinal,
 				containerColor = Color.Transparent,
 				divider = {}
 			) {
 				Tab(
-					selected = selectedTab == 0,
-					onClick = { selectedTab = 0 },
+					selected = selectedTab == SleepTimerTab.TIME,
+					onClick = { selectedTab = SleepTimerTab.TIME },
 					text = { Text(stringResource(Res.string.title_sleep_timer_time)) }
 				)
 				Tab(
-					selected = selectedTab == 1,
-					onClick = { selectedTab = 1 },
+					selected = selectedTab == SleepTimerTab.SONGS,
+					onClick = { selectedTab = SleepTimerTab.SONGS },
 					text = { Text(stringResource(Res.string.title_sleep_timer_songs)) }
 				)
 			}
 
-			if (selectedTab == 0) {
-				FlowRow(
-					modifier = Modifier.padding(horizontal = 16.dp),
-					horizontalArrangement = Arrangement.spacedBy(8.dp),
-					verticalArrangement = Arrangement.spacedBy(8.dp),
-					maxItemsInEachRow = 3
-				) {
-					durations.forEach { duration ->
-						OptionCard(
-							label = duration.label(),
-							icon = Icons.Outlined.Bedtime,
-							onClick = {
-								sleepTimerManager.startTimer(duration)
-								onDismissRequest(true)
-							},
-							modifier = Modifier.weight(1f)
-						)
-					}
-				}
-			} else {
-				Column(
-					modifier = Modifier.padding(horizontal = 16.dp),
-					verticalArrangement = Arrangement.spacedBy(8.dp)
-				) {
-					OptionCard(
-						label = stringResource(Res.string.action_sleep_timer_queue),
-						icon = Icons.Outlined.QueuePlayNext,
-						isActive = currentMode is SleepTimerMode.EndOfQueue,
-						onClick = {
-							sleepTimerManager.startEndOfQueueTimer()
-							onDismissRequest(true)
-						},
-						modifier = Modifier.fillMaxWidth()
-					)
-
+			when (selectedTab) {
+				SleepTimerTab.TIME -> {
 					FlowRow(
+						modifier = Modifier.padding(horizontal = 16.dp),
 						horizontalArrangement = Arrangement.spacedBy(8.dp),
 						verticalArrangement = Arrangement.spacedBy(8.dp),
 						maxItemsInEachRow = 3
 					) {
-						songCounts.forEach { count ->
+						durations.forEach { duration ->
 							OptionCard(
-								label = pluralStringResource(Res.plurals.count_songs, count, count),
-								icon = Icons.Outlined.Queue,
-								isActive = (currentMode as? SleepTimerMode.Songs)?.remaining == count,
+								label = duration.label(),
+								icon = Icons.Outlined.Bedtime,
 								onClick = {
-									sleepTimerManager.startSongsTimer(count)
+									sleepTimerManager.startTimer(duration)
 									onDismissRequest(true)
 								},
 								modifier = Modifier.weight(1f)
 							)
+						}
+					}
+				}
+				SleepTimerTab.SONGS -> {
+					Column(
+						modifier = Modifier.padding(horizontal = 16.dp),
+						verticalArrangement = Arrangement.spacedBy(8.dp)
+					) {
+						OptionCard(
+							label = stringResource(Res.string.action_sleep_timer_queue),
+							icon = Icons.Outlined.QueuePlayNext,
+							isActive = currentMode is SleepTimerMode.EndOfQueue,
+							onClick = {
+								sleepTimerManager.startEndOfQueueTimer()
+								onDismissRequest(true)
+							},
+							modifier = Modifier.fillMaxWidth()
+						)
+
+						FlowRow(
+							horizontalArrangement = Arrangement.spacedBy(8.dp),
+							verticalArrangement = Arrangement.spacedBy(8.dp),
+							maxItemsInEachRow = 3
+						) {
+							songCounts.forEach { count ->
+								OptionCard(
+									label = pluralStringResource(Res.plurals.count_songs, count, count),
+									icon = Icons.Outlined.Queue,
+									isActive = (currentMode as? SleepTimerMode.Songs)?.remaining == count,
+									onClick = {
+										sleepTimerManager.startSongsTimer(count)
+										onDismissRequest(true)
+									},
+									modifier = Modifier.weight(1f)
+								)
+							}
 						}
 					}
 				}

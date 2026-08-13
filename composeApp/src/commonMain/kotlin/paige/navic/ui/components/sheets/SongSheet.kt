@@ -23,12 +23,12 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_another_playlist
@@ -122,7 +122,7 @@ fun SongSheet(
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	val sleepTimerManager = koinInject<SleepTimerManager>()
-	val sleepTimerMode by sleepTimerManager.mode.collectAsState()
+	val sleepTimerMode by sleepTimerManager.mode.collectAsStateWithLifecycle()
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 
 	val colorScheme = if (useSongTheme) rememberColorSchemeFromCoverArt(song.coverArtId) else null

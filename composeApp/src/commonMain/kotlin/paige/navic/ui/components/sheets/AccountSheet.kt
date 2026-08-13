@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,6 +27,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.capsule.ContinuousCapsule
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.launch
@@ -66,7 +66,7 @@ fun AccountSheet(
 
 	var sleepTimerSheetOpen by rememberSaveable { mutableStateOf(false) }
 	val sleepTimerManager = koinInject<SleepTimerManager>()
-	val sleepTimerMode by sleepTimerManager.mode.collectAsState()
+	val sleepTimerMode by sleepTimerManager.mode.collectAsStateWithLifecycle()
 
 	val sheetState = rememberBottomSheetState(
 		initialValue = SheetValue.Hidden,

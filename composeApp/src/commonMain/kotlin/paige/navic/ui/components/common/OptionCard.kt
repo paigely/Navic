@@ -1,10 +1,7 @@
 package paige.navic.ui.components.common
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -39,24 +36,22 @@ fun OptionCard(
 	}
 
 	Surface(
-		modifier = modifier
-			.clip(MaterialTheme.shapes.medium)
-			.clickable(onClick = onClick),
+		modifier = modifier.clip(MaterialTheme.shapes.medium),
 		color = containerColor,
 		contentColor = contentColor,
-		shape = MaterialTheme.shapes.medium
+		shape = MaterialTheme.shapes.medium,
+		onClick = onClick
 	) {
 		Column(
 			modifier = Modifier.padding(16.dp),
 			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = Arrangement.Center
+			verticalArrangement = Arrangement.spacedBy(8.dp),
 		) {
 			Icon(
 				imageVector = icon,
 				contentDescription = null,
 				modifier = Modifier.size(24.dp)
 			)
-			Spacer(Modifier.height(8.dp))
 			Text(
 				text = label,
 				style = MaterialTheme.typography.labelLarge,
