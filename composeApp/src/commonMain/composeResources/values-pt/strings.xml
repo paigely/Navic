@@ -20,8 +20,6 @@
     <string name="title_artists">Artistas</string>
     <string name="title_all">Tudo</string>
     <string name="title_similar_artists">Artistas similares</string>
-    <string name="title_source">Código fonte</string>
-    <string name="title_chat">Chat</string>
     <string name="subtitle_appearance">Muda o tema e as cores do aplicativo</string>
     <string name="subtitle_now_playing">Personaliza o reprodutor principal</string>
     <string name="subtitle_bottom_app_bar">Personaliza a barra de reprodução e navegação</string>
@@ -162,7 +160,6 @@
     <string name="option_now_playing_slider_style">Estilo do slider</string>
     <string name="option_now_playing_slider_style_flat">Achatado</string>
     <string name="option_now_playing_slider_style_squiggly">Ondulado</string>
-    <string name="option_lyrics_priority">Configurar provedores de letras</string>
     <string name="option_sort_playlist_by_name">Por nome</string>
     <string name="option_sort_playlist_date_added">Data de criação</string>
     <string name="option_sort_playlist_duration">Duração</string>
@@ -275,8 +272,6 @@
     <string name="option_live_status">Status ao vivo</string>
     <string name="option_image_cache_size">Tamanho do cache de imagens</string>
     <string name="option_custom_headers">Cabeçalhos personalizados do servidor</string>
-    <string name="info_sync_mins_ago">%1$d min atrás</string>
-    <string name="info_sync_hours_ago">%1$d h atrás</string>
     <string name="title_disc_number">Disco %1$s</string>
     <string name="title_library_download">Baixar Biblioteca Completa</string>
     <string name="title_network">Rede</string>

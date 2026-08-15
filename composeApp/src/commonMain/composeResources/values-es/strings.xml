@@ -19,8 +19,6 @@
     <string name="title_songs">Canciones</string>
     <string name="title_artists">Artistas</string>
     <string name="title_similar_artists">Artistas similares</string>
-    <string name="title_source">Código fuente</string>
-    <string name="title_chat">Charla</string>
     <string name="subtitle_appearance">Temas, colores, disposición, icono de app</string>
     <string name="subtitle_now_playing">Personalice la vista de reproducción a pantalla completa y vistas de letras</string>
     <string name="subtitle_bottom_app_bar">Personalice la barra inferior y el mini‐reproductor</string>
@@ -149,7 +147,6 @@
     <string name="option_now_playing_slider_style">Estilo de control deslizante</string>
     <string name="option_now_playing_slider_style_flat">Plano</string>
     <string name="option_now_playing_slider_style_squiggly">Ondulado</string>
-    <string name="option_lyrics_priority">Configurar proveedores de letras</string>
     <string name="option_sort_playlist_by_name">Por nombre</string>
     <string name="option_sort_playlist_date_added">Fecha de adición</string>
     <string name="option_sort_playlist_duration">Duración</string>
@@ -243,8 +240,6 @@
     <string name="info_status_calculating">Calculando…</string>
     <string name="info_sync_never">Nunca</string>
     <string name="info_sync_just_now">Ahora mismo</string>
-    <string name="info_sync_mins_ago">Hace %1$d m</string>
-    <string name="info_sync_hours_ago">Hace %1$d h</string>
     <string name="action_download">Descargar</string>
     <string name="action_delete_download">Eliminar descarga</string>
     <string name="action_cancel_download">Cancelar descarga</string>
@@ -280,7 +275,6 @@
     <string name="notice_login_suggestion">Quizá quiso decir…</string>
     <string name="subtitle_trigger_sync">Fuerza una actualización completa de la biblioteca inmediatamente</string>
     <string name="subtitle_rebuild_database">Purga todos los metadatos locales y fuerza una sincronización nueva</string>
-    <string name="info_sync_date_format">%1$d %2$s</string>
     <string name="info_exception_handler">Esto hará que la aplicación se cierre inmediatamente. ¿Está seguro?</string>
     <plurals name="count_minutes">
         <item quantity="one">%1$d minuto</item>
@@ -411,4 +405,6 @@
     <string name="info_repeat_one">Repetir una</string>
     <string name="info_repeat_all">Repetir todas</string>
     <string name="info_app_icon">Cambiar el icono de la app cerrará Navic como Android requiere esto. Algunos iconos pueden parecer idénticos en su pantalla inicial si su lanzador cambia dinámicamente los colores del icono.</string>
+    <string name="option_cover_art_action_show_lyrics">Mostrar letras</string>
+    <string name="option_cover_art_action_disabled">Deshabilitado</string>
 </resources>

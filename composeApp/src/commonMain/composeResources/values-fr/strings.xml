@@ -20,8 +20,6 @@
     <string name="title_artists">Artistes</string>
     <string name="title_all">Tout</string>
     <string name="title_similar_artists">Artistes similaires</string>
-    <string name="title_source">Code source</string>
-    <string name="title_chat">Discuter</string>
     <string name="title_shares">Partages</string>
     <string name="subtitle_appearance">Thèmes, couleurs, mise en page, icône de l'application</string>
     <string name="subtitle_now_playing">Personnalisez l'affichage de la lecture en cours et des paroles</string>
@@ -170,7 +168,6 @@
     <string name="option_now_playing_slider_style">Style de la barre de lecture</string>
     <string name="option_now_playing_slider_style_flat">Plat</string>
     <string name="option_now_playing_slider_style_squiggly">Onduleux</string>
-    <string name="option_lyrics_priority">Configurer les fournisseurs de paroles</string>
     <string name="option_sort_playlist_by_name">Par nom</string>
     <string name="option_sort_playlist_date_added">Par date d'ajout</string>
     <string name="option_sort_playlist_duration">Par durée</string>
@@ -229,7 +226,7 @@
     <string name="title_cache_management">Cache &amp; Gestion du Stockage</string>
     <string name="title_danger_zone">Zone de Danger</string>
     <string name="title_sort_by">Trier par</string>
-    <string name="title_bulk_download">Télécharger tous les Albums</string>
+    <string name="title_bulk_download">Télécharger tous les albums</string>
     <string name="title_confirm">Confirmer</string>
     <string name="subtitle_data_storage">Gérer la synchronisation, l'utilisation du réseau et le cache</string>
     <string name="subtitle_trigger_sync">Forcer un scan complet de la bibliothèque</string>
@@ -241,9 +238,6 @@
     <string name="option_downloaded_songs">Morceaux téléchargés</string>
     <string name="info_status_idle">Inactif</string>
     <string name="info_sync_never">Jamais</string>
-    <string name="info_sync_mins_ago">Il y a %1$d minutes</string>
-    <string name="info_sync_hours_ago">Il y a %1$d heure(s)</string>
-    <string name="info_sync_date_format">%1$d %2$s</string>
     <string name="info_bulk_download_warning">Êtes-vous sur(e) de vouloir télécharger tous les albums de %1$s?\nCela peut nécessiter beaucoup de stockage et de données.</string>
     <string name="action_download">Télécharger</string>
     <string name="action_delete_download">Supprimer le téléchargement</string>
@@ -266,7 +260,7 @@
     <string name="action_rebuild_database">Reconstruire la base de données</string>
     <string name="title_update">Nouvelle version disponible</string>
     <string name="title_changelog">Liste des changements</string>
-    <string name="subtitle_check_for_updates">Il est recommandé de laisser cette option activée, car certaines mises à jour apportent des corrections de bogues importantes</string>
+    <string name="subtitle_check_for_updates">Vérifier GitHub pour les mis-à-jour au lancement de l'application</string>
     <string name="option_lyrics_blur">Effet de flou dans les paroles</string>
     <string name="option_sort_downloaded">Téléchargé</string>
     <string name="option_live_status">Status en direct</string>
@@ -398,7 +392,7 @@
     <string name="title_download_quality">Qualité des téléchargements</string>
     <string name="title_track_info">Informations sur la piste</string>
     <string name="subtitle_download_quality">Ajuster la qualité des morceaux téléchargés</string>
-    <string name="subtitle_dynamic_theming">Appliquer dynamiquement un thème pour l'affichage des albums et des artistes, en fonction de l'illustration de couverture</string>
+    <string name="subtitle_dynamic_theming">Thème dynamique pour l'affichage des albums et des artistes, en fonction de l'illustration de couverture</string>
     <string name="subtitle_app_icon_designer">Conçu par : %1$s</string>
     <string name="subtitle_local_network_denied">Vous devez autoriser Navic à accéder à votre réseau local pour que votre serveur soit accessible.</string>
     <string name="option_sort_year">Année</string>
@@ -411,4 +405,25 @@
     <string name="notice_local_network_denied">Permission refusée</string>
     <string name="info_download_quality">Les préréglages de meilleure qualité occupent davantage d'espace de stockage et de données. Le transcodage peut allonger les délais de téléchargement. Sélectionnez « Sans perte » si vous rencontrez des problèmes.</string>
     <string name="info_app_icon">Android requiert de fermer Navic afin de changer l'icône de l'application . Certaines icônes peuvent sembler identique sur votre écran d'accueil si votre lanceur d'application modifie dynamiquement la couleur des icônes.</string>
+    <string name="option_cover_art_action">Appui sur l'illustration de couverture</string>
+    <string name="option_cover_art_action_disabled">Désactivé</string>
+    <string name="option_cover_art_action_show_lyrics">Montrer les paroles</string>
+    <string name="subtitle_equaliser">Régler et améliorer le son</string>
+    <string name="subtitle_equaliser_disabled">Non disponible lorsque le déchargement audio est activé</string>
+    <string name="option_auto_fill_queue">Compléter automatiquement la file d'attente</string>
+    <string name="subtitle_auto_fill_queue">Ajouter automatiquement une chanson au hasard dans la file d'attente lorsqu'il n'en reste plus qu'une</string>
+    <string name="option_equaliser">Égaliseur</string>
+    <string name="option_list_view_mode">Mode de vue</string>
+    <string name="option_list_view_mode_grid">Grille</string>
+    <string name="option_list_view_mode_list">Liste</string>
+    <string name="info_external_song">Externe</string>
+    <string name="info_external_song_description">Cette chanson a été marquée comme externe par votre serveur, il se peut donc que vous ne puissiez pas l'écouter.</string>
+    <string name="action_reset">Réinitialiser</string>
+    <string name="info_equaliser_unsupported">Votre appareil ne supporte pas cette fonctionnalité.</string>
+    <string name="title_discord_server">Serveur Discord</string>
+    <string name="title_lyric_providers">Fournisseur de parole</string>
+    <string name="title_github">GitHub</string>
+    <string name="title_codeberg">Codeberg</string>
+    <string name="subtitle_configure_lyric_providers">Changer où les paroles sont récupérées</string>
+    <string name="option_equaliser_mode_disabled">Désactivé</string>
 </resources>

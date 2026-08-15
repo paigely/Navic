@@ -50,7 +50,6 @@
     <string name="info_track_sampling_rate">Tingkat pengambilan sampel</string>
     <string name="subtitle_playlist">Daftar Putar</string>
     <string name="action_log_out">Keluar</string>
-    <string name="title_source">Kode sumber</string>
     <string name="option_artwork_shape">Bentuk sampul</string>
     <string name="title_choose_font">Font aplikasi</string>
     <plurals name="count_playlists">
@@ -69,7 +68,6 @@
     <string name="action_add_all_to_playlist">Tambahkan Semua ke Daftar Putar</string>
     <string name="action_update_app">Memperbarui</string>
     <string name="option_choose_theme">Tema aplikasi</string>
-    <string name="info_sync_hours_ago">%1$d jam yang lalu</string>
     <string name="title_songs">Lagu-lagu</string>
     <string name="info_lyrics_provider">Lirik disediakan oleh %1$s</string>
     <string name="action_search_history">Pencarian Terbaru</string>
@@ -122,7 +120,6 @@
     <string name="subtitle_streaming_quality">Sesuaikan kualitas musik yang diputar</string>
     <string name="option_check_for_updates">Periksa pembaruan</string>
     <string name="option_lyrics_autoscroll">Lirik bergulir otomatis</string>
-    <string name="info_sync_mins_ago">%1$d m yang lalu</string>
     <string name="theme_mode_dark">Gelap</string>
     <string name="title_similar_artists">Artis serupa</string>
     <string name="subtitle_gapless_playback">Eksperimental. Membutuhkan restart aplikasi. Dapat bertentangan dengan fitur audio offload pada beberapa perangkat</string>
@@ -179,7 +176,6 @@
     <string name="action_navigate_back">Kembali</string>
     <string name="action_add_to_queue">Tambahkan ke Antrian</string>
     <string name="theme_dynamic">Dinamis</string>
-    <string name="option_lyrics_priority">Konfigurasi penyedia lirik</string>
     <string name="option_bottom_bar_collapse_mode">Mode runtuh</string>
     <plurals name="count_rate_stars">
         <item quantity="other">Beri peringkat %1$d bintang</item>
@@ -217,7 +213,6 @@
     <string name="theme_spotify">Menyoroti</string>
     <string name="info_error">Terjadi kesalahan.</string>
     <string name="option_now_playing_song_info">Tampilkan informasi teknis lagu</string>
-    <string name="title_chat">Mengobrol</string>
     <string name="info_album_replay_gain">Album ReplayGain</string>
     <string name="info_no_shares">Tidak ada saham</string>
     <string name="title_create_radio">Buat radio</string>
@@ -253,7 +248,6 @@
     <string name="option_now_playing_background_style">Gaya latar belakang</string>
     <string name="option_offline_mode_forced">Dipaksa</string>
     <string name="info_share_expires_never">Tidak pernah kedaluwarsa</string>
-    <string name="info_sync_date_format">%1$d %2$s</string>
     <string name="info_unknown_year">Tahun Tidak Diketahui</string>
     <string name="title_miscellaneous">Aneka ragam</string>
     <string name="info_track_name">Nama</string>

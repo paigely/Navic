@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_library">Bibliotecă</string>
+    <string name="title_starred">Cu stea</string>
+    <string name="title_playlists">Playlists</string>
+    <string name="title_settings">Setari</string>
+    <string name="title_search">Cautare</string>
+    <string name="title_appearance">Aspect</string>
+    <string name="title_behaviour">comportament</string>
+    <string name="title_now_playing">Acum se redă</string>
+    <string name="title_bottom_app_bar">Bara de jos</string>
+    <string name="title_playback">Playlists</string>
+    <string name="title_data_storage">Date și stocare</string>
+    <string name="title_sync_control">Controlul sincronizării</string>
+    <string name="title_cache_management">Gestionarea memoriei cache și a stocării</string>
+    <string name="title_danger_zone">Zonă periculoasă</string>
+    <string name="title_developer">Opțiuni pentru dezvoltatori</string>
+    <string name="title_about">Despre</string>
+</resources>

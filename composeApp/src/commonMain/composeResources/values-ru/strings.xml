@@ -17,8 +17,6 @@
     <string name="title_songs">Песни</string>
     <string name="title_artists">Исполнители</string>
     <string name="title_similar_artists">Похожие исполнители</string>
-    <string name="title_source">Исходный код</string>
-    <string name="title_chat">Чат</string>
     <string name="subtitle_appearance">Темы, цвета, компоновка, иконка приложения</string>
     <string name="subtitle_about">Информация о приложении, версия, лицензии</string>
     <string name="subtitle_playlist">Плейлист</string>
@@ -140,7 +138,7 @@
     <string name="title_navigation_bar">Навигационная панель</string>
     <string name="title_mini_player">Мини-плеер</string>
     <string name="title_miscellaneous">Разное</string>
-    <string name="title_layout">Расположение</string>
+    <string name="title_layout">Компоновка</string>
     <string name="subtitle_now_playing">Настроить вид плеера и текстов песен в полноэкранном режиме</string>
     <string name="subtitle_bottom_app_bar">Настройка нижней панели и мини-плеера</string>
     <string name="subtitle_playback">Параметры звука, история воспроизведения</string>
@@ -158,7 +156,6 @@
     <string name="option_artwork_shape">Форма обложек</string>
     <string name="option_alphabetical_scroll">Прокрутка в алфавитном порядке</string>
     <string name="title_developer">Настройки для разработчиков</string>
-    <string name="option_lyrics_priority">Приоритет поставщиков текстов песен</string>
     <string name="option_sort_playlist_by_name">По имени</string>
     <string name="option_sort_playlist_date_added">Дата добавления</string>
     <string name="option_sort_playlist_duration">Продолжительность</string>
@@ -166,9 +163,9 @@
     <string name="option_sort_descending">Нисходящий</string>
     <string name="option_enable_scrobbling">История прослушивания</string>
     <string name="option_choose_theme">Тема приложения</string>
-    <string name="option_replay_gain">ReplayGain</string>
+    <string name="option_replay_gain">ReplayGain (Выравнивание громкости)</string>
     <string name="option_gapless_playback">Воспроизведение без пропусков</string>
-    <string name="option_audio_offload">Оффлайн аудио</string>
+    <string name="option_audio_offload">Вынос аудиообработки</string>
     <string name="option_now_playing_toolbar_position">Положение панели инструментов</string>
     <string name="option_position_top">Сверху</string>
     <string name="option_position_bottom">Снизу</string>
@@ -247,9 +244,7 @@
     <string name="option_downloaded_songs">Загруженные треки</string>
     <string name="option_custom_headers">Пользовательские заголовки запросов</string>
     <string name="info_status_idle">Ожидание изменений</string>
-    <string name="info_sync_hours_ago">%1$d ч назад</string>
     <string name="info_sync_just_now">Только что</string>
-    <string name="info_sync_mins_ago">%1$d м назад</string>
     <string name="info_sync_never">Никогда</string>
     <string name="info_bulk_download_warning">Вы уверены, что хотите загрузить все альбомы %1$s?\nДля этого может потребоваться значительный объем хранилища и трафика.</string>
     <string name="action_download">Загрузить</string>
@@ -269,7 +264,6 @@
     <string name="info_download_failed">Ошибка загрузки</string>
     <string name="info_click_to_retry">Повторить попытку</string>
     <string name="info_downloaded">Загружено</string>
-    <string name="info_sync_date_format">%1$d %2$s</string>
     <string name="option_sort_downloaded">Загружено</string>
     <string name="title_update">Доступно обновление</string>
     <string name="title_changelog">О релизе</string>
@@ -365,8 +359,8 @@
     <string name="info_streaming_quality">Более высокие пресеты качества будут использовать больше трафика. Перекодирование треков может значительно повлиять на время загрузки треков и привести к рассинхронизации текстов. Выберите Сжатие без потерь, если встретились с какими-либо проблемами.</string>
     <string name="title_advanced">Расширенное транскодирование</string>
     <string name="option_off">Выключено</string>
-    <string name="option_max_bitrate_wifi">Максимальный битрейт на Wi-Fi (кб/с)</string>
-    <string name="option_max_bitrate_cellular">Максимальный битрейт на мобильной сети (kbps)</string>
+    <string name="option_max_bitrate_wifi">Максимальный битрейт по Wi-Fi (кб/с)</string>
+    <string name="option_max_bitrate_cellular">Максимальный битрейт по мобильной сети (кб/с)</string>
     <string name="title_starred">Избранное</string>
     <string name="option_cover_art_quality">Качество обложек</string>
     <string name="info_no_starred">В избранном ничего нет</string>
@@ -388,7 +382,7 @@
     <string name="subtitle_local_network_denied">Вам необходимо предоставить Navic доступ к вашей локальной сети, чтобы ваш сервер был доступен.</string>
     <string name="option_artist_image_shape">Форма изображения исполнителя</string>
     <string name="option_choose_app_icon">Иконка приложения</string>
-    <string name="option_stream_custom_quality">Выбрать качество стриминга</string>
+    <string name="option_stream_custom_quality">Пользовательское качество</string>
     <string name="option_download_custom_quality">Выбрать качество скачивания</string>
     <string name="option_explicit_playback">Нецензурный контент</string>
     <string name="option_explicit_playback_allowed">Разрешен</string>
@@ -419,4 +413,19 @@
     <string name="option_dynamic_theming">Динамическое оформление</string>
     <string name="info_transcoding_defaults">Если оставить любое из этих полей пустым, оно будет пропущено, и решение примет сервер.</string>
     <string name="notice_play_next">Воспроизвести следующим.</string>
+    <string name="option_cover_art_action">Действие при нажатии на обложку</string>
+    <string name="option_cover_art_action_disabled">Отключено</string>
+    <string name="option_cover_art_action_show_lyrics">Показать текст песни</string>
+    <string name="option_auto_fill_queue">Автозаполнение очереди</string>
+    <string name="subtitle_auto_fill_queue">Автоматически добавлять случайный трек, когда в очереди остается только один</string>
+    <string name="info_equaliser_unsupported">Ваше устройство не поддерживает эту функцию.</string>
+    <string name="subtitle_equaliser">Настройка и улучшение звука</string>
+    <string name="subtitle_equaliser_disabled">Недоступно при включенном выносе аудиообработки</string>
+    <string name="option_equaliser">Эквалайзер</string>
+    <string name="option_list_view_mode">Тип отображения</string>
+    <string name="option_list_view_mode_grid">Сетка</string>
+    <string name="option_list_view_mode_list">Список</string>
+    <string name="action_reset">Сбросить</string>
+    <string name="info_external_song">Внешний</string>
+    <string name="info_external_song_description">Ваш сервер пометил этот трек как внешний, поэтому вы, возможно, не сможете его прослушать.</string>
 </resources>
