@@ -11,6 +11,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SegmentedButton
@@ -22,6 +23,7 @@ import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
@@ -33,6 +35,8 @@ import navic.composeapp.generated.resources.title_direction
 import navic.composeapp.generated.resources.title_sort_by
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.domain.models.settings.ListViewMode
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.ListArrow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,7 +117,13 @@ fun <T> SortSheet(
 							),
 							onClick = { onSetViewMode(viewMode) },
 							selected = selectedViewMode == viewMode,
-							label = { Text(stringResource(viewMode.displayName)) }
+							label = { Text(stringResource(viewMode.displayName)) },
+							icon = {
+								Icon(
+									imageVector = viewMode.icon,
+									contentDescription = null
+								)
+							}
 						)
 					}
 				}
@@ -139,7 +149,14 @@ fun <T> SortSheet(
 						onSetReversed(false)
 					},
 					selected = !selectedReversed,
-					label = { Text(stringResource(Res.string.option_sort_ascending)) }
+					label = { Text(stringResource(Res.string.option_sort_ascending)) },
+					icon = {
+						Icon(
+							imageVector = Icons.Outlined.ListArrow,
+							contentDescription = null,
+							modifier = Modifier.rotate(180f)
+						)
+					}
 				)
 				SegmentedButton(
 					shape = SegmentedButtonDefaults.itemShape(
@@ -150,7 +167,13 @@ fun <T> SortSheet(
 						onSetReversed(true)
 					},
 					selected = selectedReversed,
-					label = { Text(stringResource(Res.string.option_sort_descending)) }
+					label = { Text(stringResource(Res.string.option_sort_descending)) },
+					icon = {
+						Icon(
+							imageVector = Icons.Outlined.ListArrow,
+							contentDescription = null
+						)
+					}
 				)
 			}
 		}
