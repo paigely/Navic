@@ -22,6 +22,7 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSongListType
+import paige.navic.domain.models.lyrics.LyricsProvider
 import kotlin.math.max
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
@@ -93,4 +94,10 @@ fun PaletteStyle.label(): String = when (this) {
 fun ColorSpec.SpecVersion.label() = when (this) {
 	ColorSpec.SpecVersion.SPEC_2021 -> "Material 3 (2021)"
 	ColorSpec.SpecVersion.SPEC_2025 -> "Expressive (2025)"
+}
+
+fun LyricsProvider.Id.label() = when (this) {
+	LyricsProvider.Id.SUBSONIC -> "Subsonic"
+	LyricsProvider.Id.LYRICS_PLUS -> "LyricsPlus"
+	LyricsProvider.Id.LRCLIB -> "LRCLIB"
 }

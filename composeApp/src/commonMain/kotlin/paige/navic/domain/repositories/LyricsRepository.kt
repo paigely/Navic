@@ -14,6 +14,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.entities.LyricEntity
 import paige.navic.domain.manager.SessionManager
@@ -41,13 +46,23 @@ class LyricsRepository(
 	}
 	private val json = Json { ignoreUnknownKeys = true }
 
+	// regex for finding parenthesis as they are often for crediting producers which can make lrclib
+	// miss a search. example "songTitle (prod. producer123)"
+	private companion object {
+		val PARENTHETICAL = Regex("""\([^)]*\)""")
+		val REPEATED_WHITESPACE = Regex("""\s+""")
+	}
+
 	private fun getConfig(): LyricsConfig {
-		val raw = settings.getStringOrNull(LyricsConfig.KEY)
-		return try {
-			if (raw != null) json.decodeFromString<LyricsConfig>(raw)
-			else LyricsConfig()
-		} catch (_: Exception) {
-			LyricsConfig()
+		try {
+			val raw = settings.getStringOrNull(LyricsConfig.KEY)
+				?: return LyricsConfig.Default
+			val config: LyricsConfig = json.decodeFromString(raw)
+			return config.takeIf { it.version == LyricsConfig.VERSION }
+				?: LyricsConfig.Default
+		} catch (ex: Exception) {
+			Logger.w("LyricsRepository", "failed to load config", ex)
+			return LyricsConfig.Default
 		}
 	}
 
@@ -57,9 +72,9 @@ class LyricsRepository(
 			if (cached != null) {
 				val parsed = LyricsContentParser.parse(cached.rawContent)
 				if (!parsed.isNullOrEmpty()) return LyricsResult(
-					parsed,
-					cached.provider,
-					cached.rawContent
+					lines = parsed,
+					providerName = cached.providerName,
+					rawContent = cached.rawContent
 				)
 			}
 		} catch (ex: Exception) {
@@ -67,24 +82,24 @@ class LyricsRepository(
 		}
 
 		val currentConfig = getConfig()
-		for (provider in currentConfig.priority) {
+		for (provider in currentConfig.providers.filter { it.enabled }) {
 			try {
 				var rawContentToCache: String? = null
 
-				val parsedLyrics = when (provider) {
-					LyricsProvider.LYRICS_PLUS -> {
+				val parsedLyrics = when (provider.id) {
+					LyricsProvider.Id.LYRICS_PLUS -> {
 						val raw = fetchRawLyricsPlus(song, currentConfig)
 						rawContentToCache = raw
 						raw?.let { LyricsContentParser.parse(it) }
 					}
 
-					LyricsProvider.LRCLIB -> {
+					LyricsProvider.Id.LRCLIB -> {
 						val raw = fetchRawLrcLib(song, currentConfig)
 						rawContentToCache = raw
 						raw?.let { LyricsContentParser.parse(it) }
 					}
 
-					LyricsProvider.SUBSONIC -> {
+					LyricsProvider.Id.SUBSONIC -> {
 						val subsonicLyrics = sessionManager.api.getLyrics(song.id).firstOrNull()
 
 						val lines = subsonicLyrics?.lines?.flatMap { line ->
@@ -121,7 +136,7 @@ class LyricsRepository(
 						rawContentToCache?.let { content ->
 							val entity = LyricEntity(
 								songId = song.id,
-								provider = provider,
+								providerName = provider.id.name,
 								rawContent = content
 							)
 							lyricDao.insertLyrics(entity)
@@ -129,10 +144,14 @@ class LyricsRepository(
 					} catch (e: Exception) {
 						Logger.e("LyricRepository", "Failed to cache lyrics for ${song.title}", e)
 					}
-					return LyricsResult(parsedLyrics, provider, rawContentToCache)
+					return LyricsResult(
+						lines = parsedLyrics,
+						providerName = provider.id.name,
+						rawContent = rawContentToCache
+					)
 				}
 			} catch (e: Exception) {
-				Logger.e("LyricRepository", "Provider ${provider.name} failed!", e)
+				Logger.e("LyricRepository", "Provider ${provider.id.name} failed!", e)
 				continue
 			}
 		}
@@ -142,17 +161,25 @@ class LyricsRepository(
 	private suspend fun fetchRawLrcLib(song: DomainSong, config: LyricsConfig): String? {
 		return try {
 			val response = client.get(config.lrcLibBaseUrl) {
-				parameter("track_name", song.title)
-				parameter("artist_name", song.artistName)
-				parameter("album_name", song.albumTitle)
-				parameter("duration", song.duration.inWholeSeconds)
+				// using /api/search with q param to search for lyrics more loosely, finds lyrics
+				// more consistently because of how one may tag their music. Also looking at how i.e
+				// navidrome tags albumless songs with [Unknown Album] which will never find a result
+				parameter("q", "${song.title.withoutParentheticals()} ${song.artistName}")
 				accept(ContentType.Application.Json)
 			}
-			if (response.status.isSuccess()) {
-				response.bodyAsText()
-			} else {
+			if (!response.status.isSuccess()) {
 				throw Exception("unsuccessful status code ${response.status.value}")
 			}
+
+			// lrclib returns up to 20 results in the form of a json object, select the first one
+			// with synced lyrics, or first one with unsynced lyrics if none have any synced. Better
+			// matching can be added further to then look for songs that do have a similar album or
+			// duration though first result should be fine?
+			val results = json.parseToJsonElement(response.bodyAsText()).jsonArray
+			val match = results.firstOrNull { it.lyricsOrNull("syncedLyrics") != null }
+				?: results.firstOrNull { it.lyricsOrNull("plainLyrics") != null }
+
+			match?.toString()
 		} catch (ex: Exception) {
 			Logger.w(
 				"LyricsRepository",
@@ -162,6 +189,16 @@ class LyricsRepository(
 			null
 		}
 	}
+
+	private fun JsonElement.lyricsOrNull(key: String): String? =
+		jsonObject[key]?.jsonPrimitive?.contentOrNull?.takeIf { it.isNotBlank() }
+
+	// remove parts of song title as defined by regex PARENTHETICAL
+	private fun String.withoutParentheticals(): String =
+		replace(PARENTHETICAL, " ")
+			.replace(REPEATED_WHITESPACE, " ")
+			.trim()
+			.ifEmpty { this }
 
 	private suspend fun fetchRawLyricsPlus(song: DomainSong, config: LyricsConfig): String? =
 		coroutineScope {

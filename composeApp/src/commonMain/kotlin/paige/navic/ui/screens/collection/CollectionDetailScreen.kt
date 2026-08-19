@@ -39,6 +39,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
+import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbum
@@ -64,6 +65,7 @@ import paige.navic.ui.screens.collection.components.collectionDetailScreenMoreBy
 import paige.navic.ui.screens.collection.viewmodels.CollectionDetailViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.theme.NavicTheme
+import paige.navic.util.core.isLandscape
 import paige.navic.util.ui.rememberColorSchemeFromCoverArt
 import paige.navic.util.ui.withoutTop
 import kotlin.time.Duration
@@ -74,6 +76,7 @@ fun CollectionDetailScreen(
 	collectionId: String,
 	tab: String
 ) {
+	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	val viewModel = koinViewModel<CollectionDetailViewModel>(
@@ -158,7 +161,8 @@ fun CollectionDetailScreen(
 			},
 			bottomBar = {
 				val scrollManager = LocalBottomBarScrollManager.current
-				if (preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+				val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
+				if (!platformContext.isLandscape() && preferVisible) {
 					RootBottomBar(scrolled = scrollManager.isTriggered)
 				}
 			}

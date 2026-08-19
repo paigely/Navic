@@ -70,6 +70,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalNavStack
+import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.PreferenceManager
@@ -93,6 +94,7 @@ import paige.navic.ui.screens.artist.viewmodels.ArtistDetailViewModel
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.theme.NavicTheme
+import paige.navic.util.core.isLandscape
 import paige.navic.util.ui.rememberColorSchemeFromCoverArt
 import kotlin.time.Duration
 
@@ -101,6 +103,7 @@ import kotlin.time.Duration
 fun ArtistDetailScreen(
 	artistId: String
 ) {
+	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	val viewModel = koinViewModel<ArtistDetailViewModel>(
@@ -172,7 +175,8 @@ fun ArtistDetailScreen(
 			},
 			bottomBar = {
 				val scrollManager = LocalBottomBarScrollManager.current
-				if (preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+				val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
+				if (!platformContext.isLandscape() && preferVisible) {
 					RootBottomBar(scrolled = scrollManager.isTriggered)
 				}
 			}

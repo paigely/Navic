@@ -26,6 +26,7 @@ import paige.navic.ui.components.common.CoverArt
 @Composable
 fun NowPlayingArtwork(
 	modifier: Modifier = Modifier,
+	onClick: (() -> Unit)?,
 	isLandscape: Boolean,
 	song: DomainSong
 ) {
@@ -49,7 +50,8 @@ fun NowPlayingArtwork(
 				.aspectRatio(1f)
 				.then(if (isLandscape) Modifier.fillMaxHeight() else Modifier.fillMaxSize())
 				.padding(padding),
-			shadowElevation = 8.dp
+			shadowElevation = 8.dp,
+			onClick = onClick
 		)
 		if (song.coverArtId.isNullOrEmpty()) {
 			Icon(

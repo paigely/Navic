@@ -4,8 +4,7 @@ import androidx.room3.ColumnTypeConverter
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainReplayGain
-import paige.navic.domain.models.lyrics.LyricsProvider
-import paige.navic.util.core.Logger
+import paige.navic.domain.models.DomainSongArtist
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
@@ -68,6 +67,27 @@ class Converters {
 		}
 	}
 
+	// List<DomainSongArtist>
+	@ColumnTypeConverter
+	fun fromDomainSongArtistList(list: List<DomainSongArtist>?): String? {
+		return list?.joinToString(separator = ";") { c ->
+			"${c.id}^${c.name}"
+		}
+	}
+
+	@ColumnTypeConverter
+	fun toDomainSongArtistList(data: String?): List<DomainSongArtist>? {
+		if (data.isNullOrEmpty()) return if (data == null) null else emptyList()
+
+		return data.split(";").filter { it.isNotEmpty() }.map { item ->
+			val parts = item.split("^")
+			DomainSongArtist(
+				id = parts.getOrNull(0)?.ifEmpty { null } ?: "",
+				name = parts.getOrNull(1)?.ifEmpty { null } ?: ""
+			)
+		}
+	}
+
 	// ReplayGain
 	@ColumnTypeConverter
 	fun fromReplayGain(rg: DomainReplayGain?): String? {
@@ -89,22 +109,6 @@ class Converters {
 			baseGain = parts[4].toFloatOrNull(),
 			fallbackGain = parts[5].toFloatOrNull()
 		)
-	}
-
-	//Lyrics
-	@ColumnTypeConverter
-	fun fromLyricsProvider(provider: LyricsProvider): String {
-		return provider.name
-	}
-
-	@ColumnTypeConverter
-	fun toLyricsProvider(name: String): LyricsProvider {
-		return try {
-			LyricsProvider.valueOf(name)
-		} catch (e: Exception) {
-			Logger.w("Converters", "Unknown lyrics provider", e)
-			LyricsProvider.SUBSONIC
-		}
 	}
 
 	// DomainExplicitStatus

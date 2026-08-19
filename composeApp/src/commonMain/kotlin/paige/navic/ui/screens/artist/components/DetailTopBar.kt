@@ -17,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalUriHandler
 import kotlinx.collections.immutable.toPersistentList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_more
@@ -40,7 +39,6 @@ fun ArtistDetailScreenTopBar(
 	starred: Boolean? = null,
 	onSetStarred: ((Boolean) -> Unit)? = null,
 ) {
-	val uriHandler = LocalUriHandler.current
 	val state = (artistState as? UiState.Success)?.data
 	val alpha by animateFloatAsState(
 		if (scrolled) 1f else 0f
@@ -91,20 +89,6 @@ fun ArtistDetailScreenTopBar(
 							},
 							onAddAllToPlaylist = {
 								playlistDialogShown = true
-							},
-							onViewOnLastFm = {
-								expanded = false
-								state.artist.lastFmUrl?.let { url ->
-									uriHandler.openUri(url)
-								}
-							},
-							onViewOnMusicBrainz = {
-								expanded = false
-								state.artist.musicBrainzId?.let { id ->
-									uriHandler.openUri(
-										"https://musicbrainz.org/artist/$id"
-									)
-								}
 							},
 							starred = starred,
 							onSetStarred = onSetStarred

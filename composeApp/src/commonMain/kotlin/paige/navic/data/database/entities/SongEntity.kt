@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainReplayGain
+import paige.navic.domain.models.DomainSongArtist
 import kotlin.time.Duration
 import kotlin.time.Instant
 
@@ -45,5 +46,8 @@ data class SongEntity(
 	val starredAt: Instant?,
 	val coverArtId: String?,
 	val musicBrainzId: String?,
-	val explicitStatus: DomainExplicitStatus
+	val explicitStatus: DomainExplicitStatus,
+	val artists: List<DomainSongArtist>,
+	val albumArtists: List<DomainSongArtist>,
+	val isExternal: Boolean
 )

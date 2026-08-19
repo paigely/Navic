@@ -20,8 +20,6 @@
     <string name="title_artists">Künstler</string>
     <string name="title_all">All</string>
     <string name="title_similar_artists">Ähnliche Künstler</string>
-    <string name="title_source">Quellcode</string>
-    <string name="title_chat">Chat</string>
     <string name="title_shares">Shares</string>
     <string name="subtitle_appearance">Aussehen anpassen</string>
     <string name="subtitle_now_playing">Player anpassen</string>

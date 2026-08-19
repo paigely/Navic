@@ -20,8 +20,6 @@
     <string name="title_artists">艺术家</string>
     <string name="title_all">全部</string>
     <string name="title_similar_artists">相似艺术家</string>
-    <string name="title_source">源代码</string>
-    <string name="title_chat">交流</string>
     <string name="title_shares">分享</string>
     <string name="title_choose_font">字体</string>
     <string name="title_fonts_inbuilt">内置字体</string>
@@ -44,7 +42,7 @@
     <string name="option_now_playing_background_style">背景样式</string>
     <string name="option_now_playing_background_style_static">静态</string>
     <string name="option_now_playing_background_style_dynamic">动态</string>
-    <string name="option_accent_colour">强调色</string>
+    <string name="option_accent_colour">调色盘</string>
     <string name="option_now_playing_slider_style">滑块风格</string>
     <string name="option_now_playing_slider_style_flat">扁平</string>
     <string name="option_now_playing_slider_style_squiggly">波浪</string>
@@ -54,7 +52,6 @@
     <string name="option_use_marquee_text">文本自动滚动速度</string>
     <string name="option_alphabetical_scroll">按字母顺序滚动</string>
     <string name="option_grid_items_per_row">网格大小</string>
-    <string name="option_lyrics_priority">设置歌词来源</string>
     <string name="option_share_expires">有效期</string>
     <string name="option_account_navidrome_instance">服务器地址</string>
     <string name="option_account_username">用户名</string>
@@ -245,8 +242,6 @@
     <string name="option_quality_lossless">无损（无转码）</string>
     <string name="info_sync_just_now">刚才</string>
     <string name="info_sync_never">从未</string>
-    <string name="info_sync_mins_ago">%1$d 分钟前</string>
-    <string name="info_sync_hours_ago">%1$d 小时前</string>
     <string name="info_library_download_warning">你确定要下载整个库吗？\n这会跳过你已经下载的曲目，但仍可能占用大量存储空间和数据。</string>
     <string name="info_library_download">保存所有同步的音乐以供离线播放</string>
     <plurals name="count_minutes">
@@ -316,7 +311,6 @@
     <string name="info_status_idle">空闲</string>
     <string name="info_status_calculating">正在计算...</string>
     <string name="info_status_downloading">正在下载...</string>
-    <string name="info_sync_date_format">%1$d %2$s</string>
     <string name="info_bulk_download_warning">你确定要下载 %1$s 的所有专辑吗？\n这可能需要大量存储空间和数据。</string>
     <string name="info_progress">进度</string>
     <string name="info_in_use">（使用中）</string>
@@ -351,8 +345,6 @@
     <string name="title_palette">调色板</string>
     <string name="title_theme_mode">主题模式</string>
     <string name="title_account">账号</string>
-    <string name="subtitle_dynamic_album_view_theme">根据专辑封面艺术动态主题化专辑视图</string>
-    <string name="subtitle_dynamic_artist_view_theme">根据艺术家图片动态主题化艺术家视图</string>
     <string name="option_artist_image_shape">艺术家图片形状</string>
     <string name="option_stream_custom_quality">使用自定义流媒体质量</string>
     <string name="option_stream_format_wifi">Wi-Fi 流媒体格式</string>
@@ -363,8 +355,6 @@
     <string name="option_explicit_playback_allowed">允许</string>
     <string name="option_explicit_playback_skip">跳过露骨歌曲</string>
     <string name="option_explicit_playback_skip_session">在此会话中跳过露骨歌曲</string>
-    <string name="option_dynamic_album_view_theme">动态专辑视图主题</string>
-    <string name="option_dynamic_artist_view_theme">动态艺术家视图主题</string>
     <string name="info_transcoding_defaults">将这些留空将省略它们，让服务器决定。</string>
     <string name="option_navigation_bar_label_visibility_never">从不</string>
     <string name="action_next_song">下一首</string>
@@ -382,4 +372,21 @@
     <string name="info_repeat_off">重复关闭</string>
     <string name="info_repeat_one">单曲重复</string>
     <string name="info_repeat_all">全部重复</string>
+    <string name="option_sort_year">年</string>
+    <string name="subtitle_dynamic_theming">根据封面图设置专辑和艺人视图的主题</string>
+    <string name="subtitle_app_icon_designer">设计者：%1$s</string>
+    <string name="option_choose_app_icon">应用程序图标</string>
+    <string name="option_dynamic_theming">动态主题</string>
+    <string name="info_app_icon">更改应用图标时，Navic 会自动退出，这是 Android 系统的限制。如果您的启动器启用了主题图标（动态图标配色），部分图标在主屏幕上可能显示为相同的样式。</string>
+    <string name="title_download_quality">下载质量</string>
+    <string name="title_track_info">音轨信息</string>
+    <string name="subtitle_download_quality">调整下载质量</string>
+    <string name="subtitle_local_network_denied">您需要授予Navic对本地网络的访问权限，以便访问您的服务器。</string>
+    <string name="option_download_custom_quality">使用自定义下载质量</string>
+    <string name="option_cover_art_action_disabled">禁用</string>
+    <string name="option_cover_art_action_show_lyrics">显示歌词</string>
+    <string name="action_open_settings">打开设置</string>
+    <string name="notice_local_network_denied">权限被拒绝</string>
+    <string name="info_download_quality">更高质量的预设会消耗更多存储和数据。转码可能会增加下载次数，若遇到问题选择无损。</string>
+    <string name="subtitle_equaliser">调整并增强音频</string>
 </resources>

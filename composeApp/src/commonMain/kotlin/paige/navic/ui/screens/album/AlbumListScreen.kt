@@ -27,10 +27,12 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
+import paige.navic.domain.models.settings.ListViewMode
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -44,6 +46,7 @@ import paige.navic.ui.screens.album.components.AlbumListScreenSortButton
 import paige.navic.ui.screens.album.components.albumListScreenContent
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
+import paige.navic.util.core.isLandscape
 import paige.navic.util.ui.withoutTop
 import kotlin.time.Duration
 
@@ -53,7 +56,9 @@ fun AlbumListScreen(
 	nested: Boolean = false,
 	listType: DomainAlbumListType
 ) {
+	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
+	val selectedViewMode = preferenceManager.albumListViewMode
 
 	val viewModel = koinViewModel<AlbumListViewModel>(
 		key = listType.toString(),
@@ -81,7 +86,9 @@ fun AlbumListScreen(
 			selectedSorting = selectedSorting,
 			onSetSorting = { viewModel.setListType(it) },
 			selectedReversed = selectedReversed,
-			onSetReversed = { viewModel.setReversed(it) }
+			onSetReversed = { viewModel.setReversed(it) },
+			selectedViewMode = selectedViewMode,
+			onSetViewMode = { preferenceManager.albumListViewMode = it }
 		)
 	}
 
@@ -99,7 +106,8 @@ fun AlbumListScreen(
 		},
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			if (!nested || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
+			if (!nested || (!platformContext.isLandscape() && preferVisible)) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}
@@ -118,15 +126,21 @@ fun AlbumListScreen(
 				else Modifier,
 				state = viewModel.gridState,
 				contentPadding = innerPadding.withoutTop(),
-				verticalArrangement = if ((albumsState as? UiState.Success)?.data?.isEmpty() == true)
+				verticalArrangement = if (albumsState.data?.isEmpty() == true) {
 					Arrangement.Center
-				else Arrangement.spacedBy(12.dp)
+				} else if (selectedViewMode == ListViewMode.List) {
+					Arrangement.spacedBy(0.dp)
+				} else {
+					Arrangement.spacedBy(12.dp)
+				},
+				selectedViewMode = selectedViewMode
 			) {
 				albumListScreenContent(
 					state = albumsState,
 					starred = starred,
 					selectedAlbum = selectedAlbum,
 					selectedAlbumRating = rating,
+					selectedViewMode = selectedViewMode,
 					onPlayNext = { if (selectedAlbum != null) player.playNext(selectedAlbum as DomainSongCollection) },
 					onAddToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum as DomainSongCollection) },
 					onUpdateSelection = { viewModel.selectAlbum(it) },

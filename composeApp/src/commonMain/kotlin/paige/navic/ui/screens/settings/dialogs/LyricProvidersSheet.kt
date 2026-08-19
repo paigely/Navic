@@ -2,13 +2,20 @@ package paige.navic.ui.screens.settings.dialogs
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,26 +30,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import com.kyant.capsule.ContinuousCapsule
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.action_reorder
-import navic.composeapp.generated.resources.option_lyrics_priority
+import navic.composeapp.generated.resources.info_lyric_provider_disclaimer
+import navic.composeapp.generated.resources.title_lyric_providers
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.domain.models.lyrics.LyricsProvider
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle
 import paige.navic.ui.components.common.ErrorBox
+import paige.navic.ui.components.sheets.ModalBottomSheet
 import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.settings.viewmodels.LyricsPriorityViewModel
+import paige.navic.util.core.label
 import paige.navic.util.ui.DraggableListState
 import paige.navic.util.ui.dragHandle
 import paige.navic.util.ui.draggableItems
 import paige.navic.util.ui.rememberDraggableListState
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun LyricsPriorityDialog(
+fun LyricsPrioritySheet(
 	presented: Boolean,
 	onDismissRequest: () -> Unit
 ) {
@@ -58,45 +68,66 @@ fun LyricsPriorityDialog(
 		haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
 	}
 
-	when (state) {
-		is UiState.Loading -> return
-		is UiState.Error -> ErrorBox(state as UiState.Error)
-		is UiState.Success -> {
-			val config = (state as UiState.Success).data
-			AlertDialog(
-				title = {
-					Text(stringResource(Res.string.option_lyrics_priority))
-				},
-				text = {
-					LazyColumn(
-						modifier = Modifier
-							.fillMaxWidth()
-							.heightIn(max = 300.dp),
-						state = draggableState.listState,
-						verticalArrangement = Arrangement.spacedBy(8.dp)
-					) {
-						draggableItems(
+	ModalBottomSheet(
+		onDismissRequest = onDismissRequest,
+		dragHandle = {
+			Surface(
+				modifier = Modifier.padding(vertical = 6.dp),
+				color = MaterialTheme.colorScheme.onSurfaceVariant,
+				shape = ContinuousCapsule,
+			) {
+				Box(Modifier.size(width = 32.dp, height = 4.dp))
+			}
+		},
+		contentWindowInsets = {
+			BottomSheetDefaults.modalWindowInsets.add(
+				WindowInsets(
+					top = 16.dp,
+					left = 12.dp,
+					right = 12.dp,
+					bottom = 8.dp
+				)
+			)
+		}
+	) {
+		Text(
+			text = stringResource(Res.string.title_lyric_providers),
+			style = MaterialTheme.typography.titleLarge
+		)
+		Text(
+			text = stringResource(Res.string.info_lyric_provider_disclaimer),
+			style = MaterialTheme.typography.bodyMedium,
+			color = MaterialTheme.colorScheme.onSurfaceVariant
+		)
+
+		Spacer(Modifier.height(16.dp))
+
+		when (state) {
+			is UiState.Loading -> return@ModalBottomSheet
+			is UiState.Error -> ErrorBox(state as UiState.Error)
+			is UiState.Success -> {
+				val config = (state as UiState.Success).data
+				LazyColumn(
+					modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+					state = draggableState.listState,
+					verticalArrangement = Arrangement.spacedBy(8.dp)
+				) {
+					draggableItems(
+						state = draggableState,
+						items = config.providers,
+						key = { provider -> provider.id }
+					) { provider, isDragging ->
+						ProviderRow(
+							provider = provider,
 							state = draggableState,
-							items = config.priority,
-							key = { provider -> provider.name }
-						) { provider, isDragging ->
-							ProviderRow(
-								provider = provider,
-								isDragging = isDragging,
-								state = draggableState
-							)
-						}
-					}
-				},
-				onDismissRequest = onDismissRequest,
-				confirmButton = {
-					Button(onClick = {
-						onDismissRequest()
-					}) {
-						Text(stringResource(Res.string.action_ok))
+							isDragging = isDragging,
+							onToggleEnabled = {
+								viewModel.toggleEnabled(provider.id)
+							}
+						)
 					}
 				}
-			)
+			}
 		}
 	}
 }
@@ -104,9 +135,10 @@ fun LyricsPriorityDialog(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ProviderRow(
-	state: DraggableListState,
 	provider: LyricsProvider,
-	isDragging: Boolean
+	state: DraggableListState,
+	isDragging: Boolean,
+	onToggleEnabled: () -> Unit
 ) {
 	val elevation by animateDpAsState(
 		if (isDragging) 4.dp else 0.dp,
@@ -115,7 +147,8 @@ private fun ProviderRow(
 	Surface(
 		shadowElevation = elevation,
 		modifier = Modifier.fillMaxWidth(),
-		shape = MaterialTheme.shapes.large
+		shape = MaterialTheme.shapes.large,
+		color = MaterialTheme.colorScheme.surfaceContainer
 	) {
 		Row(
 			modifier = Modifier
@@ -124,11 +157,15 @@ private fun ProviderRow(
 			horizontalArrangement = Arrangement.SpaceBetween,
 			verticalAlignment = Alignment.CenterVertically
 		) {
-			Text(provider.displayName)
+			Checkbox(
+				checked = provider.enabled,
+				onCheckedChange = { _ -> onToggleEnabled() }
+			)
+			Text(provider.id.label())
 			IconButton(
 				modifier = Modifier.dragHandle(
 					state = state,
-					key = provider.name
+					key = provider.id
 				),
 				onClick = {}
 			) {

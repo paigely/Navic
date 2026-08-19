@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -19,18 +20,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.action_configure_lyric_providers
 import navic.composeapp.generated.resources.action_lyrics
+import navic.composeapp.generated.resources.option_cover_art_action
 import navic.composeapp.generated.resources.option_lyrics_autoscroll
 import navic.composeapp.generated.resources.option_lyrics_beat_by_beat
 import navic.composeapp.generated.resources.option_lyrics_blur
 import navic.composeapp.generated.resources.option_lyrics_bright_inactive
 import navic.composeapp.generated.resources.option_lyrics_keep_alive
-import navic.composeapp.generated.resources.option_lyrics_priority
 import navic.composeapp.generated.resources.option_now_playing_background_style
 import navic.composeapp.generated.resources.option_now_playing_slider_style
 import navic.composeapp.generated.resources.option_now_playing_song_info
 import navic.composeapp.generated.resources.option_now_playing_toolbar_position
 import navic.composeapp.generated.resources.option_swipe_to_skip
+import navic.composeapp.generated.resources.subtitle_configure_lyric_providers
 import navic.composeapp.generated.resources.subtitle_now_playing_background_style
 import navic.composeapp.generated.resources.title_layout
 import navic.composeapp.generated.resources.title_now_playing
@@ -38,22 +41,25 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.settings.CoverArtTapAction
 import paige.navic.domain.models.settings.NowPlayingBackgroundStyle
 import paige.navic.domain.models.settings.ToolbarPosition
+import paige.navic.icons.Icons
+import paige.navic.icons.outlined.ChevronForward
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
-import paige.navic.ui.screens.settings.dialogs.LyricsPriorityDialog
+import paige.navic.ui.screens.settings.dialogs.LyricsPrioritySheet
 import paige.navic.ui.screens.settings.dialogs.NowPlayingSliderStyleDialog
 
 @Composable
 fun SettingsNowPlayingScreen() {
 	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
-	var showLyricsPriorityDialog by rememberSaveable { mutableStateOf(false) }
+	var lyricProvidersSheetOpen by rememberSaveable { mutableStateOf(false) }
 
 	Scaffold(
 		topBar = {
@@ -77,6 +83,14 @@ fun SettingsNowPlayingScreen() {
 						title = { Text(stringResource(Res.string.option_swipe_to_skip)) },
 						value = preferenceManager.swipeToSkip,
 						onSetValue = { preferenceManager.swipeToSkip = it }
+					)
+
+					SettingSelectionRow(
+						items = CoverArtTapAction.entries.toImmutableList(),
+						label = { stringResource(it.displayName) },
+						selection = preferenceManager.nowPlayingCoverArtAction,
+						onSelect = { preferenceManager.nowPlayingCoverArtAction = it },
+						title = { Text(stringResource(Res.string.option_cover_art_action)) }
 					)
 
 					SettingSelectionRow(
@@ -112,6 +126,20 @@ fun SettingsNowPlayingScreen() {
 
 				FormTitle(stringResource(Res.string.action_lyrics))
 				Form {
+					FormRow(
+						onClick = { lyricProvidersSheetOpen = true }
+					) {
+						Column(Modifier.weight(1f)) {
+							Text(stringResource(Res.string.action_configure_lyric_providers))
+							Text(
+								text = stringResource(Res.string.subtitle_configure_lyric_providers),
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						}
+						Icon(Icons.Outlined.ChevronForward, null)
+					}
+
 					SettingSwitchRow(
 						title = { Text(stringResource(Res.string.option_lyrics_autoscroll)) },
 						value = preferenceManager.lyricsAutoscroll,
@@ -141,12 +169,6 @@ fun SettingsNowPlayingScreen() {
 						value = preferenceManager.lyricsBrightInactive,
 						onSetValue = { preferenceManager.lyricsBrightInactive = it }
 					)
-
-					FormRow(
-						onClick = { showLyricsPriorityDialog = true }
-					) {
-						Text(stringResource(Res.string.option_lyrics_priority))
-					}
 				}
 
 				FormTitle(stringResource(Res.string.title_layout))
@@ -167,9 +189,9 @@ fun SettingsNowPlayingScreen() {
 				}
 			}
 		}
-		LyricsPriorityDialog(
-			presented = showLyricsPriorityDialog,
-			onDismissRequest = { showLyricsPriorityDialog = false }
+		LyricsPrioritySheet(
+			presented = lyricProvidersSheetOpen,
+			onDismissRequest = { lyricProvidersSheetOpen = false }
 		)
 	}
 }

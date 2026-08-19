@@ -61,6 +61,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalNavStack
+import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbum
@@ -72,6 +73,7 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.settings.ExplicitContentPlayback
+import paige.navic.domain.models.settings.ListViewMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.History
@@ -93,13 +95,15 @@ import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.navigation.Screen
-import paige.navic.ui.screens.album.components.AlbumListScreenItem
+import paige.navic.ui.screens.album.components.AlbumListScreenGridItem
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
-import paige.navic.ui.screens.artist.ArtistsScreenItem
+import paige.navic.ui.screens.artist.ArtistListScreenGridItem
 import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.ui.screens.search.components.SearchScreenChips
 import paige.navic.ui.screens.search.components.SearchScreenTopBar
 import paige.navic.ui.screens.search.viewmodels.SearchViewModel
+import paige.navic.util.core.buildSongInfoString
+import paige.navic.util.core.isLandscape
 
 enum class SearchCategory(val res: StringResource) {
 	ALL(Res.string.title_all),
@@ -108,11 +112,13 @@ enum class SearchCategory(val res: StringResource) {
 	ARTISTS(Res.string.title_artists)
 }
 
+// TODO: clean this up, holy shit
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
 	nested: Boolean
 ) {
+	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	val viewModel = koinViewModel<SearchViewModel>(
@@ -176,7 +182,8 @@ fun SearchScreen(
 		},
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			if (!nested || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
+			if (!nested || (!platformContext.isLandscape() && preferVisible)) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}
@@ -186,7 +193,12 @@ fun SearchScreen(
 			modifier = Modifier.fillMaxSize()
 		) { uiState ->
 			when (uiState) {
-				is UiState.Loading -> ArtGrid(contentPadding = contentPadding) { artGridPlaceholder() }
+				is UiState.Loading -> ArtGrid(
+					contentPadding = contentPadding,
+					selectedViewMode = ListViewMode.List
+				) {
+					artGridPlaceholder(viewMode = ListViewMode.List)
+				}
 				is UiState.Error -> ErrorBox(uiState, padding = contentPadding)
 				is UiState.Success -> {
 					val results = uiState.data
@@ -290,7 +302,10 @@ fun SearchScreen(
 											content = { Text(song.title) },
 											supportingContent = {
 												MarqueeText(
-													"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
+													buildSongInfoString(
+														song = song,
+														onClickArtist = { backStack.add(Screen.ArtistDetail(it)) }
+													)
 												)
 											},
 											leadingContent = {
@@ -369,7 +384,7 @@ fun SearchScreen(
 								key = { it.id },
 								seeAll = false
 							) { album ->
-								AlbumListScreenItem(
+								AlbumListScreenGridItem(
 									modifier = Modifier.animateItem(fadeInSpec = null)
 										.width(150.dp),
 									tab = "search",
@@ -394,7 +409,7 @@ fun SearchScreen(
 								key = { it.id },
 								seeAll = false
 							) { artist ->
-								ArtistsScreenItem(
+								ArtistListScreenGridItem(
 									modifier = Modifier.animateItem(fadeInSpec = null)
 										.width(150.dp),
 									tab = "search",

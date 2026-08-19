@@ -55,7 +55,6 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           SIGNING_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           SIGNING_STORE_FILE: ${{ github.workspace }}/release.keystore
-          RELEASE: true
         run: |
           echo "${{ secrets.KEYSTORE }}" | base64 -d > release.keystore
           ./gradlew :androidApp:packageRelease --stacktrace

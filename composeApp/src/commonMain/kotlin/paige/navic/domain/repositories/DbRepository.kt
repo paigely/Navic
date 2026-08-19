@@ -1,6 +1,7 @@
 package paige.navic.domain.repositories
 
 import androidx.room3.concurrent.AtomicInt
+import dev.zt64.subsonic.api.model.SubsonicException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
@@ -23,6 +24,7 @@ import navic.composeapp.generated.resources.info_syncing_playlists
 import navic.composeapp.generated.resources.info_syncing_radios
 import navic.composeapp.generated.resources.info_syncing_saved
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.ArtistDao
 import paige.navic.data.database.dao.GenreDao
@@ -84,8 +86,8 @@ class DbRepository(
 	suspend fun syncEverything(
 		onProgress: (Float, StringResource) -> Unit = { _, _ -> }
 	): Result<Unit> = runDbOp {
-		val progressCallback = { progress: Float, message: StringResource ->
-			Logger.i("DbRepository", "$progress $message")
+		val progressCallback = suspend { progress: Float, message: StringResource ->
+			Logger.i("DbRepository", "$progress ${getString(message)}")
 			onProgress(progress, message)
 		}
 
@@ -95,7 +97,15 @@ class DbRepository(
 		syncGenres().getOrThrow()
 
 		progressCallback(0.02f, Res.string.info_syncing_radios)
-		syncRadios().getOrThrow()
+		try {
+			syncRadios().getOrThrow()
+		} catch (ex: SubsonicException) {
+			Logger.e(
+				tag = "DbRepository",
+				msg = "could not sync radio stations, maybe this server doesn't support it",
+				tr = ex
+			)
+		}
 
 		progressCallback(0.04f, Res.string.info_syncing_artists)
 		syncArtists().getOrThrow()
@@ -103,10 +113,16 @@ class DbRepository(
 		progressCallback(0.07f, Res.string.info_syncing_playlists)
 		val playlists = syncPlaylists().getOrThrow()
 
-		syncLibrarySongs { localProgress, message ->
+		val validAlbumIds = mutableSetOf<String>()
+		val validSongIds = mutableSetOf<String>()
+
+		val libraryResult = syncLibrarySongs { localProgress, message ->
 			val globalProgress = 0.10f + (localProgress * 0.65f)
 			progressCallback(globalProgress, message)
 		}.getOrThrow()
+
+		validAlbumIds.addAll(libraryResult.first)
+		validSongIds.addAll(libraryResult.second)
 
 		val totalPlaylists = playlists.size
 		if (totalPlaylists > 0) {
@@ -116,7 +132,10 @@ class DbRepository(
 				playlists.map { playlist ->
 					async {
 						concurrentRequestLimit.withPermit {
-							syncPlaylistSongs(playlist.playlistId).getOrThrow()
+							val playlistSongIds =
+								syncPlaylistSongs(playlist.playlistId).getOrThrow()
+							validSongIds.addAll(playlistSongIds)
+
 							val done = completedPlaylists.incrementAndGet()
 							val globalProgress = 0.75f + (0.25f * (done.toFloat() / totalPlaylists))
 							progressCallback(globalProgress, Res.string.info_syncing_playlists)
@@ -126,12 +145,15 @@ class DbRepository(
 			}
 		}
 
+		albumDao.deleteObsoleteAlbums(validAlbumIds)
+		songDao.deleteObsoleteSongs(validSongIds)
+
 		progressCallback(1.0f, Res.string.info_syncing_finished)
 	}
 
 	suspend fun syncLibrarySongs(
-		onProgress: (Float, StringResource) -> Unit = { _, _ -> }
-	): Result<Int> = runDbOp {
+		onProgress: suspend (Float, StringResource) -> Unit = { _, _ -> }
+	): Result<Pair<Set<String>, Set<String>>> = runDbOp {
 		val pageSize = 500
 		var offset = 0
 		val allAlbumSummaries = mutableListOf<ApiAlbum>()
@@ -146,7 +168,7 @@ class DbRepository(
 			offset += pageSize
 		}
 
-		if (allAlbumSummaries.isEmpty()) return@runDbOp 0
+		if (allAlbumSummaries.isEmpty()) return@runDbOp emptySet<String>() to emptySet()
 
 		val totalAlbums = allAlbumSummaries.size
 		val completedAlbums = AtomicInt(0)
@@ -230,16 +252,13 @@ class DbRepository(
 			}
 		}
 
-		albumDao.deleteObsoleteAlbums(allValidAlbumIds)
-		songDao.deleteObsoleteSongs(allValidSongIds)
-
 		Logger.i(
 			"DbRepository",
 			"- Songs Synced: $totalAlbums albums, $finalSongsSynced songs"
 		)
 
 		onProgress(1.0f, Res.string.info_syncing_saved)
-		finalSongsSynced
+		allValidAlbumIds to allValidSongIds
 	}
 
 	suspend fun syncPlaylists(): Result<List<PlaylistEntity>> = runDbOp {
@@ -258,7 +277,7 @@ class DbRepository(
 		playlistEntities
 	}
 
-	suspend fun syncPlaylistSongs(playlistId: String): Result<Int> = runDbOp {
+	suspend fun syncPlaylistSongs(playlistId: String): Result<Set<String>> = runDbOp {
 		val playlist = try {
 			sessionManager.api.getPlaylist(playlistId)
 		} catch (e: Exception) {
@@ -268,14 +287,13 @@ class DbRepository(
 					"could not deserialize playlist $playlistId; skipping it",
 					e
 				)
-				return@runDbOp 0
+				return@runDbOp emptySet<String>()
 			} else {
 				throw e
 			}
 		}
 		val songEntities = playlist.songs.map { it.toEntity() }
-
-		playlistDao.deletePlaylistSongCrossRefs(playlistId)
+		val songIds = songEntities.map { it.songId }.toSet()
 
 		if (songEntities.isNotEmpty()) {
 			songEntities.chunked(dbChunkSize).forEach { chunk ->
@@ -286,13 +304,13 @@ class DbRepository(
 				PlaylistSongCrossRef(playlistId = playlistId, songId = it.songId, position = index)
 			}
 
-			crossRefs.chunked(dbChunkSize).forEach { chunk ->
-				playlistDao.insertPlaylistSongCrossRefs(chunk)
-			}
+			playlistDao.replacePlaylistSongs(playlistId, crossRefs)
+		} else {
+			playlistDao.deletePlaylistSongCrossRefs(playlistId)
 		}
 
 		Logger.i("DbRepository", "- Playlist [$playlistId] synced: ${songEntities.size} songs")
-		songEntities.size
+		songIds
 	}
 
 	suspend fun syncGenres(): Result<Unit> = runDbOp {

@@ -17,6 +17,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSong
@@ -34,12 +35,14 @@ import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.ui.screens.genre.components.GenreDetailScreenContent
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
+import paige.navic.util.core.isLandscape
 import kotlin.time.Duration
 
 @Composable
 fun GenreDetailScreen(
 	genreName: String
 ) {
+	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
 	val player = koinInject<MediaPlayerViewModel>()
 
@@ -72,7 +75,8 @@ fun GenreDetailScreen(
 		topBar = { NestedTopBar({ Text(genreName) }) },
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			if (preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
+			if (!platformContext.isLandscape() && preferVisible) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}

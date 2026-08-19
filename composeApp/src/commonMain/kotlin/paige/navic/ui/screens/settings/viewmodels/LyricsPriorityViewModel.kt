@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
 import paige.navic.domain.models.lyrics.LyricsConfig
+import paige.navic.domain.models.lyrics.LyricsProvider
 import paige.navic.ui.core.UiState
 
 class LyricsPriorityViewModel(
@@ -17,44 +18,45 @@ class LyricsPriorityViewModel(
 	val state: StateFlow<UiState<LyricsConfig>>
 		field = MutableStateFlow<UiState<LyricsConfig>>(UiState.Loading())
 
-	companion object {
-		const val KEY = "lyrics_config_prefs"
-	}
-
 	init {
-		loadConfig()
-	}
-
-	private fun loadConfig() {
 		try {
-			val raw = settings.getStringOrNull(KEY)
-			val config: LyricsConfig = if (raw != null) {
-				json.decodeFromString(raw)
-			} else {
-				LyricsConfig()
-			}
-			state.value = UiState.Success(config)
+			state.value = UiState.Success(loadConfig())
 		} catch (e: Exception) {
 			state.value = UiState.Error(e)
 		}
 	}
 
+	private fun loadConfig(): LyricsConfig {
+		val raw = settings.getStringOrNull(LyricsConfig.KEY)
+			?: return LyricsConfig.Default
+		val config: LyricsConfig = json.decodeFromString(raw)
+		return config.takeIf { it.version == LyricsConfig.VERSION }
+			?: LyricsConfig.Default
+	}
+
 	private fun setConfig(newConfig: LyricsConfig) {
 		state.value = UiState.Success(newConfig)
-		settings[KEY] = json.encodeToString(newConfig)
+		settings[LyricsConfig.KEY] = json.encodeToString(newConfig)
 	}
 
 	fun move(from: Int, to: Int) {
-		val currentState = state.value
-		if (currentState is UiState.Success) {
-			val config = currentState.data
-			setConfig(
-				config.copy(
-					priority = config.priority.toMutableList().apply {
-						add(to, removeAt(from))
-					}
-				)
+		val config = (state.value as UiState.Success).data
+		setConfig(
+			config.copy(
+				providers = config.providers.toMutableList().apply {
+					add(to, removeAt(from))
+				}
+			))
+	}
+
+	fun toggleEnabled(id: LyricsProvider.Id) {
+		val config = (state.value as UiState.Success).data
+		setConfig(
+			config.copy(
+				providers = config.providers.map {
+					if (it.id == id) it.copy(enabled = !it.enabled) else it
+				}
 			)
-		}
+		)
 	}
 }

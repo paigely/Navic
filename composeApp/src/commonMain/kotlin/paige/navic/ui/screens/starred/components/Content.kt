@@ -33,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
@@ -125,7 +124,6 @@ fun StarredScreenContent(
 	val songs = songsState.data.orEmpty()
 	val artists = artistsState.data.orEmpty()
 	val downloadManager = koinInject<DownloadManager>()
-	val uriHandler = LocalUriHandler.current
 
 	val scope = rememberCoroutineScope()
 
@@ -322,20 +320,6 @@ fun StarredScreenContent(
 							songsToAddToPlaylist =
 								selectedArtistAlbums?.flatMap { it.songs }.orEmpty()
 									.toImmutableList()
-						},
-						onViewOnLastFm = {
-							onClearArtistSelection()
-							artist.lastFmUrl?.let { url ->
-								uriHandler.openUri(url)
-							}
-						},
-						onViewOnMusicBrainz = {
-							onClearArtistSelection()
-							artist.musicBrainzId?.let { id ->
-								uriHandler.openUri(
-									"https://musicbrainz.org/artist/$id"
-								)
-							}
 						},
 						starred = selectedArtistIsStarred,
 						onSetStarred = { onStarSelectedArtist(!selectedArtistIsStarred) }

@@ -1,4 +1,4 @@
-package paige.navic.ui.screens.playlist.components
+package paige.navic.ui.screens.album.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -13,102 +13,99 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.count_songs
 import navic.composeapp.generated.resources.notice_deleted_download
 import navic.composeapp.generated.resources.notice_download_started
-import org.jetbrains.compose.resources.pluralStringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.SnackBarManager
-import paige.navic.domain.models.DomainPlaylist
+import paige.navic.domain.models.DomainAlbum
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 
 @Composable
-fun PlaylistListScreenItem(
+fun AlbumListScreenGridItem(
 	modifier: Modifier = Modifier,
 	tab: String,
-	playlist: DomainPlaylist,
+	album: DomainAlbum,
 	selected: Boolean,
-	onPlayNext: () -> Unit,
-	onAddToQueue: () -> Unit,
+	starred: Boolean,
+	rating: Int,
 	onSelect: () -> Unit,
 	onDeselect: () -> Unit,
+	onSetStarred: (starred: Boolean) -> Unit,
 	onSetShareId: (String) -> Unit,
-	onSetDeletionId: (String) -> Unit
+	onPlayNext: () -> Unit,
+	onAddToQueue: () -> Unit,
+	onSetRating: (Int) -> Unit
 ) {
 	val backStack = LocalNavStack.current
 	val snackBarManager = koinInject<SnackBarManager>()
 	val scope = rememberCoroutineScope()
 
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
+
 	val downloadManager = koinInject<DownloadManager>()
 	val downloadStatus by downloadManager
-		.getCollectionDownloadStatus(playlist.songs.map { it.id })
+		.getCollectionDownloadStatus(album.songs.map { it.id })
 		.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
 
 	Box(modifier) {
 		ArtGridItem(
 			onClick = dropUnlessResumed {
 				scope.launch {
-					backStack.add(Screen.CollectionDetail(playlist.id, tab))
+					backStack.add(Screen.CollectionDetail(album.id, tab))
 				}
 			},
 			onLongClick = onSelect,
-			coverArtId = playlist.coverArtId,
-			title = playlist.name,
-			subtitle = buildString {
-				append(
-					pluralStringResource(
-						Res.plurals.count_songs,
-						playlist.songCount,
-						playlist.songCount
-					)
-				)
-				playlist.comment?.let {
-					append("\n${playlist.comment}\n")
-				}
-			},
-			id = playlist.id,
+			coverArtId = album.coverArtId,
+			title = album.name,
+			subtitle = album.artistName,
+			id = album.id,
 			tab = tab
 		)
 		if (selected) {
 			CollectionSheet(
 				onDismissRequest = onDeselect,
-				collection = playlist,
-				onShare = { onSetShareId(playlist.id) },
-				onDelete = { onSetDeletionId(playlist.id) },
+				collection = album,
+				onShare = { onSetShareId(album.id) },
 				onPlayNext = onPlayNext,
 				onAddToQueue = onAddToQueue,
-				onAddAllToPlaylist = { playlistDialogShown = true },
 				downloadStatus = downloadStatus,
 				onDownloadAll = {
 					scope.launch {
-						downloadManager.downloadCollection(playlist)
+						downloadManager.downloadCollection(album)
 						snackBarManager.notify(Res.string.notice_download_started)
 					}
 				},
 				onCancelDownloadAll = {
 					scope.launch {
-						playlist.songs.forEach { downloadManager.cancelDownload(it.id) }
+						album.songs.forEach { downloadManager.cancelDownload(it.id) }
 					}
 				},
 				onDeleteDownloadAll = {
 					scope.launch {
-						downloadManager.deleteDownloadedCollection(playlist)
+						downloadManager.deleteDownloadedCollection(album)
 						snackBarManager.notify(Res.string.notice_deleted_download)
 					}
-				}
+				},
+				starred = starred,
+				onSetStarred = onSetStarred,
+				onAddAllToPlaylist = { playlistDialogShown = true },
+				onViewArtist = dropUnlessResumed {
+					backStack.add(Screen.ArtistDetail(album.artistId))
+				},
+				rating = rating,
+				onSetRating = onSetRating
 			)
 		}
 
 		if (playlistDialogShown) {
 			PlaylistUpdateDialog(
-				songs = playlist.songs.toPersistentList(),
+				songs = album.songs.toPersistentList(),
 				onDismissRequest = { playlistDialogShown = false }
 			)
 		}

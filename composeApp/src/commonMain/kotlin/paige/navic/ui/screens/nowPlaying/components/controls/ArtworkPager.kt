@@ -23,10 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
+import paige.navic.LocalNavStack
 import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.settings.CoverArtTapAction
 import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.nowPlaying.components.NowPlayingArtwork
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -35,6 +39,7 @@ fun NowPlayingArtworkPager(
 	modifier: Modifier = Modifier,
 	isLandscape: Boolean
 ) {
+	val backStack = LocalNavStack.current
 	val preferenceManager = koinInject<PreferenceManager>()
 	val player = koinInject<MediaPlayerViewModel>()
 	val playerState by player.uiState.collectAsState()
@@ -88,13 +93,22 @@ fun NowPlayingArtworkPager(
 		overscrollEffect = null
 	) { page ->
 		val song = playerState.queue.getOrNull(page) ?: return@HorizontalPager
+		val tapAction = preferenceManager.nowPlayingCoverArtAction
+		val enabled = pagerState.settledPage == page
+			&& tapAction != CoverArtTapAction.Disabled
 		Box(
 			modifier = Modifier.fillMaxSize(),
 			contentAlignment = Alignment.Center
 		) {
 			NowPlayingArtwork(
 				song = song,
-				isLandscape = isLandscape
+				isLandscape = isLandscape,
+				onClick = if (enabled) dropUnlessResumed {
+					when (tapAction) {
+						CoverArtTapAction.ShowLyrics -> backStack.add(Screen.Lyrics)
+						CoverArtTapAction.Disabled -> {}
+					}
+				} else null
 			)
 		}
 	}

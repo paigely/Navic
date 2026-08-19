@@ -24,4 +24,5 @@ data class AlbumEntity(
 	val userRating: Int?,
 	val version: String?,
 	val musicBrainzId: String?,
+	val isExternal: Boolean
 )

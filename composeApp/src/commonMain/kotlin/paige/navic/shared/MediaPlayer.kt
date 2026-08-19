@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromJsonElement
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
 import paige.navic.domain.manager.PreferenceManager
@@ -20,12 +20,13 @@ import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.domain.repositories.SongRepository
 import paige.navic.ui.core.PlayerUiState
-import paige.navic.util.core.Logger
 import kotlin.time.Duration.Companion.seconds
 
 abstract class MediaPlayerViewModel(
 	private val stateRepository: PlayerStateRepository,
+	protected val songRepository: SongRepository,
 	protected val connectivityManager: ConnectivityManager,
 	protected val downloadManager: DownloadManager,
 	protected val preferenceManager: PreferenceManager
@@ -71,18 +72,21 @@ abstract class MediaPlayerViewModel(
 		clearQueue()
 		addToQueueSingle(song, notify = false)
 		playAt(0)
+		checkAndAutoFillQueue()
 	}
 
 	fun playNow(collection: DomainSongCollection, startIndex: Int = 0) {
 		clearQueue()
 		addToQueue(collection, notify = false)
 		playAt(startIndex)
+		checkAndAutoFillQueue()
 	}
 
 	fun playNow(songs: List<DomainSong>, startIndex: Int = 0) {
 		clearQueue()
 		addToQueue(songs, notify = false)
 		playAt(startIndex)
+		checkAndAutoFillQueue()
 	}
 
 	fun togglePlay() {
@@ -95,23 +99,31 @@ abstract class MediaPlayerViewModel(
 
 	abstract fun syncPlayerWithState(state: PlayerUiState)
 
-	private suspend fun restoreState() {
-		val savedJson = stateRepository.loadState()
-		if (!savedJson.isNullOrBlank()) {
-			try {
-				val restoredState = Json.decodeFromJsonElement<PlayerUiState>(
-					Json.parseToJsonElement(savedJson)
-				)
-				val stateToApply = restoredState.copy(isPaused = true, isLoading = false)
+	protected fun checkAndAutoFillQueue() {
+		if (!preferenceManager.autoFillQueue) return
 
-				_uiState.value = stateToApply
+		val state = uiState.value
+		if (state.queue.isEmpty()) return
 
-				syncPlayerWithState(stateToApply)
+		val remainingCount = state.queue.size - state.currentIndex
 
-			} catch (e: Exception) {
-				Logger.e("MediaPlayerViewModel", "Failed to restore state!", e)
-				_uiState.value = PlayerUiState()
+		if (remainingCount <= 1) {
+			viewModelScope.launch {
+				val randomSongs = songRepository.getRandomSongs(1)
+				addToQueue(randomSongs, notify = false)
 			}
+		}
+	}
+
+	private suspend fun restoreState() {
+		val savedState = stateRepository.state
+			.filterNotNull()
+			.firstOrNull()
+			?.copy(isPaused = true, isLoading = false)
+		if (savedState != null) {
+			_uiState.value = savedState
+			syncPlayerWithState(savedState)
+			checkAndAutoFillQueue()
 		}
 	}
 
@@ -127,7 +139,7 @@ abstract class MediaPlayerViewModel(
 						old.isShuffleEnabled == new.isShuffleEnabled
 				}
 				.collect { state ->
-					saveStateInternal(state)
+					stateRepository.setState(state)
 				}
 		}
 
@@ -135,17 +147,8 @@ abstract class MediaPlayerViewModel(
 			uiState
 				.debounce(2.seconds)
 				.collect { state ->
-					saveStateInternal(state)
+					stateRepository.setState(state)
 				}
-		}
-	}
-
-	private suspend fun saveStateInternal(state: PlayerUiState) {
-		try {
-			val jsonString = Json.encodeToString(state)
-			stateRepository.saveState(jsonString)
-		} catch (e: Exception) {
-			Logger.e("MediaPlayerViewModel", "Failed to save state!", e)
 		}
 	}
 }

@@ -40,8 +40,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalBottomBarScrollManager
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarCollapseMode
+import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Add
 import paige.navic.shared.MediaPlayerViewModel
@@ -56,6 +58,7 @@ import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.screens.radio.components.radioListScreenContent
 import paige.navic.ui.screens.radio.dialogs.RadioCreateDialog
 import paige.navic.ui.screens.radio.viewmodels.RadioListViewModel
+import paige.navic.util.core.isLandscape
 import paige.navic.util.ui.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -63,6 +66,7 @@ import paige.navic.util.ui.withoutTop
 fun RadioListScreen(
 	nested: Boolean
 ) {
+	val platformContext = LocalPlatformContext.current
 	val scrollManager = LocalBottomBarScrollManager.current
 	val viewModel = koinViewModel<RadioListViewModel>(
 		viewModelStoreOwner = if (nested) {
@@ -123,7 +127,9 @@ fun RadioListScreen(
 			}
 		},
 		bottomBar = {
-			if (!nested) {
+			val scrollManager = LocalBottomBarScrollManager.current
+			val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
+			if (!nested || (!platformContext.isLandscape() && preferVisible)) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}

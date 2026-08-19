@@ -44,24 +44,10 @@ actual val platformModule = module {
 			.build()
 	}
 
-	single<PlayerStateRepository> {
-		val producePath = {
-			@OptIn(ExperimentalForeignApi::class)
-			val directory = NSFileManager.defaultManager.URLForDirectory(
-				directory = NSDocumentDirectory,
-				inDomain = NSUserDomainMask,
-				appropriateForURL = null,
-				create = true,
-				error = null
-			)
-			directory?.path + "/${PlayerStateRepository.DATASTORE_FILE_NAME}"
-		}
-		PlayerStateRepository(PlayerStateRepository.getInstance(producePath))
-	}
-
 	viewModel<MediaPlayerViewModel> {
 		IOSMediaPlayerViewModel(
 			stateRepository = get(),
+			songRepository = get(),
 			downloadManager = get(),
 			connectivityManager = get(),
 			syncManager = get(),
@@ -79,6 +65,7 @@ actual val platformModule = module {
 	singleOf(::LogManager)
 	singleOf(::AppIconManager)
 	singleOf(::PermissionManager)
+	singleOf(::LinkManager)
 }
 
 @OptIn(ExperimentalForeignApi::class)

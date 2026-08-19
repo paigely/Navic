@@ -62,7 +62,7 @@ fun LyricsScreenContent(
 
 	val lyrics = data?.lines
 	val isSynced = data?.isSynced == true
-	val provider = data?.provider
+	val providerName = data?.providerName
 	val maxSelectionChars = 150
 	fun totalSelectedChars(): Int =
 		selectedIndices.sumOf { lyrics?.getOrNull(it)?.text?.length ?: 0 }
@@ -255,12 +255,12 @@ fun LyricsScreenContent(
 					.background(lineBackgroundColor, MaterialTheme.shapes.medium)
 			)
 		}
-		provider?.let { provider ->
+		providerName?.let { providerName ->
 			item {
 				Text(
 					stringResource(
 						Res.string.info_lyrics_provider,
-						provider.displayName
+						providerName
 					),
 					textAlign = TextAlign.Center,
 					modifier = Modifier.fillMaxWidth()

@@ -315,11 +315,11 @@ class DownloadManager(
 			val lyricsResult = lyricsRepository.fetchLyrics(song)
 			if (lyricsResult != null && lyricsResult.rawContent != null) {
 				lyricDao.insertLyrics(
-                    LyricEntity(
-                        song.id,
-                        lyricsResult.rawContent,
-                        lyricsResult.provider
-                    )
+					LyricEntity(
+						songId = song.id,
+						rawContent = lyricsResult.rawContent,
+						providerName = lyricsResult.providerName
+					)
 				)
 				Logger.i("DownloadManager", "cached lyrics for ${song.id}")
 			}
@@ -352,9 +352,10 @@ class DownloadManager(
 		val url = sessionManager.api.getStreamUrl(
 			id = song.id,
 			maxBitRate = bitrate,
-			format = container?.takeIf { it.isNotBlank() }
-		) + "&estimateContentLength=true"
-
+			format = container?.takeIf { it.isNotBlank() },
+			// if this is true u get "stream was reset: INTERNAL_ERROR" for some reason
+			estimateContentLength = false
+		)
 		val path = baseDownloadManager.downloadAudio(
 			song = song,
 			url = url,

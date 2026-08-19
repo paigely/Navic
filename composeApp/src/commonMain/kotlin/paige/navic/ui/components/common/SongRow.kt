@@ -31,8 +31,6 @@ import navic.composeapp.generated.resources.info_download_failed
 import navic.composeapp.generated.resources.info_downloaded
 import navic.composeapp.generated.resources.info_explicit
 import navic.composeapp.generated.resources.info_not_available_offline
-import navic.composeapp.generated.resources.info_unknown_album
-import navic.composeapp.generated.resources.info_unknown_year
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
@@ -54,6 +52,7 @@ import paige.navic.ui.components.sheets.SongSheet
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
 import paige.navic.util.core.InlineExplicitIcon
+import paige.navic.util.core.buildSongInfoString
 
 @Composable
 fun SongRow(
@@ -116,13 +115,10 @@ fun SongRow(
 		},
 		supportingContent = {
 			MarqueeText(
-				text = buildString {
-					append(song.albumTitle ?: stringResource(Res.string.info_unknown_album))
-					append(" • ")
-					append(song.artistName)
-					append(" • ")
-					append(song.year ?: stringResource(Res.string.info_unknown_year))
-				}
+				buildSongInfoString(
+					song = song,
+					onClickArtist = { backStack.add(Screen.ArtistDetail(it)) }
+				)
 			)
 		},
 		leadingContent = {

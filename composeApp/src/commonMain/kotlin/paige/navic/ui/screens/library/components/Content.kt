@@ -35,10 +35,10 @@ import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.layouts.horizontalSection
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.Screen
-import paige.navic.ui.screens.album.components.AlbumListScreenItem
-import paige.navic.ui.screens.artist.ArtistsScreenItem
+import paige.navic.ui.screens.album.components.AlbumListScreenGridItem
+import paige.navic.ui.screens.artist.ArtistListScreenGridItem
 import paige.navic.ui.screens.genre.components.GenreListScreenCard
-import paige.navic.ui.screens.playlist.components.PlaylistListScreenItem
+import paige.navic.ui.screens.playlist.components.PlaylistListScreenGridItem
 import paige.navic.util.ui.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -122,7 +122,7 @@ fun LibraryScreenContent(
 			key = { it.id },
 			seeAll = true
 		) { album ->
-			AlbumListScreenItem(
+			AlbumListScreenGridItem(
 				modifier = Modifier.animateItem().width(150.dp),
 				tab = "library",
 				album = album,
@@ -146,7 +146,7 @@ fun LibraryScreenContent(
 			key = { it.id },
 			seeAll = true
 		) { playlist ->
-			PlaylistListScreenItem(
+			PlaylistListScreenGridItem(
 				modifier = Modifier.animateItem().width(150.dp),
 				tab = "library",
 				playlist = playlist,
@@ -167,7 +167,7 @@ fun LibraryScreenContent(
 			key = { it.id },
 			seeAll = true
 		) { artist ->
-			ArtistsScreenItem(
+			ArtistListScreenGridItem(
 				modifier = Modifier.animateItem().width(150.dp),
 				tab = "library",
 				artist = artist,

@@ -31,7 +31,7 @@ import paige.navic.ui.components.layouts.header
 import paige.navic.ui.components.layouts.horizontalSection
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.Screen
-import paige.navic.ui.screens.album.components.AlbumListScreenItem
+import paige.navic.ui.screens.album.components.AlbumListScreenGridItem
 import paige.navic.util.ui.withoutTop
 
 @Composable
@@ -134,7 +134,7 @@ fun GenreDetailScreenContent(
 			key = { it.id },
 			seeAll = true
 		) { album ->
-			AlbumListScreenItem(
+			AlbumListScreenGridItem(
 				modifier = Modifier.animateItem().width(150.dp),
 				tab = "genre",
 				album = album,

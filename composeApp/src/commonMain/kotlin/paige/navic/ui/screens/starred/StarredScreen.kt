@@ -22,6 +22,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtistListType
@@ -41,11 +42,13 @@ import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
 import paige.navic.ui.screens.starred.components.StarredScreenContent
+import paige.navic.util.core.isLandscape
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun StarredScreen() {
+	val platformContext = LocalPlatformContext.current
 	val persistentViewModelStoreOwner = koinInject<PersistentViewModelStoreOwner>()
 	val preferenceManager = koinInject<PreferenceManager>()
 
@@ -93,7 +96,8 @@ fun StarredScreen() {
 		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_starred)) }) },
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			if (preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
+			if (!platformContext.isLandscape() && preferVisible) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}

@@ -49,6 +49,7 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.ui.screens.settings.dialogs.NavtabsDialog
+import paige.navic.util.core.isLandscape
 
 @Composable
 fun BottomBarScreen() {
@@ -88,13 +89,15 @@ fun BottomBarScreen() {
 						title = { Text(stringResource(Res.string.option_bottom_bar_collapse_mode)) },
 					)
 
-					SettingSelectionRow(
-						items = BottomBarVisibilityMode.entries.toImmutableList(),
-						label = { stringResource(it.displayName) },
-						selection = preferenceManager.bottomBarVisibilityMode,
-						onSelect = { preferenceManager.bottomBarVisibilityMode = it },
-						title = { Text(stringResource(Res.string.option_bottom_bar_visibility_mode)) },
-					)
+					if (!platformContext.isLandscape()) {
+						SettingSelectionRow(
+							items = BottomBarVisibilityMode.entries.toImmutableList(),
+							label = { stringResource(it.displayName) },
+							selection = preferenceManager.bottomBarVisibilityMode,
+							onSelect = { preferenceManager.bottomBarVisibilityMode = it },
+							title = { Text(stringResource(Res.string.option_bottom_bar_visibility_mode)) },
+						)
+					}
 				}
 
 				FormTitle(stringResource(Res.string.title_navigation_bar))

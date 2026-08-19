@@ -28,7 +28,8 @@ fun ApiAlbum.toEntity(
 	lastPlayedAt = this.lastPlayedAt,
 	playCount = this.playCount,
 	genres = this.genres,
-	version = this.version
+	version = this.version,
+	isExternal = this.isExternal
 )
 
 fun AlbumWithSongs.toDomainModel() = DomainAlbum(
@@ -51,7 +52,8 @@ fun AlbumWithSongs.toDomainModel() = DomainAlbum(
 	version = album.version,
 	songs = songs
 		.map { it.toDomainModel() }
-		.sortedBy { it.trackNumber }
+		.sortedBy { it.trackNumber },
+	isExternal = album.isExternal
 )
 
 fun DomainAlbum.toEntity() = AlbumEntity(
@@ -71,7 +73,8 @@ fun DomainAlbum.toEntity() = AlbumEntity(
 	lastPlayedAt = this.lastPlayedAt,
 	playCount = this.playCount,
 	genres = this.genres,
-	version = this.version
+	version = this.version,
+	isExternal = this.isExternal
 )
 
 fun ApiAlbumInfo.toDomainModel() = DomainAlbumInfo(

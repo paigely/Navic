@@ -1,3 +1,5 @@
+-dontobfuscate
+
 -keepattributes SourceFile, LineNumberTable
 -keepattributes *Annotation*
 

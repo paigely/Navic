@@ -18,8 +18,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +29,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.cancellable
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.title_logs
@@ -43,19 +46,14 @@ import paige.navic.ui.components.layouts.TopBarButton
 @Composable
 fun SettingsLogsScreen() {
 	val logManager = koinInject<LogManager>()
-	val logs = logManager.logs
+	val lines = remember { mutableStateListOf<LogLine>() }
 	val listState = rememberLazyListState()
 
-	DisposableEffect(Unit) {
-		logManager.startStreaming()
-		onDispose {
-			logManager.stopStreaming()
-		}
-	}
-
-	LaunchedEffect(logs.size) {
-		if (logs.lastIndex > 0) {
-			listState.requestScrollToItem(logs.lastIndex)
+	LaunchedEffect(Unit) {
+		logManager.logFlow().cancellable().collect {
+			lines += it
+			listState.requestScrollToItem(lines.lastIndex)
+			if (lines.size > 500) lines.removeAt(0)
 		}
 	}
 
@@ -65,8 +63,11 @@ fun SettingsLogsScreen() {
 				title = { Text(stringResource(Res.string.title_logs)) },
 				actions = {
 					TopBarButton(
-						onClick = { logManager.clearLogs() },
-						enabled = logs.isNotEmpty()
+						onClick = {
+							lines.clear()
+							logManager.clearLogs()
+						},
+						enabled = lines.isNotEmpty()
 					) {
 						Icon(Icons.Outlined.Delete, stringResource(Res.string.action_delete))
 					}
@@ -82,7 +83,10 @@ fun SettingsLogsScreen() {
 				state = listState,
 				contentPadding = innerPadding
 			) {
-				items(logs) { line ->
+				items(
+					items = lines.toImmutableList(),
+					key = { it.id }
+				) { line ->
 					LogLineRow(line = line)
 				}
 			}

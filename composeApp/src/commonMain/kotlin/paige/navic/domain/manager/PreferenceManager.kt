@@ -9,9 +9,11 @@ import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.settings.CoverArtQuality
 import paige.navic.domain.models.settings.CoverArtShape
+import paige.navic.domain.models.settings.CoverArtTapAction
 import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.domain.models.settings.FontOption
 import paige.navic.domain.models.settings.GridSize
+import paige.navic.domain.models.settings.ListViewMode
 import paige.navic.domain.models.settings.MarqueeSpeed
 import paige.navic.domain.models.settings.MiniPlayerProgressStyle
 import paige.navic.domain.models.settings.MiniPlayerStyle
@@ -75,9 +77,11 @@ class PreferenceManager(
 	var nowPlayingToolbarPosition by preference(ToolbarPosition.Bottom)
 	var nowPlayingSongInfo by preference(true)
 	var nowPlayingSliderStyle by preference(NowPlayingSliderStyle.Squiggly)
+	var nowPlayingCoverArtAction by preference(CoverArtTapAction.ShowLyrics)
 	var customHeaders by preference("")
-	var checkForUpdates by preference(true)
+	var checkForUpdates by preference(false)
 	var explicitContentPlayback by preference(ExplicitContentPlayback.Allowed)
+	var autoFillQueue by preference(false)
 
 	// navigation bar settings
 	var bottomBarCollapseMode by preference(BottomBarCollapseMode.OnScroll)
@@ -105,6 +109,11 @@ class PreferenceManager(
 
 	// sync related settings
 	var lastFullSyncTime by preference(0L)
+
+	// sorting/view mode preferences
+	var albumListViewMode by preference(ListViewMode.Grid)
+	var playlistListViewMode by preference(ListViewMode.List)
+	var artistListViewMode by preference(ListViewMode.List)
 
 	fun customHeadersMap(): Map<String, String> = buildMap {
 		for (line in customHeaders.lines()) {

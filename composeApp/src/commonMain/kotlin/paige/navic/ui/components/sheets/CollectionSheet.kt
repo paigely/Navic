@@ -20,6 +20,10 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -67,6 +71,7 @@ import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.RatingRow
+import paige.navic.ui.components.dialogs.LinkConfirmationDialog
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -83,8 +88,6 @@ fun CollectionSheet(
 	onAddToQueue: (() -> Unit)? = null,
 	onAddAllToPlaylist: (() -> Unit)? = null,
 	onViewArtist: (() -> Unit)? = null,
-	onViewOnLastFm: ((String) -> Unit)? = null,
-	onViewOnMusicBrainz: ((String) -> Unit)? = null,
 	starred: Boolean? = null,
 	onSetStarred: ((Boolean) -> Unit)? = null,
 	onDelete: (() -> Unit)? = null,
@@ -98,6 +101,8 @@ fun CollectionSheet(
 		trailingIconColor = MaterialTheme.colorScheme.onSurface,
 		headlineColor = MaterialTheme.colorScheme.onSurface
 	)
+	var linkToOpen by rememberSaveable { mutableStateOf<String?>(null) }
+
 	ModalBottomSheet(
 		onDismissRequest = onDismissRequest,
 		dragHandle = null,
@@ -147,26 +152,24 @@ fun CollectionSheet(
 		HorizontalDivider(Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
 
 		Column(Modifier.verticalScroll(rememberScrollState())) {
-			if (onViewOnLastFm != null && albumInfo?.lastFmUrl != null) {
+			if (albumInfo?.lastFmUrl != null) {
 				ListItem(
 					content = { Text(stringResource(Res.string.action_view_on_lastfm)) },
 					leadingContent = { Icon(Icons.Brand.Lastfm, null) },
 					onClick = {
-						onViewOnLastFm(albumInfo.lastFmUrl)
-						onDismissRequest()
+						linkToOpen = albumInfo.lastFmUrl
 					},
 					colors = colors,
 					contentPadding = contentPadding
 				)
 			}
 
-			if (onViewOnMusicBrainz != null && albumInfo?.musicBrainzId != null) {
+			if (albumInfo?.musicBrainzId != null) {
 				ListItem(
 					content = { Text(stringResource(Res.string.action_view_on_musicbrainz)) },
 					leadingContent = { Icon(Icons.Brand.Musicbrainz, null) },
 					onClick = {
-						onViewOnMusicBrainz(albumInfo.musicBrainzId)
-						onDismissRequest()
+						linkToOpen = "https://musicbrainz.org/release/${albumInfo.musicBrainzId}"
 					},
 					colors = colors,
 					contentPadding = contentPadding
@@ -358,5 +361,12 @@ fun CollectionSheet(
 				)
 			}
 		}
+	}
+
+	if (linkToOpen != null) {
+		LinkConfirmationDialog(
+			linkToOpen = linkToOpen!!,
+			onDismissRequest = { linkToOpen = null }
+		)
 	}
 }

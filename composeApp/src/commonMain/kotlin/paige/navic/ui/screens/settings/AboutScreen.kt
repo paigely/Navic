@@ -10,36 +10,49 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.info_app_version
+import navic.composeapp.generated.resources.option_check_for_updates
+import navic.composeapp.generated.resources.subtitle_check_for_updates
 import navic.composeapp.generated.resources.title_about
 import navic.composeapp.generated.resources.title_acknowledgements
-import navic.composeapp.generated.resources.title_chat
-import navic.composeapp.generated.resources.title_source
+import navic.composeapp.generated.resources.title_codeberg
+import navic.composeapp.generated.resources.title_discord_server
+import navic.composeapp.generated.resources.title_github
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.LocalPlatformContext
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.ChevronForward
 import paige.navic.ui.components.common.Form
 import paige.navic.ui.components.common.FormRow
+import paige.navic.ui.components.dialogs.LinkConfirmationDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.navigation.Screen
+import paige.navic.ui.screens.settings.components.SettingSwitchRow
+import paige.navic.util.core.PlatformType
 
 @Composable
 fun SettingsAboutScreen() {
+	val preferenceManager = koinInject<PreferenceManager>()
 	@Suppress("DEPRECATION")
 	val clipboard = LocalClipboardManager.current
-	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
 	val platformContext = LocalPlatformContext.current
 	val hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
+	var linkToOpen by rememberSaveable { mutableStateOf<String?>(null) }
+
 	Scaffold(
 		topBar = {
 			NestedTopBar(
@@ -72,17 +85,24 @@ fun SettingsAboutScreen() {
 					}
 				}
 			}
+
 			Form {
 				FormRow(onClick = {
-					uriHandler.openUri("https://github.com/ssalggnikool/Navic")
+					linkToOpen = "https://github.com/ssalggnikool/Navic"
 				}) {
-					Text(stringResource(Res.string.title_source))
+					Text(stringResource(Res.string.title_github))
 					Icon(Icons.Outlined.ChevronForward, null)
 				}
 				FormRow(onClick = {
-					uriHandler.openUri("https://discord.gg/TBcnNX66PH")
+					linkToOpen = "https://codeberg.org/paige/Navic"
 				}) {
-					Text(stringResource(Res.string.title_chat))
+					Text(stringResource(Res.string.title_codeberg))
+					Icon(Icons.Outlined.ChevronForward, null)
+				}
+				FormRow(onClick = {
+					linkToOpen = "https://discord.gg/TBcnNX66PH"
+				}) {
+					Text(stringResource(Res.string.title_discord_server))
 					Icon(Icons.Outlined.ChevronForward, null)
 				}
 				FormRow(onClick = dropUnlessResumed {
@@ -92,6 +112,24 @@ fun SettingsAboutScreen() {
 					Icon(Icons.Outlined.ChevronForward, null)
 				}
 			}
+
+			if (platformContext.platformType == PlatformType.Android) {
+				Form {
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_check_for_updates)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_check_for_updates)) },
+						value = preferenceManager.checkForUpdates,
+						onSetValue = { preferenceManager.checkForUpdates = it }
+					)
+				}
+			}
 		}
+	}
+
+	if (linkToOpen != null) {
+		LinkConfirmationDialog(
+			linkToOpen = linkToOpen!!,
+			onDismissRequest = { linkToOpen = null }
+		)
 	}
 }

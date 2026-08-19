@@ -15,12 +15,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -87,6 +92,7 @@ import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext
 @Composable
 fun MiniPlayer(
 	modifier: Modifier = Modifier,
+	windowInsets: WindowInsets = NavigationBarDefaults.windowInsets.only(WindowInsetsSides.Horizontal),
 	enabled: Boolean = true
 ) {
 	val player = koinInject<MediaPlayerViewModel>()
@@ -149,7 +155,9 @@ fun MiniPlayer(
 		},
 		swipeLeftAccessibilityLabel = stringResource(Res.string.action_previous_song),
 		swipeRightAccessibilityLabel = stringResource(Res.string.action_next_song),
-		modifier = modifier,
+		modifier = modifier.then(if (detached) {
+			Modifier.windowInsetsPadding(windowInsets)
+		} else Modifier),
 		enabled = isInteractive
 	) {
 		Box(
@@ -191,7 +199,9 @@ fun MiniPlayer(
 					end = if (detached) 10.dp else 16.dp,
 					top = if (detached) 10.dp else 16.dp,
 					bottom = (if (detached) 10.dp else 12.dp) + if (detached) 0.dp else navBarPadding
-				),
+				) + if (!detached)
+					windowInsets.asPaddingValues()
+				else PaddingValues(),
 				verticalAlignment = Alignment.CenterVertically,
 				colors = ListItemDefaults.colors(
 					containerColor = NavigationBarDefaults.containerColor

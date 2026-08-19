@@ -22,6 +22,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalBottomBarScrollManager
+import paige.navic.LocalPlatformContext
+import paige.navic.domain.manager.PreferenceManager
+import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
@@ -32,6 +35,7 @@ import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.screens.genre.components.genreListScreenContent
 import paige.navic.ui.screens.genre.viewmodels.GenreListViewModel
+import paige.navic.util.core.isLandscape
 import paige.navic.util.ui.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -39,6 +43,8 @@ import paige.navic.util.ui.withoutTop
 fun GenreListScreen(
 	nested: Boolean
 ) {
+	val platformContext = LocalPlatformContext.current
+	val preferenceManager = koinInject<PreferenceManager>()
 	val viewModel = koinViewModel<GenreListViewModel>(
 		viewModelStoreOwner = if (nested) {
 			LocalViewModelStoreOwner.current!!
@@ -62,7 +68,8 @@ fun GenreListScreen(
 		},
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			if (!nested) {
+			val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
+			if (!nested || (!platformContext.isLandscape() && preferVisible)) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}

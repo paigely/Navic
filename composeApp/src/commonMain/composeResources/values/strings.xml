@@ -29,8 +29,7 @@
 	<string name="title_radios">Radios</string>
 	<string name="title_all">All</string>
 	<string name="title_similar_artists">Similar artists</string>
-	<string name="title_source">Source code</string>
-	<string name="title_chat">Chat</string>
+	<string name="title_discord_server">Discord server</string>
 	<string name="title_shares">Shares</string>
 	<string name="title_choose_font">Application font</string>
 	<string name="title_fonts_inbuilt">In-built</string>
@@ -61,28 +60,35 @@
 	<string name="title_theme_mode">Theme mode</string>
 	<string name="title_account">Account</string>
 	<string name="title_track_info">Track info</string>
+	<string name="title_lyric_providers">Lyric providers</string>
+	<string name="title_github">GitHub</string>
+	<string name="title_codeberg">Codeberg</string>
+	<string name="title_link_confirmation">Leaving Navic</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout, app icon</string>
-	<string name="subtitle_now_playing">Customise the fullscreen now playing and lyrics views</string>
+	<string name="subtitle_now_playing">Customise the now playing &amp; lyrics views</string>
 	<string name="subtitle_bottom_app_bar">Customise the bottom bar &amp; mini player</string>
-	<string name="subtitle_playback">Audio behaviour and scrobbling</string>
-	<string name="subtitle_data_storage">Manage sync, network usage, and cache</string>
+	<string name="subtitle_playback">Audio effects &amp; behaviour, scrobbling</string>
+	<string name="subtitle_data_storage">Syncing, caching, data usage</string>
 	<string name="subtitle_trigger_sync">Forces a full library pull immediately</string>
 	<string name="subtitle_pending_actions">%1$d items waiting for network</string>
-	<string name="subtitle_developer">Debugging, testing</string>
-	<string name="subtitle_about">App info, version, licenses</string>
+	<string name="subtitle_developer">Debugging, testing, logs</string>
+	<string name="subtitle_about">App info, version, updates, licences</string>
 	<string name="subtitle_playlist">Playlist</string>
 	<string name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
 	<string name="subtitle_gapless_playback">Experimental. Requires application restart. May conflict with audio offload on some devices</string>
 	<string name="subtitle_audio_offload">Experimental. Requires application restart. May conflict with gapless playback on some devices</string>
 	<string name="subtitle_now_playing_background_style">Choose static if you have performance issues</string>
-	<string name="subtitle_check_for_updates">It is recommended to leave this on, as some updates provide important bug fixes</string>
+	<string name="subtitle_check_for_updates">Check GitHub for updates when the app opens</string>
 	<string name="subtitle_offline_mode">Dictates when the app should go in an offline mode. Requires application restart</string>
 	<string name="subtitle_streaming_quality">Adjust the quality of streamed music</string>
 	<string name="subtitle_download_quality">Adjust the quality of downloaded music</string>
 	<string name="subtitle_dynamic_theming">Dynamically theme the album and artist view based on cover art</string>
 	<string name="subtitle_app_icon_designer">Designed by: %1$s</string>
 	<string name="subtitle_local_network_denied">You need to grant Navic access to your local network in order for your server to be reachable.</string>
+	<string name="subtitle_equaliser">Tune &amp; enhance audio</string>
+	<string name="subtitle_equaliser_disabled">Not available when audio offload is enabled</string>
+	<string name="subtitle_configure_lyric_providers">Change where lyrics are fetched from</string>
 
 	<string name="option_off">Off</string>
 	<string name="option_now_playing_background_style">Background style</string>
@@ -98,11 +104,12 @@
 	<string name="option_swipe_to_skip">Swipe to change songs</string>
 	<string name="option_artwork_shape">Artwork shape</string>
 	<string name="option_artist_image_shape">Artist image shape</string>
+	<string name="option_auto_fill_queue">Auto-fill queue</string>
+	<string name="subtitle_auto_fill_queue">Automatically add a random song when only one is left in the queue</string>
 	<string name="option_cover_art_size">Cover artwork size</string>
 	<string name="option_use_marquee_text">Text auto-scroll speed</string>
 	<string name="option_alphabetical_scroll">Alphabetical scrolling</string>
 	<string name="option_grid_items_per_row">Grid size</string>
-	<string name="option_lyrics_priority">Configure lyrics providers</string>
 	<string name="option_lyrics_keep_alive">Keep screen on in lyrics view</string>
 	<string name="option_lyrics_blur">Lyrics blur</string>
 	<string name="option_lyrics_bright_inactive">Bright inactive lyrics</string>
@@ -176,15 +183,23 @@
 	<string name="option_explicit_playback_skip">Skip explicit songs</string>
 	<string name="option_explicit_playback_skip_session">Skip explicit songs for this session</string>
 	<string name="option_dynamic_theming">Dynamic theming</string>
+	<string name="option_cover_art_action">Cover art tap action</string>
+	<string name="option_cover_art_action_disabled">Disabled</string>
+	<string name="option_cover_art_action_show_lyrics">Show lyrics</string>
+	<string name="option_equaliser">Equaliser</string>
+	<string name="option_equaliser_mode">Equaliser mode</string>
+	<string name="option_equaliser_mode_disabled">Disabled</string>
+	<string name="option_equaliser_mode_builtin">Built-in</string>
+	<string name="option_equaliser_mode_external">External</string>
+	<string name="option_list_view_mode">View mode</string>
+	<string name="option_list_view_mode_grid">Grid</string>
+	<string name="option_list_view_mode_list">List</string>
 
 	<string name="info_status_idle">Idle</string>
 	<string name="info_status_calculating">Calculating...</string>
 	<string name="info_status_downloading">Downloading in progress...</string>
 	<string name="info_sync_never">Never</string>
 	<string name="info_sync_just_now">Just now</string>
-	<string name="info_sync_mins_ago">%1$d m ago</string>
-	<string name="info_sync_hours_ago">%1$d h ago</string>
-	<string name="info_sync_date_format">%1$d %2$s</string>
 	<string name="info_bulk_download_warning">Are you sure you want to download every album by %1$s?\nThis may require a significant amount of storage and data.</string>
 	<string name="info_library_download_warning">Are you sure you want to download your entire library? \nThis will skip items you've already downloaded, but it may still consume a significant amount of storage space and data.</string>
 	<string name="info_library_download">Save all synced music for offline playback</string>
@@ -192,6 +207,8 @@
 	<string name="info_in_use">(in use)</string>
 	<string name="info_explicit">Explicit</string>
 	<string name="info_transcoding_defaults">Leaving any of these empty will omit them and allow the server to decide.</string>
+	<string name="info_external_song">External</string>
+	<string name="info_external_song_description">This song was marked as external by your server, so you may not be able to listen to it.</string>
 
 	<string name="option_now_playing_toolbar_position">Toolbar position</string>
 	<string name="option_position_top">Top</string>
@@ -212,7 +229,7 @@
 	<string name="option_navigation_bar_label_visibility_always">Always</string>
 	<string name="option_navigation_bar_label_visibility_only_selected">Only selected</string>
 	<string name="option_navigation_bar_label_visibility_never">Never</string>
-	<string name="option_navigation_bar_tabs">Reorder navigation bar tabs</string>
+	<string name="option_navigation_bar_tabs">Configure navigation bar tabs</string>
 
 	<string name="option_mini_player_style">Mini player style</string>
 	<string name="option_mini_player_style_unified">Unified</string>
@@ -262,6 +279,21 @@
 		<item quantity="other">%1$d hours</item>
 	</plurals>
 
+	<plurals name="count_minutes_ago">
+		<item quantity="one">%1$d minute ago</item>
+		<item quantity="other">%1$d minutes ago</item>
+	</plurals>
+
+	<plurals name="count_hours_ago">
+		<item quantity="one">%1$d hour ago</item>
+		<item quantity="other">%1$d hours ago</item>
+	</plurals>
+
+	<plurals name="count_days_ago">
+		<item quantity="one">%1$d day ago</item>
+		<item quantity="other">%1$d days ago</item>
+	</plurals>
+
 	<plurals name="count_rate_stars">
 		<item quantity="one">Rate %1$d star</item>
 		<item quantity="other">Rate %1$d stars</item>
@@ -272,6 +304,7 @@
 		<item quantity="other">%1$d lines selected</item>
 	</plurals>
 
+	<string name="action_start">Start</string>
 	<string name="action_ok">OK</string>
 	<string name="action_play">Play</string>
 	<string name="action_next_song">Next song</string>
@@ -295,7 +328,13 @@
 	<string name="action_cancel_download">Cancel download</string>
 	<string name="action_sleep_timer">Sleep timer</string>
 	<string name="action_sleep_timer_enabled">Sleep timer - %1$s left </string>
+	<string name="action_sleep_timer_songs_enabled">Sleep timer - %1$d songs left</string>
+	<string name="action_sleep_timer_queue_enabled">Sleep timer - end of queue</string>
+	<string name="action_sleep_timer_songs">Stop after %1$d songs</string>
+	<string name="action_sleep_timer_queue">Stop at end of current queue</string>
 	<string name="action_disable_sleep_timer">Turn off timer</string>
+	<string name="title_sleep_timer_time">Time</string>
+	<string name="title_sleep_timer_songs">Songs</string>
 	<string name="option_playback_speed">Playback speed</string>
 	<string name="action_navigate_back">Navigate up</string>
 	<string name="action_log_out">Logout</string>
@@ -329,6 +368,9 @@
 	<string name="action_test_exception_handler">Test exception handler</string>
 	<string name="action_dont_show_again">Don't show again</string>
 	<string name="action_open_settings">Open settings</string>
+	<string name="action_reset">Reset</string>
+	<string name="action_configure_lyric_providers">Configure lyric providers</string>
+	<string name="action_visit_site">Visit site</string>
 	<string name="subtitle_rebuild_database">Wipes all local metadata and forces a fresh sync</string>
 
 	<string name="notice_deleted_playlist">Deleted playlist.</string>
@@ -348,6 +390,7 @@
 	<string name="notice_login_suggestion">Did you mean...</string>
 	<string name="notice_queue_duplicate">This song is already in the queue. Do you really want to add it again?</string>
 	<string name="notice_local_network_denied">Permission denied</string>
+	<string name="notice_link_confirmation">This link is taking you to the following website:</string>
 
 	<string name="info_app_version">Navic %1$s</string>
 	<string name="info_action_is_permanent">This action cannot be undone</string>
@@ -378,6 +421,7 @@
 	<string name="info_track_path">Path</string>
 	<string name="info_track_replay_gain">Track ReplayGain</string>
 	<string name="info_album_replay_gain">Album ReplayGain</string>
+	<string name="info_dynamic_replay_gain">Dynamic ReplayGain</string>
 	<string name="info_track_replay_gain_effective">ReplayGain effective value</string>
 	<string name="info_update">Version "%1$s" has been released</string>
 	<string name="info_shared_by">Shared by %1$s</string>
@@ -420,6 +464,9 @@
 	<string name="info_repeat_one">Repeat one</string>
 	<string name="info_repeat_all">Repeat all</string>
 	<string name="info_app_icon">Changing the app icon will close Navic as Android requires this. Some icons may look identical on your home screen if your launcher dynamically themes the icon colours.</string>
+	<string name="info_equaliser_unsupported">Your device does not support this feature.</string>
+	<string name="info_equaliser_mode_not_builtin">Controls are only available in Built-in mode.</string>
+	<string name="info_lyric_provider_disclaimer">Enabling LRCLIB and/or LyricsPlus will make requests to external and unaffiliated web services.</string>
 
 	<string name="sideloading_warning_title">STOP, READ!</string>
 	<string name="sideloading_warning_subtitle">Google is planning to kill sideloading for ALL devices with Google Play Services installed!\n</string>

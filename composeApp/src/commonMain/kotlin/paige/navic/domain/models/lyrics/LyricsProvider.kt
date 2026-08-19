@@ -3,10 +3,14 @@ package paige.navic.domain.models.lyrics
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class LyricsProvider(
-	val displayName: String
+data class LyricsProvider(
+	val id: Id,
+	val enabled: Boolean
 ) {
-	LYRICS_PLUS("YouLy+"),
-	SUBSONIC("Subsonic"),
-	LRCLIB("Lrclib")
+	@Serializable
+	enum class Id {
+		SUBSONIC,
+		LYRICS_PLUS,
+		LRCLIB
+	}
 }

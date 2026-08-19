@@ -48,6 +48,7 @@ import navic.composeapp.generated.resources.info_explicit
 import navic.composeapp.generated.resources.info_not_available_offline
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
@@ -67,7 +68,9 @@ import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.Waveform
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
+import paige.navic.ui.navigation.Screen
 import paige.navic.util.core.InlineExplicitIcon
+import paige.navic.util.core.buildSongInfoString
 import paige.navic.util.core.toHoursMinutesSeconds
 import paige.navic.util.ui.segmentedShapes
 
@@ -107,6 +110,8 @@ fun CollectionDetailScreenSongRow(
 		count = count,
 		dismissDirection = dismissState.dismissDirection
 	)
+
+	val backStack = LocalNavStack.current
 
 	SwipeToDismissBox(
 		modifier = Modifier.padding(horizontal = 16.dp, vertical = 1.5.dp),
@@ -201,10 +206,14 @@ fun CollectionDetailScreenSongRow(
 						},
 						inlineContent = InlineExplicitIcon
 					)
-					Text(
-						song.artistName,
-						style = MaterialTheme.typography.bodySmall,
-						maxLines = 1
+					MarqueeText(
+						text = buildSongInfoString(
+							song = song,
+							onClickArtist = { backStack.add(Screen.ArtistDetail(it)) },
+							showYear = false,
+							showAlbum = false
+						),
+						style = MaterialTheme.typography.bodySmall
 					)
 				}
 			},

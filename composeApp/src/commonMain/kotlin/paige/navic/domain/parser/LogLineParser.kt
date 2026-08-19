@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import paige.navic.ui.theme.warning
 
 data class LogLine(
+	val id: Int,
 	val type: LogLineType,
 	val text: String,
 	val rawText: String
@@ -48,7 +49,8 @@ enum class LogLineType {
 }
 
 object LogLineParser {
-	fun parseString(rawText: String) = LogLine(
+	fun parseString(rawText: String, id: Int) = LogLine(
+		id = id,
 		text = rawText.drop(2),
 		rawText = rawText,
 		type = LogLineType.fromChar(rawText.firstOrNull())

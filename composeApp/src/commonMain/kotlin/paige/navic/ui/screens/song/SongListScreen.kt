@@ -29,6 +29,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.LocalBottomBarScrollManager
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
@@ -45,6 +46,7 @@ import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.screens.song.components.SongListScreenSortButton
 import paige.navic.ui.screens.song.components.songListScreenContent
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
+import paige.navic.util.core.isLandscape
 import paige.navic.util.ui.withoutTop
 import kotlin.time.Duration
 
@@ -54,6 +56,7 @@ fun SongListScreen(
 	nested: Boolean,
 	listType: DomainSongListType
 ) {
+	val platformContext = LocalPlatformContext.current
 	val viewModel = koinViewModel<SongListViewModel>(
 		key = listType.toString(),
 		parameters = { parametersOf(listType) },
@@ -105,7 +108,8 @@ fun SongListScreen(
 		},
 		bottomBar = {
 			val scrollManager = LocalBottomBarScrollManager.current
-			if (!nested || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens) {
+			val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
+			if (!nested || (!platformContext.isLandscape() && preferVisible)) {
 				RootBottomBar(scrolled = scrollManager.isTriggered)
 			}
 		}

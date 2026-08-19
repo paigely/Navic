@@ -11,6 +11,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -98,6 +99,7 @@ import paige.navic.ui.screens.settings.SettingsCustomHeadersScreen
 import paige.navic.ui.screens.settings.SettingsDataStorageScreen
 import paige.navic.ui.screens.settings.SettingsDeveloperScreen
 import paige.navic.ui.screens.settings.SettingsDownloadQualityScreen
+import paige.navic.ui.screens.settings.SettingsEqualiserScreen
 import paige.navic.ui.screens.settings.SettingsLogsScreen
 import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
@@ -195,7 +197,8 @@ fun App() {
 						SnackbarHost(hostState = snackBarState) { snackBarData ->
 							NavicSnackBar(snackBarData = snackBarData)
 						}
-					}
+					},
+					contentWindowInsets = WindowInsets()
 				) { contentPadding ->
 					NavDisplay(
 						modifier = Modifier
@@ -411,6 +414,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Settings.AppIcon>(metadata = detailPane("settings")) {
 			SettingsAppIconScreen()
+		}
+		entry<Screen.Settings.Equaliser> {
+			SettingsEqualiserScreen()
 		}
 	}
 }
