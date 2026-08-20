@@ -10,13 +10,11 @@ import navic.composeapp.generated.resources.option_sort_alphabetical_by_artist
 import navic.composeapp.generated.resources.option_sort_alphabetical_by_name
 import navic.composeapp.generated.resources.option_sort_by_genre
 import navic.composeapp.generated.resources.option_sort_by_year
-import navic.composeapp.generated.resources.option_sort_downloaded
 import navic.composeapp.generated.resources.option_sort_frequent
 import navic.composeapp.generated.resources.option_sort_newest
 import navic.composeapp.generated.resources.option_sort_random
 import navic.composeapp.generated.resources.option_sort_rating
 import navic.composeapp.generated.resources.option_sort_recent
-import navic.composeapp.generated.resources.option_sort_starred
 import navic.composeapp.generated.resources.option_sort_year
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -59,8 +57,6 @@ fun DomainAlbumListType.label() = when (this) {
 	DomainAlbumListType.AlphabeticalByName -> stringResource(Res.string.option_sort_alphabetical_by_name)
 	DomainAlbumListType.AlphabeticalByArtist -> stringResource(Res.string.option_sort_alphabetical_by_artist)
 	DomainAlbumListType.Highest -> stringResource(Res.string.option_sort_rating)
-	DomainAlbumListType.Starred -> stringResource(Res.string.option_sort_starred)
-	DomainAlbumListType.Downloaded -> stringResource(Res.string.option_sort_downloaded)
 	DomainAlbumListType.Year -> stringResource(Res.string.option_sort_year)
 	is DomainAlbumListType.ByGenre -> stringResource(Res.string.option_sort_by_genre)
 	is DomainAlbumListType.ByYear -> stringResource(Res.string.option_sort_by_year)
@@ -70,12 +66,10 @@ fun DomainAlbumListType.label() = when (this) {
 fun DomainSongListType.label() = when (this) {
 	is DomainSongListType.ByArtist -> stringResource(Res.string.option_sort_by_genre)
 	is DomainSongListType.ByGenre -> stringResource(Res.string.option_sort_by_genre)
-	DomainSongListType.Downloaded -> stringResource(Res.string.option_sort_downloaded)
 	DomainSongListType.FrequentlyPlayed -> stringResource(Res.string.option_sort_frequent)
 	DomainSongListType.Newest -> stringResource(Res.string.option_sort_newest)
 	DomainSongListType.Random -> stringResource(Res.string.option_sort_random)
 	DomainSongListType.Rating -> stringResource(Res.string.option_sort_rating)
-	DomainSongListType.Starred -> stringResource(Res.string.option_sort_starred)
 	DomainSongListType.Year -> stringResource(Res.string.option_sort_by_year)
 }
 

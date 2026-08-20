@@ -3,8 +3,6 @@ package paige.navic.util.core
 import androidx.room3.RoomRawQuery
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import paige.navic.data.database.entities.DownloadEntity
-import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSong
@@ -13,7 +11,6 @@ import paige.navic.domain.models.DomainSongListType
 // TODO: sort with sql instead
 fun ImmutableList<DomainSong>.sortedByListType(
 	listType: DomainSongListType,
-	downloads: List<DownloadEntity>,
 	albums: List<DomainAlbum>
 ): ImmutableList<DomainSong> {
 	return when (listType) {
@@ -24,13 +21,7 @@ fun ImmutableList<DomainSong>.sortedByListType(
 				?.createdAt
 		}
 
-		DomainSongListType.Starred -> filter { it.starredAt != null }.sortedBy { it.starredAt }
 		DomainSongListType.Random -> shuffled()
-		DomainSongListType.Downloaded -> filter { song ->
-			downloads
-				.filter { it.status == DownloadStatus.DOWNLOADED }
-				.any { it.songId == song.id }
-		}
 
 		DomainSongListType.Rating -> sortedByDescending { it.userRating ?: 0 }
 		DomainSongListType.Year -> sortedByDescending { it.year }
@@ -62,13 +53,7 @@ fun DomainAlbumListType.toSqlQuery(): RoomRawQuery {
 		DomainAlbumListType.Highest -> orderBy = "userRating DESC"
 		DomainAlbumListType.Newest -> orderBy = "createdAt DESC"
 		DomainAlbumListType.Random -> orderBy = "RANDOM()"
-		DomainAlbumListType.Downloaded,
 		DomainAlbumListType.Recent -> orderBy = "lastPlayedAt DESC"
-
-		DomainAlbumListType.Starred -> {
-			where = "starredAt IS NOT NULL"
-			orderBy = "starredAt ASC"
-		}
 
 		DomainAlbumListType.Year -> {
 			orderBy = "year DESC"

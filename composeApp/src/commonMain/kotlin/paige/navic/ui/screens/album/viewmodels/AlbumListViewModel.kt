@@ -8,16 +8,22 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.domain.models.DomainFilter
+import paige.navic.domain.models.toBitmask
+import paige.navic.domain.models.toDomainFilters
 import paige.navic.domain.repositories.AlbumRepository
 import paige.navic.ui.core.UiState
 
 class AlbumListViewModel(
 	initialListType: DomainAlbumListType = DomainAlbumListType.AlphabeticalByArtist,
+	initialFilters: Set<DomainFilter>? = null,
 	private val repository: AlbumRepository,
-	private val sessionManager: SessionManager
+	private val sessionManager: SessionManager,
+	private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 	val albumsState: StateFlow<UiState<ImmutableList<DomainAlbum>>>
 		field = MutableStateFlow<UiState<ImmutableList<DomainAlbum>>>(UiState.Loading())
@@ -37,6 +43,11 @@ class AlbumListViewModel(
 	val selectedReversed: StateFlow<Boolean>
 		field = MutableStateFlow(false)
 
+	val selectedFilters: StateFlow<Set<DomainFilter>>
+		field = MutableStateFlow(
+			initialFilters ?: preferenceManager.albumFilters.toDomainFilters()
+		)
+
 	val gridState = LazyGridState()
 
 	init {
@@ -47,10 +58,14 @@ class AlbumListViewModel(
 
 	fun refreshAlbums(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			repository.getAlbumsFlow(fullRefresh, listType.value, selectedReversed.value)
-				.collect {
-					albumsState.value = it
-				}
+			repository.getAlbumsFlow(
+				fullRefresh,
+				listType.value,
+				selectedReversed.value,
+				selectedFilters.value
+			).collect {
+				albumsState.value = it
+			}
 		}
 	}
 
@@ -97,6 +112,18 @@ class AlbumListViewModel(
 
 	fun setReversed(reversed: Boolean) {
 		selectedReversed.value = reversed
+		refreshAlbums(false)
+	}
+
+	fun toggleFilter(filter: DomainFilter) {
+		val current = selectedFilters.value
+		val newFilters = if (current.contains(filter)) {
+			current - filter
+		} else {
+			current + filter
+		}
+		selectedFilters.value = newFilters
+		preferenceManager.albumFilters = newFilters.toBitmask()
 		refreshAlbums(false)
 	}
 

@@ -72,6 +72,7 @@ fun SongListScreen(
 	val selectedSong by viewModel.selectedSong.collectAsStateWithLifecycle()
 	val selectedSorting by viewModel.selectedSorting.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
+	val selectedFilters by viewModel.selectedFilters.collectAsStateWithLifecycle()
 	val starred by viewModel.starred.collectAsStateWithLifecycle()
 	val selectedSongRating by viewModel.selectedSongRating.collectAsStateWithLifecycle()
 	val allDownloads by viewModel.allDownloads.collectAsStateWithLifecycle()
@@ -87,7 +88,9 @@ fun SongListScreen(
 			selectedSorting = selectedSorting,
 			onSetSorting = { viewModel.setSorting(it) },
 			selectedReversed = selectedReversed,
-			onSetReversed = { viewModel.setReversed(it) }
+			onSetReversed = { viewModel.setReversed(it) },
+			selectedFilters = selectedFilters,
+			onToggleFilter = { viewModel.toggleFilter(it) }
 		)
 	}
 

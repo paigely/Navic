@@ -72,6 +72,7 @@ fun AlbumListScreen(
 	val player = koinInject<MediaPlayerViewModel>()
 	val selectedSorting by viewModel.listType.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
+	val selectedFilters by viewModel.selectedFilters.collectAsStateWithLifecycle()
 	val albumsState by viewModel.albumsState.collectAsStateWithLifecycle()
 	val selectedAlbum by viewModel.selectedAlbum.collectAsStateWithLifecycle()
 	val starred by viewModel.starred.collectAsStateWithLifecycle()
@@ -88,7 +89,9 @@ fun AlbumListScreen(
 			selectedReversed = selectedReversed,
 			onSetReversed = { viewModel.setReversed(it) },
 			selectedViewMode = selectedViewMode,
-			onSetViewMode = { preferenceManager.albumListViewMode = it }
+			onSetViewMode = { preferenceManager.albumListViewMode = it },
+			selectedFilters = selectedFilters,
+			onToggleFilter = { viewModel.toggleFilter(it) }
 		)
 	}
 

@@ -10,6 +10,5 @@ import org.jetbrains.compose.resources.StringResource
 @Immutable
 enum class DomainArtistListType(val displayName: StringResource) {
 	AlphabeticalByName(Res.string.option_sort_alphabetical_by_name),
-	Starred(Res.string.option_sort_starred),
 	Random(Res.string.option_sort_random)
 }

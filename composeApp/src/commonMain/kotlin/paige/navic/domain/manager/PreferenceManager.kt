@@ -115,6 +115,11 @@ class PreferenceManager(
 	var playlistListViewMode by preference(ListViewMode.List)
 	var artistListViewMode by preference(ListViewMode.List)
 
+	var albumFilters by preference(0)
+	var songFilters by preference(0)
+	var artistFilters by preference(0)
+	var playlistFilters by preference(0)
+
 	fun customHeadersMap(): Map<String, String> = buildMap {
 		for (line in customHeaders.lines()) {
 			val parts = line.split(":", limit = 2)

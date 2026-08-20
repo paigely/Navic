@@ -14,6 +14,5 @@ enum class DomainPlaylistListType(val displayName: StringResource) {
 	Name(Res.string.option_sort_playlist_by_name),
 	DateAdded(Res.string.option_sort_playlist_date_added),
 	Duration(Res.string.option_sort_playlist_duration),
-	Random(Res.string.option_sort_random),
-	Downloaded(Res.string.option_sort_downloaded)
+	Random(Res.string.option_sort_random)
 }

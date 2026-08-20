@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.domain.models.DomainFilter
 import paige.navic.domain.models.DomainPlaylistListType
 import paige.navic.domain.models.settings.ListViewMode
 import paige.navic.icons.Icons
@@ -26,7 +27,9 @@ fun PlaylistListScreenSortButton(
 	selectedReversed: Boolean,
 	onSetReversed: (Boolean) -> Unit,
 	selectedViewMode: ListViewMode,
-	onSetViewMode: (ListViewMode) -> Unit
+	onSetViewMode: (ListViewMode) -> Unit,
+	selectedFilters: Set<DomainFilter>,
+	onToggleFilter: (DomainFilter) -> Unit
 ) {
 	val entries = remember { DomainPlaylistListType.entries.toImmutableList() }
 	var expanded by remember { mutableStateOf(false) }
@@ -57,7 +60,9 @@ fun PlaylistListScreenSortButton(
 			onSetReversed = onSetReversed,
 			onDismissRequest = { expanded = false },
 			selectedViewMode = selectedViewMode,
-			onSetViewMode = onSetViewMode
+			onSetViewMode = onSetViewMode,
+			selectedFilters = selectedFilters,
+			onToggleFilter = onToggleFilter
 		)
 	}
 }

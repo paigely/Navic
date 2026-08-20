@@ -11,6 +11,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -31,12 +32,17 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_list_view_mode
 import navic.composeapp.generated.resources.option_sort_ascending
 import navic.composeapp.generated.resources.option_sort_descending
+import navic.composeapp.generated.resources.option_sort_downloaded
+import navic.composeapp.generated.resources.option_sort_starred
 import navic.composeapp.generated.resources.title_direction
 import navic.composeapp.generated.resources.title_sort_by
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.domain.models.DomainFilter
 import paige.navic.domain.models.settings.ListViewMode
 import paige.navic.icons.Icons
+import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.ListArrow
+import paige.navic.icons.outlined.Star
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +55,8 @@ fun <T> SortSheet(
 	onSetReversed: (Boolean) -> Unit,
 	selectedViewMode: ListViewMode? = null,
 	onSetViewMode: ((ListViewMode) -> Unit)? = null,
+	selectedFilters: Set<DomainFilter> = emptySet(),
+	onToggleFilter: ((DomainFilter) -> Unit)? = null,
 	onDismissRequest: () -> Unit
 ) {
 	ModalBottomSheet(
@@ -92,6 +100,41 @@ fun <T> SortSheet(
 							text = label(sorting),
 							style = MaterialTheme.typography.bodyLarge,
 							modifier = Modifier.padding(start = 16.dp)
+						)
+					}
+				}
+			}
+
+			if (onToggleFilter != null) {
+				Row(
+					modifier = Modifier
+						.fillMaxWidth()
+						.padding(horizontal = 16.dp),
+					horizontalArrangement = Arrangement.spacedBy(8.dp)
+				) {
+					DomainFilter.entries.forEach { filter ->
+						FilterChip(
+							selected = selectedFilters.contains(filter),
+							onClick = { onToggleFilter(filter) },
+							label = {
+								Text(
+									stringResource(
+										when (filter) {
+											DomainFilter.Starred -> Res.string.option_sort_starred
+											DomainFilter.Downloaded -> Res.string.option_sort_downloaded
+										}
+									)
+								)
+							},
+							leadingIcon = {
+								Icon(
+									imageVector = when (filter) {
+										DomainFilter.Starred -> Icons.Outlined.Star
+										DomainFilter.Downloaded -> Icons.Outlined.Download
+									},
+									contentDescription = null
+								)
+							}
 						)
 					}
 				}

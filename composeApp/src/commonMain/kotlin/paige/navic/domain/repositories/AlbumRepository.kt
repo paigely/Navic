@@ -16,6 +16,7 @@ import paige.navic.data.database.mappers.toEntity
 import paige.navic.domain.manager.SyncManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.domain.models.DomainFilter
 import paige.navic.ui.core.UiState
 import paige.navic.util.core.toSqlQuery
 import kotlin.time.Clock
@@ -28,9 +29,10 @@ class AlbumRepository(
 ) {
 	private suspend fun getLocalData(
 		listType: DomainAlbumListType,
-		reversed: Boolean
+		reversed: Boolean,
+		filters: Set<DomainFilter> = emptySet()
 	): ImmutableList<DomainAlbum> {
-		val downloadedSongIds = if (listType == DomainAlbumListType.Downloaded) {
+		val downloadedSongIds = if (filters.contains(DomainFilter.Downloaded)) {
 			downloadDao.getAllDownloadsList()
 				.filter { it.status == DownloadStatus.DOWNLOADED }
 				.map { it.songId }
@@ -40,29 +42,38 @@ class AlbumRepository(
 		return albumDao
 			.getAlbumsByQuery(listType.toSqlQuery())
 			.map { it.toDomainModel() }
+			.filter { album ->
+				filters.all { filter ->
+					when (filter) {
+						DomainFilter.Starred -> album.starredAt != null
+						DomainFilter.Downloaded -> downloadedSongIds != null && downloadedSongIds.containsAll(album.songs.map { it.id })
+					}
+				}
+			}
 			.let { if (reversed) it.asReversed() else it }
-			.filter { album -> downloadedSongIds == null || downloadedSongIds.containsAll(album.songs.map { it.id }) }
 			.toImmutableList()
 	}
 
 	private suspend fun refreshLocalData(
 		listType: DomainAlbumListType,
-		reversed: Boolean
+		reversed: Boolean,
+		filters: Set<DomainFilter> = emptySet()
 	): ImmutableList<DomainAlbum> {
 		dbRepository.syncLibrarySongs().getOrThrow()
-		return getLocalData(listType, reversed)
+		return getLocalData(listType, reversed, filters)
 	}
 
 	fun getAlbumsFlow(
 		fullRefresh: Boolean,
 		listType: DomainAlbumListType,
-		reversed: Boolean
+		reversed: Boolean,
+		filters: Set<DomainFilter> = emptySet()
 	): Flow<UiState<ImmutableList<DomainAlbum>>> = flow {
-		val localData = getLocalData(listType, reversed)
+		val localData = getLocalData(listType, reversed, filters)
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))
 			try {
-				emit(UiState.Success(data = refreshLocalData(listType, reversed)))
+				emit(UiState.Success(data = refreshLocalData(listType, reversed, filters)))
 			} catch (error: Exception) {
 				emit(UiState.Error(error = error, data = localData))
 			}

@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.collections.immutable.persistentListOf
+import paige.navic.domain.models.DomainFilter
 import paige.navic.domain.models.DomainSongListType
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
@@ -21,15 +22,15 @@ fun SongListScreenSortButton(
 	selectedSorting: DomainSongListType,
 	onSetSorting: (listType: DomainSongListType) -> Unit,
 	selectedReversed: Boolean,
-	onSetReversed: (Boolean) -> Unit
+	onSetReversed: (Boolean) -> Unit,
+	selectedFilters: Set<DomainFilter>,
+	onToggleFilter: (DomainFilter) -> Unit
 ) {
 	val entries = remember {
 		persistentListOf(
 			DomainSongListType.FrequentlyPlayed,
 			DomainSongListType.Newest,
-			DomainSongListType.Starred,
 			DomainSongListType.Random,
-			DomainSongListType.Downloaded,
 			DomainSongListType.Rating,
 			DomainSongListType.Year
 		)
@@ -60,7 +61,9 @@ fun SongListScreenSortButton(
 			onSetSorting = onSetSorting,
 			selectedReversed = selectedReversed,
 			label = { it.label() },
-			onSetReversed = onSetReversed
+			onSetReversed = onSetReversed,
+			selectedFilters = selectedFilters,
+			onToggleFilter = onToggleFilter
 		)
 	}
 }

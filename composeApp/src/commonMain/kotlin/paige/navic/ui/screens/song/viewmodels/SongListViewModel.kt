@@ -11,17 +11,23 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.models.DomainFilter
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
+import paige.navic.domain.models.toBitmask
+import paige.navic.domain.models.toDomainFilters
 import paige.navic.domain.repositories.SongRepository
 import paige.navic.ui.core.UiState
 
 class SongListViewModel(
 	initialListType: DomainSongListType = DomainSongListType.FrequentlyPlayed,
+	initialFilters: Set<DomainFilter>? = null,
 	private val repository: SongRepository,
 	private val downloadManager: DownloadManager,
 	private val sessionManager: SessionManager,
+	private val preferenceManager: PreferenceManager,
 	connectivityManager: ConnectivityManager
 ) : ViewModel() {
 	val songsState: StateFlow<UiState<ImmutableList<DomainSong>>>
@@ -49,6 +55,11 @@ class SongListViewModel(
 	val selectedReversed: StateFlow<Boolean>
 		field = MutableStateFlow(false)
 
+	val selectedFilters: StateFlow<Set<DomainFilter>>
+		field = MutableStateFlow(
+			initialFilters ?: preferenceManager.songFilters.toDomainFilters()
+		)
+
 	val isOnline = connectivityManager.isOnline
 
 	init {
@@ -74,7 +85,8 @@ class SongListViewModel(
 			repository.getSongsFlow(
 				fullRefresh,
 				selectedSorting.value,
-				selectedReversed.value
+				selectedReversed.value,
+				selectedFilters.value
 			).collect {
 				songsState.value = it
 			}
@@ -113,6 +125,18 @@ class SongListViewModel(
 
 	fun setReversed(reversed: Boolean) {
 		selectedReversed.value = reversed
+		refreshSongs(false)
+	}
+
+	fun toggleFilter(filter: DomainFilter) {
+		val current = selectedFilters.value
+		val newFilters = if (current.contains(filter)) {
+			current - filter
+		} else {
+			current + filter
+		}
+		selectedFilters.value = newFilters
+		preferenceManager.songFilters = newFilters.toBitmask()
 		refreshSongs(false)
 	}
 

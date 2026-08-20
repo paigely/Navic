@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.flowOn
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.dao.DownloadDao
 import paige.navic.data.database.dao.SongDao
+import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.entities.SyncActionType
 import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.data.database.mappers.toEntity
 import paige.navic.domain.manager.SyncManager
+import paige.navic.domain.models.DomainFilter
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
 import paige.navic.ui.core.UiState
@@ -37,44 +39,63 @@ class SongRepository(
 
 	private suspend fun getLocalData(
 		listType: DomainSongListType,
-		reversed: Boolean
+		reversed: Boolean,
+		filters: Set<DomainFilter> = emptySet()
 	): ImmutableList<DomainSong> {
 		val songs = songDao
 			.getAllSongs()
 			.map { it.toDomainModel() }
-		val filtered = songs
+
+		val downloadedIds = if (filters.contains(DomainFilter.Downloaded)) {
+			downloadDao.getAllDownloadsList()
+				.filter { it.status == DownloadStatus.DOWNLOADED }
+				.map { it.songId }
+				.toSet()
+		} else emptySet()
+
+		val filteredByFilters = songs.filter { song ->
+			filters.all { filter ->
+				when (filter) {
+					DomainFilter.Starred -> song.starredAt != null
+					DomainFilter.Downloaded -> downloadedIds.contains(song.id)
+				}
+			}
+		}
+
+		val sorted = filteredByFilters
 			.toImmutableList()
 			.sortedByListType(
 				listType,
-				downloads = downloadDao.getAllDownloadsList(),
 				albums = albumDao.getAllAlbumsList().map { it.toDomainModel() }
 			)
 
 		return if (reversed) {
-			filtered.reversed().toImmutableList()
+			sorted.reversed().toImmutableList()
 		} else {
-			filtered
+			sorted
 		}
 	}
 
 	private suspend fun refreshLocalData(
 		listType: DomainSongListType,
-		reversed: Boolean
+		reversed: Boolean,
+		filters: Set<DomainFilter> = emptySet()
 	): ImmutableList<DomainSong> {
 		dbRepository.syncLibrarySongs().getOrThrow()
-		return getLocalData(listType, reversed)
+		return getLocalData(listType, reversed, filters)
 	}
 
 	fun getSongsFlow(
 		fullRefresh: Boolean,
 		listType: DomainSongListType,
-		reversed: Boolean
+		reversed: Boolean,
+		filters: Set<DomainFilter> = emptySet()
 	): Flow<UiState<ImmutableList<DomainSong>>> = flow {
-		val localData = getLocalData(listType, reversed)
+		val localData = getLocalData(listType, reversed, filters)
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))
 			try {
-				emit(UiState.Success(data = refreshLocalData(listType, reversed)))
+				emit(UiState.Success(data = refreshLocalData(listType, reversed, filters)))
 			} catch (error: Exception) {
 				emit(UiState.Error(error = error, data = localData))
 			}

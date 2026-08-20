@@ -3,7 +3,11 @@ package paige.navic.di
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
+import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.domain.models.DomainArtistListType
+import paige.navic.domain.models.DomainFilter
 import paige.navic.domain.models.DomainSong
+import paige.navic.domain.models.DomainSongListType
 import paige.navic.ui.components.dialogs.DeletionViewModel
 import paige.navic.ui.components.sheets.ChangelogViewModel
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
@@ -60,9 +64,36 @@ val viewModelModule = module {
 		)
 	}
 
-	viewModelOf(::AlbumListViewModel)
-	viewModelOf(::SongListViewModel)
-	viewModelOf(::ArtistListViewModel)
+	viewModel { params ->
+		AlbumListViewModel(
+			initialListType = params.getOrNull<DomainAlbumListType>() ?: DomainAlbumListType.AlphabeticalByArtist,
+			initialFilters = params.getOrNull<Set<DomainFilter>>(),
+			repository = get(),
+			sessionManager = get(),
+			preferenceManager = get()
+		)
+	}
+	viewModel { params ->
+		SongListViewModel(
+			initialListType = params.getOrNull<DomainSongListType>() ?: DomainSongListType.FrequentlyPlayed,
+			initialFilters = params.getOrNull<Set<DomainFilter>>(),
+			repository = get(),
+			downloadManager = get(),
+			sessionManager = get(),
+			preferenceManager = get(),
+			connectivityManager = get()
+		)
+	}
+	viewModel { params ->
+		ArtistListViewModel(
+			initialListType = params.getOrNull<DomainArtistListType>() ?: DomainArtistListType.AlphabeticalByName,
+			initialFilters = params.getOrNull<Set<DomainFilter>>(),
+			repository = get(),
+			albumDao = get(),
+			sessionManager = get(),
+			preferenceManager = get()
+		)
+	}
 	viewModelOf(::SearchViewModel)
 	viewModelOf(::GenreListViewModel)
 	viewModelOf(::RadioListViewModel)

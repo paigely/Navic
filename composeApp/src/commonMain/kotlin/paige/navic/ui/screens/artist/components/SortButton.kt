@@ -8,7 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.collections.immutable.persistentListOf
-import paige.navic.domain.models.DomainAlbumListType
+import org.jetbrains.compose.resources.stringResource
+import paige.navic.domain.models.DomainArtistListType
+import paige.navic.domain.models.DomainFilter
 import paige.navic.domain.models.settings.ListViewMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
@@ -20,9 +22,19 @@ import paige.navic.util.core.label
 @Composable
 fun ArtistListScreenSortButton(
 	nested: Boolean,
+	selectedSorting: DomainArtistListType,
+	onSetSorting: (DomainArtistListType) -> Unit,
 	selectedViewMode: ListViewMode,
-	onSetViewMode: (ListViewMode) -> Unit
+	onSetViewMode: (ListViewMode) -> Unit,
+	selectedFilters: Set<DomainFilter>,
+	onToggleFilter: (DomainFilter) -> Unit
 ) {
+	val entries = remember {
+		persistentListOf(
+			DomainArtistListType.AlphabeticalByName,
+			DomainArtistListType.Random
+		)
+	}
 	var expanded by remember { mutableStateOf(false) }
 	if (!nested) {
 		IconButton(onClick = {
@@ -42,10 +54,18 @@ fun ArtistListScreenSortButton(
 		}
 	}
 	if (expanded) {
-		ViewModeSheet(
+		SortSheet(
+			entries = entries,
+			selectedSorting = selectedSorting,
+			selectedReversed = false,
+			onSetReversed = {},
+			label = { stringResource(it.displayName) },
+			onSetSorting = onSetSorting,
 			onDismissRequest = { expanded = false },
 			selectedViewMode = selectedViewMode,
-			onSetViewMode = onSetViewMode
+			onSetViewMode = onSetViewMode,
+			selectedFilters = selectedFilters,
+			onToggleFilter = onToggleFilter
 		)
 	}
 }

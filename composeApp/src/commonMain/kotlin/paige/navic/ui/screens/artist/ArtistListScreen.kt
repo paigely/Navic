@@ -76,6 +76,8 @@ fun ArtistListScreen(
 	val artistsState by viewModel.artistsState.collectAsState()
 	val selectedArtist by viewModel.selectedArtist.collectAsState()
 	val selectedArtistAlbums by viewModel.selectedArtistAlbums.collectAsState()
+	val selectedSorting by viewModel.listType.collectAsState()
+	val selectedFilters by viewModel.selectedFilters.collectAsState()
 	val starred by viewModel.starred.collectAsState()
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -84,8 +86,12 @@ fun ArtistListScreen(
 	val actions: @Composable RowScope.() -> Unit = {
 		ArtistListScreenSortButton(
 			nested = nested,
+			selectedSorting = selectedSorting,
+			onSetSorting = { viewModel.setListType(it) },
 			selectedViewMode = selectedViewMode,
-			onSetViewMode = { preferenceManager.artistListViewMode = it }
+			onSetViewMode = { preferenceManager.artistListViewMode = it },
+			selectedFilters = selectedFilters,
+			onToggleFilter = { viewModel.toggleFilter(it) }
 		)
 	}
 

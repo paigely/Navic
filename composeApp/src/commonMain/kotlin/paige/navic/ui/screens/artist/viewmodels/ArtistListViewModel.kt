@@ -12,19 +12,25 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import paige.navic.data.database.dao.AlbumDao
 import paige.navic.data.database.mappers.toDomainModel
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
+import paige.navic.domain.models.DomainFilter
+import paige.navic.domain.models.toBitmask
+import paige.navic.domain.models.toDomainFilters
 import paige.navic.domain.repositories.ArtistRepository
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.core.UiState
 
 class ArtistListViewModel(
 	initialListType: DomainArtistListType = DomainArtistListType.AlphabeticalByName,
+	initialFilters: Set<DomainFilter>? = null,
 	private val repository: ArtistRepository,
 	private val albumDao: AlbumDao,
-	private val sessionManager: SessionManager
+	private val sessionManager: SessionManager,
+	private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 	val artistsState: StateFlow<UiState<ImmutableList<DomainArtist>>>
 		field = MutableStateFlow<UiState<ImmutableList<DomainArtist>>>(UiState.Loading())
@@ -41,6 +47,11 @@ class ArtistListViewModel(
 	val listType: StateFlow<DomainArtistListType>
 		field = MutableStateFlow(initialListType)
 
+	val selectedFilters: StateFlow<Set<DomainFilter>>
+		field = MutableStateFlow(
+			initialFilters ?: preferenceManager.artistFilters.toDomainFilters()
+		)
+
 	val gridState = LazyGridState()
 
 	init {
@@ -51,9 +62,10 @@ class ArtistListViewModel(
 
 	fun refreshArtists(fullRefresh: Boolean) {
 		viewModelScope.launch {
-			repository.getArtistsFlow(fullRefresh, listType.value).collect {
-				artistsState.value = it
-			}
+			repository.getArtistsFlow(fullRefresh, listType.value, selectedFilters.value)
+				.collect {
+					artistsState.value = it
+				}
 		}
 	}
 
@@ -110,6 +122,19 @@ class ArtistListViewModel(
 	// TODO: implement me
 	fun setListType(newListType: DomainArtistListType) {
 		listType.value = newListType
+		refreshArtists(false)
+	}
+
+	fun toggleFilter(filter: DomainFilter) {
+		val current = selectedFilters.value
+		val newFilters = if (current.contains(filter)) {
+			current - filter
+		} else {
+			current + filter
+		}
+		selectedFilters.value = newFilters
+		preferenceManager.artistFilters = newFilters.toBitmask()
+		refreshArtists(false)
 	}
 
 	fun clearError() {
