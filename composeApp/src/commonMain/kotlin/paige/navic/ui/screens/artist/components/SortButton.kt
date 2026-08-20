@@ -16,8 +16,6 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
 import paige.navic.ui.components.layouts.TopBarButton
 import paige.navic.ui.components.sheets.SortSheet
-import paige.navic.ui.components.sheets.ViewModeSheet
-import paige.navic.util.core.label
 
 @Composable
 fun ArtistListScreenSortButton(

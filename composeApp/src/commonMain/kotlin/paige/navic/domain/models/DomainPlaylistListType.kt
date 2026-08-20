@@ -2,7 +2,6 @@ package paige.navic.domain.models
 
 import androidx.compose.runtime.Immutable
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.option_sort_downloaded
 import navic.composeapp.generated.resources.option_sort_playlist_by_name
 import navic.composeapp.generated.resources.option_sort_playlist_date_added
 import navic.composeapp.generated.resources.option_sort_playlist_duration
