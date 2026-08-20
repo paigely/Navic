@@ -197,6 +197,7 @@ fun LyricsScreenContent(
 				text = line.text,
 				progress = progress,
 				isActive = highlight,
+				isSynced = isSynced,
 				onClick = {
 					if (isSelecting) {
 						val lineTextLength = line.text.length
@@ -233,8 +234,8 @@ fun LyricsScreenContent(
 								}
 							}
 						}
-					} else {
-						player.seek((lineTime / duration).toFloat())
+					} else if (line.time != null) {
+						player.seek((line.time / duration).toFloat())
 						if (player.uiState.value.isPaused) {
 							player.resume()
 						}
