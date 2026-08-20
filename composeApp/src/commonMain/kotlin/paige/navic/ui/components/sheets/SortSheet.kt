@@ -4,28 +4,34 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import navic.composeapp.generated.resources.Res
@@ -67,40 +73,66 @@ fun <T> SortSheet(
 		)
 	) {
 		Column(
-			modifier = Modifier.verticalScroll(rememberScrollState()),
-			verticalArrangement = Arrangement.spacedBy(8.dp)
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(horizontal = 24.dp)
+				.verticalScroll(rememberScrollState())
+				.selectableGroup(),
+			verticalArrangement = Arrangement.spacedBy(2.dp)
 		) {
 			Text(
 				text = stringResource(Res.string.title_sort_by),
-				style = MaterialTheme.typography.titleLarge,
-				modifier = Modifier.padding(horizontal = 16.dp)
+				style = MaterialTheme.typography.headlineMedium,
+				fontWeight = FontWeight.Bold,
+				modifier = Modifier.padding(start = 2.dp, top = 0.dp, bottom = 16.dp)
 			)
 
-			Column(Modifier.selectableGroup()) {
+			Column(
+				modifier = Modifier
+					.clip(RoundedCornerShape(20.dp)),
+				verticalArrangement = Arrangement.spacedBy(4.dp)
+			) {
 				entries.forEach { sorting ->
-					Row(
-						Modifier
-							.padding(horizontal = 16.dp)
+					val isSelected = sorting == selectedSorting
+					val containerColor = if (isSelected) {
+						MaterialTheme.colorScheme.secondaryContainer
+					} else {
+						MaterialTheme.colorScheme.surfaceContainerLowest
+					}
+
+					Surface(
+						color = containerColor,
+						modifier = Modifier
 							.fillMaxWidth()
-							.height(56.dp)
+							.clip(RoundedCornerShape(8.dp))
 							.selectable(
-								selected = (sorting == selectedSorting),
-								onClick = {
-									onSetSorting(sorting)
-								},
+								selected = isSelected,
+								onClick = { onSetSorting(sorting) },
 								role = Role.RadioButton
-							),
-						verticalAlignment = Alignment.CenterVertically
+							)
+							.semantics { this.selected = isSelected }
 					) {
-						RadioButton(
-							selected = (sorting == selectedSorting),
-							onClick = null
-						)
-						Text(
-							text = label(sorting),
-							style = MaterialTheme.typography.bodyLarge,
-							modifier = Modifier.padding(start = 16.dp)
-						)
+						Row(
+							modifier = Modifier
+								.fillMaxWidth()
+								.padding(start = 20.dp, end = 14.dp, top = 14.dp, bottom = 14.dp),
+							verticalAlignment = Alignment.CenterVertically,
+							horizontalArrangement = Arrangement.SpaceBetween
+						) {
+							Text(
+								text = label(sorting),
+								style = MaterialTheme.typography.bodyLarge,
+								color = if (isSelected) {
+									MaterialTheme.colorScheme.onSecondaryContainer
+								} else {
+									MaterialTheme.colorScheme.onSurface
+								}
+							)
+							RadioButton(
+								selected = isSelected,
+								onClick = null
+							)
+						}
 					}
 				}
 			}
@@ -109,7 +141,7 @@ fun <T> SortSheet(
 				Row(
 					modifier = Modifier
 						.fillMaxWidth()
-						.padding(horizontal = 16.dp),
+						.padding(top = 8.dp),
 					horizontalArrangement = Arrangement.spacedBy(8.dp)
 				) {
 					DomainFilter.entries.forEach { filter ->
@@ -144,13 +176,11 @@ fun <T> SortSheet(
 				Text(
 					text = stringResource(Res.string.option_list_view_mode),
 					style = MaterialTheme.typography.titleMedium,
-					modifier = Modifier.padding(horizontal = 16.dp)
+					modifier = Modifier.padding(top = 8.dp)
 				)
 
 				SingleChoiceSegmentedButtonRow(
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(horizontal = 16.dp)
+					modifier = Modifier.fillMaxWidth()
 				) {
 					ListViewMode.entries.forEachIndexed { index, viewMode ->
 						SegmentedButton(
@@ -175,13 +205,11 @@ fun <T> SortSheet(
 			Text(
 				text = stringResource(Res.string.title_direction),
 				style = MaterialTheme.typography.titleMedium,
-				modifier = Modifier.padding(horizontal = 16.dp)
+				modifier = Modifier.padding(top = 8.dp)
 			)
 
 			SingleChoiceSegmentedButtonRow(
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(horizontal = 16.dp)
+				modifier = Modifier.fillMaxWidth()
 			) {
 				SegmentedButton(
 					shape = SegmentedButtonDefaults.itemShape(
