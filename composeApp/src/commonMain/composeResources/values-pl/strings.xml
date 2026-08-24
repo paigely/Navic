@@ -64,7 +64,7 @@
     <string name="subtitle_data_storage">Zarządzaj synchronizacją, zużyciem sieci i pamięcią podręczną</string>
     <string name="subtitle_trigger_sync">Natychmiast wymusza pełny skan biblioteki</string>
     <string name="subtitle_pending_actions">%1$d element(-ów) oczekuje na połączenie z siecią</string>
-    <string name="subtitle_developer">Debuggowanie, testowanie</string>
+    <string name="subtitle_developer">Debuggowanie, testowanie, logi</string>
     <string name="subtitle_about">Informacje o aplikacji, wersji i licencjach</string>
     <string name="subtitle_playlist">Playlista</string>
     <string name="subtitle_enable_scrobbling">Scrobbluj odtwarzane utwory do serwera Navidrome</string>
@@ -73,7 +73,7 @@
     <string name="subtitle_now_playing_background_style">Wybierz statyczny, jeżeli masz problemy z wydajnością</string>
     <string name="option_now_playing_background_style_static">Statyczny</string>
     <string name="title_starred">Ulubione</string>
-    <string name="subtitle_check_for_updates">Zalecamy pozostawienie tej opcji włączonej, niektóre aktualizacje zawierają ważne poprawki błędów</string>
+    <string name="subtitle_check_for_updates">Sprawdź aktualizacje na GitHubie przy otworzeniu aplikacji</string>
     <string name="subtitle_offline_mode">Zarządza kiedy aplikacja powinna przejść w tryb offline. Wymaga restartu aplikacji</string>
     <string name="subtitle_streaming_quality">Zmienia jakość streamowanej muzyki</string>
     <string name="subtitle_download_quality">Zmienia jakość pobranej muzyki</string>
@@ -414,4 +414,58 @@
     <string name="sideloading_warning_link_mask">tutaj.</string>
     <string name="option_cover_art_action_show_lyrics">Pokaż tekst</string>
     <string name="option_cover_art_action_disabled">Wyłączone</string>
+    <string name="title_discord_server">Serwer Discord</string>
+    <string name="title_github">GitHub</string>
+    <string name="title_codeberg">Codeberg</string>
+    <string name="title_link_confirmation">Wyjście z Navic</string>
+    <string name="action_visit_site">Odwiedź stronę</string>
+    <string name="notice_link_confirmation">Ten link zabierze Ciebie do następującej strony:</string>
+    <string name="info_equaliser_unsupported">Twoje urządzenie nie obsługuje tej funkcji.</string>
+    <string name="title_lyric_providers">Dostawcy Napisów</string>
+    <string name="subtitle_equaliser">Dostrajanie i wzmacnianie audio</string>
+    <string name="subtitle_equaliser_disabled">Niedostępne, jeżeli funkcja odciążania audio jest aktywna</string>
+    <string name="subtitle_configure_lyric_providers">Zmień źródło tekstów piosenek</string>
+    <string name="option_auto_fill_queue">Automatyczne wypełnianie kolejki</string>
+    <string name="subtitle_auto_fill_queue">Automatycznie dodaj losowy utwór do kończącej się kolejki</string>
+    <string name="option_cover_art_action">Akcja po naciśnięciu okładki</string>
+    <string name="option_equaliser">Equalizer</string>
+    <string name="option_equaliser_mode">Tryb equalizera</string>
+    <string name="option_equaliser_mode_disabled">Wyłączony</string>
+    <string name="option_equaliser_mode_builtin">Wbudowany</string>
+    <string name="option_equaliser_mode_external">Zewnętrzny</string>
+    <string name="option_list_view_mode">Tryb wyświetlania</string>
+    <string name="option_list_view_mode_grid">Siatka</string>
+    <string name="option_list_view_mode_list">Lista</string>
+    <string name="info_external_song">Zewnętrzny</string>
+    <string name="info_external_song_description">Ten utwór został oznaczony jako zewnętrzny przez twój serwer, odtworzenie go może być niemożliwe.</string>
+    <plurals name="count_minutes_ago">
+        <item quantity="one">%1$d minutę temu</item>
+        <item quantity="few">%1$d minuty temu</item>
+        <item quantity="many">%1$d minut temu</item>
+        <item quantity="other">%1$d minut temu</item>
+    </plurals>
+    <plurals name="count_hours_ago">
+        <item quantity="one">%1$d godzinę temu</item>
+        <item quantity="few">%1$d godziny temu</item>
+        <item quantity="many">%1$d godzin temu</item>
+        <item quantity="other">%1$d godzin temu</item>
+    </plurals>
+    <plurals name="count_days_ago">
+        <item quantity="one">%1$d dzień temu</item>
+        <item quantity="few">%1$d dni temu</item>
+        <item quantity="many">%1$d dni temu</item>
+        <item quantity="other">%1$d dni temu</item>
+    </plurals>
+    <string name="action_start">Start</string>
+    <string name="action_sleep_timer_songs_enabled">Timer snu - pozostało %1$d utworów</string>
+    <string name="action_sleep_timer_queue_enabled">Timer snu - koniec kolejki</string>
+    <string name="action_sleep_timer_songs">Zakończ po %1$d utworach</string>
+    <string name="action_sleep_timer_queue">Zakończ po skończeniu kolejki</string>
+    <string name="title_sleep_timer_time">Czas</string>
+    <string name="title_sleep_timer_songs">Utwory</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_configure_lyric_providers">Konfiguruj źródła tekstów</string>
+    <string name="info_dynamic_replay_gain">Dynamiczny ReplayGain</string>
+    <string name="info_equaliser_mode_not_builtin">Sterowanie dostępne wyłącznie w trybie "Wbudowany".</string>
+    <string name="info_lyric_provider_disclaimer">Aktywowanie LRCLIB i/lub LyricsPlus będzie się wiązać z wykonywaniem żądań do zewnętrznych serwisów.</string>
 </resources>
