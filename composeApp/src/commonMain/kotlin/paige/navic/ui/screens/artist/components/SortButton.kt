@@ -55,8 +55,6 @@ fun ArtistListScreenSortButton(
 		SortSheet(
 			entries = entries,
 			selectedSorting = selectedSorting,
-			selectedReversed = false,
-			onSetReversed = {},
 			label = { stringResource(it.displayName) },
 			onSetSorting = onSetSorting,
 			onDismissRequest = { expanded = false },

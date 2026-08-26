@@ -54,8 +54,8 @@ fun <T> SortSheet(
 	label: @Composable (T) -> String,
 	selectedSorting: T,
 	onSetSorting: (T) -> Unit,
-	selectedReversed: Boolean,
-	onSetReversed: (Boolean) -> Unit,
+	selectedReversed: Boolean? = null,
+	onSetReversed: ((Boolean) -> Unit)? = null,
 	selectedViewMode: ListViewMode? = null,
 	onSetViewMode: ((ListViewMode) -> Unit)? = null,
 	selectedFilters: Set<DomainFilter> = emptySet(),
@@ -191,50 +191,52 @@ fun <T> SortSheet(
 				}
 			}
 
-			Text(
-				text = stringResource(Res.string.title_direction),
-				style = MaterialTheme.typography.titleMedium,
-				modifier = Modifier.padding(top = 8.dp)
-			)
+			if (selectedReversed != null && onSetReversed != null) {
+				Text(
+					text = stringResource(Res.string.title_direction),
+					style = MaterialTheme.typography.titleMedium,
+					modifier = Modifier.padding(top = 8.dp)
+				)
 
-			SingleChoiceSegmentedButtonRow(
-				modifier = Modifier.fillMaxWidth()
-			) {
-				SegmentedButton(
-					shape = SegmentedButtonDefaults.itemShape(
-						index = 0,
-						count = 2
-					),
-					onClick = {
-						onSetReversed(false)
-					},
-					selected = !selectedReversed,
-					label = { Text(stringResource(Res.string.option_sort_ascending)) },
-					icon = {
-						Icon(
-							imageVector = Icons.Outlined.ListArrow,
-							contentDescription = null,
-							modifier = Modifier.rotate(180f)
-						)
-					}
-				)
-				SegmentedButton(
-					shape = SegmentedButtonDefaults.itemShape(
-						index = 1,
-						count = 2
-					),
-					onClick = {
-						onSetReversed(true)
-					},
-					selected = selectedReversed,
-					label = { Text(stringResource(Res.string.option_sort_descending)) },
-					icon = {
-						Icon(
-							imageVector = Icons.Outlined.ListArrow,
-							contentDescription = null
-						)
-					}
-				)
+				SingleChoiceSegmentedButtonRow(
+					modifier = Modifier.fillMaxWidth()
+				) {
+					SegmentedButton(
+						shape = SegmentedButtonDefaults.itemShape(
+							index = 0,
+							count = 2
+						),
+						onClick = {
+							onSetReversed(false)
+						},
+						selected = !selectedReversed,
+						label = { Text(stringResource(Res.string.option_sort_ascending)) },
+						icon = {
+							Icon(
+								imageVector = Icons.Outlined.ListArrow,
+								contentDescription = null,
+								modifier = Modifier.rotate(180f)
+							)
+						}
+					)
+					SegmentedButton(
+						shape = SegmentedButtonDefaults.itemShape(
+							index = 1,
+							count = 2
+						),
+						onClick = {
+							onSetReversed(true)
+						},
+						selected = selectedReversed,
+						label = { Text(stringResource(Res.string.option_sort_descending)) },
+						icon = {
+							Icon(
+								imageVector = Icons.Outlined.ListArrow,
+								contentDescription = null
+							)
+						}
+					)
+				}
 			}
 		}
 	}
