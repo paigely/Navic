@@ -79,7 +79,7 @@ class SongRepository(
 	private suspend fun refreshLocalData(
 		listType: DomainSongListType,
 		reversed: Boolean,
-		filters: Set<DomainFilter> = emptySet()
+		filters: Set<DomainFilter>
 	): ImmutableList<DomainSong> {
 		dbRepository.syncLibrarySongs().getOrThrow()
 		return getLocalData(listType, reversed, filters)
