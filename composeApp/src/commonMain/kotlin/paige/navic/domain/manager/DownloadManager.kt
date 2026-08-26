@@ -55,7 +55,7 @@ class DownloadManager(
 	private val activeDownloadsMutex = Mutex()
 	private val activeDownloads = mutableMapOf<String, Job>()
 	private val downloadSemaphore =
-        Semaphore(10)// idk a good number, maybe u should be able to choose
+		Semaphore(10)// idk a good number, maybe u should be able to choose
 
 	private var libraryDownloadJob: Job? = null
 
