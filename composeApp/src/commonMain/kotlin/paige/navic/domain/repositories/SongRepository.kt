@@ -89,7 +89,7 @@ class SongRepository(
 		fullRefresh: Boolean,
 		listType: DomainSongListType,
 		reversed: Boolean,
-		filters: Set<DomainFilter> = emptySet()
+		filters: Set<DomainFilter>
 	): Flow<UiState<ImmutableList<DomainSong>>> = flow {
 		val localData = getLocalData(listType, reversed, filters)
 		if (fullRefresh) {
