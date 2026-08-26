@@ -18,7 +18,7 @@
     <string name="title_artists">Исполнители</string>
     <string name="title_similar_artists">Похожие исполнители</string>
     <string name="subtitle_appearance">Темы, цвета, компоновка, иконка приложения</string>
-    <string name="subtitle_about">Информация о приложении, версия, лицензии</string>
+    <string name="subtitle_about">Информация о приложении, версия, обновления, лицензии</string>
     <string name="subtitle_playlist">Плейлист</string>
     <string name="option_accent_colour">Акцент палитры</string>
     <string name="option_swipe_to_skip">Свайп для смены трека</string>
@@ -139,10 +139,10 @@
     <string name="title_mini_player">Мини-плеер</string>
     <string name="title_miscellaneous">Разное</string>
     <string name="title_layout">Компоновка</string>
-    <string name="subtitle_now_playing">Настроить вид плеера и текстов песен в полноэкранном режиме</string>
+    <string name="subtitle_now_playing">Настройка отображения текущего трека и текста песен</string>
     <string name="subtitle_bottom_app_bar">Настройка нижней панели и мини-плеера</string>
-    <string name="subtitle_playback">Параметры звука, история воспроизведения</string>
-    <string name="subtitle_developer">Отладка, тестирование</string>
+    <string name="subtitle_playback">Аудио-эффекты и поведение, история прослушивания</string>
+    <string name="subtitle_developer">Отладка, тестирование, логи</string>
     <string name="subtitle_enable_scrobbling">Отправлять историю прослушивания на ваш сервер Navidrome</string>
     <string name="subtitle_gapless_playback">Экспериментальная функция. Требуется перезапуск приложения. На некоторых устройствах может возникать конфликт при выносе аудиообработки</string>
     <string name="subtitle_audio_offload">Экспериментальная функция. Требуется перезапуск приложения. Может конфликтовать с режимом воспроизведения без пропусков</string>
@@ -178,7 +178,7 @@
     <string name="option_navigation_bar_style">Стиль панели навигации</string>
     <string name="option_navigation_bar_style_normal">Обычный</string>
     <string name="option_navigation_bar_style_short">Короткий</string>
-    <string name="option_navigation_bar_tabs">Изменить порядок вкладок панели навигации</string>
+    <string name="option_navigation_bar_tabs">Настройка вкладок панели навигации</string>
     <string name="option_mini_player_style">Стиль мини-плеера</string>
     <string name="option_mini_player_style_unified">Соединённый</string>
     <string name="option_mini_player_style_detached">Отдельный</string>
@@ -233,7 +233,7 @@
     <string name="title_direction">Направление</string>
     <string name="title_bulk_download">Загрузка всех альбомов</string>
     <string name="title_confirm">Подтвердить</string>
-    <string name="subtitle_data_storage">Синхронизация, использование сети и кэш</string>
+    <string name="subtitle_data_storage">Синхронизация, кэш, использование сети</string>
     <string name="subtitle_trigger_sync">Принудительная полная синхронизация библиотеки</string>
     <string name="subtitle_pending_actions">%1$d элемент(-ов) ожидают подключения к сети</string>
     <string name="option_lyrics_keep_alive">Не выключать экран при просмотре текстов песен</string>
@@ -267,7 +267,7 @@
     <string name="option_sort_downloaded">Загружено</string>
     <string name="title_update">Доступно обновление</string>
     <string name="title_changelog">О релизе</string>
-    <string name="subtitle_check_for_updates">Рекомендуется оставить эту функцию включенной, так как некоторые обновления содержат важные исправления ошибок</string>
+    <string name="subtitle_check_for_updates">Проверять обновления на GitHub, когда приложение открывается</string>
     <string name="option_check_for_updates">Проверять наличие обновлений</string>
     <string name="info_status_calculating">Расчет...</string>
     <string name="action_test_exception_handler">Тест обработки исключений</string>
@@ -428,4 +428,45 @@
     <string name="action_reset">Сбросить</string>
     <string name="info_external_song">Внешний</string>
     <string name="info_external_song_description">Ваш сервер пометил этот трек как внешний, поэтому вы, возможно, не сможете его прослушать.</string>
+    <string name="title_github">GitHub</string>
+    <string name="title_codeberg">Codeberg</string>
+    <string name="option_equaliser_mode">Режим эквалайзера</string>
+    <string name="action_configure_lyric_providers">Настроить источник текстов песен</string>
+    <string name="subtitle_configure_lyric_providers">Измените источник получения текстов песен</string>
+    <string name="option_equaliser_mode_disabled">Отключен</string>
+    <string name="option_equaliser_mode_builtin">Встроенный</string>
+    <string name="option_equaliser_mode_external">Внешний</string>
+    <plurals name="count_minutes_ago">
+        <item quantity="one">%1$d минуту назад</item>
+        <item quantity="few">%1$d минуты назад</item>
+        <item quantity="many">%1$d минут назад</item>
+        <item quantity="other">%1$d минут назад</item>
+    </plurals>
+    <plurals name="count_hours_ago">
+        <item quantity="one">%1$d час назад</item>
+        <item quantity="few">%1$d часа назад</item>
+        <item quantity="many">%1$d часов назад</item>
+        <item quantity="other">%1$d часов назад</item>
+    </plurals>
+    <plurals name="count_days_ago">
+        <item quantity="one">%1$d день назад</item>
+        <item quantity="few">%1$d дня назад</item>
+        <item quantity="many">%1$d дней назад</item>
+        <item quantity="other">%1$d дней назад</item>
+    </plurals>
+    <string name="action_sleep_timer_songs_enabled">Таймер сна - осталось треков: %1$d</string>
+    <string name="action_sleep_timer_queue_enabled">Таймер сна - конец очереди</string>
+    <string name="action_sleep_timer_songs">Остановить после %1$d треков</string>
+    <string name="action_sleep_timer_queue">Остановить в конце текущей очереди</string>
+    <string name="title_sleep_timer_time">Время</string>
+    <string name="title_sleep_timer_songs">Треки</string>
+    <string name="action_visit_site">Посетить сайт</string>
+    <string name="notice_link_confirmation">Эта ссылка ведет на следующий веб-сайт:</string>
+    <string name="info_dynamic_replay_gain">Динамичный ReplayGain</string>
+    <string name="info_equaliser_mode_not_builtin">Управление доступно только в режиме Встроенный.</string>
+    <string name="info_lyric_provider_disclaimer">Включении LRCLIB и/или LyricsPlus приведёт к отправке запросов на внешние и не связанные с приложением веб-сервисы.</string>
+    <string name="title_discord_server">Сервер Discord</string>
+    <string name="title_lyric_providers">Источники текстов песен</string>
+    <string name="title_link_confirmation">Покидаете Navic</string>
+    <string name="action_start">Запустить</string>
 </resources>
