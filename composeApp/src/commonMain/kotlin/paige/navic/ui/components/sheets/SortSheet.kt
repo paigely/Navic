@@ -2,35 +2,31 @@ package paige.navic.ui.components.sheets
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
@@ -49,8 +45,9 @@ import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Download
 import paige.navic.icons.outlined.ListArrow
 import paige.navic.icons.outlined.Star
+import paige.navic.util.ui.segmentedShapes
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun <T> SortSheet(
 	entries: ImmutableList<T>,
@@ -88,11 +85,10 @@ fun <T> SortSheet(
 			)
 
 			Column(
-				modifier = Modifier
-					.clip(RoundedCornerShape(20.dp)),
-				verticalArrangement = Arrangement.spacedBy(4.dp)
+				modifier = Modifier.selectableGroup(),
+				verticalArrangement = Arrangement.spacedBy(2.dp)
 			) {
-				entries.forEach { sorting ->
+				entries.forEachIndexed { index, sorting ->
 					val isSelected = sorting == selectedSorting
 					val containerColor = if (isSelected) {
 						MaterialTheme.colorScheme.secondaryContainer
@@ -100,25 +96,15 @@ fun <T> SortSheet(
 						MaterialTheme.colorScheme.surfaceContainerLowest
 					}
 
-					Surface(
-						color = containerColor,
-						modifier = Modifier
-							.fillMaxWidth()
-							.clip(RoundedCornerShape(8.dp))
-							.selectable(
-								selected = isSelected,
-								onClick = { onSetSorting(sorting) },
-								role = Role.RadioButton
-							)
-							.semantics { this.selected = isSelected }
-					) {
-						Row(
-							modifier = Modifier
-								.fillMaxWidth()
-								.padding(start = 20.dp, end = 14.dp, top = 14.dp, bottom = 14.dp),
-							verticalAlignment = Alignment.CenterVertically,
-							horizontalArrangement = Arrangement.SpaceBetween
-						) {
+					SegmentedListItem(
+						selected = isSelected,
+						onClick = { onSetSorting(sorting) },
+						shapes = segmentedShapes(index = index, count = entries.size),
+						colors = ListItemDefaults.colors(
+							containerColor = containerColor,
+							selectedContainerColor = containerColor,
+						),
+						content = {
 							Text(
 								text = label(sorting),
 								style = MaterialTheme.typography.bodyLarge,
@@ -128,12 +114,15 @@ fun <T> SortSheet(
 									MaterialTheme.colorScheme.onSurface
 								}
 							)
+						},
+						trailingContent = {
 							RadioButton(
 								selected = isSelected,
 								onClick = null
 							)
-						}
-					}
+						},
+						contentPadding = PaddingValues(horizontal = 20.dp, vertical = 14.dp)
+					)
 				}
 			}
 
