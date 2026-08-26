@@ -84,7 +84,7 @@ fun <T> SortSheet(
 				text = stringResource(Res.string.title_sort_by),
 				style = MaterialTheme.typography.headlineMedium,
 				fontWeight = FontWeight.Bold,
-				modifier = Modifier.padding(start = 2.dp, top = 0.dp, bottom = 16.dp)
+				modifier = Modifier.padding(start = 2.dp, bottom = 16.dp)
 			)
 
 			Column(
