@@ -115,6 +115,7 @@ class PreferenceManager(
 	var playlistListViewMode by preference(ListViewMode.List)
 	var artistListViewMode by preference(ListViewMode.List)
 
+	// these values are bitmasks of `DomainFilter`
 	var albumFilters by preference(0)
 	var songFilters by preference(0)
 	var artistFilters by preference(0)
