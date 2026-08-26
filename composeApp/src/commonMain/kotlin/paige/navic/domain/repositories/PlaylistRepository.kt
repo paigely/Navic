@@ -43,7 +43,7 @@ class PlaylistRepository(
 		val filtered = playlists.filter { (_, songs) ->
 			filters.all { filter ->
 				when (filter) {
-					DomainFilter.Starred -> false // Playlists themselves are not starred, or we don't have that info here
+					DomainFilter.Starred -> false // not applicable
 					DomainFilter.Downloaded -> downloadedIds != null && downloadedIds.containsAll(songs.map { it.song.songId })
 				}
 			}
