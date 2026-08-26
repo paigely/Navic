@@ -172,7 +172,7 @@
     <string name="option_navigation_bar_style">Stile barra di navigazione</string>
     <string name="option_navigation_bar_style_normal">Normale</string>
     <string name="option_navigation_bar_style_short">Basso</string>
-    <string name="option_navigation_bar_tabs">Riorganizza le schede della barra di navigazione</string>
+    <string name="option_navigation_bar_tabs">Configura le schede della barra di navigazione</string>
     <string name="option_mini_player_style">Stile del mini player</string>
     <string name="option_mini_player_style_unified">Unificata</string>
     <string name="option_mini_player_style_detached">Staccata</string>
@@ -457,4 +457,5 @@
     <string name="title_sleep_timer_time">Tempo</string>
     <string name="title_sleep_timer_songs">Tracce</string>
     <string name="info_equaliser_mode_not_builtin">I controlli sono disponibili nella modalità Integrata.</string>
+    <string name="info_dynamic_replay_gain">ReplayGain dinamico</string>
 </resources>

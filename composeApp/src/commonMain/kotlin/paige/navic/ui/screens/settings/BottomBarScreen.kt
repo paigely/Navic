@@ -75,12 +75,6 @@ fun BottomBarScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_swipe_to_skip)) },
-						value = preferenceManager.swipeToSkip,
-						onSetValue = { preferenceManager.swipeToSkip = it }
-					)
-
 					SettingSelectionRow(
 						items = BottomBarCollapseMode.entries.toImmutableList(),
 						label = { stringResource(it.displayName) },
@@ -142,6 +136,11 @@ fun BottomBarScreen() {
 						selection = preferenceManager.miniPlayerProgressStyle,
 						onSelect = { preferenceManager.miniPlayerProgressStyle = it },
 						title = { Text(stringResource(Res.string.option_mini_player_progress_style)) },
+					)
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_swipe_to_skip)) },
+						value = preferenceManager.swipeToSkip,
+						onSetValue = { preferenceManager.swipeToSkip = it }
 					)
 				}
 			}

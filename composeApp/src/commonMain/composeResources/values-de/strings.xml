@@ -89,7 +89,7 @@
     <string name="subtitle_appearance">Passe das Aussehen an</string>
     <string name="subtitle_bottom_app_bar">Passe den Mini Player und die Navigationsleiste an</string>
     <string name="subtitle_enable_scrobbling">Scrobble abgespielte Tracks auf deinem Navidrome Server</string>
-    <string name="subtitle_now_playing">Player anpassen</string>
+    <string name="subtitle_now_playing">Passe die jetzt spielend und Songtext Ansichten an</string>
     <string name="subtitle_playlist">Playlist</string>
     <string name="title_about">Über diese App</string>
     <string name="title_acknowledgements">Mitwirkende</string>
@@ -132,7 +132,7 @@
     <string name="title_confirm">Bestätigen</string>
     <string name="title_update">Update verfügbar</string>
     <string name="title_changelog">Änderungsprotokoll</string>
-    <string name="subtitle_playback">Audio Verhalten und scrobbling</string>
+    <string name="subtitle_playback">Audio Effekte &amp; Verhalten, scrobbling</string>
     <string name="subtitle_data_storage">Synchronisation, Datennutzung und Cache</string>
     <string name="subtitle_trigger_sync">Erzwingt ein sofortiges Laden der Audiothek</string>
     <string name="subtitle_pending_actions">%1$d Datei wartet auf Netzwerk</string>
@@ -183,7 +183,7 @@
     <string name="option_navigation_bar_style">Navigationsleisten-Stil</string>
     <string name="option_navigation_bar_style_normal">Normal</string>
     <string name="option_navigation_bar_style_short">Kurz</string>
-    <string name="option_navigation_bar_tabs">Navigationsleisten Tabs</string>
+    <string name="option_navigation_bar_tabs">Navigationsleisten-Tabs konfigurieren</string>
     <string name="option_mini_player_style">Mini Player Stil</string>
     <string name="option_mini_player_style_unified">Fest</string>
     <string name="option_mini_player_style_detached">Fliegend</string>
@@ -408,4 +408,41 @@
     <string name="subtitle_configure_lyric_providers">Lyrics Quelle ändern</string>
     <string name="option_auto_fill_queue">Wiedergabeliste automatisch füllen</string>
     <string name="subtitle_auto_fill_queue">zufälliges Lied hinzufügen falls nur noch eins in der Wiedergabeliste ist</string>
+    <string name="title_codeberg">Codeberg</string>
+    <string name="subtitle_equaliser">Audio anpassen &amp; verbessern</string>
+    <string name="option_equaliser">Equalizer</string>
+    <string name="option_equaliser_mode">Equalizer-Modus</string>
+    <string name="option_equaliser_mode_disabled">Deaktiviert</string>
+    <string name="option_equaliser_mode_builtin">Eingebaut</string>
+    <string name="option_equaliser_mode_external">Extern</string>
+    <string name="option_list_view_mode">Ansichtsmodus</string>
+    <string name="option_list_view_mode_grid">Raster</string>
+    <string name="option_list_view_mode_list">Liste</string>
+    <string name="info_external_song">Extern</string>
+    <string name="info_external_song_description">Dieser Song wurde von deinem Server als extern markiert, du kannst ihn möglicherweise nicht anhören.</string>
+    <plurals name="count_minutes_ago">
+        <item quantity="one">Vor %1$d Minute</item>
+        <item quantity="other">Vor %1$d Minuten</item>
+    </plurals>
+    <plurals name="count_hours_ago">
+        <item quantity="one">Vor %1$d Stunde</item>
+        <item quantity="other">Vor %1$d Stunden</item>
+    </plurals>
+    <plurals name="count_days_ago">
+        <item quantity="one">Vor %1$d Tag</item>
+        <item quantity="other">Vor %1$d Tagen</item>
+    </plurals>
+    <string name="action_start">Start</string>
+    <string name="action_sleep_timer_songs_enabled">Schlaftimer - noch %1$d Songs</string>
+    <string name="action_sleep_timer_songs">Stop nach %1$d Songs</string>
+    <string name="title_sleep_timer_time">Zeit</string>
+    <string name="title_sleep_timer_songs">Songs</string>
+    <string name="action_reset">Zurücksetzen</string>
+    <string name="action_configure_lyric_providers">Konfiguriere Songtext-Anbieter</string>
+    <string name="action_visit_site">Besuche Seite</string>
+    <string name="notice_link_confirmation">Dieser Link bringt dich zur folgenden Webseite:</string>
+    <string name="info_dynamic_replay_gain">Dynamisches ReplayGain</string>
+    <string name="info_equaliser_unsupported">Dein Gerät unterstützt diese Funktion nicht.</string>
+    <string name="info_equaliser_mode_not_builtin">Die Steuerung ist nur im eingebauten Modus verfügbar.</string>
+    <string name="info_lyric_provider_disclaimer">Aktivieren von LRCLIB und/oder LyricsPlus führt zu Anfragen an externe und fremde Webdienste.</string>
 </resources>
