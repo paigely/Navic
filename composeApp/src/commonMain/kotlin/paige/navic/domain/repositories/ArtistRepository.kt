@@ -36,7 +36,7 @@ class ArtistRepository(
 			filters.all { filter ->
 				when (filter) {
 					DomainFilter.Starred -> artist.starredAt != null
-					DomainFilter.Downloaded -> false // Not supported for artists yet or needs complicated logic
+					DomainFilter.Downloaded -> false // not applicable
 				}
 			}
 		}.toImmutableList()
