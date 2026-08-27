@@ -1,6 +1,6 @@
 <div align="center">
 
-# Navic
+<img title="Navic" alt="Navic" height="140" src="https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/wordmark.png">
 
 A modern Navidrome client for Android and iOS.
 
@@ -8,6 +8,7 @@ A modern Navidrome client for Android and iOS.
 [![AltSource provides links for most sideloading apps, like Feather](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/altsource.svg)][ALTSOURCE]
 [![Link to the latest release where you can download the APK or IPA directly](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/direct_download.svg)][LATEST_RELEASE]
 [![Discord](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/discord.svg)](https://discord.gg/TBcnNX66PH)
+[![F-droid](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/fdroid.svg)](https://f-droid.org/packages/paige.navic/)
 [![Translate](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/translate.svg)](#translating)
 [![Codeberg](https://raw.githubusercontent.com/NavicApp/Branding/refs/heads/main/assets/codeberg.svg)](https://codeberg.org/paige/Navic)
 
@@ -32,7 +33,7 @@ A modern Navidrome client for Android and iOS.
 
 You can help translate Navic by contributing on [Weblate](https://hosted.weblate.org/engage/navic/).
 
-![Weblate translation status](https://hosted.weblate.org/widget/navic/navic/horizontal-auto.svg)
+![Weblate translation status](https://hosted.weblate.org/widget/navic/navic/matrix-auto.svg)
 
 ## Star History
 
