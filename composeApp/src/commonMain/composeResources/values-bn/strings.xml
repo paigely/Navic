@@ -12,4 +12,8 @@
     <string name="title_data_storage">ডেটা ও স্টোরেজ</string>
     <string name="title_sync_control">সিঙ্ক নিয়ন্ত্রণ</string>
     <string name="title_cache_management">ক্যাশ ও স্টোরেজ ম্যানেজমেন্ট</string>
+    <string name="title_acknowledgements">কৃতজ্ঞতা জ্ঞাপন</string>
+    <string name="title_albums">অ্যালবাম</string>
+    <string name="title_songs">গান</string>
+    <string name="title_artists">সঙ্গীতশিল্পী</string>
 </resources>

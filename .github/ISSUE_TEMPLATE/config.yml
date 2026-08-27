@@ -1,7 +1,10 @@
 contact_links:
+  - name: "Discussions"
+    url: https://github.com/ssalggnikool/Navic/discussions
+    about: Qestions, known issues, announcements & more
   - name: "Discord"
     url: https://discord.gg/TBcnNX66PH
-    about: Ask general questions here
+    about: Development discussion & random other things
   - name: "Downloads"
-    url: https://github.com/ssalggnikool/Navic
-    about: See the top of the README for downloads
+    url: https://navic.app/downloads/
+    about: List of available downloads for Navic

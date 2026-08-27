@@ -445,4 +445,6 @@
     <string name="info_equaliser_unsupported">Dein Gerät unterstützt diese Funktion nicht.</string>
     <string name="info_equaliser_mode_not_builtin">Die Steuerung ist nur im eingebauten Modus verfügbar.</string>
     <string name="info_lyric_provider_disclaimer">Aktivieren von LRCLIB und/oder LyricsPlus führt zu Anfragen an externe und fremde Webdienste.</string>
+    <string name="action_sleep_timer_queue">Am Ende der aktuellen Warteschlange anhalten</string>
+    <string name="action_sleep_timer_queue_enabled">Sleeptimer – Ende der Wiedergabeliste</string>
 </resources>
