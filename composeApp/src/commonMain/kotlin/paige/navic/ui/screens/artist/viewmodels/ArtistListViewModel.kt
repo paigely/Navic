@@ -119,7 +119,6 @@ class ArtistListViewModel(
 		}
 	}
 
-	// TODO: implement me
 	fun setListType(newListType: DomainArtistListType) {
 		listType.value = newListType
 		refreshArtists(false)
