@@ -1087,29 +1087,27 @@ class AndroidMediaPlayerViewModel(
 			.setDurationMs(duration.inWholeMilliseconds)
 			.setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
 
-		val artworkData = coverArtId?.let { coverId ->
+		// Point at the artwork instead of eagerly reading it into a byte array here: when
+		// queueing many tracks at once (e.g. a 1000+ song album) reading + cloning full
+		// image bytes for every single item blows past the heap and OOMs (see #issue).
+		// media3 loads artwork from the URI lazily, only for the item that actually needs
+		// it (current item / notification), so this keeps bulk queue adds cheap.
+		val cachedArtworkUri = coverArtId?.let { coverId ->
 			val diskCache = platformContext.imageLoader.diskCache
 			val snapshot = diskCache?.openSnapshot(coverId) ?: return@let null
-
-			val bytes = try {
-				snapshot.use { it.data.toFile().readBytes() }
+			try {
+				snapshot.data.toFile().toUri()
 			} catch (ex: Exception) {
-				Logger.w("MediaPlayer", "could not read artwork data", ex)
+				Logger.w("MediaPlayer", "could not resolve cached artwork file", ex)
 				null
+			} finally {
+				snapshot.close()
 			}
-
-			snapshot.close()
-
-			return@let bytes
 		}
 
-		if (artworkData != null) {
-			metadataBuilder.setArtworkData(artworkData, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
-		} else {
-			metadataBuilder.setArtworkUri(
-				coverArtId?.let { sessionManager.getCoverArtUrl(it).toUri() }
-			)
-		}
+		metadataBuilder.setArtworkUri(
+			cachedArtworkUri ?: coverArtId?.let { sessionManager.getCoverArtUrl(it).toUri() }
+		)
 
 		val metadata = metadataBuilder.build()
 
