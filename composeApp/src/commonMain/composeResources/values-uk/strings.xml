@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title_library">Бібліотека</string>
+    <string name="title_library">Медіатека</string>
     <string name="title_settings">Налаштування</string>
     <string name="title_search">Пошук</string>
     <string name="title_starred">Обране</string>
@@ -12,7 +12,7 @@
     <string name="title_playback">Відтворення</string>
     <string name="title_data_storage">Дані та сховище</string>
     <string name="title_sync_control">Керування синхронізацією</string>
-    <string name="title_cache_management">Керування кешем і сховищем</string>
+    <string name="title_cache_management">Керування кешем та сховищем</string>
     <string name="title_danger_zone">Небезпечна зона</string>
     <string name="title_developer">Параметри розробника</string>
     <string name="title_about">Про застосунок</string>
@@ -21,7 +21,7 @@
     <string name="title_delete_share">Видалити спільне посилання?</string>
     <string name="title_create_share">Створити спільне посилання</string>
     <string name="title_create_playlist">Створити плейлист</string>
-    <string name="title_create_radio">Створити радіостанцію</string>
+    <string name="title_create_radio">Додати радіостанцію</string>
     <string name="title_albums">Альбоми</string>
     <string name="title_songs">Пісні</string>
     <string name="title_artists">Виконавці</string>
@@ -108,7 +108,7 @@
     <string name="option_alphabetical_scroll">Алфавітне прокручування</string>
     <string name="option_grid_items_per_row">Елементів у рядку</string>
     <string name="option_lyrics_keep_alive">Не вимикати екран під час перегляду тексту пісні</string>
-    <string name="option_lyrics_blur">Розмиття тексту пісні</string>
+    <string name="option_lyrics_blur">Розмиття країв</string>
     <string name="option_lyrics_bright_inactive">Яскраві неактивні рядки</string>
     <string name="option_share_expires">Термін дії</string>
     <string name="option_account_navidrome_instance">URL сервера</string>
@@ -221,11 +221,11 @@
     <string name="option_navigation_bar_label_visibility_always">Завжди</string>
     <string name="option_navigation_bar_label_visibility_only_selected">Лише для вибраного</string>
     <string name="option_navigation_bar_label_visibility_never">Ніколи</string>
-    <string name="option_navigation_bar_tabs">Налаштувати вкладки панелі навігації</string>
+    <string name="option_navigation_bar_tabs">Налаштувати та змінити порядок вкладок</string>
     <string name="option_mini_player_style">Стиль мініпрогравача</string>
     <string name="option_mini_player_style_unified">Об’єднаний</string>
     <string name="option_mini_player_style_detached">Окремий</string>
-    <string name="option_mini_player_progress_style">Індикатор прогресу мініпрогравача</string>
+    <string name="option_mini_player_progress_style">Видимість індикатора прогресу</string>
     <string name="option_mini_player_progress_style_hidden">Прихований</string>
     <string name="option_mini_player_progress_style_visible">Видимий</string>
     <string name="option_mini_player_progress_style_seekable">З можливістю перемотування</string>
@@ -376,14 +376,14 @@
     <string name="notice_created_playlist">Створено плейлист «%1$s».</string>
     <string name="notice_deleted_download">Завантаження видалено.</string>
     <string name="notice_removed_from_playlist">Видалено з плейлиста.</string>
-    <string name="notice_created_radio">Створено радіостанцію «%1$s».</string>
+    <string name="notice_created_radio">Додано радіостанцію «%1$s».</string>
     <string name="notice_added_to_queue">Додано до черги.</string>
     <string name="notice_play_next">Відтвориться наступною.</string>
     <string name="notice_added_to_playlist">Додано до «%1$s».</string>
     <string name="notice_added_to_multiple_playlists">Додано до кількох плейлистів.</string>
     <string name="notice_download_started">Завантаження розпочато.</string>
     <string name="notice_copied">Скопійовано в буфер обміну.</string>
-    <string name="notice_expiry">Термін дії: ще %1$s.</string>
+    <string name="notice_expiry">Термін дії: ще %1$s</string>
     <string name="notice_loading_lyrics">Завантаження тексту пісні…\nЦе може тривати деякий час.</string>
     <string name="notice_login_suggestion">Можливо, ви мали на увазі…</string>
     <string name="notice_queue_duplicate">Ця пісня вже є в черзі. Додати її ще раз?</string>
@@ -462,10 +462,10 @@
     <string name="info_repeat_all">Повтор усіх композицій</string>
     <string name="info_app_icon">Після зміни значка Navic закриється — цього вимагає Android. Якщо ваш лаунчер автоматично змінює кольори значків відповідно до теми, деякі варіанти на головному екрані можуть виглядати однаково.</string>
     <string name="info_equaliser_unsupported">Ваш пристрій не підтримує цю функцію.</string>
-    <string name="info_equaliser_mode_not_builtin">Елементи керування доступні лише у вбудованому режимі.</string>
+    <string name="info_equaliser_mode_not_builtin">Будь ласка, налаштуйте зовнішній еквалайзер за допомогою відповідного застосунку.</string>
     <string name="info_lyric_provider_disclaimer">Якщо ввімкнути LRCLIB та/або LyricsPlus, застосунок надсилатиме запити до сторонніх вебсервісів, не пов’язаних із Navic.</string>
     <string name="sideloading_warning_title">УВАГА! ПРОЧИТАЙТЕ!</string>
     <string name="sideloading_warning_subtitle">Google планує заблокувати встановлення застосунків зі сторонніх джерел на ВСІХ пристроях, де встановлено Сервіси Google Play!\n</string>
-    <string name="sideloading_warning_description">Точні деталі цієї зміни ще невідомі, але в результаті встановлення застосунків зі сторонніх джерел може бути ПОВНІСТЮ заблоковано, якщо розробник, який підписує застосунок, не розкриє Google та/або публічно свою особу.\n\nЯкщо ви вмієте встановлювати сторонню прошивку (custom ROM) на свій пристрій, САМЕ ЧАС ЦЕ ЗРОБИТИ.\n\nДізнайтеся більше про те, що можна зробити та як висловити свою позицію</string>
-    <string name="sideloading_warning_link_mask">тут.</string>
+    <string name="sideloading_warning_description">В результаті встановлення застосунків зі сторонніх джерел може бути ПОВНІСТЮ заблоковано, якщо розробник, який підписує застосунок, не розкриє Google та/або публічно свою особу.\n\nЯкщо ви вмієте встановлювати сторонню прошивку (custom ROM) на свій пристрій, САМЕ ЧАС ЦЕ ЗРОБИТИ.\n\nДізнайтеся більше про те, що можна зробити та як висловити свою позицію</string>
+    <string name="sideloading_warning_link_mask">keepandroidopen.org</string>
 </resources>
