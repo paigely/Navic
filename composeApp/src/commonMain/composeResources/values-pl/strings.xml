@@ -10,7 +10,7 @@
     <string name="title_bottom_app_bar">Pasek dolny</string>
     <string name="title_playback">Opcje odtwarzania</string>
     <string name="title_data_storage">Dane i pamięć</string>
-    <string name="title_sync_control">Synchronizacja</string>
+    <string name="title_sync_control">Kontrola synchronizacji</string>
     <string name="title_cache_management">Zarządzanie pamięcią podręczną</string>
     <string name="title_danger_zone">Strefa ryzyka</string>
     <string name="title_developer">Ustawienia programisty</string>
@@ -20,7 +20,7 @@
     <string name="title_delete_share">Usunąć udostępnienie?</string>
     <string name="title_create_share">Utwórz udostępnienie</string>
     <string name="title_create_playlist">Utwórz playlistę</string>
-    <string name="title_create_radio">Utwórz radio</string>
+    <string name="title_create_radio">Dodaj radio</string>
     <string name="title_albums">Albumy</string>
     <string name="title_songs">Utwory</string>
     <string name="title_artists">Wykonawcy</string>
@@ -58,7 +58,7 @@
     <string name="title_account">Konto</string>
     <string name="title_track_info">O utworze</string>
     <string name="subtitle_appearance">Motywy, kolory, układ, ikona apliacji</string>
-    <string name="subtitle_now_playing">Dostosuj pełnoekranowy widok odtwarzanego utworu i tekstu</string>
+    <string name="subtitle_now_playing">Dostosuj widok odtwarzanego utworu i napisów na pełnym ekranie</string>
     <string name="subtitle_bottom_app_bar">Dostosuj dolny pasek i miniodtwarzacz</string>
     <string name="subtitle_playback">Ustawienia audio, scrobbling i teksty</string>
     <string name="subtitle_data_storage">Zarządzaj synchronizacją, zużyciem sieci i pamięcią podręczną</string>
@@ -332,7 +332,7 @@
     <string name="notice_added_to_multiple_playlists">Dodano do wielu playlist.</string>
     <string name="notice_download_started">Rozpoczęto pobieranie.</string>
     <string name="notice_copied">Skopiowano do schowka.</string>
-    <string name="notice_expiry">Wygasa w %1$s.</string>
+    <string name="notice_expiry">Wygasa w %1$s</string>
     <string name="notice_loading_lyrics">Wczytywanie tekstu utworu...\nTo może chwilę zająć.</string>
     <string name="notice_login_suggestion">Czy masz na myśli...</string>
     <string name="notice_queue_duplicate">Ta piosenka jest już w kolejce. Czy chcesz dodać ją ponownie?</string>
@@ -411,7 +411,7 @@
     <string name="sideloading_warning_title">STÓJ, PRZECZYTAJ!</string>
     <string name="sideloading_warning_subtitle">Google planuje zaniechać sideloadowanie na WSZYSTKICH twoich urządzeniach korzystających z Google Play Services!\n</string>
     <string name="sideloading_warning_description">Choć nie wszystkie informacje dotyczące tej decyzji są znane, może ona uniemożliwić JAKIEKOLWIEK sideloadowanie, o ile podpisujący daną aplikację nie wyjawi swoich prywatnych informacji Google'owi i/lub publicznie.\n\nJeżeli potrafisz zainstalować customowy ROM na swoim urządzeniu, TERAZ JEST MOMENT BY TO ZROBIĆ.\n\nPrzeczytaj co możesz zrobić w tej sprawie i jak sprawić, by twój głos został usłyszany</string>
-    <string name="sideloading_warning_link_mask">tutaj.</string>
+    <string name="sideloading_warning_link_mask">keepandroidopen.org</string>
     <string name="option_cover_art_action_show_lyrics">Pokaż tekst</string>
     <string name="option_cover_art_action_disabled">Wyłączone</string>
     <string name="title_discord_server">Serwer Discord</string>

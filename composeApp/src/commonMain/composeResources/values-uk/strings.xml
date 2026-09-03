@@ -117,9 +117,9 @@
     <string name="option_lyrics_autoscroll">Автопрокручування тексту пісні</string>
     <string name="option_lyrics_beat_by_beat">Синхронізація тексту за ритмом</string>
     <string name="option_sort_random">Випадково</string>
-    <string name="option_sort_newest">Нещодавно додані</string>
+    <string name="option_sort_newest">Новинки</string>
     <string name="option_sort_rating">За оцінкою</string>
-    <string name="option_sort_frequent">Найчастіше відтворювані</string>
+    <string name="option_sort_frequent">Нещодавні</string>
     <string name="option_sort_recent">Нещодавно відтворені</string>
     <string name="option_sort_downloaded">Завантажені</string>
     <string name="option_sort_alphabetical_by_name">За назвою (А–Я)</string>

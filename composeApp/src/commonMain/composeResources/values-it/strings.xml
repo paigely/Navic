@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="action_add_all_to_playlist">Aggiungi tutte alla Playlist</string>
-    <string name="action_add_to_another_playlist">Aggiungi ad un'altra Playlist</string>
-    <string name="action_add_to_playlist">Aggiungi alla Playlist</string>
+    <string name="action_add_all_to_playlist">Aggiungi tutti alla playlist</string>
+    <string name="action_add_to_another_playlist">Aggiungi ad un'altra playlist</string>
+    <string name="action_add_to_playlist">Aggiungi alla playlist</string>
     <string name="action_cancel">Annulla</string>
     <string name="action_clear_search">Cancella</string>
     <string name="action_delete">Elimina</string>
     <string name="action_log_in">Accedi</string>
-    <string name="action_log_out">Logout</string>
+    <string name="action_log_out">Esci</string>
     <string name="action_lyrics">Testo</string>
     <string name="action_more">Altro</string>
     <string name="action_navigate_back">Indietro</string>
@@ -16,7 +16,7 @@
     <string name="action_play">Riproduci</string>
     <string name="action_queue">Coda</string>
     <string name="action_refresh">Ricarica</string>
-    <string name="action_remove_from_playlist">Rimuovi dalla Playlist</string>
+    <string name="action_remove_from_playlist">Rimuovi dalla playlist</string>
     <string name="action_remove_star">Rimuovi dai preferiti</string>
     <string name="action_repeat">Ripeti</string>
     <string name="action_see_all">Vedi tutti</string>
@@ -65,14 +65,14 @@
     <string name="notice_copied">Copiato negli appunti.</string>
     <string name="notice_deleted_playlist">Playlist eliminata.</string>
     <string name="notice_deleted_share">Condivisione eliminata.</string>
-    <string name="notice_expiry">Scade tra %1$s.</string>
+    <string name="notice_expiry">Scade tra %1$s</string>
     <string name="notice_loading_lyrics">Caricamento testi...\nPotrebbe richiedere qualche istante.</string>
     <string name="option_accent_colour">Colore di accento palette</string>
     <string name="option_account_navidrome_instance">Istanza</string>
     <string name="option_account_password">Password</string>
     <string name="option_account_username">Nome utente</string>
     <string name="option_alphabetical_scroll">Scorrimento alfabetico</string>
-    <string name="option_artwork_shape">Forma della copertina degli album</string>
+    <string name="option_artwork_shape">Forma della copertina degli album/brani</string>
     <string name="option_choose_theme">Scegli un tema</string>
     <string name="option_cover_art_size">Dimensione copertina</string>
     <string name="option_enable_scrobbling">Attiva lo scrobbling</string>
@@ -96,7 +96,7 @@
     <string name="option_swipe_to_skip">Scorri per skippare</string>
     <string name="option_use_marquee_text">Usa testo marquee</string>
     <string name="sideloading_warning_description">Sebbene i dettagli esatti di questo cambiamento non siano ancora completamente noti, potrebbe comportare il blocco DI QUALSIASI forma di sideloading, a meno che lo sviluppatore dell’app non riveli la propria identità a Google e/o pubblicamente.\n\nSe sei abbastanza esperto da installare una ROM personalizzata sul tuo dispositivo, ORA È IL MOMENTO DI FARLO.\n\nLeggi di più su cosa puoi fare e su come far sentire la tua voce</string>
-    <string name="sideloading_warning_link_mask">qui.</string>
+    <string name="sideloading_warning_link_mask">keepandroidopen.org</string>
     <string name="sideloading_warning_subtitle">Google sta pianificando di eliminare il sideloading su TUTTI i dispositivi con Google Play Services installato!\n</string>
     <string name="sideloading_warning_title">LEGGI !!!!</string>
     <string name="subtitle_about">Versioni, aggiornamenti, licenze</string>
@@ -133,7 +133,7 @@
     <string name="title_playback">Playback</string>
     <string name="title_developer">Opzioni sviluppatore</string>
     <string name="title_choose_font">Font dell'app</string>
-    <string name="title_fonts_inbuilt">integrato</string>
+    <string name="title_fonts_inbuilt">Integrato</string>
     <string name="title_fonts_external">Esterno</string>
     <string name="title_more_by_artist">Altri da %1$s</string>
     <string name="title_genres">Generi</string>
@@ -172,11 +172,11 @@
     <string name="option_navigation_bar_style">Stile barra di navigazione</string>
     <string name="option_navigation_bar_style_normal">Normale</string>
     <string name="option_navigation_bar_style_short">Basso</string>
-    <string name="option_navigation_bar_tabs">Configura le schede della barra di navigazione</string>
+    <string name="option_navigation_bar_tabs">Configura e riordina le schede della barra di navigazione</string>
     <string name="option_mini_player_style">Stile del mini player</string>
     <string name="option_mini_player_style_unified">Unificata</string>
     <string name="option_mini_player_style_detached">Staccata</string>
-    <string name="option_mini_player_progress_style">Stile della barra di progresso del mini player</string>
+    <string name="option_mini_player_progress_style">Visibilità della barra di avanzamento</string>
     <string name="option_mini_player_progress_style_hidden">Nascosto</string>
     <string name="option_mini_player_progress_style_visible">Visibile</string>
     <string name="option_mini_player_progress_style_seekable">Trascinabile</string>
@@ -222,9 +222,9 @@
     <string name="info_lyrics_provider">Testo fornito da %1$s</string>
     <string name="info_image_failed_to_load">Errore nel caricamento</string>
     <string name="title_data_storage">Dati &amp; Archiviazione</string>
-    <string name="title_sync_control">Controllo Sincronizzazione</string>
-    <string name="title_cache_management">Gestione Cache &amp; Archiviazione</string>
-    <string name="title_danger_zone">Area di Pericolo</string>
+    <string name="title_sync_control">Controllo sincronizzazione</string>
+    <string name="title_cache_management">Gestione cache &amp; archiviazione</string>
+    <string name="title_danger_zone">Area pericolosa</string>
     <string name="subtitle_data_storage">Sincronizzazione, cache, dati</string>
     <string name="subtitle_trigger_sync">Forza il download completo della libreria</string>
     <string name="subtitle_pending_actions">%1$d elementi in attesa di rete</string>
@@ -249,14 +249,14 @@
     <string name="subtitle_rebuild_database">Cancella tutti i metadati locali e forza una nuova sincronizzazione</string>
     <string name="info_no_songs">Nessun brano</string>
     <string name="info_not_available_offline">Non disponibile offline</string>
-    <string name="action_add_to_queue">Aggiungi alla Coda</string>
+    <string name="action_add_to_queue">Aggiungi alla coda</string>
     <string name="notice_login_suggestion">Volevi dire...</string>
     <string name="title_sort_by">Ordina per</string>
     <string name="title_direction">Ordine</string>
-    <string name="title_bulk_download">Scarica tutti gli Album</string>
+    <string name="title_bulk_download">Scarica tutti gli album</string>
     <string name="title_confirm">Conferma</string>
     <string name="info_bulk_download_warning">Sei sicuro di voler scaricare tutti gli album di %1$s?\nPotrebbe richiedere molto spazio e risorse.</string>
-    <string name="notice_queue_duplicate">Questa traccia è già in coda. Vuoi davvero aggiungerla di nuovo?</string>
+    <string name="notice_queue_duplicate">Questa traccia è già in coda. Vuoi aggiungerla di nuovo?</string>
     <string name="info_download_failed">Download fallito</string>
     <string name="info_click_to_retry">Premi pee riprovare</string>
     <string name="info_downloaded">Scaricato</string>
@@ -281,7 +281,7 @@
     <string name="action_dont_show_again">Non mostrare di nuovo</string>
     <string name="info_update">È stata rilasciata la versione %1$s</string>
     <string name="info_exception_handler">Questo farà immediatamente crashare l'app. Sei sicuro?</string>
-    <string name="option_lyrics_blur">Blur del testo</string>
+    <string name="option_lyrics_blur">Sfoca i bordi</string>
     <string name="title_create_radio">Crea radio</string>
     <string name="title_radios">Radio</string>
     <string name="option_lyrics_bright_inactive">Testo inattivo più visibile</string>
@@ -351,8 +351,8 @@
     <string name="option_playback_speed">Velocità di riproduzione</string>
     <string name="title_advanced">Transcoding avanzato</string>
     <string name="option_off">Off</string>
-    <string name="option_max_bitrate_wifi">Bitrate Massimo Wi-Fi (kbps)</string>
-    <string name="option_max_bitrate_cellular">Bitrate Massimo Dati mobili (kbps)</string>
+    <string name="option_max_bitrate_wifi">Bitrate massimo Wi-Fi (kbps)</string>
+    <string name="option_max_bitrate_cellular">Bitrate massimo dati mobili (kbps)</string>
     <string name="action_clear_queue">Svuota coda</string>
     <string name="title_starred">Preferiti</string>
     <string name="option_cover_art_quality">Qualità copertine</string>
@@ -373,8 +373,8 @@
     <string name="title_account">Account</string>
     <string name="option_artist_image_shape">Forma della copertina degli artisti</string>
     <string name="option_stream_custom_quality">Usa una qualità per lo stream personalizzate</string>
-    <string name="option_stream_format_wifi">Formato Stream Wi-Fi</string>
-    <string name="option_stream_format_cellular">Formato Stream Dati Mobili</string>
+    <string name="option_stream_format_wifi">Formato stream Wi-Fi</string>
+    <string name="option_stream_format_cellular">Formato stream dati mobili</string>
     <string name="option_palette_style">Stile palette</string>
     <string name="option_palette_specification">Specifiche palette</string>
     <string name="option_explicit_playback">Playback del contenuto esplicito</string>
@@ -390,7 +390,7 @@
     <string name="info_repeat_one">Ripeti un brano</string>
     <string name="info_repeat_all">Ripeti tutto</string>
     <string name="option_sort_year">Anno</string>
-    <string name="subtitle_dynamic_theming">Applica un tema dinamico nella pagina degli Album e Artisti basandolo sulla copertina</string>
+    <string name="subtitle_dynamic_theming">Applica un tema dinamico nella pagina degli album e artisti basandosi sulla copertina</string>
     <string name="subtitle_app_icon_designer">Disegnato da: %1$s</string>
     <string name="option_choose_app_icon">Icona dell'app</string>
     <string name="option_dynamic_theming">Tema dinamico</string>
@@ -404,8 +404,8 @@
     <string name="option_auto_fill_queue">Riempi automaticamente la coda</string>
     <string name="subtitle_auto_fill_queue">Aggiunge automaticamente una canzone casuale quando una sola è rimanente nella coda</string>
     <string name="option_download_custom_quality">Qualità di download custom</string>
-    <string name="option_download_format_wifi">Formato Download Wi-Fi</string>
-    <string name="option_download_format_cellular">Formato Download Dati Mobili</string>
+    <string name="option_download_format_wifi">Formato download Wi-Fi</string>
+    <string name="option_download_format_cellular">Formato download dati mobili</string>
     <string name="option_cover_art_action">Azione tocco copertina</string>
     <string name="option_cover_art_action_disabled">Disattivato</string>
     <string name="option_cover_art_action_show_lyrics">Mostra testo</string>
@@ -425,7 +425,7 @@
     <string name="title_github">GitHub</string>
     <string name="title_codeberg">Codeberg</string>
     <string name="title_link_confirmation">Uscita da Navic</string>
-    <string name="subtitle_configure_lyric_providers">Cambia da dove vengono presi i testi</string>
+    <string name="subtitle_configure_lyric_providers">Scegli dove prendere i testi</string>
     <plurals name="count_minutes_ago">
         <item quantity="one">%1$d minuto fa</item>
         <item quantity="many">%1$d minuti fa</item>
@@ -456,6 +456,6 @@
     <string name="action_sleep_timer_queue">Fermati alla fine della coda</string>
     <string name="title_sleep_timer_time">Tempo</string>
     <string name="title_sleep_timer_songs">Tracce</string>
-    <string name="info_equaliser_mode_not_builtin">I controlli sono disponibili nella modalità Integrata.</string>
+    <string name="info_equaliser_mode_not_builtin">Per favore aggiusta l'equalizzatore esterno nella sua app dedicata.</string>
     <string name="info_dynamic_replay_gain">ReplayGain dinamico</string>
 </resources>

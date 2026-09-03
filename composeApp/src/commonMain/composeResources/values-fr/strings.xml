@@ -29,8 +29,8 @@
     <string name="subtitle_enable_scrobbling">Scrobbler les morceaux écoutés vers votre serveur Navidrome</string>
     <string name="option_accent_colour">Palette d'accents</string>
     <string name="option_swipe_to_skip">Glisser pour passer les morceaux</string>
-    <string name="option_artwork_shape">Forme de la pochette</string>
-    <string name="option_cover_art_size">Taille de la pochette</string>
+    <string name="option_artwork_shape">Forme des pochettes d'albums</string>
+    <string name="option_cover_art_size">Taille des pochettes d'illustrations</string>
     <string name="option_use_marquee_text">Défilement automatique des textes longs</string>
     <string name="option_alphabetical_scroll">Défilement alphabétique</string>
     <string name="option_grid_items_per_row">Taille de la grille</string>
@@ -115,7 +115,7 @@
     <string name="notice_deleted_playlist">Liste de lecture supprimée.</string>
     <string name="notice_deleted_share">Partage supprimé.</string>
     <string name="notice_copied">Copié dans le presse-papiers.</string>
-    <string name="notice_expiry">Expire dans %1$s.</string>
+    <string name="notice_expiry">Expire dans %1$s</string>
     <string name="notice_loading_lyrics">Chargement des paroles...\nCela peut prendre un moment.</string>
     <string name="info_app_version">Navic %1$s</string>
     <string name="info_action_is_permanent">Cette action est irréversible</string>
@@ -126,7 +126,7 @@
     <string name="info_unknown_album">Album inconnu</string>
     <string name="info_unknown_year">Année inconnue</string>
     <string name="info_unknown_genre">Genre inconnu</string>
-    <string name="info_not_playing">Aucune lecture</string>
+    <string name="info_not_playing">Aucune lecture en cours</string>
     <string name="info_no_playlists">Vous n'avez pas de listes de lecture.</string>
     <string name="info_no_other_playlists">Vous n'avez pas d'autres listes de lecture que celle-ci.</string>
     <string name="info_track_name">Nom</string>
@@ -188,11 +188,11 @@
     <string name="option_navigation_bar_style">Style de la barre de navigation</string>
     <string name="option_navigation_bar_style_normal">Normal</string>
     <string name="option_navigation_bar_style_short">Court</string>
-    <string name="option_navigation_bar_tabs">Configurer la barre de navigation</string>
+    <string name="option_navigation_bar_tabs">Configurer et déplacer les onglets</string>
     <string name="option_mini_player_style">Style du mini-lecteur</string>
     <string name="option_mini_player_style_unified">Unifié</string>
     <string name="option_mini_player_style_detached">Détaché</string>
-    <string name="option_mini_player_progress_style">Style de la barre de progression du mini-lecteur</string>
+    <string name="option_mini_player_progress_style">Style de la barre de progression</string>
     <string name="option_mini_player_progress_style_hidden">Caché</string>
     <string name="option_mini_player_progress_style_visible">Visible</string>
     <string name="option_mini_player_progress_style_seekable">Interactive</string>
@@ -219,8 +219,8 @@
     <string name="info_image_failed_to_load">Échec du chargement</string>
     <string name="sideloading_warning_title">STOP, LISEZ !</string>
     <string name="sideloading_warning_subtitle">Google prévoit de désactiver l'installation d'applications tierces sur TOUS les appareils sur lesquels les services Google Play sont installés!\n</string>
-    <string name="sideloading_warning_description">Même si les détails précis de ce changement ne sont pas encore tout à fait connus, cela pourrait entraîner le blocage de TOUTES les applications tierces, à moins que le signataire de l'application ne divulgue son identité à Google et/ou publiquement.\n\nSi vous maîtrisez suffisamment le sujet pour installer une ROM tierce sur votre appareil, C'EST LE MOMENT DE LE FAIRE.\n\nDécouvrez ce que vous pouvez faire et comment faire entendre votre voix</string>
-    <string name="sideloading_warning_link_mask">ici.</string>
+    <string name="sideloading_warning_description">Cela va entraîner le blocage de TOUTES les applications tierces, à moins que le signataire de l'application ne divulgue son identité à Google et/ou publiquement.\n\nSi vous maîtrisez suffisamment le sujet pour installer une ROM tierce sur votre appareil, C'EST LE MOMENT DE LE FAIRE.\n\nDécouvrez ce que vous pouvez faire et comment faire entendre votre voix sur</string>
+    <string name="sideloading_warning_link_mask">keepandroidopen.org</string>
     <string name="title_data_storage">Données &amp; Stockage</string>
     <string name="title_sync_control">Contrôle de la synchronisation</string>
     <string name="title_cache_management">Gestion du stockage et du cache</string>
@@ -249,7 +249,7 @@
     <string name="action_trigger_sync">Synchronisation manuelle</string>
     <string name="subtitle_rebuild_database">Supprimer toutes les métadonnées et forcer une nouvelle synchronisation</string>
     <string name="notice_login_suggestion">Voulez-vous dire...</string>
-    <string name="notice_queue_duplicate">Ce morceau est déjà dans la file d'attente. Voulez-vous l'ajouter à nouveau ?</string>
+    <string name="notice_queue_duplicate">Ce morceau est déjà dans la file d'attente. Voulez-vous l'ajouter à nouveau ?</string>
     <string name="info_no_songs">Pas de morceaux</string>
     <string name="info_not_available_offline">Pas disponible hors ligne</string>
     <string name="info_download_failed">Téléchargement échoué</string>
@@ -261,7 +261,7 @@
     <string name="title_update">Nouvelle version disponible</string>
     <string name="title_changelog">Liste des changements</string>
     <string name="subtitle_check_for_updates">Vérifier GitHub pour les mis-à-jour au lancement de l'application</string>
-    <string name="option_lyrics_blur">Effet de flou dans les paroles</string>
+    <string name="option_lyrics_blur">Flou sur les bords</string>
     <string name="option_sort_downloaded">Téléchargé</string>
     <string name="option_live_status">Status en direct</string>
     <string name="option_check_for_updates">Vérifier la version</string>
@@ -284,7 +284,7 @@
     <string name="title_radios">Radios</string>
     <string name="title_create_radio">Ajouter une radio</string>
     <string name="title_direction">Direction</string>
-    <string name="option_lyrics_bright_inactive">Éclaircir les paroles inactives</string>
+    <string name="option_lyrics_bright_inactive">Éclaircir les lignes inactives</string>
     <string name="option_radio_name">Nom</string>
     <string name="option_radio_stream_url">URL de la source</string>
     <string name="option_radio_homepage_url">URL de la page d'acceuil</string>
@@ -314,8 +314,8 @@
     <string name="info_streaming_quality">Les préconfigurations de haute qualité vont utiliser plus de données. Le transcodage peut grandement affecter les temps de chargement et rendre les paroles désynchronisées. Sélectionnez Sans perte si vous rencontrez des problèmes.</string>
     <string name="title_disc_number">Disque %1$s</string>
     <string name="title_library_download">Télécharger la bibliothèque entière</string>
-    <string name="title_select_lyrics">Sélectionner les Paroles</string>
-    <string name="title_advanced">Transcodage Avancé</string>
+    <string name="title_select_lyrics">Sélectionner les paroles</string>
+    <string name="title_advanced">Transcodage avancé</string>
     <string name="title_network">Réseau</string>
     <string name="title_streaming_quality">Qualité du streaming</string>
     <string name="subtitle_streaming_quality">Ajuster la qualité de la musique en streaming</string>
@@ -325,7 +325,7 @@
     <string name="option_animation_style_expressive">Expressif</string>
     <string name="option_animation_style_standard">Standard</string>
     <string name="option_max_bitrate_wifi">Débit maximal en Wi-Fi (kbps)</string>
-    <string name="option_max_bitrate_cellular">Débit Max en Données Mobiles (kbps)</string>
+    <string name="option_max_bitrate_cellular">Débit Max en données mobiles (kbps)</string>
     <string name="option_cover_art_quality">Qualité de la pochette</string>
     <string name="info_library_download_warning">Êtes-vous sûr(e) de vouloir télécharger l'entièreté de votre bibliothèque ?\nCette fonction va ignorer les morceaux déjà téléchargés, mais cela pourrait quand même utiliser un montant significatif de stockage et de données.</string>
     <string name="info_library_download">Enregistrer toutes les musiques synchronisées pour la lecture hors-ligne</string>
@@ -364,8 +364,8 @@
     <string name="title_account">Compte</string>
     <string name="option_artist_image_shape">Forme de l'image de l'artiste</string>
     <string name="option_stream_custom_quality">Utiliser une qualité de diffusion personnalisée</string>
-    <string name="option_stream_format_wifi">Format du flux Wi-Fi</string>
-    <string name="option_stream_format_cellular">Format du flux Données mobiles</string>
+    <string name="option_stream_format_wifi">Format du flux en Wi-Fi</string>
+    <string name="option_stream_format_cellular">Format du flux en données mobiles</string>
     <string name="option_palette_style">Style de palette</string>
     <string name="option_palette_specification">Spécifications de la palette</string>
     <string name="option_explicit_playback">Lecture de contenus pour adultes</string>
@@ -380,7 +380,7 @@
     <string name="notice_created_playlist">Liste de lecture %1$s créée.</string>
     <string name="notice_deleted_download">Téléchargement supprimé.</string>
     <string name="notice_removed_from_playlist">Retiré de la liste de lecture.</string>
-    <string name="notice_created_radio">Radio %1$s crée.</string>
+    <string name="notice_created_radio">Radio %1$s ajoutée.</string>
     <string name="notice_added_to_queue">Ajouté a la file d'attente.</string>
     <string name="notice_play_next">Sera joué après.</string>
     <string name="notice_added_to_playlist">Ajouté à %1$s.</string>
@@ -398,8 +398,8 @@
     <string name="option_sort_year">Année</string>
     <string name="option_choose_app_icon">Icône de l'application</string>
     <string name="option_download_custom_quality">Utiliser une qualité de téléchargement personnalisée</string>
-    <string name="option_download_format_wifi">Format des téléchargement - Wi-Fi</string>
-    <string name="option_download_format_cellular">Format des téléchargement - Données mobiles</string>
+    <string name="option_download_format_wifi">Format des téléchargement en Wi-Fi</string>
+    <string name="option_download_format_cellular">Format des téléchargement en données mobiles</string>
     <string name="option_dynamic_theming">Thème dynamique</string>
     <string name="action_open_settings">Ouvrir les paramètres</string>
     <string name="notice_local_network_denied">Permission refusée</string>
@@ -427,7 +427,7 @@
     <string name="subtitle_configure_lyric_providers">Choisir d'où les paroles sont récupérées</string>
     <string name="option_equaliser_mode_disabled">Désactivé</string>
     <string name="title_link_confirmation">Sortir de Navic</string>
-    <string name="option_equaliser_mode">Choix de l'égaliseur</string>
+    <string name="option_equaliser_mode">Source de l'égaliseur</string>
     <string name="option_equaliser_mode_builtin">Intégré</string>
     <string name="option_equaliser_mode_external">Externe</string>
     <plurals name="count_minutes_ago">
@@ -456,6 +456,6 @@
     <string name="action_visit_site">Visiter le site web</string>
     <string name="notice_link_confirmation">Ce lien vous redirige vers le site web suivant :</string>
     <string name="info_dynamic_replay_gain">ReplayGain dynamique</string>
-    <string name="info_equaliser_mode_not_builtin">Le contrôle n'est disponible qu'avec l'égaliseur intégré.</string>
+    <string name="info_equaliser_mode_not_builtin">Veuillez régler l'égaliseur externe via son application dédiée.</string>
     <string name="info_lyric_provider_disclaimer">L'utilisation de LRCLIB et/ou de LyricsPlus entraînera l'envoi de requêtes à des services Web externes et non affiliés.</string>
 </resources>

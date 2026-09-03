@@ -180,7 +180,7 @@
     <string name="action_more">Mer</string>
     <string name="action_add_to_playlist">Legg til i spilleliste</string>
     <string name="action_add_to_another_playlist">Legg til i en annen spilleliste</string>
-    <string name="action_add_all_to_playlist">Legg til i alle spillelister</string>
+    <string name="action_add_all_to_playlist">Legg alle til spilleliste</string>
     <string name="action_remove_from_playlist">Fjern fra spilleliste</string>
     <string name="action_see_all">Se alle</string>
     <string name="action_lyrics">Sangtekst</string>
@@ -199,9 +199,9 @@
     <string name="action_dont_show_again">Ikke vis igjen</string>
     <string name="action_open_settings">Åpne innstillinger</string>
     <string name="subtitle_rebuild_database">Fjerner metadata fra denne enheten og starter en full synkronisering</string>
-    <string name="notice_deleted_playlist">Slett spilleliste.</string>
-    <string name="notice_created_playlist">Opprettet spilleliste %1$s.</string>
-    <string name="notice_deleted_download">Slettet nedlasting.</string>
+    <string name="notice_deleted_playlist">Spilleliste slettet.</string>
+    <string name="notice_created_playlist">Spilleliste %1$s opprettet.</string>
+    <string name="notice_deleted_download">Nedlasting slettet.</string>
     <string name="notice_removed_from_playlist">Fjern fra spilleliste.</string>
     <string name="notice_created_radio">Opprettet radio %1$s.</string>
     <string name="notice_added_to_queue">Lagt til i avspillingskø.</string>
@@ -210,10 +210,10 @@
     <string name="notice_added_to_multiple_playlists">Lagt til i flere spillelister.</string>
     <string name="notice_download_started">Nedlasting startet.</string>
     <string name="notice_copied">Kopiert til utklippstavle.</string>
-    <string name="notice_expiry">Utløper om %1$s.</string>
+    <string name="notice_expiry">Utløper om %1$s</string>
     <string name="notice_loading_lyrics">Laster ned sangtekst …\nDette kan ta en stund.</string>
     <string name="notice_login_suggestion">Mente du …</string>
-    <string name="notice_queue_duplicate">Denne sangen er alerede i avspillingskøen. Vil du virkelig legge den til igjen?</string>
+    <string name="notice_queue_duplicate">Denne sangen er alerede i avspillingskøen. Vil du legge den til igjen?</string>
     <string name="info_app_version">Navic %1$s</string>
     <string name="info_action_is_permanent">Dette kan ikke angres</string>
     <string name="info_error">Noe gikk feil.</string>
@@ -286,7 +286,7 @@
     <string name="option_navigation_bar_tabs">Tilpass fanene i navigasjonslinjen</string>
     <string name="option_mini_player_style_unified">Festet</string>
     <string name="option_mini_player_style_detached">Løs</string>
-    <string name="option_mini_player_progress_style">Stil for fremdriftsviser for mini spiller</string>
+    <string name="option_mini_player_progress_style">Vis eller skjul fremdriftsviseren til mini spilleren</string>
     <string name="action_star">Gi stjernemerke</string>
     <string name="action_remove_star">Fjern stjernemerke</string>
     <string name="info_track_number">Spornummer</string>
@@ -345,7 +345,7 @@
     <string name="info_track_artist">Artist(er)</string>
     <string name="info_track_name">Sportnavn</string>
     <string name="info_track_channel_count">Kanaler</string>
-    <string name="info_no_other_playlists">Denne er den eneste spillelisten.</string>
+    <string name="info_no_other_playlists">Dette er den eneste spillelisten.</string>
     <string name="option_accent_colour">Aksentfarge</string>
     <string name="option_lyrics_autoscroll">Automatisk rulling av sangtekst</string>
     <string name="option_lyrics_bright_inactive">Gjør inaktive sangtekstlinjer lysere</string>
@@ -362,7 +362,7 @@
     <string name="action_navigate_back">Tilbake</string>
     <string name="info_streaming_quality">Høy kvalitet vil bruker mer mobildata. Omkoding kan påvirke innlastingstid og kan føre til at sangtekst kan miste posisjonen. Velg «tapsfri» hvis det oppstår problemer.</string>
     <string name="info_download_quality">Høy kvalitet vil bruker mer lagringsplass og mobildata. Omkoding kan påvirke nedlastingstid. Velg «tapsfri» hvis det oppstår problemer.</string>
-    <string name="info_app_icon">Endring av app ikon vil avslutte appen. Dette er påkrevd i Android.</string>
+    <string name="info_app_icon">Endring av app ikon vil avslutte appen. Dette er påkrevd i Android. Noen ikoner kan se like ut hvis din startsideapp dynamisk endrer ikoner.</string>
     <string name="info_click_to_retry">Trykk her for å prøve på nytt</string>
     <string name="title_discord_server">Discord tjener</string>
     <string name="title_codeberg">Codeberg</string>
@@ -375,7 +375,7 @@
     <string name="option_equaliser_mode_external">Ekstern</string>
     <string name="option_equaliser_mode_disabled">Avslått</string>
     <string name="option_equaliser">Tonekontroll</string>
-    <string name="option_equaliser_mode">Tonekontrollmodus</string>
+    <string name="option_equaliser_mode">Tonekontrollkilde</string>
     <string name="option_list_view_mode">Visningsmodus</string>
     <string name="option_list_view_mode_grid">Rutenett</string>
     <string name="option_list_view_mode_list">Liste</string>
@@ -399,7 +399,7 @@
     <string name="title_sleep_timer_time">Tid</string>
     <string name="title_sleep_timer_songs">Sanger</string>
     <string name="info_equaliser_unsupported">Din enhet støtter ikke denne funksjonen.</string>
-    <string name="info_equaliser_mode_not_builtin">Kontrollene er kun tilgjengelig i innebyggetmodus.</string>
+    <string name="info_equaliser_mode_not_builtin">Bruk den eksterne tonekontrollen sin egen app.</string>
     <string name="action_visit_site">Besøk nettside</string>
     <string name="title_lyric_providers">Sangtekstkilder</string>
     <string name="action_configure_lyric_providers">Velg sangtekstkilder</string>
@@ -413,4 +413,17 @@
     <string name="option_gapless_playback">Sømløsavspilling</string>
     <string name="subtitle_dynamic_theming">Tilpass utseende på album- og artistskjermene dynamisk basert på albumbilde</string>
     <string name="option_mini_player_progress_style_seekable">Spolbar</string>
+    <string name="option_alphabetical_scroll">Alfabetisk rulling</string>
+    <string name="info_track_bit_depth">Bitdybde</string>
+    <string name="info_track_sampling_rate">Samplingsrate</string>
+    <string name="info_track_bitrate">Bithastighet</string>
+    <string name="option_max_bitrate_wifi">Maks bithastighet over Wi-Fi (kb/s)</string>
+    <string name="option_max_bitrate_cellular">Maks bithastighet over mobildata (kb/s)</string>
+    <string name="title_create_share">Del musikk</string>
+    <string name="title_shares">Delt musikk</string>
+    <string name="action_view_shares">Delt musikk</string>
+    <string name="info_no_shares">Ingenting delt</string>
+    <string name="notice_deleted_share">Deling avsluttet.</string>
+    <string name="title_delete_share">Avslutt deling?</string>
+    <string name="option_use_marquee_text">Hastighet på automatisk rullende tekst</string>
 </resources>

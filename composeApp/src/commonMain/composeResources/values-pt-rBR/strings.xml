@@ -227,7 +227,6 @@
     <string name="info_syncing_artists">Sincronizando artistas...</string>
     <string name="info_syncing_radios">Sincronizando rádios...</string>
     <string name="info_login_description_start">Faça login na sua instância</string>
-	<string name="info_login_description_end" />
     <string name="info_exception_handler">Isso fará o aplicativo travar imediatamente. Tem certeza?</string>
     <string name="subtitle_data_storage">Gerenciar sincronização, uso de rede e cache</string>
     <string name="subtitle_pending_actions">%1$d itens aguardando conexão de rede</string>
@@ -306,158 +305,145 @@
     <string name="title_advanced">Transcodificação avançada</string>
     <string name="option_off">Desligado</string>
     <string name="option_offline_mode_forced">Forçado</string>
-	<string name="title_discord_server">Servidor do Discord</string>
-	<string name="option_dynamic_theming">Tema dinâmico</string>
-	<string name="option_equaliser">Equalizador</string>
-	<string name="option_equaliser_mode">Modo do equalizador</string>
-	<string name="option_equaliser_mode_disabled">Desativado</string>
-	<string name="option_equaliser_mode_builtin">Nativo</string>
-	<string name="option_equaliser_mode_external">Externo</string>
-	<string name="action_configure_lyric_providers">Configurar provedores de letras</string>
-	<string name="subtitle_configure_lyric_providers">Selecionar de onde obter as letras</string>
-	<string name="option_cover_art_action">Ação ao tocar na capa</string>
-	<string name="option_explicit_playback">Reprodução de conteúdo explícito</string>
-	<string name="option_explicit_playback_allowed">Permitido</string>
-	<string name="option_explicit_playback_skip">Pular músicas explícitas</string>
-	<string name="option_explicit_playback_skip_session">Pular músicas explícitas para essa sessão</string>
-	<string name="option_auto_fill_queue">Preencher fila automaticamente</string>
-	<string name="subtitle_auto_fill_queue">Automaticamente adicionar uma música aleatória quando há apenas uma na fila</string>
-	<string name="info_repeat_off">Repetir desativado</string>
-	<string name="info_repeat_one">Repetir atual</string>
-	<string name="info_repeat_all">Repetir todas</string>
-	<string name="info_app_icon">Alterar o ícone do aplicativo irá fechar o Navic, pois isso é uma exigência do Android. Talvez alguns ícones pareçam idênticos na sua tela inicial se o seu launcher aplica temas dinâmicos no ícone.</string>
-	<string name="info_equaliser_unsupported">Seu dispositivo não suporta essa opção.</string>
-	<string name="info_equaliser_mode_not_builtin">Por favor ajuste o equalizador externo usando o seu próprio aplicativo dedicado.</string>
-	<string name="info_lyric_provider_disclaimer">Ativar o LRCLIB e/ou o LyricsPlus irá fazer requisições a serviços externos e não afiliados.</string>
-	<string name="option_cover_art_quality">Qualidade da capa</string>
-	<string name="subtitle_equaliser">Ajustar e melhorar o áudio</string>
-	<string name="option_stream_custom_quality">Usar qualidade alternativa para streaming</string>
-	<string name="option_download_custom_quality">Usar qualidade alternativa para download</string>
-
-	<plurals name="count_songs">
-		<item quantity="one">%1$d música</item>
-		<item quantity="other">%1$d músicas</item>
-	</plurals>
-
-	<plurals name="count_albums">
-		<item quantity="one">%1$d álbum</item>
-		<item quantity="other">%1$d álbuns</item>
-	</plurals>
-
-	<plurals name="count_playlists">
-		<item quantity="one">%1$d playlist</item>
-		<item quantity="other">%1$d playlists</item>
-	</plurals>
-
-	<plurals name="count_artists">
-		<item quantity="one">%1$d artista</item>
-		<item quantity="other">%1$d artistas</item>
-	</plurals>
-
-	<plurals name="count_minutes">
-		<item quantity="one">%1$d minuto</item>
-		<item quantity="other">%1$d minutos</item>
-	</plurals>
-
-	<plurals name="count_hours">
-		<item quantity="one">%1$d hora</item>
-		<item quantity="other">%1$d horas</item>
-	</plurals>
-
-	<plurals name="count_minutes_ago">
-		<item quantity="one">%1$d minuto atrás</item>
-		<item quantity="other">%1$d minutos atrás</item>
-	</plurals>
-
-	<plurals name="count_hours_ago">
-		<item quantity="one">%1$d hora atrás</item>
-		<item quantity="other">%1$d horas atrás</item>
-	</plurals>
-
-	<plurals name="count_days_ago">
-		<item quantity="one">%1$d dia atrás</item>
-		<item quantity="other">%1$d dias atrás</item>
-	</plurals>
-
-	<plurals name="count_rate_stars">
-		<item quantity="one">Avaliar com %1$d estrela</item>
-		<item quantity="other">Avaliar com %1$d estrelas</item>
-	</plurals>
-
-	<plurals name="count_lines">
-		<item quantity="one">%1$d linha selecionada</item>
-		<item quantity="other">%1$d linhas selecionadas</item>
-	</plurals>
-
-	<string name="option_cover_art_action_disabled">Desativado</string>
-	<string name="option_cover_art_action_show_lyrics">Mostrar letras</string>
-	<string name="title_starred">Favoritado</string>
-	<string name="title_download_quality">Qualidade de download</string>
-	<string name="title_logs">Logs</string>
-	<string name="title_palette">Paleta</string>
-	<string name="title_theme_mode">Modo do tema</string>
-	<string name="title_account">Conta</string>
-	<string name="title_track_info">Informações da faixa</string>
-	<string name="title_lyric_providers">Provedores de letras</string>
-	<string name="title_link_confirmation">Saindo do Navic</string>
-	<string name="subtitle_download_quality">Ajustar a qualidade da música baixada</string>
-	<string name="subtitle_dynamic_theming">Alterar dinamicamente o tema das páginas de artista e álbum baseado na capa</string>
-	<string name="notice_local_network_denied">Permissão negada</string>
-	<string name="subtitle_local_network_denied">Você precisa permitir o acesso à rede local ao Navic para que seja possível acessar o seu servidor.</string>
-	<string name="info_download_quality">Predefinições de qualidade mais altas utilizam mais espaço e dados. A transcodificação pode aumentar o tempo de download. Selecione "Lossless" se encontrar algum problema.</string>
-	<string name="subtitle_equaliser_disabled">Indisponível quando o offload de áudio está ativado</string>
-	<string name="notice_added_to_queue">Adicionado à fila.</string>
-	<string name="option_choose_app_icon">Ícone do aplicativo</string>
-	<string name="option_max_bitrate_wifi">Bitrate máximo em Wi-fi (kbps)</string>
-	<string name="option_max_bitrate_cellular">Bitrate máximo em dados móveis (kbps)</string>
-	<string name="option_stream_format_wifi">Formato da stream Wi-fi</string>
-	<string name="option_download_format_cellular">Formato do download Dados Móveis</string>
-
-	<string name="option_stream_format_cellular">Formato da stream em dados móveis</string>
-	<string name="option_download_format_wifi">Formato do download em Wi-fi</string>
-	<string name="info_external_song">Externa</string>
-	<string name="info_external_song_description">Essa música foi marcada como externa pelo seu servidor, então talvez não seja possível você ouvi-la.</string>
-	<string name="info_transcoding_defaults">Deixar vazio quaisquer das opções irá omitir elas e permitir que o servidor decida.</string>
-	<string name="option_palette_style">Estilo da paleta</string>
-	<string name="option_navigation_bar_label_visibility">Visibilidade</string>
-	<string name="option_navigation_bar_label_visibility_never">Nunca</string>
-	<string name="action_start">Iniciar</string>
-	<string name="action_ok">OK</string>
-	<string name="action_play">Reproduzir</string>
-	<string name="action_pause">Pausar</string>
-	<string name="option_playback_speed">Velocidade da reprodução</string>
-	<string name="notice_added_to_multiple_playlists">Adicionado em múltiplas playlists.</string>
-	<string name="notice_download_started">Download iniciado.</string>
-	<string name="notice_link_confirmation">Esse link está te levando para o seguinte site:</string>
-	<string name="info_no_search_results">Nenhum resultado</string>
-	<string name="info_no_starred">Nada favoritado</string>
-	<string name="option_list_view_mode">Modo de visualização</string>
-	<string name="option_list_view_mode_grid">Grade</string>
-	<string name="option_list_view_mode_list">Lista</string>
-	<string name="option_artist_image_shape">Forma da imagem do artista</string>
-	<string name="action_next_song">Próxima música</string>
-	<string name="action_previous_song">Música anterior</string>
-	<string name="title_sleep_timer_songs">Músicas</string>
-	<string name="action_open_settings">Abrir configurações</string>
-	<string name="action_visit_site">Visitar site</string>
-	<string name="notice_created_playlist">Playlist %1$s criada.</string>
-	<string name="notice_deleted_download">Download deletado.</string>
-	<string name="notice_removed_from_playlist">Removido da playlist.</string>
-	<string name="notice_play_next">Será reproduzido a seguir.</string>
-	<string name="option_sort_year">Ano</string>
-	<string name="subtitle_app_icon_designer">Feito por: %1$s</string>
-	<string name="option_palette_specification">Especificação da paleta</string>
-	<string name="option_navigation_bar_style_short">Curto</string>
-	<string name="action_clear_queue">Limpar fila</string>
-	<string name="action_reset">Resetar</string>
-	<string name="notice_created_radio">Rádio %1$s adicionada.</string>
-	<string name="notice_added_to_playlist">Adicionado à %1$s.</string>
-	<string name="action_sleep_timer_songs_enabled">Timer de repouso - %1$d músicas a seguir</string>
-	<string name="action_sleep_timer_queue_enabled">Timer de repouso - fim da fila</string>
-	<string name="title_sleep_timer_time">Tempo</string>
-	<string name="action_sleep_timer_queue">Parar no final da fila atual</string>
-	<string name="action_sleep_timer_songs">Parar após %1$d músicas</string>
-	<string name="option_mini_player_progress_style_seekable">Navegável</string>
-	<string name="title_github">GitHub</string>
-	<string name="title_codeberg">Codeberg</string>
+    <string name="title_discord_server">Servidor do Discord</string>
+    <string name="option_dynamic_theming">Tema dinâmico</string>
+    <string name="option_equaliser">Equalizador</string>
+    <string name="option_equaliser_mode">Modo do equalizador</string>
+    <string name="option_equaliser_mode_disabled">Desativado</string>
+    <string name="option_equaliser_mode_builtin">Nativo</string>
+    <string name="option_equaliser_mode_external">Externo</string>
+    <string name="action_configure_lyric_providers">Configurar provedores de letras</string>
+    <string name="subtitle_configure_lyric_providers">Selecionar de onde obter as letras</string>
+    <string name="option_cover_art_action">Ação ao tocar na capa</string>
+    <string name="option_explicit_playback">Reprodução de conteúdo explícito</string>
+    <string name="option_explicit_playback_allowed">Permitido</string>
+    <string name="option_explicit_playback_skip">Pular músicas explícitas</string>
+    <string name="option_explicit_playback_skip_session">Pular músicas explícitas para essa sessão</string>
+    <string name="option_auto_fill_queue">Preencher fila automaticamente</string>
+    <string name="subtitle_auto_fill_queue">Automaticamente adicionar uma música aleatória quando há apenas uma na fila</string>
+    <string name="info_repeat_off">Repetir desativado</string>
+    <string name="info_repeat_one">Repetir atual</string>
+    <string name="info_repeat_all">Repetir todas</string>
+    <string name="info_app_icon">Alterar o ícone do aplicativo irá fechar o Navic, pois isso é uma exigência do Android. Talvez alguns ícones pareçam idênticos na sua tela inicial se o seu launcher aplica temas dinâmicos no ícone.</string>
+    <string name="info_equaliser_unsupported">Seu dispositivo não suporta essa opção.</string>
+    <string name="info_equaliser_mode_not_builtin">Por favor ajuste o equalizador externo usando o seu próprio aplicativo dedicado.</string>
+    <string name="info_lyric_provider_disclaimer">Ativar o LRCLIB e/ou o LyricsPlus irá fazer requisições a serviços externos e não afiliados.</string>
+    <string name="option_cover_art_quality">Qualidade da capa</string>
+    <string name="subtitle_equaliser">Ajustar e melhorar o áudio</string>
+    <string name="option_stream_custom_quality">Usar qualidade alternativa para streaming</string>
+    <string name="option_download_custom_quality">Usar qualidade alternativa para download</string>
+    <plurals name="count_songs">
+        <item quantity="one">%1$d música</item>
+        <item quantity="other">%1$d músicas</item>
+    </plurals>
+    <plurals name="count_albums">
+        <item quantity="one">%1$d álbum</item>
+        <item quantity="other">%1$d álbuns</item>
+    </plurals>
+    <plurals name="count_playlists">
+        <item quantity="one">%1$d playlist</item>
+        <item quantity="other">%1$d playlists</item>
+    </plurals>
+    <plurals name="count_artists">
+        <item quantity="one">%1$d artista</item>
+        <item quantity="other">%1$d artistas</item>
+    </plurals>
+    <plurals name="count_minutes">
+        <item quantity="one">%1$d minuto</item>
+        <item quantity="other">%1$d minutos</item>
+    </plurals>
+    <plurals name="count_hours">
+        <item quantity="one">%1$d hora</item>
+        <item quantity="other">%1$d horas</item>
+    </plurals>
+    <plurals name="count_minutes_ago">
+        <item quantity="one">%1$d minuto atrás</item>
+        <item quantity="other">%1$d minutos atrás</item>
+    </plurals>
+    <plurals name="count_hours_ago">
+        <item quantity="one">%1$d hora atrás</item>
+        <item quantity="other">%1$d horas atrás</item>
+    </plurals>
+    <plurals name="count_days_ago">
+        <item quantity="one">%1$d dia atrás</item>
+        <item quantity="other">%1$d dias atrás</item>
+    </plurals>
+    <plurals name="count_rate_stars">
+        <item quantity="one">Avaliar com %1$d estrela</item>
+        <item quantity="other">Avaliar com %1$d estrelas</item>
+    </plurals>
+    <plurals name="count_lines">
+        <item quantity="one">%1$d linha selecionada</item>
+        <item quantity="other">%1$d linhas selecionadas</item>
+    </plurals>
+    <string name="option_cover_art_action_disabled">Desativado</string>
+    <string name="option_cover_art_action_show_lyrics">Mostrar letras</string>
+    <string name="title_starred">Favoritado</string>
+    <string name="title_download_quality">Qualidade de download</string>
+    <string name="title_logs">Logs</string>
+    <string name="title_palette">Paleta</string>
+    <string name="title_theme_mode">Modo do tema</string>
+    <string name="title_account">Conta</string>
+    <string name="title_track_info">Informações da faixa</string>
+    <string name="title_lyric_providers">Provedores de letras</string>
+    <string name="title_link_confirmation">Saindo do Navic</string>
+    <string name="subtitle_download_quality">Ajustar a qualidade da música baixada</string>
+    <string name="subtitle_dynamic_theming">Alterar dinamicamente o tema das páginas de artista e álbum baseado na capa</string>
+    <string name="notice_local_network_denied">Permissão negada</string>
+    <string name="subtitle_local_network_denied">Você precisa permitir o acesso à rede local ao Navic para que seja possível acessar o seu servidor.</string>
+    <string name="info_download_quality">Predefinições de qualidade mais altas utilizam mais espaço e dados. A transcodificação pode aumentar o tempo de download. Selecione "Lossless" se encontrar algum problema.</string>
+    <string name="subtitle_equaliser_disabled">Indisponível quando o offload de áudio está ativado</string>
+    <string name="notice_added_to_queue">Adicionado à fila.</string>
+    <string name="option_choose_app_icon">Ícone do aplicativo</string>
+    <string name="option_max_bitrate_wifi">Bitrate máximo em Wi-fi (kbps)</string>
+    <string name="option_max_bitrate_cellular">Bitrate máximo em dados móveis (kbps)</string>
+    <string name="option_stream_format_wifi">Formato da stream Wi-fi</string>
+    <string name="option_download_format_cellular">Formato do download Dados Móveis</string>
+    <string name="option_stream_format_cellular">Formato da stream em dados móveis</string>
+    <string name="option_download_format_wifi">Formato do download em Wi-fi</string>
+    <string name="info_external_song">Externa</string>
+    <string name="info_external_song_description">Essa música foi marcada como externa pelo seu servidor, então talvez não seja possível você ouvi-la.</string>
+    <string name="info_transcoding_defaults">Deixar vazio quaisquer das opções irá omitir elas e permitir que o servidor decida.</string>
+    <string name="option_palette_style">Estilo da paleta</string>
+    <string name="option_navigation_bar_label_visibility">Visibilidade</string>
+    <string name="option_navigation_bar_label_visibility_never">Nunca</string>
+    <string name="action_start">Iniciar</string>
+    <string name="action_ok">OK</string>
+    <string name="action_play">Reproduzir</string>
+    <string name="action_pause">Pausar</string>
+    <string name="option_playback_speed">Velocidade da reprodução</string>
+    <string name="notice_added_to_multiple_playlists">Adicionado em múltiplas playlists.</string>
+    <string name="notice_download_started">Download iniciado.</string>
+    <string name="notice_link_confirmation">Esse link está te levando para o seguinte site:</string>
+    <string name="info_no_search_results">Nenhum resultado</string>
+    <string name="info_no_starred">Nada favoritado</string>
+    <string name="option_list_view_mode">Modo de visualização</string>
+    <string name="option_list_view_mode_grid">Grade</string>
+    <string name="option_list_view_mode_list">Lista</string>
+    <string name="option_artist_image_shape">Forma da imagem do artista</string>
+    <string name="action_next_song">Próxima música</string>
+    <string name="action_previous_song">Música anterior</string>
+    <string name="title_sleep_timer_songs">Músicas</string>
+    <string name="action_open_settings">Abrir configurações</string>
+    <string name="action_visit_site">Visitar site</string>
+    <string name="notice_created_playlist">Playlist %1$s criada.</string>
+    <string name="notice_deleted_download">Download deletado.</string>
+    <string name="notice_removed_from_playlist">Removido da playlist.</string>
+    <string name="notice_play_next">Será reproduzido a seguir.</string>
+    <string name="option_sort_year">Ano</string>
+    <string name="subtitle_app_icon_designer">Feito por: %1$s</string>
+    <string name="option_palette_specification">Especificação da paleta</string>
+    <string name="option_navigation_bar_style_short">Curto</string>
+    <string name="action_clear_queue">Limpar fila</string>
+    <string name="action_reset">Resetar</string>
+    <string name="notice_created_radio">Rádio %1$s adicionada.</string>
+    <string name="notice_added_to_playlist">Adicionado à %1$s.</string>
+    <string name="action_sleep_timer_songs_enabled">Timer de repouso - %1$d músicas a seguir</string>
+    <string name="action_sleep_timer_queue_enabled">Timer de repouso - fim da fila</string>
+    <string name="title_sleep_timer_time">Tempo</string>
+    <string name="action_sleep_timer_queue">Parar no final da fila atual</string>
+    <string name="action_sleep_timer_songs">Parar após %1$d músicas</string>
+    <string name="option_mini_player_progress_style_seekable">Navegável</string>
+    <string name="title_github">GitHub</string>
+    <string name="title_codeberg">Codeberg</string>
 </resources>
