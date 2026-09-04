@@ -1,16 +1,10 @@
 package paige.navic.domain.manager
 
+import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.size.Size
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.onDownload
-import io.ktor.client.request.header
-import io.ktor.client.request.prepareRequest
-import io.ktor.client.statement.bodyAsChannel
-import io.ktor.http.HttpMethod
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -36,34 +30,28 @@ import paige.navic.data.database.dao.LyricDao
 import paige.navic.data.database.entities.DownloadEntity
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.data.database.entities.LyricEntity
+import paige.navic.domain.manager.base.BaseDownloadManager
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.repositories.LyricsRepository
 import paige.navic.util.core.Logger
 import paige.navic.util.core.PlatformType
-import coil3.PlatformContext as CoilPlatformContext
 
 class DownloadManager(
-	private val coilPlatformContext: CoilPlatformContext,
-	private val downloadDao: DownloadDao,
-	private val albumDao: AlbumDao,
-	private val storageManager: StorageManager,
-	private val lyricsRepository: LyricsRepository,
-	private val lyricDao: LyricDao,
-	private val sessionManager: SessionManager,
-	private val preferenceManager: PreferenceManager,
-	private val connectivityManager: ConnectivityManager,
-	private val platformType: PlatformType
+    private val coilPlatformContext: PlatformContext,
+    private val downloadDao: DownloadDao,
+    private val albumDao: AlbumDao,
+    private val storageManager: StorageManager,
+    private val lyricsRepository: LyricsRepository,
+    private val lyricDao: LyricDao,
+    private val sessionManager: SessionManager,
+    private val preferenceManager: PreferenceManager,
+    private val connectivityManager: ConnectivityManager,
+    private val platformType: PlatformType,
+    private val baseDownloadManager: BaseDownloadManager
 ) {
 	private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-	private val client = HttpClient {
-		val customHeaders = preferenceManager.customHeadersMap()
-		if (customHeaders.isNotEmpty()) {
-			defaultRequest {
-				customHeaders.forEach { (key, value) -> header(key, value) }
-			}
-		}
-	}
+
 	private val activeDownloadsMutex = Mutex()
 	private val activeDownloads = mutableMapOf<String, Job>()
 	private val downloadSemaphore =
@@ -109,7 +97,7 @@ class DownloadManager(
 			if (alreadyActive) return@launch
 
 			try {
-				activeDownloadsMutex.withLock { activeDownloads[song.id] = coroutineContext[Job]!! }
+				activeDownloadsMutex.withLock { activeDownloads[song.id] = coroutineContext[Job.Key]!! }
 
 				downloadSemaphore.withPermit {
 					executeDownloadProcess(song)
@@ -361,55 +349,47 @@ class DownloadManager(
 
 		val extension = container?.takeIf { it.isNotBlank() } ?: song.fileExtension
 
-		val request = client.prepareRequest(
-			sessionManager.api.getStreamUrl(
-				id = song.id,
-				maxBitRate = bitrate,
-				format = container?.takeIf { it.isNotBlank() },
-				// if this is true u get "stream was reset: INTERNAL_ERROR" for some reason
-				estimateContentLength = false
-			)
-		) {
-			method = HttpMethod.Get
-			onDownload { bytesSentTotal, contentLength ->
-				if (contentLength != null && contentLength > 0L) {
-					val progress = (bytesSentTotal.toDouble() / contentLength).toFloat()
-					if (progress - lastProgress >= 0.01f || progress == 1f) {
-						lastProgress = progress
-						Logger.i("DownloadManager", "downloading ${song.id} $progress")
+		val url = sessionManager.api.getStreamUrl(
+			id = song.id,
+			maxBitRate = bitrate,
+			format = container?.takeIf { it.isNotBlank() },
+			// if this is true u get "stream was reset: INTERNAL_ERROR" for some reason
+			estimateContentLength = false
+		)
+		val path = baseDownloadManager.downloadAudio(
+			song = song,
+			url = url,
+			extension = extension,
+			headers = preferenceManager.customHeadersMap(),
+			onProgress = { progress ->
+				if (progress - lastProgress >= 0.01f || progress == 1f) {
+					lastProgress = progress
+					Logger.i("DownloadManager", "downloading ${song.id} $progress")
 
-						progressJob?.cancel()
+					progressJob?.cancel()
 
-						progressJob = scope.launch {
-							downloadDao.updateProgress(
-								song.id,
-								DownloadStatus.DOWNLOADING,
-								progress
-							)
-						}
+					progressJob = scope.launch {
+						downloadDao.updateProgress(
+							song.id,
+							DownloadStatus.DOWNLOADING,
+							progress
+						)
 					}
-				} else {
-					Logger.i("DownloadManager", "downloaded ${song.id}")
 				}
 			}
-		}
+		)
 
-		request.execute { response ->
-			Logger.i("DownloadManager", "writing download for ${song.id}")
-			val path = storageManager.getDownloadPath(song.id, extension)
-			storageManager.saveFile(path, response.bodyAsChannel())
-			Logger.i("DownloadManager", "wrote download for ${song.id}")
+		Logger.i("DownloadManager", "downloaded ${song.id} to $path")
 
-			progressJob?.cancel()
+		progressJob?.cancel()
 
-			downloadDao.insertDownload(
-				DownloadEntity(
-					song.id,
-					DownloadStatus.DOWNLOADED,
-					1f,
-					path
-				)
-			)
-		}
+		downloadDao.insertDownload(
+            DownloadEntity(
+                song.id,
+                DownloadStatus.DOWNLOADED,
+                1f,
+                path
+            )
+		)
 	}
 }
