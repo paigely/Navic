@@ -57,7 +57,7 @@ import androidx.navigation3.ui.NavDisplay.popTransitionSpec
 import androidx.navigation3.ui.NavDisplay.predictivePopTransitionSpec
 import androidx.navigation3.ui.NavDisplay.transitionSpec
 import androidx.savedstate.serialization.SavedStateConfiguration
-import coil3.compose.setSingletonImageLoaderFactory
+import coil3.SingletonImageLoader
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
@@ -104,6 +104,7 @@ import paige.navic.ui.screens.settings.SettingsCustomHeadersScreen
 import paige.navic.ui.screens.settings.SettingsDataStorageScreen
 import paige.navic.ui.screens.settings.SettingsDeveloperScreen
 import paige.navic.ui.screens.settings.SettingsDownloadQualityScreen
+import paige.navic.ui.screens.settings.SettingsEqualiserScreen
 import paige.navic.ui.screens.settings.SettingsLogsScreen
 import paige.navic.ui.screens.settings.SettingsNowPlayingScreen
 import paige.navic.ui.screens.settings.SettingsPlaybackScreen
@@ -146,9 +147,11 @@ val LocalGlobalBottomBarHeight = staticCompositionLocalOf { 0.dp }
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun App() {
-	// TODO: wtf was this for
-	setSingletonImageLoaderFactory { platformContext ->
-		initializeSingletonImageLoader(platformContext)
+	// TODO: inject image loader and stop using this cursed singleton thing
+	runCatching {
+		SingletonImageLoader.setSafe({ platformContext ->
+			initializeSingletonImageLoader(platformContext)
+		})
 	}
 
 	val platformContext = rememberPlatformContext()
@@ -470,6 +473,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Settings.AppIcon>(metadata = detailPane("settings")) {
 			SettingsAppIconScreen()
+		}
+		entry<Screen.Settings.Equaliser> {
+			SettingsEqualiserScreen()
 		}
 	}
 }

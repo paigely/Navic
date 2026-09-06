@@ -27,9 +27,7 @@ import navic.composeapp.generated.resources.action_cancel
 import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.action_test_exception_handler
 import navic.composeapp.generated.resources.info_exception_handler
-import navic.composeapp.generated.resources.option_check_for_updates
 import navic.composeapp.generated.resources.option_custom_headers
-import navic.composeapp.generated.resources.subtitle_check_for_updates
 import navic.composeapp.generated.resources.title_confirm
 import navic.composeapp.generated.resources.title_developer
 import navic.composeapp.generated.resources.title_logs
@@ -46,7 +44,6 @@ import paige.navic.ui.components.common.FormRow
 import paige.navic.ui.components.dialogs.FormDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.navigation.Screen
-import paige.navic.ui.screens.settings.components.SettingSwitchRow
 import paige.navic.util.core.PlatformType
 import paige.navic.LocalGlobalBottomBarHeight
 import androidx.compose.foundation.layout.Spacer
@@ -79,14 +76,6 @@ fun SettingsDeveloperScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
-					if (platformContext.platformType == PlatformType.Android) {
-						SettingSwitchRow(
-							title = { Text(stringResource(Res.string.option_check_for_updates)) },
-							subtitle = { Text(stringResource(Res.string.subtitle_check_for_updates)) },
-							value = preferenceManager.checkForUpdates,
-							onSetValue = { preferenceManager.checkForUpdates = it }
-						)
-					}
 					FormRow(
 						onClick = dropUnlessResumed {
 							backStack.lastOrNull()?.let {

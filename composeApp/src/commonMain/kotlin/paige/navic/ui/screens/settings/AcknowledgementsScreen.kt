@@ -10,6 +10,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -18,8 +22,11 @@ import com.mikepenz.aboutlibraries.ui.compose.produceLibraries
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_acknowledgements
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.ui.components.dialogs.LinkConfirmationDialog
 import paige.navic.ui.components.layouts.NestedTopBar
+import paige.navic.ui.components.sheets.LibrarySheet
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsAcknowledgementsScreen() {
 	val libraries by produceLibraries {

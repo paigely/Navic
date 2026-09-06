@@ -2,17 +2,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools">
 
-	<permission
-		android:name="${applicationId}.permission.PLAYBACK_SERVICE"
-		android:protectionLevel="signature" />
-
+	<!-- needed for obvious reasons, network state is for checking if offline -->
+	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
-	<uses-permission android:name="android.permission.INTERNET" />
+
+	<!-- needed for the equaliser feature, for some reason -->
+	<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+	<!-- needed for widgets (glance automatically adds these but just putting this here to be explicit) -->
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+	<!-- needed for the playback service and widgets -->
 	<uses-permission
 		android:name="android.permission.FOREGROUND_SERVICE"
 		tools:ignore="ForegroundServicesPolicy" />
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
+	<permission
+		android:name="${applicationId}.permission.PLAYBACK_SERVICE"
+		android:protectionLevel="signature" />
 	<uses-permission android:name="${applicationId}.permission.PLAYBACK_SERVICE" />
 
 	<application
@@ -76,7 +86,7 @@
 			android:enabled="true"
 			android:exported="true"
 			android:foregroundServiceType="mediaPlayback">
-<!--			android:permission="${applicationId}.permission.PLAYBACK_SERVICE">   : Blocks android auto from seeing the app at all? -->
+			<!--			android:permission="${applicationId}.permission.PLAYBACK_SERVICE">   : Blocks android auto from seeing the app at all? -->
 			<intent-filter>
 
 				<action android:name="androidx.media3.session.MediaSessionService" />
@@ -132,8 +142,9 @@
 		</provider>
 
 		<!-- Android Auto -->
-		<meta-data android:name="com.google.android.gms.car.application"
-			android:resource="@xml/automotive_app_desc"/>
+		<meta-data
+			android:name="com.google.android.gms.car.application"
+			android:resource="@xml/automotive_app_desc" />
 		<meta-data
 			android:name="androidx.car.app.TintableAttributionIcon"
 			android:resource="@drawable/ic_navic" />

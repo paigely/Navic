@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -36,6 +37,7 @@ fun FormRow(
 	rounding: Dp = 5.dp,
 	contentPadding: PaddingValues = PaddingValues(14.dp),
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+	enabled: Boolean = true,
 	content: @Composable RowScope.() -> Unit
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
@@ -50,7 +52,8 @@ fun FormRow(
 							},
 							onLongClick = onLongClick,
 							interactionSource = interactionSource,
-							indication = null
+							indication = null,
+							enabled = enabled
 						)
 				else Modifier
 			)
@@ -62,6 +65,8 @@ fun FormRow(
 			.background(color ?: MaterialTheme.colorScheme.surfaceContainer)
 			.fillMaxWidth()
 			.indication(interactionSource, ripple())
+			// lazy
+			.alpha(if (enabled) 1f else 0.75f)
 	) {
 		Row(
 			horizontalArrangement = horizontalArrangement,

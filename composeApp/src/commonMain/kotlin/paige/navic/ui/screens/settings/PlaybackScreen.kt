@@ -30,14 +30,19 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toImmutableList
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_audio_offload
+import navic.composeapp.generated.resources.option_auto_fill_queue
 import navic.composeapp.generated.resources.option_enable_scrobbling
+import navic.composeapp.generated.resources.option_equaliser
 import navic.composeapp.generated.resources.option_explicit_playback
 import navic.composeapp.generated.resources.option_gapless_playback
 import navic.composeapp.generated.resources.option_min_duration_to_scrobble
 import navic.composeapp.generated.resources.option_replay_gain
 import navic.composeapp.generated.resources.option_scrobble_percentage
 import navic.composeapp.generated.resources.subtitle_audio_offload
+import navic.composeapp.generated.resources.subtitle_auto_fill_queue
 import navic.composeapp.generated.resources.subtitle_enable_scrobbling
+import navic.composeapp.generated.resources.subtitle_equaliser
+import navic.composeapp.generated.resources.subtitle_equaliser_disabled
 import navic.composeapp.generated.resources.subtitle_gapless_playback
 import navic.composeapp.generated.resources.subtitle_streaming_quality
 import navic.composeapp.generated.resources.title_behaviour
@@ -110,6 +115,25 @@ fun SettingsPlaybackScreen() {
 							selection = preferenceManager.replayGainMode,
 							onSelect = { preferenceManager.replayGainMode = it }
 						)
+						FormRow(
+							onClick = dropUnlessResumed { backStack.add(Screen.Settings.Equaliser) },
+							horizontalArrangement = Arrangement.Start,
+							enabled = !preferenceManager.audioOffload
+						) {
+							Column(Modifier.weight(1f)) {
+								Text(stringResource(Res.string.option_equaliser))
+								Text(
+									text = stringResource(
+										if (!preferenceManager.audioOffload)
+											Res.string.subtitle_equaliser
+										else Res.string.subtitle_equaliser_disabled
+									),
+									style = MaterialTheme.typography.bodyMedium,
+									color = MaterialTheme.colorScheme.onSurfaceVariant
+								)
+							}
+							Icon(Icons.Outlined.ChevronForward, null)
+						}
 						SettingSwitchRow(
 							title = { Text(stringResource(Res.string.option_gapless_playback)) },
 							subtitle = { Text(stringResource(Res.string.subtitle_gapless_playback)) },
@@ -130,6 +154,14 @@ fun SettingsPlaybackScreen() {
 						selection = preferenceManager.explicitContentPlayback,
 						onSelect = { preferenceManager.explicitContentPlayback = it }
 					)
+					if (platformContext.platformType == PlatformType.Android) {
+						SettingSwitchRow(
+							title = { Text(stringResource(Res.string.option_auto_fill_queue)) },
+							subtitle = { Text(stringResource(Res.string.subtitle_auto_fill_queue)) },
+							value = preferenceManager.autoFillQueue,
+							onSetValue = { preferenceManager.autoFillQueue = it }
+						)
+					}
 				}
 
 				FormTitle(stringResource(Res.string.title_behaviour))

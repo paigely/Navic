@@ -27,6 +27,7 @@ import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingMoreButton
 import paige.navic.ui.screens.nowPlaying.components.controls.NowPlayingStarButton
 import paige.navic.util.core.InlineExplicitIconLarge
+import paige.navic.util.core.appendArtists
 
 @Composable
 fun NowPlayingInfoRow(
@@ -85,6 +86,7 @@ fun NowPlayingInfoRow(
 						),
 				)
 			}
+			val notPlayingString = stringResource(Res.string.info_not_playing)
 			MarqueeText(
 				modifier = Modifier.clickable(
 					song != null,
@@ -100,7 +102,19 @@ fun NowPlayingInfoRow(
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
 						fontSize = MaterialTheme.typography.bodyMedium.fontSize * 1.1
 					),
-				text = song?.artistName ?: stringResource(Res.string.info_not_playing)
+				text = buildAnnotatedString {
+					if (song != null) {
+						appendArtists(
+							artists = song.artists,
+							onClick = {
+								backStack.remove(Screen.NowPlaying)
+								backStack.add(Screen.ArtistDetail(it))
+							}
+						)
+					} else {
+						append(notPlayingString)
+					}
+				}
 			)
 		}
 		Row(

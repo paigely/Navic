@@ -27,6 +27,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.capsule.ContinuousCapsule
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.launch
@@ -34,12 +35,15 @@ import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_log_out
 import navic.composeapp.generated.resources.action_sleep_timer
 import navic.composeapp.generated.resources.action_sleep_timer_enabled
+import navic.composeapp.generated.resources.action_sleep_timer_queue_enabled
+import navic.composeapp.generated.resources.action_sleep_timer_songs_enabled
 import navic.composeapp.generated.resources.action_view_shares
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.domain.manager.LoginManager
 import paige.navic.domain.manager.SleepTimerManager
+import paige.navic.domain.manager.SleepTimerMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Bedtime
 import paige.navic.icons.outlined.Logout
@@ -62,7 +66,7 @@ fun AccountSheet(
 
 	var sleepTimerSheetOpen by rememberSaveable { mutableStateOf(false) }
 	val sleepTimerManager = koinInject<SleepTimerManager>()
-	val sleepTimerLeft = sleepTimerManager.timeLeft
+	val sleepTimerMode by sleepTimerManager.mode.collectAsStateWithLifecycle()
 
 	val sheetState = rememberBottomSheetState(
 		initialValue = SheetValue.Hidden,
@@ -159,17 +163,31 @@ fun AccountSheet(
 					contentPadding = contentPadding,
 					color = color
 				) {
-					if (sleepTimerLeft != null) {
+					val isEnabled = sleepTimerMode !is SleepTimerMode.Disabled
+					if (isEnabled) {
 						Icon(
 							imageVector = Icons.Outlined.Bedtime,
 							contentDescription = null,
 							tint = MaterialTheme.colorScheme.positive
 						)
 						Text(
-							text = stringResource(
-								resource = Res.string.action_sleep_timer_enabled,
-								sleepTimerLeft.label()
-							),
+							text = when (val mode = sleepTimerMode) {
+								is SleepTimerMode.Time -> stringResource(
+									Res.string.action_sleep_timer_enabled,
+									sleepTimerManager.timeLeft?.label() ?: ""
+								)
+
+								is SleepTimerMode.Songs -> stringResource(
+									Res.string.action_sleep_timer_songs_enabled,
+									mode.remaining
+								)
+
+								is SleepTimerMode.EndOfQueue -> stringResource(
+									Res.string.action_sleep_timer_queue_enabled
+								)
+
+								else -> ""
+							},
 							color = MaterialTheme.colorScheme.positive,
 							modifier = Modifier.weight(1f)
 						)

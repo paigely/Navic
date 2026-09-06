@@ -9,6 +9,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.collections.immutable.persistentListOf
 import paige.navic.domain.models.DomainAlbumListType
+import paige.navic.domain.models.DomainFilter
+import paige.navic.domain.models.settings.ListViewMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Sort
 import paige.navic.ui.components.layouts.TopBarButton
@@ -21,19 +23,22 @@ fun AlbumListScreenSortButton(
 	selectedSorting: DomainAlbumListType,
 	onSetSorting: (DomainAlbumListType) -> Unit,
 	selectedReversed: Boolean,
-	onSetReversed: (Boolean) -> Unit
+	onSetReversed: (Boolean) -> Unit,
+	selectedViewMode: ListViewMode,
+	onSetViewMode: (ListViewMode) -> Unit,
+	selectedFilters: Set<DomainFilter>,
+	onToggleFilter: (DomainFilter) -> Unit
 ) {
 	val entries = remember {
 		persistentListOf(
 			DomainAlbumListType.AlphabeticalByArtist,
+			DomainAlbumListType.AlphabeticalByName,
 			DomainAlbumListType.Frequent,
 			DomainAlbumListType.Recent,
 			DomainAlbumListType.Newest,
 			DomainAlbumListType.Highest,
-			DomainAlbumListType.Starred,
 			DomainAlbumListType.Random,
-			DomainAlbumListType.Year,
-			DomainAlbumListType.Downloaded
+			DomainAlbumListType.Year
 		)
 	}
 	var expanded by remember { mutableStateOf(false) }
@@ -62,7 +67,11 @@ fun AlbumListScreenSortButton(
 			label = { it.label() },
 			onSetSorting = onSetSorting,
 			onSetReversed = onSetReversed,
-			onDismissRequest = { expanded = false }
+			onDismissRequest = { expanded = false },
+			selectedViewMode = selectedViewMode,
+			onSetViewMode = onSetViewMode,
+			selectedFilters = selectedFilters,
+			onToggleFilter = onToggleFilter
 		)
 	}
 }

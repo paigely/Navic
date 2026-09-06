@@ -7,10 +7,10 @@
     <string name="title_starred">お気に入り</string>
     <string name="title_appearance">外観</string>
     <string name="title_behaviour">動作</string>
-    <string name="title_now_playing">再生中</string>
-    <string name="title_bottom_app_bar">ボトムバー</string>
-    <string name="title_playback">再生</string>
-    <string name="title_data_storage">データストレージ</string>
+    <string name="title_now_playing">再生画面</string>
+    <string name="title_bottom_app_bar">ナビゲーションバー</string>
+    <string name="title_playback">再生・オーディオ</string>
+    <string name="title_data_storage">データとストレージ</string>
     <string name="title_delete_share">共有を削除しますか？</string>
     <string name="title_create_share">共有の作成</string>
     <string name="title_create_playlist">プレイリストを作成</string>
@@ -21,8 +21,6 @@
     <string name="title_radios">ラジオ</string>
     <string name="title_all">すべて</string>
     <string name="title_similar_artists">類似アーティスト</string>
-    <string name="title_source">ソースコード</string>
-    <string name="title_chat">チャット</string>
     <string name="title_shares">共有</string>
     <string name="title_choose_font">アプリ内のフォント</string>
     <string name="title_fonts_inbuilt">内蔵</string>
@@ -53,11 +51,11 @@
     <string name="title_theme_mode">テーマモード</string>
     <string name="title_account">アカウント</string>
     <string name="title_track_info">トラック情報</string>
-    <string name="subtitle_appearance">テーマ、色、レイアウト、アプリアイコン</string>
-    <string name="subtitle_now_playing">フルスクリーンの再生中画面と歌詞画面をカスタマイズ</string>
-    <string name="subtitle_bottom_app_bar">ボトムバーとミニプレイヤーをカスタマイズ</string>
-    <string name="subtitle_playback">音声の挙動とスクローブリング</string>
-    <string name="subtitle_data_storage">同期、ネットワーク使用量、キャッシュの管理</string>
+    <string name="subtitle_appearance">テーマ、カラー、レイアウト、アイコンの変更</string>
+    <string name="subtitle_now_playing">再生画面と歌詞表示のカスタマイズ</string>
+    <string name="subtitle_bottom_app_bar">下部バーやミニプレイヤーをカスタマイズ</string>
+    <string name="subtitle_playback">オーディオ設定・再生動作、スクロブル</string>
+    <string name="subtitle_data_storage">同期、キャッシュ、通信量の管理</string>
     <string name="subtitle_trigger_sync">ライブラリを今すぐ強制的にフル同期する</string>
     <string name="subtitle_pending_actions">%1$d件のアイテムがネットワークを待機中</string>
     <string name="subtitle_developer">デバッグとテスト</string>
@@ -92,7 +90,6 @@
     <string name="option_use_marquee_text">テキストの自動スクロール速度</string>
     <string name="option_alphabetical_scroll">アルファベット順スクロール</string>
     <string name="option_grid_items_per_row">1行あたりのグリッド数</string>
-    <string name="option_lyrics_priority">歌詞プロバイダーを設定</string>
     <string name="option_lyrics_keep_alive">歌詞表示画面をオンにする</string>
     <string name="option_lyrics_blur">歌詞をぼかす</string>
     <string name="option_lyrics_bright_inactive">非アクティブな歌詞を明るく表示</string>
@@ -105,7 +102,7 @@
     <string name="option_sort_random">シャッフル</string>
     <string name="option_sort_newest">最近追加された</string>
     <string name="option_sort_rating">評価</string>
-    <string name="option_sort_frequent">よく再生される</string>
+    <string name="option_sort_frequent">よく聴く曲</string>
     <string name="option_sort_recent">最近再生した</string>
     <string name="option_sort_downloaded">ダウンロード済み</string>
     <string name="option_sort_alphabetical_by_name">名前のアルファベット順</string>
@@ -127,4 +124,14 @@
     <string name="option_choose_theme">アプリのテーマ</string>
     <string name="option_choose_app_icon">アプリのアイコン</string>
     <string name="option_replay_gain">リプレイゲイン</string>
+    <string name="title_sync_control">同期制御</string>
+    <string name="title_cache_management">キャッシュとストレージの管理</string>
+    <string name="title_danger_zone">危険地帯</string>
+    <string name="title_developer">開発者向けオプション</string>
+    <string name="title_about">このアプリについて</string>
+    <string name="title_acknowledgements">謝辞</string>
+    <string name="title_delete_playlist">このプレイリストを削除しますか？</string>
+    <string name="option_gapless_playback">ギャップレス再生</string>
+    <string name="option_audio_offload">オーディオオフロード</string>
+    <string name="option_live_status">現在のステータス</string>
 </resources>

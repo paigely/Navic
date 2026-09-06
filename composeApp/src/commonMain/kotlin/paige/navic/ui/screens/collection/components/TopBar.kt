@@ -11,7 +11,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toPersistentList
@@ -49,7 +48,6 @@ fun CollectionDetailScreenTopBar(
 	onSetStarred: ((Boolean) -> Unit)? = null,
 	refreshCollection: () -> Unit
 ) {
-	val uriHandler = LocalUriHandler.current
 	var playlistDialogShown by rememberSaveable { mutableStateOf(false) }
 	val backStack = LocalNavStack.current
 
@@ -86,10 +84,6 @@ fun CollectionDetailScreenTopBar(
 						onPlayNext = onPlayNext,
 						onAddToQueue = onAddToQueue,
 						onAddAllToPlaylist = { playlistDialogShown = true },
-						onViewOnLastFm = { url -> uriHandler.openUri(url) },
-						onViewOnMusicBrainz = { id ->
-							uriHandler.openUri("https://musicbrainz.org/release/$id")
-						},
 						onViewArtist =
 							if (collection is DomainAlbum)
 								dropUnlessResumed { backStack.add(Screen.ArtistDetail(collection.artistId)) }

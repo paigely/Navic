@@ -1,6 +1,9 @@
 package paige.navic.ui.screens.album.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -9,6 +12,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
@@ -19,17 +24,20 @@ import org.koin.compose.koinInject
 import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SnackBarManager
 import paige.navic.domain.models.DomainAlbum
-import paige.navic.ui.components.layouts.ArtGridItem
+import paige.navic.ui.components.common.CoverArt
+import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.sheets.CollectionSheet
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
+import paige.navic.util.core.appendBulletPoint
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AlbumListScreenItem(
+fun AlbumListScreenListItem(
 	modifier: Modifier = Modifier,
-	tab: String,
 	album: DomainAlbum,
 	selected: Boolean,
 	starred: Boolean,
@@ -43,6 +51,7 @@ fun AlbumListScreenItem(
 	onSetRating: (Int) -> Unit
 ) {
 	val backStack = LocalNavStack.current
+	val preferenceManager = koinInject<PreferenceManager>()
 	val snackBarManager = koinInject<SnackBarManager>()
 	val scope = rememberCoroutineScope()
 
@@ -54,18 +63,32 @@ fun AlbumListScreenItem(
 		.collectAsState(initial = DownloadStatus.NOT_DOWNLOADED)
 
 	Box(modifier) {
-		ArtGridItem(
+		ListItem(
+			leadingContent = {
+				CoverArt(
+					coverArtId = album.coverArtId,
+					modifier = Modifier.size(50.dp),
+					shape = preferenceManager.coverArtShape.decreasedShape
+				)
+			},
+			content = { MarqueeText(album.name) },
+			supportingContent = {
+				MarqueeText(
+					buildAnnotatedString {
+						append(album.artistName)
+						album.year?.let {
+							appendBulletPoint()
+							append("$it")
+						}
+					}
+				)
+			},
 			onClick = dropUnlessResumed {
 				scope.launch {
-					backStack.add(Screen.CollectionDetail(album.id, tab))
+					backStack.add(Screen.CollectionDetail(album.id, ""))
 				}
 			},
-			onLongClick = onSelect,
-			coverArtId = album.coverArtId,
-			title = album.name,
-			subtitle = album.artistName,
-			id = album.id,
-			tab = tab
+			onLongClick = onSelect
 		)
 		if (selected) {
 			CollectionSheet(

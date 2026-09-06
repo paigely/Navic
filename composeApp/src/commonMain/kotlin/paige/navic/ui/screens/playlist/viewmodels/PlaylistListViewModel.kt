@@ -8,15 +8,20 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
+import paige.navic.domain.models.DomainFilter
 import paige.navic.domain.models.DomainPlaylist
 import paige.navic.domain.models.DomainPlaylistListType
+import paige.navic.domain.models.toBitmask
+import paige.navic.domain.models.toDomainFilters
 import paige.navic.domain.repositories.PlaylistRepository
 import paige.navic.ui.core.UiState
 
 class PlaylistListViewModel(
 	private val repository: PlaylistRepository,
-	private val sessionManager: SessionManager
+	private val sessionManager: SessionManager,
+	private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 	val playlistsState: StateFlow<UiState<ImmutableList<DomainPlaylist>>>
 		field = MutableStateFlow<UiState<ImmutableList<DomainPlaylist>>>(UiState.Loading())
@@ -29,6 +34,9 @@ class PlaylistListViewModel(
 
 	val selectedReversed: StateFlow<Boolean>
 		field = MutableStateFlow(false)
+
+	val selectedFilters: StateFlow<Set<DomainFilter>>
+		field = MutableStateFlow(preferenceManager.playlistFilters.toDomainFilters())
 
 	val gridState = LazyGridState()
 
@@ -51,7 +59,8 @@ class PlaylistListViewModel(
 			repository.getPlaylistsFlow(
 				fullRefresh,
 				selectedSorting.value,
-				selectedReversed.value
+				selectedReversed.value,
+				selectedFilters.value
 			).collect {
 				playlistsState.value = it
 			}
@@ -65,6 +74,18 @@ class PlaylistListViewModel(
 
 	fun setReversed(reversed: Boolean) {
 		selectedReversed.value = reversed
+		refreshPlaylists(false)
+	}
+
+	fun toggleFilter(filter: DomainFilter) {
+		val current = selectedFilters.value
+		val newFilters = if (current.contains(filter)) {
+			current - filter
+		} else {
+			current + filter
+		}
+		selectedFilters.value = newFilters
+		preferenceManager.playlistFilters = newFilters.toBitmask()
 		refreshPlaylists(false)
 	}
 

@@ -187,5 +187,9 @@ sealed interface Screen : NavKey {
 		@Immutable
 		@Serializable
 		data object AppIcon : Settings
+
+		@Immutable
+		@Serializable
+		data object Equaliser : Settings
 	}
 }

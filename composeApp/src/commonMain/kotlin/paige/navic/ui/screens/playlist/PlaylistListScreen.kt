@@ -44,6 +44,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalBottomBarScrollManager
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.BottomBarCollapseMode
@@ -73,7 +74,9 @@ import kotlin.time.Duration
 fun PlaylistListScreen(
 	nested: Boolean = false
 ) {
+	val platformContext = LocalPlatformContext.current
 	val preferenceManager = koinInject<PreferenceManager>()
+	val selectedViewMode = preferenceManager.playlistListViewMode
 
 	val viewModel = koinViewModel<PlaylistListViewModel>(
 		viewModelStoreOwner = if (nested) {
@@ -87,6 +90,7 @@ fun PlaylistListScreen(
 	val selectedPlaylist by viewModel.selectedPlaylist.collectAsState()
 	val selectedSorting by viewModel.selectedSorting.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
+	val selectedFilters by viewModel.selectedFilters.collectAsStateWithLifecycle()
 
 	val scrollManager = LocalBottomBarScrollManager.current
 
@@ -108,7 +112,11 @@ fun PlaylistListScreen(
 			selectedSorting = selectedSorting,
 			onSetSorting = { viewModel.setSorting(it) },
 			selectedReversed = selectedReversed,
-			onSetReversed = { viewModel.setReversed(it) }
+			onSetReversed = { viewModel.setReversed(it) },
+			selectedViewMode = selectedViewMode,
+			onSetViewMode = { preferenceManager.playlistListViewMode = it },
+			selectedFilters = selectedFilters,
+			onToggleFilter = { viewModel.toggleFilter(it) }
 		)
 	}
 
@@ -177,11 +185,17 @@ fun PlaylistListScreen(
 				contentPadding = combinedPadding.withoutTop(),
 				verticalArrangement = if ((playlistsState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center
-				else Arrangement.spacedBy(12.dp)
+				} else if (selectedViewMode == ListViewMode.List) {
+					Arrangement.spacedBy(0.dp)
+				} else {
+					Arrangement.spacedBy(12.dp)
+				},
+				selectedViewMode = selectedViewMode
 			) {
 				playlistListScreenContent(
 					state = playlistsState,
 					selectedPlaylist = selectedPlaylist,
+					selectedViewMode = selectedViewMode,
 					onUpdateSelection = { viewModel.selectPlaylist(it) },
 					onClearSelection = { viewModel.clearSelection() },
 					onSetShareId = { newShareId ->

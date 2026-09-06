@@ -62,6 +62,7 @@ fun AlbumListScreen(
 	val player = koinInject<MediaPlayerViewModel>()
 	val selectedSorting by viewModel.listType.collectAsStateWithLifecycle()
 	val selectedReversed by viewModel.selectedReversed.collectAsStateWithLifecycle()
+	val selectedFilters by viewModel.selectedFilters.collectAsStateWithLifecycle()
 	val albumsState by viewModel.albumsState.collectAsStateWithLifecycle()
 	val selectedAlbum by viewModel.selectedAlbum.collectAsStateWithLifecycle()
 	val starred by viewModel.starred.collectAsStateWithLifecycle()
@@ -76,7 +77,11 @@ fun AlbumListScreen(
 			selectedSorting = selectedSorting,
 			onSetSorting = { viewModel.setListType(it) },
 			selectedReversed = selectedReversed,
-			onSetReversed = { viewModel.setReversed(it) }
+			onSetReversed = { viewModel.setReversed(it) },
+			selectedViewMode = selectedViewMode,
+			onSetViewMode = { preferenceManager.albumListViewMode = it },
+			selectedFilters = selectedFilters,
+			onToggleFilter = { viewModel.toggleFilter(it) }
 		)
 	}
 
@@ -110,13 +115,19 @@ fun AlbumListScreen(
 				contentPadding = combinedPadding.withoutTop(),
 				verticalArrangement = if ((albumsState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center
-				else Arrangement.spacedBy(12.dp)
+				} else if (selectedViewMode == ListViewMode.List) {
+					Arrangement.spacedBy(0.dp)
+				} else {
+					Arrangement.spacedBy(12.dp)
+				},
+				selectedViewMode = selectedViewMode
 			) {
 				albumListScreenContent(
 					state = albumsState,
 					starred = starred,
 					selectedAlbum = selectedAlbum,
 					selectedAlbumRating = rating,
+					selectedViewMode = selectedViewMode,
 					onPlayNext = { if (selectedAlbum != null) player.playNext(selectedAlbum as DomainSongCollection) },
 					onAddToQueue = { if (selectedAlbum != null) player.addToQueue(selectedAlbum as DomainSongCollection) },
 					onUpdateSelection = { viewModel.selectAlbum(it) },

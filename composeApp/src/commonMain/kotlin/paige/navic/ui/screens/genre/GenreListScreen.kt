@@ -38,6 +38,8 @@ import paige.navic.util.ui.withoutTop
 fun GenreListScreen(
 	nested: Boolean
 ) {
+	val platformContext = LocalPlatformContext.current
+	val preferenceManager = koinInject<PreferenceManager>()
 	val viewModel = koinViewModel<GenreListViewModel>(
 		viewModelStoreOwner = if (nested) {
 			LocalViewModelStoreOwner.current!!

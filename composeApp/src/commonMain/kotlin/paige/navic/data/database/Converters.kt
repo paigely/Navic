@@ -4,6 +4,7 @@ import androidx.room3.ColumnTypeConverter
 import paige.navic.domain.models.DomainContributor
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainReplayGain
+import paige.navic.domain.models.DomainSongArtist
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
@@ -62,6 +63,27 @@ class Converters {
 				subRole = parts.getOrNull(1)?.ifEmpty { null },
 				artistId = parts.getOrNull(2)?.ifEmpty { null } ?: "",
 				artistName = parts.getOrNull(3)?.ifEmpty { null } ?: ""
+			)
+		}
+	}
+
+	// List<DomainSongArtist>
+	@ColumnTypeConverter
+	fun fromDomainSongArtistList(list: List<DomainSongArtist>?): String? {
+		return list?.joinToString(separator = ";") { c ->
+			"${c.id}^${c.name}"
+		}
+	}
+
+	@ColumnTypeConverter
+	fun toDomainSongArtistList(data: String?): List<DomainSongArtist>? {
+		if (data.isNullOrEmpty()) return if (data == null) null else emptyList()
+
+		return data.split(";").filter { it.isNotEmpty() }.map { item ->
+			val parts = item.split("^")
+			DomainSongArtist(
+				id = parts.getOrNull(0)?.ifEmpty { null } ?: "",
+				name = parts.getOrNull(1)?.ifEmpty { null } ?: ""
 			)
 		}
 	}

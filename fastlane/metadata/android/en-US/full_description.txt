@@ -1,0 +1,19 @@
+<p>Navic is a free and open source modern Navidrome client for Android and iOS.</p>
+
+<h2>Features</h2>
+<ul>
+	<li>Customisable: large selection of settings and tweaks</li>
+	<li>Secure & private: minimal permissions, zero telemetry, and zero analytics</li>
+	<li>Integrated: shows up on the lock screen + quick settings</li>
+	<li>Lightweight & fast: zero bloat</li>
+	<li>Feature rich: covers almost the entirety of the Subsonic API</li>
+	<li>Works offline: syncs your entire library locally, and allows you to download songs</li>
+</ul>
+
+<h2>Links</h2>
+<ul>
+	<li><a href="https://navic.app/">Website</a></li>
+	<li><a href="https://github.com/ssalggnikool/Navic">GitHub</a></li>
+	<li><a href="https://codeberg.org/paige/Navic">Codeberg</a></li>
+	<li><a href="https://hosted.weblate.org/engage/navic/">Translations</a></li>
+</ul>

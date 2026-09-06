@@ -365,8 +365,10 @@ class DownloadManager(
 			sessionManager.api.getStreamUrl(
 				id = song.id,
 				maxBitRate = bitrate,
-				format = container?.takeIf { it.isNotBlank() }
-			) + "&estimateContentLength=true"
+				format = container?.takeIf { it.isNotBlank() },
+				// if this is true u get "stream was reset: INTERNAL_ERROR" for some reason
+				estimateContentLength = false
+			)
 		) {
 			method = HttpMethod.Get
 			onDownload { bytesSentTotal, contentLength ->

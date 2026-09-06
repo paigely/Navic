@@ -14,6 +14,7 @@ import paige.navic.data.database.mappers.toEntity
 import paige.navic.domain.manager.SyncManager
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
+import paige.navic.domain.models.DomainFilter
 import paige.navic.ui.core.UiState
 import kotlin.time.Clock
 
@@ -23,31 +24,42 @@ class ArtistRepository(
 	private val dbRepository: DbRepository
 ) {
 	private suspend fun getLocalData(
-		listType: DomainArtistListType
+		listType: DomainArtistListType,
+		filters: Set<DomainFilter> = emptySet()
 	): ImmutableList<DomainArtist> {
-		return when (listType) {
+		val artists = when (listType) {
 			DomainArtistListType.AlphabeticalByName -> artistDao.getArtistsAlphabeticalByName()
 			DomainArtistListType.Random -> artistDao.getArtistsRandom()
-			DomainArtistListType.Starred -> artistDao.getArtistsStarred()
-		}.map { it.toDomainModel() }.toImmutableList()
+		}.map { it.toDomainModel() }
+
+		return artists.filter { artist ->
+			filters.all { filter ->
+				when (filter) {
+					DomainFilter.Starred -> artist.starredAt != null
+					DomainFilter.Downloaded -> false // not applicable
+				}
+			}
+		}.toImmutableList()
 	}
 
 	private suspend fun refreshLocalData(
-		listType: DomainArtistListType
+		listType: DomainArtistListType,
+		filters: Set<DomainFilter> = emptySet()
 	): ImmutableList<DomainArtist> {
 		dbRepository.syncArtists().getOrThrow()
-		return getLocalData(listType)
+		return getLocalData(listType, filters)
 	}
 
 	fun getArtistsFlow(
 		fullRefresh: Boolean,
-		listType: DomainArtistListType
+		listType: DomainArtistListType,
+		filters: Set<DomainFilter> = emptySet()
 	): Flow<UiState<ImmutableList<DomainArtist>>> = flow {
-		val localData = getLocalData(listType)
+		val localData = getLocalData(listType, filters)
 		if (fullRefresh) {
 			emit(UiState.Loading(data = localData))
 			try {
-				emit(UiState.Success(data = refreshLocalData(listType)))
+				emit(UiState.Success(data = refreshLocalData(listType, filters)))
 			} catch (error: Exception) {
 				emit(UiState.Error(error = error, data = localData))
 			}

@@ -15,8 +15,8 @@ data class LyricsConfig(
 		val Default = LyricsConfig(
 			providers = listOf(
 				LyricsProvider(LyricsProvider.Id.SUBSONIC, true),
-				LyricsProvider(LyricsProvider.Id.LRCLIB, true),
-				LyricsProvider(LyricsProvider.Id.LYRICS_PLUS, true)
+				LyricsProvider(LyricsProvider.Id.LRCLIB, false),
+				LyricsProvider(LyricsProvider.Id.LYRICS_PLUS, false)
 			),
 			lyricsPlusMirrors = listOf(
 				"https://lyricsplus.atomix.one",

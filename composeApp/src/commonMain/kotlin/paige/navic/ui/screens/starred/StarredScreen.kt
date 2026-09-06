@@ -23,6 +23,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtistListType
+import paige.navic.domain.models.DomainFilter
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.DomainSongListType
@@ -43,11 +44,12 @@ import kotlin.time.Duration
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun StarredScreen() {
+	val platformContext = LocalPlatformContext.current
 	val persistentViewModelStoreOwner = koinInject<PersistentViewModelStoreOwner>()
 
 	val songsViewModel = koinViewModel<SongListViewModel>(
 		key = "starredSongs",
-		parameters = { parametersOf(DomainSongListType.Starred) },
+		parameters = { parametersOf(DomainSongListType.FrequentlyPlayed, setOf(DomainFilter.Starred)) },
 		viewModelStoreOwner = persistentViewModelStoreOwner
 	)
 	val songsState by songsViewModel.songsState.collectAsStateWithLifecycle()
@@ -58,7 +60,7 @@ fun StarredScreen() {
 
 	val albumsViewModel = koinViewModel<AlbumListViewModel>(
 		key = "starredAlbums",
-		parameters = { parametersOf(DomainAlbumListType.Starred) },
+		parameters = { parametersOf(DomainAlbumListType.AlphabeticalByArtist, setOf(DomainFilter.Starred)) },
 		viewModelStoreOwner = persistentViewModelStoreOwner
 	)
 	val albumsState by albumsViewModel.albumsState.collectAsStateWithLifecycle()
@@ -68,7 +70,7 @@ fun StarredScreen() {
 
 	val artistsViewModel = koinViewModel<ArtistListViewModel>(
 		key = "starredArtists",
-		parameters = { parametersOf(DomainArtistListType.Starred) },
+		parameters = { parametersOf(DomainArtistListType.AlphabeticalByName, setOf(DomainFilter.Starred)) },
 		viewModelStoreOwner = persistentViewModelStoreOwner
 	)
 	val artistsState by artistsViewModel.artistsState.collectAsStateWithLifecycle()

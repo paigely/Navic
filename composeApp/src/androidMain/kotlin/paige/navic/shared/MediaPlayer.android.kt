@@ -5,10 +5,11 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.media.audiofx.AudioEffect
+import android.media.audiofx.Equalizer
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.OptIn
-import androidx.compose.runtime.snapshotFlow
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.AudioAttributes
@@ -38,12 +39,12 @@ import coil3.imageLoader
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -55,6 +56,7 @@ import paige.navic.data.database.mappers.toDomainModel
 import paige.navic.domain.manager.AndroidScrobbleManager
 import paige.navic.domain.manager.ConnectivityManager
 import paige.navic.domain.manager.DownloadManager
+import paige.navic.domain.manager.EqualiserManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.SnackBarManager
@@ -64,8 +66,10 @@ import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainRadio
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
+import paige.navic.domain.models.settings.EqualiserMode
 import paige.navic.domain.models.settings.ReplayGainMode
 import paige.navic.domain.repositories.PlayerStateRepository
+import paige.navic.domain.repositories.SongRepository
 import paige.navic.ui.core.PlayerUiState
 import paige.navic.util.core.Logger
 import paige.navic.util.core.ResourceProvider
@@ -77,6 +81,8 @@ import coil3.PlatformContext as CoilPlatformContext
 
 @OptIn(UnstableApi::class)
 class PlaybackService : MediaSessionService(), KoinComponent {
+	private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+
 	private var mediaSession: MediaSession? = null
 	private val serviceScope = MainScope()
 	private var scrobbleManager: AndroidScrobbleManager? = null
@@ -87,6 +93,12 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 	private val syncManager: SyncManager by inject()
 	private val sessionManager: SessionManager by inject()
 	private val preferenceManager: PreferenceManager by inject()
+	private val equaliserManager: EqualiserManager by inject()
+
+	private var equaliser: Equalizer? = null
+	private var audioEffectSessionId: Int = C.AUDIO_SESSION_ID_UNSET
+	private var currentAudioSessionId: Int = C.AUDIO_SESSION_ID_UNSET
+	private var equaliserMode: EqualiserMode = EqualiserMode.Disabled
 
 	override fun onCreate() {
 		super.onCreate()
@@ -171,6 +183,10 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			.setCustomLayout(makeButtons(player))
 			.build()
 
+		currentAudioSessionId = player.audioSessionId
+		equaliserMode = equaliserManager.config.value.mode
+		applyEqualiserMode(equaliserMode, currentAudioSessionId)
+
 		player.addListener(object : Player.Listener {
 			override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
 				mediaSession?.setCustomLayout(makeButtons(player))
@@ -179,7 +195,23 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 			override fun onRepeatModeChanged(repeatMode: Int) {
 				mediaSession?.setCustomLayout(makeButtons(player))
 			}
+
+			override fun onAudioSessionIdChanged(audioSessionId: Int) {
+				currentAudioSessionId = audioSessionId
+				applyEqualiserMode(equaliserMode, audioSessionId)
+			}
 		})
+
+		scope.launch(Dispatchers.Main) {
+			equaliserManager.config.collect { config ->
+				if (config.mode != equaliserMode) {
+					equaliserMode = config.mode
+					applyEqualiserMode(equaliserMode, currentAudioSessionId)
+				} else {
+					updateEqualiser()
+				}
+			}
+		}
 	}
 
 	override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
@@ -191,6 +223,8 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 	}
 
 	override fun onDestroy() {
+		closeAudioEffectSession(audioEffectSessionId)
+		releaseEqualiser()
 		scrobbleManager?.release()
 		serviceScope.cancel()
 		stopForeground(STOP_FOREGROUND_REMOVE)
@@ -245,6 +279,95 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 		}
 	}
 
+	// Applies the chosen equaliser mode
+	private fun applyEqualiserMode(mode: EqualiserMode, sessionId: Int) {
+		closeAudioEffectSession(audioEffectSessionId)
+		releaseEqualiser()
+
+		when (mode) {
+			EqualiserMode.BuiltIn -> makeEqualiser(sessionId)
+			EqualiserMode.External -> openAudioEffectSession(sessionId)
+			EqualiserMode.Disabled -> Unit
+		}
+	}
+
+	private fun releaseEqualiser() {
+		equaliser?.release()
+		equaliser = null
+	}
+
+	// Announces our audio session to the system so external equalizer apps can attach effects to it
+	private fun openAudioEffectSession(sessionId: Int) {
+		if (sessionId == C.AUDIO_SESSION_ID_UNSET) return
+		audioEffectSessionId = sessionId
+		sendBroadcast(
+			Intent(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION).apply {
+				putExtra(AudioEffect.EXTRA_AUDIO_SESSION, sessionId)
+				putExtra(AudioEffect.EXTRA_PACKAGE_NAME, packageName)
+				putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
+			}
+		)
+	}
+
+	// Tells external equalizer apps our audio session is going away so they can release their effects
+	private fun closeAudioEffectSession(sessionId: Int) {
+		if (sessionId == C.AUDIO_SESSION_ID_UNSET) return
+		sendBroadcast(
+			Intent(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION).apply {
+				putExtra(AudioEffect.EXTRA_AUDIO_SESSION, sessionId)
+				putExtra(AudioEffect.EXTRA_PACKAGE_NAME, packageName)
+			}
+		)
+		audioEffectSessionId = C.AUDIO_SESSION_ID_UNSET
+	}
+
+	private fun makeEqualiser(sessionId: Int) {
+		releaseEqualiser()
+		try {
+			val equaliser = Equalizer(0, sessionId).apply {
+				enabled = true
+			}
+
+			this.equaliser = equaliser
+
+			val bandLowerRange = equaliser.bandLevelRange.firstOrNull()?.toFloat() ?: -1500f
+			val bandUpperRange = equaliser.bandLevelRange.lastOrNull()?.toFloat() ?: 1500f
+			val bandCount = equaliser.numberOfBands.toInt()
+
+			scope.launch {
+				equaliserManager.setConfig(
+					equaliserManager.config.value.copy(
+						bandLowerRange = bandLowerRange,
+						bandUpperRange = bandUpperRange,
+						bandCount = bandCount
+					)
+				)
+			}
+
+			updateEqualiser()
+		} catch (ex: Exception) {
+			Logger.e("PlaybackService", "error while configuring eq", ex)
+		}
+	}
+
+	private fun updateEqualiser() {
+		val equaliser = equaliser ?: return
+		val config = equaliserManager.config.value
+		try {
+			// reset all band levels first in case an item in
+			// config.bandLevels was removed (e.g. user presses
+			// reset in the equaliser settings)
+			repeat(equaliser.numberOfBands.toInt()) { band ->
+				equaliser.setBandLevel(band.toShort(), 0)
+			}
+			config.bandLevels.forEach { (band, level) ->
+				equaliser.setBandLevel(band.toShort(), level.toInt().toShort())
+			}
+		} catch (ex: Exception) {
+			Logger.e("PlaybackService", "error while setting eq band levels", ex)
+		}
+	}
+
 	companion object {
 		const val COMMAND_SHUFFLE = "COMMAND_SHUFFLE"
 		const val COMMAND_REPEAT = "COMMAND_REPEAT"
@@ -286,6 +409,7 @@ class PlaybackService : MediaSessionService(), KoinComponent {
 
 class AndroidMediaPlayerViewModel(
 	stateRepository: PlayerStateRepository,
+	songRepository: SongRepository,
 	downloadManager: DownloadManager,
 	connectivityManager: ConnectivityManager,
 	preferenceManager: PreferenceManager,
@@ -296,6 +420,7 @@ class AndroidMediaPlayerViewModel(
 	private val snackBarManager: SnackBarManager
 ) : MediaPlayerViewModel(
 	stateRepository = stateRepository,
+	songRepository = songRepository,
 	connectivityManager = connectivityManager,
 	downloadManager = downloadManager,
 	preferenceManager = preferenceManager
@@ -348,6 +473,7 @@ class AndroidMediaPlayerViewModel(
 					override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 						updatePlaybackState()
 						skipUnavailableSong()
+						checkAndAutoFillQueue()
 					}
 
 					override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -404,52 +530,7 @@ class AndroidMediaPlayerViewModel(
 					syncPlayerWithState(state)
 					pendingSyncState = null
 				}
-
-				combine(
-					downloadManager.downloadedSongs,
-					connectivityManager.isCellular,
-					snapshotFlow { preferenceManager.streamingQualityWifi },
-					snapshotFlow { preferenceManager.streamingQualityCellular },
-					snapshotFlow { preferenceManager.isAdvancedTranscodingActive },
-					snapshotFlow { preferenceManager.customMaxBitrateWifi },
-					snapshotFlow { preferenceManager.customMaxBitrateCellular },
-					snapshotFlow { preferenceManager.customFormatWifi },
-					snapshotFlow { preferenceManager.customFormatCellular }
-				) { it }.collectLatest { args ->
-					@Suppress("UNCHECKED_CAST")
-					val downloadedMap = args[0] as Map<String, String>
-					val player = controller ?: return@collectLatest
-					val currentIndex = player.currentMediaItemIndex
-
-					for (i in 0 until player.mediaItemCount) {
-						if (i == currentIndex) continue
-
-						val item = player.getMediaItemAt(i)
-						val id = item.mediaId
-						val localPath = downloadedMap[id]
-
-						val isCurrentlyLocal = item.localConfiguration?.uri?.scheme == "file"
-
-						val newItem = if (localPath != null) {
-							if (!isCurrentlyLocal) {
-								item.buildUpon()
-									.setUri(File(localPath).toUri())
-									.build()
-							} else null
-						} else {
-							val newUri = getStreamUrl(id)
-							if (isCurrentlyLocal || item.localConfiguration?.uri != newUri) {
-								item.buildUpon()
-									.setUri(newUri)
-									.build()
-							} else null
-						}
-
-						if (newItem != null) {
-							player.replaceMediaItem(i, newItem)
-						}
-					}
-				}
+				checkAndAutoFillQueue()
 			}
 		}
 	}
@@ -481,13 +562,19 @@ class AndroidMediaPlayerViewModel(
 			.firstOrNull { index -> !isExplicit(queue[index]) }
 
 		if (nextAvailableIdx == null) {
-			Logger.i("MediaPlayer", "pausing because this song is unavailable and there isn't anything to skip to")
+			Logger.i(
+				"MediaPlayer",
+				"pausing because this song is unavailable and there isn't anything to skip to"
+			)
 			controller?.pause()
 			return
 		}
 
 		if (nextAvailableIdx <= currentIdx) {
-			Logger.i("MediaPlayer", "skipping and pausing because the last song in the queue was unavailable")
+			Logger.i(
+				"MediaPlayer",
+				"skipping and pausing because the last song in the queue was unavailable"
+			)
 			controller?.seekTo(nextAvailableIdx, 0L)
 			controller?.pause()
 		} else {
@@ -539,14 +626,22 @@ class AndroidMediaPlayerViewModel(
 				repeatMode = controller.repeatMode
 			)
 		}
-		applyReplayGain()
+		applyReplayGain(currentSong)
 		updateProgress()
 	}
 
-	private fun applyReplayGain() {
+	private fun applyReplayGain(currentSong: DomainSong?) {
 		if (preferenceManager.replayGainMode != ReplayGainMode.Off) {
 			(_uiState.value.currentSong)?.replayGain?.let { replayGain ->
-				controller?.volume = replayGain.effectiveGain(preferenceManager.replayGainMode)
+				if (preferenceManager.replayGainMode != ReplayGainMode.Dynamic) {
+					controller?.volume = replayGain.effectiveGain(preferenceManager.replayGainMode)
+				} else {
+					if (_uiState.value.queue.all { it.albumId == currentSong?.albumId }) {
+						controller?.volume = replayGain.effectiveGain(ReplayGainMode.Album)
+					} else {
+						controller?.volume = replayGain.effectiveGain(ReplayGainMode.Track)
+					}
+				}
 			}
 		} else {
 			controller?.volume = 1f
@@ -846,7 +941,10 @@ class AndroidMediaPlayerViewModel(
 				filePath = radio.streamUrl,
 				starredAt = null,
 				musicBrainzId = null,
-				explicitStatus = DomainExplicitStatus.Unknown
+				explicitStatus = DomainExplicitStatus.Unknown,
+				artists = emptyList(),
+				albumArtists = emptyList(),
+				isExternal = false
 			)
 
 			val metadata = MediaMetadata.Builder()

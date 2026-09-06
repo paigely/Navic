@@ -29,13 +29,14 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
+import paige.navic.domain.models.settings.ListViewMode
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.Artist
 import paige.navic.ui.components.common.AlphabeticalScroller
 import paige.navic.ui.components.common.ContentUnavailable
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.core.UiState
-import paige.navic.ui.screens.artist.ArtistsScreenItem
+import paige.navic.ui.screens.artist.ArtistListScreenGridItem
 import paige.navic.util.ui.withoutTop
 
 @Composable
@@ -49,6 +50,7 @@ fun ArtistListScreenContent(
 	nested: Boolean,
 	selectedArtist: DomainArtist?,
 	selectedArtistAlbums: ImmutableList<DomainAlbum>?,
+	selectedViewMode: ListViewMode,
 	onUpdateSelection: (DomainArtist) -> Unit,
 	onClearSelection: () -> Unit,
 	onSetStarred: (Boolean) -> Unit,
@@ -73,6 +75,11 @@ fun ArtistListScreenContent(
 		}.toImmutableList()
 	}
 
+	val textPadding = PaddingValues(
+		horizontal = if (selectedViewMode == ListViewMode.List) 16.dp else 0.dp,
+		vertical = 8.dp
+	)
+
 	Box {
 		ArtGrid(
 			modifier = if (!nested)
@@ -81,33 +88,40 @@ fun ArtistListScreenContent(
 			else Modifier.fillMaxSize(),
 			state = gridState,
 			contentPadding = innerPadding.withoutTop(),
-			verticalArrangement = if (grouped.isEmpty())
+			verticalArrangement = if (grouped.isEmpty()) {
 				Arrangement.Center
-			else Arrangement.spacedBy(12.dp)
+			} else if (selectedViewMode == ListViewMode.List) {
+				Arrangement.spacedBy(0.dp)
+			} else {
+				Arrangement.spacedBy(12.dp)
+			},
+			selectedViewMode = selectedViewMode
 		) {
-			item(span = { GridItemSpan(maxLineSpan) }) {
-				Row(
-					Modifier
-						.background(MaterialTheme.colorScheme.surface)
-						.padding(bottom = 8.dp),
-					verticalAlignment = Alignment.CenterVertically
-				) {
-					Text(
-						pluralStringResource(
-							Res.plurals.count_artists,
-							totalArtistCount,
-							totalArtistCount
-						),
-						color = MaterialTheme.colorScheme.onSurfaceVariant
-					)
+			if (totalArtistCount != 0) {
+				item(span = { GridItemSpan(maxLineSpan) }) {
+					Row(
+						modifier = Modifier
+							.background(MaterialTheme.colorScheme.surface)
+							.padding(textPadding.withoutTop()),
+						verticalAlignment = Alignment.CenterVertically
+					) {
+						Text(
+							pluralStringResource(
+								Res.plurals.count_artists,
+								totalArtistCount,
+								totalArtistCount
+							),
+							color = MaterialTheme.colorScheme.onSurfaceVariant
+						)
+					}
 				}
 			}
 			grouped.forEach { (letter, artists) ->
-				item(span = { GridItemSpan(maxLineSpan) }) {
+				stickyHeader {
 					Row(
-						Modifier
+						modifier = Modifier
 							.background(MaterialTheme.colorScheme.surface)
-							.padding(bottom = 8.dp),
+							.padding(textPadding),
 						verticalAlignment = Alignment.CenterVertically
 					) {
 						Text(
@@ -117,19 +131,34 @@ fun ArtistListScreenContent(
 					}
 				}
 				items(artists, { it.id }) { artist ->
-					ArtistsScreenItem(
-						modifier = Modifier.animateItem(),
-						tab = "artists",
-						artist = artist,
-						selected = artist == selectedArtist,
-						selectedArtistAlbums = selectedArtistAlbums,
-						starred = starred,
-						onSelect = { onUpdateSelection(artist) },
-						onDeselect = { onClearSelection() },
-						onSetStarred = { onSetStarred(it) },
-						onPlayNext = onPlayNext,
-						onAddToQueue = onAddToQueue
-					)
+					if (selectedViewMode == ListViewMode.Grid) {
+						ArtistListScreenGridItem(
+							modifier = Modifier.animateItem(),
+							tab = "artists",
+							artist = artist,
+							selected = artist == selectedArtist,
+							selectedArtistAlbums = selectedArtistAlbums,
+							starred = starred,
+							onSelect = { onUpdateSelection(artist) },
+							onDeselect = { onClearSelection() },
+							onSetStarred = { onSetStarred(it) },
+							onPlayNext = onPlayNext,
+							onAddToQueue = onAddToQueue
+						)
+					} else {
+						ArtistListScreenListItem(
+							modifier = Modifier.animateItem(),
+							artist = artist,
+							selected = artist == selectedArtist,
+							selectedArtistAlbums = selectedArtistAlbums,
+							starred = starred,
+							onSelect = { onUpdateSelection(artist) },
+							onDeselect = { onClearSelection() },
+							onSetStarred = { onSetStarred(it) },
+							onPlayNext = onPlayNext,
+							onAddToQueue = onAddToQueue
+						)
+					}
 				}
 			}
 

@@ -18,10 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,6 +52,7 @@ import org.koin.core.parameter.parametersOf
 import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.components.common.Markdown
+import paige.navic.ui.components.dialogs.LinkConfirmationDialog
 import paige.navic.ui.theme.defaultFont
 import paige.navic.util.core.Logger
 import paige.navic.util.core.PlatformContext
@@ -109,11 +112,11 @@ class ChangelogViewModel(
 fun ChangelogSheet() {
 	val preferenceManager = koinInject<PreferenceManager>()
 	val platformContext = LocalPlatformContext.current
-	val uriHandler = LocalUriHandler.current
 	val viewModel = koinViewModel<ChangelogViewModel>(
 		parameters = { parametersOf(platformContext) }
 	)
 	val release by viewModel.release.collectAsStateWithLifecycle()
+	var linkToOpen by rememberSaveable { mutableStateOf<String?>(null) }
 
 	release?.let { release ->
 		ModalBottomSheet(
@@ -161,10 +164,7 @@ fun ChangelogSheet() {
 				Spacer(Modifier.weight(1f))
 
 				Button(
-					onClick = {
-						viewModel.clearRelease()
-						uriHandler.openUri(release.url)
-					},
+					onClick = { linkToOpen = release.url },
 					modifier = Modifier.fillMaxWidth(),
 					shape = ContinuousCapsule
 				) {
@@ -189,5 +189,12 @@ fun ChangelogSheet() {
 				}
 			}
 		}
+	}
+
+	if (linkToOpen != null) {
+		LinkConfirmationDialog(
+			linkToOpen = linkToOpen!!,
+			onDismissRequest = { linkToOpen = null }
+		)
 	}
 }

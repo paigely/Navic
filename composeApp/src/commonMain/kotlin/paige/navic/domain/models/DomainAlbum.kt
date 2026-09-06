@@ -25,5 +25,6 @@ data class DomainAlbum(
 	val userRating: Int?,
 	val version: String?,
 	val musicBrainzId: String?,
-	override val songs: List<DomainSong>
+	override val songs: List<DomainSong>,
+	val isExternal: Boolean
 ) : DomainSongCollection

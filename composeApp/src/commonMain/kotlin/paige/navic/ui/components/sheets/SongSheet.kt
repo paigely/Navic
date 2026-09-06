@@ -23,10 +23,12 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_to_another_playlist
@@ -41,6 +43,8 @@ import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_share
 import navic.composeapp.generated.resources.action_sleep_timer
 import navic.composeapp.generated.resources.action_sleep_timer_enabled
+import navic.composeapp.generated.resources.action_sleep_timer_queue_enabled
+import navic.composeapp.generated.resources.action_sleep_timer_songs_enabled
 import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.action_track_info
 import navic.composeapp.generated.resources.action_view_album
@@ -50,9 +54,11 @@ import navic.composeapp.generated.resources.info_download_failed
 import navic.composeapp.generated.resources.option_playback_speed
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import paige.navic.LocalNavStack
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SleepTimerManager
+import paige.navic.domain.manager.SleepTimerMode
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainExplicitStatus
 import paige.navic.domain.models.DomainSong
@@ -77,11 +83,13 @@ import paige.navic.icons.outlined.Star
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.MarqueeText
 import paige.navic.ui.components.common.RatingRow
+import paige.navic.ui.navigation.Screen
+import paige.navic.ui.theme.NavicTheme
 import paige.navic.ui.theme.positive
 import paige.navic.util.core.InlineExplicitIcon
+import paige.navic.util.core.buildSongInfoString
 import paige.navic.util.core.label
 import paige.navic.util.ui.rememberColorSchemeFromCoverArt
-import paige.navic.ui.theme.NavicTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -114,10 +122,12 @@ fun SongSheet(
 	val preferenceManager = koinInject<PreferenceManager>()
 
 	val sleepTimerManager = koinInject<SleepTimerManager>()
-	val sleepTimerLeft = sleepTimerManager.timeLeft
+	val sleepTimerMode by sleepTimerManager.mode.collectAsStateWithLifecycle()
 	val contentPadding = PaddingValues(horizontal = 16.dp)
 
 	val colorScheme = if (useSongTheme) rememberColorSchemeFromCoverArt(song.coverArtId) else null
+
+	val backStack = LocalNavStack.current
 
 	NavicTheme(colorScheme) {
 		val colors = ListItemDefaults.colors(
@@ -159,7 +169,13 @@ fun SongSheet(
 				},
 				supportingContent = {
 					MarqueeText(
-						"${song.albumTitle ?: ""} • ${song.artistName} • ${song.year ?: ""}"
+						buildSongInfoString(
+							song = song,
+							onClickArtist = {
+								onDismissRequest()
+								backStack.add(Screen.ArtistDetail(it))
+							}
+						)
 					)
 				},
 				leadingContent = {
@@ -386,50 +402,43 @@ fun SongSheet(
 				}
 
 				if (showSleepTimer) {
-					if (sleepTimerLeft != null) {
-						ListItem(
-							content = {
-								Text(
-									stringResource(
+					val isEnabled = sleepTimerMode !is SleepTimerMode.Disabled
+					ListItem(
+						content = {
+							Text(
+								text = when (val mode = sleepTimerMode) {
+									is SleepTimerMode.Time -> stringResource(
 										Res.string.action_sleep_timer_enabled,
-										sleepTimerLeft.label()
-									),
-									color = MaterialTheme.colorScheme.positive
-								)
-							},
-							leadingContent = {
-								Icon(
-									Icons.Outlined.Bedtime,
-									null,
-									tint = MaterialTheme.colorScheme.positive
-								)
-							},
-							onClick = {
-								onSleepTimer?.invoke()
-							},
-							colors = colors,
-							contentPadding = contentPadding
-						)
-					} else {
-						ListItem(
-							content = {
-								Text(
-									stringResource(Res.string.action_sleep_timer)
-								)
-							},
-							leadingContent = {
-								Icon(
-									Icons.Outlined.Bedtime,
-									null
-								)
-							},
-							onClick = {
-								onSleepTimer?.invoke()
-							},
-							colors = colors,
-							contentPadding = contentPadding
-						)
-					}
+										sleepTimerManager.timeLeft?.label() ?: ""
+									)
+
+									is SleepTimerMode.Songs -> stringResource(
+										Res.string.action_sleep_timer_songs_enabled,
+										mode.remaining
+									)
+
+									is SleepTimerMode.EndOfQueue -> stringResource(
+										Res.string.action_sleep_timer_queue_enabled
+									)
+
+									else -> stringResource(Res.string.action_sleep_timer)
+								},
+								color = if (isEnabled) MaterialTheme.colorScheme.positive else Color.Unspecified
+							)
+						},
+						leadingContent = {
+							Icon(
+								imageVector = Icons.Outlined.Bedtime,
+								contentDescription = null,
+								tint = if (isEnabled) MaterialTheme.colorScheme.positive else MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						},
+						onClick = {
+							onSleepTimer?.invoke()
+						},
+						colors = colors,
+						contentPadding = contentPadding
+					)
 				}
 
 				if (showPlaybackSpeed) {

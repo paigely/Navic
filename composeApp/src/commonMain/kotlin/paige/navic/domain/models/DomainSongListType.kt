@@ -16,15 +16,7 @@ sealed class DomainSongListType {
 
 	@Serializable
 	@Immutable
-	data object Starred : DomainSongListType()
-
-	@Serializable
-	@Immutable
 	data object Random : DomainSongListType()
-
-	@Serializable
-	@Immutable
-	data object Downloaded : DomainSongListType()
 
 	@Serializable
 	@Immutable

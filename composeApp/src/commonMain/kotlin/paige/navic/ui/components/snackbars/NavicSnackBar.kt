@@ -1,5 +1,8 @@
 package paige.navic.ui.components.snackbars
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarData
@@ -12,7 +15,7 @@ fun NavicSnackBar(
 	modifier: Modifier = Modifier
 ) {
 	Snackbar(
-		modifier = modifier,
+		modifier = modifier.windowInsetsPadding(WindowInsets.navigationBars),
 		snackbarData = snackBarData,
 		shape = MaterialTheme.shapes.large,
 		containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
