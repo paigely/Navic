@@ -12,6 +12,8 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -44,6 +46,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalBottomBarScrollManager
+import paige.navic.LocalGlobalBottomBarHeight
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.settings.BottomBarCollapseMode
@@ -65,7 +68,6 @@ import paige.navic.ui.screens.playlist.components.playlistListScreenContent
 import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
-import paige.navic.util.ui.withGlobalBottomBar
 import paige.navic.util.ui.withoutTop
 import kotlin.time.Duration
 
@@ -134,6 +136,9 @@ fun PlaylistListScreen(
 				)
 			}
 		},
+		bottomBar = {
+			Spacer(Modifier.height(LocalGlobalBottomBarHeight.current))
+		},
 		floatingActionButton = {
 			AnimatedContent(
 				!scrollManager.isTriggered
@@ -180,7 +185,7 @@ fun PlaylistListScreen(
 					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier,
 				state = gridState,
-				contentPadding = innerPadding.withoutTop().withGlobalBottomBar(),
+				contentPadding = innerPadding.withoutTop(),
 				verticalArrangement = if (playlistsState.data?.isEmpty() == true) {
 					Arrangement.Center
 				} else if (selectedViewMode == ListViewMode.List) {
