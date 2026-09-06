@@ -76,7 +76,7 @@ fun GenreListScreen(
 				modifier = if (!nested)
 					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier,
-				contentPadding = innerPadding.withoutTop(),
+				contentPadding = innerPadding.withoutTop().withGlobalBottomBar(),
 				state = viewModel.gridState,
 				verticalArrangement = if ((genresState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center

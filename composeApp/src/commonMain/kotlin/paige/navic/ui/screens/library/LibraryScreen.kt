@@ -122,7 +122,7 @@ fun LibraryScreen() {
 		) {
 			LibraryScreenContent(
 				scrollBehavior = scrollBehavior,
-				innerPadding = innerPadding,
+				innerPadding = innerPadding.withGlobalBottomBar(),
 				onSetShareId = { shareId = it },
 
 				albumsState = albumsState,

@@ -107,7 +107,7 @@ fun StarredScreen() {
 			key = listOf(albumsState, artistsState, songsState)
 		) {
 			StarredScreenContent(
-				innerPadding = innerPadding,
+				innerPadding = innerPadding.withGlobalBottomBar(),
 				onSetShareId = { shareId = it },
 				isOnline = isOnline,
 

@@ -117,7 +117,7 @@ fun SongListScreen(
 				modifier = if (!nested)
 					Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier.fillMaxSize(),
-				contentPadding = innerPadding.withoutTop(),
+				contentPadding = innerPadding.withoutTop().withGlobalBottomBar(),
 				verticalArrangement = if ((songsState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center
 				else Arrangement.spacedBy(12.dp)
