@@ -5,9 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
@@ -53,15 +57,17 @@ fun SettingsAppIconScreen() {
 	// in case user tries to change the icon multiple times
 	var changed by rememberSaveable { mutableStateOf(false) }
 	Scaffold(
-		topBar = { NestedTopBar({ Text(stringResource(Res.string.option_choose_app_icon)) }) }
+		topBar = { NestedTopBar({ Text(stringResource(Res.string.option_choose_app_icon)) }) },
+		contentWindowInsets = WindowInsets(0, 0, 0, 0)
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp
 		) {
 			Column(
 				Modifier
-					.padding(innerPadding)
+					.fillMaxSize()
 					.verticalScroll(rememberScrollState())
+					.padding(top = innerPadding.calculateTopPadding())
 					.padding(16.dp)
 			) {
 				Form(Modifier.selectableGroup()) {
@@ -114,6 +120,7 @@ fun SettingsAppIconScreen() {
 						style = MaterialTheme.typography.bodyMedium
 					)
 				}
+				Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
 			}
 		}
 	}

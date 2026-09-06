@@ -16,34 +16,27 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalBottomBarScrollManager
-import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongCollection
 import paige.navic.domain.models.DomainSongListType
-import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.QueueDuplicateDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
-import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.snackbars.ErrorSnackBar
 import paige.navic.ui.core.UiState
 import paige.navic.ui.screens.album.viewmodels.AlbumListViewModel
 import paige.navic.ui.screens.genre.components.GenreDetailScreenContent
 import paige.navic.ui.screens.share.dialogs.ShareDialog
 import paige.navic.ui.screens.song.viewmodels.SongListViewModel
-import paige.navic.util.core.isLandscape
+import paige.navic.util.ui.withGlobalBottomBar
 import kotlin.time.Duration
 
 @Composable
 fun GenreDetailScreen(
 	genreName: String
 ) {
-	val platformContext = LocalPlatformContext.current
-	val preferenceManager = koinInject<PreferenceManager>()
 	val player = koinInject<MediaPlayerViewModel>()
 
 	val songsViewModel = koinViewModel<SongListViewModel>(
@@ -72,14 +65,7 @@ fun GenreDetailScreen(
 	var songToQueue by remember { mutableStateOf<DomainSong?>(null) }
 
 	Scaffold(
-		topBar = { NestedTopBar({ Text(genreName) }) },
-		bottomBar = {
-			val scrollManager = LocalBottomBarScrollManager.current
-			val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
-			if (!platformContext.isLandscape() && preferVisible) {
-				RootBottomBar(scrolled = scrollManager.isTriggered)
-			}
-		}
+		topBar = { NestedTopBar({ Text(genreName) }) }
 	) { innerPadding ->
 		PullToRefreshBox(
 			modifier = Modifier

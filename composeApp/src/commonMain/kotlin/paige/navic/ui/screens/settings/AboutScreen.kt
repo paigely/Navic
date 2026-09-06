@@ -1,7 +1,12 @@
 package paige.navic.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -66,12 +71,14 @@ fun SettingsAboutScreen() {
 				{ Text(stringResource(Res.string.title_about)) },
 				hideBack = hideBack
 			)
-		}
+		},
+		contentWindowInsets = WindowInsets(0, 0, 0, 0)
 	) { innerPadding ->
 		Column(
 			Modifier
-				.padding(innerPadding)
+				.fillMaxSize()
 				.verticalScroll(rememberScrollState())
+				.padding(top = innerPadding.calculateTopPadding())
 				.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 		) {
 			Form {
@@ -119,23 +126,7 @@ fun SettingsAboutScreen() {
 					Icon(Icons.Outlined.ChevronForward, null)
 				}
 			}
-
-			if (platformContext.platformType == PlatformType.Android) {
-				Form {
-					SettingSwitchRow(
-						title = { Text(stringResource(Res.string.option_check_for_updates)) },
-						subtitle = { Text(stringResource(Res.string.subtitle_check_for_updates)) },
-						value = preferenceManager.checkForUpdates,
-						onSetValue = { value ->
-							if (value) {
-								updateDialogIsOpen = true
-							} else {
-								preferenceManager.checkForUpdates = false
-							}
-						}
-					)
-				}
-			}
+			Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
 		}
 	}
 

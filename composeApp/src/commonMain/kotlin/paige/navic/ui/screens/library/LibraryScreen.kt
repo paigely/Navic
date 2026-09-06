@@ -23,7 +23,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import paige.navic.LocalBottomBarScrollManager
 import paige.navic.domain.manager.LoginManager
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtistListType
@@ -32,7 +31,6 @@ import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.layouts.PullToRefreshBox
-import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.snackbars.ErrorSnackBar
 import paige.navic.ui.core.LoginUiState
@@ -45,6 +43,7 @@ import paige.navic.ui.screens.library.components.LibraryScreenContent
 import paige.navic.ui.screens.playlist.dialogs.PlaylistCreateDialog
 import paige.navic.ui.screens.playlist.viewmodels.PlaylistListViewModel
 import paige.navic.ui.screens.share.dialogs.ShareDialog
+import paige.navic.util.ui.withGlobalBottomBar
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -103,11 +102,7 @@ fun LibraryScreen() {
 	}
 
 	Scaffold(
-		topBar = { RootTopBar({ Text(stringResource(Res.string.title_library)) }, scrollBehavior) },
-		bottomBar = {
-			val scrollManager = LocalBottomBarScrollManager.current
-			RootBottomBar(scrolled = scrollManager.isTriggered)
-		}
+		topBar = { RootTopBar({ Text(stringResource(Res.string.title_library)) }, scrollBehavior) }
 	) { innerPadding ->
 		PullToRefreshBox(
 			modifier = Modifier
@@ -127,7 +122,7 @@ fun LibraryScreen() {
 		) {
 			LibraryScreenContent(
 				scrollBehavior = scrollBehavior,
-				innerPadding = innerPadding,
+				innerPadding = innerPadding.withGlobalBottomBar(),
 				onSetShareId = { shareId = it },
 
 				albumsState = albumsState,

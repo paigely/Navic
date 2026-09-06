@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.runtime.Composable
@@ -18,7 +19,9 @@ import org.koin.compose.koinInject
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.domain.models.settings.MiniPlayerStyle
+import paige.navic.ui.theme.NavicTheme
 import paige.navic.util.ui.easedVerticalGradient
+import paige.navic.util.ui.rememberColorSchemeForCurrentSong
 
 @Composable
 fun RootBottomBar(
@@ -29,6 +32,13 @@ fun RootBottomBar(
 	bottomBarWindowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
 ) {
 	val preferenceManager = koinInject<PreferenceManager>()
+
+	val colorScheme = if (preferenceManager.dynamicTheming) {
+		rememberColorSchemeForCurrentSong(forceDark = false)
+	} else {
+		null
+	}
+
 	val scrolled =
 		scrolled && preferenceManager.bottomBarCollapseMode == BottomBarCollapseMode.OnScroll
 	val progress by animateFloatAsState(
@@ -42,36 +52,41 @@ fun RootBottomBar(
 		targetValue = if (scrolled || !shadows) 0f else 1f,
 		animationSpec = tween(durationMillis = 600)
 	)
-	Column(
-		modifier = modifier.then(
-			if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
-				Modifier.background(
-					Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress))
-				)
-			else Modifier
-		)
-	) {
-		if (!hideMiniPlayer) MiniPlayer(
-			modifier = Modifier.graphicsLayer {
-				alpha = progress.coerceIn(0f..1f)
-				translationY = ((1f - progress) * (size.height * 2)).coerceAtLeast(
-					if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
-				)
-			},
-			enabled = !scrolled
-		)
-		BottomBar(
-			containerColor = if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
-				NavigationBarDefaults.containerColor.copy(alpha = 0f)
-			else NavigationBarDefaults.containerColor,
-			windowInsets = bottomBarWindowInsets,
-			modifier = Modifier.graphicsLayer {
-				alpha = progress.coerceIn(0f..1f)
-				translationY = ((1f - progress) * size.height).coerceAtLeast(
-					if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
-				)
-			},
-			enabled = !scrolled
-		)
+
+	NavicTheme(colorScheme) {
+		Column(
+			modifier = modifier.then(
+				if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
+					Modifier.background(
+						Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress))
+					)
+				else Modifier
+			)
+		) {
+			if (!hideMiniPlayer) MiniPlayer(
+				modifier = Modifier.graphicsLayer {
+					alpha = progress.coerceIn(0f..1f)
+					translationY = ((1f - progress) * (size.height * 2)).coerceAtLeast(
+						if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
+					)
+				},
+				enabled = !scrolled
+			)
+			BottomBar(
+				containerColor = if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
+					NavigationBarDefaults.containerColor.copy(alpha = 0f)
+				else NavigationBarDefaults.containerColor,
+				windowInsets = bottomBarWindowInsets,
+				modifier = Modifier
+					.fillMaxWidth()
+					.graphicsLayer {
+						alpha = progress.coerceIn(0f..1f)
+						translationY = ((1f - progress) * size.height).coerceAtLeast(
+							if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
+						)
+					},
+				enabled = !scrolled
+			)
+		}
 	}
 }

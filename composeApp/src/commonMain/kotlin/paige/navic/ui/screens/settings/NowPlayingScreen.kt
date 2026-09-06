@@ -1,7 +1,10 @@
 package paige.navic.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -52,8 +55,11 @@ import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import paige.navic.ui.screens.settings.dialogs.LyricsPrioritySheet
 import paige.navic.ui.screens.settings.dialogs.NowPlayingSliderStyleDialog
+import paige.navic.util.ui.LocalGlobalBottomBarHeight
 
 @Composable
 fun SettingsNowPlayingScreen() {
@@ -67,15 +73,17 @@ fun SettingsNowPlayingScreen() {
 				{ Text(stringResource(Res.string.title_now_playing)) },
 				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
-		}
+		},
+		contentWindowInsets = WindowInsets.statusBars
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp
 		) {
 			Column(
 				Modifier
-					.padding(innerPadding)
+					.fillMaxSize()
 					.verticalScroll(rememberScrollState())
+					.padding(top = innerPadding.calculateTopPadding())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
@@ -187,6 +195,7 @@ fun SettingsNowPlayingScreen() {
 						title = { Text(stringResource(Res.string.option_now_playing_toolbar_position)) }
 					)
 				}
+				Spacer(Modifier.height(LocalGlobalBottomBarHeight.current))
 			}
 		}
 		LyricsPrioritySheet(

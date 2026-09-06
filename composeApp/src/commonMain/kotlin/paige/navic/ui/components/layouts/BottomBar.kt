@@ -3,23 +3,25 @@ package paige.navic.ui.components.layouts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationItemIconPosition
-import androidx.compose.material3.ShortNavigationBar
-import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_albums
@@ -35,7 +37,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.LocalNavStack
-import paige.navic.LocalPlatformContext
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.NavbarConfig
 import paige.navic.domain.models.settings.NavbarTab
@@ -56,8 +57,8 @@ import paige.navic.icons.outlined.PlaylistPlay
 import paige.navic.icons.outlined.Radio
 import paige.navic.icons.outlined.Search
 import paige.navic.ui.components.common.animatedTabIconPainter
-import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.Screen
+import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 
 private enum class NavItem(
@@ -122,132 +123,164 @@ fun BottomBar(
 	windowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
 	enabled: Boolean = true
 ) {
-	val viewModel = koinViewModel<NavtabsViewModel>()
+	val persistentViewModelStoreOwner = koinInject<PersistentViewModelStoreOwner>()
+	val viewModel = koinViewModel<NavtabsViewModel>(
+		viewModelStoreOwner = persistentViewModelStoreOwner
+	)
 	val backStack = LocalNavStack.current
-	val platformContext = LocalPlatformContext.current
 	val state by viewModel.state.collectAsState()
 	val containerColor by animateColorAsState(containerColor)
-	val tabs = ((state as? UiState.Success)?.data ?: NavbarConfig.default)
+	val tabs = (state.data ?: NavbarConfig.default)
 		.tabs.filter { tab -> tab.visible }
 	val preferenceManager = koinInject<PreferenceManager>()
 
-	AnimatedContent(
-		preferenceManager.navigationBarStyle != NavigationBarStyle.Short
-			&& platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
-			&& tabs.size > 1
-	) {
+	val selectedTabId = remember(backStack.size, backStack.lastOrNull(), tabs) {
+		val lastKey = backStack.lastOrNull() ?: return@remember tabs.firstOrNull()?.id
+		tabs.find { tab ->
+			val item = when (tab.id) {
+				NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
+				NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
+				NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
+				NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
+				NavbarTab.Id.SEARCH -> NavItem.SEARCH
+				NavbarTab.Id.GENRES -> NavItem.GENRES
+				NavbarTab.Id.SONGS -> NavItem.SONGS
+				NavbarTab.Id.RADIOS -> NavItem.RADIOS
+			}
+			// Use class name to match destinations even if arguments differ
+			val entryClassName = lastKey::class.qualifiedName
+			val destClassName = item.destination::class.qualifiedName
+			entryClassName == destClassName || (lastKey is Screen.Settings && tab.id == NavbarTab.Id.LIBRARY)
+		}?.id ?: tabs.firstOrNull()?.id
+	}
+
+	val isShort = preferenceManager.navigationBarStyle == NavigationBarStyle.Short
+	AnimatedContent(isShort) { short ->
 		if (tabs.size < 2) return@AnimatedContent
-		if (it) {
+		if (!short) {
 			NavigationBar(
 				modifier = modifier,
 				containerColor = containerColor,
 				windowInsets = windowInsets
 			) {
 				tabs.forEach { tab ->
-					val item = when (tab.id) {
-						NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
-						NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
-						NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
-						NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
-						NavbarTab.Id.SEARCH -> NavItem.SEARCH
-						NavbarTab.Id.GENRES -> NavItem.GENRES
-						NavbarTab.Id.SONGS -> NavItem.SONGS
-						NavbarTab.Id.RADIOS -> NavItem.RADIOS
-					}
-					val selected = backStack.lastOrNull() == item.destination
+					key(tab.id) {
+						val item = when (tab.id) {
+							NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
+							NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
+							NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
+							NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
+							NavbarTab.Id.SEARCH -> NavItem.SEARCH
+							NavbarTab.Id.GENRES -> NavItem.GENRES
+							NavbarTab.Id.SONGS -> NavItem.SONGS
+							NavbarTab.Id.RADIOS -> NavItem.RADIOS
+						}
+						val selected = selectedTabId == tab.id
 
-					NavigationBarItem(
-						selected = selected,
-						enabled = enabled,
-						alwaysShowLabel = preferenceManager.navigationBarLabelVisibility
-							== NavigationBarLabelVisibility.Always,
-						onClick = {
-							backStack.apply {
-								clear()
-								add(item.destination)
-							}
-						},
-						icon = {
-							if (selected) {
-								val painter = animatedTabIconPainter(item.destination)
-								if (painter != null) {
-									Icon(painter = painter, null)
+						NavigationBarItem(
+							selected = selected,
+							enabled = enabled,
+							alwaysShowLabel = preferenceManager.navigationBarLabelVisibility
+								== NavigationBarLabelVisibility.Always,
+							onClick = {
+								backStack.apply {
+									clear()
+									add(item.destination)
+								}
+							},
+							icon = {
+								if (selected) {
+									val painter = animatedTabIconPainter(item.destination)
+									if (painter != null) {
+										Icon(painter = painter, null)
+									} else {
+										Icon(item.icon, null)
+									}
 								} else {
-									Icon(item.icon, null)
+									Icon(item.iconUnselected, null)
+								}
+							},
+							label = if (preferenceManager.navigationBarLabelVisibility
+								!== NavigationBarLabelVisibility.Never) {
+								{
+									Text(
+										stringResource(item.label),
+										maxLines = 1,
+										autoSize = TextAutoSize.StepBased(
+											minFontSize = 1.sp,
+											maxFontSize = MaterialTheme.typography.labelMedium.fontSize
+										)
+									)
 								}
 							} else {
-								Icon(item.iconUnselected, null)
+								null
 							}
-						},
-						label = if (preferenceManager.navigationBarLabelVisibility
-							!== NavigationBarLabelVisibility.Never) {
-							{
-								Text(
-									stringResource(item.label),
-									maxLines = 1,
-									autoSize = TextAutoSize.StepBased(
-										minFontSize = 1.sp,
-										maxFontSize = MaterialTheme.typography.labelMedium.fontSize
-									)
-								)
-							}
-						} else {
-							null
-						}
-					)
+						)
+					}
 				}
 			}
 		} else {
-			ShortNavigationBar(
-				modifier = modifier,
-				containerColor = containerColor
+			val density = LocalDensity.current
+			NavigationBar(
+				modifier = modifier.fillMaxWidth().height(56.dp + with(density) { windowInsets.getBottom(this).toDp() }),
+				containerColor = containerColor,
+				windowInsets = windowInsets
 			) {
 				tabs.forEach { tab ->
-					val item = when (tab.id) {
-						NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
-						NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
-						NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
-						NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
-						NavbarTab.Id.SEARCH -> NavItem.SEARCH
-						NavbarTab.Id.GENRES -> NavItem.GENRES
-						NavbarTab.Id.SONGS -> NavItem.SONGS
-						NavbarTab.Id.RADIOS -> NavItem.RADIOS
-					}
-					val selected = backStack.last() == item.destination
+					key(tab.id) {
+						val item = when (tab.id) {
+							NavbarTab.Id.LIBRARY -> NavItem.LIBRARY
+							NavbarTab.Id.ALBUMS -> NavItem.ALBUMS
+							NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
+							NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
+							NavbarTab.Id.SEARCH -> NavItem.SEARCH
+							NavbarTab.Id.GENRES -> NavItem.GENRES
+							NavbarTab.Id.SONGS -> NavItem.SONGS
+							NavbarTab.Id.RADIOS -> NavItem.RADIOS
+						}
+						val selected = selectedTabId == tab.id
 
-					ShortNavigationBarItem(
-						iconPosition = if (platformContext.sizeClass.widthSizeClass > WindowWidthSizeClass.Compact)
-							NavigationItemIconPosition.Start
-						else NavigationItemIconPosition.Top,
-						selected = backStack.last() == item.destination,
-						enabled = enabled,
-						onClick = {
-							backStack.apply {
-								clear()
-								add(item.destination)
-							}
-						},
-						icon = {
-							if (selected) {
-								val painter = animatedTabIconPainter(item.destination)
-								if (painter != null) {
-									Icon(painter = painter, null)
+						NavigationBarItem(
+							selected = selected,
+							enabled = enabled,
+							alwaysShowLabel = preferenceManager.navigationBarLabelVisibility
+								== NavigationBarLabelVisibility.Always,
+							onClick = {
+								backStack.apply {
+									clear()
+									add(item.destination)
+								}
+							},
+							icon = {
+								if (selected) {
+									val painter = animatedTabIconPainter(item.destination)
+									if (painter != null) {
+										Icon(painter = painter, null)
+									} else {
+										Icon(item.icon, null)
+									}
 								} else {
-									Icon(item.icon, null)
+									Icon(item.iconUnselected, null)
+								}
+							},
+							label = if (preferenceManager.navigationBarLabelVisibility
+								== NavigationBarLabelVisibility.Always ||
+								(preferenceManager.navigationBarLabelVisibility == NavigationBarLabelVisibility.OnlySelected && selected)) {
+								{
+									Text(
+										stringResource(item.label),
+										maxLines = 1,
+										autoSize = TextAutoSize.StepBased(
+											minFontSize = 1.sp,
+											maxFontSize = 12.sp
+										)
+									)
 								}
 							} else {
-								Icon(item.iconUnselected, null)
+								null
 							}
-						},
-						label = if (
-							preferenceManager.navigationBarLabelVisibility == NavigationBarLabelVisibility.Always ||
-							(preferenceManager.navigationBarLabelVisibility == NavigationBarLabelVisibility.OnlySelected && selected)
-						) {
-							{ Text(stringResource(item.label)) }
-						} else {
-							null
-						},
-					)
+						)
+					}
 				}
 			}
 		}

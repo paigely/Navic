@@ -4,8 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -61,12 +66,14 @@ import paige.navic.ui.theme.defaultFont
 @Composable
 fun SettingsScreen() {
 	Scaffold(
-		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_settings)) }) }
+		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_settings)) }) },
+		contentWindowInsets = WindowInsets(0, 0, 0, 0)
 	) { innerPadding ->
 		Column(
 			modifier = Modifier
-				.padding(innerPadding)
+				.fillMaxSize()
 				.verticalScroll(rememberScrollState())
+				.padding(top = innerPadding.calculateTopPadding())
 				.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 		) {
 			Form {
@@ -121,6 +128,7 @@ fun SettingsScreen() {
 					subtitle = Res.string.subtitle_about
 				)
 			}
+			Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
 		}
 	}
 }
