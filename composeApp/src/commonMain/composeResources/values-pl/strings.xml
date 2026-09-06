@@ -11,7 +11,7 @@
     <string name="title_playback">Opcje odtwarzania</string>
     <string name="title_data_storage">Dane i pamięć</string>
     <string name="title_sync_control">Kontrola synchronizacji</string>
-    <string name="title_cache_management">Zarządzanie pamięcią podręczną</string>
+    <string name="title_cache_management">Zarządzanie pamięcią podręczną i danymi</string>
     <string name="title_danger_zone">Strefa ryzyka</string>
     <string name="title_developer">Ustawienia programisty</string>
     <string name="title_about">O aplikacji</string>
@@ -65,7 +65,7 @@
     <string name="subtitle_trigger_sync">Natychmiast wymusza pełny skan biblioteki</string>
     <string name="subtitle_pending_actions">%1$d element(-ów) oczekuje na połączenie z siecią</string>
     <string name="subtitle_developer">Debuggowanie, testowanie, logi</string>
-    <string name="subtitle_about">Informacje o aplikacji, wersji i licencjach</string>
+    <string name="subtitle_about">Informacje o aplikacji, wersja, aktualizacje i licencje</string>
     <string name="subtitle_playlist">Playlista</string>
     <string name="subtitle_enable_scrobbling">Scrobbluj odtwarzane utwory do serwera Navidrome</string>
     <string name="subtitle_gapless_playback">Eksperymentalne. Wymaga restartu aplikacji. Może wywołać konflikt z funkcją odciążania audio na niektórych urządzeniach</string>
