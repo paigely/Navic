@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
@@ -84,15 +87,16 @@ fun SettingsAppearanceScreen() {
 				hideBack = platformContext.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 			)
 		},
-		contentWindowInsets = WindowInsets.statusBars
+		contentWindowInsets = WindowInsets(0, 0, 0, 0)
 	) { innerPadding ->
 		CompositionLocalProvider(
 			LocalMinimumInteractiveComponentSize provides 0.dp
 		) {
 			Column(
 				Modifier
-					.padding(innerPadding)
+					.fillMaxSize()
 					.verticalScroll(rememberScrollState())
+					.padding(top = innerPadding.calculateTopPadding())
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
@@ -276,6 +280,7 @@ fun SettingsAppearanceScreen() {
 						onSelect = { preferenceManager.animationStyle = it }
 					)
 				}
+				Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
 			}
 		}
 		ArtworkShapeDialog(

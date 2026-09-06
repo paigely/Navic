@@ -29,12 +29,14 @@ import navic.composeapp.generated.resources.action_ok
 import navic.composeapp.generated.resources.action_reorder
 import navic.composeapp.generated.resources.option_navigation_bar_tabs
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import paige.navic.domain.models.settings.NavbarTab
 import paige.navic.icons.Icons
 import paige.navic.icons.outlined.DragHandle
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.core.UiState
+import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.screens.settings.viewmodels.NavtabsViewModel
 import paige.navic.util.ui.DraggableListState
 import paige.navic.util.ui.dragHandle
@@ -50,7 +52,10 @@ fun NavtabsDialog(
 	if (!presented) return
 
 	val haptic = LocalHapticFeedback.current
-	val viewModel = koinViewModel<NavtabsViewModel>()
+	val persistentViewModelStoreOwner = koinInject<PersistentViewModelStoreOwner>()
+	val viewModel = koinViewModel<NavtabsViewModel>(
+		viewModelStoreOwner = persistentViewModelStoreOwner
+	)
 	val state by viewModel.state.collectAsState()
 
 	val draggableState = rememberDraggableListState { from, to ->

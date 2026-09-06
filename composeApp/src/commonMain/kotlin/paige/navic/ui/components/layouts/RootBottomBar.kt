@@ -7,18 +7,19 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import org.koin.compose.koinInject
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.settings.BottomBarCollapseMode
 import paige.navic.domain.models.settings.MiniPlayerStyle
-import paige.navic.util.ui.easedVerticalGradient
 
 @Composable
 fun RootBottomBar(
@@ -43,13 +44,17 @@ fun RootBottomBar(
 		animationSpec = tween(durationMillis = 600)
 	)
 	Column(
-		modifier = modifier.then(
-			if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
-				Modifier.background(
-					Brush.easedVerticalGradient(color = MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress))
-				)
-			else Modifier
-		)
+		modifier = modifier
+			.fillMaxWidth()
+			.background(
+				if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
+					Brush.verticalGradient(
+						0f to Color.Transparent,
+						0.4f to MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress * 0.7f),
+						1f to MaterialTheme.colorScheme.surface.copy(alpha = shadowFadeProgress)
+					)
+				else Brush.linearGradient(listOf(Color.Transparent, Color.Transparent))
+			)
 	) {
 		if (!hideMiniPlayer) MiniPlayer(
 			modifier = Modifier.graphicsLayer {
@@ -62,15 +67,17 @@ fun RootBottomBar(
 		)
 		BottomBar(
 			containerColor = if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached)
-				NavigationBarDefaults.containerColor.copy(alpha = 0f)
+				Color.Transparent
 			else NavigationBarDefaults.containerColor,
 			windowInsets = bottomBarWindowInsets,
-			modifier = Modifier.graphicsLayer {
-				alpha = progress.coerceIn(0f..1f)
-				translationY = ((1f - progress) * size.height).coerceAtLeast(
-					if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
-				)
-			},
+			modifier = Modifier
+				.fillMaxWidth()
+				.graphicsLayer {
+					alpha = progress.coerceIn(0f..1f)
+					translationY = ((1f - progress) * size.height).coerceAtLeast(
+						if (preferenceManager.miniPlayerStyle == MiniPlayerStyle.Detached) -2048f else 0f
+					)
+				},
 			enabled = !scrolled
 		)
 	}

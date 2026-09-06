@@ -21,21 +21,16 @@ import navic.composeapp.generated.resources.title_genres
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import paige.navic.LocalBottomBarScrollManager
-import paige.navic.LocalPlatformContext
-import paige.navic.domain.manager.PreferenceManager
-import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
-import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.snackbars.ErrorSnackBar
 import paige.navic.ui.core.UiState
 import paige.navic.ui.navigation.PersistentViewModelStoreOwner
 import paige.navic.ui.screens.genre.components.genreListScreenContent
 import paige.navic.ui.screens.genre.viewmodels.GenreListViewModel
-import paige.navic.util.core.isLandscape
+import paige.navic.util.ui.withGlobalBottomBar
 import paige.navic.util.ui.withoutTop
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -65,18 +60,12 @@ fun GenreListScreen(
 			} else {
 				NestedTopBar({ Text(stringResource(Res.string.title_genres)) })
 			}
-		},
-		bottomBar = {
-			val scrollManager = LocalBottomBarScrollManager.current
-			val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
-			if (!nested || (!platformContext.isLandscape() && preferVisible)) {
-				RootBottomBar(scrolled = scrollManager.isTriggered)
-			}
 		}
 	) { innerPadding ->
+		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = innerPadding.calculateTopPadding())
+				.padding(top = combinedPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = genresState !is UiState.Loading,
 			onRefresh = { viewModel.refreshGenres(true) },
@@ -86,7 +75,7 @@ fun GenreListScreen(
 				modifier = if (!nested)
 					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier,
-				contentPadding = innerPadding.withoutTop(),
+				contentPadding = combinedPadding.withoutTop(),
 				state = viewModel.gridState,
 				verticalArrangement = if ((genresState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center

@@ -11,11 +11,10 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -23,9 +22,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.listPane
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -36,10 +38,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,9 +69,11 @@ import paige.navic.domain.manager.BottomBarScrollManager
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.manager.SessionManager
 import paige.navic.domain.manager.SnackBarManager
+import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.domain.models.settings.ExplicitContentPlayback
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.dialogs.SideloadingDialog
+import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.sheets.ChangelogSheet
 import paige.navic.ui.components.snackbars.NavicSnackBar
 import paige.navic.ui.navigation.BottomSheetSceneStrategy
@@ -137,6 +142,8 @@ val LocalBottomBarScrollManager = staticCompositionLocalOf<BottomBarScrollManage
 	error("No BottomBarScrollManager provided")
 }
 
+val LocalGlobalBottomBarHeight = staticCompositionLocalOf { 0.dp }
+
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun App() {
@@ -168,12 +175,27 @@ fun App() {
 	}
 
 	val density = LocalDensity.current
-	val layoutDirection = LocalLayoutDirection.current
 	val scrollManager = remember {
 		BottomBarScrollManager(with(density) { 50.dp.toPx() })
 	}
 
 	var appStarted by rememberSaveable { mutableStateOf(false) }
+	var bottomBarHeight by remember { mutableStateOf(0.dp) }
+
+	val adaptiveInfo = currentWindowAdaptiveInfoV2()
+	val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>(
+		directive = calculatePaneScaffoldDirective(adaptiveInfo).let { directive ->
+			val hasDetail = backStack.any { key ->
+				key is Screen.CollectionDetail ||
+					(key is Screen.Settings && key !is Screen.Settings.Root)
+			}
+			if (!hasDetail) {
+				directive.copy(maxHorizontalPartitions = 1)
+			} else {
+				directive
+			}
+		}
+	)
 
 	LaunchedEffect(Unit) {
 		if (!appStarted) {
@@ -190,9 +212,32 @@ fun App() {
 			LocalNavStack provides backStack,
 			LocalSnackBarState provides snackBarState,
 			LocalSharedTransitionScope provides this@SharedTransitionLayout,
-			LocalBottomBarScrollManager provides scrollManager
+			LocalBottomBarScrollManager provides scrollManager,
+			LocalGlobalBottomBarHeight provides bottomBarHeight
 		) {
 			NavicTheme {
+				val showBottomBar = remember(backStack.size, backStack.lastOrNull(), preferenceManager.bottomBarVisibilityMode, platformContext.sizeClass.widthSizeClass) {
+					if (backStack.lastOrNull() is Screen.Login || backStack.any { it is Screen.Settings }) return@remember false
+					val rootKeys = listOf(
+						Screen.Library::class,
+						Screen.Starred::class,
+						Screen.AlbumList::class,
+						Screen.PlaylistList::class,
+						Screen.ArtistList::class,
+						Screen.GenreList::class,
+						Screen.SongList::class,
+						Screen.RadioList::class,
+						Screen.Search::class,
+						Screen.ShareList::class
+					)
+					val isRoot = if (platformContext.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
+						rootKeys.any { it.isInstance(backStack.lastOrNull()) }
+					} else {
+						backStack.any { key -> rootKeys.any { it.isInstance(key) } }
+					}
+					isRoot || preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
+				} && isLoggedIn
+
 				Scaffold(
 					modifier = Modifier.nestedScroll(scrollManager.connection),
 					snackbarHost = {
@@ -201,64 +246,76 @@ fun App() {
 						}
 					},
 					contentWindowInsets = WindowInsets()
-				) { contentPadding ->
-					NavDisplay(
-						modifier = Modifier
-							.padding(
-								start = contentPadding
-									.calculateStartPadding(layoutDirection),
-								end = contentPadding
-									.calculateEndPadding(layoutDirection)
-							)
-							.fillMaxSize()
-							.background(MaterialTheme.colorScheme.surface),
-						backStack = backStack,
-						sceneStrategies = listOf(
-							remember { NowPlayingSceneStrategy() },
-							remember { BottomSheetSceneStrategy() },
-							rememberListDetailSceneStrategy()
-						),
-						entryDecorators = listOf(
-							rememberSaveableStateHolderNavEntryDecorator(),
+				) { _ ->
+					Box(Modifier.fillMaxSize()) {
+						NavDisplay(
+							modifier = Modifier
+								.fillMaxSize()
+								.background(MaterialTheme.colorScheme.surface),
+							backStack = backStack,
+							sceneStrategies = listOf(
+								remember { NowPlayingSceneStrategy() },
+								remember { BottomSheetSceneStrategy() },
+								listDetailStrategy
+							),
+							entryDecorators = listOf(
+								rememberSaveableStateHolderNavEntryDecorator(),
 
-							// makes it so that ViewModels get destroyed if their
-							// associated screen is removed from the back stack
-							//
-							// this might not always be desirable, so the
-							// `PersistentViewModelStoreOwner` class is used for
-							// certain ViewModels to work around this
-							rememberViewModelStoreNavEntryDecorator()
-						),
-						onBack = {
-							if (backStack.size >= 2) {
-								backStack.removeLastOrNull()
+								// makes it so that ViewModels get destroyed if their
+								// associated screen is removed from the back stack
+								//
+								// this might not always be desirable, so the
+								// `PersistentViewModelStoreOwner` class is used for
+								// certain ViewModels to work around this
+								rememberViewModelStoreNavEntryDecorator()
+							),
+							onBack = {
+								if (backStack.size >= 2) {
+									backStack.removeLastOrNull()
+								}
+							},
+							entryProvider = entryProvider(backStack),
+							transitionSpec = {
+								Material3Transitions.SharedXAxisEnterTransition(
+									density
+								) togetherWith Material3Transitions.SharedXAxisExitTransition(
+									density
+								)
+							},
+							popTransitionSpec = {
+								Material3Transitions.SharedXAxisPopEnterTransition(
+									density
+								) togetherWith Material3Transitions.SharedXAxisPopExitTransition(
+									density
+								)
+							},
+							predictivePopTransitionSpec = {
+								slideInHorizontally(
+									animationSpec = tween(300, easing = EaseOutQuart),
+									initialOffsetX = { -it }
+								) togetherWith slideOutHorizontally(
+									animationSpec = tween(300, easing = EaseOutQuart),
+									targetOffsetX = { it }
+								)
 							}
-						},
-						entryProvider = entryProvider(backStack),
-						transitionSpec = {
-							Material3Transitions.SharedXAxisEnterTransition(
-								density
-							) togetherWith Material3Transitions.SharedXAxisExitTransition(
-								density
-							)
-						},
-						popTransitionSpec = {
-							Material3Transitions.SharedXAxisPopEnterTransition(
-								density
-							) togetherWith Material3Transitions.SharedXAxisPopExitTransition(
-								density
-							)
-						},
-						predictivePopTransitionSpec = {
-							slideInHorizontally(
-								animationSpec = tween(300, easing = EaseOutQuart),
-								initialOffsetX = { -it }
-							) togetherWith slideOutHorizontally(
-								animationSpec = tween(300, easing = EaseOutQuart),
-								targetOffsetX = { it }
-							)
+						)
+						if (showBottomBar) {
+							Box(
+								modifier = Modifier
+									.align(Alignment.BottomCenter)
+									.fillMaxWidth()
+									.onGloballyPositioned {
+										bottomBarHeight = with(density) { it.size.height.toDp() }
+									}
+							) {
+								RootBottomBar(scrolled = scrollManager.isTriggered)
+							}
+						} else {
+							LaunchedEffect(showBottomBar) {
+								bottomBarHeight = 0.dp
+							}
 						}
-					)
+					}
 				}
 				if (!preferenceManager.showedSideloadingWarning
 					&& platformContext.name.lowercase().contains("android")
