@@ -126,10 +126,9 @@ fun RadioListScreen(
 			}
 		}
 	) { innerPadding ->
-		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = combinedPadding.calculateTopPadding())
+				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = radiosState !is UiState.Loading,
 			onRefresh = { viewModel.refreshRadios(true) },
@@ -139,7 +138,7 @@ fun RadioListScreen(
 				modifier = if (!nested)
 					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier,
-				contentPadding = combinedPadding.withoutTop(),
+				contentPadding = innerPadding.withoutTop(),
 				state = viewModel.gridState,
 				verticalArrangement = if ((radiosState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center

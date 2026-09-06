@@ -104,10 +104,9 @@ fun LibraryScreen() {
 	Scaffold(
 		topBar = { RootTopBar({ Text(stringResource(Res.string.title_library)) }, scrollBehavior) }
 	) { innerPadding ->
-		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = combinedPadding.calculateTopPadding())
+				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = albumsState !is UiState.Loading &&
 				playlistsState !is UiState.Loading &&
@@ -123,7 +122,7 @@ fun LibraryScreen() {
 		) {
 			LibraryScreenContent(
 				scrollBehavior = scrollBehavior,
-				innerPadding = combinedPadding,
+				innerPadding = innerPadding,
 				onSetShareId = { shareId = it },
 
 				albumsState = albumsState,

@@ -171,7 +171,6 @@ fun ArtistDetailScreen(
 				)
 			}
 		) { innerPadding ->
-			val combinedPadding = innerPadding.withGlobalBottomBar()
 			AnimatedContent(
 				targetState = artistState,
 				transitionSpec = {
@@ -189,7 +188,7 @@ fun ArtistDetailScreen(
 				modifier = Modifier.fillMaxSize()
 			) { artistState ->
 				when (artistState) {
-					is UiState.Error -> Box(Modifier.fillMaxSize().padding(combinedPadding)) {
+					is UiState.Error -> Box(Modifier.fillMaxSize().padding(innerPadding)) {
 						ErrorBox(artistState)
 					}
 
@@ -228,7 +227,7 @@ fun ArtistDetailScreen(
 								coverArtId = state.artist.coverArtId,
 								subtitle = state.artist.biography,
 								lastfm = state.artist.lastFmUrl,
-								innerPadding = combinedPadding,
+								innerPadding = innerPadding,
 								scrolled = scrolled
 							)
 							ArtistActionButtons(
@@ -255,12 +254,12 @@ fun ArtistDetailScreen(
 								modifier = Modifier
 									.fillMaxWidth()
 									.padding(
-										start = combinedPadding.calculateStartPadding(
+										start = innerPadding.calculateStartPadding(
 											layoutDirection
 										)
 									)
 									.padding(
-										end = combinedPadding.calculateEndPadding(
+										end = innerPadding.calculateEndPadding(
 											layoutDirection
 										)
 									),
@@ -425,7 +424,7 @@ fun ArtistDetailScreen(
 									)
 								}
 							}
-							Spacer(Modifier.height(combinedPadding.calculateBottomPadding()))
+							Spacer(Modifier.height(innerPadding.calculateBottomPadding()))
 						}
 					}
 				}

@@ -29,14 +29,19 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import paige.navic.LocalBottomBarScrollManager
 import paige.navic.LocalNavStack
+import paige.navic.LocalPlatformContext
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbum
 import paige.navic.domain.models.DomainArtist
 import paige.navic.domain.models.DomainArtistListType
+import paige.navic.domain.models.settings.BottomBarVisibilityMode
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
+import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.sheets.ArtistSheet
 import paige.navic.ui.components.snackbars.ErrorSnackBar
@@ -47,7 +52,7 @@ import paige.navic.ui.screens.artist.components.ArtistListScreenContent
 import paige.navic.ui.screens.artist.components.ArtistListScreenSortButton
 import paige.navic.ui.screens.artist.viewmodels.ArtistListViewModel
 import paige.navic.ui.screens.playlist.dialogs.PlaylistUpdateDialog
-import paige.navic.util.ui.withGlobalBottomBar
+import paige.navic.util.core.isLandscape
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -55,6 +60,10 @@ fun ArtistListScreen(
 	nested: Boolean = false,
 	listType: DomainArtistListType
 ) {
+	val platformContext = LocalPlatformContext.current
+	val preferenceManager = koinInject<PreferenceManager>()
+	val selectedViewMode = preferenceManager.artistListViewMode
+
 	val viewModel = koinViewModel<ArtistListViewModel>(
 		key = listType.toString(),
 		parameters = { parametersOf(listType) },
@@ -97,12 +106,18 @@ fun ArtistListScreen(
 			} else {
 				NestedTopBar({ Text(stringResource(Res.string.title_artists)) }, actions)
 			}
+		},
+		bottomBar = {
+			val scrollManager = LocalBottomBarScrollManager.current
+			val preferVisible = preferenceManager.bottomBarVisibilityMode == BottomBarVisibilityMode.AllScreens
+			if (!nested || (!platformContext.isLandscape() && preferVisible)) {
+				RootBottomBar(scrolled = scrollManager.isTriggered)
+			}
 		}
 	) { innerPadding ->
-		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = combinedPadding.calculateTopPadding())
+				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = artistsState !is UiState.Loading,
 			onRefresh = { viewModel.refreshArtists(true) },
@@ -116,7 +131,7 @@ fun ArtistListScreen(
 				selectedViewMode = selectedViewMode,
 				gridState = viewModel.gridState,
 				scrollBehavior = scrollBehavior,
-				innerPadding = combinedPadding,
+				innerPadding = innerPadding,
 				nested = nested,
 				onUpdateSelection = { viewModel.selectArtist(it) },
 				onClearSelection = { viewModel.clearSelection() },

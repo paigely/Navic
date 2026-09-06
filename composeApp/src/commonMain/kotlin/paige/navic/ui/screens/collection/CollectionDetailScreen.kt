@@ -38,6 +38,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import paige.navic.LocalPlatformContext
 import paige.navic.data.database.entities.DownloadStatus
 import paige.navic.domain.manager.PreferenceManager
 import paige.navic.domain.models.DomainAlbum
@@ -156,10 +157,9 @@ fun CollectionDetailScreen(
 				)
 			}
 		) { innerPadding ->
-			val combinedPadding = innerPadding.withGlobalBottomBar()
 			PullToRefreshBox(
 				modifier = Modifier
-					.padding(top = combinedPadding.calculateTopPadding())
+					.padding(top = innerPadding.calculateTopPadding())
 					.background(MaterialTheme.colorScheme.surface),
 				finished = collectionState !is UiState.Loading,
 				onRefresh = { viewModel.refreshCollection(true) },
@@ -170,7 +170,7 @@ fun CollectionDetailScreen(
 						.background(MaterialTheme.colorScheme.surface)
 						.fillMaxSize(),
 					horizontalAlignment = Alignment.CenterHorizontally,
-					contentPadding = combinedPadding.withoutTop(),
+					contentPadding = innerPadding.withoutTop(),
 					state = viewModel.listState
 				) {
 					if (collection == null) return@LazyColumn

@@ -21,6 +21,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.models.DomainAlbumListType
 import paige.navic.domain.models.DomainArtistListType
 import paige.navic.domain.models.DomainFilter
@@ -90,13 +91,12 @@ fun StarredScreen() {
 	Scaffold(
 		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_starred)) }) }
 	) { innerPadding ->
-		val combinedPadding = innerPadding.withGlobalBottomBar()
 		val isAnythingLoading = albumsState is UiState.Loading ||
 			artistsState is UiState.Loading ||
 			songsState is UiState.Loading
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = combinedPadding.calculateTopPadding())
+				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = !isAnythingLoading,
 			onRefresh = {
@@ -107,7 +107,7 @@ fun StarredScreen() {
 			key = listOf(albumsState, artistsState, songsState)
 		) {
 			StarredScreenContent(
-				innerPadding = combinedPadding,
+				innerPadding = innerPadding,
 				onSetShareId = { shareId = it },
 				isOnline = isOnline,
 

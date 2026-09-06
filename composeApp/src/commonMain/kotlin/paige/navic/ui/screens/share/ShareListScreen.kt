@@ -51,10 +51,9 @@ fun ShareListScreen() {
 	Scaffold(
 		topBar = { NestedTopBar({ Text(stringResource(Res.string.title_shares)) }) }
 	) { innerPadding ->
-		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = combinedPadding.calculateTopPadding())
+				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = sharesState !is UiState.Loading && !isRefreshingFlow,
 			onRefresh = { viewModel.refreshShares() },
@@ -64,7 +63,7 @@ fun ShareListScreen() {
 				LazyVerticalGrid(
 					modifier = Modifier.fillMaxSize(),
 					columns = GridCells.Fixed(1),
-					contentPadding = combinedPadding.withoutTop(),
+					contentPadding = innerPadding.withoutTop(),
 					state = viewModel.gridState,
 					verticalArrangement = if ((stateValue as? UiState.Success)?.data?.isEmpty() == true)
 						Arrangement.Center

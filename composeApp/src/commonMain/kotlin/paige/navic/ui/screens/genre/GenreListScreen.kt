@@ -21,6 +21,8 @@ import navic.composeapp.generated.resources.title_genres
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import paige.navic.LocalPlatformContext
+import paige.navic.domain.manager.PreferenceManager
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.PullToRefreshBox
@@ -62,10 +64,9 @@ fun GenreListScreen(
 			}
 		}
 	) { innerPadding ->
-		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = combinedPadding.calculateTopPadding())
+				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = genresState !is UiState.Loading,
 			onRefresh = { viewModel.refreshGenres(true) },
@@ -75,7 +76,7 @@ fun GenreListScreen(
 				modifier = if (!nested)
 					Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier,
-				contentPadding = combinedPadding.withoutTop(),
+				contentPadding = innerPadding.withoutTop(),
 				state = viewModel.gridState,
 				verticalArrangement = if ((genresState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center

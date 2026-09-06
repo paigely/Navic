@@ -28,6 +28,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import paige.navic.LocalPlatformContext
 import paige.navic.domain.models.DomainSong
 import paige.navic.domain.models.DomainSongListType
 import paige.navic.shared.MediaPlayerViewModel
@@ -104,10 +105,9 @@ fun SongListScreen(
 			}
 		}
 	) { innerPadding ->
-		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = combinedPadding.calculateTopPadding())
+				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = songsState !is UiState.Loading,
 			onRefresh = { viewModel.refreshSongs(true) },
@@ -117,7 +117,7 @@ fun SongListScreen(
 				modifier = if (!nested)
 					Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)
 				else Modifier.fillMaxSize(),
-				contentPadding = combinedPadding.withoutTop(),
+				contentPadding = innerPadding.withoutTop(),
 				verticalArrangement = if ((songsState as? UiState.Success)?.data?.isEmpty() == true)
 					Arrangement.Center
 				else Arrangement.spacedBy(12.dp)

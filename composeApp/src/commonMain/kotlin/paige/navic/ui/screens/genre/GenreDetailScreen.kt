@@ -67,10 +67,9 @@ fun GenreDetailScreen(
 	Scaffold(
 		topBar = { NestedTopBar({ Text(genreName) }) }
 	) { innerPadding ->
-		val combinedPadding = innerPadding.withGlobalBottomBar()
 		PullToRefreshBox(
 			modifier = Modifier
-				.padding(top = combinedPadding.calculateTopPadding())
+				.padding(top = innerPadding.calculateTopPadding())
 				.background(MaterialTheme.colorScheme.surface),
 			finished = albumsState !is UiState.Loading &&
 				songsState !is UiState.Loading,
@@ -82,7 +81,7 @@ fun GenreDetailScreen(
 		) {
 			GenreDetailScreenContent(
 				genreName = genreName,
-				innerPadding = combinedPadding,
+				innerPadding = innerPadding,
 				onSetShareId = { shareId = it },
 				isOnline = isOnline,
 
