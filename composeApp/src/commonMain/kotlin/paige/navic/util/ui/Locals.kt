@@ -3,6 +3,7 @@ package paige.navic.util.ui
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.unit.dp
 
 /**
  * this exists because if you use `sheetState.hide()` inside
@@ -15,3 +16,5 @@ import androidx.compose.runtime.staticCompositionLocalOf
 val LocalSheetState = staticCompositionLocalOf<SheetState> {
 	error("LocalSheetState used outside of a sheet")
 }
+
+val LocalGlobalBottomBarHeight = staticCompositionLocalOf { 0.dp }

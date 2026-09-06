@@ -45,9 +45,9 @@ import paige.navic.ui.components.dialogs.FormDialog
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.navigation.Screen
 import paige.navic.util.core.PlatformType
-import paige.navic.LocalGlobalBottomBarHeight
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import paige.navic.util.ui.LocalGlobalBottomBarHeight
 
 @Composable
 fun SettingsDeveloperScreen() {

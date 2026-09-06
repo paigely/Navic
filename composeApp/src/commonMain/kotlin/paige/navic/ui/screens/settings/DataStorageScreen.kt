@@ -106,11 +106,9 @@ import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.navigation.Screen
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.viewmodels.SettingsDataStorageViewModel
-import paige.navic.LocalGlobalBottomBarHeight
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.lifecycle.compose.dropUnlessResumed
-import navic.composeapp.generated.resources.subtitle_download_quality
+import paige.navic.util.ui.LocalGlobalBottomBarHeight
 import kotlin.time.Clock
 import kotlin.time.Instant
 import coil3.compose.LocalPlatformContext as LocalCoilPlatformContext

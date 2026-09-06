@@ -55,11 +55,11 @@ import paige.navic.ui.components.common.FormTitle
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.screens.settings.components.SettingSelectionRow
 import paige.navic.ui.screens.settings.components.SettingSwitchRow
-import paige.navic.LocalGlobalBottomBarHeight
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import paige.navic.ui.screens.settings.dialogs.LyricsPrioritySheet
 import paige.navic.ui.screens.settings.dialogs.NowPlayingSliderStyleDialog
+import paige.navic.util.ui.LocalGlobalBottomBarHeight
 
 @Composable
 fun SettingsNowPlayingScreen() {

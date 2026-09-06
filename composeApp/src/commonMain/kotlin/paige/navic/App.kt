@@ -120,6 +120,7 @@ import paige.navic.ui.theme.NavicTheme
 import paige.navic.util.core.PlatformContext
 import paige.navic.util.core.PlatformType
 import paige.navic.util.core.rememberPlatformContext
+import paige.navic.util.ui.LocalGlobalBottomBarHeight
 import paige.navic.util.ui.Material3Transitions
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -142,7 +143,7 @@ val LocalBottomBarScrollManager = staticCompositionLocalOf<BottomBarScrollManage
 	error("No BottomBarScrollManager provided")
 }
 
-val LocalGlobalBottomBarHeight = staticCompositionLocalOf { 0.dp }
+
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
