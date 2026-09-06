@@ -1,6 +1,6 @@
 [versions]
 #noinspection AndroidGradlePluginVersion
-agp = "9.3.2"
+agp = "9.4.0"
 #noinspection UnusedVersionCatalogEntry
 android-compileSdk = "37"
 #noinspection UnusedVersionCatalogEntry
