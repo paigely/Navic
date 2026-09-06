@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title_library">Biblotek</string>
+    <string name="title_library">Bibliotek</string>
     <string name="title_starred">Stjernemerket</string>
     <string name="title_playlists">Spilleliste</string>
     <string name="title_settings">Innstillinger</string>
@@ -24,7 +24,7 @@
     <string name="title_miscellaneous">Diverse</string>
     <string name="title_direction">Retning</string>
     <string name="title_bulk_download">Last ned alle albumene</string>
-    <string name="title_library_download">Last ned hele bibloteket</string>
+    <string name="title_library_download">Last ned hele biblioteket</string>
     <string name="title_confirm">Bekreft</string>
     <string name="title_update">Oppdatering tilgjengelig</string>
     <string name="title_network">Nettverk</string>
@@ -43,7 +43,7 @@
     <string name="subtitle_about">App info, versjon, oppdateringer og lisenser</string>
     <string name="subtitle_playlist">Spilleliste</string>
     <string name="subtitle_now_playing_background_style">Velg statisk hvis du har problemer med ytelse</string>
-    <string name="subtitle_check_for_updates">Se etter oppdateringer på GitHub når appen starter</string>
+    <string name="subtitle_check_for_updates">Se etter oppdateringer på Github når appen starter</string>
     <string name="subtitle_offline_mode">Styrer når appen settes i frakobletmodus. Krever omstart</string>
     <string name="subtitle_streaming_quality">Juster kvaliteten på musikk ved strømming</string>
     <string name="subtitle_download_quality">Justerer kvaliteten på nedlastet musikk</string>
@@ -100,7 +100,7 @@
     <string name="info_status_downloading">Laster ned …</string>
     <string name="info_sync_never">Aldri</string>
     <string name="info_sync_just_now">Akuratt nå</string>
-    <string name="info_library_download_warning">Er du sikker på at du vil laste ned hele bilboteket?\nDette vil hoppe over elementer du alerede har lastet ned, men kan bruke store deler av din lagringsplass og mobildata.</string>
+    <string name="info_library_download_warning">Er du sikker på at du vil laste ned hele biblioteket?\nDette vil hoppe over elementer du allerede har lastet ned, men kan bruke store deler av din lagringsplass og mobildata.</string>
     <string name="info_library_download">Lagre all synkronisert musikk for avspilling uten nett</string>
     <string name="info_progress">Fremgang</string>
     <string name="info_in_use">(i bruk)</string>
@@ -213,10 +213,10 @@
     <string name="notice_expiry">Utløper om %1$s</string>
     <string name="notice_loading_lyrics">Laster ned sangtekst …\nDette kan ta en stund.</string>
     <string name="notice_login_suggestion">Mente du …</string>
-    <string name="notice_queue_duplicate">Denne sangen er alerede i avspillingskøen. Vil du legge den til igjen?</string>
+    <string name="notice_queue_duplicate">Denne sangen er allerede i avspillingskøen. Vil du legge den til igjen?</string>
     <string name="info_app_version">Navic %1$s</string>
     <string name="info_action_is_permanent">Dette kan ikke angres</string>
-    <string name="info_error">Noe gikk feil.</string>
+    <string name="info_error">Det oppstod en feil.</string>
     <string name="info_error_show">Vis detaljer</string>
     <string name="info_error_hide">Gjem detaljer</string>
     <string name="info_unknown">Ukjent</string>
@@ -226,7 +226,7 @@
     <string name="title_now_playing">Spiller nå</string>
     <string name="title_sync_control">Synkroniseringskontroll</string>
     <string name="title_data_storage">Data og lagring</string>
-    <string name="title_bottom_app_bar">Bunnmeny</string>
+    <string name="title_bottom_app_bar">Bunnlinje</string>
     <string name="title_behaviour">Oppførsel</string>
     <string name="title_cache_management">Lagring</string>
     <string name="title_danger_zone">Faresone</string>
@@ -256,7 +256,7 @@
     <string name="info_no_starred">Ingenting er stjernemerket</string>
     <string name="info_no_playlists_short">Ingen spillelister</string>
     <string name="info_lyrics_provider">Sangtekster er fra %1$s</string>
-    <string name="info_image_failed_to_load">Kunne ikke hente</string>
+    <string name="info_image_failed_to_load">Klarte ikke å hente</string>
     <string name="action_view_on_lastfm">Vis i last.fm</string>
     <string name="action_view_on_musicbrainz">Vis i MusicBrainz</string>
     <string name="action_clear_search">Tøm</string>
@@ -271,11 +271,11 @@
     <string name="subtitle_developer">Feilsøking, testing og logger</string>
     <string name="subtitle_now_playing">Tilpass «spiller nå» og «sangtekst» skjermene</string>
     <string name="title_advanced">Avansert omkoding</string>
-    <string name="subtitle_appearance">Tema, farger, utseende, ikon</string>
+    <string name="subtitle_appearance">Tema, farger, utseende og ikon</string>
     <string name="option_now_playing_slider_style">Stil for fremdriftsviser</string>
     <string name="option_swipe_to_skip">Dra for å bytte sang</string>
     <string name="option_lyrics_keep_alive">Behold skjermen på når sangtekster vise</string>
-    <string name="option_lyrics_blur">Gjør inaktive sangtekstlinjer uskarpe</string>
+    <string name="option_lyrics_blur">Gjør sangtekstlinjer ved skjermkantene uskarpe</string>
     <string name="option_account_navidrome_instance">Nettadresse til tjener</string>
     <string name="option_live_status">Synkroniseringsstatus</string>
     <string name="info_status_idle">Inaktiv</string>
@@ -298,7 +298,7 @@
     <string name="info_shared_by">Delt av %1$s</string>
     <string name="info_no_search_results">Ingen resultater</string>
     <string name="info_not_available_offline">Ikke tilgjengelig uten nett</string>
-    <string name="info_no_queue">Ingenting i køen</string>
+    <string name="info_no_queue">Ingenting i avspillingskøen</string>
     <string name="info_download_failed">Nedlastingsfeil</string>
     <string name="info_exception_handler">Dette kommer til å krasje appen umiddelbart. Er du sikker?</string>
     <string name="info_repeat_one">Gjenta en</string>
@@ -322,7 +322,7 @@
     <string name="option_stream_format_cellular">Strømmeformat over mobildata</string>
     <string name="option_download_format_wifi">Nedlastingsformat over Wi-Fi</string>
     <string name="option_download_format_cellular">Nedlastingsformat over mobildata</string>
-    <string name="subtitle_bottom_app_bar">Tilpass bunnmeny og minispiller</string>
+    <string name="subtitle_bottom_app_bar">Tilpass navigasjonslinje og minispiller</string>
     <string name="option_now_playing_slider_style_squiggly">Bølgete</string>
     <string name="option_lyrics_beat_by_beat">Følg takten i sangteksten på sangtekstskjermen</string>
     <string name="option_palette_style">Farge stil</string>
@@ -346,7 +346,7 @@
     <string name="info_track_name">Sportnavn</string>
     <string name="info_track_channel_count">Kanaler</string>
     <string name="info_no_other_playlists">Dette er den eneste spillelisten.</string>
-    <string name="option_accent_colour">Aksentfarge</string>
+    <string name="option_accent_colour">Fremhevingsfarger</string>
     <string name="option_lyrics_autoscroll">Automatisk rulling av sangtekst</string>
     <string name="option_lyrics_bright_inactive">Gjør inaktive sangtekstlinjer lysere</string>
     <string name="option_animation_style_expressive">Uttrykksfull</string>
@@ -366,9 +366,9 @@
     <string name="info_click_to_retry">Trykk her for å prøve på nytt</string>
     <string name="title_discord_server">Discord tjener</string>
     <string name="title_codeberg">Codeberg</string>
-    <string name="title_github">GitHub</string>
+    <string name="title_github">Github</string>
     <string name="subtitle_auto_fill_queue">Legg til en tilfeldig sang når det kun er en sang igjen i avspillingskøen</string>
-    <string name="title_link_confirmation">Forlater Navic</string>
+    <string name="title_link_confirmation">Du forlater nå Navic</string>
     <string name="option_auto_fill_queue">Fyll avspillingskøen automatisk</string>
     <string name="subtitle_configure_lyric_providers">Endrer hvor sangtekster hentes fra</string>
     <string name="option_equaliser_mode_builtin">Innebygd</string>
@@ -422,8 +422,15 @@
     <string name="title_create_share">Del musikk</string>
     <string name="title_shares">Delt musikk</string>
     <string name="action_view_shares">Delt musikk</string>
-    <string name="info_no_shares">Ingenting delt</string>
+    <string name="info_no_shares">Ingenting er delt</string>
     <string name="notice_deleted_share">Deling avsluttet.</string>
     <string name="title_delete_share">Avslutt deling?</string>
     <string name="option_use_marquee_text">Hastighet på automatisk rullende tekst</string>
+    <string name="sideloading_warning_title">STOPP, LES DETTE!</string>
+    <string name="sideloading_warning_subtitle">Google planlegger å drepe all installasjon av apper utenfor appbutikker for alle enheter med Google Play Services installert.\n</string>
+    <string name="sideloading_warning_description">Dette vil føre til at all installasjon av apper utenfor appbutikker blir blokkert hvis app utvikleren ikke utleverer sin personopplysninger til Google og/eller offentligheten.\n\nHvis du har kunnskapen som kreves for å installere alternativ fastvare er tiden inne for å gjøre det.\n\nLes mer om dette og si din mening på</string>
+    <string name="sideloading_warning_link_mask">keepandroidopen.org</string>
+    <string name="title_acknowledgements">Anerkjennelser</string>
+    <string name="action_scroll_down">Rulle ned</string>
+    <string name="info_update_check">Se etter oppdateringer på Github.\n\nDette er kanskje ikke ønskelig hvis du har installert Navic fra kilder som F-droid eller IzzyOnDroid. Å se etter oppdateringer fra Github omgår eventuelle sikkerhetskontroller som den kilden gjør.\n\nEr du sikker på at du vil slå dette på?</string>
 </resources>

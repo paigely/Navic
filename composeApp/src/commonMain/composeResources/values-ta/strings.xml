@@ -1,3 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="title_settings">அமைப்புகள்</string>
+    <string name="title_appearance">தோற்றம்</string>
+    <string name="title_search">தேடுக</string>
+    <string name="title_library">லைப்ரரி</string>
+    <string name="title_playlists">பிளேலிஸ்ட்ஸ்</string>
+    <string name="title_account">கணக்கு</string>
+    <string name="title_behaviour">நடத்தை</string>
+    <string name="title_playback">பிளேபேக்</string>
 </resources>
