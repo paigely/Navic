@@ -90,6 +90,7 @@ import paige.navic.ui.screens.queue.QueueScreen
 import paige.navic.ui.screens.radio.RadioListScreen
 import paige.navic.ui.screens.search.SearchScreen
 import paige.navic.ui.screens.settings.BottomBarScreen
+import paige.navic.ui.screens.settings.AudioEffectsScreen
 import paige.navic.ui.screens.settings.FontsScreen
 import paige.navic.ui.screens.settings.SettingsAboutScreen
 import paige.navic.ui.screens.settings.SettingsAcknowledgementsScreen
@@ -383,6 +384,9 @@ private fun entryProvider(
 		}
 		entry<Screen.Settings.Playback>(metadata = detailPane("settings")) {
 			SettingsPlaybackScreen()
+		}
+		entry<Screen.Settings.Effects>(metadata = detailPane("settings")) {
+			AudioEffectsScreen()
 		}
 		entry<Screen.Settings.Developer>(metadata = detailPane("settings")) {
 			SettingsDeveloperScreen()

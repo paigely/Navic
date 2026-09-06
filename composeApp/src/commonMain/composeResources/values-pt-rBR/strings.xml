@@ -171,7 +171,7 @@
     <string name="info_track_replay_gain">ReplayGain da faixa</string>
     <string name="info_album_replay_gain">ReplayGain do álbum</string>
     <string name="info_dynamic_replay_gain">ReplayGain dinâmico</string>
-    <string name="info_track_replay_gain_effective">Valor efetivo de ReplayGain</string>
+	<string name="info_track_replay_gain_effective">Valor efetivo de ReplayGain</string>
     <string name="info_shared_by">Compartilhado por %1$s</string>
     <string name="info_share_expires_in">Expira em %1$s</string>
     <string name="info_share_expires_never">Nunca expira</string>

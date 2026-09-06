@@ -64,6 +64,7 @@
 	<string name="title_github">GitHub</string>
 	<string name="title_codeberg">Codeberg</string>
 	<string name="title_link_confirmation">Leaving Navic</string>
+	<string name="title_audio_effects">Audio effects</string>
 
 	<string name="subtitle_appearance">Themes, colours, layout, app icon</string>
 	<string name="subtitle_now_playing">Customise the now playing &amp; lyrics views</string>
@@ -89,6 +90,7 @@
 	<string name="subtitle_equaliser">Tune &amp; enhance audio</string>
 	<string name="subtitle_equaliser_disabled">Not available when audio offload is enabled</string>
 	<string name="subtitle_configure_lyric_providers">Choose where to fetch lyrics from</string>
+	<string name="subtitle_audio_effects">Adjust how the music sounds</string>
 
 	<string name="option_off">Off</string>
 	<string name="option_now_playing_background_style">Background style</string>
@@ -144,6 +146,12 @@
 	<string name="option_choose_theme">Application theme</string>
 	<string name="option_choose_app_icon">Application icon</string>
 	<string name="option_replay_gain">ReplayGain</string>
+	<string name="option_replaygain_mode">ReplayGain mode</string>
+	<string name="option_title_preamp">Preamp options</string>
+	<string name="option_preamp_with_rg">With ReplayGain tags</string>
+	<string name="option_preamp_without_rg">Without ReplayGain tags</string>
+	<string name="option_preamp_tip">Setting either of the preamp options to a very high value might cause audio distortion.</string>
+	<string name="option_dynamic_replaygain_tip">Setting ReplayGain to Dynamic will use the album gain if an album is playing. Otherwise, the track gain will be used instead.</string>
 	<string name="option_gapless_playback">Gapless playback</string>
 	<string name="option_audio_offload">Audio offload</string>
 	<string name="option_live_status">Live status</string>
